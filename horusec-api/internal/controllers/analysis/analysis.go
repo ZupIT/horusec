@@ -74,11 +74,11 @@ func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 }
 
 func (c *Controller) setDefaultContentToCreate(
-	analysis *horusecEntities.Analysis, companyName string, repository *accountEntities.Repository) {
+	analysis *horusecEntities.Analysis, companyName string, repo *accountEntities.Repository) {
 	analysis.GenerateID()
 	analysis.SetCompanyName(companyName)
-	analysis.SetRepositoryName(repository.Name)
-	analysis.SetRepositoryID(repository.RepositoryID)
+	analysis.SetRepositoryName(repo.Name)
+	analysis.SetRepositoryID(repo.RepositoryID)
 	analysis.SetAnalysisIDAndNewIDInVulnerabilities()
 }
 
