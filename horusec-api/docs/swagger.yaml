@@ -1,0 +1,630 @@
+definitions:
+  api.Token:
+    properties:
+      description:
+        type: string
+    type: object
+  horusec.Analysis:
+    properties:
+      companyID:
+        type: string
+      companyName:
+        type: string
+      createdAt:
+        type: string
+      errors:
+        type: string
+      finishedAt:
+        type: string
+      id:
+        type: string
+      repositoryID:
+        type: string
+      repositoryName:
+        type: string
+      status:
+        type: string
+      vulnerabilities:
+        items:
+          $ref: '#/definitions/horusec.Vulnerability'
+        type: array
+    type: object
+  horusec.CommitAuthor:
+    properties:
+      author:
+        type: string
+      commitHash:
+        type: string
+      date:
+        type: string
+      email:
+        type: string
+      message:
+        type: string
+    type: object
+  horusec.Vulnerability:
+    properties:
+      analysisID:
+        type: string
+      code:
+        type: string
+      column:
+        type: string
+      commitAuthor:
+        type: string
+      commitDate:
+        type: string
+      commitEmail:
+        type: string
+      commitHash:
+        type: string
+      commitMessage:
+        type: string
+      confidence:
+        type: string
+      details:
+        type: string
+      file:
+        type: string
+      language:
+        type: string
+      line:
+        type: string
+      securityTool:
+        type: string
+      severity:
+        type: string
+      type:
+        type: string
+      version:
+        type: string
+      vulnHash:
+        type: string
+      vulnerabilityID:
+        type: string
+      vulnerableBelow:
+        type: string
+    type: object
+  http.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec
+  description: Service of Horusec.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-API
+paths:
+  /api/analysis:
+    post:
+      consumes:
+      - application/json
+      description: Start new analysis
+      operationId: start-new-analysis
+      parameters:
+      - description: send new analysis info
+        in: body
+        name: SendNewAnalysis
+        required: true
+        schema:
+          $ref: '#/definitions/horusec.Analysis'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Analysis
+  /api/analysis/{analysisID}:
+    get:
+      consumes:
+      - application/json
+      description: Get analysis on database
+      operationId: get-one-analysis
+      parameters:
+      - description: analysisID of the analysis
+        in: path
+        name: analysisID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  allOf:
+                  - $ref: '#/definitions/horusec.Analysis'
+                  - properties:
+                      vulnerabilities:
+                        items:
+                          allOf:
+                          - $ref: '#/definitions/horusec.Vulnerability'
+                          - properties:
+                              commitAuthor:
+                                $ref: '#/definitions/horusec.CommitAuthor'
+                            type: object
+                        type: array
+                    type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Analysis
+  /api/companies/{companyID}/repositories/{repositoryID}/tokens:
+    get:
+      description: Delete a repository token
+      operationId: repository-get-all-token
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the repository
+        in: path
+        name: companyID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+    post:
+      consumes:
+      - application/json
+      description: Create a new repository token
+      operationId: repository-new-token
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the repository
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: token info
+        in: body
+        name: Token
+        required: true
+        schema:
+          $ref: '#/definitions/api.Token'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "422":
+          description: UNPROCESSABLE ENTITY
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+  /api/companies/{companyID}/repositories/{repositoryID}/tokens/{tokenID}:
+    delete:
+      description: Delete a repository token
+      operationId: repository-delete-token
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the repository
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: ID of the token
+        in: path
+        name: tokenID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+  /api/companies/{companyID}/tokens:
+    get:
+      description: Delete a company token
+      operationId: company-get-all-token
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+    post:
+      consumes:
+      - application/json
+      description: Create a new company token
+      operationId: company-new-token
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: token info
+        in: body
+        name: Token
+        required: true
+        schema:
+          $ref: '#/definitions/api.Token'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "422":
+          description: UNPROCESSABLE ENTITY
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+  /api/companies/{companyID}/tokens/{tokenID}:
+    delete:
+      description: Delete a company token
+      operationId: company-delete-token
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: ID of the token
+        in: path
+        name: tokenID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Tokens
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

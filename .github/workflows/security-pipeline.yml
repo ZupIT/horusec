@@ -1,0 +1,17 @@
+name: SecurityPipeline
+
+on: [push]
+
+jobs:
+  horusec-security:
+    name: horusec-security
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      - name: Running Horusec Security
+        shell: bash
+        run: |
+          curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+          horusec start -p="./"

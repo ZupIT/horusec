@@ -1,0 +1,27 @@
+/**
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+div.footer { display: flex; justify-content: space-between; align-items: center; width: 100%; position: fixed; bottom: 0; left: 0;
+  @media all and (max-width: 320px) { flex-direction: column; }
+
+  section.change-language { margin: 10px;
+    .theme--light.v-icon { color: #fff; }
+  }
+
+  img.zup { margin: 10px; filter: grayscale(100%); $defaultWidth: 66px; width: $defaultWidth; $defaultHeight: 32px; height: $defaultHeight;
+    @media all and (max-width: 425px) { width: $defaultWidth - ($defaultWidth * 0.15); height: $defaultHeight - ($defaultHeight * 0.15); }
+  }
+}

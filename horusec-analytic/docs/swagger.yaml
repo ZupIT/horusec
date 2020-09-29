@@ -1,0 +1,552 @@
+definitions:
+  http.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec
+  description: Service of Horusec.
+  license: {}
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Analytic
+paths:
+  /api/dashboard/companies/{companyID}/all-vulnerabilities:
+    get:
+      consumes:
+      - application/json
+      description: get total vulnerabilities by severity
+      operationId: company-vulnerabilities-by-severity
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/details:
+    get:
+      consumes:
+      - application/json
+      description: get vuln details
+      operationId: vuln-details
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: graphql query string
+        in: query
+        name: query
+        type: string
+      - description: graphql query string
+        in: query
+        name: page
+        type: string
+      - description: graphql query string
+        in: query
+        name: size
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities:
+    get:
+      consumes:
+      - application/json
+      description: get vuln by severity
+      operationId: repository-by-severity
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers:
+    get:
+      consumes:
+      - application/json
+      description: get total developers
+      operationId: repository-total-dev
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories:
+    get:
+      consumes:
+      - application/json
+      description: get total repositories
+      operationId: repository-total-repositories
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author:
+    get:
+      consumes:
+      - application/json
+      description: get vuln by developer
+      operationId: repository-by-developer
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language:
+    get:
+      consumes:
+      - application/json
+      description: get vuln by language
+      operationId: repository-by-language
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository:
+    get:
+      consumes:
+      - application/json
+      description: get vuln by repository
+      operationId: repository-by-repository
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time:
+    get:
+      consumes:
+      - application/json
+      description: get vuln by time
+      operationId: repository-by-time
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Repository
+  /api/dashboard/companies/{companyID}/total-developers:
+    get:
+      consumes:
+      - application/json
+      description: get total developers
+      operationId: company-total-dev
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/total-repositories:
+    get:
+      consumes:
+      - application/json
+      description: get total repositories
+      operationId: company-total-repositories
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/vulnerabilities-by-author:
+    get:
+      consumes:
+      - application/json
+      description: get total vulnerabilities by author
+      operationId: company-vulnerabilities-by-author
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/vulnerabilities-by-language:
+    get:
+      consumes:
+      - application/json
+      description: get total vulnerabilities by language
+      operationId: company-vulnerabilities-by-language
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/vulnerabilities-by-repository:
+    get:
+      consumes:
+      - application/json
+      description: get total vulnerabilities by repository
+      operationId: company-vulnerabilities-by-repository
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/dashboard/companies/{companyID}/vulnerabilities-by-time:
+    get:
+      consumes:
+      - application/json
+      description: get total vulnerabilities by time
+      operationId: company-vulnerabilities-by-time
+      parameters:
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: BAD REQUEST
+        "500":
+          description: INTERNAL SERVER ERROR
+      tags:
+      - Dashboard Company
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Health
+swagger: "2.0"

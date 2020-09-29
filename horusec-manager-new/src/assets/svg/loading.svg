@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin:auto;background:0 0;display:block;shape-rendering:auto" width="121px" height="121px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <circle cx="50" cy="50" r="0" fill="none" stroke="#8e8e93" stroke-width="8">
+        <animate attributeName="r" repeatCount="indefinite" dur="2.1739130434782608s" values="0;38" keyTimes="0;1" keySplines="0 0.2 0.8 1" calcMode="spline" begin="-1.0869565217391304s"/>
+        <animate attributeName="opacity" repeatCount="indefinite" dur="2.1739130434782608s" values="1;0" keyTimes="0;1" keySplines="0.2 0 0.8 1" calcMode="spline" begin="-1.0869565217391304s"/>
+    </circle>
+    <circle cx="50" cy="50" r="0" fill="none" stroke="#636366" stroke-width="8">
+        <animate attributeName="r" repeatCount="indefinite" dur="2.1739130434782608s" values="0;38" keyTimes="0;1" keySplines="0 0.2 0.8 1" calcMode="spline"/>
+        <animate attributeName="opacity" repeatCount="indefinite" dur="2.1739130434782608s" values="1;0" keyTimes="0;1" keySplines="0.2 0 0.8 1" calcMode="spline"/>
+    </circle>
+</svg>

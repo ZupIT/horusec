@@ -1,0 +1,272 @@
+{
+  "$vuetify": {
+    "dataTable": {
+      "itemsPerPageText": "Rows per page:",
+      "ariaLabel": {
+        "sortDescending": "Sorted descending.",
+        "sortAscending": "Sorted ascending.",
+        "sortNone": "Not sorted.",
+        "activateNone": "Activate to remove sorting.",
+        "activateDescending": "Activate to sort descending.",
+        "activateAscending": "Activate to sort ascending."
+      },
+      "sortBy": "Sort by"
+    },
+    "dataFooter": {
+      "itemsPerPageText": "Items per page:",
+      "itemsPerPageAll": "All",
+      "nextPage": "Next page",
+      "prevPage": "Previous page",
+      "firstPage": "First page",
+      "lastPage": "Last page",
+      "pageText": "{0}-{1} of {2}"
+    },
+    "datePicker": {
+      "itemsSelected": "{0} selected",
+      "nextMonthAriaLabel": "Next month",
+      "nextYearAriaLabel": "Next year",
+      "prevMonthAriaLabel": "Previous month",
+      "prevYearAriaLabel": "Previous year"
+    },
+    "noDataText": "No data available"
+  },
+  "globals": {
+    "change_i18n": {
+      "label": "Selected Language"
+    },
+    "toast": {
+      "invalid_form": "Invalid form. Check and try again!",
+      "generic_toast_error": "An unexpected error has occurred. Please try again later!",
+      "not_found": "No data found.",
+      "user_without_permission": "You are not allowed to perform this action, check with your supervisor and try again!"
+    },
+    "tooltip": {
+      "user_without_permission": "Actions disabled because you do not have the necessary permissions"
+    },
+    "table": {
+      "header_action": "Action"
+    },
+    "form": {
+      "rules": {
+        "field_required": "Required field",
+        "email_invalid": "Invalid email",
+        "password_invalid": {
+          "min_characters": "* Required: Min. 8 Characters",
+          "min_capital_character": "* Required: Min. 1 capital letter",
+          "min_lower_character": "* Required: Min. 1 lowercase letter",
+          "min_special_character": "* Mandatory: Min. 1 special character",
+          "min_number_character": "* Required: Min. 1 number"
+        }
+      },
+      "btn_save": "Save",
+      "btn_cancel": "Cancel",
+      "btn_delete": "Delete"
+    },
+    "horusec_title": "Horusec",
+    "not_found": "No results found",
+    "close": "Close",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "without_permission": "You do not have the necessary privileges, login again or report to your superior"
+  },
+  "login": {
+    "title": "Horusec",
+    "form": {
+      "email_field": "E-mail",
+      "password_field": "Password",
+      "btn_sign_up": "Register",
+      "btn_login": "Log in"
+    },
+    "forgot_password": "Forgot your password?",
+    "toast_success": "Welcome to Horusec",
+    "toast_username_password_invalid": "Invalid username or password, try again!",
+    "toast_account_not_confirmed": "The account is not confirmed, check your email and try again!",
+    "toast_account_already_logged": "The account is already logged in, please try again later!"
+  },
+  "sign_up": {
+    "form": {
+      "email_field": "E-mail",
+      "username_field": "User",
+      "password_field": "Password",
+      "confirm_password_field": "Confirm password",
+      "btn_login": "Back to login",
+      "btn_sign_up": "Register"
+    },
+    "toast_success": "User registered successfully!",
+    "toast_user_exists": "The email is already registered in the system!"
+  },
+  "recovery_password": {
+    "form": {
+      "code_field": "Code",
+      "email_field": "E-mail",
+      "password_field": "Password",
+      "confirm_password_field": "Confirm password",
+      "code_invalid": "Invalid code",
+      "passwords_not_equals": "Passwords are not the same",
+      "toast_email_sent": "Code sent to email successfully informed!",
+      "toast_password_updated": "Password updated successfully!",
+      "btn_login": "Back to login",
+      "btn_send_code": "Send code to informed email",
+      "btn_check_code": "Check code",
+      "btn_update_password": "Update password"
+    }
+  },
+  "company": {
+    "title": "Select a company",
+    "search_field": "Search",
+    "title_add_company": "Add new company",
+    "title_edit_company": "Edit company",
+    "title_delete_company": "Delete company",
+    "modal_delete_description": "Do you really want to delete the company <b>{companyName}</b>? This action cannot be undone!",
+    "actions": {
+      "select": "Select",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "company_name_field": "Company Name"
+    },
+    "toast": {
+      "company_created": "Company created successfully!",
+      "company_updated": "Company updated successfully!",
+      "company_deleted": "Company deleted successfully!"
+    }
+  },
+  "not_found": {
+    "title": "Page not found!",
+    "message": "The page you tried to search for does not exist. Go back to the beginning and try again!",
+    "btn_home": "Back to the top"
+  },
+  "internal": {
+    "menu": {
+      "back_to_companies": "Back to companies",
+      "dashboard": "Dashboard",
+      "repositories": "Repositories",
+      "users": "Company users"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "On this page you can analytically view the vulnerabilities of your organization or repositories.",
+    "tabs": {
+      "company_tab": "Company",
+      "repository_tab": "Repository"
+    },
+    "repository": {
+      "placeholder_select": "Select a repository",
+      "label_select": "Repository"
+    },
+    "charts": {
+      "title_all_vulnerabilities": "All vulnerabilities",
+      "title_vulnerabilities_by_developer": "Vulnerabilities by developer",
+      "title_vulnerabilities_by_language": "Vulnerabilities by language",
+      "title_vulnerabilities_by_repository": "Vulnerabilities by repository",
+      "title_vulnerabilities_by_time": "Vulnerabilities timeline",
+      "title_vulnerabilities_details_table": "Vulnerabilities detail",
+      "title_total_developers": "Total developers",
+      "title_total_repositories": "Total repositories"
+    },
+    "table": {
+      "header_author": "Author",
+      "header_severity": "Severity",
+      "header_description": "Description",
+      "header_file": "File",
+      "header_code": "Code",
+      "header_line": "Line",
+      "header_language": "Language",
+      "vuln_hash": "Hash"
+    }
+  },
+  "repository": {
+    "title": "Repositories",
+    "table": {
+      "search_name": "Search by name",
+      "btn_create": "New repository",
+      "header_name": "Name",
+      "header_description": "Description",
+      "btn_lock_title": "Open modal to manage tokens",
+      "btn_account_title": "Open modal to manage user access in this repository",
+      "btn_edit_title": "Edit repository",
+      "btn_remove_title": "Remove repository"
+    },
+    "title_edit_repository": "Edit repository",
+    "title_add_repository": "Create repository",
+    "title_delete_repository": "Remove repository",
+    "modal_delete_repository": "Do you really want to delete the <b>{name}</b> repository? This action cannot be undone!",
+    "form": {
+      "name_field": "Name",
+      "description_field": "Description"
+    },
+    "toast": {
+      "repository_created": "Repository created successfully!",
+      "repository_updated": "Repository updated successfully!",
+      "repository_deleted": "Repository deleted successfully!"
+    },
+    "description": "On this page, you can configure your repositories along with your access tokens and users who are allowed to analytically view the vulnerabilities of the repository",
+    "user": {
+      "toast": {
+        "user_created": "User added to the repository successfully!",
+        "user_deleted": "User removed from the repository successfully!",
+        "user_updated": "User permission on the repository changed successfully!"
+      }
+    },
+    "user_without_permission": "You are not allowed to fetch users from this repository",
+    "tokens": {
+      "btn_create": "New Token",
+      "table": {
+        "header_token": "Token",
+        "header_description": "Description",
+        "header_expiresAt": "Expires at"
+      },
+      "title_modal_create": "Add new token",
+      "title_modal_delete": "Delete token",
+      "content_modal_delete_token": "Do you really want to delete the <b>{description}</b> token? This action cannot be undone!",
+      "form": {
+        "description_field": "Description",
+        "created_success_title": "Token created successfully!",
+        "created_success_description": "This token grants you access to perform analysis for the selected repository! Save it in a safe place and <b>do not share!</b>"
+      },
+      "toast": {
+        "token_created": "Token created successfully!",
+        "token_deleted": "Token removed successfully!"
+      }
+    },
+    "users": {
+      "form": {
+        "help_permission_admin": "The <b> Administrator </b> permission allows you to perform in the repository: <ul> <li> manage tokens </li> <li> manage access for other users </li> <li> view the analytic </li> </ul>",
+        "help_permission_member": "The <b> Member </b> permission allows you to perform in the repository: <ul> <li> view the repository that he has access to </li> <li> view the analytic </li> </ul>"
+      }
+    }
+  },
+  "user": {
+    "title": "Company users",
+    "table": {
+      "header_username": "User",
+      "header_email": "E-mail",
+      "header_role": "Permission",
+      "tooltip_disabled_action_yourself": "Actions disabled because you cannot edit your user",
+      "item_role_admin": "Administrator",
+      "item_role_member": "Member",
+      "search_email": "Search by Email",
+      "btn_invate_user": "Invite User"
+    },
+    "form": {
+      "user_email_field": "E-mail",
+      "user_role_field": "Permission",
+      "help_permission_admin": "The <b> Administrator </b> permission allows you to perform on the system: <ul> <li> manage company users </li> <li> manage repositories </li> <li> view all available analytics </ li> </ul> ",
+      "help_permission_member": "The permission of <b> Member </b> allows the system to perform: <ul> <li> view the repositories it has access to </li> <li> view the company's analytics </li> <li> view the analytics of the repository that he has access to </li> </ul> "
+    },
+    "modal_delete_user": "Do you really want to delete the user <b> {username} </b>? This action cannot be undone!",
+    "title_edit_user": "Edit user",
+    "title_add_user": "Invite User",
+    "title_delete_user": "Remove company user",
+    "toast": {
+      "user_created": "Invited user! Check the email to confirm the invitation.",
+      "user_updated": "User permission updated successfully!",
+      "user_not_found": "The informed email does not exist in the system!",
+      "user_deleted": "The user has been successfully deleted!",
+      "user_already_exist": "The informed user is already registered with the company!"
+    },
+    "description": "On this page you can manage the users who have access to that company to be able to view the dashboard. Another feature is that with the permission of the administrator you can manage repositories and users of this company."
+  }
+}

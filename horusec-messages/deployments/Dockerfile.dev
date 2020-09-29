@@ -1,0 +1,6 @@
+FROM golang:latest
+
+COPY . /go/src/github.com/ZupIT/horusec
+WORKDIR /go/src/github.com/ZupIT/horusec
+
+CMD ["go", "run", "horusec-messages/cmd/app/main.go"]

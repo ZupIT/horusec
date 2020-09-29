@@ -1,0 +1,18 @@
+{
+  "horusecCliHorusecApiUri": "http://dev.horusec.com",
+  "horusecCliTimeoutInSecondsRequest": 20,
+  "horusecCliTimeoutInSecondsAnalysis": 100,
+  "horusecCliMonitorRetryInSeconds": 10,
+  "horusecCliRepositoryAuthorization": "8beffdca-636e-4d73-a22f-b0f7c3cff1c4",
+  "horusecCliPrintOutputType": "json",
+  "horusecCliJsonOutputFilepath": "./output.json",
+  "horusecCliTypesOfVulnerabilitiesToIgnore": "NOSEC",
+  "horusecCliFilesOrPathsToIgnore": "./assets",
+  "horusecCliReturnErrorIfFoundVulnerability": true,
+  "horusecCliProjectPath": "./",
+  "horusecCliFilterPath": "./tmp",
+  "horusecCliEnableGitHistoryAnalysis": true,
+  "horusecCliCertInsecureSkipVerify": true,
+  "horusecCliWorkDir": {},
+  "horusecCliRepositoryName": "horus"
+}

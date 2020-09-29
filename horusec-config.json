@@ -1,0 +1,25 @@
+{
+  "horusecCliHorusecApiUri": "http://localhost:8000",
+  "horusecCliTimeoutInSecondsRequest": 300,
+  "horusecCliTimeoutInSecondsAnalysis": 600,
+  "horusecCliMonitorRetryInSeconds": 15,
+  "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
+  "horusecCliPrintOutputType": "text",
+  "horusecCliJsonOutputFilepath": "",
+  "horusecCliTypesOfVulnerabilitiesToIgnore": "",
+  "horusecCliFilesOrPathsToIgnore": "development-kit/pkg/engines/examples, deployments/dockerfiles/gitleaks/rules.toml, _test.go, _mock.go, README.md, development-kit/pkg/enums/engine/advisories",
+  "horusecCliReturnErrorIfFoundVulnerability": false,
+  "horusecCliProjectPath": "./",
+  "horusecCliWorkDir": {
+    "go":         [],
+    "netCore":    [],
+    "ruby":       [],
+    "python":     [],
+    "java" :      [],
+    "kotlin":     [],
+    "javaScript": [
+    ],
+    "leaks":      [],
+    "hcl":        []
+  }
+}

@@ -1,0 +1,44 @@
+name: HorusecMessagesPipeline
+
+on: [push]
+
+jobs:
+  install-build-test-fmt-lint:
+    name: install-build-test-fmt-lint
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Setup External Dependences
+        run: make compose
+      - name: fmt
+        run: |
+          echo "==> Checking that code complies with gofmt requirements..."
+          gofmt_files=$(gofmt -l `find ./horusec-messages -name '*.go' | grep -v vendor`)
+          echo $gofmt_files
+          if [ ! -z $gofmt_files ]; then
+              echo 'gofmt needs running on the following files:'
+              echo "$gofmt_files"
+              echo "You can use the command: \`gofmt -w \$(gofmt -l \'find ./horusec-messages -name \'*.go\' | grep -v vendor)\` to reformat code."
+              exit 1
+          fi
+          echo "=) The project horusec-messages it's OK!"
+      - name: lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.25.0
+          ./bin/golangci-lint run -v --timeout=2m -c .golangci.yml ./horusec-messages/...
+      - name: test
+        run: |
+          go clean -testcache
+          go test -v ./horusec-messages/... -timeout=2m -parallel=1 -failfast -short
+      - name: coverage
+        run: make coverage-horusec-messages
+      - name: build
+        run: go build -o "./tmp/bin/horusec-messages" ./horusec-messages/cmd/app/main.go
+

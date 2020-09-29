@@ -1,0 +1,60 @@
+name: DeployService
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages'
+        required: true
+      update_type:
+        description: 'Update Type: alpha, rc, release, minor, major'
+        required: true
+      is_to_update_latest:
+        description: 'Is to update latest: true, false'
+        required: false
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: setup env
+        run: |
+          echo "::set-env name=GOPATH::$(go env GOPATH)"
+          echo "::add-path::$(go env GOPATH)/bin"
+        shell: bash
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: deploy
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
+          then
+              echo "Variables DOCKER_USERNAME, DOCKER_PASSWORD is required"
+              exit 1
+          fi
+
+          UPDATE_TYPE="${{ github.event.inputs.update_type }}"
+          IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
+          SERVICE="${{ github.event.inputs.service }}"
+
+          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+          chmod +x ./deployments/scripts/update-image-service.sh
+          ./deployments/scripts/update-image-service.sh $SERVICE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        with:
+          author_name: "Wilian Gabriel"
+          author_email: "wilian.silva@zup.com.br"
+          ref: "merge/update-versioning-file"
+          message: "[skip ci] update versioning file"
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}

@@ -1,0 +1,25 @@
+{
+  "status": 200,
+  "content": [
+    {
+      "type": "MEDIUM",
+      "count": 200
+    },
+    {
+      "type": "HIGH",
+      "count": 150
+    },
+    {
+      "type": "LOW",
+      "count": 50
+    },
+    {
+      "type": "NOSEC",
+      "count": 10
+    },
+    {
+      "type": "AUDIT",
+      "count": 30
+    }
+  ]
+}

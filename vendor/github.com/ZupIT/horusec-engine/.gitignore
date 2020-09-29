@@ -1,0 +1,11 @@
+.idea
+.vscode
+coverage.out
+bin
+*tmp*
+tmp/
+.env
+.aws/
+*.pem
+*.srl
+.horusec/

@@ -1,0 +1,31 @@
+/**
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+div.container-auth {
+  @media all and (max-width: 768px) { flex-direction: column; }
+
+  div.v-card { width: 500px; z-index: 2; padding: 50px 20px; background-color: #fff; border-radius: 10px; margin-bottom: 15px;
+    @media all and (max-width: 768px) { width: 100%; }
+
+    section.horusec-logo img.horusec { width: 150px; height: 150px;
+      @media all and (max-width: 425px) { width: 100px; height: 100px; }
+    }
+
+    button.v-btn { width: 100%; margin: 5px 0; $defaultColor: #0a213e; background-color: $defaultColor !important; border-color: $defaultColor !important;
+      &.lighten { background-color: lighten($defaultColor, 15%) !important; border-color: lighten($defaultColor, 15%) !important; }
+    }
+  }
+}

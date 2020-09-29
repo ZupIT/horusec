@@ -1,0 +1,110 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  golint:
+    min-confidence: 0.8
+  gocyclo:
+    min-complexity: 5
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  depguard:
+    list-type: blacklist
+    packages:
+      # logging is allowed only by logutils.Log, logrus
+      # is allowed to use only in logutils package
+      - github.com/sirupsen/logrus
+    packages-with-error-messages:
+      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
+  goimports:
+    local-prefixes: github.com/golangci/golangci-lint
+  gocritic:
+    enabled-tags:
+      - opinionated
+      - experimental
+      - diagnostic
+      - style
+      - performance
+    disabled-checks:
+      - evalOrder
+      - wrapperFunc
+      - unnamedResult
+      - octalLiteral
+      - dupImport
+  funlen:
+    lines: 15
+    statements: 10
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    - dogsled
+    - deadcode
+    - depguard
+    - bodyclose
+    - funlen
+    - errcheck
+    - dupl
+    - gocritic
+    - gochecknoinits
+    - goconst
+    - gofmt
+    - gocyclo
+    - gosec
+    - golint
+    - ineffassign
+    - gosimple
+    - govet
+    - lll
+    - interfacer
+    - nakedret
+    - misspell
+    - staticcheck
+    - scopelint
+    - stylecheck
+    - structcheck
+    - unconvert
+    - typecheck
+    - unused
+    - unparam
+    - whitespace
+    - varcheck
+
+run:
+  skip-dirs:
+    - vendor/
+    - tmp
+    - e2e/
+  skip-files:
+    - .*_test.go
+    - .*_mock.go
+
+issues:
+  exclude-rules:
+    - path: horusec-api/internal/handlers/analysis
+      linters:
+        - lll
+
+# golangci.com configuration
+# https://github.com/golangci/golangci/wiki/Configuration
+service:
+  golangci-lint-version: v1.21.0 # use the fixed version to not introduce new linters unexpectedly
+  prepare:
+    - echo "here I can run custom commands, but no preparation needed for this repo"

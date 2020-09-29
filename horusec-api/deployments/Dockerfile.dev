@@ -1,0 +1,8 @@
+FROM golang:latest
+
+COPY . /go/src/github.com/ZupIT/horusec
+WORKDIR /go/src/github.com/ZupIT/horusec
+
+EXPOSE 8000
+
+CMD ["go", "run", "horusec-api/cmd/app/main.go"]
