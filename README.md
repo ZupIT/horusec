@@ -1,4 +1,4 @@
-<a href="https://github.com/ZupIT/horusec/releases"><img src="https://img.shields.io/badge/release-v1.5.0-green"/></a>
+<a href="https://github.com/ZupIT/horusec/releases"><img src="https://img.shields.io/badge/release-v1.0.0-green"/></a>
 <a href="https://github.com/ZupIT/horusec/actions?query=branch%3Amaster+"><img src="https://img.shields.io/badge/Build-passing-green"/></a>
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
