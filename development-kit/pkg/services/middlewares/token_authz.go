@@ -91,7 +91,9 @@ func (t *TokenAuthz) getContextAndValidateIsValidToken(
 	if err != nil {
 		return nil, err
 	}
-	ctx = t.bindRepositoryIDCtx(ctx, *token.RepositoryID)
+	if token.RepositoryID != nil {
+		ctx = t.bindRepositoryIDCtx(ctx, *token.RepositoryID)
+	}
 	ctx = t.bindCompanyIDCtx(ctx, token.CompanyID)
 	return ctx, t.returnErrorIfTokenIsExpired(token)
 }

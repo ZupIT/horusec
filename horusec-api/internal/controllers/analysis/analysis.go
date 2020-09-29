@@ -59,13 +59,13 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	if err != nil {
 		return uuid.Nil, err
 	}
-	c.setDefaultContentToCreate(analysisData.Analysis, company.Name, repo.Name)
+	c.setDefaultContentToCreate(analysisData.Analysis, company.Name, repo)
 	return c.createAnalyzeAndVulnerabilities(analysisData.Analysis)
 }
 
 func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 	repo *accountEntities.Repository, err error) {
-	if analysisData.RepositoryName != "" {
+	if analysisData.RepositoryName != "" && analysisData.Analysis.RepositoryID == uuid.Nil {
 		repo, err = c.repoRepository.GetByName(analysisData.Analysis.CompanyID, analysisData.RepositoryName)
 		return repo, err
 	}
@@ -73,10 +73,12 @@ func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 	return c.repoRepository.Get(analysisData.Analysis.RepositoryID)
 }
 
-func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysis, companyName, repositoryName string) {
+func (c *Controller) setDefaultContentToCreate(
+	analysis *horusecEntities.Analysis, companyName string, repository *accountEntities.Repository) {
 	analysis.GenerateID()
 	analysis.SetCompanyName(companyName)
-	analysis.SetRepositoryName(repositoryName)
+	analysis.SetRepositoryName(repository.Name)
+	analysis.SetRepositoryID(repository.RepositoryID)
 	analysis.SetAnalysisIDAndNewIDInVulnerabilities()
 }
 
