@@ -32,31 +32,31 @@ function LoginScreen() {
     <ExternalLayout>
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
-          label={t('EMAIL')}
+          label={t('LOGIN_SCREEN.EMAIL')}
           name="email"
           type="text"
           onChangeValue={(field: Field) => setEmail(field)}
-          invalidMessage={t('INVALID_EMAIL')}
+          invalidMessage={t('LOGIN_SCREEN.INVALID_EMAIL')}
           validation={isValidEmail}
         />
 
         <Styled.Field
-          label={t('PASSWORD')}
+          label={t('LOGIN_SCREEN.PASSWORD')}
           name="password"
           type="password"
           onChangeValue={(field: Field) => setPassword(field)}
           validation={isEmptyString}
-          invalidMessage={t('INVALID_PASS')}
+          invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
         />
 
         <Styled.ForgotPass onClick={() => history.push('/recovery-password')}>
-          {t('FORGOT_PASS')}
+          {t('LOGIN_SCREEN.FORGOT_PASS')}
         </Styled.ForgotPass>
 
         <Styled.Submit
           isDisabled={!password.isValid || !email.isValid}
           isLoading={loginInProgress}
-          text={t('LOGIN')}
+          text={t('LOGIN_SCREEN.SUBMIT')}
           type="submit"
           rounded
         />
@@ -64,7 +64,7 @@ function LoginScreen() {
         <Styled.Register
           onClick={() => history.push('/create-account')}
           outline
-          text={t('NO_ACCOUNT')}
+          text={t('LOGIN_SCREEN.NO_ACCOUNT')}
           rounded
         />
       </Styled.Form>

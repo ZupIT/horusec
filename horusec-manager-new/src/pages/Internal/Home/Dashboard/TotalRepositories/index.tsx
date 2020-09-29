@@ -37,7 +37,7 @@ const TotalRepositories: React.FC<Props> = ({ filters }) => {
       <Counter
         value={total}
         isLoading={isLoading}
-        title={t('TOTAL_REPOSITORIES')}
+        title={t('DASHBOARD_SCREEN.TOTAL_REPOSITORIES')}
       />
     </div>
   );

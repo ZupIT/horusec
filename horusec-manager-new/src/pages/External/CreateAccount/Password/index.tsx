@@ -56,48 +56,52 @@ function PasswordForm() {
 
   return (
     <>
-      <Styled.SubTitle>{t('CREATE_NEW_PASS')}</Styled.SubTitle>
+      <Styled.SubTitle>
+        {t('CREATE_ACCOUNT_SCREEN.CREATE_NEW_PASS')}
+      </Styled.SubTitle>
 
       <Styled.PassRequirements>
-        <Styled.Info>{t('PASSWORD_REQUIREMENTS')}</Styled.Info>
+        <Styled.Info>
+          {t('CREATE_ACCOUNT_SCREEN.PASSWORD_REQUIREMENTS')}
+        </Styled.Info>
 
         <Styled.Item isInvalid={passValidations.minCharacters}>
-          {t('MIN_CHARACTERS')}
+          {t('CREATE_ACCOUNT_SCREEN.MIN_CHARACTERS')}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.alpha}>
-          {t('ALPHA_REQUIREMENTS')}
+          {t('CREATE_ACCOUNT_SCREEN.ALPHA_REQUIREMENTS')}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.number}>
-          {t('NUMBER_REQUIREMENT')}
+          {t('CREATE_ACCOUNT_SCREEN.NUMBER_REQUIREMENT')}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.characterSpecial}>
-          {t('SPECIAL_CHARACTER')}
+          {t('CREATE_ACCOUNT_SCREEN.SPECIAL_CHARACTER')}
         </Styled.Item>
 
-        <Styled.Info>{t('NO_EQUALS')}</Styled.Info>
+        <Styled.Info>{t('CREATE_ACCOUNT_SCREEN.NO_EQUALS')}</Styled.Info>
 
-        <Styled.Item>{t('USER_NAME')}</Styled.Item>
+        <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.USER_NAME')}</Styled.Item>
       </Styled.PassRequirements>
 
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
           onChangeValue={(field: Field) => handlePasswordValue(field)}
-          label={t('PASSWORD')}
+          label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
           name="password"
           type="password"
-          invalidMessage={t('INVALID_PASS')}
+          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_PASS')}
           validation={isEmptyString}
         />
 
         <Styled.Field
-          label={t('CONFIRM_PASS')}
+          label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
           onChangeValue={(field: Field) => setConfirmPass(field)}
           name="confirm-pass"
           type="password"
-          invalidMessage={t('INVALID_CONFIRM_PASS')}
+          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_CONFIRM_PASS')}
           validation={validateEqualsPassword}
         />
 
@@ -110,7 +114,7 @@ function PasswordForm() {
             passValidations.minCharacters ||
             passValidations.number
           }
-          text={t('REGISTER')}
+          text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
           type="submit"
           isLoading={isLoading}
           rounded
@@ -118,7 +122,7 @@ function PasswordForm() {
 
         <Styled.BackToLogin
           onClick={() => history.push('/login')}
-          text={t('BACK_LOGIN')}
+          text={t('CREATE_ACCOUNT_SCREEN.BACK')}
           outline
           rounded
         />
@@ -126,8 +130,8 @@ function PasswordForm() {
 
       <Dialog
         isVisible={successDialogVisible}
-        confirmText={t('CONFIRM')}
-        message={t('SUCCESS_CREATE_ACCOUNT')}
+        confirmText={t('CREATE_ACCOUNT_SCREEN.CONFIRM')}
+        message={t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')}
         onConfirm={() => history.push('/login')}
       />
     </>

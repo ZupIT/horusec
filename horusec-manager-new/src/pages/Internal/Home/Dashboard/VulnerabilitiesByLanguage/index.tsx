@@ -28,7 +28,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
       size: 0,
     },
     noData: {
-      text: t('CHART_NO_DATA'),
+      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
       },
@@ -106,7 +106,9 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
   return (
     <div className="block max-space">
       <Styled.Wrapper>
-        <Styled.Title>{t('VULNERABILITIES_BY_LANG')}</Styled.Title>
+        <Styled.Title>
+          {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG')}
+        </Styled.Title>
 
         <Styled.LoadingWrapper isLoading={isLoading}>
           <Icon name="loading" size="200px" className="loading" />

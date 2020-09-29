@@ -42,25 +42,27 @@ function EditCompany({
 
   return (
     <>
-      <Styled.Title>{t('EDIT_ORGANIZATION_NAME')}</Styled.Title>
+      <Styled.Title>{t('COMPANY_SCREEN.EDIT_ORGANIZATION_NAME')}</Styled.Title>
 
-      <Styled.SubTitle>{t('TYPE_ORGANIZATION_NAME')}</Styled.SubTitle>
+      <Styled.SubTitle>
+        {t('COMPANY_SCREEN.TYPE_ORGANIZATION_NAME')}
+      </Styled.SubTitle>
 
       <Styled.Form onSubmit={handleSubmit}>
         <Input
           name="companyName"
-          label={t('ORGANIZATION_NAME')}
+          label={t('COMPANY_SCREEN.ORGANIZATION_NAME')}
           width="100%"
           onChangeValue={(field: Field) => setCompanyName(field)}
           validation={isEmptyString}
-          invalidMessage={t('INVALID_ORGANIZATION_NAME')}
+          invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
           initialValue={companyName.value}
         />
 
         <Styled.OptionsWrapper>
           <Styled.Btn
             outline
-            text={t('CANCEL')}
+            text={t('COMPANY_SCREEN.CANCEL')}
             width={100}
             height={40}
             onClick={() => history.push('/organization')}
@@ -70,7 +72,7 @@ function EditCompany({
             isDisabled={!companyName.isValid}
             isLoading={isLoading}
             type="submit"
-            text={t('SAVE')}
+            text={t('COMPANY_SCREEN.SAVE')}
             width={100}
             height={40}
           />

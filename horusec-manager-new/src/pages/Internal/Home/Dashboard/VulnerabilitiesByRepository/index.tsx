@@ -30,7 +30,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ filters }) => {
     },
     colors: Object.values(colors.vulnerabilities),
     noData: {
-      text: t('CHART_NO_DATA'),
+      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
       },
@@ -96,7 +96,9 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ filters }) => {
   return (
     <div className="block max-space">
       <Styled.Wrapper>
-        <Styled.Title>{t('VULNERABILITIES_BY_REPO')}</Styled.Title>
+        <Styled.Title>
+          {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_REPO')}
+        </Styled.Title>
 
         <Styled.LoadingWrapper isLoading={isLoading}>
           <Icon name="loading" size="200px" className="loading" />

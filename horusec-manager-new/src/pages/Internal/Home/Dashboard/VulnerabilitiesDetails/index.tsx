@@ -111,7 +111,9 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   return (
     <div className="max-space">
       <Styled.Wrapper>
-        <Styled.Title>{t('VULNERABILITY_DETAILS')}</Styled.Title>
+        <Styled.Title>
+          {t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}
+        </Styled.Title>
 
         <Styled.LoadingWrapper isLoading={isLoading}>
           <Icon name="loading" size="200px" className="loading" />
@@ -119,18 +121,20 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
 
         <Styled.Table>
           <Styled.Head>
-            <Styled.Column>{t('LANGUAGE')}</Styled.Column>
-            <Styled.Column>{t('SEVERITY')}</Styled.Column>
-            <Styled.Column>{t('AUTHOR')}</Styled.Column>
-            <Styled.Column>{t('DESCRIPTION')}</Styled.Column>
-            <Styled.Column>{t('FILE')}</Styled.Column>
-            <Styled.Column>{t('LINE')}</Styled.Column>
-            <Styled.Column>{t('CODE')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.LANGUAGE')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.SEVERITY')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.AUTHOR')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.DESCRIPTION')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.FILE')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.LINE')}</Styled.Column>
+            <Styled.Column>{t('DASHBOARD_SCREEN.CODE')}</Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
             {!dataValues || dataValues.length <= 0 ? (
-              <Styled.EmptyText>{t('CHART_NO_DATA')}</Styled.EmptyText>
+              <Styled.EmptyText>
+                {t('DASHBOARD_SCREEN.CHART_NO_DATA')}
+              </Styled.EmptyText>
             ) : null}
 
             {dataValues.map((item, index) => (
@@ -169,13 +173,13 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
           {dataValues && dataValues.length > 0 ? (
             <Styled.Pagination>
               <Styled.Button onClick={() => handlePagination('previous')}>
-                {t('PREVIOUS_PAGE')}
+                {t('DASHBOARD_SCREEN.PREVIOUS_PAGE')}
               </Styled.Button>
               <Styled.CurrentPage>
                 {pagination.currentPage} / {pagination.totalPages}
               </Styled.CurrentPage>
               <Styled.Button onClick={() => handlePagination('next')}>
-                {t('NEXT_PAGE')}
+                {t('DASHBOARD_SCREEN.NEXT_PAGE')}
               </Styled.Button>
             </Styled.Pagination>
           ) : null}

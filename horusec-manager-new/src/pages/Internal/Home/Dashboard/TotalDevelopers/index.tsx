@@ -37,7 +37,7 @@ const TotalDevelopers: React.FC<Props> = ({ filters }) => {
       <Counter
         value={total}
         isLoading={isLoading}
-        title={t('TOTAL_DEVELOPERS')}
+        title={t('DASHBOARD_SCREEN.TOTAL_DEVELOPERS')}
       />
     </div>
   );
