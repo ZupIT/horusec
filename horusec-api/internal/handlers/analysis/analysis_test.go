@@ -396,15 +396,20 @@ func TestPost(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
-	t.Run("Should return 400 when repositoryID is not found", func(t *testing.T) {
+	t.Run("Should return 201 when repositoryID is not found", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
 		resp := &response.Response{}
+
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("Create").Return(resp)
+		mockWrite.On("CommitTransaction").Return(resp)
+
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		analysis := &apiEntities.AnalysisData{
+		analysisData := apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
 				Status:     enumsHorusec.Success,
 				CreatedAt:  time.Now(),
@@ -414,7 +419,7 @@ func TestPost(t *testing.T) {
 		}
 
 		handler := NewHandler(mockRead, mockWrite)
-		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
+		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysisData.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
@@ -423,7 +428,7 @@ func TestPost(t *testing.T) {
 
 		handler.Post(w, r)
 
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 	t.Run("Should return 500 when return error create analysis", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
