@@ -1,6 +1,6 @@
 ---
 name: Support request
-about: Support request or question relating to Ritchie
+about: Support request or question relating to Horusec
 labels: support
 assignees: ''
 
