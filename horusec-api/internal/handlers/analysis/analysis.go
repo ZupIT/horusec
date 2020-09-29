@@ -93,7 +93,7 @@ func (h *Handler) getCompanyIDAndRepositoryIDInCxt(r *netHTTP.Request) (uuid.UUI
 	}
 	repositoryIDCtx := r.Context().Value(middlewares.RepositoryIDCtxKey)
 	if repositoryIDCtx == nil {
-		return uuid.Nil, uuid.Nil, errors.ErrorDoNotHavePermissionToThisAction
+		return companyIDCtx.(uuid.UUID), uuid.Nil, nil
 	}
 	return companyIDCtx.(uuid.UUID), repositoryIDCtx.(uuid.UUID), nil
 }
