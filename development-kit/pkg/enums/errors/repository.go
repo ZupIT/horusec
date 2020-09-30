@@ -22,6 +22,7 @@ var ErrorInvalidCompanyID = errors.New("{ERROR_REPOSITORY} invalid company id")
 var ErrorInvalidRepositoryID = errors.New("{ERROR_REPOSITORY} invalid repository id")
 var ErrorUserNotMemberOfCompany = errors.New("{ERROR_REPOSITORY} this user is not member of this company")
 var ErrorUserAlreadyInThisRepository = errors.New("{ERROR_REPOSITORY} this account already in this repository")
+var ErrorRepositoryNotFound = errors.New("repository not found, wrong token or repository name")
 
 const ErrorAlreadyExistingRepositoryID = "pq: duplicate key value violates unique constraint" +
 	" \"account_repository_repository_id_account_id_key\""
