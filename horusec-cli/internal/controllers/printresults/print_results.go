@@ -183,14 +183,14 @@ func (pr *PrintResults) openJSONFileAndWriteBytes(bytesToWrite []byte, completeP
 }
 
 func (pr *PrintResults) printTextOutputVulnerability() {
-	pr.printTotalVulnerabilities()
-
-	pr.logSeparator()
-
 	for index := range pr.analysis.Vulnerabilities {
 		vulnerability := pr.analysis.Vulnerabilities[index]
 		pr.printTextOutputVulnerabilityData(&vulnerability)
 	}
+
+	pr.printTotalVulnerabilities()
+
+	pr.logSeparator()
 }
 
 func (pr *PrintResults) printTotalVulnerabilities() {
@@ -226,8 +226,9 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 
 	pr.printCommitAuthor(vulnerability)
 
+	fmt.Println(fmt.Sprintf("ReferenceHash: %s", vulnerability.VulnHash))
+
 	fmt.Print("\n")
-	fmt.Println(vulnerability.VulnHash)
 
 	pr.logSeparator()
 }

@@ -89,11 +89,10 @@ func (f *Formatter) setGoSecOutPutInHorusecAnalysis(golangOutput golang.Output) 
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *horusec.Vulnerability {
-	columnNumber, _ := strconv.Atoi(issue.Column)
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = utilsHorusec.GetSeverityOrNoSec(issue.Severity, issue.Code)
 	vulnerability.Details = issue.Details
-	vulnerability.Code = f.GetCodeWithMaxCharacters(issue.Code, columnNumber)
+	vulnerability.Code = f.getCode(issue.Code, issue.Column)
 	vulnerability.Line = issue.Line
 	vulnerability.Column = issue.Column
 	vulnerability.Confidence = issue.Confidence
@@ -103,6 +102,11 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *ho
 	vulnerability = vulnhash.Bind(vulnerability)
 
 	return f.setCommitAuthor(vulnerability)
+}
+
+func (f *Formatter) getCode(code, column string) string {
+	columnNumber, _ := strconv.Atoi(column)
+	return f.GetCodeWithMaxCharacters(code, columnNumber)
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {

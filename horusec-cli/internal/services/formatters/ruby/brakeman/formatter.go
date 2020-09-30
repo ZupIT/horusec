@@ -94,7 +94,7 @@ func (f *Formatter) setVulnerabilityData(output *ruby.Warning) *horusec.Vulnerab
 	data.Line = output.GetLine()
 	data.Type = output.Type
 	data.File = output.File
-	data.Code =  f.GetCodeWithMaxCharacters(output.Code, 0)
+	data.Code = f.GetCodeWithMaxCharacters(output.Code, 0)
 
 	// Set data.VulnHash value
 	data = vulnhash.Bind(data)
