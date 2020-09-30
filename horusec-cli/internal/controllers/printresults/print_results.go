@@ -220,9 +220,6 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("File: %s", vulnerability.File))
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
-	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
-	fmt.Println(fmt.Sprintf("VulnerableBelow: %s", vulnerability.VulnerableBelow))
-	fmt.Println(fmt.Sprintf("Version: %s", vulnerability.Version))
 
 	pr.printCommitAuthor(vulnerability)
 

@@ -96,11 +96,9 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 func (f *Formatter) setVulnerabilitySeverityData(output *npm.Issue) (data *horusec.Vulnerability) {
 	data = f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
-	data.Version = output.GetVersion()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
-	data.VulnerableBelow = output.VulnerableVersions
-	data.Line = f.getVulnerabilityLineByName(fmt.Sprintf(`"version": "%s"`, data.Version), data.Code, data.File)
+	data.Line = f.getVulnerabilityLineByName(fmt.Sprintf(`"version": "%s"`, output.GetVersion()), data.Code, data.File)
 	return f.setCommitAuthor(data)
 }
 
