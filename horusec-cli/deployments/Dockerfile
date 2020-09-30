@@ -9,9 +9,9 @@ RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horus
 
 FROM alpine
 
-RUN apk add --no-cache bash git openssh docker
+RUN apk add --no-cache bash git openssh
 
 COPY --from=builder /bin/horusec /usr/bin
 RUN chmod +x /usr/bin/horusec
 
-ENTRYPOINT [ "horusec", "start" ]
+ENTRYPOINT [ "/bin/bash" ]
