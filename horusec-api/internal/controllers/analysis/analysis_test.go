@@ -69,7 +69,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 				CreatedAt:  time.Now(),
 				FinishedAt: time.Now(),
 			},
-			RepositoryName: "",
+			RepositoryName: "test",
 		}
 		id, err := controller.SaveAnalysis(analysis)
 		assert.NoError(t, err)
