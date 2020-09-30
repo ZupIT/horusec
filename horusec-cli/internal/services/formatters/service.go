@@ -42,6 +42,7 @@ type IService interface {
 	LogAnalysisError(err error, tool tools.Tool, projectSubPath string)
 	SetMonitor(monitor *horusec.Monitor)
 	RemoveSrcFolderFromPath(filepath string) string
+	GetCodeWithMaxCharacters(code string, column int) string
 }
 
 type Service struct {
@@ -133,4 +134,19 @@ func (s *Service) RemoveSrcFolderFromPath(filepath string) string {
 	}
 
 	return filepath[5:]
+}
+
+func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
+	maxLengthCode := 100
+	if column < 0 {
+		column = 0
+	}
+	if len(code) > maxLengthCode {
+		newCode := code[column:]
+		if len(newCode) > maxLengthCode {
+			return newCode[:maxLengthCode]
+		}
+		return newCode
+	}
+	return code
 }
