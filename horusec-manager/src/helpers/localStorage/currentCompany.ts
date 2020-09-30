@@ -35,8 +35,14 @@ const clearCurrentCompany = () => {
 };
 
 const isAdminOfCompany = (): boolean => {
-  const { role } = getCurrentCompany();
-  return role === 'admin';
+  const currentCompany = getCurrentCompany();
+
+  if (currentCompany) {
+    const { role } = currentCompany;
+    return role === 'admin';
+  } else {
+    return false;
+  }
 };
 
 export {

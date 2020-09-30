@@ -15,14 +15,20 @@
  */
 
 import React, { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { tokenIsExpired } from 'helpers/localStorage/currentUser';
+import LoginPage from 'pages/External/Login';
 
 const AuthRoutes = () => (
   <Switch>
+    <Redirect exact from="/" to="/login" />
+
     <Route
       exact
       path="/login"
-      component={lazy(() => import('pages/External/Login'))}
+      component={() =>
+        !tokenIsExpired() ? <Redirect to="/home" /> : LoginPage()
+      }
     />
 
     <Route
