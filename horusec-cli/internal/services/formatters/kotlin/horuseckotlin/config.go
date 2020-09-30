@@ -16,7 +16,7 @@ package horuseckotlin
 
 const (
 	ImageName = "horuszup/horusec-kotlin"
-	ImageTag  = "v0.3.1"
+	ImageTag  = "v0.3.2"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-kotlin run -o="./output-ANALYSISID.json"
