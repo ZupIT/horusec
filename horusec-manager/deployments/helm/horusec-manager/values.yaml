@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 671982376808.dkr.ecr.us-east-1.amazonaws.com/horusec-manager
+  repository: horuszup/horusec-manager
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: lastest
@@ -44,7 +44,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: "manager.horusec.continuousplatform.com"
+    - host: ""
       paths:
         - /
 

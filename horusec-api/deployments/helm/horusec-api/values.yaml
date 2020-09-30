@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 671982376808.dkr.ecr.us-east-1.amazonaws.com/horusec-api
+  repository: horuszup/horusec-api
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -44,7 +44,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: "api.horusec.continuousplatform.com"
+    - host: ""
       paths:
         - /
 
@@ -81,7 +81,7 @@ env:
   - name: "HORUSEC_MANAGER_URL"
     value: "http://0.0.0.0:8043"
   - name: "HORUSEC_BROKER_HOST"
-    value: "horusec-mq-rabbitmq.horusec-dev.svc.cluster.local"
+    value: ""
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
