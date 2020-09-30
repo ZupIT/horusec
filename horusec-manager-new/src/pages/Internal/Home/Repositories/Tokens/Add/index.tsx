@@ -67,13 +67,13 @@ const AddToken: React.FC<Props> = ({
     <>
       <Dialog
         isVisible={isVisible}
-        message={t('CREATE_NEW_TOKEN')}
+        message={t('REPOSITORIES_SCREEN.CREATE_NEW_TOKEN')}
         onCancel={() => {
           onCancel();
           resetFields();
         }}
         onConfirm={handleConfirmSave}
-        confirmText={t('SAVE')}
+        confirmText={t('REPOSITORIES_SCREEN.SAVE')}
         disableConfirm={!description.isValid}
         disabledColor={colors.button.disableInDark}
         loadingConfirm={isLoading}
@@ -81,11 +81,13 @@ const AddToken: React.FC<Props> = ({
         defaultButton
         hasCancel
       >
-        <Styled.SubTitle>{t('CREATE_TOKEN_BELOW')}</Styled.SubTitle>
+        <Styled.SubTitle>
+          {t('REPOSITORIES_SCREEN.CREATE_TOKEN_BELOW')}
+        </Styled.SubTitle>
 
         <Styled.Field
-          label={t('DESCRIPTION')}
-          invalidMessage={t('INVALID_DESCRIPTION')}
+          label={t('REPOSITORIES_SCREEN.DESCRIPTION')}
+          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_DESCRIPTION')}
           onChangeValue={(field: Field) => setDescription(field)}
           validation={isEmptyString}
           name="description"

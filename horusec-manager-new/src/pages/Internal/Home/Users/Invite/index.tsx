@@ -32,11 +32,11 @@ const InviteToCompany: React.FC<Props> = ({
 
   const roles: Role[] = [
     {
-      name: t('ADMIN'),
+      name: t('PERMISSIONS.ADMIN'),
       value: 'admin',
     },
     {
-      name: t('MEMBER'),
+      name: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];

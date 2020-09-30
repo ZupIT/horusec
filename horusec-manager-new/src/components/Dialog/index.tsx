@@ -57,7 +57,7 @@ const Dialog: React.FC<DialogProps> = ({
             <Styled.ButtonsWrapper>
               {hasCancel ? (
                 <Button
-                  text={t('CANCEL')}
+                  text={t('GENERAL.CANCEL')}
                   width={105}
                   height={35}
                   rounded={!defaultButton}

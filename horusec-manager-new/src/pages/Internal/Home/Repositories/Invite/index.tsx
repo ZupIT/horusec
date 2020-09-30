@@ -37,11 +37,11 @@ const InviteToRepository: React.FC<Props> = ({
 
   const roles = [
     {
-      name: t('ADMIN'),
+      name: t('PERMISSIONS.ADMIN'),
       value: 'admin',
     },
     {
-      name: t('MEMBER'),
+      name: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];
@@ -159,15 +159,19 @@ const InviteToRepository: React.FC<Props> = ({
     <Styled.Background>
       <Styled.Wrapper>
         <Styled.Header>
-          <Styled.Title>{t('INVITE_TO_REPOSITORY')}</Styled.Title>
+          <Styled.Title>
+            {t('REPOSITORIES_SCREEN.INVITE_TO_REPOSITORY')}
+          </Styled.Title>
 
           <Styled.Close name="close" size="24px" onClick={onClose} />
         </Styled.Header>
 
-        <Styled.SubTitle>{t('INVITE_USER_BELOW')}</Styled.SubTitle>
+        <Styled.SubTitle>
+          {t('REPOSITORIES_SCREEN.INVITE_USER_BELOW')}
+        </Styled.SubTitle>
 
         <SearchBar
-          placeholder={t('SEARCH_USER_EMAIL_BELOW')}
+          placeholder={t('REPOSITORIES_SCREEN.SEARCH_USER_EMAIL_BELOW')}
           onSearch={(value) => onSearchUser(value)}
         />
 
@@ -177,15 +181,17 @@ const InviteToRepository: React.FC<Props> = ({
           </Styled.LoadingWrapper>
 
           <Styled.Head>
-            <Styled.Column>{t('ACTION')}</Styled.Column>
-            <Styled.Column>{t('USER')}</Styled.Column>
-            <Styled.Column>{t('EMAIL')}</Styled.Column>
-            <Styled.Column>{t('PERMISSION')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.USER')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.EMAIL')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.PERMISSION')}</Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
             {!filteredUserAccounts || filteredUserAccounts.length <= 0 ? (
-              <Styled.EmptyText>{t('NO_USERS_TO_INVITE')}</Styled.EmptyText>
+              <Styled.EmptyText>
+                {t('REPOSITORIES_SCREEN.NO_USERS_TO_INVITE')}
+              </Styled.EmptyText>
             ) : null}
 
             {filteredUserAccounts.map((account) => (

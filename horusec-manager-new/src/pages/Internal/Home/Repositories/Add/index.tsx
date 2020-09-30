@@ -56,13 +56,13 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   return (
     <Dialog
       isVisible={isVisible}
-      message={t('CREATE_REPO')}
+      message={t('REPOSITORIES_SCREEN.CREATE_REPO')}
       onCancel={() => {
         onCancel();
         resetFields();
       }}
       onConfirm={handleConfirmSave}
-      confirmText={t('SAVE')}
+      confirmText={t('REPOSITORIES_SCREEN.SAVE')}
       disableConfirm={!name.isValid}
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
@@ -70,12 +70,14 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       defaultButton
       hasCancel
     >
-      <Styled.SubTitle>{t('CREATE_NEW_REPO')}</Styled.SubTitle>
+      <Styled.SubTitle>
+        {t('REPOSITORIES_SCREEN.CREATE_NEW_REPO')}
+      </Styled.SubTitle>
 
       <Styled.Form onSubmit={handleConfirmSave}>
         <Styled.Field
-          label={t('NAME_REPO')}
-          invalidMessage={t('INVALID_NAME')}
+          label={t('REPOSITORIES_SCREEN.NAME_REPO')}
+          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_NAME')}
           onChangeValue={(field: Field) => setName(field)}
           validation={isEmptyString}
           name="name"
@@ -84,7 +86,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
         />
 
         <Styled.Field
-          label={t('DESCRIPTION_REPO')}
+          label={t('REPOSITORIES_SCREEN.DESCRIPTION_REPO')}
           onChangeValue={(field: Field) => setDescription(field)}
           name="description"
           type="text"
