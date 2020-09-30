@@ -64,12 +64,23 @@ func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
+
 	analysisID, err := h.analysisController.SaveAnalysis(analysisData)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkSaveAnalysisErrors(w, err)
 		return
 	}
+
 	httpUtil.StatusCreated(w, analysisID)
+}
+
+func (h *Handler) checkSaveAnalysisErrors(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrNotFoundRecords {
+		httpUtil.StatusNotFound(w, errors.ErrorRepositoryNotFound)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }
 
 func (h *Handler) getAnalysisBody(r *netHTTP.Request) (*apiEntities.AnalysisData, error) {
