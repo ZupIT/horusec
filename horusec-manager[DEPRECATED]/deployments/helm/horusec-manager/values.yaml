@@ -1,14 +1,14 @@
-# Default values for horusec-api-helm.
+# Default values for horusec-manager.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: horuszup/horusec-api
+  repository: 671982376808.dkr.ecr.us-east-1.amazonaws.com/horusec-manager
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: lastest
 
 imagePullSecrets: []
 nameOverride: ""
@@ -38,13 +38,13 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8000
-  targetPort: 8000
+  port: 8080
+  targetPort: 8080
 
 ingress:
   enabled: true
   hosts:
-    - host: ""
+    - host: "manager.horusec.continuousplatform.com"
       paths:
         - /
 
@@ -72,31 +72,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-env:          
-  - name: "HORUSEC_SWAGGER_HOST"
-    value: "0.0.0.0"
-  - name: "HORUSEC_API_URL"
-    value: "http://0.0.0.0:8003"
-  - name: "HORUSEC_MANAGER_URL"
-    value: "http://0.0.0.0:8043"
-  - name: "HORUSEC_BROKER_HOST"
-    value: ""
-  - name: "HORUSEC_BROKER_PORT"
-    value: "5672"
-  - name: "HORUSEC_PORT"
-    value: "8000"
-  - name: "HORUSEC_DATABASE_SQL_LOG_MODE"
-    value: "false"
-  - name: "HORUSEC_DATABASE_SQL_DIALECT"
-    value: "postgres"
-
-envFromSecret:
-  - name: "HORUSEC_BROKER_USERNAME"
-    key: "broker-username"
-  - name: "HORUSEC_BROKER_PASSWORD"
-    key: "broker-password"
-  - name: "HORUSEC_DATABASE_SQL_URI"
-    key: "database-uri"
-  - name: "HORUSEC_JWT_SECRET_KEY"
-    key: "jwt-token"

@@ -12,7 +12,7 @@ RUN npm run lint
 
 FROM nginx:1.18.0-alpine
 
-COPY --from=builder /usr/src/app/build /var/www
+COPY --from=builder /usr/src/app/dist /var/www
 COPY ./horusec-manager/deployments/nginx.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]

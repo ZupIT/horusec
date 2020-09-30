@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 671982376808.dkr.ecr.us-east-1.amazonaws.com/horusec-messages
+  repository: horuszup/horusec-messages
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -84,19 +84,19 @@ env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_BROKER_HOST"
-    value: "horusec-mq-rabbitmq.horusec-dev.svc.cluster.local"
+    value: ""
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
     value: "8004"
   - name: "HORUSEC_SMTP_ADDRESS"
-    value: "smtp.mailtrap.io"
+    value: ""
   - name: "HORUSEC_SMTP_HOST"
-    value: "smtp.mailtrap.io"
+    value: ""
   - name: "HORUSEC_SMTP_PORT"
-    value: "2525"
+    value: ""
   - name: "HORUSEC_EMAIL_FROM"
-    value: "horusec@zup.com.br"
+    value: ""
 
 envFromSecret:
   - name: "HORUSEC_BROKER_USERNAME"

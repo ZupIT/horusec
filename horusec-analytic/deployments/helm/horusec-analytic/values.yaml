@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 671982376808.dkr.ecr.us-east-1.amazonaws.com/horusec-analytic
+  repository: horuszup/horusec-analytic
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -45,7 +45,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: "analytic.horusec.continuousplatform.com"
+    - host: ""
       paths:
         - /
 
