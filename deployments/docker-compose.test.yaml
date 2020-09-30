@@ -57,8 +57,8 @@ services:
       HORUSEC_JWT_SECRET_KEY: "horusec_test"
   horusec-api:
     build:
-      context: ../horusec-api
-      dockerfile: ./deployments/Dockerfile
+      context: ../
+      dockerfile: ./horusec-api/deployments/Dockerfile
     depends_on: 
       - "rabbit"
       - postgresql
@@ -76,8 +76,8 @@ services:
       HORUSEC_JWT_SECRET_KEY: "horusec_test"
   horusec-analytic:
     build:
-      context: ../horusec-analytic
-      dockerfile: ./deployments/Dockerfile
+      context: ../
+      dockerfile: ./horusec-analytic/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
@@ -89,8 +89,8 @@ services:
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
   horusec-manager:
     build:
-      context: ../horusec-manager
-      dockerfile: ./deployments/Dockerfile
+      context: ../
+      dockerfile: ./horusec-manager/deployments/Dockerfile
     restart: always
     container_name: horusec-manager
     ports:

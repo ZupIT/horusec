@@ -62,7 +62,7 @@ build-manager:
 # ========================================================================================= #
 
 # Down and Up all containers on depends to the project run
-COMPOSE_FILE_NAME ?= docker-compose.dev.yaml
+COMPOSE_FILE_NAME ?= docker-compose.test.yaml
 
 compose: compose-down compose-up
 
