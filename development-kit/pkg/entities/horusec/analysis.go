@@ -100,6 +100,10 @@ func (a *Analysis) SetRepositoryName(repositoryName string) {
 	a.RepositoryName = repositoryName
 }
 
+func (a *Analysis) SetRepositoryID(repositoryID uuid.UUID) {
+	a.RepositoryID = repositoryID
+}
+
 func (a *Analysis) SetAnalysisIDAndNewIDInVulnerabilities() {
 	for key := range a.Vulnerabilities {
 		a.Vulnerabilities[key].AnalysisID = a.ID
