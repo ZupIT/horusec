@@ -153,7 +153,7 @@ func (a *Account) sendResetPasswordEmail(email, username, code string) error {
 		To:           email,
 		TemplateName: emailEnum.ResetPassword,
 		Subject:      "[Horusec] Reset Password",
-		Data:         map[string]interface{}{"Username": username, "Code": code, "URL": env.GetHorusecManagerURL()},
+		Data:         map[string]interface{}{"Username": username, "Code": code, "URL": a.getURLToResetPassword(email, code)},
 	}
 
 	return a.broker.Publish(queues.HorusecEmail.ToString(), "", "", emailMessage.ToBytes())
@@ -266,4 +266,9 @@ func (a *Account) Logout(accountID uuid.UUID) error {
 func (a *Account) createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error) {
 	accountRepository, _ := a.accountRepositoryRepo.GetOfAccount(account.AccountID)
 	return jwt.CreateToken(account, a.useCases.MapRepositoriesRoles(&accountRepository))
+}
+
+func (a *Account) getURLToResetPassword(email, code string) string {
+	base := env.GetHorusecManagerURL()
+	return fmt.Sprintf("%s/recovery-password/check-code?email=%s&code=%s", base, email, code)
 }
