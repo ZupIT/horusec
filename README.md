@@ -92,10 +92,8 @@ For usage complete feature of the horusec you can see enter using this default u
 * postgres
 * account-of-email (optional)
 
-## Horusec admin panel
-To access the Horusec administrative panel on our server.
-You can register and login through <a href="https://horusec.zup.com.br">https://horusec.zup.com.br</a>. In this panel you can:
-* Free registration and use
+## Horusec manager
+
 * Separate repositories by companies
 * Manage users who have access to your company (users must be pre-registered on horusec to be invited to a pre-existing company)
 * Manage the repositories available in your company for analysis
