@@ -86,7 +86,9 @@ func (f *Formatter) parseOutput(output string) error {
 func (f *Formatter) appendResults(hclVulnerabilities *hcl.Vulnerabilities) {
 	for _, result := range hclVulnerabilities.Results {
 		hclResult := result
-		f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *f.setVulnerabilityData(&hclResult))
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
+			Vulnerability: *f.setVulnerabilityData(&hclResult),
+		})
 	}
 }
 

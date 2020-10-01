@@ -102,7 +102,9 @@ func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput pytho
 func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []python.SafetyIssues) {
 	for index := range issues {
 		vulnerability := f.setupVulnerabilitiesSeveritiesSafety(issues, index)
-		f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 	}
 }
 

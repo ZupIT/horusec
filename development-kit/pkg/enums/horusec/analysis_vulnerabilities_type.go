@@ -14,29 +14,10 @@
 
 package horusec
 
-import (
-	"mime/multipart"
-	"net/textproto"
-	"time"
+type AnalysisVulnerabilitiesType string
 
-	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
-	"github.com/google/uuid"
+const (
+	FalsePositive AnalysisVulnerabilitiesType = "FalsePositive"
+	RiskAccepted  AnalysisVulnerabilitiesType = "RiskAccepted"
+	Vulnerability AnalysisVulnerabilitiesType = "Vulnerability"
 )
-
-type Attachment struct {
-	FileZip    multipart.File `json:"fileZip"`
-	FileName   string
-	FileSize   int64
-	FileHeader textproto.MIMEHeader
-}
-
-func (r *Attachment) ToAnalysis(repositoryID, companyID uuid.UUID) *Analysis {
-	return &Analysis{
-		ID:              uuid.New(),
-		CreatedAt:       time.Now(),
-		RepositoryID:    repositoryID,
-		CompanyID:       companyID,
-		Status:          horusecEnum.Running,
-		Vulnerabilities: []Vulnerability{},
-	}
-}

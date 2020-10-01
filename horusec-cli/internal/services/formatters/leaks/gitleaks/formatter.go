@@ -104,7 +104,9 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
 }
 
 func (f *Formatter) factoryAddVulnerabilityBySeverityGitLeaks(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
+		Vulnerability: *vulnerability,
+	})
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability, issue *leaks.Issue) *horusec.Vulnerability {

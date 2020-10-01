@@ -53,11 +53,11 @@ func NewAnalysisUseCases() Interface {
 
 func (au *UseCases) NewAnalysisRunning() *horusecEntities.Analysis {
 	return &horusecEntities.Analysis{
-		ID:              uuid.New(),
-		Status:          horusec.Running,
-		Errors:          "",
-		CreatedAt:       time.Now(),
-		Vulnerabilities: []horusecEntities.Vulnerability{},
+		ID:                      uuid.New(),
+		Status:                  horusec.Running,
+		Errors:                  "",
+		CreatedAt:               time.Now(),
+		AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{},
 	}
 }
 
@@ -104,20 +104,20 @@ func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {
 			validation.Required, validation.In(horusec.Running, horusec.Success, horusec.Error)),
 		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
 		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
-		validation.Field(&analysis.Vulnerabilities, validation.By(au.validateVulnerabilities(analysis.Vulnerabilities))),
+		validation.Field(&analysis.AnalysisVulnerabilities, validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
 	)
 }
 
-func (au *UseCases) validateVulnerabilities(vulnerabilities []horusecEntities.Vulnerability) validation.RuleFunc {
+func (au *UseCases) validateVulnerabilities(vulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
 	return func(value interface{}) error {
 		if len(vulnerabilities) == 0 {
 			return nil
 		}
 		for key := range vulnerabilities {
 			if err := validation.ValidateStruct(&vulnerabilities[key],
-				validation.Field(&vulnerabilities[key].SecurityTool, validation.Required, validation.In(au.sliceTools()...)),
-				validation.Field(&vulnerabilities[key].Language, validation.Required, validation.In(au.sliceLanguages()...)),
-				validation.Field(&vulnerabilities[key].Severity, validation.Required, validation.In(au.sliceSeverities()...)),
+				validation.Field(&vulnerabilities[key].Vulnerability.SecurityTool, validation.Required, validation.In(au.sliceTools()...)),
+				validation.Field(&vulnerabilities[key].Vulnerability.Language, validation.Required, validation.In(au.sliceLanguages()...)),
+				validation.Field(&vulnerabilities[key].Vulnerability.Severity, validation.Required, validation.In(au.sliceSeverities()...)),
 			); err != nil {
 				return err
 			}

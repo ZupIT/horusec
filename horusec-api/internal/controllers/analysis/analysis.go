@@ -79,7 +79,13 @@ func (c *Controller) setDefaultContentToCreate(
 	analysis.SetCompanyName(companyName)
 	analysis.SetRepositoryName(repo.Name)
 	analysis.SetRepositoryID(repo.RepositoryID)
-	analysis.SetAnalysisIDAndNewIDInVulnerabilities()
+	analysis.ID = uuid.New()
+	for key := range analysis.AnalysisVulnerabilities {
+		vulnerabilityID := uuid.New()
+		analysis.AnalysisVulnerabilities[key].Vulnerability.VulnerabilityID = vulnerabilityID
+		analysis.AnalysisVulnerabilities[key].AnalysisID = analysis.ID
+		analysis.AnalysisVulnerabilities[key].VulnerabilityID = vulnerabilityID
+	}
 }
 
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {

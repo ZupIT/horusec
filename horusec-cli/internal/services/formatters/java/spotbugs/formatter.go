@@ -203,7 +203,9 @@ func (f *Formatter) getVulnerabilitiesSeveritiesCode(
 }
 
 func (f *Formatter) factoryAddVulnerabilityBySeverity(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
+		Vulnerability: *vulnerability,
+	})
 }
 
 func (f *Formatter) isJavaOutput(fileName string) bool {

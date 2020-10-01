@@ -15,6 +15,7 @@
 package test
 
 import (
+	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -26,13 +27,25 @@ import (
 
 // CreateAnalysisMock creates a mocked plain entity to use in test suites.
 func CreateAnalysisMock() *horusec.Analysis {
-	return &horusec.Analysis{
-		ID:              uuid.New(),
-		RepositoryID:    uuid.New(),
-		CompanyID:       uuid.New(),
-		CreatedAt:       time.Now(),
-		Vulnerabilities: ReturnEachTypeOfVulnerability(),
+	analysis := &horusec.Analysis{
+		ID:                      uuid.New(),
+		RepositoryID:            uuid.New(),
+		CompanyID:               uuid.New(),
+		CreatedAt:               time.Now(),
+		AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{},
 	}
+	vuls := ReturnEachTypeOfVulnerability()
+	for key := range vuls {
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
+			AnalysisVulnerabilitiesID: uuid.New(),
+			VulnerabilityID:           vuls[key].VulnerabilityID,
+			AnalysisID:                analysis.ID,
+			Type:                      enumHorusec.Vulnerability,
+			IsApproved:                true,
+			Vulnerability:             vuls[key],
+		})
+	}
+	return analysis
 }
 
 func GetGoVulnerabilityWithSeverity(severity severity.Severity) horusec.Vulnerability {

@@ -114,8 +114,8 @@ func (pr *PrintResults) runPrintResultsSonarQube() error {
 }
 
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
-	for key := range pr.analysis.Vulnerabilities {
-		severityType := pr.analysis.Vulnerabilities[key].Severity.ToString()
+	for key := range pr.analysis.AnalysisVulnerabilities {
+		severityType := pr.analysis.AnalysisVulnerabilities[key].Vulnerability.Severity.ToString()
 		if severityType != "" {
 			if !pr.isIgnoredVulnerability(severityType) {
 				pr.totalVulns++
@@ -183,8 +183,8 @@ func (pr *PrintResults) openJSONFileAndWriteBytes(bytesToWrite []byte, completeP
 }
 
 func (pr *PrintResults) printTextOutputVulnerability() {
-	for index := range pr.analysis.Vulnerabilities {
-		vulnerability := pr.analysis.Vulnerabilities[index]
+	for index := range pr.analysis.AnalysisVulnerabilities {
+		vulnerability := pr.analysis.AnalysisVulnerabilities[index].Vulnerability
 		pr.printTextOutputVulnerabilityData(&vulnerability)
 	}
 
