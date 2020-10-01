@@ -48,13 +48,15 @@ function ListCompanies() {
 
   return (
     <>
-      <Styled.Title>{t('SELECT_ORGANIZATION')}</Styled.Title>
+      <Styled.Title>{t('COMPANY_SCREEN.SELECT_ORGANIZATION')}</Styled.Title>
 
       <Styled.OptionsWrapper>
         <Styled.AddCompanyBtn onClick={() => history.push('/organization/add')}>
           <Icon name="add" size="16px" />
 
-          <Styled.TextBtn>{t('ADD_ORGANIZATION')}</Styled.TextBtn>
+          <Styled.TextBtn>
+            {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
+          </Styled.TextBtn>
         </Styled.AddCompanyBtn>
 
         <Styled.SearchWrapper>
@@ -78,7 +80,9 @@ function ListCompanies() {
 
           {filteredCompanies.length <= 0 && !isLoading ? (
             <Styled.NoItem>
-              <Styled.ItemText>{t('NO_ORGANIZATIONS')}</Styled.ItemText>
+              <Styled.ItemText>
+                {t('COMPANY_SCREEN.NO_ORGANIZATIONS')}
+              </Styled.ItemText>
             </Styled.NoItem>
           ) : null}
 
@@ -108,13 +112,13 @@ function ListCompanies() {
                     })
                   }
                 >
-                  {t('EDIT')}
+                  {t('COMPANY_SCREEN.EDIT')}
                 </Styled.SettingsItem>
 
                 <Styled.SettingsItem
                   onClick={() => setCompanyToDelete(company)}
                 >
-                  {t('REMOVE')}
+                  {t('COMPANY_SCREEN.REMOVE')}
                 </Styled.SettingsItem>
               </Styled.Settings>
             </Styled.Item>
@@ -126,8 +130,8 @@ function ListCompanies() {
         hasCancel
         defaultButton
         isVisible={companyToDelete}
-        confirmText={t('YES')}
-        message={`${t('CONFIRM_DELETE_ORGANIZATION')} ${
+        confirmText={t('COMPANY_SCREEN.YES')}
+        message={`${t('COMPANY_SCREEN.CONFIRM_DELETE_ORGANIZATION')} ${
           companyToDelete?.name
         } ?`}
         onConfirm={() => {

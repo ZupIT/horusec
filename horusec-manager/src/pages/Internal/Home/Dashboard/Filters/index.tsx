@@ -70,7 +70,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       <Styled.CalendarWrapper>
         <Calendar
           initialDate={filters.initialDate}
-          title={t('START_DATE')}
+          title={t('DASHBOARD_SCREEN.START_DATE')}
           onChangeValue={(date: Date) =>
             setFilters({ ...filters, initialDate: date })
           }
@@ -79,7 +79,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
       <Styled.CalendarWrapper>
         <Calendar
-          title={t('FINAL_DATE')}
+          title={t('DASHBOARD_SCREEN.FINAL_DATE')}
           onChangeValue={(date: Date) =>
             setFilters({ ...filters, finalDate: date })
           }
@@ -91,7 +91,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           keyLabel="name"
           width="200px"
           options={repositories}
-          title={t('REPOSITORY')}
+          title={t('DASHBOARD_SCREEN.REPOSITORY')}
           onChangeValue={(value) =>
             setFilters({ ...filters, repositoryID: value.repositoryID })
           }
@@ -99,7 +99,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       ) : null}
 
       <Styled.ApplyButton
-        text={t('APPLY')}
+        text={t('DASHBOARD_SCREEN.APPLY')}
         rounded
         width={78}
         onClick={() => onApply(filters)}

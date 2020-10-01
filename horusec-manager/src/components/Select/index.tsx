@@ -85,7 +85,7 @@ const Select: React.FC<Props> = ({
         width={width}
       >
         <Styled.CurrentValue>
-          {currentValue ? currentValue[keyLabel] : t('SELECT')}
+          {currentValue ? currentValue[keyLabel] : t('GENERAL.SELECT')}
         </Styled.CurrentValue>
 
         <Styled.OptionsList

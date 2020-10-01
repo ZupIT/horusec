@@ -67,15 +67,17 @@ function CheckCode() {
   return (
     <ExternalLayout>
       <>
-        <Styled.SubTitle>{t('TYPE_THE_CODE')}</Styled.SubTitle>
+        <Styled.SubTitle>
+          {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
+        </Styled.SubTitle>
 
         <Styled.Form onSubmit={handleSubmit}>
           <Styled.Field
-            label={t('EMAIL')}
+            label={t('RECOVERY_PASS_SCREEN.EMAIL')}
             name="email"
             type="text"
             onChangeValue={(value: Field) => setEmail(value)}
-            invalidMessage={t('INVALID_EMAIL')}
+            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
             validation={isValidEmail}
             initialValue={email.value}
           />
@@ -85,21 +87,21 @@ function CheckCode() {
             name="code"
             type="text"
             onChangeValue={(value: Field) => setCode(value)}
-            invalidMessage={t('INVALID_CODE')}
+            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CODE')}
             validation={isEmptyString}
             initialValue={code.value}
           />
 
           <Styled.Submit
             isDisabled={!code.isValid}
-            text={t('CHECK_CODE')}
+            text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
             type="submit"
             rounded
           />
 
           <Styled.BackToLogin
             onClick={() => history.push('/login')}
-            text={t('BACK_LOGIN')}
+            text={t('RECOVERY_PASS_SCREEN.BACK')}
             rounded
             outline
           />

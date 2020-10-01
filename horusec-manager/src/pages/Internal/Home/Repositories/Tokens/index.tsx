@@ -105,13 +105,13 @@ const Tokens: React.FC<Props> = ({
     <Styled.Background>
       <Styled.Wrapper>
         <Styled.Header>
-          <Styled.Title>{t('TOKENS')}</Styled.Title>
+          <Styled.Title>{t('REPOSITORIES_SCREEN.TOKENS')}</Styled.Title>
 
           <Styled.Close name="close" size="24px" onClick={onClose} />
         </Styled.Header>
 
         <Button
-          text={t('ADD_TOKEN')}
+          text={t('REPOSITORIES_SCREEN.ADD_TOKEN')}
           rounded
           width={150}
           icon="plus"
@@ -124,15 +124,19 @@ const Tokens: React.FC<Props> = ({
           </Styled.LoadingWrapper>
 
           <Styled.Head>
-            <Styled.Column>{t('TOKEN')}</Styled.Column>
-            <Styled.Column>{t('DESCRIPTION')}</Styled.Column>
-            <Styled.Column>{t('EXPIRES')}</Styled.Column>
-            <Styled.Column>{t('ACTION')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.TOKEN')}</Styled.Column>
+            <Styled.Column>
+              {t('REPOSITORIES_SCREEN.DESCRIPTION')}
+            </Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.EXPIRES')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
             {!tokens || tokens.length <= 0 ? (
-              <Styled.EmptyText>{t('NO_TOKENS')}</Styled.EmptyText>
+              <Styled.EmptyText>
+                {t('REPOSITORIES_SCREEN.NO_TOKENS')}
+              </Styled.EmptyText>
             ) : null}
 
             {tokens.map((token) => (
@@ -150,7 +154,7 @@ const Tokens: React.FC<Props> = ({
                     rounded
                     outline
                     opaque
-                    text={t('DELETE')}
+                    text={t('REPOSITORIES_SCREEN.DELETE')}
                     width={90}
                     height={30}
                     icon="delete"
@@ -164,8 +168,8 @@ const Tokens: React.FC<Props> = ({
       </Styled.Wrapper>
 
       <Dialog
-        message={t('CONFIRM_DELETE_TOKEN')}
-        confirmText={t('YES')}
+        message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_TOKEN')}
+        confirmText={t('REPOSITORIES_SCREEN.YES')}
         loadingConfirm={deleteIsLoading}
         defaultButton
         hasCancel
