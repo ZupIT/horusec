@@ -69,15 +69,6 @@ func createVulnerabilityType() *graphql.Object {
 		"details": &graphql.Field{
 			Type: graphql.String,
 		},
-		"type": &graphql.Field{
-			Type: graphql.String,
-		},
-		"vulnerableBelow": &graphql.Field{
-			Type: graphql.String,
-		},
-		"version": &graphql.Field{
-			Type: graphql.String,
-		},
 		"securityTool": &graphql.Field{
 			Type: graphql.String,
 		},

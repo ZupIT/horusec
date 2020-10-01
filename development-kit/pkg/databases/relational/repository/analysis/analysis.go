@@ -92,8 +92,8 @@ func (ar *Repository) GetDetailsPaginated(companyID, repositoryID uuid.UUID, pag
 		Select("analysis.repository_id, analysis.repository_name, analysis.company_id, analysis.company_name," +
 			" analysis.status, analysis.errors, analysis.created_at, analysis.finished_at," +
 			" vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence, vulnerabilities.file," +
-			" vulnerabilities.code, vulnerabilities.details, vulnerabilities.type, vulnerabilities.vulnerable_below," +
-			" vulnerabilities.version, vulnerabilities.security_tool, vulnerabilities.language," +
+			" vulnerabilities.code, vulnerabilities.details," +
+			" vulnerabilities.security_tool, vulnerabilities.language," +
 			" vulnerabilities.severity, vulnerabilities.commit_author, vulnerabilities.commit_email," +
 			" vulnerabilities.commit_hash, vulnerabilities.commit_message, vulnerabilities.commit_date," +
 			" vulnerabilities.vuln_hash").

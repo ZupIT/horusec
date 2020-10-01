@@ -95,11 +95,9 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 func (f *Formatter) setVulnerabilitySeverityData(output *yarn.Issue) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
-	data.Version = output.GetVersion()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
-	data.VulnerableBelow = output.VulnerableVersions
-	data.Line = f.getVulnerabilityLineByName(data.Code, data.Version, data.File)
+	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
 	return f.setCommitAuthor(data)
 }
 

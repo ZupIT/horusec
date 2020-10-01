@@ -102,7 +102,6 @@ func (f *Formatter) setVulnerabilitySeverityData(output dotnet.Output) *horusec.
 	data.Details = f.removeCsprojPathFromDetails(output.IssueText)
 	data.Line = output.GetLine()
 	data.Column = output.GetColumn()
-	data.Type = output.ErrorID
 	data.File = output.GetFilename()
 
 	// Set data.VulnHash value

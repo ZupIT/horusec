@@ -14,12 +14,19 @@ services:
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root
-      POSTGRES_DB: horusec_db_test
+      POSTGRES_DB: horusec_db
+    volumes:
+      - /var/lib/postgres/db/data:/var/lib/postgresql/data
+    tty: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
   horusec-messages:
     build:
       context: ../
       dockerfile: ./horusec-messages/deployments/Dockerfile
-    depends_on: 
+    depends_on:
       - "rabbit"
     restart: always
     container_name: horusec-messages
@@ -40,7 +47,7 @@ services:
     build:
       context: ../
       dockerfile: ./horusec-account/deployments/Dockerfile
-    depends_on: 
+    depends_on:
       - "rabbit"
       - postgresql
     restart: always
@@ -48,36 +55,18 @@ services:
     ports:
       - "8003:8003"
     environment:
-      HORUSEC_BROKER_HOST: rabbit
-      HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db_test?sslmode=disable"
-      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec_test"
-  horusec-api:
-    build:
-      context: ../horusec-api
-      dockerfile: ./deployments/Dockerfile
-    depends_on: 
-      - "rabbit"
-      - postgresql
-    restart: always
-    container_name: horusec-api
-    ports:
-      - "8000:8000"
-    environment:
+      HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "true"
       HORUSEC_BROKER_HOST: rabbit
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec_test"
+      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
   horusec-analytic:
     build:
-      context: ../horusec-analytic
-      dockerfile: ./deployments/Dockerfile
+      context: ../
+      dockerfile: ./horusec-analytic/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
@@ -87,10 +76,25 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
+  horusec-api:
+    build:
+      context: ../
+      dockerfile: ./horusec-api/deployments/Dockerfile
+    depends_on:
+      - "rabbit"
+      - postgresql
+    restart: always
+    container_name: horusec-api
+    ports:
+      - "8000:8000"
+    environment:
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
+      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
   horusec-manager:
     build:
-      context: ../horusec-manager
-      dockerfile: ./deployments/Dockerfile
+      context: ../
+      dockerfile: ./horusec-manager/deployments/Dockerfile
     restart: always
     container_name: horusec-manager
     ports:
