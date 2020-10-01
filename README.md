@@ -64,7 +64,7 @@ To acquire the authorization token and you can see your vulnerabilities analytic
 
 **WARN:** When horusec starts an analysis it creates a folder called `.horusec`. This folder serves as the basis for not changing your code. So we recommend that you add the line `.horusec` into your `.gitignore` file so that this folder does not need to be sent to your git server!
 
-<p align="center" margin="20 0"><img src="assets/usage_horusec.gif" alt="usage_horusec" width="65%" style="max-width:100%;"/></p>
+<p align="center" margin="20 0"><img src="assets/usage_horusec.gif" alt="usage_horusec" width="100%" style="max-width:100%;"/></p>
 
 ## Requirements for usage horusec-cli
 * docker
