@@ -108,12 +108,13 @@ func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) er
 func (f *Formatter) setupVulnerabilitiesSeverities(reportOutput []engine.Finding,
 	index int) (vulnerabilitySeverity *horusec.Vulnerability) {
 	line := strconv.Itoa(reportOutput[index].SourceLocation.Line)
+	column := strconv.Itoa(reportOutput[index].SourceLocation.Column)
 	return &horusec.Vulnerability{
 		Line:         line,
-		Column:       strconv.Itoa(reportOutput[index].SourceLocation.Column),
+		Column:       column,
 		Confidence:   reportOutput[index].Confidence,
 		File:         f.RemoveSrcFolderFromPath(reportOutput[index].SourceLocation.Filename),
-		Code:         reportOutput[index].CodeSample,
+		Code:         f.GetCodeWithMaxCharacters(reportOutput[index].CodeSample, reportOutput[index].SourceLocation.Column),
 		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
 		SecurityTool: tools.HorusecLeaks,
 		Language:     languages.Leaks,

@@ -110,7 +110,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverityInSafety()
 	vulnerabilitySeverity.Details = issues[index].Description
-	vulnerabilitySeverity.Code = issues[index].Dependency
+	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vulnerabilitySeverity.Line = f.getVulnerabilityLineByName(lineContent, vulnerabilitySeverity.File)
 
 	// Set vulnerabilitySeverity.VulnHash value

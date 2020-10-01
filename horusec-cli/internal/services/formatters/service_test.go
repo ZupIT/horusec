@@ -16,6 +16,7 @@ package formatters
 
 import (
 	"errors"
+	"strconv"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -168,5 +169,69 @@ func TestSetLanguageIsFinished(t *testing.T) {
 
 		monitorController.SetLanguageIsFinished()
 		assert.Equal(t, 0, monitor.GetProcess())
+	})
+}
+
+func TestService_GetCodeWithMaxCharacters(t *testing.T) {
+	t.Run("should return default code", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		column := 0
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, "text", newCode)
+	})
+	t.Run("should return default code if column is negative", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		column := -1
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, "text", newCode)
+	})
+	t.Run("should return 4:105 characters when text is so bigger", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		for i := 0; i < 10; i++ {
+			for i := 0; i <= 9; i++ {
+				code += strconv.Itoa(i)
+			}
+		}
+		column := 4
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789", newCode)
+	})
+	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		for i := 0; i < 10; i++ {
+			for i := 0; i <= 9; i++ {
+				code += strconv.Itoa(i)
+			}
+		}
+		column := 0
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, "text012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345", newCode)
+	})
+	t.Run("should return first 100 characters when text contains breaking lines", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := `22: func GetMD5(s string) string {
+23:     h := md5.New()
+24:     io.WriteString(h, s) // #nohorus
+		`
+		column := 0
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, `22: func GetMD5(s string) string {
+23:     h := md5.New()
+24:     io.WriteString(h, s) // #nohorus
+	`, newCode)
+	})
+	t.Run("should return first 200 characters when text is so bigger", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		for i := 0; i <= 200; i++ {
+			code += strconv.Itoa(i)
+		}
+		column := 74
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Equal(t, "4041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889", newCode)
 	})
 }

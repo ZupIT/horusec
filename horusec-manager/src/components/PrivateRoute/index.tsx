@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import { tokenIsExpired } from 'helpers/localStorage/currentUser';
 
 interface PrivateRouteProps {
   component: React.FC;
@@ -25,13 +25,10 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = (props) => {
-  const user = getCurrentUser();
-  const hasAccessToken = user?.accessToken;
-
-  return hasAccessToken ? (
-    <Route path={props.path} exact={props.exact} component={props.component} />
-  ) : (
+  return tokenIsExpired() ? (
     <Redirect to="/login" />
+  ) : (
+    <Route path={props.path} exact={props.exact} component={props.component} />
   );
 };
 
