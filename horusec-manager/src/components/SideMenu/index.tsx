@@ -36,13 +36,14 @@ const SideMenu: React.FC = () => {
       name: t('DASHBOARD'),
       icon: 'list',
       type: 'route',
-      path: '/home/dashobard',
+      path: '/home/dashboard',
       subRoutes: [
         {
           name: t('ORGANIZATION'),
           icon: 'grid',
           path: '/home/dashboard/organization',
           type: 'subRoute',
+          adminOnly: true,
         },
         {
           name: t('REPOSITORIES'),
@@ -69,7 +70,11 @@ const SideMenu: React.FC = () => {
 
   useEffect(() => {
     setSelectedRoute(routes[0]);
-    setSelectedSubRoute(routes[0].subRoutes[0]);
+
+    isAdminOfCompany()
+      ? setSelectedSubRoute(routes[0].subRoutes[0])
+      : setSelectedSubRoute(routes[0].subRoutes[1]);
+
     // eslint-disable-next-line
   }, []);
 
@@ -103,8 +108,24 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  const renderSubRoutes = () =>
+  const fetchSubRoutes = () =>
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
+
+  const renderSubRoute = (subRoute: InternalRoute, index: number) => {
+    if (!subRoute.adminOnly || (subRoute.adminOnly && isAdminOfCompany())) {
+      return (
+        <Styled.SubRouteItem
+          key={index}
+          isActive={subRoute.path === selectedSubRoute?.path}
+          onClick={() => handleSelectedRoute(subRoute)}
+        >
+          <Icon name={subRoute.icon} size="15" />
+
+          <Styled.RouteName>{subRoute.name}</Styled.RouteName>
+        </Styled.SubRouteItem>
+      );
+    }
+  };
 
   return (
     <>
@@ -128,17 +149,9 @@ const SideMenu: React.FC = () => {
 
       <Styled.SubMenu isActive={!!selectedRoute?.subRoutes}>
         <Styled.SubRoutesList>
-          {renderSubRoutes().map((subRoute, index) => (
-            <Styled.SubRouteItem
-              key={index}
-              isActive={subRoute.path === selectedSubRoute?.path}
-              onClick={() => handleSelectedRoute(subRoute)}
-            >
-              <Icon name={subRoute.icon} size="15" />
-
-              <Styled.RouteName>{subRoute.name}</Styled.RouteName>
-            </Styled.SubRouteItem>
-          ))}
+          {fetchSubRoutes().map((subRoute, index) =>
+            renderSubRoute(subRoute, index)
+          )}
         </Styled.SubRoutesList>
       </Styled.SubMenu>
     </>
