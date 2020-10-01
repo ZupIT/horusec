@@ -16,6 +16,7 @@ package company
 
 import (
 	"encoding/json"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"io"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -25,6 +26,7 @@ import (
 type ICompany interface {
 	NewAccountCompanyFromReadCLoser(body io.ReadCloser) (accountCompany *roles.AccountCompany, err error)
 	NewCompanyFromReadCloser(body io.ReadCloser) (company *accountEntities.Company, err error)
+	CheckCreateCompanyErrors(err error) error
 }
 
 type Company struct {
@@ -53,4 +55,12 @@ func (c *Company) NewCompanyFromReadCloser(body io.ReadCloser) (company *account
 	}
 
 	return company, company.Validate()
+}
+
+func (c *Company) CheckCreateCompanyErrors(err error) error {
+	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_companies_username\"" {
+		return errorsEnum.ErrorCompanyNameAlreadyInUse
+	}
+
+	return err
 }

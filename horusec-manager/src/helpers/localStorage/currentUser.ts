@@ -16,6 +16,7 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { User } from 'helpers/interfaces/User';
+import moment from 'moment';
 
 const getCurrentUser = (): User | null => {
   const localData: User = JSON.parse(
@@ -34,4 +35,15 @@ const clearCurrentUser = () => {
   window.localStorage.removeItem(localStorageKeys.USER);
 };
 
-export { getCurrentUser, setCurrentUser, clearCurrentUser };
+const tokenIsExpired = (): boolean => {
+  const user = getCurrentUser();
+
+  if (!user || !user?.expiresAt) return true;
+
+  const now = moment();
+  const expires = moment(user?.expiresAt);
+
+  return expires.isSameOrBefore(now);
+};
+
+export { getCurrentUser, setCurrentUser, clearCurrentUser, tokenIsExpired };

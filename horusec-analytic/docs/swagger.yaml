@@ -47,6 +47,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/details:
@@ -80,6 +82,8 @@ paths:
           description: OK
         "400":
           description: BAD REQUEST
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities:
@@ -116,6 +120,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers:
@@ -152,6 +158,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories:
@@ -188,6 +196,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author:
@@ -224,6 +234,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language:
@@ -260,6 +272,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository:
@@ -296,6 +310,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time:
@@ -332,6 +348,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Repository
   /api/dashboard/companies/{companyID}/total-developers:
@@ -363,6 +381,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/total-repositories:
@@ -394,6 +414,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/vulnerabilities-by-author:
@@ -425,6 +447,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/vulnerabilities-by-language:
@@ -456,6 +480,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/vulnerabilities-by-repository:
@@ -487,6 +513,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/dashboard/companies/{companyID}/vulnerabilities-by-time:
@@ -518,6 +546,8 @@ paths:
           description: BAD REQUEST
         "500":
           description: INTERNAL SERVER ERROR
+      security:
+      - ApiKeyAuth: []
       tags:
       - Dashboard Company
   /api/health:
@@ -549,4 +579,9 @@ paths:
               type: object
       tags:
       - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

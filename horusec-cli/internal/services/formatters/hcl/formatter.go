@@ -95,7 +95,7 @@ func (f *Formatter) setVulnerabilityData(result *hcl.Result) *horusec.Vulnerabil
 	vulnerability.Severity = severity.High
 	vulnerability.Details = result.GetDetails()
 	vulnerability.Line = result.GetStartLine()
-	vulnerability.Code = result.GetCode()
+	vulnerability.Code = f.GetCodeWithMaxCharacters(result.GetCode(), 0)
 	vulnerability.File = f.RemoveSrcFolderFromPath(result.GetFilename())
 
 	// Set vulnerabilitySeverity.VulnHash value

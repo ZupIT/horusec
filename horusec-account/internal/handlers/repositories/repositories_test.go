@@ -163,6 +163,29 @@ func TestCreate(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
+
+	t.Run("should return 400 when repository name already in use", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp.SetError(errorsEnum.ErrorRepositoryNameAlreadyInUse))
+		mockWrite.On("StartTransaction").Return(mockWrite)
+
+		repositoryBytes, _ := json.Marshal(getRepositoryMock())
+
+		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		r, _ := http.NewRequest(http.MethodPost, "api/repository", bytes.NewReader(repositoryBytes))
+		w := httptest.NewRecorder()
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("companyID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
 }
 
 func TestUpdate(t *testing.T) {

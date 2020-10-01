@@ -94,7 +94,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
 	vulnerabilitySeverity = f.getDefaultSeverity()
 	vulnerabilitySeverity.Severity = utilsHorusec.GetSeverityOrNoSec(severity.High, issue.Line)
 	vulnerabilitySeverity.Details = issue.Rule
-	vulnerabilitySeverity.Code = issue.Line
+	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File
 
 	// Set vulnerabilitySeverity.VulnHash value

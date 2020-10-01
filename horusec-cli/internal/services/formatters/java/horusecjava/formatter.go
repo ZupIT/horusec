@@ -114,7 +114,7 @@ func (f *Formatter) setupVulnerabilitiesSeverities(
 		Column:       strconv.Itoa(reportOutput[index].SourceLocation.Column),
 		Confidence:   reportOutput[index].Confidence,
 		File:         f.RemoveSrcFolderFromPath(reportOutput[index].SourceLocation.Filename),
-		Code:         reportOutput[index].CodeSample,
+		Code:         f.GetCodeWithMaxCharacters(reportOutput[index].CodeSample, reportOutput[index].SourceLocation.Column),
 		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
 		SecurityTool: tools.HorusecJava,
 		Language:     languages.Java,
