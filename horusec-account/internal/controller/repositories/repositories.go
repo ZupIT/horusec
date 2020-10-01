@@ -28,6 +28,7 @@ import (
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	repositoriesUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
 )
@@ -54,6 +55,7 @@ type Controller struct {
 	accountCompanyRepository repositoryAccountCompany.IAccountCompany
 	broker                   brokerLib.IBroker
 	appConfig                app.IAppConfig
+	repositoriesUseCases     repositoriesUseCases.IRepository
 }
 
 func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead,
@@ -67,6 +69,7 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 		accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(databaseRead, databaseWrite),
 		broker:                   broker,
 		appConfig:                appConfig,
+		repositoriesUseCases:     repositoriesUseCases.NewRepositoryUseCases(),
 	}
 }
 
@@ -74,7 +77,7 @@ func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntiti
 	*accountEntities.Repository, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	if err := c.repository.Create(repositoryEntity, transaction); err != nil {
-		return nil, err
+		return nil, c.repositoriesUseCases.CheckCreateRepositoryErrors(err)
 	}
 
 	if err := c.accountRepositoryRepo.Create(repositoryEntity.ToAccountRepository(accountEnum.Admin, accountID),

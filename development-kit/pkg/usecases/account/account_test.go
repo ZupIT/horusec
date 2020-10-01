@@ -150,6 +150,14 @@ func TestCheckCreateAccountErrorType(t *testing.T) {
 		result := useCases.CheckCreateAccountErrorType(err)
 		assert.Error(t, result)
 	})
+
+	t.Run("should return error username already in use", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		err := errors.New("pq: duplicate key value violates unique constraint \"uk_accounts_username\"")
+		result := useCases.CheckCreateAccountErrorType(err)
+		assert.Error(t, result)
+		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
+	})
 }
 
 func TestGenerateResetPasswordCode(t *testing.T) {

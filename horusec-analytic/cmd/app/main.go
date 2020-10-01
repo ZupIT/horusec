@@ -32,6 +32,10 @@ import (
 // @contact.name Horusec
 // @contact.url https://github.com/ZupIT/horusec
 // @contact.email horusec@zup.com.br
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	postgresRead := adapter.NewRepositoryRead()
 

@@ -57,6 +57,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Router /api/dashboard/companies/{companyID}/details [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	query := r.URL.Query().Get("query")
 	if query == "" {
@@ -85,6 +86,7 @@ func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/total-developers [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -114,6 +116,7 @@ func (h *Handler) GetCompanyTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/total-repositories [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -143,6 +146,7 @@ func (h *Handler) GetCompanyTotalRepositories(w netHTTP.ResponseWriter, r *netHT
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-author [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -172,6 +176,7 @@ func (h *Handler) GetCompanyVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-language [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -201,6 +206,7 @@ func (h *Handler) GetCompanyVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-repository [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -230,6 +236,7 @@ func (h *Handler) GetCompanyVulnByRepository(w netHTTP.ResponseWriter, r *netHTT
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-time [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -259,6 +266,7 @@ func (h *Handler) GetCompanyVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Requ
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/all-vulnerabilities [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -289,6 +297,7 @@ func (h *Handler) GetCompanyVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -319,6 +328,7 @@ func (h *Handler) GetRepositoryTotalDevelopers(w netHTTP.ResponseWriter, r *netH
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -349,6 +359,7 @@ func (h *Handler) GetRepositoryTotalRepositories(w netHTTP.ResponseWriter, r *ne
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -379,6 +390,7 @@ func (h *Handler) GetRepositoryVulnByDeveloper(w netHTTP.ResponseWriter, r *netH
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -409,6 +421,7 @@ func (h *Handler) GetRepositoryVulnByLanguage(w netHTTP.ResponseWriter, r *netHT
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -439,6 +452,7 @@ func (h *Handler) GetRepositoryVulnByRepository(w netHTTP.ResponseWriter, r *net
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)
@@ -469,6 +483,7 @@ func (h *Handler) GetRepositoryVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.R
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
 // @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities [get]
+// @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	initialDate, finalDate, err := getDateRangeFromRequestQuery(r)

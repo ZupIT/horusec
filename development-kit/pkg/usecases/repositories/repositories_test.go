@@ -16,6 +16,8 @@ package repositories
 
 import (
 	"encoding/json"
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -103,5 +105,23 @@ func TestNewInviteUserFromReadCloser(t *testing.T) {
 		_, err := useCases.NewInviteUserFromReadCloser(readCloser)
 
 		assert.Error(t, err)
+	})
+}
+
+func TestCheckCreateRepositoryErrors(t *testing.T) {
+	t.Run("should return error repositories name already in use", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+		errMock := errors.New("pq: duplicate key value violates unique constraint \"uk_repositories_username\"")
+		err := useCases.CheckCreateRepositoryErrors(errMock)
+		assert.Error(t, err)
+		assert.Equal(t, errorsEnums.ErrorRepositoryNameAlreadyInUse, err)
+	})
+
+	t.Run("should return generic error", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+		errMock := errors.New("test")
+		err := useCases.CheckCreateRepositoryErrors(errMock)
+		assert.Error(t, err)
+		assert.NotEqual(t, errorsEnums.ErrorRepositoryNameAlreadyInUse, err)
 	})
 }

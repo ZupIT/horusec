@@ -68,11 +68,20 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	accountID, _ := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
 	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkCreateRepositoryErrors(w, err)
 		return
 	}
 
 	httpUtil.StatusCreated(w, response)
+}
+
+func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
+	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }
 
 func (h *Handler) getCreateRequestData(r *http.Request) (uuid.UUID, *accountEntities.Repository, error) {

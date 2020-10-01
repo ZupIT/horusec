@@ -16,6 +16,7 @@ package repositories
 
 import (
 	"encoding/json"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"io"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -26,6 +27,7 @@ type IRepository interface {
 	NewRepositoryFromReadCloser(body io.ReadCloser) (repository *accountEntities.Repository, err error)
 	NewAccountRepositoryFromReadCloser(body io.ReadCloser) (accountRepository *roles.AccountRepository, err error)
 	NewInviteUserFromReadCloser(body io.ReadCloser) (inviteUser *accountEntities.InviteUser, err error)
+	CheckCreateRepositoryErrors(err error) error
 }
 
 type Repository struct {
@@ -66,4 +68,12 @@ func (r *Repository) NewInviteUserFromReadCloser(body io.ReadCloser) (
 	}
 
 	return inviteUser, inviteUser.Validate()
+}
+
+func (r *Repository) CheckCreateRepositoryErrors(err error) error {
+	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_repositories_username\"" {
+		return errorsEnum.ErrorRepositoryNameAlreadyInUse
+	}
+
+	return err
 }
