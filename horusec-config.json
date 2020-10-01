@@ -17,8 +17,7 @@
     "python":     [],
     "java" :      [],
     "kotlin":     [],
-    "javaScript": [
-    ],
+    "javaScript": [],
     "leaks":      [],
     "hcl":        []
   }

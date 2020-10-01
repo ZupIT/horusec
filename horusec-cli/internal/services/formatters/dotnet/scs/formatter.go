@@ -23,7 +23,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
@@ -136,15 +136,16 @@ func (f *Formatter) appendVulnerabilities(vulnerability *horusec.Vulnerability) 
 }
 
 func (f *Formatter) getFilePathFromPackageName(filePath string) string {
-	return file.GetPathIntoFilename(filePath,
+	return fileUtil.GetPathIntoFilename(filePath,
 		fmt.Sprintf("%s/.horusec/%s/", f.GetConfigProjectPath(), f.GetAnalysisID()))
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		Image: ImageName,
+		Tag:   ImageTag,
+		CMD: f.AddWorkDirInCmd(ImageCmd,
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj")),
 		Language: languages.DotNet,
 	}
 }

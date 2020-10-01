@@ -16,6 +16,7 @@ package file
 
 import (
 	"github.com/stretchr/testify/assert"
+	"path/filepath"
 	"testing"
 )
 
@@ -65,6 +66,20 @@ func TestGetFilePathIntoBasePath(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
 		volume := "S0M3 N0T E3X1$t"
 		response := GetPathIntoFilename(filePath, volume)
+		assert.Equal(t, "", response)
+	})
+}
+
+func TestGetSubPathByExtension(t *testing.T) {
+	t.Run("Should return sub path for .go", func(t *testing.T) {
+		path, _ := filepath.Abs(".")
+		response := GetSubPathByExtension(path, "", "*.go")
+		assert.Equal(t, "", response)
+	})
+
+	t.Run("Should not matches matches", func(t *testing.T) {
+		path, _ := filepath.Abs(".")
+		response := GetSubPathByExtension(path, "test", "*.test")
 		assert.Equal(t, "", response)
 	})
 }
