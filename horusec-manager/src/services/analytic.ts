@@ -158,9 +158,6 @@ const getVulnerabilitiesDetails = (
         file
         code
         details
-        type
-        vulnerableBelow
-        version
         securityTool
         language
         severity
