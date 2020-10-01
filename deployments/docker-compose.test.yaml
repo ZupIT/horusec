@@ -52,7 +52,7 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db_test?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec_test"
   horusec-api:
