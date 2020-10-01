@@ -46,7 +46,6 @@ func (r *Router) setMiddleware() {
 	r.EnableTimeout()
 	r.EnableCompress()
 	r.EnableRequestID()
-	r.EnableJWTAuth()
 	r.EnableCORS()
 	r.RouterMetrics()
 }
@@ -89,11 +88,6 @@ func (r *Router) EnableRequestID() *Router {
 	return r
 }
 
-func (r *Router) EnableJWTAuth() *Router {
-	r.router.Use(jwt.AuthMiddleware)
-	return r
-}
-
 func (r *Router) EnableCORS() *Router {
 	r.router.Use(r.config.Cors)
 	return r
@@ -119,6 +113,7 @@ func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *R
 	handler := dashboard.NewDashboardHandler(postgresRead)
 	authz := middlewares.NewCompanyAuthzMiddleware(postgresRead, nil)
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
+		router.Use(jwt.AuthMiddleware)
 		router.With(authz.IsCompanyMember).Get("/{companyID}/details", handler.GetVulnDetails)
 		router.With(authz.IsCompanyMember).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
 		router.With(authz.IsCompanyMember).Get("/{companyID}/total-repositories", handler.GetCompanyTotalRepositories)
@@ -139,6 +134,7 @@ func (r *Router) RouterRepositoryAnalytic(postgresRead relational.InterfaceRead)
 	handler := dashboard.NewDashboardHandler(postgresRead)
 	authz := middlewares.NewRepositoryAuthzMiddleware(postgresRead, nil)
 	r.router.Route(routes.RepositoryHandler, func(router chi.Router) {
+		router.Use(jwt.AuthMiddleware)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/details", handler.GetVulnDetails)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/total-developers", handler.GetRepositoryTotalDevelopers)
 		router.With(authz.IsRepositoryMember).Get(
