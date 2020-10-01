@@ -1,26 +1,26 @@
 {
   "LOGIN_SCREEN": {
-    "EMAIL": "E-mail",
+    "EMAIL": "Email",
     "PASSWORD": "Senha",
     "FORGOT_PASS": "Esqueceu a senha?",
     "SUBMIT": "Entrar",
     "NO_ACCOUNT": "Não tem conta? Cadastre-se",
-    "INVALID_EMAIL": "E-mail inválido",
+    "INVALID_EMAIL": "Email inválido",
     "INVALID_PASS": "Informe a senha"
   },
 
   "RECOVERY_PASS_SCREEN": {
-    "INPUT_EMAIL": "Para sua segurança, digite o e-mail cadastrado para redefinir sua senha",
-    "EMAIL": "E-mail",
+    "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
+    "EMAIL": "Email",
     "CODE": "Código",
-    "INVALID_EMAIL": "E-mail inválido",
+    "INVALID_EMAIL": "Email inválido",
     "INVALID_CODE": "Informe um código",
     "CHECK_CODE": "Verificar código",
-    "SUBMIT": "Enviar código para o e-mail",
+    "SUBMIT": "Enviar código para o email",
     "BACK": "Voltar para o login",
-    "SUCCESS": "Foi enviado para seu e-mail um código para a recuperação de senha.",
+    "SUCCESS": "Foi enviado para seu email um código para a recuperação de senha.",
     "CONFIRM": "Ok, entendi.",
-    "TYPE_THE_CODE": "Digite o código informado no seu e-mail cadastrado. O código é válido por 10 minutos e deve ser utilizado 1x.",
+    "TYPE_THE_CODE": "Digite o código informado no seu email cadastrado. O código é válido por 10 minutos e deve ser utilizado 1x.",
     "CREATE_NEW_PASS": "Crie sua nova senha:",
     "PASSWORD_REQUIREMENTS": "Para a sua segurança, a senha deve conter no mínimo:",
     "MIN_CHARACTERS": "A partir de 8 caracteres",
@@ -35,17 +35,17 @@
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUCCESS_ALTER_PASS": "Sua senha foi alterada com sucesso",
     "UPDATE_PASS": "Atualizar senha",
-    "INVALID_RECOVERY_CODE": "Códido de recuperação inválido."
+    "INVALID_RECOVERY_CODE": "Código de recuperação inválido."
   },
 
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Crie sua conta Horusec",
-    "EMAIL": "E-mail",
+    "EMAIL": "Email",
     "NAME": "Nome",
     "NEXT": "Avançar",
     "BACK": "Voltar para o login",
     "INVALID_NAME": "Informe o nome",
-    "INVALID_EMAIL": "E-mail inválido",
+    "INVALID_EMAIL": "Email inválido",
     "CREATE_NEW_PASS": "Crie sua nova senha:",
     "PASSWORD_REQUIREMENTS": "Para a sua segurança, a senha deve conter no mínimo:",
     "MIN_CHARACTERS": "A partir de 8 caracteres",
@@ -60,7 +60,7 @@
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUBMIT": "Cadastrar",
     "CONFIRM": "Ok, entendi.",
-    "SUCCESS_CREATE_ACCOUNT": "Foi enviado um e-mail para verficação da sua conta."
+    "SUCCESS_CREATE_ACCOUNT": "Foi enviado um email para verificação da sua conta."
   },
 
   "COMPANY_SCREEN": {
@@ -91,8 +91,8 @@
     "VULNERABILITIES_BY_LANG": "Vulnerabilidades por linguagem",
     "VULNERABILITIES_BY_DEV": "Vulnerabilidades por desenvolvedor",
     "VULNERABILITIES_BY_REPO": "Vulnerabilidades por repositório",
-    "VULNERABILITY_TIMELINE": "Linha do tempo de vunerabilidade",
-    "VULNERABILITY_DETAILS": "Detalhes das vunerabiliadade",
+    "VULNERABILITY_TIMELINE": "Linha do tempo de vulnerabilidade",
+    "VULNERABILITY_DETAILS": "Detalhes das vulnerabilidade",
     "LANGUAGE": "Linguagem",
     "SEVERITY": "Severidade",
     "AUTHOR": "Autor",
@@ -127,9 +127,9 @@
     "EDIT_REPO_BELOW": "Edite o repositório abaixo:",
     "INVITE_TO_REPOSITORY": "Convidar para o repositório",
     "INVITE_USER_BELOW": "Convide um usuário para o repositorio abaixo:",
-    "SEARCH_USER_EMAIL_BELOW": "Pesquisar usuário pelo e-mail",
+    "SEARCH_USER_EMAIL_BELOW": "Pesquisar usuário pelo email",
     "USER": "Usuário",
-    "EMAIL": "E-mail",
+    "EMAIL": "Email",
     "PERMISSION": "Permissão",
     "NO_USERS_TO_INVITE": "Não há usuários correspondentes para serem convidados.",
     "ADD_TOKEN": "Adicionar Token",
@@ -183,15 +183,15 @@
     "EDIT_USER": "Editar usuário",
     "EDIT_SUBTITLE": "Edite o usuário abaixo:",
     "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
-    "EMAIL": "E-mail",
-    "INVALID_EMAIL": "E-mail inválido",
+    "EMAIL": "Email",
+    "INVALID_EMAIL": "Email inválido",
     "CONFIRM_DELETE": "Deseja realmente deletar este usuário? Essa ação não poderá ser desfeita.",
     "YES": "Sim",
     "SAVE": "Salvar",
     "TABLE": {
       "EMPTY": "Não há usuarios correspondentes para esta organização",
       "USER": "Usuário",
-      "EMAIL": "E-mail",
+      "EMAIL": "Email",
       "PERMISSION": "Permissão",
       "ACTION": "Ação",
       "DELETE": "Deletar",
@@ -213,10 +213,10 @@
 
   "API_ERRORS": {
     "GENERIC_ERROR": "Algo inesperado aconteceu, tente novamente.",
-    "ERROR_LOGIN": "Verifique seu e-mail e senha e tente novamente.",
-    "UNCONFIRMED_EMAIL": "O e-mail ainda não foi confirmado.",
+    "ERROR_LOGIN": "Verifique seu email e senha e tente novamente.",
+    "UNCONFIRMED_EMAIL": "O email ainda não foi confirmado.",
     "INVALID_RECOVERY_CODE": "Código de recuperação inválido.",
-    "EMAIL_IN_USE": "O e-mail informado já esta em uso.",
+    "EMAIL_IN_USE": "O email informado já esta em uso.",
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
     "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização."
   }
