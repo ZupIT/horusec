@@ -79,7 +79,7 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
-	if err == errors.ErrorEmailAlreadyInUse {
+	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}

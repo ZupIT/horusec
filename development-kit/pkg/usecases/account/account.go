@@ -86,6 +86,10 @@ func (a *Account) CheckCreateAccountErrorType(err error) error {
 		return errors.ErrorEmailAlreadyInUse
 	}
 
+	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_accounts_username\"" {
+		return errors.ErrorUsernameAlreadyInUse
+	}
+
 	return err
 }
 
