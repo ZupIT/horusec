@@ -68,7 +68,7 @@ const TokenWrapper = styled.div<TokenWrapperProps>`
   ${({ isCopy }) =>
     isCopy &&
     css`
-      background-color: rgba(40, 175, 96, 0.3);
+      background-color: ${({ theme }) => theme.colors.success};
     `};
 
   :hover {

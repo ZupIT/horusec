@@ -103,10 +103,13 @@ function ListCompanies() {
               >
                 {company.name}
               </Styled.ItemText>
-              <Styled.SettingsIcon
-                onClick={() => setSelectedCompany(company)}
-                name="settings"
-              />
+
+              {company?.role === 'admin' ? (
+                <Styled.SettingsIcon
+                  onClick={() => setSelectedCompany(company)}
+                  name="settings"
+                />
+              ) : null}
 
               <Styled.Settings
                 ref={ref}
