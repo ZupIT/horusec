@@ -27,7 +27,7 @@ type ICompanyRepository interface {
 	Create(company *accountEntities.Company, tx SQL.InterfaceWrite) (*accountEntities.Company, error)
 	Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
 	GetByID(companyID uuid.UUID) (*accountEntities.Company, error)
-	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.Company, error)
+	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
 }
@@ -83,22 +83,19 @@ func (r *Repository) GetByID(companyID uuid.UUID) (*accountEntities.Company, err
 	return company, response.GetError()
 }
 
-func (r *Repository) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.Company, error) {
-	var companies []accountEntities.Company
-	account := &accountEntities.Account{}
+func (r *Repository) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+	companies := &[]accountEntities.CompanyResponse{}
 
-	response := r.databaseRead.First(account, "account_id = ?", accountID)
-	if response.GetError() != nil {
-		return nil, response.GetError()
-	}
-	account = response.GetData().(*accountEntities.Account)
+	query := r.databaseRead.
+		GetConnection().
+		Select("comp.company_id, comp.name, comp.description, accountComp.role, comp.created_at, comp.updated_at").
+		Table("companies AS comp").
+		Joins("JOIN account_company AS accountComp ON accountComp.company_id = comp.company_id"+
+			" AND accountComp.account_id = ?", accountID).
+		Where("accountComp.account_id = ?", accountID).
+		Find(&companies)
 
-	response = r.databaseRead.Related(account, &companies, nil, "Companies")
-	if response.GetData() == nil {
-		return nil, response.GetError()
-	}
-
-	return response.GetData().(*[]accountEntities.Company), response.GetError()
+	return companies, query.Error
 }
 
 func getCompanyByIDFilter(companyID uuid.UUID) map[string]interface{} {
