@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
-import AuthRoutes from './auth.routes';
-import InternalRoutes from './internal.routes';
+import styled from 'styled-components';
 
-const Routes = () => (
-  <BrowserRouter>
-    <Suspense fallback="">
-      <AuthRoutes />
+const Wrapper = styled.section`
+  padding: 35px;
+  width: 100%;
+  max-width: 1200px;
+`;
 
-      <InternalRoutes />
-
-      <Route path="*" component={lazy(() => import('pages/NotFound'))} />
-    </Suspense>
-  </BrowserRouter>
-);
-
-export default Routes;
+export default {
+  Wrapper,
+};
