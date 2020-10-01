@@ -46,6 +46,11 @@ var doc = `{
     "paths": {
         "/api/dashboard/companies/{companyID}/all-vulnerabilities": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total vulnerabilities by severity",
                 "consumes": [
                     "application/json"
@@ -93,6 +98,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/details": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln details",
                 "consumes": [
                     "application/json"
@@ -143,6 +153,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln by severity",
                 "consumes": [
                     "application/json"
@@ -197,6 +212,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total developers",
                 "consumes": [
                     "application/json"
@@ -251,6 +271,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total repositories",
                 "consumes": [
                     "application/json"
@@ -305,6 +330,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln by developer",
                 "consumes": [
                     "application/json"
@@ -359,6 +389,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln by language",
                 "consumes": [
                     "application/json"
@@ -413,6 +448,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln by repository",
                 "consumes": [
                     "application/json"
@@ -467,6 +507,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get vuln by time",
                 "consumes": [
                     "application/json"
@@ -521,6 +566,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/total-developers": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total developers",
                 "consumes": [
                     "application/json"
@@ -568,6 +618,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/total-repositories": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total repositories",
                 "consumes": [
                     "application/json"
@@ -615,6 +670,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/vulnerabilities-by-author": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total vulnerabilities by author",
                 "consumes": [
                     "application/json"
@@ -662,6 +722,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/vulnerabilities-by-language": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total vulnerabilities by language",
                 "consumes": [
                     "application/json"
@@ -709,6 +774,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/vulnerabilities-by-repository": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total vulnerabilities by repository",
                 "consumes": [
                     "application/json"
@@ -756,6 +826,11 @@ var doc = `{
         },
         "/api/dashboard/companies/{companyID}/vulnerabilities-by-time": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get total vulnerabilities by time",
                 "consumes": [
                     "application/json"
@@ -869,6 +944,13 @@ var doc = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
