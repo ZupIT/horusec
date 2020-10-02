@@ -1,6 +1,6 @@
 name: HorusecJavaPipeline
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   install-build-test-fmt-lint:
