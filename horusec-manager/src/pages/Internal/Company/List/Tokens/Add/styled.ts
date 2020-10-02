@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-export interface Company {
-  companyID: string;
-  name: string;
-  description: string;
-  role: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import styled from 'styled-components';
+import { Input } from 'components';
+
+const SubTitle = styled.h3`
+  font-weight: normal;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  color: ${({ theme }) => theme.colors.text.secundary};
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Field = styled(Input)`
+  margin-top: 25px;
+`;
+
+export default {
+  SubTitle,
+  Form,
+  Field,
+};

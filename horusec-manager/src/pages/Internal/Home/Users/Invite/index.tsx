@@ -123,6 +123,7 @@ const InviteToCompany: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
+          initialValue={roles[0]}
           options={roles}
           onChangeValue={(item) => setRole(item)}
         />
