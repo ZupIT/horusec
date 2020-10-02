@@ -1,6 +1,6 @@
 name: DevelopmentKitPipeline
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   install-build-test-fmt-lint:
