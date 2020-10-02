@@ -220,7 +220,9 @@
     "REPOSITORIES": "Repositórios",
     "ORGANIZATION": "Organização",
     "REPOSITORY": "Repositório",
-    "ORGANIZATION_USERS": "Usuários da organização"
+    "ORGANIZATION_USERS": "Usuários da organização",
+    "BACK_ORGANIZATION": "Voltar para organizações",
+    "LOGOUT": "Sair"
   },
 
   "API_ERRORS": {
@@ -232,5 +234,11 @@
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
     "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização.",
     "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação."
+  },
+
+  "NOT_FOUND_SCREEN": {
+    "ERROR": "Erro 404.",
+    "MESSAGE": "Não conseguimos encontrar a página que você está procurando.",
+    "BACK": "Voltar para a home"
   }
 }

@@ -15,6 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
+import { Icon } from 'components';
 
 interface RouterItemProps {
   isActive: boolean;
@@ -111,6 +112,12 @@ const SubMenu = styled.div<SubMenuProps>`
     `};
 `;
 
+const Back = styled(Icon)`
+  margin: 20px 0px 0px 17px;
+  width: 30px;
+  cursor: pointer;
+`;
+
 export default {
   SideMenu,
   Logo,
@@ -122,4 +129,5 @@ export default {
   SubMenu,
   SubRoutesList,
   SubRouteItem,
+  Back,
 };

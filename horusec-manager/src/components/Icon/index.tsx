@@ -27,11 +27,23 @@ export interface Props {
   className?: string;
   isActive?: boolean;
   onClick?: (event: MouseEvent) => void;
+  dataFor?: string;
+  dataTip?: string;
 }
 
 const Icon = React.forwardRef(
   (
-    { name, color, size, className, onClick, isActive, title }: Props,
+    {
+      name,
+      color,
+      size,
+      className,
+      onClick,
+      isActive,
+      title,
+      dataTip,
+      dataFor,
+    }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
     const iRef = useRef<HTMLDivElement>(null);
@@ -48,6 +60,8 @@ const Icon = React.forwardRef(
         size={size}
         onClick={onClick}
         title={title}
+        data-tip={dataTip}
+        data-for={dataFor}
       >
         {uri ? <ReactSVG src={uri} /> : ''}
       </Styled.Icon>
