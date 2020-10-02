@@ -1,6 +1,9 @@
 name: HorusecCliPipeline
 
-on: [pull_request]
+on:
+  push:
+    branches: [ "master", "develop" ]
+  pull_request:
 
 jobs:
   install-build-test-fmt-lint:
