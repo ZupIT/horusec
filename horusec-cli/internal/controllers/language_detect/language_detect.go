@@ -151,12 +151,7 @@ func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
 	if ld.configs.GetFilesOrPathsToIgnore() != "" {
 		for _, value := range strings.Split(ld.configs.GetFilesOrPathsToIgnore(), ",") {
-			pattern, err := filepath.Abs(value)
-			if err != nil {
-				continue
-			}
-
-			matched, _ := doublestar.Match(pattern, path)
+			matched, _ := doublestar.Match(strings.TrimSpace(value), path)
 			if matched {
 				return true
 			}

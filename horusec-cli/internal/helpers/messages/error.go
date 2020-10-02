@@ -84,7 +84,6 @@ const (
 	MsgErrorYarnLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a yarn.lock file. " +
 		"If you use Yarn to handle your dependencies, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
-	MsgErrorYarnProcess      = "{HORUSEC_CLI} Error Yarn returned an error: "
-	MsgErrorDeferFileClose   = "{HORUSEC_CLI} Error defer file close: "
-	MsgErrorGetAbsPathToBind = "{HORUSEC_CLI} Error when parse path to abs in start bind container: "
+	MsgErrorYarnProcess    = "{HORUSEC_CLI} Error Yarn returned an error: "
+	MsgErrorDeferFileClose = "{HORUSEC_CLI} Error defer file close: "
 )

@@ -89,7 +89,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
-		result := monitorController.AddWorkDirInCmd("test", "C#")
+		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
 		assert.NotEmpty(t, result)
 	})
@@ -100,7 +100,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
-		result := monitorController.AddWorkDirInCmd("test", "C#")
+		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
 		assert.NotEmpty(t, result)
 	})
