@@ -16,12 +16,46 @@
 
 import React from 'react';
 import Styled from './styled';
+import { Footer, Logout, Language } from 'components';
+import { useTranslation } from 'react-i18next';
+import { tokenIsExpired } from 'helpers/localStorage/currentUser';
+
+import HorusecLogo from 'assets/logo/horusec.svg';
+import NotFoundImg from 'assets/svg/not_found.svg';
+import { useHistory } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
+  const { t } = useTranslation();
+  const history = useHistory();
+
   return (
-    <Styled.Wrapper>
-      <h1>Not found</h1>
-    </Styled.Wrapper>
+    <>
+      <Styled.Content>
+        <Styled.SideBar>
+          <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+
+          <Styled.SettingsWrapper>
+            {tokenIsExpired() ? null : <Logout />}
+
+            <Language />
+          </Styled.SettingsWrapper>
+        </Styled.SideBar>
+
+        <Styled.NotFoundImg src={NotFoundImg} />
+
+        <Styled.Message>{t('NOT_FOUND_SCREEN.ERROR')}</Styled.Message>
+
+        <Styled.Message>{t('NOT_FOUND_SCREEN.MESSAGE')}</Styled.Message>
+
+        <Styled.BackBtn
+          rounded
+          text={t('NOT_FOUND_SCREEN.BACK')}
+          onClick={() => history.replace('/home')}
+        />
+      </Styled.Content>
+
+      <Footer />
+    </>
   );
 };
 

@@ -15,13 +15,64 @@
  */
 
 import styled from 'styled-components';
+import { Button } from 'components';
 
-const Wrapper = styled.section`
-  padding: 35px;
+const Content = styled.section`
   width: 100%;
-  max-width: 1200px;
+  height: calc(100vh - 36px);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const SideBar = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 36px);
+  position: absolute;
+  padding: 30px 15px;
+  left: 0;
+  top: 0;
+`;
+
+const Logo = styled.img`
+  display: block;
+  width: 100px;
+  height: 22px;
+`;
+
+const NotFoundImg = styled.img`
+  display: block;
+  width: 460px;
+  height: 300px;
+  margin-bottom: 35px;
+`;
+
+const SettingsWrapper = styled.div`
+  display: block;
+`;
+
+const Message = styled.span`
+  display: block;
+  max-width: 700px;
+  font-size: ${({ theme }) => theme.metrics.fontSize.big};
+  color: ${({ theme }) => theme.colors.text.secundary};
+  text-align: center;
+`;
+
+const BackBtn = styled(Button)`
+  margin-top: 70px;
 `;
 
 export default {
-  Wrapper,
+  Content,
+  SideBar,
+  Logo,
+  SettingsWrapper,
+  NotFoundImg,
+  Message,
+  BackBtn,
 };

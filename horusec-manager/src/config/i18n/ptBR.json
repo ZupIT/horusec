@@ -219,5 +219,11 @@
     "EMAIL_IN_USE": "O email informado já esta em uso.",
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
     "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização."
+  },
+
+  "NOT_FOUND_SCREEN": {
+    "ERROR": "Erro 404.",
+    "MESSAGE": "Não conseguimos encontrar a página que você está procurando.",
+    "BACK": "Voltar para a home"
   }
 }
