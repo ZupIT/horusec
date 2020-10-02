@@ -59,6 +59,13 @@ const changePassword = (token: string, password: string) => {
   });
 };
 
+const verifyUniqueUsernameEmail = (email: string, username: string) => {
+  return http.post(`${SERVICE_ACCOUNT}/verify-already-used`, {
+    email,
+    username,
+  });
+};
+
 const callRenewToken = async (): Promise<User | AxiosError> => {
   const { accessToken, refreshToken } = getCurrentUser();
 
@@ -95,4 +102,5 @@ export default {
   validateCode,
   changePassword,
   callRenewToken,
+  verifyUniqueUsernameEmail,
 };

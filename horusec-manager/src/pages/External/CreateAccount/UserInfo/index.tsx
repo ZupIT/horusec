@@ -29,15 +29,22 @@ interface UserInfoProps {
 function UserInfoForm({ onNextStep }: UserInfoProps) {
   const { t } = useTranslation();
   const history = useHistory();
-  const { email, setEmail, username, setUsername } = useContext(
-    CreateAccountContext
-  );
+  const {
+    email,
+    setEmail,
+    username,
+    setUsername,
+    isLoading,
+    verifyUsernameAndEmail,
+  } = useContext(CreateAccountContext);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (email.isValid && username.isValid) {
-      onNextStep();
+      verifyUsernameAndEmail().then(() => {
+        onNextStep();
+      });
     }
   };
 
@@ -70,6 +77,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
           isDisabled={!email.isValid || !username.isValid}
           text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
           type="submit"
+          isLoading={isLoading}
           rounded
         />
 
