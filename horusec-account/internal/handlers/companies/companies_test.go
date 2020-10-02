@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -308,19 +309,14 @@ func TestGetCompany(t *testing.T) {
 
 func TestList(t *testing.T) {
 	t.Run("should return status 200 when successfully retrieve companies of an account", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-		brokerMock := &broker.Mock{}
+		controllerMock := &companiesController.Mock{}
 
-		account := &accountEntities.Account{}
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetData(account))
+		controllerMock.On("List").Return(&[]accountEntities.CompanyResponse{}, nil)
 
-		companies := &[]accountEntities.Company{{Name: "test "}}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
+		handler := Handler{
+			controller: controllerMock,
+		}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
 		w := httptest.NewRecorder()
 
@@ -333,19 +329,12 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("should return status 401 the account is not authorizes", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-		brokerMock := &broker.Mock{}
+		controllerMock := &companiesController.Mock{}
 
-		account := &accountEntities.Account{}
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetData(account))
+		handler := Handler{
+			controller: controllerMock,
+		}
 
-		companies := &[]accountEntities.Company{{Name: "test "}}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
-
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
 		w := httptest.NewRecorder()
 
@@ -354,19 +343,15 @@ func TestList(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
-	t.Run("should return status 400 when an error occured", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-		brokerMock := &broker.Mock{}
+	t.Run("should return status 400 when an error occurred", func(t *testing.T) {
+		controllerMock := &companiesController.Mock{}
 
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetError(errors.New("test")))
+		controllerMock.On("List").Return(&[]accountEntities.CompanyResponse{}, errors.New("test"))
 
-		companies := &[]accountEntities.Company{{Name: "test "}}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
+		handler := Handler{
+			controller: controllerMock,
+		}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
 		w := httptest.NewRecorder()
 
