@@ -739,7 +739,7 @@ func TestLogout(t *testing.T) {
 }
 
 func TestCreateTokenWithAccountPermissions(t *testing.T) {
-	t.Run("should successfuly create a token", func(t *testing.T) {
+	t.Run("should successfully create a token", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -761,4 +761,77 @@ func TestCreateTokenWithAccountPermissions(t *testing.T) {
 		assert.NotEmpty(t, token)
 	})
 
+}
+
+func TestVerifyAlreadyInUse(t *testing.T) {
+	t.Run("should return no errors when email and username are not in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		account := &accountEntities.Account{}
+
+		resp := &response.Response{}
+		resp.SetData(account)
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when username already in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		account := &accountEntities.Account{Username: "test"}
+
+		resp := &response.Response{}
+		resp.SetData(account)
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+
+		assert.Error(t, err)
+		assert.Equal(t, errorsEnum.ErrorUsernameAlreadyInUse, err)
+	})
+
+	t.Run("should return error when email already in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		account := &accountEntities.Account{Email: "test"}
+
+		resp := &response.Response{}
+		resp.SetData(account)
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+
+		assert.Error(t, err)
+		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
+	})
 }
