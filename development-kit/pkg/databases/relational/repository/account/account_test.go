@@ -86,3 +86,20 @@ func TestUpdate(t *testing.T) {
 		assert.NoError(t, repository.Update(&accountEntities.Account{}))
 	})
 }
+
+func TestGetByUsername(t *testing.T) {
+	t.Run("should success get account by username with no errors", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetData(&accountEntities.Account{}))
+
+		repository := NewAccountRepository(mockRead, mockWrite)
+		account, err := repository.GetByUsername("test")
+
+		assert.NoError(t, err)
+		assert.NotNil(t, account)
+	})
+}

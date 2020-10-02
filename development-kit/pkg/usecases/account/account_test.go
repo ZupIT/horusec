@@ -305,3 +305,23 @@ func TestNewRefreshTokenFromReadCloser(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestNewValidateUniqueFromReadCloser(t *testing.T) {
+	t.Run("should return no error when validate unique is valid", func(t *testing.T) {
+		bytes, _ := json.Marshal(accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAccountUseCases()
+		result, err := useCases.NewValidateUniqueFromReadCloser(readCloser)
+		assert.NoError(t, err)
+		assert.Equal(t, "test", result.Username)
+		assert.Equal(t, "test@test.com", result.Email)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewValidateUniqueFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+}

@@ -43,4 +43,5 @@ const (
 	MsgDebugFolderOrFileIgnored = "{HORUSEC_CLI} The file ou folder was ignored to send analysis:"
 	// Fired when configs already validate and before start analysis
 	MsgDebugShowConfigs = "{HORUSEC_CLI} The current configuration for this analysis are:"
+	MsgDebugShowWorkdir = "{HORUSEC_CLI} The workdir setup for run in path:"
 )

@@ -42,6 +42,7 @@ type IAccount interface {
 	NewEmailDataFromReadCloser(body io.ReadCloser) (data *accountEntities.EmailData, err error)
 	MapRepositoriesRoles(accountRepositories *[]roles.AccountRepository) map[string]string
 	NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error)
+	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error)
 }
 
 type Account struct {
@@ -171,4 +172,15 @@ func (a *Account) NewRefreshTokenFromReadCloser(body io.ReadCloser) (token strin
 	token = buf.String()
 
 	return token, validation.Validate(token, validation.Required, validation.Length(1, 255))
+}
+
+func (a *Account) NewValidateUniqueFromReadCloser(
+	body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error) {
+	err = json.NewDecoder(body).Decode(&validateUnique)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return validateUnique, validateUnique.Validate()
 }

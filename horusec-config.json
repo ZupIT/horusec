@@ -7,7 +7,7 @@
   "horusecCliPrintOutputType": "text",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-  "horusecCliFilesOrPathsToIgnore": "development-kit/pkg/engines/examples, deployments/dockerfiles/gitleaks/rules.toml, _test.go, _mock.go, README.md, development-kit/pkg/enums/engine/advisories",
+  "horusecCliFilesOrPathsToIgnore": "**/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, development-kit/pkg/enums/engine/advisories/**",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliProjectPath": "./",
   "horusecCliWorkDir": {

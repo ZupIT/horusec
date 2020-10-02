@@ -144,7 +144,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Image: ImageName,
 		Tag:   ImageTag,
 		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj")),
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
 		Language: languages.DotNet,
 	}
 }

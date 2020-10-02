@@ -16,6 +16,7 @@ package formatters
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -35,7 +36,7 @@ type IService interface {
 	ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error)
 	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
-	AddWorkDirInCmd(cmd string, projectSubPath string) string
+	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
 	GetAnalysis() *horusec.Analysis
 	SetLanguageIsFinished()
@@ -80,11 +81,12 @@ func (s *Service) GetCommitAuthor(line, filePath string) (commitAuthor horusec.C
 }
 
 func (s *Service) GetConfigProjectPath() string {
-	return s.config.ProjectPath
+	return file.ReplacePathSeparator(fmt.Sprintf("%s/%s/%s", s.config.ProjectPath, ".horusec", s.analysis.ID.String()))
 }
 
-func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string) string {
+func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
 	if projectSubPath != "" {
+		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, logger.DebugLevel, tool.ToString(), projectSubPath)
 		return strings.ReplaceAll(cmd, "{{WORK_DIR}}", fmt.Sprintf("cd %s", projectSubPath))
 	}
 

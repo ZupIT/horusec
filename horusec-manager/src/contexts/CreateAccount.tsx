@@ -35,6 +35,7 @@ interface CreateAccountContext {
   isLoading: boolean;
   createAccount: Function;
   successDialogVisible: boolean;
+  verifyUsernameAndEmail: Function;
 }
 
 const fieldInitialValue: Field = {
@@ -54,6 +55,7 @@ const CreateAccountContext = React.createContext<CreateAccountContext>({
   isLoading: false,
   createAccount: () => '',
   successDialogVisible: false,
+  verifyUsernameAndEmail: () => '',
 });
 
 const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
@@ -79,6 +81,24 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
       });
   };
 
+  const verifyUsernameAndEmail = () => {
+    setLoading(true);
+
+    return new Promise((resolve, reject) => {
+      accountService
+        .verifyUniqueUsernameEmail(email.value, username.value)
+        .then((result) => {
+          setLoading(false);
+          resolve(result);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+          setLoading(false);
+          reject(err);
+        });
+    });
+  };
+
   return (
     <CreateAccountContext.Provider
       value={{
@@ -93,6 +113,7 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
         isLoading,
         createAccount,
         successDialogVisible,
+        verifyUsernameAndEmail,
       }}
     >
       {children}
