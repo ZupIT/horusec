@@ -159,7 +159,12 @@
 
   "GENERAL": {
     "SELECT": "Selecione",
-    "CANCEL": "Cancelar"
+    "CANCEL": "Cancelar",
+    "PAGINATION": {
+      "ITENS_PAGE": "Itens por página:",
+      "OF": "de",
+      "PAGES": "páginas"
+    }
   },
 
   "PERMISSIONS": {

@@ -17,10 +17,11 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Icon } from 'components';
+import { Icon, Pagination } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
 import ReactTooltip from 'react-tooltip';
+import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 interface Props {
   filters?: FilterValues;
@@ -36,22 +37,16 @@ interface DatatableValue {
   code: string;
 }
 
-interface Pagination {
-  currentPage: number;
-  totalItems: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
   const [isLoading, setLoading] = useState(true);
   const [dataValues, setDataValues] = useState<DatatableValue[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
+
+  const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
-    totalItems: 0,
+    totalItems: 100,
     pageSize: 10,
-    totalPages: 0,
+    totalPages: 10,
   });
 
   const formatDataValues = (data: any[]) => {
@@ -81,25 +76,25 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
     setDataValues(formattedData);
   };
 
-  const fetchData = (page: number, size: number, isPageHandle = false) => {
+  const fetchData = (currentPage: number, pageSize: number) => {
     setLoading(true);
+    if (pageSize !== pagination.pageSize) {
+      currentPage = 1;
+    }
+
     analyticService
-      .getVulnerabilitiesDetails(filters, page, size)
+      .getVulnerabilitiesDetails(filters, currentPage, pageSize)
       .then((result) => {
         formatDataValues(result.data?.content?.data?.analysis);
+        const totalItems = result?.data?.content?.data?.totalItems;
 
-        if (!isPageHandle) {
-          const totalItems = result.data?.content?.data?.totalItems;
-          const totalPages = totalItems
-            ? Math.round(totalItems / pagination.pageSize)
-            : 0;
+        let totalPages = totalItems ? Math.round(totalItems / pageSize) : 1;
 
-          setPagination({
-            ...pagination,
-            totalItems,
-            totalPages,
-          });
+        if (totalPages <= 0) {
+          totalPages = 1;
         }
+
+        setPagination({ currentPage, pageSize, totalPages, totalItems });
       })
       .finally(() => {
         setLoading(false);
@@ -113,16 +108,6 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
 
     // eslint-disable-next-line
   }, [filters]);
-
-  const handlePagination = (action: 'next' | 'previous') => {
-    let currentPage = pagination.currentPage;
-    action === 'next' ? currentPage++ : currentPage--;
-
-    if (currentPage > 0 && currentPage <= pagination.totalPages) {
-      setPagination({ ...pagination, currentPage });
-      fetchData(currentPage, pagination.pageSize, true);
-    }
-  };
 
   return (
     <div className="max-space">
@@ -187,17 +172,10 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
           </Styled.Body>
 
           {dataValues && dataValues.length > 0 ? (
-            <Styled.Pagination>
-              <Styled.Button onClick={() => handlePagination('previous')}>
-                {t('DASHBOARD_SCREEN.PREVIOUS_PAGE')}
-              </Styled.Button>
-              <Styled.CurrentPage>
-                {pagination.currentPage} / {pagination.totalPages}
-              </Styled.CurrentPage>
-              <Styled.Button onClick={() => handlePagination('next')}>
-                {t('DASHBOARD_SCREEN.NEXT_PAGE')}
-              </Styled.Button>
-            </Styled.Pagination>
+            <Pagination
+              pagination={pagination}
+              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize)}
+            />
           ) : null}
         </Styled.Table>
       </Styled.Wrapper>

@@ -32,6 +32,7 @@ import Select from './Select';
 import SearchBar from './SearchBar';
 import Checkbox from './Checkbox';
 import Permissions from './Permissions';
+import Pagination from './Pagination';
 
 export {
   Button,
@@ -52,4 +53,5 @@ export {
   SearchBar,
   Checkbox,
   Permissions,
+  Pagination,
 };
