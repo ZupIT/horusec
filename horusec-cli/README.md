@@ -41,7 +41,7 @@ To integrate horusec in your pipeline also your download binary and run yourself
 ```yaml
 name: SecurityPipeline
 
-on: [push]
+on: [pull_request]
 
 jobs:
   horusec-security:

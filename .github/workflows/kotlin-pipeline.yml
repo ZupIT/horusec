@@ -1,6 +1,6 @@
 name: HorusecKotlinPipeline
 
-on: [push]
+on: [pull_request]
 
 jobs:
   install-build-test-fmt-lint:
