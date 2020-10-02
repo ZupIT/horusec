@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import AuthRoutes from './auth.routes';
 import InternalRoutes from './internal.routes';
 
@@ -25,8 +25,6 @@ const Routes = () => (
       <AuthRoutes />
 
       <InternalRoutes />
-
-      <Route path="*" component={lazy(() => import('pages/NotFound'))} />
     </Suspense>
   </BrowserRouter>
 );

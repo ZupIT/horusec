@@ -208,7 +208,9 @@
     "REPOSITORIES": "Repositórios",
     "ORGANIZATION": "Organização",
     "REPOSITORY": "Repositório",
-    "ORGANIZATION_USERS": "Usuários da organização"
+    "ORGANIZATION_USERS": "Usuários da organização",
+    "BACK_ORGANIZATION": "Voltar para organizações",
+    "LOGOUT": "Sair"
   },
 
   "API_ERRORS": {
