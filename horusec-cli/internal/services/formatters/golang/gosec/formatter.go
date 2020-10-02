@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
+	"strconv"
 )
 
 type Formatter struct {
@@ -91,7 +92,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *ho
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = utilsHorusec.GetSeverityOrNoSec(issue.Severity, issue.Code)
 	vulnerability.Details = issue.Details
-	vulnerability.Code = issue.Code
+	vulnerability.Code = f.getCode(issue.Code, issue.Column)
 	vulnerability.Line = issue.Line
 	vulnerability.Column = issue.Column
 	vulnerability.Confidence = issue.Confidence
@@ -101,6 +102,11 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *ho
 	vulnerability = vulnhash.Bind(vulnerability)
 
 	return f.setCommitAuthor(vulnerability)
+}
+
+func (f *Formatter) getCode(code, column string) string {
+	columnNumber, _ := strconv.Atoi(column)
+	return f.GetCodeWithMaxCharacters(code, columnNumber)
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {

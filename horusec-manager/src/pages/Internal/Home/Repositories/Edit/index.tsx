@@ -85,10 +85,10 @@ const EditRepository: React.FC<Props> = ({
   return (
     <Dialog
       isVisible={isVisible}
-      message={t('EDIT_REPO')}
+      message={t('REPOSITORIES_SCREEN.EDIT_REPO')}
       onCancel={onCancel}
       onConfirm={handleConfirmSave}
-      confirmText={t('SAVE')}
+      confirmText={t('REPOSITORIES_SCREEN.SAVE')}
       disableConfirm={!name.isValid}
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
@@ -96,12 +96,14 @@ const EditRepository: React.FC<Props> = ({
       defaultButton
       hasCancel
     >
-      <Styled.SubTitle>{t('EDIT_REPO_BELOW')}</Styled.SubTitle>
+      <Styled.SubTitle>
+        {t('REPOSITORIES_SCREEN.EDIT_REPO_BELOW')}
+      </Styled.SubTitle>
 
       <Styled.Form onSubmit={handleConfirmSave}>
         <Styled.Field
-          label={t('NAME_REPO')}
-          invalidMessage={t('INVALID_NAME')}
+          label={t('REPOSITORIES_SCREEN.NAME_REPO')}
+          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_NAME')}
           onChangeValue={(field: Field) => setName(field)}
           validation={isEmptyString}
           name="name"
@@ -111,7 +113,7 @@ const EditRepository: React.FC<Props> = ({
         />
 
         <Styled.Field
-          label={t('DESCRIPTION_REPO')}
+          label={t('REPOSITORIES_SCREEN.DESCRIPTION_REPO')}
           onChangeValue={(field: Field) => setDescription(field)}
           name="description"
           type="text"

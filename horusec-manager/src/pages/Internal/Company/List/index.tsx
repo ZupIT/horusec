@@ -21,12 +21,19 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Styled from './styled';
+import { Company } from 'helpers/interfaces/Company';
+
+import Tokens from './Tokens';
 
 function ListCompanies() {
   const { t } = useTranslation();
   const history = useHistory();
-  const [selectedCompany, setSelectedCompany] = useState(null);
-  const [companyToDelete, setCompanyToDelete] = useState(null);
+
+  const [selectedCompany, setSelectedCompany] = useState<Company>(null);
+  const [companyToDelete, setCompanyToDelete] = useState<Company>(null);
+  const [companyToManagerTokens, setCompanyToManagerTokens] = useState<Company>(
+    null
+  );
 
   const {
     isLoading,
@@ -48,13 +55,15 @@ function ListCompanies() {
 
   return (
     <>
-      <Styled.Title>{t('SELECT_ORGANIZATION')}</Styled.Title>
+      <Styled.Title>{t('COMPANY_SCREEN.SELECT_ORGANIZATION')}</Styled.Title>
 
       <Styled.OptionsWrapper>
         <Styled.AddCompanyBtn onClick={() => history.push('/organization/add')}>
           <Icon name="add" size="16px" />
 
-          <Styled.TextBtn>{t('ADD_ORGANIZATION')}</Styled.TextBtn>
+          <Styled.TextBtn>
+            {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
+          </Styled.TextBtn>
         </Styled.AddCompanyBtn>
 
         <Styled.SearchWrapper>
@@ -78,7 +87,9 @@ function ListCompanies() {
 
           {filteredCompanies.length <= 0 && !isLoading ? (
             <Styled.NoItem>
-              <Styled.ItemText>{t('NO_ORGANIZATIONS')}</Styled.ItemText>
+              <Styled.ItemText>
+                {t('COMPANY_SCREEN.NO_ORGANIZATIONS')}
+              </Styled.ItemText>
             </Styled.NoItem>
           ) : null}
 
@@ -92,10 +103,13 @@ function ListCompanies() {
               >
                 {company.name}
               </Styled.ItemText>
-              <Styled.SettingsIcon
-                onClick={() => setSelectedCompany(company)}
-                name="settings"
-              />
+
+              {company?.role === 'admin' ? (
+                <Styled.SettingsIcon
+                  onClick={() => setSelectedCompany(company)}
+                  name="settings"
+                />
+              ) : null}
 
               <Styled.Settings
                 ref={ref}
@@ -108,13 +122,19 @@ function ListCompanies() {
                     })
                   }
                 >
-                  {t('EDIT')}
+                  {t('COMPANY_SCREEN.EDIT')}
                 </Styled.SettingsItem>
 
                 <Styled.SettingsItem
                   onClick={() => setCompanyToDelete(company)}
                 >
-                  {t('REMOVE')}
+                  {t('COMPANY_SCREEN.REMOVE')}
+                </Styled.SettingsItem>
+
+                <Styled.SettingsItem
+                  onClick={() => setCompanyToManagerTokens(company)}
+                >
+                  {t('COMPANY_SCREEN.TOKENS')}
                 </Styled.SettingsItem>
               </Styled.Settings>
             </Styled.Item>
@@ -125,9 +145,9 @@ function ListCompanies() {
       <Dialog
         hasCancel
         defaultButton
-        isVisible={companyToDelete}
-        confirmText={t('YES')}
-        message={`${t('CONFIRM_DELETE_ORGANIZATION')} ${
+        isVisible={!!companyToDelete}
+        confirmText={t('COMPANY_SCREEN.YES')}
+        message={`${t('COMPANY_SCREEN.CONFIRM_DELETE_ORGANIZATION')} ${
           companyToDelete?.name
         } ?`}
         onConfirm={() => {
@@ -135,6 +155,12 @@ function ListCompanies() {
           setCompanyToDelete(null);
         }}
         onCancel={() => setCompanyToDelete(null)}
+      />
+
+      <Tokens
+        isVisible={!!companyToManagerTokens}
+        selectedCompany={companyToManagerTokens}
+        onClose={() => setCompanyToManagerTokens(null)}
       />
     </>
   );

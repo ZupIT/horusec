@@ -73,6 +73,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
 
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnum.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
 		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
@@ -96,6 +101,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
 
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
 		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
@@ -118,6 +128,11 @@ func TestCreate(t *testing.T) {
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
+
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
@@ -158,6 +173,33 @@ func TestCreate(t *testing.T) {
 		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/repository", nil)
 		w := httptest.NewRecorder()
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when repository name already in use", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp.SetError(errorsEnum.ErrorRepositoryNameAlreadyInUse))
+		mockWrite.On("StartTransaction").Return(mockWrite)
+
+		respFind := &response.Response{}
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		repositoryBytes, _ := json.Marshal(getRepositoryMock())
+
+		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		r, _ := http.NewRequest(http.MethodPost, "api/repository", bytes.NewReader(repositoryBytes))
+		w := httptest.NewRecorder()
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("companyID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Create(w, r)
 

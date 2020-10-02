@@ -27,6 +27,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -96,11 +97,9 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 func (f *Formatter) setVulnerabilitySeverityData(output *npm.Issue) (data *horusec.Vulnerability) {
 	data = f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
-	data.Version = output.GetVersion()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
-	data.VulnerableBelow = output.VulnerableVersions
-	data.Line = f.getVulnerabilityLineByName(fmt.Sprintf(`"version": "%s"`, data.Version), data.Code, data.File)
+	data.Line = f.getVulnerabilityLineByName(fmt.Sprintf(`"version": "%s"`, output.GetVersion()), data.Code, data.File)
 	return f.setCommitAuthor(data)
 }
 
@@ -177,9 +176,10 @@ func isModuleInScannerText(isFoundModule bool, module, scannerText string) bool 
 
 func (f *Formatter) getConfigDataNpm(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		Image: ImageName,
+		Tag:   ImageTag,
+		CMD: f.AddWorkDirInCmd(ImageCmd,
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "package-lock.json")),
 		Language: languages.Javascript,
 	}
 }

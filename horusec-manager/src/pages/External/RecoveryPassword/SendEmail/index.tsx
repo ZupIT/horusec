@@ -57,22 +57,24 @@ function SendEmailScreen() {
   return (
     <ExternalLayout>
       <>
-        <Styled.SubTitle>{t('RECOVERY_PASS')}</Styled.SubTitle>
+        <Styled.SubTitle>
+          {t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}
+        </Styled.SubTitle>
 
         <Styled.Form onSubmit={handleSubmit}>
           <Styled.Field
             onChangeValue={(field: Field) => setEmail(field)}
-            label={t('EMAIL')}
+            label={t('RECOVERY_PASS_SCREEN.EMAIL')}
             name="email"
             type="email"
-            invalidMessage={t('INVALID_EMAIL')}
+            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
             validation={emailValidator}
           />
 
           <Styled.Submit
             isLoading={isLoading}
             isDisabled={!email.isValid}
-            text={t('SEND_CODE_EMAIL')}
+            text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
             type="submit"
             rounded
           />
@@ -80,15 +82,15 @@ function SendEmailScreen() {
           <Styled.BackToLogin
             onClick={() => history.push('/login')}
             outline
-            text={t('BACK_LOGIN')}
+            text={t('RECOVERY_PASS_SCREEN.BACK')}
             rounded
           />
         </Styled.Form>
 
         <Dialog
           isVisible={successDialogVisible}
-          confirmText={t('CONFIRM')}
-          message={t('SUCCESS_SEND_EMAIL')}
+          confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}
+          message={t('RECOVERY_PASS_SCREEN.SUCCESS')}
           onConfirm={() => history.push('/login')}
         />
       </>

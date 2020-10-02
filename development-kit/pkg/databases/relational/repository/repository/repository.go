@@ -16,10 +16,10 @@ package repository
 
 import (
 	"fmt"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
 )
 
@@ -51,7 +51,23 @@ func (r *Repository) Create(repository *accountEntities.Repository, transaction 
 		conn = transaction
 	}
 
-	return conn.Create(repository, repository.GetTable()).GetError()
+	if _, err := r.GetByName(repository.CompanyID, repository.Name); err != nil {
+		if err == errors.ErrNotFoundRecords {
+			return conn.Create(repository, repository.GetTable()).GetError()
+		}
+
+		return err
+	}
+
+	return errors.ErrorRepositoryNameAlreadyInUse
+}
+
+func (r *Repository) GetByName(companyID uuid.UUID, name string) (*accountEntities.Repository, error) {
+	repository := &accountEntities.Repository{}
+	response := r.databaseRead.Find(repository,
+		r.databaseRead.SetFilter(map[string]interface{}{"company_id": companyID, "name": name}), repository.GetTable())
+
+	return repository, response.GetError()
 }
 
 func (r *Repository) Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (
@@ -108,12 +124,4 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 
 	response := r.databaseRead.RawSQL(query, accounts)
 	return accounts, response.GetError()
-}
-
-func (r *Repository) GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error) {
-	repository := &accountEntities.Repository{}
-	response := r.databaseRead.Find(repository, r.databaseRead.SetFilter(
-		map[string]interface{}{"company_id": companyID, "name": repositoryName}), repository.GetTable())
-
-	return repository, response.GetError()
 }

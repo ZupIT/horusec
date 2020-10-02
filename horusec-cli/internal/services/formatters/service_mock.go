@@ -81,3 +81,8 @@ func (m *Mock) LogAnalysisError(err error, tool tools.Tool, projectSubPath strin
 func (m *Mock) SetMonitor(monitor *horusec.Monitor) {
 	_ = m.MethodCalled("SetMonitor")
 }
+
+func (m *Mock) GetCodeWithMaxCharacters(code string, column int) string {
+	args := m.MethodCalled("GetCodeWithMaxCharacters")
+	return args.Get(0).(string)
+}

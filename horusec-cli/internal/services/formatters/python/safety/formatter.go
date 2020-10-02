@@ -27,6 +27,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -67,9 +68,10 @@ func (f *Formatter) startSafetyAnalysis(projectSubPath string) error {
 
 func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		Image: ImageName,
+		Tag:   ImageTag,
+		CMD: f.AddWorkDirInCmd(ImageCmd,
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt")),
 		Language: languages.Python,
 	}
 }
@@ -110,7 +112,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverityInSafety()
 	vulnerabilitySeverity.Details = issues[index].Description
-	vulnerabilitySeverity.Code = issues[index].Dependency
+	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vulnerabilitySeverity.Line = f.getVulnerabilityLineByName(lineContent, vulnerabilitySeverity.File)
 
 	// Set vulnerabilitySeverity.VulnHash value

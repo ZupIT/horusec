@@ -27,6 +27,7 @@ import (
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	companyUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
@@ -36,7 +37,7 @@ type IController interface {
 	Create(accountID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
 	Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
 	Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error)
-	List(accountID uuid.UUID) (*[]accountEntities.Company, error)
+	List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	UpdateAccountCompany(role *roles.AccountCompany) error
 	InviteUser(inviteUser *accountEntities.InviteUser) error
 	Delete(companyID uuid.UUID) error
@@ -53,6 +54,7 @@ type Controller struct {
 	repoAccountRepository repoAccountRepository.IAccountRepository
 	broker                brokerLib.IBroker
 	appConfig             app.IAppConfig
+	companyUseCases       companyUseCases.ICompany
 }
 
 func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead,
@@ -66,6 +68,7 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(databaseRead, databaseWrite),
 		broker:                broker,
 		appConfig:             appConfig,
+		companyUseCases:       companyUseCases.NewCompanyUseCases(),
 	}
 }
 
@@ -105,7 +108,7 @@ func (c *Controller) Get(companyID, accountID uuid.UUID) (*accountEntities.Compa
 	return company.ToCompanyResponse(accountCompany.Role), nil
 }
 
-func (c *Controller) List(accountID uuid.UUID) (*[]accountEntities.Company, error) {
+func (c *Controller) List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
 	return c.repoCompany.GetAllOfAccount(accountID)
 }
 

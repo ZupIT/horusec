@@ -290,9 +290,6 @@ func getChartDetailsUsingGraphQLAndReturnBody(t *testing.T, repositoryID string)
          file
          code
          details
-         type
-         vulnerableBelow
-         version
          securityTool
          language
          severity

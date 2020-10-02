@@ -114,7 +114,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverity()
 	vulnerabilitySeverity.Severity = f.getSeverity(issues, index)
 	vulnerabilitySeverity.Details = issues[index].IssueText
-	vulnerabilitySeverity.Code = issues[index].Code
+	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Code, 0)
 	vulnerabilitySeverity.Line = strconv.Itoa(issues[index].LineNumber)
 	vulnerabilitySeverity.Confidence = issues[index].IssueConfidence
 	vulnerabilitySeverity.File = issues[index].FileName

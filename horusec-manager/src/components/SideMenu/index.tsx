@@ -22,7 +22,11 @@ import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
-import { isAdminOfCompany } from 'helpers/localStorage/currentCompany';
+import {
+  isAdminOfCompany,
+  clearCurrentCompany,
+} from 'helpers/localStorage/currentCompany';
+import ReactTooltip from 'react-tooltip';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -33,19 +37,20 @@ const SideMenu: React.FC = () => {
 
   const routes: InternalRoute[] = [
     {
-      name: t('DASHBOARD'),
+      name: t('SIDE_MENU.DASHBOARD'),
       icon: 'list',
       type: 'route',
-      path: '/home/dashobard',
+      path: '/home/dashboard',
       subRoutes: [
         {
-          name: t('ORGANIZATION'),
+          name: t('SIDE_MENU.ORGANIZATION'),
           icon: 'grid',
           path: '/home/dashboard/organization',
           type: 'subRoute',
+          adminOnly: true,
         },
         {
-          name: t('REPOSITORIES'),
+          name: t('SIDE_MENU.REPOSITORIES'),
           icon: 'columns',
           path: '/home/dashboard/repositories',
           type: 'subRoute',
@@ -53,13 +58,13 @@ const SideMenu: React.FC = () => {
       ],
     },
     {
-      name: t('REPOSITORIES'),
+      name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
       path: '/home/repositories',
       type: 'route',
     },
     {
-      name: t('ORGANIZATION_USERS'),
+      name: t('SIDE_MENU.ORGANIZATION_USERS'),
       icon: 'grid',
       path: '/home/organization-users',
       type: 'route',
@@ -69,7 +74,11 @@ const SideMenu: React.FC = () => {
 
   useEffect(() => {
     setSelectedRoute(routes[0]);
-    setSelectedSubRoute(routes[0].subRoutes[0]);
+
+    isAdminOfCompany()
+      ? setSelectedSubRoute(routes[0].subRoutes[0])
+      : setSelectedSubRoute(routes[0].subRoutes[1]);
+
     // eslint-disable-next-line
   }, []);
 
@@ -103,8 +112,29 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  const renderSubRoutes = () =>
+  const backToOrganization = () => {
+    clearCurrentCompany();
+    history.replace('/organization');
+  };
+
+  const fetchSubRoutes = () =>
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
+
+  const renderSubRoute = (subRoute: InternalRoute, index: number) => {
+    if (!subRoute.adminOnly || (subRoute.adminOnly && isAdminOfCompany())) {
+      return (
+        <Styled.SubRouteItem
+          key={index}
+          isActive={subRoute.path === selectedSubRoute?.path}
+          onClick={() => handleSelectedRoute(subRoute)}
+        >
+          <Icon name={subRoute.icon} size="15" />
+
+          <Styled.RouteName>{subRoute.name}</Styled.RouteName>
+        </Styled.SubRouteItem>
+      );
+    }
+  };
 
   return (
     <>
@@ -120,25 +150,27 @@ const SideMenu: React.FC = () => {
         <Styled.OptionsWrapper>
           <Helper />
 
+          <Styled.Back
+            dataFor="side-options"
+            dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
+            name="grid"
+            size="15"
+            onClick={backToOrganization}
+          />
+
           <Logout />
 
           <Language />
+
+          <ReactTooltip id="side-options" place="top" type="dark" insecure />
         </Styled.OptionsWrapper>
       </Styled.SideMenu>
 
       <Styled.SubMenu isActive={!!selectedRoute?.subRoutes}>
         <Styled.SubRoutesList>
-          {renderSubRoutes().map((subRoute, index) => (
-            <Styled.SubRouteItem
-              key={index}
-              isActive={subRoute.path === selectedSubRoute?.path}
-              onClick={() => handleSelectedRoute(subRoute)}
-            >
-              <Icon name={subRoute.icon} size="15" />
-
-              <Styled.RouteName>{subRoute.name}</Styled.RouteName>
-            </Styled.SubRouteItem>
-          ))}
+          {fetchSubRoutes().map((subRoute, index) =>
+            renderSubRoute(subRoute, index)
+          )}
         </Styled.SubRoutesList>
       </Styled.SubMenu>
     </>

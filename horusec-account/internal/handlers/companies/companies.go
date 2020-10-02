@@ -67,11 +67,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if newRepo, err := h.controller.Create(accountID, company); err != nil {
+	newRepo, err := h.controller.Create(accountID, company)
+	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
-	} else {
-		httpUtil.StatusCreated(w, newRepo)
+		return
 	}
+
+	httpUtil.StatusCreated(w, newRepo)
 }
 
 func (h *Handler) getCreateData(w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {

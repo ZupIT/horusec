@@ -20,10 +20,11 @@ import (
 	enumSeverity "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 )
 
-const NoHorusec = "nohorus"
+const NoHorus = "nohorus"
+const NoHorusec = "nohorusec"
 
 func GetSeverityOrNoSec(severity enumSeverity.Severity, code string) enumSeverity.Severity {
-	if strings.Contains(code, NoHorusec) {
+	if strings.Contains(code, NoHorus) || strings.Contains(code, NoHorusec) {
 		return enumSeverity.NoSec
 	}
 

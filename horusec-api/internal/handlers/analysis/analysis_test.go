@@ -540,4 +540,42 @@ func TestPost(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
+
+	t.Run("Should return 404 when wrong token or missing repository name", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("RollbackTransaction").Return(&response.Response{})
+		mockWrite.On("Create").Return(resp.SetError(errorsEnum.ErrNotFoundRecords))
+
+		resp = &response.Response{}
+
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		analysis := &apiEntities.AnalysisData{
+			Analysis: &horusec.Analysis{
+				Status:     enumsHorusec.Success,
+				CreatedAt:  time.Now(),
+				FinishedAt: time.Now(),
+			},
+			RepositoryName: "",
+		}
+
+		handler := NewHandler(mockRead, mockWrite)
+		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
+		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
+		r = r.WithContext(ctx)
+		r.Header.Set("Authorization", uuid.New().String())
+		w := httptest.NewRecorder()
+
+		handler.Post(w, r)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
 }

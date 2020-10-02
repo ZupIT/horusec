@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 	"os"
 	"strconv"
 	"strings"
@@ -28,10 +27,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 )
 
 type Formatter struct {
@@ -94,11 +95,9 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 func (f *Formatter) setVulnerabilitySeverityData(output *yarn.Issue) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
-	data.Version = output.GetVersion()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
-	data.VulnerableBelow = output.VulnerableVersions
-	data.Line = f.getVulnerabilityLineByName(data.Code, data.Version, data.File)
+	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
 	return f.setCommitAuthor(data)
 }
 
@@ -205,9 +204,10 @@ func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
 
 func (f *Formatter) getConfigDataYarn(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image:    npmaudit.ImageName,
-		Tag:      npmaudit.ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		Image: npmaudit.ImageName,
+		Tag:   npmaudit.ImageTag,
+		CMD: f.AddWorkDirInCmd(ImageCmd,
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "yarn.lock")),
 		Language: languages.Javascript,
 	}
 }

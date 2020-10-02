@@ -18,6 +18,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/Icon';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
+import { isObject, isString } from 'lodash';
 
 interface Props {
   title?: string;
@@ -56,16 +57,13 @@ const Select: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (options && options.length > 0) {
-      if (initialValue) {
-        setCurrentValue(
-          options.filter((item) => item[keyValue] === initialValue)[0]
-        );
-      } else {
-        setCurrentValue(options[0]);
-      }
+    if (isObject(initialValue)) {
+      setCurrentValue(initialValue);
+    } else if (isString(initialValue)) {
+      setCurrentValue(
+        options.filter((item) => item[keyValue] === initialValue)[0]
+      );
     }
-
     // eslint-disable-next-line
   }, [initialValue, keyValue]);
 
@@ -85,7 +83,7 @@ const Select: React.FC<Props> = ({
         width={width}
       >
         <Styled.CurrentValue>
-          {currentValue ? currentValue[keyLabel] : t('SELECT')}
+          {currentValue ? currentValue[keyLabel] : t('GENERAL.SELECT')}
         </Styled.CurrentValue>
 
         <Styled.OptionsList

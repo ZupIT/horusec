@@ -29,3 +29,5 @@ var ErrorEmptyOrInvalidRefreshToken = errors.New("{ACCOUNT} empty or invalid tok
 var ErrorNotFoundRefreshTokenInCache = errors.New("{ACCOUNT} refresh token not found in cache")
 var ErrorAccessAndRefreshTokenNotMatch = errors.New("{ACCOUNT} access and refresh token does not match")
 var ErrorErrorEmptyBody = errors.New("{ACCOUNT} empty request body")
+var ErrorUsernameAlreadyInUse = errors.New("{ACCOUNT} username already in use")
+var ErrorRepositoryNameAlreadyInUse = errors.New("{ACCOUNT} repository name already in use")

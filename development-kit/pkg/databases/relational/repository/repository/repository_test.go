@@ -15,6 +15,7 @@
 package repository
 
 import (
+	"errors"
 	"os"
 	"testing"
 	"time"
@@ -41,10 +42,52 @@ func TestCreateRepository(t *testing.T) {
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp)
 
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnums.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		repository := NewRepository(mockRead, mockWrite)
 
 		err := repository.Create(&accountEntities.Repository{}, mockWrite)
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return error name already in use", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp)
+
+		respFind := &response.Response{}
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		repository := NewRepository(mockRead, mockWrite)
+
+		err := repository.Create(&accountEntities.Repository{}, mockWrite)
+		assert.Error(t, err)
+		assert.Equal(t, errorsEnums.ErrorRepositoryNameAlreadyInUse, err)
+	})
+
+	t.Run("should return generic error from get", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp)
+
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		repository := NewRepository(mockRead, mockWrite)
+
+		err := repository.Create(&accountEntities.Repository{}, mockWrite)
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
 	})
 }
 

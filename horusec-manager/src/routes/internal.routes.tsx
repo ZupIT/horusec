@@ -15,7 +15,7 @@
  */
 
 import React, { lazy } from 'react';
-import { Switch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 
 const InternalRoutes = () => (
@@ -31,6 +31,8 @@ const InternalRoutes = () => (
       path="/home"
       component={lazy(() => import('./home.routes'))}
     />
+
+    <Route component={lazy(() => import('pages/NotFound'))} />
   </Switch>
 );
 
