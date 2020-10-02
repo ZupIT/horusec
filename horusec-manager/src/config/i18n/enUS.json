@@ -235,7 +235,7 @@
     "ALREADY_IN_COMPANY": "This user is already part of this organization.",
     "PRIVILEGES": "You do not have sufficient permissions to perform this action.",
     "REPO_NAME_IN_USE": "Repository name already in use.",
-    "USERNAME_IN_USE": "Nome de usuário já em uso"
+    "USERNAME_IN_USE": "Username already in use."
   },
 
   "NOT_FOUND_SCREEN": {
