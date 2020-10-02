@@ -43,7 +43,9 @@ const useResponseMessage = () => {
         'API_ERRORS.PRIVILEGES'
       ),
       '{ACCOUNT} username already in use': t('API_ERRORS.USERNAME_IN_USE'),
-      '{ACCOUNT} repository name already in use': t('API_ERRORS.REPO_NAME_IN_USE'),
+      '{ACCOUNT} repository name already in use': t(
+        'API_ERRORS.REPO_NAME_IN_USE'
+      ),
       generic: t('API_ERRORS.GENERIC_ERROR'),
     };
 
