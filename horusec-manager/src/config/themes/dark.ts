@@ -19,6 +19,8 @@ import commom from './common';
 export default {
   ...commom,
   colors: {
+    success: 'rgba(16, 170, 128, 0.49)',
+
     background: {
       primary: '#1C1C1E',
       secundary: '#2C2C2E',
@@ -88,6 +90,7 @@ export default {
     flashMessage: {
       text: '#F5F5FB',
       error: '#FF453A',
+      success: '#10AA80',
     },
 
     dialog: {

@@ -76,7 +76,19 @@
     "INVALID_ORGANIZATION_NAME": "Nome da organização inválido.",
     "CANCEL": "Cancelar",
     "SAVE": "Salvar",
-    "EDIT_ORGANIZATION_NAME": "Edite o nome da organização"
+    "EDIT_ORGANIZATION_NAME": "Edite o nome da organização",
+    "TOKENS": "Tokens",
+    "TOKEN": "Token",
+    "ADD_TOKEN": "Adicionar Token",
+    "DESCRIPTION": "Descrição",
+    "EXPIRES": "Expira em:",
+    "ACTION": "Ação",
+    "NO_TOKENS":"Não há tokens registrados para esta organização.",
+    "DELETE": "Deletar",
+    "CONFIRM_DELETE_TOKEN":"Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
+    "TOKEN_SUCCESS": "Token criado com sucesso!",
+    "TOKEN_INFO":"Este token lhe concede acesso a realizar análises para a organização selecionada! Salve ele em um lugar seguro e não compartilhe!",
+    "CONFIRM":"Ok, entendi."
   },
 
   "DASHBOARD_SCREEN": {
@@ -220,7 +232,8 @@
     "INVALID_RECOVERY_CODE": "Código de recuperação inválido.",
     "EMAIL_IN_USE": "O email informado já esta em uso.",
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
-    "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização."
+    "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização.",
+    "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação."
   },
 
   "NOT_FOUND_SCREEN": {

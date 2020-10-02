@@ -16,7 +16,12 @@ package company
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
+	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 
@@ -142,68 +147,63 @@ func TestGetCompanyByID(t *testing.T) {
 }
 
 func TestGetAllOfAccount(t *testing.T) {
+	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+	_ = os.Setenv(config.EnvRelationalLogMode, "false")
+
+	databaseWrite := adapter.NewRepositoryWrite()
+	databaseRead := adapter.NewRepositoryRead()
+
+	account := &accountEntities.Account{
+		Email:     "test@test.com",
+		Username:  "test",
+		CreatedAt: time.Now(),
+		Password:  "test",
+		AccountID: uuid.New(),
+	}
+
+	company := &accountEntities.Company{
+		CompanyID:   uuid.New(),
+		Name:        "test",
+		Description: "test",
+		CreatedAt:   time.Now(),
+	}
+
+	accountCompany := &roles.AccountCompany{
+		AccountID: account.AccountID,
+		CompanyID: company.CompanyID,
+		Role:      rolesEnum.Admin,
+		CreatedAt: time.Now(),
+	}
+
+	databaseWrite.SetLogMode(true)
+	databaseWrite.GetConnection().Table(account.GetTable()).AutoMigrate(account)
+	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+	databaseWrite.GetConnection().Table(accountCompany.GetTable()).AutoMigrate(accountCompany)
+
+	resp := databaseWrite.Create(account, account.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(company, company.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(accountCompany, accountCompany.GetTable())
+	assert.NoError(t, resp.GetError())
+
 	t.Run("should get companies from account relation", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
+		repo := NewCompanyRepository(databaseRead, databaseWrite)
 
-		account := &accountEntities.Account{}
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetData(account))
-
-		companies := &[]accountEntities.Company{{Name: "test "}}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
-
-		repository := NewCompanyRepository(mockRead, mockWrite)
-
-		retrievedCompanies, err := repository.GetAllOfAccount(uuid.New())
+		result, err := repo.GetAllOfAccount(account.AccountID)
 
 		assert.NoError(t, err)
-		assert.NotNil(t, retrievedCompanies)
-		mockRead.AssertCalled(t, "First")
-		mockRead.AssertCalled(t, "Related")
+		assert.NotNil(t, result)
 	})
 
 	t.Run("should return an error when get model fails", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
+		repo := NewCompanyRepository(databaseRead, databaseWrite)
 
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetError(errors.New("test")))
+		result, err := repo.GetAllOfAccount(uuid.UUID{})
 
-		companies := &[]accountEntities.Company{{Name: "test "}}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
-
-		repository := NewCompanyRepository(mockRead, mockWrite)
-
-		retrievedCompanies, err := repository.GetAllOfAccount(uuid.New())
-
-		assert.Error(t, err)
-		assert.Nil(t, retrievedCompanies)
-		mockRead.AssertCalled(t, "First")
-		mockRead.AssertNotCalled(t, "Related")
-	})
-
-	t.Run("should return an error when related fails", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-
-		account := &accountEntities.Account{}
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetData(account))
-
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetError(errors.New("test")))
-
-		repository := NewCompanyRepository(mockRead, mockWrite)
-
-		retrievedCompanies, err := repository.GetAllOfAccount(uuid.New())
-
-		assert.Error(t, err)
-		assert.Nil(t, retrievedCompanies)
-		mockRead.AssertCalled(t, "First")
-		mockRead.AssertCalled(t, "Related")
+		assert.NoError(t, err)
+		assert.Empty(t, result)
 	})
 }
 
