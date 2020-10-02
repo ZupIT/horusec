@@ -104,26 +104,37 @@ func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {
 			validation.Required, validation.In(horusec.Running, horusec.Success, horusec.Error)),
 		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
 		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
-		validation.Field(&analysis.AnalysisVulnerabilities, validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
+		validation.Field(&analysis.AnalysisVulnerabilities,
+			validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
 	)
 }
 
-func (au *UseCases) validateVulnerabilities(vulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
+func (au *UseCases) validateVulnerabilities(
+	vulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
 	return func(value interface{}) error {
 		if len(vulnerabilities) == 0 {
 			return nil
 		}
 		for key := range vulnerabilities {
-			if err := validation.ValidateStruct(&vulnerabilities[key],
-				validation.Field(&vulnerabilities[key].Vulnerability.SecurityTool, validation.Required, validation.In(au.sliceTools()...)),
-				validation.Field(&vulnerabilities[key].Vulnerability.Language, validation.Required, validation.In(au.sliceLanguages()...)),
-				validation.Field(&vulnerabilities[key].Vulnerability.Severity, validation.Required, validation.In(au.sliceSeverities()...)),
-			); err != nil {
+			err := au.setupValidationVulnerabilities(key, vulnerabilities)
+			if err != nil {
 				return err
 			}
 		}
 		return nil
 	}
+}
+
+func (au *UseCases) setupValidationVulnerabilities(
+	key int, vulnerabilities []horusecEntities.AnalysisVulnerabilities) error {
+	return validation.ValidateStruct(&vulnerabilities[key],
+		validation.Field(&vulnerabilities[key].Vulnerability.SecurityTool, validation.Required,
+			validation.In(au.sliceTools()...)),
+		validation.Field(&vulnerabilities[key].Vulnerability.Language, validation.Required,
+			validation.In(au.sliceLanguages()...)),
+		validation.Field(&vulnerabilities[key].Vulnerability.Severity, validation.Required,
+			validation.In(au.sliceSeverities()...)),
+	)
 }
 
 func (au *UseCases) sliceTools() []interface{} {

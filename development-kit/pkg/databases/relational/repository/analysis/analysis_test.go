@@ -15,6 +15,7 @@
 package analysis
 
 import (
+	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"os"
 	"testing"
 	"time"
@@ -91,12 +92,22 @@ func insertAnalysisData() error {
 		FinishedAt:     time.Now(),
 	}
 
+	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{
+		AnalysisVulnerabilitiesID: uuid.New(),
+		VulnerabilityID:           vulnerabilityID,
+		AnalysisID:                analysisID,
+		Type:                      enumHorusec.Vulnerability,
+		Status:                    enumHorusec.Approved,
+		Vulnerability:             horusec.Vulnerability{},
+	}
+
 	vulnerability := &horusec.Vulnerability{
 		VulnerabilityID: vulnerabilityID,
-		AnalysisID:      analysis.ID,
 		Severity:        severity.Low,
 		CommitEmail:     "test@test.com",
 	}
+
+	analysisVulnerabilities.Vulnerability = *vulnerability
 
 	databaseWrite.SetLogMode(true)
 	databaseWrite.GetConnection().Table(account.GetTable()).AutoMigrate(account)
@@ -105,6 +116,7 @@ func insertAnalysisData() error {
 	databaseWrite.GetConnection().Table(accountRepository.GetTable()).AutoMigrate(accountRepository)
 	databaseWrite.GetConnection().Table(accountCompany.GetTable()).AutoMigrate(accountCompany)
 	databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+	databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
 	databaseWrite.GetConnection().Table(vulnerability.GetTable()).AutoMigrate(vulnerability)
 
 	resp := databaseWrite.Create(account, account.GetTable())

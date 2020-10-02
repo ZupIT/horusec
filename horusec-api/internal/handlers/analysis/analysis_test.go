@@ -346,10 +346,10 @@ func TestPost(t *testing.T) {
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
-				Status:          enumsHorusec.Success,
-				CreatedAt:       time.Now(),
-				FinishedAt:      time.Now(),
-				Vulnerabilities: []horusec.Vulnerability{{}},
+				Status:                  enumsHorusec.Success,
+				CreatedAt:               time.Now(),
+				FinishedAt:              time.Now(),
+				AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{{}},
 			},
 			RepositoryName: "",
 		}

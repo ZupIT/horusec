@@ -155,9 +155,10 @@ func (f *Formatter) processOutput(output *yarn.Output) {
 	for _, advisory := range output.Advisories {
 		value := advisory
 		vulnerability := f.setVulnerabilitySeverityData(&value)
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+			horusec.AnalysisVulnerabilities{
+				Vulnerability: *vulnerability,
+			})
 	}
 }
 

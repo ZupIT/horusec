@@ -41,7 +41,7 @@ func CreateAnalysisMock() *horusec.Analysis {
 			VulnerabilityID:           vuls[key].VulnerabilityID,
 			AnalysisID:                analysis.ID,
 			Type:                      enumHorusec.Vulnerability,
-			IsApproved:                true,
+			Status:                    enumHorusec.Approved,
 			Vulnerability:             vuls[key],
 		})
 	}

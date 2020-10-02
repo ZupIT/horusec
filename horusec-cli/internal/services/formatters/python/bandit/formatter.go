@@ -97,9 +97,8 @@ func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []python.BanditResul
 	for index := range issues {
 		if f.notSkipVulnerabilityBecauseIsInformation(issues, index) {
 			vulnerability := f.setupVulnerabilitiesSeveritiesBandit(issues, index)
-			f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-				Vulnerability: *vulnerability,
-			})
+			f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+				horusec.AnalysisVulnerabilities{Vulnerability: *vulnerability})
 		} else {
 			totalInformation++
 		}

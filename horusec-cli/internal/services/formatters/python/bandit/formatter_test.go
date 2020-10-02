@@ -31,13 +31,13 @@ import (
 
 func getAnalysis() *horusec.Analysis {
 	return &horusec.Analysis{
-		ID:              uuid.New(),
-		RepositoryID:    uuid.New(),
-		CompanyID:       uuid.New(),
-		Status:          enumHorusec.Running,
-		Errors:          "",
-		CreatedAt:       time.Now(),
-		Vulnerabilities: []horusec.Vulnerability{},
+		ID:                      uuid.New(),
+		RepositoryID:            uuid.New(),
+		CompanyID:               uuid.New(),
+		Status:                  enumHorusec.Running,
+		Errors:                  "",
+		CreatedAt:               time.Now(),
+		AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{},
 	}
 }
 

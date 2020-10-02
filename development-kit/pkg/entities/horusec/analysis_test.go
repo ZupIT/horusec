@@ -141,7 +141,7 @@ func TestSetAnalysisFinishedData(t *testing.T) {
 func TestGetTotalVulnerabilities(t *testing.T) {
 	t.Run("should return total of 1 vulnerability", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{{}},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{{}},
 		}
 
 		assert.Equal(t, 1, analysis.GetTotalVulnerabilities())
@@ -151,13 +151,22 @@ func TestGetTotalVulnerabilities(t *testing.T) {
 func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 	t.Run("should return total vulns by severity", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{
-				{Severity: severity.Low},
-				{Severity: severity.Low},
-				{Severity: severity.Audit},
-				{Severity: severity.Medium},
-				{Severity: severity.High},
-				{Severity: severity.High},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{Severity: severity.Low},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.Audit},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.Medium},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.High},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.Info},
+				},
 			},
 		}
 
@@ -173,32 +182,23 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 func TestSortVulnerabilitiesByCriticality(t *testing.T) {
 	t.Run("should return total of 1 vulnerability", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{
-				{Severity: severity.Low},
-				{Severity: severity.Medium},
-				{Severity: severity.High},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{Severity: severity.Low},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.Medium},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.High},
+				},
 			},
 		}
 
 		analysis.SortVulnerabilitiesByCriticality()
 
-		assert.Equal(t, severity.High, analysis.Vulnerabilities[0].Severity)
-		assert.Equal(t, severity.Medium, analysis.Vulnerabilities[1].Severity)
-		assert.Equal(t, severity.Low, analysis.Vulnerabilities[2].Severity)
-	})
-}
-
-func TestSetAnalysisIDAndNewIDInVulnerabilities(t *testing.T) {
-	t.Run("vulnerabilities id and analysis id should not be nil", func(t *testing.T) {
-		analysis := &Analysis{
-			ID:              uuid.New(),
-			Vulnerabilities: []Vulnerability{{}},
-		}
-
-		analysis.SetAnalysisIDAndNewIDInVulnerabilities()
-		for _, item := range analysis.Vulnerabilities {
-			assert.NotEqual(t, uuid.Nil, item.VulnerabilityID)
-			assert.NotEqual(t, uuid.Nil, item.AnalysisID)
-		}
+		assert.Equal(t, severity.High, analysis.AnalysisVulnerabilities[0].Vulnerability.Severity)
+		assert.Equal(t, severity.Medium, analysis.AnalysisVulnerabilities[1].Vulnerability.Severity)
+		assert.Equal(t, severity.Low, analysis.AnalysisVulnerabilities[2].Vulnerability.Severity)
 	})
 }

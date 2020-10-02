@@ -131,9 +131,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) appendVulnerabilities(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-		Vulnerability: *vulnerability,
-	})
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }
 
 func (f *Formatter) getFilePathFromPackageName(filePath string) string {

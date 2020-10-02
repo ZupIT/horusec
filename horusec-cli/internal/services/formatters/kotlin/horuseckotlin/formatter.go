@@ -100,9 +100,10 @@ func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) er
 		// Set vulnerabilitySeverity.VulnHash value
 		vulnerability = vulnhash.Bind(vulnerability)
 
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+			horusec.AnalysisVulnerabilities{
+				Vulnerability: *vulnerability,
+			})
 	}
 	return nil
 }

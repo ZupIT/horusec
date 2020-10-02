@@ -49,7 +49,7 @@ func TestParseOutput(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
-		assert.Len(t, analysis.Vulnerabilities, 4)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
 
 	t.Run("Should error not found cs proj", func(t *testing.T) {

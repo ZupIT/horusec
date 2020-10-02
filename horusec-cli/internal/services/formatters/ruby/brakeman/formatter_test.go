@@ -48,7 +48,7 @@ func TestParseOutput(t *testing.T) {
 			formatter.StartAnalysis("")
 		})
 
-		assert.Len(t, analysis.Vulnerabilities, 4)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
 
 	t.Run("Should return error when parsing invalid output", func(t *testing.T) {

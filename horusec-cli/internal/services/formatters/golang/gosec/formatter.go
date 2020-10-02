@@ -129,9 +129,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) addVulnerabilityBySeverityGoSec(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-		Vulnerability: *vulnerability,
-	})
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }
 
 func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {

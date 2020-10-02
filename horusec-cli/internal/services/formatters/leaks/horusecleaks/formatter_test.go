@@ -41,7 +41,7 @@ func TestParseOutputHorusecJava(t *testing.T) {
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
-			assert.Equal(t, len(analysis.Vulnerabilities), 0)
+			assert.Equal(t, len(analysis.AnalysisVulnerabilities), 0)
 			assert.NotEqual(t, len(analysis.Errors), 0)
 		})
 	})
@@ -76,7 +76,7 @@ func TestParseOutputHorusecJava(t *testing.T) {
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
-			assert.NotEqual(t, len(analysis.Vulnerabilities), 0)
+			assert.NotEqual(t, len(analysis.AnalysisVulnerabilities), 0)
 		})
 	})
 	t.Run("HorusecJava Should return empty analysis when format is empty", func(t *testing.T) {
@@ -95,7 +95,7 @@ func TestParseOutputHorusecJava(t *testing.T) {
 
 		err := formatter.formatOutput("")
 		assert.NoError(t, err)
-		assert.Len(t, analysis.Vulnerabilities, 0)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 	t.Run("HorusecJava Should return empty analysis when format is null", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
@@ -113,7 +113,7 @@ func TestParseOutputHorusecJava(t *testing.T) {
 
 		err := formatter.formatOutput("null")
 		assert.NoError(t, err)
-		assert.Len(t, analysis.Vulnerabilities, 0)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 	t.Run("HorusecJava Should return error when invalid output", func(t *testing.T) {
 		analysis := &horusec.Analysis{}

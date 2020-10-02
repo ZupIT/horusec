@@ -41,7 +41,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		configs := &config.Config{}
 
 		analysis := &horusec.Analysis{
-			Vulnerabilities: []horusec.Vulnerability{},
+			AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{},
 		}
 
 		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
@@ -52,7 +52,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 	t.Run("Should not return errors with type JSON", func(t *testing.T) {
 		analysis := &horusec.Analysis{
-			Vulnerabilities: []horusec.Vulnerability{},
+			AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{},
 		}
 
 		configs := &config.Config{}
@@ -103,7 +103,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 	t.Run("Should return 12 vulnerabilities", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 
-		analysis.Vulnerabilities = append(analysis.Vulnerabilities, test.GetGoVulnerabilityWithSeverity(severity.Low))
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Low)})
 
 		printResults := &PrintResults{
 			analysis: analysis,
@@ -121,7 +121,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 		analysis := test.CreateAnalysisMock()
 
-		analysis.Vulnerabilities = append(analysis.Vulnerabilities, test.GetGoVulnerabilityWithSeverity(severity.Medium))
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Medium)})
 
 		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
 
@@ -132,10 +132,16 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 	t.Run("Should not return errors when configured to ignore vulnerabilities with severity LOW and MEDIUM", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 
-		analysis.Vulnerabilities = []horusec.Vulnerability{
-			test.GetGoVulnerabilityWithSeverity(severity.Medium),
-			test.GetGoVulnerabilityWithSeverity(severity.Low),
-			test.GetGoVulnerabilityWithSeverity(severity.High),
+		analysis.AnalysisVulnerabilities = []horusec.AnalysisVulnerabilities{
+			{
+				Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Medium),
+			},
+			{
+				Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Low),
+			},
+			{
+				Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.High),
+			},
 		}
 
 		configs := &config.Config{}
