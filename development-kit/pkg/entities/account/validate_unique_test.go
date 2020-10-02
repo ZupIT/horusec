@@ -15,18 +15,27 @@
 package account
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type ValidateUnique struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
-}
+func TestValidateValidateUnique(t *testing.T) {
+	t.Run("should return no error when valid data", func(t *testing.T) {
+		validateUnique := &ValidateUnique{
+			Email:    "test@test.com",
+			Username: "test",
+		}
+		err := validateUnique.Validate()
+		assert.NoError(t, err)
+	})
 
-func (v *ValidateUnique) Validate() error {
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Email, validation.Required, validation.Length(1, 255), is.Email),
-		validation.Field(&v.Username, validation.Length(1, 255), validation.Required),
-	)
+	t.Run("should return no error when invalid data", func(t *testing.T) {
+		validateUnique := &ValidateUnique{
+			Email: "test",
+		}
+		err := validateUnique.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "email: must be a valid email address")
+		assert.Contains(t, err.Error(), "username: cannot be blank")
+	})
 }
