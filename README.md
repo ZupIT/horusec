@@ -123,8 +123,8 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [NpmAudit]: https://docs.npmjs.com/cli/audit
 [YarnAudit]: https://yarnpkg.com/lang/en/docs/cli/audit/
 [Gitleaks]: https://github.com/zricethezav/gitleaks
-[HorusecKotlin]: https://github.com/ZupIT/horusec/tree/master/horusec-java
-[HorusecJava]: https://github.com/ZupIT/horusec/tree/master/horusec-kotlin
+[HorusecKotlin]: https://github.com/ZupIT/horusec/tree/master/horusec-kotlin
+[HorusecJava]: https://github.com/ZupIT/horusec/tree/master/horusec-java
 [HorusecLeaks]: https://github.com/ZupIT/horusec/tree/master/horusec-leaks
 [FindSec]: https://find-sec-bugs.github.io
 [Tfsec]: https://github.com/liamg/tfsec
