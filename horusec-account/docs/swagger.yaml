@@ -48,6 +48,13 @@ definitions:
       email:
         type: string
     type: object
+  account.ValidateUnique:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
   http.Response:
     properties:
       code:
@@ -73,7 +80,6 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
@@ -435,6 +441,51 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
+  /api/account/verify-already-used:
+    post:
+      consumes:
+      - application/json
+      description: Verify if email and username already in use!
+      operationId: validate-unique
+      parameters:
+      - description: validate unique info
+        in: body
+        name: ValidateUnique
+        required: true
+        schema:
+          $ref: '#/definitions/account.ValidateUnique'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: STATUS CREATED
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

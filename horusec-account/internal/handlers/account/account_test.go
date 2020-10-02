@@ -838,3 +838,109 @@ func TestLogout(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 }
+
+func TestVerifyAlreadyInUse(t *testing.T) {
+	t.Run("should return status code 200 when not in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		account := &accountEntities.Account{}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+
+		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUniqueBytes, _ := json.Marshal(validateUnique)
+
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
+		w := httptest.NewRecorder()
+
+		handler.VerifyAlreadyInUse(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return status code 400 when username is already in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		account := &accountEntities.Account{Username: "test"}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+
+		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUniqueBytes, _ := json.Marshal(validateUnique)
+
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
+		w := httptest.NewRecorder()
+
+		handler.VerifyAlreadyInUse(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return status code 400 when email is already in use", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		account := &accountEntities.Account{Email: "test@test.com"}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+
+		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUniqueBytes, _ := json.Marshal(validateUnique)
+
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
+		w := httptest.NewRecorder()
+
+		handler.VerifyAlreadyInUse(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return status code 400 when invalid validate unique", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		account := &accountEntities.Account{Email: "test@test.com"}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+
+		validateUnique := &accountEntities.ValidateUnique{Email: "test", Username: "test"}
+		validateUniqueBytes, _ := json.Marshal(validateUnique)
+
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
+		w := httptest.NewRecorder()
+
+		handler.VerifyAlreadyInUse(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
