@@ -93,6 +93,7 @@ const ListWrapper = styled.div`
   border-radius: 4px;
   background-color: ${({ theme }) => theme.colors.background.highlight};
   padding: 18px 8px 18px 18px;
+  position: relative;
 `;
 
 const List = styled.ul`
@@ -112,7 +113,6 @@ const List = styled.ul`
 `;
 
 const Item = styled.li<ItemProps>`
-  position: relative;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   list-style: none;
   border-radius: 4px;
@@ -157,7 +157,8 @@ const SettingsIcon = styled(Icon)`
 const Settings = styled.ul<SettingsProps>`
   position: absolute;
   z-index: -1;
-  right: 35px;
+  right: 0px;
+  top: 30%;
   background-color: ${({ theme }) => theme.colors.background.highlight};
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.32);
   border-radius: 2px;
@@ -169,7 +170,7 @@ const Settings = styled.ul<SettingsProps>`
   ${({ isVisible }) =>
     isVisible &&
     css`
-      height: 68px;
+      height: 102px;
       opacity: 1;
       z-index: 3;
     `};

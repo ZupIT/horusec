@@ -43,37 +43,39 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
 
   return (
     <>
-      <Styled.SubTitle>{t('CREATE_ACCOUNT')}</Styled.SubTitle>
+      <Styled.SubTitle>
+        {t('CREATE_ACCOUNT_SCREEN.CREATE_ACCOUNT')}
+      </Styled.SubTitle>
 
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
           onChangeValue={(field: Field) => setUsername(field)}
-          label={t('NAME')}
+          label={t('CREATE_ACCOUNT_SCREEN.NAME')}
           name="username"
           type="username"
-          invalidMessage={t('INVALID_NAME')}
+          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')}
           validation={isEmptyString}
         />
 
         <Styled.Field
-          label={t('EMAIL')}
+          label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
           onChangeValue={(field: Field) => setEmail(field)}
           name="email"
           type="text"
-          invalidMessage={t('INVALID_EMAIL')}
+          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')}
           validation={isValidEmail}
         />
 
         <Styled.Submit
           isDisabled={!email.isValid || !username.isValid}
-          text={t('NEXT')}
+          text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
           type="submit"
           rounded
         />
 
         <Styled.BackToLogin
           onClick={() => history.push('/login')}
-          text={t('BACK_LOGIN')}
+          text={t('CREATE_ACCOUNT_SCREEN.BACK')}
           outline
           rounded
         />

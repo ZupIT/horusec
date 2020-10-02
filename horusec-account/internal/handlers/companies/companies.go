@@ -69,20 +69,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	newRepo, err := h.controller.Create(accountID, company)
 	if err != nil {
-		h.checkCreateCompanyErrors(w, err)
+		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 
 	httpUtil.StatusCreated(w, newRepo)
-}
-
-func (h *Handler) checkCreateCompanyErrors(w http.ResponseWriter, err error) {
-	if err == errorsEnum.ErrorCompanyNameAlreadyInUse {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	httpUtil.StatusInternalServerError(w, err)
 }
 
 func (h *Handler) getCreateData(w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {

@@ -56,8 +56,8 @@ const Repositories: React.FC = () => {
     repositoryService
       .getAll(companyID)
       .then((result) => {
-        setRepositories(result.data.content);
-        setFilteredRepos(result.data.content);
+        setRepositories(result?.data?.content);
+        setFilteredRepos(result?.data?.content);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -102,13 +102,13 @@ const Repositories: React.FC = () => {
     <Styled.Wrapper>
       <Styled.Options>
         <SearchBar
-          placeholder={t('SEARCH_REPO')}
+          placeholder={t('REPOSITORIES_SCREEN.SEARCH_REPO')}
           onSearch={(value) => onSearchRepository(value)}
         />
 
         {isAdminOfCompany() ? (
           <Button
-            text={t('CREATE_REPO')}
+            text={t('REPOSITORIES_SCREEN.CREATE_REPO')}
             rounded
             width={180}
             icon="plus"
@@ -122,18 +122,22 @@ const Repositories: React.FC = () => {
           <Icon name="loading" size="200px" className="loading" />
         </Styled.LoadingWrapper>
 
-        <Styled.Title>{t('REPOSITORIES')}</Styled.Title>
+        <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
 
         <Styled.Table>
           <Styled.Head>
-            <Styled.Column>{t('NAME')}</Styled.Column>
-            <Styled.Column>{t('DESCRIPTION')}</Styled.Column>
-            <Styled.Column>{t('ACTION')}</Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.NAME')}</Styled.Column>
+            <Styled.Column>
+              {t('REPOSITORIES_SCREEN.DESCRIPTION')}
+            </Styled.Column>
+            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
             {!filteredRepos || filteredRepos.length <= 0 ? (
-              <Styled.EmptyText>{t('NO_REPOSITORIES')}</Styled.EmptyText>
+              <Styled.EmptyText>
+                {t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+              </Styled.EmptyText>
             ) : null}
 
             {filteredRepos.map((repo) => (
@@ -148,7 +152,7 @@ const Repositories: React.FC = () => {
                       rounded
                       outline
                       opaque
-                      text={t('DELETE')}
+                      text={t('REPOSITORIES_SCREEN.DELETE')}
                       width={90}
                       height={30}
                       icon="delete"
@@ -159,7 +163,7 @@ const Repositories: React.FC = () => {
                       outline
                       rounded
                       opaque
-                      text={t('EDIT')}
+                      text={t('REPOSITORIES_SCREEN.EDIT')}
                       width={90}
                       height={30}
                       icon="edit"
@@ -171,7 +175,7 @@ const Repositories: React.FC = () => {
                         outline
                         rounded
                         opaque
-                        text={t('INVITE')}
+                        text={t('REPOSITORIES_SCREEN.INVITE')}
                         width={90}
                         height={30}
                         icon="users"
@@ -183,7 +187,7 @@ const Repositories: React.FC = () => {
                       outline
                       rounded
                       opaque
-                      text={t('TOKENS')}
+                      text={t('REPOSITORIES_SCREEN.TOKENS')}
                       width={90}
                       height={30}
                       icon="lock"
@@ -198,8 +202,8 @@ const Repositories: React.FC = () => {
       </Styled.Content>
 
       <Dialog
-        message={t('CONFIRM_DELETE_REPO')}
-        confirmText={t('YES')}
+        message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_REPO')}
+        confirmText={t('REPOSITORIES_SCREEN.YES')}
         loadingConfirm={deleteIsLoading}
         defaultButton
         hasCancel

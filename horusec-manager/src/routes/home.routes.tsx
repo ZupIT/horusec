@@ -15,7 +15,10 @@
  */
 
 import React, { useEffect } from 'react';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
+import {
+  getCurrentCompany,
+  isAdminOfCompany,
+} from 'helpers/localStorage/currentCompany';
 import {
   useHistory,
   Switch,
@@ -43,7 +46,15 @@ function HomeRoutes() {
   return (
     <HomeLayout>
       <Switch>
-        <Redirect exact from="/home" to={`${path}/dashboard/organization`} />
+        <Redirect
+          exact
+          from="/home"
+          to={
+            isAdminOfCompany()
+              ? `${path}/dashboard/organization`
+              : `${path}/dashboard/repositories`
+          }
+        />
 
         <Route
           path={`${path}/dashboard/organization`}

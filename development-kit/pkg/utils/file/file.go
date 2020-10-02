@@ -15,6 +15,7 @@
 package file
 
 import (
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -58,4 +59,58 @@ func isSameExtensions(filename, path string) bool {
 
 func ReplacePathSeparator(path string) string {
 	return strings.ReplaceAll(path, "/", string(os.PathSeparator))
+}
+
+func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) {
+	_ = filepath.Walk(setProjectPathWithSubPath(projectPath, subPath),
+		func(walkPath string, info os.FileInfo, err error) error {
+			if err != nil || info.IsDir() || strings.Contains(walkPath, ".horusec") {
+				return err
+			}
+
+			if result := verifyMathAndFormat(projectPath, walkPath, ext); result != "" {
+				finalPath = result
+				return io.EOF
+			}
+			return nil
+		})
+
+	return finalPath
+}
+
+func setExtension(ext string) string {
+	return "*" + ext
+}
+
+func verifyMathAndFormat(projectPath, walkPath, ext string) string {
+	matched, err := filepath.Match(setExtension(ext), filepath.Base(walkPath))
+	if err != nil {
+		return ""
+	}
+
+	if matched {
+		return formatExtPath(projectPath, walkPath)
+	}
+
+	return ""
+}
+
+func setProjectPathWithSubPath(projectPath, projectSubPath string) string {
+	if projectSubPath != "" {
+		projectPath += "/"
+		projectPath += projectSubPath
+	}
+
+	return projectPath
+}
+
+func formatExtPath(projectPath, walkPath string) string {
+	basePathRemoved := strings.ReplaceAll(walkPath, projectPath, "")
+	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepath.Base(walkPath), "")
+
+	if extensionFileRemoved != "" && extensionFileRemoved[0:1] == "/" {
+		extensionFileRemoved = extensionFileRemoved[1:]
+	}
+
+	return extensionFileRemoved
 }
