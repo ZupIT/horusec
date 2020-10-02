@@ -76,7 +76,7 @@ func (c *Controller) Create(accountID uuid.UUID, data *accountEntities.Company) 
 	tx := c.databaseWrite.StartTransaction()
 	newCompany, err := c.repoCompany.Create(data, tx)
 	if err != nil {
-		return nil, c.companyUseCases.CheckCreateCompanyErrors(err)
+		return nil, err
 	}
 
 	if err = c.repoAccountCompany.CreateAccountCompany(
