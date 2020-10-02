@@ -38,7 +38,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -701,6 +700,88 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/verify-already-used": {
+            "post": {
+                "description": "Verify if email and username already in use!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "validate-unique",
+                "parameters": [
+                    {
+                        "description": "validate unique info",
+                        "name": "ValidateUnique",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.ValidateUnique"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "STATUS CREATED",
                         "schema": {
                             "allOf": [
                                 {
@@ -2743,6 +2824,17 @@ var doc = `{
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "account.ValidateUnique": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

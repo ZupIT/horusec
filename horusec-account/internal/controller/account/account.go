@@ -46,6 +46,7 @@ type IAccount interface {
 	RenewToken(refreshToken, accessToken string) (*accountEntities.LoginResponse, error)
 	Logout(accountID uuid.UUID) error
 	createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error)
+	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
 }
 
 type Account struct {
@@ -271,4 +272,18 @@ func (a *Account) createTokenWithAccountPermissions(account *accountEntities.Acc
 func (a *Account) getURLToResetPassword(email, code string) string {
 	base := env.GetHorusecManagerURL()
 	return fmt.Sprintf("%s/recovery-password/check-code?email=%s&code=%s", base, email, code)
+}
+
+func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error {
+	validateEmail, _ := a.accountRepository.GetByEmail(validateUnique.Email)
+	if validateEmail != nil && validateEmail.Email != "" {
+		return errors.ErrorEmailAlreadyInUse
+	}
+
+	validateUsername, _ := a.accountRepository.GetByUsername(validateUnique.Username)
+	if validateUsername != nil && validateUsername.Username != "" {
+		return errors.ErrorUsernameAlreadyInUse
+	}
+
+	return nil
 }

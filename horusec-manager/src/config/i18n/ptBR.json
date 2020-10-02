@@ -238,7 +238,9 @@
     "EMAIL_IN_USE": "O email informado já esta em uso.",
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
     "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização.",
-    "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação."
+    "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação.",
+    "REPO_NAME_IN_USE": "Nome do repositório já em uso.",
+    "USERNAME_IN_USE": "Nome de usuário já em uso"
   },
 
   "NOT_FOUND_SCREEN": {
