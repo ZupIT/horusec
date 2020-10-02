@@ -16,7 +16,9 @@ package companies
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	"testing"
+	"time"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
@@ -219,19 +221,24 @@ func TestUpdateAccountCompany(t *testing.T) {
 
 func TestList(t *testing.T) {
 	t.Run("should successfully retrieve companies list", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-		brokerMock := &broker.Mock{}
+		companyRepoMock := &company.Mock{}
 
-		account := &accountEntities.Account{}
-		accountResp := &response.Response{}
-		mockRead.On("First").Return(accountResp.SetData(account))
+		companyResponse := &[]accountEntities.CompanyResponse{
+			{
+				CompanyID:   uuid.New(),
+				Name:        "",
+				Role:        "",
+				Description: "",
+				CreatedAt:   time.Time{},
+				UpdatedAt:   time.Time{},
+			},
+		}
 
-		companies := &[]accountEntities.Company{}
-		companiesResp := &response.Response{}
-		mockRead.On("Related").Return(companiesResp.SetData(companies))
+		companyRepoMock.On("GetAllOfAccount").Return(companyResponse, nil)
 
-		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+		controller := Controller{
+			repoCompany: companyRepoMock,
+		}
 
 		repositories, err := controller.List(uuid.New())
 		assert.NoError(t, err)
