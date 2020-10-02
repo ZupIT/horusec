@@ -77,7 +77,7 @@ func TestGetConfigProjectPath(t *testing.T) {
 		result := monitorController.GetConfigProjectPath()
 
 		assert.NotEmpty(t, result)
-		assert.Equal(t, "test", result)
+		assert.Equal(t, "test/.horusec/00000000-0000-0000-0000-000000000000", result)
 	})
 }
 
@@ -89,7 +89,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
-		result := monitorController.AddWorkDirInCmd("test", "C#")
+		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
 		assert.NotEmpty(t, result)
 	})
@@ -100,7 +100,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
-		result := monitorController.AddWorkDirInCmd("test", "C#")
+		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
 		assert.NotEmpty(t, result)
 	})
