@@ -174,37 +174,6 @@ func TestCreateCompany(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
-
-	t.Run("should return status code 400 when company name already in use", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		mockTx := &relational.MockWrite{}
-		brokerMock := &broker.Mock{}
-
-		company := &accountEntities.Company{
-			Name: "test",
-		}
-
-		resp := &response.Response{}
-		resp.SetError(errorsEnum.ErrorCompanyNameAlreadyInUse)
-		mockTx.On("Create").Return(resp)
-		mockTx.On("CommitTransaction").Return(&response.Response{})
-
-		mockWrite.On("StartTransaction").Return(mockTx)
-
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
-		body, _ := json.Marshal(company)
-		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
-
-		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
-
-		w := httptest.NewRecorder()
-
-		handler.Create(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
 }
 
 func TestUpdateCompany(t *testing.T) {

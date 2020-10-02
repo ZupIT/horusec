@@ -44,6 +44,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
 
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnums.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
 		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
@@ -59,6 +64,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
+
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
@@ -78,6 +88,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("Create").Return(respWithError.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("RollbackTransaction").Return(respWithError)
+
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnums.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
