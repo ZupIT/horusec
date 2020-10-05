@@ -17,9 +17,9 @@ package horusec
 type AnalysisVulnerabilitiesStatus string
 
 const (
-	Approved AnalysisVulnerabilitiesStatus = "Approved"
-	Reproved AnalysisVulnerabilitiesStatus = "Reproved"
-	NoAction AnalysisVulnerabilitiesStatus = "NoAction"
+	Approved AnalysisVulnerabilitiesStatus = "approved"
+	Reproved AnalysisVulnerabilitiesStatus = "reproved"
+	NoAction AnalysisVulnerabilitiesStatus = "noAction"
 )
 
 func (a AnalysisVulnerabilitiesStatus) ToString() string {

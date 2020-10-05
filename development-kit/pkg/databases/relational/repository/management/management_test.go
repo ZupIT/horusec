@@ -14,16 +14,18 @@
 
 package management
 
-type IController interface {
-}
+import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/google/uuid"
+	"testing"
+)
 
-type Controller struct {
-}
+func Test(t *testing.T) {
+	t.Run("", func(t *testing.T) {
+		repository := NewManagementRepository(adapter.NewRepositoryRead(), adapter.NewRepositoryWrite())
 
-func NewManagementController() IController {
-	return &Controller{}
-}
-
-func (c *Controller) GetAllVulnerabilities() {
-
+		repository.GetAllVulnManagementData(uuid.MustParse("759d8c85-48d7-42f0-b7da-d320bbb0c5ca"), 1, 1,
+			horusec.FalsePositive, horusec.Reproved)
+	})
 }
