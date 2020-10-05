@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type ManagementList struct {
+type VulnManagement struct {
 	AnalysisID      uuid.UUID                                  `json:"analysisID"`
 	VulnerabilityID uuid.UUID                                  `json:"vulnerabilityID"`
 	RepositoryID    uuid.UUID                                  `json:"repositoryID"`

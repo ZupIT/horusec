@@ -21,6 +21,13 @@ func NewManagementRepository(databaseRead SQL.InterfaceRead, databaseWrite SQL.I
 	}
 }
 
-func (r *Repository) GetVulnByTime(repositoryID uuid.UUID) (managementList []dto.ManagementList, err error) {
-	return managementList, nil
+func (r *Repository) GetVulnByTime(repositoryID uuid.UUID) (vulnManagement []dto.VulnManagement, err error) {
+	query := r.databaseRead.
+		GetConnection().
+		Select("").
+		Table("analysis").
+		Joins("JOIN vulnerabilities ON analysis.analysis_id = vulnerabilities.analysis_id").
+		Where("repository_id = ?", repositoryID)
+
+	return vulnManagement, nil
 }
