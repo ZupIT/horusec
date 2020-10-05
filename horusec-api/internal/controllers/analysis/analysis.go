@@ -51,6 +51,7 @@ func NewAnalysisController(postgresRead relational.InterfaceRead, postgresWrite 
 }
 
 func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.UUID, error) {
+	c.postgresWrite.SetLogMode(true)
 	company, err := c.repoCompany.GetByID(analysisData.Analysis.CompanyID)
 	if err != nil {
 		return uuid.Nil, err
@@ -59,7 +60,7 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	if err != nil {
 		return uuid.Nil, err
 	}
-	c.setDefaultContentToCreate(analysisData.Analysis, company.Name, repo)
+	c.setDefaultContentToCreate(analysisData.Analysis, company, repo)
 	return c.createAnalyzeAndVulnerabilities(analysisData.Analysis)
 }
 
@@ -73,24 +74,18 @@ func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 	return c.repoRepository.Get(analysisData.Analysis.RepositoryID)
 }
 
-func (c *Controller) setDefaultContentToCreate(
-	analysis *horusecEntities.Analysis, companyName string, repo *accountEntities.Repository) {
-	analysis.GenerateID()
-	analysis.SetCompanyName(companyName)
-	analysis.SetRepositoryName(repo.Name)
-	analysis.SetRepositoryID(repo.RepositoryID)
-	analysis.ID = uuid.New()
-	for key := range analysis.AnalysisVulnerabilities {
-		vulnerabilityID := uuid.New()
-		analysis.AnalysisVulnerabilities[key].Vulnerability.VulnerabilityID = vulnerabilityID
-		analysis.AnalysisVulnerabilities[key].AnalysisID = analysis.ID
-		analysis.AnalysisVulnerabilities[key].VulnerabilityID = vulnerabilityID
-	}
+func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysis,
+	company *accountEntities.Company, repo *accountEntities.Repository) {
+	analysis.
+		SetCompanyName(company.Name).
+		SetRepositoryName(repo.Name).
+		SetRepositoryID(repo.RepositoryID).
+		SetupIDInAnalysisContents()
 }
 
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {
 	conn := c.postgresWrite.StartTransaction()
-	if err := c.createAnalyze(analysis, conn); err != nil {
+	if err := c.repoAnalysis.Create(analysis, conn); err != nil {
 		logger.LogError(
 			"{HORUSEC_API} Error in rollback transaction analysis",
 			conn.RollbackTransaction().GetError(),
@@ -102,8 +97,4 @@ func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.A
 
 func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*horusecEntities.Analysis, error) {
 	return c.repoAnalysis.GetByID(analysisID)
-}
-
-func (c *Controller) createAnalyze(analysis *horusecEntities.Analysis, conn relational.InterfaceWrite) error {
-	return c.repoAnalysis.Create(analysis, conn)
 }

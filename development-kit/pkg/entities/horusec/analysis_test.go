@@ -113,7 +113,7 @@ func TestSetRepositoryName(t *testing.T) {
 func TestGenerateID(t *testing.T) {
 	t.Run("should success return a new id", func(t *testing.T) {
 		analysis := &Analysis{}
-		analysis.GenerateID()
+		analysis.SetupIDInAnalysisContents()
 
 		assert.NotEmpty(t, analysis)
 	})

@@ -93,18 +93,17 @@ func insertAnalysisData() error {
 	}
 
 	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{
-		AnalysisVulnerabilitiesID: uuid.New(),
-		VulnerabilityID:           vulnerabilityID,
-		AnalysisID:                analysisID,
-		Type:                      enumHorusec.Vulnerability,
-		Status:                    enumHorusec.Approved,
-		Vulnerability:             horusec.Vulnerability{},
+		VulnerabilityID: vulnerabilityID,
+		AnalysisID:      analysisID,
+		Vulnerability:   horusec.Vulnerability{},
 	}
 
 	vulnerability := &horusec.Vulnerability{
 		VulnerabilityID: vulnerabilityID,
 		Severity:        severity.Low,
 		CommitEmail:     "test@test.com",
+		Type:            enumHorusec.Vulnerability,
+		Status:          enumHorusec.Approved,
 	}
 
 	analysisVulnerabilities.Vulnerability = *vulnerability

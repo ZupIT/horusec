@@ -37,12 +37,9 @@ func CreateAnalysisMock() *horusec.Analysis {
 	vuls := ReturnEachTypeOfVulnerability()
 	for key := range vuls {
 		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{
-			AnalysisVulnerabilitiesID: uuid.New(),
-			VulnerabilityID:           vuls[key].VulnerabilityID,
-			AnalysisID:                analysis.ID,
-			Type:                      enumHorusec.Vulnerability,
-			Status:                    enumHorusec.Approved,
-			Vulnerability:             vuls[key],
+			VulnerabilityID: vuls[key].VulnerabilityID,
+			AnalysisID:      analysis.ID,
+			Vulnerability:   vuls[key],
 		})
 	}
 	return analysis
@@ -82,6 +79,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.GoSec,
 			Language:     languages.Go,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -93,6 +92,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.SecurityCodeScan,
 			Language:     languages.DotNet,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -104,6 +105,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.Brakeman,
 			Language:     languages.Ruby,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -115,6 +118,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.NpmAudit,
 			Language:     languages.Javascript,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -126,6 +131,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.YarnAudit,
 			Language:     languages.Javascript,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -137,6 +144,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.Bandit,
 			Language:     languages.Python,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -148,6 +157,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.Bandit,
 			Language:     languages.Python,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:       "",
@@ -158,6 +169,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Details:    "",
 			Language:   languages.Leaks,
 			Severity:   severity.High,
+			Type:       enumHorusec.Vulnerability,
+			Status:     enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -169,6 +182,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.GitLeaks,
 			Language:     languages.Leaks,
 			Severity:     severity.High,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -180,6 +195,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.SpotBugs,
 			Language:     languages.Java,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -191,6 +208,8 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			SecurityTool: tools.SpotBugs,
 			Language:     languages.Kotlin,
 			Severity:     severity.Low,
+			Type:         enumHorusec.Vulnerability,
+			Status:       enumHorusec.Approved,
 		},
 	}
 }
