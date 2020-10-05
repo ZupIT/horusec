@@ -17,7 +17,7 @@ package horusec
 type AnalysisVulnerabilitiesStatus string
 
 const (
-	Approved AnalysisVulnerabilitiesStatus = "approved"
-	Reproved AnalysisVulnerabilitiesStatus = "reproved"
-	NoAction AnalysisVulnerabilitiesStatus = "noAction"
+	Approved AnalysisVulnerabilitiesStatus = "Approved"
+	Reproved AnalysisVulnerabilitiesStatus = "Reproved"
+	NoAction AnalysisVulnerabilitiesStatus = "NoAction"
 )
