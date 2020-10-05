@@ -14,16 +14,32 @@
 
 package management
 
+import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/management"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/google/uuid"
+)
+
 type IController interface {
+	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
+		vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error)
 }
 
 type Controller struct {
+	managementRepository management.IManagementRepository
 }
 
-func NewManagementController() IController {
-	return &Controller{}
+func NewManagementController(postgresRead relational.InterfaceRead,
+	postgresWrite relational.InterfaceWrite) IController {
+	return &Controller{
+		managementRepository: management.NewManagementRepository(postgresRead, postgresWrite),
+	}
 }
 
-func (c *Controller) GetAllVulnerabilities() {
-
+func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
+	vulnType horusecEnums.AnalysisVulnerabilitiesType,
+	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
+	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
 }

@@ -40,10 +40,10 @@ func NewManagementRepository(databaseRead SQL.InterfaceRead, databaseWrite SQL.I
 	}
 }
 
+//nolint
 func (r *Repository) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
 	vulnType horusecEnums.AnalysisVulnerabilitiesType,
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
-
 	query := r.databaseRead.
 		GetConnection().
 		Select("analysis.analysis_id, vulnerabilities.vulnerability_id, analysis.repository_id," +
@@ -62,7 +62,8 @@ func (r *Repository) GetAllVulnManagementData(repositoryID uuid.UUID, page, size
 	return vulnManagement, query.Error
 }
 
-func (r *Repository) getTotalVulnManagementData(repositoryID uuid.UUID, vulnType horusecEnums.AnalysisVulnerabilitiesType,
+func (r *Repository) getTotalVulnManagementData(repositoryID uuid.UUID,
+	vulnType horusecEnums.AnalysisVulnerabilitiesType,
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (count int) {
 	query := r.databaseRead.
 		GetConnection().

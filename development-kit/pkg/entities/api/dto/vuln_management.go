@@ -24,10 +24,10 @@ import (
 
 type VulnManagement struct {
 	TotalItems int    `json:"totalItems"`
-	Data       []data `json:"data"`
+	Data       []Data `json:"data"`
 }
 
-type data struct {
+type Data struct {
 	AnalysisID      uuid.UUID                                  `json:"analysisID"`
 	VulnerabilityID uuid.UUID                                  `json:"vulnerabilityID"`
 	RepositoryID    uuid.UUID                                  `json:"repositoryID"`
