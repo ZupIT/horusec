@@ -12,12 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package routes
-
-const (
-	AnalysisHandler         = "/api/analysis"
-	TokensRepositoryHandler = "/api/companies/{companyID}/repositories/{repositoryID}/tokens" // nolint
-	TokensCompanyHandler    = "/api/companies/{companyID}/tokens"                             // nolint
-	HealthHandler           = "/api/health"
-	ManagementHandler       = "/api/management"
-)
+package management

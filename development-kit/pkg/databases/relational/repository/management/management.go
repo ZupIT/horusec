@@ -88,7 +88,7 @@ func (r *Repository) setWhereFilter(query *gorm.DB, repositoryID uuid.UUID,
 	}
 
 	if vulnType != "" {
-		return query.Where("repository_id = ? AND vulnerabilities.status = ?", repositoryID, vulnType)
+		return query.Where("repository_id = ? AND vulnerabilities.type = ?", repositoryID, vulnType)
 	}
 
 	return query.Where("repository_id = ?", repositoryID)
