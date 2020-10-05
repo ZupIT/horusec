@@ -28,6 +28,6 @@ type Mock struct {
 
 func (m *Mock) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
-	args := m.MethodCalled("Update")
+	args := m.MethodCalled("GetAllVulnManagementData")
 	return args.Get(0).(dto.VulnManagement), mockUtils.ReturnNilOrError(args, 1)
 }

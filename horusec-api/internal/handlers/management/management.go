@@ -54,17 +54,13 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
-		httpUtil.StatusUnprocessableEntity(w, err)
+		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	page, size, err := h.getPageSize(r)
-	if err != nil {
-		httpUtil.StatusUnprocessableEntity(w, err)
-		return
-	}
-
-	result, err := h.managementController.GetAllVulnManagementData(repositoryID, page, size, h.getVulnType(r), h.getVulnStatus(r))
+	page, size := h.getPageSize(r)
+	result, err := h.managementController.GetAllVulnManagementData(repositoryID, page, size,
+		h.getVulnType(r), h.getVulnStatus(r))
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
@@ -73,14 +69,10 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	httpUtil.StatusOK(w, result)
 }
 
-func (h *Handler) getPageSize(r *netHTTP.Request) (page int, size int, err error) {
-	page, err = strconv.Atoi(r.URL.Query().Get("page"))
-	if err != nil {
-		return page, 0, err
-	}
-
-	size, err = strconv.Atoi(r.URL.Query().Get("size"))
-	return page, size, err
+func (h *Handler) getPageSize(r *netHTTP.Request) (page, size int) {
+	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
+	size, _ = strconv.Atoi(r.URL.Query().Get("size"))
+	return page, size
 }
 
 func (h *Handler) getVulnType(r *netHTTP.Request) horusec.AnalysisVulnerabilitiesType {
