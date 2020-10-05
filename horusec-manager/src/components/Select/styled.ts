@@ -92,6 +92,7 @@ const OptionsList = styled.div<OptionsListProps>`
   position: absolute;
   top: 25px;
   left: 0;
+  background-color: ${({ theme }) => theme.colors.select.background};
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   width: ${({ width }) => (width ? width : '100%')};
@@ -130,7 +131,6 @@ const OptionItem = styled.div<OptionItem>`
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   line-height: ${({ theme }) => theme.metrics.fontSize.small} !important;
   color: ${({ theme }) => theme.colors.select.text};
-  background-color: ${({ theme }) => theme.colors.select.background};
   cursor: pointer;
   padding: 10px;
 

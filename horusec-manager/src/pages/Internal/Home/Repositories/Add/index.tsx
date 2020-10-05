@@ -83,7 +83,6 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={600}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>

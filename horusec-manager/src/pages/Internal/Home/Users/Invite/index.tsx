@@ -102,7 +102,6 @@ const InviteToCompany: React.FC<Props> = ({
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={450}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>{t('USERS_SCREEN.INVITE_SUBTITLE')}</Styled.SubTitle>
