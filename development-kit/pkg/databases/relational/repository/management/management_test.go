@@ -16,16 +16,146 @@ package management
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
+	"time"
 )
 
-func Test(t *testing.T) {
-	t.Run("", func(t *testing.T) {
-		repository := NewManagementRepository(adapter.NewRepositoryRead(), adapter.NewRepositoryWrite())
+func TestGetAllVulnManagementData(t *testing.T) {
+	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+	_ = os.Setenv(config.EnvRelationalLogMode, "false")
 
-		repository.GetAllVulnManagementData(uuid.MustParse("759d8c85-48d7-42f0-b7da-d320bbb0c5ca"), 1, 1,
-			horusec.FalsePositive, horusec.Reproved)
+	databaseWrite := adapter.NewRepositoryWrite()
+	databaseRead := adapter.NewRepositoryRead()
+
+	account := &accountEntities.Account{
+		Email:     "test@test.com",
+		Username:  "test",
+		CreatedAt: time.Now(),
+		Password:  "test",
+		AccountID: uuid.New(),
+	}
+
+	company := &accountEntities.Company{
+		CompanyID:   uuid.New(),
+		Name:        "test",
+		Description: "test",
+		CreatedAt:   time.Now(),
+	}
+
+	repository := &accountEntities.Repository{
+		RepositoryID: uuid.New(),
+		CompanyID:    company.CompanyID,
+		Name:         "test",
+		CreatedAt:    time.Now(),
+	}
+
+	accountCompany := &roles.AccountCompany{
+		AccountID: account.AccountID,
+		CompanyID: company.CompanyID,
+		Role:      rolesEnum.Admin,
+		CreatedAt: time.Now(),
+	}
+
+	accountRepository := &roles.AccountRepository{
+		AccountID:    account.AccountID,
+		CompanyID:    company.CompanyID,
+		RepositoryID: repository.RepositoryID,
+		Role:         rolesEnum.Admin,
+		CreatedAt:    time.Now(),
+	}
+
+	analysis := &horusecEntities.Analysis{
+		ID:             uuid.New(),
+		RepositoryID:   repository.RepositoryID,
+		RepositoryName: "test",
+		CompanyID:      company.CompanyID,
+		CompanyName:    "test",
+		Status:         "success",
+		Errors:         "",
+		CreatedAt:      time.Now(),
+		FinishedAt:     time.Now(),
+	}
+
+	vulnerability := &horusecEntities.Vulnerability{
+		VulnerabilityID: uuid.New(),
+		Line:            "test",
+		Column:          "test",
+	}
+
+	analysisVulnerabilities := &horusecEntities.AnalysisVulnerabilities{
+		VulnerabilityID: vulnerability.VulnerabilityID,
+		AnalysisID:      analysis.ID,
+	}
+
+	databaseWrite.SetLogMode(true)
+	databaseWrite.GetConnection().Table(account.GetTable()).AutoMigrate(account)
+	databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+	databaseWrite.GetConnection().Table(accountRepository.GetTable()).AutoMigrate(accountRepository)
+	databaseWrite.GetConnection().Table(accountCompany.GetTable()).AutoMigrate(accountCompany)
+	databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+	databaseWrite.GetConnection().Table(vulnerability.GetTable()).AutoMigrate(vulnerability)
+	databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
+
+	resp := databaseWrite.Create(account, account.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(company, company.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(repository, repository.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(accountRepository, accountRepository.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(accountCompany, accountCompany.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(analysis, analysis.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(vulnerability, vulnerability.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(analysisVulnerabilities, analysisVulnerabilities.GetTable())
+	assert.NoError(t, resp.GetError())
+
+	t.Run("should success get vulnerability data with no errors", func(t *testing.T) {
+		repo := NewManagementRepository(databaseRead, databaseWrite)
+
+		result, err := repo.GetAllVulnManagementData(repository.RepositoryID, 1, 1, "", "")
+
+		assert.NoError(t, err)
+		assert.Len(t, result.Data, 1)
+	})
+
+	t.Run("should success get vulnerability data with no errors", func(t *testing.T) {
+		repo := NewManagementRepository(databaseRead, databaseWrite)
+
+		result, err := repo.GetAllVulnManagementData(repository.RepositoryID, 1, 1, "test", "")
+
+		assert.NoError(t, err)
+		assert.Len(t, result.Data, 0)
+	})
+
+	t.Run("should success get vulnerability data with no errors", func(t *testing.T) {
+		repo := NewManagementRepository(databaseRead, databaseWrite)
+
+		result, err := repo.GetAllVulnManagementData(repository.RepositoryID, 1, 1, "", "test")
+
+		assert.NoError(t, err)
+		assert.Len(t, result.Data, 0)
+	})
+
+	t.Run("should success get vulnerability data with no errors", func(t *testing.T) {
+		repo := NewManagementRepository(databaseRead, databaseWrite)
+
+		result, err := repo.GetAllVulnManagementData(repository.RepositoryID, 1, 1, "test", "test")
+
+		assert.NoError(t, err)
+		assert.Len(t, result.Data, 0)
 	})
 }
