@@ -68,6 +68,12 @@ func (ar *Repository) Create(analysis *horusec.Analysis, tx SQL.InterfaceWrite) 
 	if tx != nil {
 		conn = tx
 	}
+	for key := range analysis.AnalysisVulnerabilities {
+		vul := analysis.AnalysisVulnerabilities[key].Vulnerability
+		if err := ar.createVulnerability(vul, conn); err != nil {
+			return err
+		}
+	}
 	response := conn.Create(analysis, analysis.GetTable())
 	return response.GetError()
 }
@@ -77,7 +83,8 @@ func (ar *Repository) GetByID(analysisID uuid.UUID) (*horusec.Analysis, error) {
 	query := ar.databaseRead.
 		SetFilter(map[string]interface{}{"analysis_id": analysisID.String()}).
 		Limit(1).
-		Preload("Vulnerabilities")
+		Preload("AnalysisVulnerabilities").
+		Preload("Vulnerability")
 	response := ar.databaseRead.Find(analysis, query, analysis.GetTable())
 	if err := response.GetError(); err != nil {
 		return nil, err
@@ -280,4 +287,10 @@ func (ar *Repository) setWhereFilter(query *gorm.DB, companyID, repositoryID uui
 
 	return query.Where("finished_at BETWEEN ? AND ? AND repository_id = ?",
 		initialDate, finalDate, repositoryID)
+}
+
+func (ar *Repository) createVulnerability(vul horusec.Vulnerability, conn SQL.InterfaceWrite) error {
+	//existingEntity := &horusec.Vulnerability{}
+	//ar.databaseRead.Find()
+	return conn.Create(vul, vul.GetTable()).GetError()
 }

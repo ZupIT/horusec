@@ -17,6 +17,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type AnalysisData struct {
@@ -26,5 +27,7 @@ type AnalysisData struct {
 
 func (a *AnalysisData) ToBytes() []byte {
 	bytes, _ := json.Marshal(a)
+	ct := string(bytes)
+	logger.LogWarnWithLevel("ATTENTION TO BODY SENDING TO API: ", logger.WarnLevel, ct)
 	return bytes
 }

@@ -17,7 +17,26 @@ package horusec
 type AnalysisVulnerabilitiesType string
 
 const (
-	FalsePositive AnalysisVulnerabilitiesType = "FalsePositive"
-	RiskAccepted  AnalysisVulnerabilitiesType = "RiskAccepted"
-	Vulnerability AnalysisVulnerabilitiesType = "Vulnerability"
+	FalsePositive AnalysisVulnerabilitiesType = "falsePositive"
+	RiskAccepted  AnalysisVulnerabilitiesType = "riskAccepted"
+	Vulnerability AnalysisVulnerabilitiesType = "vulnerability"
 )
+
+func (a AnalysisVulnerabilitiesType) ToString() string {
+	return string(a)
+}
+
+func valuesAnalysisVulnerabilitiesType() []AnalysisVulnerabilitiesType {
+	return []AnalysisVulnerabilitiesType{
+		FalsePositive, RiskAccepted, Vulnerability,
+	}
+}
+
+func IsValidAnalysisVulnerabilitiesType(data AnalysisVulnerabilitiesType) bool {
+	for _, validContent := range valuesAnalysisVulnerabilitiesType() {
+		if data == validContent {
+			return true
+		}
+	}
+	return false
+}

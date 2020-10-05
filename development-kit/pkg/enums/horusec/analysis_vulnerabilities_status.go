@@ -21,3 +21,7 @@ const (
 	Reproved AnalysisVulnerabilitiesStatus = "Reproved"
 	NoAction AnalysisVulnerabilitiesStatus = "NoAction"
 )
+
+func (a AnalysisVulnerabilitiesStatus) ToString() string {
+	return string(a)
+}

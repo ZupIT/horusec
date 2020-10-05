@@ -110,14 +110,10 @@ func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {
 }
 
 func (au *UseCases) validateVulnerabilities(
-	vulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
+	analysisVulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
 	return func(value interface{}) error {
-		if len(vulnerabilities) == 0 {
-			return nil
-		}
-		for key := range vulnerabilities {
-			err := au.setupValidationVulnerabilities(key, vulnerabilities)
-			if err != nil {
+		for key := range analysisVulnerabilities {
+			if err := au.setupValidationVulnerabilities(&analysisVulnerabilities[key].Vulnerability); err != nil {
 				return err
 			}
 		}
@@ -125,15 +121,18 @@ func (au *UseCases) validateVulnerabilities(
 	}
 }
 
-func (au *UseCases) setupValidationVulnerabilities(
-	key int, vulnerabilities []horusecEntities.AnalysisVulnerabilities) error {
-	return validation.ValidateStruct(&vulnerabilities[key],
-		validation.Field(&vulnerabilities[key].Vulnerability.SecurityTool, validation.Required,
+func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntities.Vulnerability) error {
+	return validation.ValidateStruct(vulnerability,
+		validation.Field(&vulnerability.SecurityTool, validation.Required,
 			validation.In(au.sliceTools()...)),
-		validation.Field(&vulnerabilities[key].Vulnerability.Language, validation.Required,
+		validation.Field(&vulnerability.Language, validation.Required,
 			validation.In(au.sliceLanguages()...)),
-		validation.Field(&vulnerabilities[key].Vulnerability.Severity, validation.Required,
+		validation.Field(&vulnerability.Severity, validation.Required,
 			validation.In(au.sliceSeverities()...)),
+		validation.Field(&vulnerability.Status,
+			validation.Required, validation.In(horusec.Approved, horusec.Reproved, horusec.NoAction)),
+		validation.Field(&vulnerability.Type,
+			validation.Required, validation.In(horusec.FalsePositive, horusec.RiskAccepted, horusec.Vulnerability)),
 	)
 }
 

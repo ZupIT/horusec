@@ -88,20 +88,28 @@ func (a *Analysis) SetAnalysisError(err error) {
 	}
 }
 
-func (a *Analysis) GenerateID() {
+func (a *Analysis) SetupIDInAnalysisContents() {
 	a.ID = uuid.New()
+	for key := range a.AnalysisVulnerabilities {
+		a.AnalysisVulnerabilities[key].SetCreatedAt()
+		a.AnalysisVulnerabilities[key].SetAnalysisID(a.ID)
+		a.AnalysisVulnerabilities[key].SetVulnerabilityID(uuid.New())
+	}
 }
 
-func (a *Analysis) SetCompanyName(companyName string) {
+func (a *Analysis) SetCompanyName(companyName string) *Analysis {
 	a.CompanyName = companyName
+	return a
 }
 
-func (a *Analysis) SetRepositoryName(repositoryName string) {
+func (a *Analysis) SetRepositoryName(repositoryName string) *Analysis {
 	a.RepositoryName = repositoryName
+	return a
 }
 
-func (a *Analysis) SetRepositoryID(repositoryID uuid.UUID) {
+func (a *Analysis) SetRepositoryID(repositoryID uuid.UUID) *Analysis {
 	a.RepositoryID = repositoryID
+	return a
 }
 
 func (a *Analysis) SetAnalysisFinishedData() *Analysis {
