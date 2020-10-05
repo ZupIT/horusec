@@ -62,18 +62,18 @@ func ReplacePathSeparator(path string) string {
 }
 
 func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) {
-	_ = filepath.Walk(setProjectPathWithSubPath(projectPath, subPath),
-		func(walkPath string, info os.FileInfo, err error) error {
-			if err != nil || info.IsDir() || strings.Contains(walkPath, ".horusec") {
-				return err
-			}
+	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
+	_ = filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 
-			if result := verifyMathAndFormat(projectPath, walkPath, ext); result != "" {
-				finalPath = result
-				return io.EOF
-			}
-			return nil
-		})
+		if result := verifyMathAndFormat(projectPath, walkPath, ext); result != "" {
+			finalPath = result
+			return io.EOF
+		}
+		return nil
+	})
 
 	return finalPath
 }

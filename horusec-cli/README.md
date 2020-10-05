@@ -241,19 +241,20 @@ All available flags are:
 For run an analysis is necessary get an token of repository.
 Using the web platform **[HORUSEC-MANAGER](http://localhost:8043)** follow there steps bellow you can generate an new token:
 
-- Access the web platform create a new user <a href="../assets/manager/create-account-step1.png">as the picture shows</a>
-- Fill in the required fields and click register <a href="../assets/manager/create-account-step2.png">as the picture shows</a>
-- **Confirm in your e-mail** the registry and login in system <a href="../assets/manager/login.png">as the picture shows</a>
-- Click in add button to add company <a href="../assets/manager/create-company-step1.png">as the picture shows</a>
-- Create an new company <a href="../assets/manager/create-company-step2.png">as the picture shows</a>
-- Select your company <a href="../assets/manager/create-company-step3.png">as the picture shows</a>
-- Go to repositories page <a href="../assets/manager/create-repository-step1.png">as the picture shows</a>
-- Click in add button to add repository <a href="../assets/manager/create-repository-step2.png">as the picture shows</a>
-- Create an new repository <a href="../assets/manager/create-repository-step3.png">as the picture shows</a>
-- Click in tokens buttons to show all tokens of the repository <a href="../assets/manager/create-token-step1.png">as the picture shows</a>
-- Click in add button to add new token <a href="../assets/manager/create-token-step2.png">as the picture shows</a>
-- Fill in the required fields and click save <a href="../assets/manager/create-token-step3.png">as the picture shows</a>
-- Copy or Save the token generated **for use in the horusec-cli** <a href="../assets/manager/create-token-step4.png">as the picture shows</a>
+- Access the web platform create a new user <a href="../assets/steps-generate-repository-token/step1.png">as the picture shows</a>
+- Fill in the required fields <a href="../assets/steps-generate-repository-token/step2.png">as the picture shows</a>
+- Fill in the required fields and click register <a href="../assets/steps-generate-repository-token/step3.png">as the picture shows</a>
+- **Confirm in your e-mail** the registry and login in system <a href="../assets/steps-generate-repository-token/step4.png">as the picture shows</a>
+- Click in add button to add company <a href="../assets/steps-generate-repository-token/step5.png">as the picture shows</a>
+- Create an new company <a href="../assets/steps-generate-repository-token/step6.png">as the picture shows</a>
+- Select your company <a href="../assets/steps-generate-repository-token/step7.png">as the picture shows</a>
+- Go to repositories page <a href="../assets/steps-generate-repository-token/step8.png">as the picture shows</a>
+- Click in add button to add repository <a href="../assets/steps-generate-repository-token/step9.png">as the picture shows</a>
+- Create an new repository <a href="../assets/steps-generate-repository-token/step10.png">as the picture shows</a>
+- Click in tokens buttons to show all tokens of the repository <a href="../assets/steps-generate-repository-token/step11.png">as the picture shows</a>
+- Click in add button to add new token <a href="../assets/steps-generate-repository-token/step12.png">as the picture shows</a>
+- Fill in the required fields and click save <a href="../assets/steps-generate-repository-token/step13.png">as the picture shows</a>
+- Copy or Save the token generated **for use in the horusec-cli** <a href="../assets/steps-generate-repository-token/step14.png">as the picture shows</a>
 
 #### WorkDir
 The WorkDir is an representation to run multiple projects inside one directory, that can be configured through the horusec-config.json file.

@@ -77,7 +77,7 @@ func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntiti
 	*accountEntities.Repository, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	if err := c.repository.Create(repositoryEntity, transaction); err != nil {
-		return nil, c.repositoriesUseCases.CheckCreateRepositoryErrors(err)
+		return nil, err
 	}
 
 	if err := c.accountRepositoryRepo.Create(repositoryEntity.ToAccountRepository(accountEnum.Admin, accountID),

@@ -15,7 +15,7 @@
  */
 
 import http from 'services/axios/default';
-import { SERVICE_COMPANY } from './enpoints';
+import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
 
 const getAll = () => {
   return http.get(SERVICE_COMPANY);
@@ -63,6 +63,20 @@ const removeUserInCompany = (companyId: string, accountId: string) => {
   return http.delete(`${SERVICE_COMPANY}/${companyId}/roles/${accountId}`);
 };
 
+const getAllTokens = (companyId: string) => {
+  return http.get(`${SERVICE_API}/${companyId}/tokens`);
+};
+
+const createToken = (companyId: string, description: string) => {
+  return http.post(`${SERVICE_API}/${companyId}/tokens`, {
+    description,
+  });
+};
+
+const removeToken = (companyId: string, tokenId: string) => {
+  return http.delete(`${SERVICE_API}/${companyId}/tokens/${tokenId}`);
+};
+
 export default {
   getAll,
   create,
@@ -73,4 +87,7 @@ export default {
   createUserInCompany,
   editUserInCompany,
   removeUserInCompany,
+  createToken,
+  removeToken,
+  getAllTokens,
 };

@@ -18,7 +18,7 @@ export interface Company {
   companyID: string;
   name: string;
   description: string;
-  role?: string;
+  role: string;
   createdAt?: string;
   updatedAt?: string;
 }

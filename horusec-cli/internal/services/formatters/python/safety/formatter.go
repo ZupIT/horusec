@@ -71,7 +71,7 @@ func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.Analy
 		Image: ImageName,
 		Tag:   ImageTag,
 		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt")),
+			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
 }

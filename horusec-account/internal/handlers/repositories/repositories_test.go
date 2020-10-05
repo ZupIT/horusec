@@ -73,6 +73,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
 
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnum.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
 		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
@@ -96,6 +101,11 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
 
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
 		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
@@ -118,6 +128,11 @@ func TestCreate(t *testing.T) {
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 		mockWrite.On("StartTransaction").Return(mockWrite)
+
+		respFind := &response.Response{}
+		respFind.SetError(errors.New("test"))
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 
@@ -172,6 +187,10 @@ func TestCreate(t *testing.T) {
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp.SetError(errorsEnum.ErrorRepositoryNameAlreadyInUse))
 		mockWrite.On("StartTransaction").Return(mockWrite)
+
+		respFind := &response.Response{}
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		repositoryBytes, _ := json.Marshal(getRepositoryMock())
 

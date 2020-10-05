@@ -139,7 +139,7 @@ func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.Analy
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GoSec),
 		Language: languages.Go,
 	}
 }

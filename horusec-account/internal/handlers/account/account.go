@@ -336,3 +336,29 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	httpUtil.StatusNoContent(w)
 }
+
+// @Tags Account
+// @Description Verify if email and username already in use!
+// @ID validate-unique
+// @Accept  json
+// @Produce  json
+// @Param ValidateUnique body account.ValidateUnique true "validate unique info"
+// @Success 201 {object} http.Response{content=string} "STATUS CREATED"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/account/verify-already-used [post]
+func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
+	validateUnique, err := h.useCases.NewValidateUniqueFromReadCloser(r.Body)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	err = h.controller.VerifyAlreadyInUse(validateUnique)
+	if err != nil {
+		h.checkCreateAccountErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, "")
+}

@@ -179,10 +179,22 @@ func isModuleInScannerText(isFoundModule bool, module, scannerText string) bool 
 
 func (f *Formatter) getConfigDataNpm(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image: ImageName,
-		Tag:   ImageTag,
-		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "package-lock.json")),
+		Image:    ImageName,
+		Tag:      ImageTag,
+		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
+}
+
+func (f *Formatter) getConfigCMD(projectSubPath string) string {
+	projectPath := f.GetConfigProjectPath()
+	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
+	if newProjectSubPath != "" {
+		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.NpmAudit)
+	}
+	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
+	if newProjectSubPath != "" {
+		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.NpmAudit)
+	}
+	return f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.NpmAudit)
 }

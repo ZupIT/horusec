@@ -22,7 +22,11 @@ import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
-import { isAdminOfCompany } from 'helpers/localStorage/currentCompany';
+import {
+  isAdminOfCompany,
+  clearCurrentCompany,
+} from 'helpers/localStorage/currentCompany';
+import ReactTooltip from 'react-tooltip';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -108,6 +112,11 @@ const SideMenu: React.FC = () => {
     }
   };
 
+  const backToOrganization = () => {
+    clearCurrentCompany();
+    history.replace('/organization');
+  };
+
   const fetchSubRoutes = () =>
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
@@ -141,9 +150,19 @@ const SideMenu: React.FC = () => {
         <Styled.OptionsWrapper>
           <Helper />
 
+          <Styled.Back
+            dataFor="side-options"
+            dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
+            name="grid"
+            size="15"
+            onClick={backToOrganization}
+          />
+
           <Logout />
 
           <Language />
+
+          <ReactTooltip id="side-options" place="top" type="dark" insecure />
         </Styled.OptionsWrapper>
       </Styled.SideMenu>
 

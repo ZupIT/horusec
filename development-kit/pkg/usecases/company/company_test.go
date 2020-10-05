@@ -16,8 +16,6 @@ package company
 
 import (
 	"encoding/json"
-	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -81,23 +79,5 @@ func TestNewCompanyFromReadCloser(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Nil(t, company)
-	})
-}
-
-func TestCheckCreateCompanyErrors(t *testing.T) {
-	t.Run("should return error company name already in use", func(t *testing.T) {
-		useCases := NewCompanyUseCases()
-		errMock := errors.New("pq: duplicate key value violates unique constraint \"uk_companies_username\"")
-		err := useCases.CheckCreateCompanyErrors(errMock)
-		assert.Error(t, err)
-		assert.Equal(t, errorsEnums.ErrorCompanyNameAlreadyInUse, err)
-	})
-
-	t.Run("should return generic error", func(t *testing.T) {
-		useCases := NewCompanyUseCases()
-		errMock := errors.New("test")
-		err := useCases.CheckCreateCompanyErrors(errMock)
-		assert.Error(t, err)
-		assert.NotEqual(t, errorsEnums.ErrorCompanyNameAlreadyInUse, err)
 	})
 }

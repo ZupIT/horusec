@@ -221,7 +221,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath),
+		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.SpotBugs),
 		Language: languages.Java,
 	}
 }

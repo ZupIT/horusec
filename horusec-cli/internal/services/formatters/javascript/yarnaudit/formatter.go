@@ -207,10 +207,22 @@ func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
 
 func (f *Formatter) getConfigDataYarn(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
-		Image: npmaudit.ImageName,
-		Tag:   npmaudit.ImageTag,
-		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "yarn.lock")),
+		Image:    npmaudit.ImageName,
+		Tag:      npmaudit.ImageTag,
+		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
+}
+
+func (f *Formatter) getConfigCMD(projectSubPath string) string {
+	projectPath := f.GetConfigProjectPath()
+	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
+	if newProjectSubPath != "" {
+		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.YarnAudit)
+	}
+	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
+	if newProjectSubPath != "" {
+		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.YarnAudit)
+	}
+	return f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.YarnAudit)
 }

@@ -25,6 +25,7 @@ type IAccount interface {
 	GetByAccountID(accountID uuid.UUID) (*accountEntities.Account, error)
 	GetByEmail(email string) (*accountEntities.Account, error)
 	Update(account *accountEntities.Account) error
+	GetByUsername(username string) (*accountEntities.Account, error)
 }
 
 type Account struct {
@@ -61,4 +62,11 @@ func (a *Account) Update(account *accountEntities.Account) error {
 	account.SetUpdatedAt()
 	return a.databaseWrite.Update(account.ToMap(), map[string]interface{}{"account_id": account.AccountID},
 		account.GetTable()).GetError()
+}
+
+func (a *Account) GetByUsername(username string) (*accountEntities.Account, error) {
+	account := &accountEntities.Account{}
+	filter := a.databaseRead.SetFilter(map[string]interface{}{"username": username})
+	result := a.databaseRead.Find(account, filter, account.GetTable())
+	return account, result.GetError()
 }

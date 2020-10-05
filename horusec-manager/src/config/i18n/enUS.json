@@ -76,7 +76,19 @@
     "INVALID_ORGANIZATION_NAME": "Invalid organization name.",
     "CANCEL": "Cancel",
     "SAVE": "Save",
-    "EDIT_ORGANIZATION_NAME": "Edit the organization name"
+    "EDIT_ORGANIZATION_NAME": "Edit the organization name",
+    "TOKENS": "Tokens",
+    "TOKEN": "Token",
+    "ADD_TOKEN": "Add Token",
+    "DESCRIPTION": "Description",
+    "EXPIRES": "Expires in:",
+    "ACTION": "Action",
+    "NO_TOKENS":"There are no registered tokens for this organization.",
+    "DELETE": "Delete",
+    "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
+    "TOKEN_SUCCESS": "Token created successfully!",
+    "TOKEN_INFO":"This token grants you access to perform analyzes for the selected organization! Save it in a safe place and don't share it!",
+    "CONFIRM":"Ok, I got it."
   },
 
   "DASHBOARD_SCREEN": {
@@ -208,7 +220,9 @@
     "REPOSITORIES": "Repositories",
     "ORGANIZATION": "Organization",
     "REPOSITORY": "Repository",
-    "ORGANIZATION_USERS": "Organization users"
+    "ORGANIZATION_USERS": "Organization users",
+    "BACK_ORGANIZATION": "Back to organizations",
+    "LOGOUT": "Logout"
   },
 
   "API_ERRORS": {
@@ -218,6 +232,15 @@
     "INVALID_RECOVERY_CODE": "Invalid recovery code.",
     "EMAIL_IN_USE": "The informed email is already in use.",
     "NO_RECORDS": "There are no corresponding records for the reported data.",
-    "ALREADY_IN_COMPANY": "This user is already part of this organization."
+    "ALREADY_IN_COMPANY": "This user is already part of this organization.",
+    "PRIVILEGES": "You do not have sufficient permissions to perform this action.",
+    "REPO_NAME_IN_USE": "Repository name already in use.",
+    "USERNAME_IN_USE": "Username already in use."
+  },
+
+  "NOT_FOUND_SCREEN": {
+    "ERROR": "Error 404.",
+    "MESSAGE": "We could not find the page you are looking for.",
+    "BACK": "Back to home"
   }
 }
