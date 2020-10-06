@@ -18,6 +18,7 @@ package analysis
 import "C"
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -68,14 +69,98 @@ func (ar *Repository) Create(analysis *horusec.Analysis, tx SQL.InterfaceWrite) 
 	if tx != nil {
 		conn = tx
 	}
+	// First create analysis without Many to Many and without Vulnerability
+	if err := ar.createAnalysis(conn, analysis); err != nil {
+		return err
+	}
+
+	// Validate if already exists vulnerability to create other fields
+	if err := ar.validateToCreateManyToMany(conn, analysis); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ar *Repository) createAnalysis(conn SQL.InterfaceWrite, analysis *horusec.Analysis) error {
+	return conn.Create(analysis.GetAnalysisWithoutAnalysisVulnerabilities(), analysis.GetTable()).GetError()
+}
+
+func (ar *Repository) validateToCreateManyToMany(conn SQL.InterfaceWrite, analysis *horusec.Analysis) error {
 	for key := range analysis.AnalysisVulnerabilities {
-		vul := analysis.AnalysisVulnerabilities[key].Vulnerability
-		if err := ar.createVulnerability(vul, conn); err != nil {
+		vuln := analysis.AnalysisVulnerabilities[key].Vulnerability
+		// Validate if already exists vulnerability lookup hash and repositoryID
+		vulnerabilityID, err := ar.getVulnerabilityIDByHashAndRepositoryID(vuln.VulnHash, analysis.RepositoryID, conn.GetConnection())
+		if err != nil {
+			return err
+		}
+		// Now create ManyToMany and vulnerability if not exists
+		if err = ar.createManyToManyAndVulnerability(vulnerabilityID, &analysis.AnalysisVulnerabilities[key], conn); err != nil {
 			return err
 		}
 	}
-	response := conn.Create(analysis, analysis.GetTable())
-	return response.GetError()
+	return nil
+}
+
+func (ar *Repository) createManyToManyAndVulnerability(vulnerabilityID uuid.UUID,
+	currentAnalyseVulnerability *horusec.AnalysisVulnerabilities, conn SQL.InterfaceWrite) error {
+	// Now get ManyToMany without Vulnerability
+	analyseVulnerability := currentAnalyseVulnerability.GetAnalysisVulnerabilitiesWithoutVulnerability()
+	// Get new vulnerability to create
+	vuln := currentAnalyseVulnerability.Vulnerability
+	if vulnerabilityID != uuid.Nil {
+		// If exists vulnerability we need replace generic VulnerabilityID to existing vulnerability in DB
+		analyseVulnerability.VulnerabilityID = vulnerabilityID
+		// If not exists we need create vulnerability with instance InterfaceWrite
+	} else if err := ar.execCreateVulnerability(vuln, conn); err != nil {
+		return err
+	}
+	// Now we create Analysis and Vulnerability is possible create ManyToMany
+	return ar.execCreateAnalysisVulnerabilities(*analyseVulnerability, conn.GetConnection())
+}
+
+func (ar *Repository) getVulnerabilityIDByHashAndRepositoryID(vulnHash string, repositoryID uuid.UUID, conn *gorm.DB) (vulnerabilityID uuid.UUID, err error) {
+	vulnerability := horusec.Vulnerability{}
+	// To validate if already exists this vulnerability inside of repository we need find by hash and repositoryID
+	query := conn.
+		Joins("INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
+		Joins("INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id").
+		Where("analysis.repository_id = ?", repositoryID.String()).
+		Where(map[string]interface{}{"vuln_hash": vulnHash}).
+		Table(vulnerability.GetTable()).Find(&vulnerability)
+	if query.Error != nil {
+		// If error is "record not found" is not necessary procced because we go add new vulnerability
+		if strings.EqualFold(query.Error.Error(), "record not found") {
+			return uuid.Nil, nil
+		}
+		// If error unknown is need validate
+		return uuid.Nil, query.Error
+	}
+	// Else we return VulnerabilityID of existing vulnerability
+	return vulnerability.VulnerabilityID, nil
+}
+
+func (ar *Repository) execCreateVulnerability(vul horusec.Vulnerability, conn SQL.InterfaceWrite) error {
+	return conn.Create(vul, vul.GetTable()).GetError()
+}
+
+func (ar *Repository) execCreateAnalysisVulnerabilities(analysisVulnerabilities horusec.AnalysisVulnerabilities,
+	conn *gorm.DB) error {
+	entityToCheck := horusec.AnalysisVulnerabilities{}
+	// Before create ManyToMany we need lookup inside transaction if was generated this many to many in other loop
+	query := conn.
+		Where("analysis_id = ? AND vulnerability_id = ?", analysisVulnerabilities.AnalysisID, analysisVulnerabilities.VulnerabilityID).
+		Table(analysisVulnerabilities.GetTable()).
+		Find(&entityToCheck)
+	// If return error we need validate
+	if query.Error != nil && !strings.EqualFold(query.Error.Error(), "record not found") {
+		return query.Error
+	}
+	// If already exists this VulnerabilityID and AnalysisID in database is not necessary add again.
+	if entityToCheck.VulnerabilityID != uuid.Nil && entityToCheck.AnalysisID != uuid.Nil {
+		return nil
+	}
+	// If error is "record not found" or not exists VulnerabilityID/AnalysisID we need create ManyToMany
+	return conn.Table(analysisVulnerabilities.GetTable()).Create(analysisVulnerabilities).Error
 }
 
 func (ar *Repository) GetByID(analysisID uuid.UUID) (*horusec.Analysis, error) {
@@ -287,10 +372,4 @@ func (ar *Repository) setWhereFilter(query *gorm.DB, companyID, repositoryID uui
 
 	return query.Where("finished_at BETWEEN ? AND ? AND repository_id = ?",
 		initialDate, finalDate, repositoryID)
-}
-
-func (ar *Repository) createVulnerability(vul horusec.Vulnerability, conn SQL.InterfaceWrite) error {
-	//existingEntity := &horusec.Vulnerability{}
-	//ar.databaseRead.Find()
-	return conn.Create(vul, vul.GetTable()).GetError()
 }

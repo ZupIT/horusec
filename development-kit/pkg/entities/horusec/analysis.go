@@ -158,6 +158,20 @@ func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
 	return a
 }
 
+func (a *Analysis) GetAnalysisWithoutAnalysisVulnerabilities() *Analysis {
+	return &Analysis{
+		ID:             a.ID,
+		RepositoryID:   a.RepositoryID,
+		RepositoryName: a.RepositoryName,
+		CompanyID:      a.CompanyID,
+		CompanyName:    a.CompanyName,
+		Status:         a.Status,
+		Errors:         a.Errors,
+		CreatedAt:      a.CreatedAt,
+		FinishedAt:     a.FinishedAt,
+	}
+}
+
 func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (response []AnalysisVulnerabilities) {
 	for index := range a.AnalysisVulnerabilities {
 		if a.AnalysisVulnerabilities[index].Vulnerability.Severity == search {

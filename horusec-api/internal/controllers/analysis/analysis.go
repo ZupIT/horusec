@@ -61,7 +61,8 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 		return uuid.Nil, err
 	}
 	c.setDefaultContentToCreate(analysisData.Analysis, company, repo)
-	return c.createAnalyzeAndVulnerabilities(analysisData.Analysis)
+	analysis := c.removeAnalysisVulnerabilityWithHashDuplicate(analysisData.Analysis)
+	return c.createAnalyzeAndVulnerabilities(analysis)
 }
 
 func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
@@ -85,6 +86,7 @@ func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysi
 
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {
 	conn := c.postgresWrite.StartTransaction()
+	conn.SetLogMode(true)
 	if err := c.repoAnalysis.Create(analysis, conn); err != nil {
 		logger.LogError(
 			"{HORUSEC_API} Error in rollback transaction analysis",
@@ -97,4 +99,27 @@ func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.A
 
 func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*horusecEntities.Analysis, error) {
 	return c.repoAnalysis.GetByID(analysisID)
+}
+
+func (c *Controller) removeAnalysisVulnerabilityWithHashDuplicate(
+	analysis *horusecEntities.Analysis) *horusecEntities.Analysis {
+	newAnalysis := analysis.GetAnalysisWithoutAnalysisVulnerabilities()
+	for keyObservable := range analysis.AnalysisVulnerabilities {
+		observable := analysis.AnalysisVulnerabilities[keyObservable]
+		if !c.existsHashDuplicated(newAnalysis, &observable) {
+			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
+		}
+	}
+	return newAnalysis
+}
+
+func (c *Controller) existsHashDuplicated(
+	newAnalysis *horusecEntities.Analysis, observable *horusecEntities.AnalysisVulnerabilities) bool {
+	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
+		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
+		if observable.Vulnerability.VulnHash == current.Vulnerability.VulnHash {
+			return true
+		}
+	}
+	return false
 }

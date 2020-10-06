@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 	"os"
 	"strconv"
 	"strings"
@@ -98,6 +99,7 @@ func (f *Formatter) setVulnerabilitySeverityData(output *yarn.Issue) *horusec.Vu
 	data.Details = output.Overview
 	data.Code = output.ModuleName
 	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
+	data = vulnhash.Bind(data)
 	return f.setCommitAuthor(data)
 }
 
