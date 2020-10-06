@@ -98,12 +98,11 @@ workflows:
 
 * Example using `code-build`:
     *   Environment:
-        - `Managed Image`
-            - Operating system: `Ubuntu` 
-            - Runtime(s): `Standard`
-            - Image: `aws/codebuild/standard:4.0`
+        - `CUstom Image`
+            - Environment type: `Linux` 
+            - Image registry: `Other registry`
+            - External registry URL: `horuszup/horusec-cli`
             - Image Version: `Alway use the latest image for this runtime version`
-            - Environment Type: `Linux`
             - Privileged: `true`
             - Allow AWS CodeBuild to modify this service role so it can be used with this build project: `true`
 
@@ -114,9 +113,7 @@ workflows:
     phases:
       build:
         commands:
-           - curl -fsSL https://horusec-cli.s3.amazonaws.com/latest/linux_x64/horusec -o horusec
-           - chmod +x horusec
-           - ./horusec start -p="./" -e="true"
+           - sh /usr/local/bin/hoursec-cli.sh -p="./" -e="true"
     ```
 
 #### Check the installation
