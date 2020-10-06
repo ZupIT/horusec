@@ -65,7 +65,7 @@ func TestUpdate(t *testing.T) {
 
 		controller := Controller{managementRepository: repositoryMock}
 
-		_, err := controller.Update(uuid.New(), &dto.UpdateManagementData{})
+		_, err := controller.Update(uuid.New(), &dto.UpdateVulnManagementData{})
 		assert.NoError(t, err)
 	})
 }

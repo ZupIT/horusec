@@ -4,6 +4,13 @@ definitions:
       description:
         type: string
     type: object
+  dto.UpdateVulnManagementData:
+    properties:
+      status:
+        type: string
+      type:
+        type: string
+    type: object
   horusec.Analysis:
     properties:
       analysisVulnerabilities:
@@ -656,6 +663,30 @@ paths:
       - description: type query string
         in: query
         name: type
+        type: string
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
+  /api/management/{vulnerabilityID}:
+    put:
+      consumes:
+      - application/json
+      description: update vulnerability status and type
+      operationId: update-vuln-data
+      parameters:
+      - description: type and status of vulnerability
+        in: body
+        name: UpdateVulnManagementData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVulnManagementData'
+      - description: vulnerabilityID of the repository
+        in: path
+        name: vulnerabilityID
+        required: true
         type: string
       produces:
       - application/json

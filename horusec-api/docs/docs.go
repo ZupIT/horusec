@@ -1062,6 +1062,44 @@ var doc = `{
                     }
                 ]
             }
+        },
+        "/api/management/{vulnerabilityID}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update vulnerability status and type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "update-vuln-data",
+                "parameters": [
+                    {
+                        "description": "type and status of vulnerability",
+                        "name": "UpdateVulnManagementData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVulnManagementData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnerabilityID of the repository",
+                        "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            }
         }
     },
     "definitions": {
@@ -1069,6 +1107,17 @@ var doc = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateVulnManagementData": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

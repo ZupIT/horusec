@@ -16,7 +16,10 @@ package management
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto" // [swagger-import]
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	managementUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/management"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-api/internal/controllers/management"
 	"github.com/go-chi/chi"
@@ -27,11 +30,13 @@ import (
 
 type Handler struct {
 	managementController management.IController
+	managementUseCases   managementUseCases.IUseCases
 }
 
 func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Handler {
 	return &Handler{
 		managementController: management.NewManagementController(postgresRead, postgresWrite),
+		managementUseCases:   managementUseCases.NewManagementUseCases(),
 	}
 }
 
@@ -81,4 +86,39 @@ func (h *Handler) getVulnType(r *netHTTP.Request) horusec.AnalysisVulnerabilitie
 
 func (h *Handler) getVulnStatus(r *netHTTP.Request) horusec.AnalysisVulnerabilitiesStatus {
 	return horusec.AnalysisVulnerabilitiesStatus(r.URL.Query().Get("status"))
+}
+
+// @Tags Management
+// @Security ApiKeyAuth
+// @Description update vulnerability status and type
+// @ID update-vuln-data
+// @Accept  json
+// @Produce  json
+// @Param UpdateVulnManagementData body dto.UpdateVulnManagementData true "type and status of vulnerability"
+// @Param vulnerabilityID path string true "vulnerabilityID of the repository"
+// @Router /api/management/{vulnerabilityID} [put]
+func (h *Handler) Put(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	data, err := h.managementUseCases.NewUpdateVulnManagementDataFromReadCloser(r.Body)
+	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	result, err := h.managementController.Update(vulnerabilityID, data)
+	if err != nil {
+		h.checkSaveAnalysisErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, result)
+}
+
+func (h *Handler) checkSaveAnalysisErrors(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrNotFoundRecords {
+		httpUtil.StatusNotFound(w, errors.ErrVulnerabilityNotFound)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }

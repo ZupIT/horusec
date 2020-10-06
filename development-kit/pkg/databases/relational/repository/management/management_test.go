@@ -178,7 +178,7 @@ func TestUpdate(t *testing.T) {
 
 		repo := NewManagementRepository(mockRead, mockWrite)
 
-		result, err := repo.Update(uuid.New(), &dto.UpdateManagementData{
+		result, err := repo.Update(uuid.New(), &dto.UpdateVulnManagementData{
 			Status: horusecEnum.Reproved,
 			Type:   horusecEnum.Vulnerability,
 		})
@@ -197,7 +197,7 @@ func TestUpdate(t *testing.T) {
 
 		repo := NewManagementRepository(mockRead, mockWrite)
 
-		_, err := repo.Update(uuid.New(), &dto.UpdateManagementData{
+		_, err := repo.Update(uuid.New(), &dto.UpdateVulnManagementData{
 			Status: horusecEnum.Reproved,
 			Type:   horusecEnum.Vulnerability,
 		})

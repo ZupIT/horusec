@@ -26,6 +26,7 @@ import (
 type IController interface {
 	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
 		vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error)
+	Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error)
 }
 
 type Controller struct {
@@ -45,6 +46,7 @@ func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size
 	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
 }
 
-func (c *Controller) Update(vulnerabilityID uuid.UUID, data *dto.UpdateManagementData) (*horusec.Vulnerability, error) {
+func (c *Controller) Update(
+	vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error) {
 	return c.managementRepository.Update(vulnerabilityID, data)
 }

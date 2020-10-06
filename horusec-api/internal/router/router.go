@@ -161,6 +161,7 @@ func (r *Router) RouterManagement(postgresRead relational.InterfaceRead,
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
 		router.Get("/{repositoryID}", handler.Get)
+		router.Put("/{vulnerabilityID}", handler.Put)
 		router.Options("/", handler.Options)
 	})
 
