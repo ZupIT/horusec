@@ -158,10 +158,11 @@ func (r *Router) RouterTokensCompany(
 
 func (r *Router) RouterManagement(postgresRead relational.InterfaceRead,
 	postgresWrite relational.InterfaceWrite) *Router {
+	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
-		router.Get("/{repositoryID}", handler.Get)
-		router.Put("/{vulnerabilityID}", handler.Put)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Get("/", handler.Get)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}", handler.Put)
 		router.Options("/", handler.Options)
 	})
 

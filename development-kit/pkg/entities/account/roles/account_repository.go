@@ -36,7 +36,8 @@ func (a *AccountRepository) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.RepositoryID, validation.Required, is.UUID),
 		validation.Field(&a.AccountID, validation.Required, is.UUID),
-		validation.Field(&a.Role, validation.In(accountEnums.Admin, accountEnums.Member), validation.Required),
+		validation.Field(&a.Role, validation.In(accountEnums.Admin,
+			accountEnums.Member, accountEnums.Supervisor), validation.Required),
 	)
 }
 
