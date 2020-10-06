@@ -14,14 +14,14 @@
 
 package horusec
 
-type AnalysisVulnerabilitiesStatus string
+type VulnerabilityStatus string
 
 const (
-	Approved AnalysisVulnerabilitiesStatus = "approved"
-	Reproved AnalysisVulnerabilitiesStatus = "reproved"
-	NoAction AnalysisVulnerabilitiesStatus = "noAction"
+	Approved VulnerabilityStatus = "approved"
+	Reproved VulnerabilityStatus = "reproved"
+	NoAction VulnerabilityStatus = "noAction"
 )
 
-func (a AnalysisVulnerabilitiesStatus) ToString() string {
+func (a VulnerabilityStatus) ToString() string {
 	return string(a)
 }

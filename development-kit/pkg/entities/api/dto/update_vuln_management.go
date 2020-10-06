@@ -20,8 +20,8 @@ import (
 )
 
 type UpdateVulnManagementData struct {
-	Status horusecEnums.AnalysisVulnerabilitiesStatus `json:"status"`
-	Type   horusecEnums.AnalysisVulnerabilitiesType   `json:"type"`
+	Status horusecEnums.VulnerabilityStatus `json:"status"`
+	Type   horusecEnums.VulnerabilityType   `json:"type"`
 }
 
 func (u *UpdateVulnManagementData) Validate() error {

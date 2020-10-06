@@ -14,25 +14,25 @@
 
 package horusec
 
-type AnalysisVulnerabilitiesType string
+type VulnerabilityType string
 
 const (
-	FalsePositive AnalysisVulnerabilitiesType = "falsePositive"
-	RiskAccepted  AnalysisVulnerabilitiesType = "riskAccepted"
-	Vulnerability AnalysisVulnerabilitiesType = "vulnerability"
+	FalsePositive VulnerabilityType = "falsePositive"
+	RiskAccepted  VulnerabilityType = "riskAccepted"
+	Vulnerability VulnerabilityType = "vulnerability"
 )
 
-func (a AnalysisVulnerabilitiesType) ToString() string {
+func (a VulnerabilityType) ToString() string {
 	return string(a)
 }
 
-func valuesAnalysisVulnerabilitiesType() []AnalysisVulnerabilitiesType {
-	return []AnalysisVulnerabilitiesType{
+func valuesAnalysisVulnerabilitiesType() []VulnerabilityType {
+	return []VulnerabilityType{
 		FalsePositive, RiskAccepted, Vulnerability,
 	}
 }
 
-func IsValidAnalysisVulnerabilitiesType(data AnalysisVulnerabilitiesType) bool {
+func IsValidAnalysisVulnerabilitiesType(data VulnerabilityType) bool {
 	for _, validContent := range valuesAnalysisVulnerabilitiesType() {
 		if data == validContent {
 			return true

@@ -24,8 +24,8 @@ import (
 )
 
 type IController interface {
-	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
-		vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error)
+	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
+		vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error)
 	Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error)
 }
 
@@ -41,8 +41,8 @@ func NewManagementController(postgresRead relational.InterfaceRead,
 }
 
 func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
-	vulnType horusecEnums.AnalysisVulnerabilitiesType,
-	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
+	vulnType horusecEnums.VulnerabilityType,
+	vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error) {
 	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
 }
 

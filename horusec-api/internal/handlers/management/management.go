@@ -83,12 +83,12 @@ func (h *Handler) getPageSize(r *netHTTP.Request) (page, size int) {
 	return page, size
 }
 
-func (h *Handler) getVulnType(r *netHTTP.Request) horusec.AnalysisVulnerabilitiesType {
-	return horusec.AnalysisVulnerabilitiesType(r.URL.Query().Get("type"))
+func (h *Handler) getVulnType(r *netHTTP.Request) horusec.VulnerabilityType {
+	return horusec.VulnerabilityType(r.URL.Query().Get("type"))
 }
 
-func (h *Handler) getVulnStatus(r *netHTTP.Request) horusec.AnalysisVulnerabilitiesStatus {
-	return horusec.AnalysisVulnerabilitiesStatus(r.URL.Query().Get("status"))
+func (h *Handler) getVulnStatus(r *netHTTP.Request) horusec.VulnerabilityStatus {
+	return horusec.VulnerabilityStatus(r.URL.Query().Get("status"))
 }
 
 // @Tags Management
