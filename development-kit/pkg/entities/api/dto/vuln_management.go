@@ -28,10 +28,7 @@ type VulnManagement struct {
 }
 
 type Data struct {
-	AnalysisID      uuid.UUID                                  `json:"analysisID"`
 	VulnerabilityID uuid.UUID                                  `json:"vulnerabilityID"`
-	RepositoryID    uuid.UUID                                  `json:"repositoryID"`
-	CompanyID       uuid.UUID                                  `json:"companyID"`
 	Status          horusecEnums.AnalysisVulnerabilitiesStatus `json:"status"`
 	Type            horusecEnums.AnalysisVulnerabilitiesType   `json:"type"`
 	VulnHash        string                                     `json:"vulnHash"`

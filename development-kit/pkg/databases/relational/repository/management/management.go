@@ -48,11 +48,10 @@ func (r *Repository) GetAllVulnManagementData(repositoryID uuid.UUID, page, size
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
 	query := r.databaseRead.
 		GetConnection().
-		Select("analysis.analysis_id, vulnerabilities.vulnerability_id, analysis.repository_id," +
-			" analysis.company_id, vulnerabilities.status, vulnerabilities.type, vulnerabilities.vuln_hash," +
-			" vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence, vulnerabilities.file," +
-			" vulnerabilities.code, vulnerabilities.details, vulnerabilities.security_tool, vulnerabilities.language," +
-			"vulnerabilities.severity").
+		Select("DISTINCT vulnerabilities.vulnerability_id, vulnerabilities.status, vulnerabilities.type," +
+			" vulnerabilities.vuln_hash, vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence," +
+			" vulnerabilities.file, vulnerabilities.code, vulnerabilities.details, vulnerabilities.security_tool," +
+			" vulnerabilities.language, vulnerabilities.severity").
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").

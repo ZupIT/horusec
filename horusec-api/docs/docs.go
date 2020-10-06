@@ -1010,7 +1010,7 @@ var doc = `{
                 }
             }
         },
-        "/api/management/{repositoryID}": {
+        "/api/repositories/{repositoryID}/management": {
             "get": {
                 "security": [
                     {
@@ -1149,8 +1149,15 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "vulnerabilityID of the repository",
+                        "description": "vulnerabilityID of the vulnerability",
                         "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
                         "in": "path",
                         "required": true
                     }

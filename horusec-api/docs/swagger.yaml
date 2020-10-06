@@ -636,7 +636,7 @@ paths:
               type: object
       tags:
       - Health
-  /api/management/{repositoryID}:
+  /api/repositories/{repositoryID}/management:
     get:
       consumes:
       - application/json
@@ -711,9 +711,14 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.UpdateVulnManagementData'
-      - description: vulnerabilityID of the repository
+      - description: vulnerabilityID of the vulnerability
         in: path
         name: vulnerabilityID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
         required: true
         type: string
       produces:
