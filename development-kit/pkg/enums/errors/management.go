@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package routes
+package errors
 
-const (
-	AnalysisHandler         = "/api/analysis"
-	TokensRepositoryHandler = "/api/companies/{companyID}/repositories/{repositoryID}/tokens" // nolint
-	TokensCompanyHandler    = "/api/companies/{companyID}/tokens"                             // nolint
-	HealthHandler           = "/api/health"
-	ManagementHandler       = "/api/management"
-)
+import "errors"
+
+var ErrVulnerabilityNotFound = errors.New("no vulnerability was found with this id")
+var ErrInvalidVulnerabilityID = errors.New("invalid vulnerability id")

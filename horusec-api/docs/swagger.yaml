@@ -4,8 +4,19 @@ definitions:
       description:
         type: string
     type: object
+  dto.UpdateVulnManagementData:
+    properties:
+      status:
+        type: string
+      type:
+        type: string
+    type: object
   horusec.Analysis:
     properties:
+      analysisVulnerabilities:
+        items:
+          $ref: '#/definitions/horusec.AnalysisVulnerabilities'
+        type: array
       companyID:
         type: string
       companyName:
@@ -24,10 +35,17 @@ definitions:
         type: string
       status:
         type: string
+    type: object
+  horusec.AnalysisVulnerabilities:
+    properties:
+      analysisID:
+        type: string
+      createdAt:
+        type: string
       vulnerabilities:
-        items:
-          $ref: '#/definitions/horusec.Vulnerability'
-        type: array
+        $ref: '#/definitions/horusec.Vulnerability'
+      vulnerabilityID:
+        type: string
     type: object
   horusec.CommitAuthor:
     properties:
@@ -44,8 +62,6 @@ definitions:
     type: object
   horusec.Vulnerability:
     properties:
-      analysisID:
-        type: string
       code:
         type: string
       column:
@@ -74,15 +90,13 @@ definitions:
         type: string
       severity:
         type: string
-      type:
+      status:
         type: string
-      version:
+      type:
         type: string
       vulnHash:
         type: string
       vulnerabilityID:
-        type: string
-      vulnerableBelow:
         type: string
     type: object
   http.Response:
@@ -622,6 +636,64 @@ paths:
               type: object
       tags:
       - Health
+  /api/management/{repositoryID}:
+    get:
+      consumes:
+      - application/json
+      description: Get all vuln management data in repository
+      operationId: get-vuln-data
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      - description: status query string
+        in: query
+        name: status
+        type: string
+      - description: type query string
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
+  /api/management/{vulnerabilityID}:
+    put:
+      consumes:
+      - application/json
+      description: update vulnerability status and type
+      operationId: update-vuln-data
+      parameters:
+      - description: type and status of vulnerability
+        in: body
+        name: UpdateVulnManagementData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVulnManagementData'
+      - description: vulnerabilityID of the repository
+        in: path
+        name: vulnerabilityID
+        required: true
+        type: string
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
 securityDefinitions:
   ApiKeyAuth:
     in: header

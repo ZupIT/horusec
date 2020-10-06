@@ -12,12 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package routes
+package management
 
-const (
-	AnalysisHandler         = "/api/analysis"
-	TokensRepositoryHandler = "/api/companies/{companyID}/repositories/{repositoryID}/tokens" // nolint
-	TokensCompanyHandler    = "/api/companies/{companyID}/tokens"                             // nolint
-	HealthHandler           = "/api/health"
-	ManagementHandler       = "/api/management"
+import (
+	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"io"
 )
+
+type IUseCases interface {
+	NewUpdateVulnManagementDataFromReadCloser(body io.ReadCloser) (data *dto.UpdateVulnManagementData, err error)
+}
+
+type UseCases struct {
+}
+
+func NewManagementUseCases() IUseCases {
+	return &UseCases{}
+}
+
+func (u *UseCases) NewUpdateVulnManagementDataFromReadCloser(body io.ReadCloser) (
+	data *dto.UpdateVulnManagementData, err error) {
+	err = json.NewDecoder(body).Decode(&data)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
+}

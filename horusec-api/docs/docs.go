@@ -1009,6 +1009,97 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/api/management/{repositoryID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all vuln management data in repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "get-vuln-data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "page query string",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "size query string",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status query string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "type query string",
+                        "name": "type",
+                        "in": "query"
+                    }
+                ]
+            }
+        },
+        "/api/management/{vulnerabilityID}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update vulnerability status and type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "update-vuln-data",
+                "parameters": [
+                    {
+                        "description": "type and status of vulnerability",
+                        "name": "UpdateVulnManagementData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVulnManagementData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnerabilityID of the repository",
+                        "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            }
         }
     },
     "definitions": {
@@ -1020,9 +1111,26 @@ var doc = `{
                 }
             }
         },
+        "dto.UpdateVulnManagementData": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "horusec.Analysis": {
             "type": "object",
             "properties": {
+                "analysisVulnerabilities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horusec.AnalysisVulnerabilities"
+                    }
+                },
                 "companyID": {
                     "type": "string"
                 },
@@ -1049,12 +1157,23 @@ var doc = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "horusec.AnalysisVulnerabilities": {
+            "type": "object",
+            "properties": {
+                "analysisID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
                 },
                 "vulnerabilities": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/horusec.Vulnerability"
-                    }
+                    "$ref": "#/definitions/horusec.Vulnerability"
+                },
+                "vulnerabilityID": {
+                    "type": "string"
                 }
             }
         },
@@ -1081,9 +1200,6 @@ var doc = `{
         "horusec.Vulnerability": {
             "type": "object",
             "properties": {
-                "analysisID": {
-                    "type": "string"
-                },
                 "code": {
                     "type": "string"
                 },
@@ -1126,19 +1242,16 @@ var doc = `{
                 "severity": {
                     "type": "string"
                 },
-                "type": {
+                "status": {
                     "type": "string"
                 },
-                "version": {
+                "type": {
                     "type": "string"
                 },
                 "vulnHash": {
                     "type": "string"
                 },
                 "vulnerabilityID": {
-                    "type": "string"
-                },
-                "vulnerableBelow": {
                     "type": "string"
                 }
             }
