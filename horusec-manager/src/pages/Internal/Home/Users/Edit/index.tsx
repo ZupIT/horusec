@@ -86,7 +86,6 @@ const EditUserRole: React.FC<Props> = ({
       confirmText={t('USERS_SCREEN.SAVE')}
       loadingConfirm={isLoading}
       width={450}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>{t('USERS_SCREEN.EDIT_SUBTITLE')}</Styled.SubTitle>
