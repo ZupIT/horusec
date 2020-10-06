@@ -125,6 +125,7 @@ func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntitie
 	return validation.ValidateStruct(vulnerability,
 		validation.Field(&vulnerability.SecurityTool, validation.Required,
 			validation.In(au.sliceTools()...)),
+		validation.Field(&vulnerability.VulnHash, validation.Required),
 		validation.Field(&vulnerability.Language, validation.Required,
 			validation.In(au.sliceLanguages()...)),
 		validation.Field(&vulnerability.Severity, validation.Required,

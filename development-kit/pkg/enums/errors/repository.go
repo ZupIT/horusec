@@ -23,6 +23,10 @@ var ErrorInvalidRepositoryID = errors.New("{ERROR_REPOSITORY} invalid repository
 var ErrorUserNotMemberOfCompany = errors.New("{ERROR_REPOSITORY} this user is not member of this company")
 var ErrorUserAlreadyInThisRepository = errors.New("{ERROR_REPOSITORY} this account already in this repository")
 var ErrorRepositoryNotFound = errors.New("repository not found, wrong token or repository name")
+var ErrorAlreadyExistsVulnerabilityInDB = errors.New("already exists vulnerability in database")
 
 const ErrorAlreadyExistingRepositoryID = "pq: duplicate key value violates unique constraint" +
 	" \"account_repository_repository_id_account_id_key\""
+
+const ErrorAlreadyExistingAnalyseVulnerabilityID = "pq: duplicate key value violates unique constraint" +
+	" \"analysis_vulnerabilities_pkey\""
