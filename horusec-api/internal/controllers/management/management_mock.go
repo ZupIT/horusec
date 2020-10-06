@@ -16,6 +16,7 @@ package management
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
@@ -30,4 +31,9 @@ func (m *Mock) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, 
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
 	args := m.MethodCalled("GetAllVulnManagementData")
 	return args.Get(0).(dto.VulnManagement), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) Update(vulnerabilityID uuid.UUID, data *dto.UpdateManagementData) (*horusec.Vulnerability, error) {
+	args := m.MethodCalled("Update")
+	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
 }

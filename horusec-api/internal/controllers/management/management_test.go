@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/management"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -53,5 +54,18 @@ func TestGetAllVulnManagementData(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 1, result.TotalItems)
 		assert.Len(t, result.Data, 1)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("should success update data with no errors", func(t *testing.T) {
+		repositoryMock := &management.Mock{}
+
+		repositoryMock.On("Update").Return(&horusec.Vulnerability{}, nil)
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.Update(uuid.New(), &dto.UpdateManagementData{})
+		assert.NoError(t, err)
 	})
 }

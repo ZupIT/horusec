@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/management"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/google/uuid"
 )
@@ -42,4 +43,8 @@ func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size
 	vulnType horusecEnums.AnalysisVulnerabilitiesType,
 	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
 	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
+}
+
+func (c *Controller) Update(vulnerabilityID uuid.UUID, data *dto.UpdateManagementData) (*horusec.Vulnerability, error) {
+	return c.managementRepository.Update(vulnerabilityID, data)
 }
