@@ -17,3 +17,4 @@ package errors
 import "errors"
 
 var ErrVulnerabilityNotFound = errors.New("no vulnerability was found with this id")
+var ErrInvalidVulnerabilityID = errors.New("invalid vulnerability id")

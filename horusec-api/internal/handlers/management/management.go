@@ -100,8 +100,8 @@ func (h *Handler) getVulnStatus(r *netHTTP.Request) horusec.AnalysisVulnerabilit
 func (h *Handler) Put(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	data, err := h.managementUseCases.NewUpdateVulnManagementDataFromReadCloser(r.Body)
 	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
+	if err != nil || vulnerabilityID == uuid.Nil {
+		h.checkInvalidRequestErrors(w, err)
 		return
 	}
 
@@ -121,4 +121,13 @@ func (h *Handler) checkSaveAnalysisErrors(w netHTTP.ResponseWriter, err error) {
 	}
 
 	httpUtil.StatusInternalServerError(w, err)
+}
+
+func (h *Handler) checkInvalidRequestErrors(w netHTTP.ResponseWriter, err error) {
+	if err == nil {
+		httpUtil.StatusBadRequest(w, errors.ErrInvalidVulnerabilityID)
+		return
+	}
+
+	httpUtil.StatusBadRequest(w, err)
 }
