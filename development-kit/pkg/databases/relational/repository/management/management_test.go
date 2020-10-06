@@ -15,13 +15,19 @@
 package management
 
 import (
+	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -157,5 +163,46 @@ func TestGetAllVulnManagementData(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Len(t, result.Data, 0)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("should success update data with no errors", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		resp := &response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetData(horusecEntities.Vulnerability{}))
+		mockWrite.On("Update").Return(resp)
+
+		repo := NewManagementRepository(mockRead, mockWrite)
+
+		result, err := repo.Update(uuid.New(), &dto.UpdateManagementData{
+			Status: horusecEnum.Reproved,
+			Type:   horusecEnum.Vulnerability,
+		})
+
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should should return error when getting data to update", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		resp := &response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+
+		repo := NewManagementRepository(mockRead, mockWrite)
+
+		_, err := repo.Update(uuid.New(), &dto.UpdateManagementData{
+			Status: horusecEnum.Reproved,
+			Type:   horusecEnum.Vulnerability,
+		})
+
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
 	})
 }

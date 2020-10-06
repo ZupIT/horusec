@@ -17,6 +17,7 @@ package management
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/pagination"
 	"github.com/google/uuid"
@@ -26,6 +27,7 @@ import (
 type IManagementRepository interface {
 	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
 		vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error)
+	Update(vulnerabilityID uuid.UUID, data *dto.UpdateManagementData) (*horusec.Vulnerability, error)
 }
 
 type Repository struct {
@@ -92,4 +94,24 @@ func (r *Repository) setWhereFilter(query *gorm.DB, repositoryID uuid.UUID,
 	}
 
 	return query.Where("repository_id = ?", repositoryID)
+}
+
+func (r *Repository) Update(vulnerabilityID uuid.UUID, data *dto.UpdateManagementData) (*horusec.Vulnerability, error) {
+	toUpdate, err := r.getVulnByID(vulnerabilityID)
+	if err != nil {
+		return nil, err
+	}
+
+	toUpdate.SetStatus(data.Status)
+	toUpdate.SetType(data.Type)
+	return toUpdate, r.databaseWrite.Update(toUpdate,
+		map[string]interface{}{"vulnerability_id": vulnerabilityID}, toUpdate.GetTable()).GetError()
+}
+
+func (r *Repository) getVulnByID(vulnerabilityID uuid.UUID) (*horusec.Vulnerability, error) {
+	vulnerability := &horusec.Vulnerability{}
+	response := r.databaseRead.Find(vulnerability, r.databaseRead.SetFilter(
+		map[string]interface{}{"vulnerability_id": vulnerabilityID}), vulnerability.GetTable())
+
+	return vulnerability, response.GetError()
 }
