@@ -131,7 +131,7 @@ func TestUpdateType(t *testing.T) {
 		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.UpdateType(w, r)
+		handler.UpdateVulnType(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -157,7 +157,7 @@ func TestUpdateType(t *testing.T) {
 		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.UpdateType(w, r)
+		handler.UpdateVulnType(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -183,7 +183,7 @@ func TestUpdateType(t *testing.T) {
 		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.UpdateType(w, r)
+		handler.UpdateVulnType(w, r)
 
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
@@ -203,7 +203,7 @@ func TestUpdateType(t *testing.T) {
 		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.UpdateType(w, r)
+		handler.UpdateVulnType(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -229,133 +229,7 @@ func TestUpdateType(t *testing.T) {
 		ctx.URLParams.Add("vulnerabilityID", "test")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.UpdateType(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-}
-
-func TestUpdateStatus(t *testing.T) {
-	t.Run("should return 200 when everything its ok", func(t *testing.T) {
-		controllerMock := &management.Mock{}
-
-		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, nil)
-
-		data := &dto.UpdateVulnType{
-			Type: horusecEnum.RiskAccepted,
-		}
-
-		dataBytes, _ := json.Marshal(data)
-
-		handler := Handler{managementController: controllerMock,
-			managementUseCases: managementUseCases.NewManagementUseCases()}
-
-		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(dataBytes))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.UpdateStatus(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-
-	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		controllerMock := &management.Mock{}
-
-		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errors.New("test"))
-
-		data := &dto.UpdateVulnType{
-			Type: horusecEnum.RiskAccepted,
-		}
-
-		dataBytes, _ := json.Marshal(data)
-
-		handler := Handler{managementController: controllerMock,
-			managementUseCases: managementUseCases.NewManagementUseCases()}
-
-		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(dataBytes))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.UpdateStatus(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-
-	t.Run("should return 404 when not found vulnerability", func(t *testing.T) {
-		controllerMock := &management.Mock{}
-
-		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errorsEnum.ErrNotFoundRecords)
-
-		data := &dto.UpdateVulnType{
-			Type: horusecEnum.RiskAccepted,
-		}
-
-		dataBytes, _ := json.Marshal(data)
-
-		handler := Handler{managementController: controllerMock,
-			managementUseCases: managementUseCases.NewManagementUseCases()}
-
-		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(dataBytes))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.UpdateStatus(w, r)
-
-		assert.Equal(t, http.StatusNotFound, w.Code)
-	})
-
-	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		controllerMock := &management.Mock{}
-
-		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errorsEnum.ErrNotFoundRecords)
-
-		handler := Handler{managementController: controllerMock,
-			managementUseCases: managementUseCases.NewManagementUseCases()}
-
-		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader([]byte("test")))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.UpdateStatus(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-
-	t.Run("should return 400 when invalid vulnerability id", func(t *testing.T) {
-		controllerMock := &management.Mock{}
-
-		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errorsEnum.ErrNotFoundRecords)
-
-		handler := Handler{managementController: controllerMock,
-			managementUseCases: managementUseCases.NewManagementUseCases()}
-
-		data := &dto.UpdateVulnType{
-			Type: horusecEnum.RiskAccepted,
-		}
-
-		dataBytes, _ := json.Marshal(data)
-
-		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(dataBytes))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("vulnerabilityID", "test")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.UpdateStatus(w, r)
+		handler.UpdateVulnType(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

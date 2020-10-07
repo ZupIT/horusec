@@ -183,7 +183,6 @@ func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (respo
 
 func (a *Analysis) SetDefaultVulnerabilityStatusAndType() *Analysis {
 	for key := range a.AnalysisVulnerabilities {
-		a.AnalysisVulnerabilities[key].Vulnerability.Status = horusec.NoAction
 		a.AnalysisVulnerabilities[key].Vulnerability.Type = horusec.Vulnerability
 	}
 	return a
@@ -204,7 +203,6 @@ func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
 	for _, flagVulnerabilityHash := range listToCheck {
 		if currentHash == flagVulnerabilityHash {
 			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
-			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Status = horusec.NoAction
 			break
 		}
 	}

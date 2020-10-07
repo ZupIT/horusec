@@ -126,8 +126,7 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 }
 
 func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
-	return (vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted) &&
-		(vuln.Status == horusec.Approved || vuln.Status == horusec.PendingRetest || vuln.Status == horusec.NoAction)
+	return (vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted)
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
@@ -227,7 +226,6 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
 	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
-	fmt.Println(fmt.Sprintf("Status: %s", vulnerability.Status))
 
 	pr.printCommitAuthor(vulnerability)
 

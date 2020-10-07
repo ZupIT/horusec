@@ -103,7 +103,6 @@ func insertAnalysisData() error {
 		Severity:        severity.Low,
 		CommitEmail:     "test@test.com",
 		Type:            enumHorusec.Vulnerability,
-		Status:          enumHorusec.Approved,
 	}
 
 	analysisVulnerabilities.Vulnerability = *vulnerability

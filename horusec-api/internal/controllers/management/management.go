@@ -24,7 +24,7 @@ import (
 )
 
 type IController interface {
-	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
+	ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
 		vulnHash string) (vulnManagement dto.VulnManagement, err error)
 	UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error)
 }
@@ -40,12 +40,12 @@ func NewManagementController(postgresRead relational.InterfaceRead,
 	}
 }
 
-func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
+func (c *Controller) ListVulnManagementData(repositoryID uuid.UUID, page, size int,
 	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error) {
 	return c.managementRepository.ListVulnManagementData(repositoryID, page, size, vulnType, vulnHash)
 }
 
 func (c *Controller) UpdateVulnType(vulnerabilityID uuid.UUID,
 	updateTypeData *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
-	return c.managementRepository.UpdateVulnerabilityType(vulnerabilityID, updateTypeData)
+	return c.managementRepository.UpdateVulnType(vulnerabilityID, updateTypeData)
 }

@@ -67,7 +67,7 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	}
 
 	page, size := h.getPageSize(r)
-	result, err := h.managementController.GetAllVulnManagementData(repositoryID, page, size,
+	result, err := h.managementController.ListVulnManagementData(repositoryID, page, size,
 		h.getVulnType(r), h.getVulnHash(r))
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)

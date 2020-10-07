@@ -142,7 +142,6 @@ func (r *Router) RouterTokensRepository(
 	return r
 }
 
-// nolint methods aren't duplicated
 func (r *Router) RouterTokensCompany(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensCompany.NewHandler(postgresRead, postgresWrite)
@@ -158,17 +157,16 @@ func (r *Router) RouterTokensCompany(
 	return r
 }
 
-// nolint methods aren't duplicated
 func (r *Router) RouterManagement(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
 		router.Use(jwt.AuthMiddleware)
-		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
-		router.With(repositoryMiddleware.IsRepositoryMember).Put("/{vulnerabilityID}/type", handler.UpdateType)
-		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/status",
-			handler.UpdateStatus)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Get("/", handler.Get)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/type",
+			handler.UpdateVulnType)
+
 		router.Options("/", handler.Options)
 	})
 
