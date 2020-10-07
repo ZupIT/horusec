@@ -119,7 +119,7 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 		severityType := vuln.Severity.ToString()
 		if severityType != "" && !pr.isFalsePositiveOrRiskAccept(&vuln) {
 			if !pr.isIgnoredVulnerability(severityType) {
-				logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: " + vuln.VulnHash,
+				logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash,
 					logger.DebugLevel)
 				fmt.Print("\n")
 				pr.totalVulns++
@@ -130,8 +130,8 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 
 func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
 	if vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted {
-		logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability was considered to be a " +
-			"FALSE POSITIVE or ACCEPTED RISK: " + vuln.VulnHash, logger.DebugLevel)
+		logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability was considered to be a "+
+			"FALSE POSITIVE or ACCEPTED RISK: "+vuln.VulnHash, logger.DebugLevel)
 		fmt.Print("\n")
 		return true
 	}

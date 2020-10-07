@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package router
 
 import (
@@ -165,9 +166,9 @@ func (r *Router) RouterManagement(
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
 		router.Use(jwt.AuthMiddleware)
 		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
-		router.With(repositoryMiddleware.IsRepositoryMember).Put("/{vulnerabilityID}/type", handler.UpdateType)
-		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/status",
-			handler.UpdateStatus)
+		//router.With(repositoryMiddleware.IsRepositoryMember).Put("/{vulnerabilityID}/type", handler.UpdateType)
+		//router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/status",
+		//	handler.UpdateStatus)
 		router.Options("/", handler.Options)
 	})
 

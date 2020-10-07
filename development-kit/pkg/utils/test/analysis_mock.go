@@ -80,7 +80,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Go,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -93,7 +92,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.DotNet,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -106,7 +104,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Ruby,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -119,7 +116,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Javascript,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -132,7 +128,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Javascript,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -145,7 +140,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Python,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -158,7 +152,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Python,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:       "",
@@ -170,7 +163,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:   languages.Leaks,
 			Severity:   severity.High,
 			Type:       enumHorusec.Vulnerability,
-			Status:     enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -183,7 +175,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Leaks,
 			Severity:     severity.High,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -196,7 +187,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Java,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 		{
 			Line:         "",
@@ -209,7 +199,6 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Language:     languages.Kotlin,
 			Severity:     severity.Low,
 			Type:         enumHorusec.Vulnerability,
-			Status:       enumHorusec.Approved,
 		},
 	}
 }

@@ -28,17 +28,16 @@ type VulnManagement struct {
 }
 
 type Data struct {
-	VulnerabilityID uuid.UUID                        `json:"vulnerabilityID"`
-	Status          horusecEnums.VulnerabilityStatus `json:"status"`
-	Type            horusecEnums.VulnerabilityType   `json:"type"`
-	VulnHash        string                           `json:"vulnHash"`
-	Line            string                           `json:"line"`
-	Column          string                           `json:"column"`
-	Confidence      string                           `json:"confidence"`
-	File            string                           `json:"file"`
-	Code            string                           `json:"code"`
-	Details         string                           `json:"details"`
-	SecurityTool    tools.Tool                       `json:"securityTool"`
-	Language        languages.Language               `json:"language"`
-	Severity        severity.Severity                `json:"severity"`
+	VulnerabilityID uuid.UUID                      `json:"vulnerabilityID"`
+	Type            horusecEnums.VulnerabilityType `json:"type"`
+	VulnHash        string                         `json:"vulnHash"`
+	Line            string                         `json:"line"`
+	Column          string                         `json:"column"`
+	Confidence      string                         `json:"confidence"`
+	File            string                         `json:"file"`
+	Code            string                         `json:"code"`
+	Details         string                         `json:"details"`
+	SecurityTool    tools.Tool                     `json:"securityTool"`
+	Language        languages.Language             `json:"language"`
+	Severity        severity.Severity              `json:"severity"`
 }

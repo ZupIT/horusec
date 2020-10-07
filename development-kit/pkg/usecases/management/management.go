@@ -21,7 +21,6 @@ import (
 )
 
 type IUseCases interface {
-	NewUpdateVulnStatusFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnStatus, err error)
 	NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnType, err error)
 }
 
@@ -30,16 +29,6 @@ type UseCases struct {
 
 func NewManagementUseCases() IUseCases {
 	return &UseCases{}
-}
-
-func (u *UseCases) NewUpdateVulnStatusFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnStatus, err error) {
-	err = json.NewDecoder(body).Decode(&updateData)
-	_ = body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	return updateData, updateData.Validate()
 }
 
 func (u *UseCases) NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnType, err error) {
