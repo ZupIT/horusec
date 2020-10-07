@@ -18,8 +18,10 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
 
@@ -32,6 +34,7 @@ import (
 
 type IService interface {
 	SendAnalysis(analysis *horusec.Analysis)
+	GetAnalysis(analysisID uuid.UUID) *horusec.Analysis
 }
 
 type Service struct {
@@ -51,16 +54,46 @@ func (s *Service) SendAnalysis(analysis *horusec.Analysis) {
 		return
 	}
 
-	response, err := s.sendRequest(analysis)
+	response, err := s.sendCreateAnalysisRequest(analysis)
 	if err != nil {
 		s.loggerSendError(err)
 		return
 	}
 
-	s.loggerSendError(s.verifyResponse(response))
+	s.loggerSendError(s.verifyResponseCreateAnalysis(response))
 }
 
-func (s *Service) sendRequest(analysis *horusec.Analysis) (httpResponse.Interface, error) {
+func (s *Service) GetAnalysis(analysisID uuid.UUID) *horusec.Analysis {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
+		return nil
+	}
+
+	response, err := s.sendFindAnalysisRequest(analysisID)
+	if err != nil {
+		s.loggerSendError(err)
+		return nil
+	}
+	body, err := s.verifyResponseFindAnalysis(response)
+	s.loggerSendError(err)
+	return body
+}
+
+func (s *Service) sendFindAnalysisRequest(analysisID uuid.UUID) (httpResponse.Interface, error) {
+	req, err := http.NewRequest(http.MethodGet, s.getHorusecAPIURL()+"/"+analysisID.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	tlsConfig, err := s.setTLSConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Authorization", s.config.GetRepositoryAuthorization())
+	return s.httpUtil.DoRequest(req, tlsConfig)
+}
+
+func (s *Service) sendCreateAnalysisRequest(analysis *horusec.Analysis) (httpResponse.Interface, error) {
 	req, err := http.NewRequest(http.MethodPost, s.getHorusecAPIURL(), bytes.NewReader(s.newRequestData(analysis)))
 	if err != nil {
 		return nil, err
@@ -75,7 +108,7 @@ func (s *Service) sendRequest(analysis *horusec.Analysis) (httpResponse.Interfac
 	return s.httpUtil.DoRequest(req, tlsConfig)
 }
 
-func (s *Service) verifyResponse(response httpResponse.Interface) error {
+func (s *Service) verifyResponseCreateAnalysis(response httpResponse.Interface) error {
 	if response.GetStatusCode() == 201 {
 		return nil
 	}
@@ -86,6 +119,17 @@ func (s *Service) verifyResponse(response httpResponse.Interface) error {
 	}
 
 	return fmt.Errorf("something went wrong while sending analysis to horusec -> %s", string(body))
+}
+
+func (s *Service) verifyResponseFindAnalysis(response httpResponse.Interface) (analysis *horusec.Analysis, err error) {
+	body, err := response.GetBody()
+	if err != nil {
+		return nil, err
+	}
+	if response.GetStatusCode() != 200 {
+		return nil, fmt.Errorf("something went wrong while finding analysis to horusec -> %s", string(body))
+	}
+	return analysis, json.Unmarshal(body, &analysis)
 }
 
 func (s *Service) getHorusecAPIURL() string {

@@ -88,13 +88,13 @@ func (a *Analysis) SetAnalysisError(err error) {
 	}
 }
 
-func (a *Analysis) SetupIDInAnalysisContents() {
-	a.ID = uuid.New()
+func (a *Analysis) SetupIDInAnalysisContents() *Analysis {
 	for key := range a.AnalysisVulnerabilities {
 		a.AnalysisVulnerabilities[key].SetCreatedAt()
 		a.AnalysisVulnerabilities[key].SetAnalysisID(a.ID)
 		a.AnalysisVulnerabilities[key].SetVulnerabilityID(uuid.New())
 	}
+	return a
 }
 
 func (a *Analysis) SetCompanyName(companyName string) *Analysis {
@@ -179,4 +179,32 @@ func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (respo
 		}
 	}
 	return response
+}
+
+func (a *Analysis) SetDefaultVulnerabilityStatusAndType() *Analysis {
+	for key := range a.AnalysisVulnerabilities {
+		a.AnalysisVulnerabilities[key].Vulnerability.Status = horusec.NoAction
+		a.AnalysisVulnerabilities[key].Vulnerability.Type = horusec.Vulnerability
+	}
+	return a
+}
+
+func (a *Analysis) SetFalsePositivesAndRiskAcceptInVulnerabilities(
+	listFalsePositive, listRiskAccept []string) *Analysis {
+	for key := range a.AnalysisVulnerabilities {
+		a.setVulnerabilityType(key, listFalsePositive, horusec.FalsePositive)
+		a.setVulnerabilityType(key, listRiskAccept, horusec.RiskAccepted)
+	}
+	return a
+}
+
+func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
+	listToCheck []string, vulnerabilityType horusec.AnalysisVulnerabilitiesType) {
+	currentHash := a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
+	for _, flagVulnerabilityHash := range listToCheck {
+		if currentHash == flagVulnerabilityHash {
+			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
+			break
+		}
+	}
 }

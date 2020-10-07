@@ -226,7 +226,6 @@ func TestPut(t *testing.T) {
 
 		dataBytes, _ := json.Marshal(data)
 
-
 		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 

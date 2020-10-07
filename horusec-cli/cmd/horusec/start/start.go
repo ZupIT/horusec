@@ -192,4 +192,10 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().
 		StringVarP(&s.configs.RepositoryName, "repository-name", "n", s.configs.GetRepositoryName(),
 			"Used to send repository name to horus server. Example -n=\"horus\"")
+	cmd.PersistentFlags().
+		StringVarP(&s.configs.FalsePositiveHashes, "false-positive", "F", s.configs.GetFalsePositiveHashes(),
+			"Used to ignore a vulnerability by hash and setting it to be of the false positive type. Example -F=\"hash1, hash2\"")
+	cmd.PersistentFlags().
+		StringVarP(&s.configs.RiskAcceptHashes, "risk-accept", "R", s.configs.GetRiskAcceptHashes(),
+			"Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
 }

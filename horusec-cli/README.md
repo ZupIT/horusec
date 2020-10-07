@@ -400,31 +400,8 @@ HORUSEC ENDED THE ANALYSIS COM STATUS OF "success" AND WITH THE FOLLOWING RESULT
 
 ==================================================================================
 
-Analysis StartedAt: 2020-09-18 14:20:18
-Analysis FinishedAt: 2020-09-18 14:21:18
-
-==================================================================================
-
-Total of Vulnerabilities HIGH is: 6
-Total of Vulnerabilities MEDIUM is: 1
-Total of Vulnerabilities NOSEC is: 1
-A total of 8 vulnerabilities were found in this analysis
-
-==================================================================================
-
-Language: Leaks
-Severity: HIGH
-Line: 1
-Column: 31
-SecurityTool: HorusecLeaks
-Confidence: MEDIUM
-File: deployments/certs/ca-key.pem
-Code: -----BEGIN RSA PRIVATE KEY-----
-Details: Asymmetric Private Key
-Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+Analysis StartedAt: 2020-10-07 09:21:14
+Analysis FinishedAt: 2020-10-07 09:21:29
 
 ==================================================================================
 
@@ -438,9 +415,8 @@ File: deployments/certs/server-key.pem
 Code: -----BEGIN RSA PRIVATE KEY-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: ccf56588e43693fd5a9198f72810db6b6379512f
+
 
 ==================================================================================
 
@@ -454,9 +430,8 @@ File: deployments/certs/ca.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: 5203b29de1e4ca506b3a0c633852fd3bf423ceff
+
 
 ==================================================================================
 
@@ -466,13 +441,12 @@ Line: 1
 Column: 27
 SecurityTool: HorusecLeaks
 Confidence: MEDIUM
-File: deployments/certs/client-horusecapi-cert.pem
+File: deployments/certs/client-huskyapi-cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: b8d785d43cbf1be2bcbf3ae78679db1392854c3c
+
 
 ==================================================================================
 
@@ -482,13 +456,12 @@ Line: 1
 Column: 31
 SecurityTool: HorusecLeaks
 Confidence: MEDIUM
-File: deployments/certs/client-horusecapi-key.pem
+File: deployments/certs/client-huskyapi-key.pem
 Code: -----BEGIN RSA PRIVATE KEY-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: 66ba735b42e38566b9b54743e88298fbbb567245
+
 
 ==================================================================================
 
@@ -502,9 +475,23 @@ File: deployments/certs/server-cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: ed67624ad4c28b08df7d030f6224ea4e44939b92
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 1
+Column: 31
+SecurityTool: HorusecLeaks
+Confidence: MEDIUM
+File: deployments/certs/ca-key.pem
+Code: -----BEGIN RSA PRIVATE KEY-----
+Details: Asymmetric Private Key
+Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
+ReferenceHash: 5d515e6e0a3e1cb696c4d9dda0a16c2da6ec95b8
+
 
 ==================================================================================
 
@@ -520,14 +507,13 @@ Code: 3: import (
 5:      "fmt"
 
 Details: Blocklisted import crypto/md5: weak cryptographic primitive
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: 2ac373b4b0feeacb37efb7c7002dfbcf943f2a00
+
 
 ==================================================================================
 
 Language: Go
-Severity: NOSEC
+Severity: MEDIUM
 Line: 23
 Column: 7
 SecurityTool: GoSec
@@ -535,19 +521,24 @@ Confidence: HIGH
 File: api/util/util.go
 Code: 22: func GetMD5(s string) string {
 23:     h := md5.New()
-24:     io.WriteString(h, s) // #nohorus
+24:     io.WriteString(h, s)
 
 Details: Use of weak cryptographic primitive
-Type: 
-VulnerableBelow: 
-Version: 
+ReferenceHash: 8f6cd7781da75d2316e97c164c44cd884367cea8
+
+
+==================================================================================
+
+Total of Vulnerabilities HIGH is: 6
+Total of Vulnerabilities MEDIUM is: 2
+A total of 8 vulnerabilities were found in this analysis
 
 ==================================================================================
 
 
-WARN[0061] {HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis 
+WARN[0015] {HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis 
 
-WARN[0061] [HORUSEC] 7 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, CHECK AND TRY AGAIN
+WARN[0015] [HORUSEC] 8 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, CHECK AND TRY AGAIN 
 ```
 
 Attention if you received a warn of type:

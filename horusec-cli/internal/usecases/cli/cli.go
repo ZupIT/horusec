@@ -68,7 +68,39 @@ func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 		validation.Field(&config.WorkDir, validation.By(au.validateWorkDir(config.WorkDir, config.ProjectPath))),
 		validation.Field(&config.CertInsecureSkipVerify, validation.In(true, false)),
 		validation.Field(&config.CertPath, validation.By(au.validateCertPath(config.CertPath))),
+		validation.Field(&config.FalsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
+		validation.Field(&config.RiskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
 	)
+}
+
+func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
+	return func(value interface{}) error {
+		listFalsePositive := strings.Split(strings.TrimSpace(config.FalsePositiveHashes), ",")
+		listRiskAccept := strings.Split(strings.TrimSpace(config.RiskAcceptHashes), ",")
+		for _, falsePositive := range listFalsePositive {
+			for _, riskAccept := range listRiskAccept {
+				if falsePositive == riskAccept {
+					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
+				}
+			}
+		}
+		return nil
+	}
+}
+
+func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
+	return func(value interface{}) error {
+		listFalsePositive := strings.Split(strings.TrimSpace(config.FalsePositiveHashes), ",")
+		listRiskAccept := strings.Split(strings.TrimSpace(config.RiskAcceptHashes), ",")
+		for _, riskAccept := range listRiskAccept {
+			for _, falsePositive := range listFalsePositive {
+				if falsePositive == riskAccept {
+					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
+				}
+			}
+		}
+		return nil
+	}
 }
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config) func(value interface{}) error {
