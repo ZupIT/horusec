@@ -16,6 +16,7 @@ package horusec
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -181,9 +182,8 @@ func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (respo
 	return response
 }
 
-func (a *Analysis) SetDefaultVulnerabilityStatusAndType() *Analysis {
+func (a *Analysis) SetDefaultVulnerabilityType() *Analysis {
 	for key := range a.AnalysisVulnerabilities {
-		a.AnalysisVulnerabilities[key].Vulnerability.Status = horusec.NoAction
 		a.AnalysisVulnerabilities[key].Vulnerability.Type = horusec.Vulnerability
 	}
 	return a
@@ -202,10 +202,8 @@ func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
 	listToCheck []string, vulnerabilityType horusec.VulnerabilityType) {
 	currentHash := a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
 	for _, flagVulnerabilityHash := range listToCheck {
-		if currentHash == flagVulnerabilityHash {
+		if flagVulnerabilityHash != "" && strings.TrimSpace(currentHash) == strings.TrimSpace(flagVulnerabilityHash) {
 			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
-			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Status = horusec.NoAction
-			break
 		}
 	}
 }

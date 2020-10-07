@@ -17,10 +17,10 @@ package horusec
 type VulnerabilityType string
 
 const (
-	FalsePositive VulnerabilityType = "falsePositive"
-	RiskAccepted  VulnerabilityType = "riskAccepted"
-	Vulnerability VulnerabilityType = "vulnerability"
-	Corrected     VulnerabilityType = "corrected"
+	FalsePositive VulnerabilityType = "False Positive"
+	RiskAccepted  VulnerabilityType = "Risk Accepted"
+	Vulnerability VulnerabilityType = "Vulnerability"
+	Corrected     VulnerabilityType = "Corrected"
 )
 
 func (a VulnerabilityType) ToString() string {

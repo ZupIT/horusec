@@ -65,7 +65,6 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
-
 	if pr.configs.IsTimeout {
 		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs, logger.ErrorLevel)
 	}
@@ -116,9 +115,13 @@ func (pr *PrintResults) runPrintResultsSonarQube() error {
 
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 	for key := range pr.analysis.AnalysisVulnerabilities {
-		severityType := pr.analysis.AnalysisVulnerabilities[key].Vulnerability.Severity.ToString()
-		if severityType != "" && !pr.isFalsePositiveOrRiskAccept(&pr.analysis.AnalysisVulnerabilities[key].Vulnerability) {
+		vuln := pr.analysis.AnalysisVulnerabilities[key].Vulnerability
+		severityType := vuln.Severity.ToString()
+		if severityType != "" && !pr.isFalsePositiveOrRiskAccept(&vuln) {
 			if !pr.isIgnoredVulnerability(severityType) {
+				logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: " + vuln.VulnHash,
+					logger.DebugLevel)
+				fmt.Print("\n")
 				pr.totalVulns++
 			}
 		}
@@ -126,8 +129,13 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 }
 
 func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
-	return (vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted) &&
-		(vuln.Status == horusec.Approved || vuln.Status == horusec.PendingRetest || vuln.Status == horusec.NoAction)
+	if vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted {
+		logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability was considered to be a " +
+			"FALSE POSITIVE or ACCEPTED RISK: " + vuln.VulnHash, logger.DebugLevel)
+		fmt.Print("\n")
+		return true
+	}
+	return false
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
@@ -208,7 +216,7 @@ func (pr *PrintResults) printTotalVulnerabilities() {
 				severityName.ToString(), count))
 		}
 	}
-
+	pr.logSeparator()
 	if totalVulnerabilities > 0 {
 		fmt.Println(fmt.Sprintf("A total of %v vulnerabilities were found in this analysis",
 			totalVulnerabilities))
@@ -227,7 +235,6 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
 	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
-	fmt.Println(fmt.Sprintf("Status: %s", vulnerability.Status))
 
 	pr.printCommitAuthor(vulnerability)
 

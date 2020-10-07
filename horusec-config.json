@@ -7,7 +7,7 @@
   "horusecCliPrintOutputType": "text",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-  "horusecCliFilesOrPathsToIgnore": "**/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, development-kit/pkg/enums/engine/advisories/**",
+  "horusecCliFilesOrPathsToIgnore": "**/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, development-kit/pkg/enums/engine/advisories/**",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliProjectPath": "./",
   "horusecCliWorkDir": {
