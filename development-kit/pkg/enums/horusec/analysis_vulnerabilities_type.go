@@ -20,6 +20,7 @@ const (
 	FalsePositive VulnerabilityType = "falsePositive"
 	RiskAccepted  VulnerabilityType = "riskAccepted"
 	Vulnerability VulnerabilityType = "vulnerability"
+	Corrected     VulnerabilityType = "corrected"
 )
 
 func (a VulnerabilityType) ToString() string {

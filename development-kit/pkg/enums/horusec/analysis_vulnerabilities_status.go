@@ -17,9 +17,11 @@ package horusec
 type VulnerabilityStatus string
 
 const (
-	Approved VulnerabilityStatus = "approved"
-	Reproved VulnerabilityStatus = "reproved"
-	NoAction VulnerabilityStatus = "noAction"
+	Approved         VulnerabilityStatus = "approved"
+	Reproved         VulnerabilityStatus = "reproved"
+	NoAction         VulnerabilityStatus = "noAction"
+	AwaitingApproval VulnerabilityStatus = "awaitingApproval"
+	PendingRetest    VulnerabilityStatus = "pendingRetest"
 )
 
 func (a VulnerabilityStatus) ToString() string {
