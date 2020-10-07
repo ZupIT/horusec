@@ -162,8 +162,10 @@ func (r *Router) RouterManagement(postgresRead relational.InterfaceRead,
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
 		router.Use(jwt.AuthMiddleware)
-		router.With(repositoryMiddleware.IsRepositorySupervisor).Get("/", handler.Get)
-		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}", handler.Put)
+		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
+		router.With(repositoryMiddleware.IsRepositoryMember).Put("/{vulnerabilityID}/type", handler.UpdateType)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/status",
+			handler.UpdateStatus)
 		router.Options("/", handler.Options)
 	})
 

@@ -24,13 +24,13 @@ import (
 	"testing"
 )
 
-func TestNewRepositoryFromReadCloser(t *testing.T) {
+func TestNewUpdateVulnStatusFromReadCloser(t *testing.T) {
 	t.Run("should success parse read closer to update data", func(t *testing.T) {
-		bytes, _ := json.Marshal(&dto.UpdateVulnManagementData{Status: horusecEnum.Approved})
+		bytes, _ := json.Marshal(&dto.UpdateVulnStatus{Status: horusecEnum.Approved})
 		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
 
 		useCases := NewManagementUseCases()
-		data, err := useCases.NewUpdateVulnManagementDataFromReadCloser(readCloser)
+		data, err := useCases.NewUpdateVulnStatusFromReadCloser(readCloser)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, data)
 	})
@@ -39,7 +39,27 @@ func TestNewRepositoryFromReadCloser(t *testing.T) {
 		readCloser := ioutil.NopCloser(strings.NewReader(""))
 
 		useCases := NewManagementUseCases()
-		_, err := useCases.NewUpdateVulnManagementDataFromReadCloser(readCloser)
+		_, err := useCases.NewUpdateVulnStatusFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+}
+
+func TestNewUpdateVulnTypeFromReadCloser(t *testing.T) {
+	t.Run("should success parse read closer to update data", func(t *testing.T) {
+		bytes, _ := json.Marshal(&dto.UpdateVulnType{Type: horusecEnum.RiskAccepted})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewManagementUseCases()
+		data, err := useCases.NewUpdateVulnTypeFromReadCloser(readCloser)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, data)
+	})
+
+	t.Run("should return error when invalid read closer", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+
+		useCases := NewManagementUseCases()
+		_, err := useCases.NewUpdateVulnTypeFromReadCloser(readCloser)
 		assert.Error(t, err)
 	})
 }

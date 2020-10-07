@@ -26,7 +26,8 @@ import (
 type IController interface {
 	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
 		vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error)
-	Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error)
+	UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error)
+	UpdateVulnStatus(vulnerabilityID uuid.UUID, vulnStatus *dto.UpdateVulnStatus) (*horusec.Vulnerability, error)
 }
 
 type Controller struct {
@@ -46,7 +47,24 @@ func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size
 	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
 }
 
-func (c *Controller) Update(
-	vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error) {
-	return c.managementRepository.Update(vulnerabilityID, data)
+func (c *Controller) UpdateVulnType(vulnerabilityID uuid.UUID,
+	vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
+	toUpdate, err := c.managementRepository.GetVulnByID(vulnerabilityID)
+	if err != nil {
+		return nil, err
+	}
+
+	toUpdate.SetType(vulnType.Type)
+	return c.managementRepository.Update(vulnerabilityID, toUpdate)
+}
+
+func (c *Controller) UpdateVulnStatus(vulnerabilityID uuid.UUID,
+	vulnStatus *dto.UpdateVulnStatus) (*horusec.Vulnerability, error) {
+	toUpdate, err := c.managementRepository.GetVulnByID(vulnerabilityID)
+	if err != nil {
+		return nil, err
+	}
+
+	toUpdate.SetStatus(vulnStatus.Status)
+	return c.managementRepository.Update(vulnerabilityID, toUpdate)
 }

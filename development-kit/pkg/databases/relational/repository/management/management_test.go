@@ -21,10 +21,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -172,16 +170,29 @@ func TestUpdate(t *testing.T) {
 		mockRead := &relational.MockRead{}
 
 		resp := &response.Response{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockRead.On("Find").Return(resp.SetData(horusecEntities.Vulnerability{}))
 		mockWrite.On("Update").Return(resp)
 
 		repo := NewManagementRepository(mockRead, mockWrite)
 
-		result, err := repo.Update(uuid.New(), &dto.UpdateVulnManagementData{
-			Status: horusecEnum.Reproved,
-			Type:   horusecEnum.Vulnerability,
-		})
+		result, err := repo.Update(uuid.New(), &horusecEntities.Vulnerability{})
+
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
+
+func TestGetByID(t *testing.T) {
+	t.Run("should success update data with no errors", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		resp := &response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetData(horusecEntities.Vulnerability{}))
+
+		repo := NewManagementRepository(mockRead, mockWrite)
+
+		result, err := repo.GetVulnByID(uuid.New())
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -197,10 +208,7 @@ func TestUpdate(t *testing.T) {
 
 		repo := NewManagementRepository(mockRead, mockWrite)
 
-		_, err := repo.Update(uuid.New(), &dto.UpdateVulnManagementData{
-			Status: horusecEnum.Reproved,
-			Type:   horusecEnum.Vulnerability,
-		})
+		_, err := repo.GetVulnByID(uuid.New())
 
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)

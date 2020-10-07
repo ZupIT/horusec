@@ -1119,14 +1119,14 @@ var doc = `{
                 }
             }
         },
-        "/api/repositories/{repositoryID}/management/{vulnerabilityID}": {
+        "/api/repositories/{repositoryID}/management/{vulnerabilityID}/status": {
             "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "update vulnerability status and type",
+                "description": "update vulnerability status",
                 "consumes": [
                     "application/json"
                 ],
@@ -1136,15 +1136,134 @@ var doc = `{
                 "tags": [
                     "Management"
                 ],
-                "operationId": "update-vuln-data",
+                "operationId": "update-vuln-status",
                 "parameters": [
                     {
-                        "description": "type and status of vulnerability",
-                        "name": "UpdateVulnManagementData",
+                        "description": "status of vulnerability",
+                        "name": "UpdateVulnStatus",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateVulnManagementData"
+                            "$ref": "#/definitions/dto.UpdateVulnStatus"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnerabilityID of the vulnerability",
+                        "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/repositories/{repositoryID}/management/{vulnerabilityID}/type": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update vulnerability type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "update-vuln-type",
+                "parameters": [
+                    {
+                        "description": "type of vulnerability",
+                        "name": "UpdateVulnType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVulnType"
                         }
                     },
                     {
@@ -1248,12 +1367,17 @@ var doc = `{
                 }
             }
         },
-        "dto.UpdateVulnManagementData": {
+        "dto.UpdateVulnStatus": {
             "type": "object",
             "properties": {
                 "status": {
                     "type": "string"
-                },
+                }
+            }
+        },
+        "dto.UpdateVulnType": {
+            "type": "object",
+            "properties": {
                 "type": {
                     "type": "string"
                 }

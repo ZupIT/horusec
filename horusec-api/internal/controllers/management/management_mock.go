@@ -33,7 +33,13 @@ func (m *Mock) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, 
 	return args.Get(0).(dto.VulnManagement), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error) {
-	args := m.MethodCalled("Update")
+func (m *Mock) UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
+	args := m.MethodCalled("UpdateVulnType")
+	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) UpdateVulnStatus(vulnerabilityID uuid.UUID,
+	vulnStatus *dto.UpdateVulnStatus) (*horusec.Vulnerability, error) {
+	args := m.MethodCalled("UpdateVulnStatus")
 	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
 }

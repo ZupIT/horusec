@@ -15,6 +15,7 @@
 package management
 
 import (
+	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/management"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
@@ -57,15 +58,52 @@ func TestGetAllVulnManagementData(t *testing.T) {
 	})
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateVulnType(t *testing.T) {
 	t.Run("should success update data with no errors", func(t *testing.T) {
 		repositoryMock := &management.Mock{}
 
 		repositoryMock.On("Update").Return(&horusec.Vulnerability{}, nil)
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, nil)
 
 		controller := Controller{managementRepository: repositoryMock}
 
-		_, err := controller.Update(uuid.New(), &dto.UpdateVulnManagementData{})
+		_, err := controller.UpdateVulnType(uuid.New(), &dto.UpdateVulnType{})
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return error while getting vulnerability", func(t *testing.T) {
+		repositoryMock := &management.Mock{}
+
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, errors.New("test"))
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.UpdateVulnType(uuid.New(), &dto.UpdateVulnType{})
+		assert.Error(t, err)
+	})
+}
+
+func TestUpdateVulnStatus(t *testing.T) {
+	t.Run("should success update data with no errors", func(t *testing.T) {
+		repositoryMock := &management.Mock{}
+
+		repositoryMock.On("Update").Return(&horusec.Vulnerability{}, nil)
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, nil)
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.UpdateVulnStatus(uuid.New(), &dto.UpdateVulnStatus{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error while getting vulnerability", func(t *testing.T) {
+		repositoryMock := &management.Mock{}
+
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, errors.New("test"))
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.UpdateVulnStatus(uuid.New(), &dto.UpdateVulnStatus{})
+		assert.Error(t, err)
 	})
 }

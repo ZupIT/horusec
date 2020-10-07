@@ -20,11 +20,10 @@ import (
 	"testing"
 )
 
-func TestValidate(t *testing.T) {
+func TestValidateUpdateVulnType(t *testing.T) {
 	t.Run("should return no error when valid data", func(t *testing.T) {
-		updateManagementData := &UpdateVulnManagementData{
-			Status: horusecEnum.Approved,
-			Type:   horusecEnum.RiskAccepted,
+		updateManagementData := &UpdateVulnType{
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		err := updateManagementData.Validate()
@@ -32,24 +31,12 @@ func TestValidate(t *testing.T) {
 	})
 
 	t.Run("should return error invalid type", func(t *testing.T) {
-		updateManagementData := &UpdateVulnManagementData{
-			Status: horusecEnum.Approved,
-			Type:   "test",
+		updateManagementData := &UpdateVulnType{
+			Type: "test",
 		}
 
 		err := updateManagementData.Validate()
 		assert.Error(t, err)
 		assert.Equal(t, "type: must be a valid value.", err.Error())
-	})
-
-	t.Run("should return error invalid status", func(t *testing.T) {
-		updateManagementData := &UpdateVulnManagementData{
-			Status: "test",
-			Type:   horusecEnum.RiskAccepted,
-		}
-
-		err := updateManagementData.Validate()
-		assert.Error(t, err)
-		assert.Equal(t, "status: must be a valid value.", err.Error())
 	})
 }

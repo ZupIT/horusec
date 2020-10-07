@@ -93,36 +93,67 @@ func (h *Handler) getVulnStatus(r *netHTTP.Request) horusec.VulnerabilityStatus 
 
 // @Tags Management
 // @Security ApiKeyAuth
-// @Description update vulnerability status and type
-// @ID update-vuln-data
+// @Description update vulnerability status
+// @ID update-vuln-status
 // @Accept  json
 // @Produce  json
-// @Param UpdateVulnManagementData body dto.UpdateVulnManagementData true "type and status of vulnerability"
+// @Param UpdateVulnStatus body dto.UpdateVulnStatus true "status of vulnerability"
 // @Param vulnerabilityID path string true "vulnerabilityID of the vulnerability"
 // @Param repositoryID path string true "repositoryID of the repository"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Success 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Success 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/repositories/{repositoryID}/management/{vulnerabilityID} [put]
-func (h *Handler) Put(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	data, err := h.managementUseCases.NewUpdateVulnManagementDataFromReadCloser(r.Body)
+// @Router /api/repositories/{repositoryID}/management/{vulnerabilityID}/status [put]
+func (h *Handler) UpdateStatus(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	updateData, err := h.managementUseCases.NewUpdateVulnStatusFromReadCloser(r.Body)
 	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))
 	if err != nil || vulnerabilityID == uuid.Nil {
 		h.checkInvalidRequestErrors(w, err)
 		return
 	}
 
-	result, err := h.managementController.Update(vulnerabilityID, data)
+	result, err := h.managementController.UpdateVulnStatus(vulnerabilityID, updateData)
 	if err != nil {
-		h.checkSaveAnalysisErrors(w, err)
+		h.checkUpdateErrors(w, err)
 		return
 	}
 
 	httpUtil.StatusOK(w, result)
 }
 
-func (h *Handler) checkSaveAnalysisErrors(w netHTTP.ResponseWriter, err error) {
+// @Tags Management
+// @Security ApiKeyAuth
+// @Description update vulnerability type
+// @ID update-vuln-type
+// @Accept  json
+// @Produce  json
+// @Param UpdateVulnType body dto.UpdateVulnType true "type of vulnerability"
+// @Param vulnerabilityID path string true "vulnerabilityID of the vulnerability"
+// @Param repositoryID path string true "repositoryID of the repository"
+// @Success 200 {object} http.Response{content=string} "OK"
+// @Success 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} http.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/repositories/{repositoryID}/management/{vulnerabilityID}/type [put]
+func (h *Handler) UpdateType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	updateData, err := h.managementUseCases.NewUpdateVulnTypeFromReadCloser(r.Body)
+	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))
+	if err != nil || vulnerabilityID == uuid.Nil {
+		h.checkInvalidRequestErrors(w, err)
+		return
+	}
+
+	result, err := h.managementController.UpdateVulnType(vulnerabilityID, updateData)
+	if err != nil {
+		h.checkUpdateErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, result)
+}
+
+func (h *Handler) checkUpdateErrors(w netHTTP.ResponseWriter, err error) {
 	if err == errors.ErrNotFoundRecords {
 		httpUtil.StatusNotFound(w, errors.ErrVulnerabilityNotFound)
 		return

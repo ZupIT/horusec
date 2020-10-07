@@ -27,7 +27,8 @@ import (
 type IManagementRepository interface {
 	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
 		vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error)
-	Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error)
+	Update(vulnerabilityID uuid.UUID, vulnerability *horusec.Vulnerability) (*horusec.Vulnerability, error)
+	GetVulnByID(vulnerabilityID uuid.UUID) (*horusec.Vulnerability, error)
 }
 
 type Repository struct {
@@ -92,20 +93,13 @@ func (r *Repository) setWhereFilter(query *gorm.DB, repositoryID uuid.UUID,
 	return query.Where("repository_id = ?", repositoryID)
 }
 
-func (r *Repository) Update(
-	vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error) {
-	toUpdate, err := r.getVulnByID(vulnerabilityID)
-	if err != nil {
-		return nil, err
-	}
-
-	toUpdate.SetStatus(data.Status)
-	toUpdate.SetType(data.Type)
-	return toUpdate, r.databaseWrite.Update(toUpdate,
-		map[string]interface{}{"vulnerability_id": vulnerabilityID}, toUpdate.GetTable()).GetError()
+func (r *Repository) Update(vulnerabilityID uuid.UUID,
+	vulnerability *horusec.Vulnerability) (*horusec.Vulnerability, error) {
+	return vulnerability, r.databaseWrite.Update(vulnerability,
+		map[string]interface{}{"vulnerability_id": vulnerabilityID}, vulnerability.GetTable()).GetError()
 }
 
-func (r *Repository) getVulnByID(vulnerabilityID uuid.UUID) (*horusec.Vulnerability, error) {
+func (r *Repository) GetVulnByID(vulnerabilityID uuid.UUID) (*horusec.Vulnerability, error) {
 	vulnerability := &horusec.Vulnerability{}
 	response := r.databaseRead.Find(vulnerability, r.databaseRead.SetFilter(
 		map[string]interface{}{"vulnerability_id": vulnerabilityID}), vulnerability.GetTable())

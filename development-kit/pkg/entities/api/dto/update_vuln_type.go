@@ -19,28 +19,17 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
-type UpdateVulnManagementData struct {
-	Status horusecEnums.VulnerabilityStatus `json:"status"`
-	Type   horusecEnums.VulnerabilityType   `json:"type"`
+type UpdateVulnType struct {
+	Type horusecEnums.VulnerabilityType `json:"type"`
 }
 
-func (u *UpdateVulnManagementData) Validate() error {
+func (u *UpdateVulnType) Validate() error {
 	return validation.ValidateStruct(u,
-		validation.Field(&u.Status, validation.In(u.StatusValues()...)),
 		validation.Field(&u.Type, validation.In(u.TypeValues()...)),
 	)
 }
 
-func (u UpdateVulnManagementData) StatusValues() []interface{} {
-	return []interface{}{
-		horusecEnums.Approved,
-		horusecEnums.Reproved,
-		horusecEnums.NoAction,
-		"",
-	}
-}
-
-func (u UpdateVulnManagementData) TypeValues() []interface{} {
+func (u UpdateVulnType) TypeValues() []interface{} {
 	return []interface{}{
 		horusecEnums.FalsePositive,
 		horusecEnums.RiskAccepted,
