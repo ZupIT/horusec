@@ -116,7 +116,7 @@ func TestUpdateType(t *testing.T) {
 		controllerMock.On("UpdateVulnType").Return(&horusec.Vulnerability{}, nil)
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -142,7 +142,7 @@ func TestUpdateType(t *testing.T) {
 		controllerMock.On("UpdateVulnType").Return(&horusec.Vulnerability{}, errors.New("test"))
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -168,7 +168,7 @@ func TestUpdateType(t *testing.T) {
 		controllerMock.On("UpdateVulnType").Return(&horusec.Vulnerability{}, errorsEnum.ErrNotFoundRecords)
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -217,7 +217,7 @@ func TestUpdateType(t *testing.T) {
 			managementUseCases: managementUseCases.NewManagementUseCases()}
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -242,7 +242,7 @@ func TestUpdateStatus(t *testing.T) {
 		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, nil)
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -268,7 +268,7 @@ func TestUpdateStatus(t *testing.T) {
 		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errors.New("test"))
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -294,7 +294,7 @@ func TestUpdateStatus(t *testing.T) {
 		controllerMock.On("UpdateVulnStatus").Return(&horusec.Vulnerability{}, errorsEnum.ErrNotFoundRecords)
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -343,7 +343,7 @@ func TestUpdateStatus(t *testing.T) {
 			managementUseCases: managementUseCases.NewManagementUseCases()}
 
 		data := &dto.UpdateVulnType{
-			Type:   horusecEnum.RiskAccepted,
+			Type: horusecEnum.RiskAccepted,
 		}
 
 		dataBytes, _ := json.Marshal(data)
@@ -360,4 +360,3 @@ func TestUpdateStatus(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }
-

@@ -199,7 +199,7 @@ func (a *Analysis) SetFalsePositivesAndRiskAcceptInVulnerabilities(
 }
 
 func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
-	listToCheck []string, vulnerabilityType horusec.AnalysisVulnerabilitiesType) {
+	listToCheck []string, vulnerabilityType horusec.VulnerabilityType) {
 	currentHash := a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
 	for _, flagVulnerabilityHash := range listToCheck {
 		if currentHash == flagVulnerabilityHash {
