@@ -24,6 +24,10 @@ const (
 	MsgErrorJSONOutputFilePathNotValid = "JSON File path is required or is invalid: "
 	// USED IN USE CASES: Fired when an severity is not allowed in configs
 	MsgErrorSeverityNotValid = "Type of severity not valid: "
+	// USED IN USE CASES: Fired when an false positive is not allowed in configs
+	MsgErrorFalsePositiveNotValid = "False positive is not valid because is duplicated in risk accept: "
+	// USED IN USE CASES: Fired when an risk accept is not allowed in configs
+	MsgErrorRiskAcceptNotValid = "Risk Accept is not valid because is duplicated in false positive: "
 	// Fired when an unexpected error occurs when check if the requirements it's ok
 	MsgErrorWhenCheckRequirements = "{HORUSEC_CLI} Error when check if requirements it's ok!"
 	// Fired when an unexpected error occurs when check if the docker is running
