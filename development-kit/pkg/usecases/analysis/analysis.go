@@ -131,9 +131,11 @@ func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntitie
 		validation.Field(&vulnerability.Severity, validation.Required,
 			validation.In(au.sliceSeverities()...)),
 		validation.Field(&vulnerability.Status,
-			validation.Required, validation.In(horusec.Approved, horusec.Reproved, horusec.NoAction)),
+			validation.Required, validation.In(horusec.Approved, horusec.Reproved, horusec.NoAction,
+				horusec.AwaitingApproval, horusec.PendingRetest)),
 		validation.Field(&vulnerability.Type,
-			validation.Required, validation.In(horusec.FalsePositive, horusec.RiskAccepted, horusec.Vulnerability)),
+			validation.Required, validation.In(horusec.FalsePositive, horusec.RiskAccepted,
+				horusec.Vulnerability, horusec.Corrected)),
 	)
 }
 

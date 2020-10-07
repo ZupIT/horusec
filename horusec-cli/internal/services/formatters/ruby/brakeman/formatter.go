@@ -16,7 +16,6 @@ package brakeman
 
 import (
 	"encoding/json"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/ruby"
@@ -88,7 +87,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 
 func (f *Formatter) setVulnerabilityData(output *ruby.Warning) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = utilsHorusec.GetSeverityOrNoSec(output.GetSeverity(), output.Code)
+	data.Severity = output.GetSeverity()
 	data.Confidence = output.GetSeverity().ToString()
 	data.Details = output.GetDetails()
 	data.Line = output.GetLine()

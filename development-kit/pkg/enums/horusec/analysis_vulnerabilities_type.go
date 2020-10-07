@@ -26,18 +26,3 @@ const (
 func (a VulnerabilityType) ToString() string {
 	return string(a)
 }
-
-func valuesAnalysisVulnerabilitiesType() []VulnerabilityType {
-	return []VulnerabilityType{
-		FalsePositive, RiskAccepted, Vulnerability,
-	}
-}
-
-func IsValidAnalysisVulnerabilitiesType(data VulnerabilityType) bool {
-	for _, validContent := range valuesAnalysisVulnerabilitiesType() {
-		if data == validContent {
-			return true
-		}
-	}
-	return false
-}

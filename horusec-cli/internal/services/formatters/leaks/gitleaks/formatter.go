@@ -22,7 +22,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -92,7 +91,7 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []leaks.Issue) {
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
 	vulnerabilitySeverity *horusec.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = utilsHorusec.GetSeverityOrNoSec(severity.High, issue.Line)
+	vulnerabilitySeverity.Severity = severity.High
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File

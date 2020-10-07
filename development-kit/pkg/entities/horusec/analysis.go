@@ -204,6 +204,7 @@ func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
 	for _, flagVulnerabilityHash := range listToCheck {
 		if currentHash == flagVulnerabilityHash {
 			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
+			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Status = horusec.NoAction
 			break
 		}
 	}
