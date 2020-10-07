@@ -16,7 +16,7 @@ package management
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/management"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/vulnerability"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -25,46 +25,27 @@ import (
 
 type IController interface {
 	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
-		vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error)
+		vulnHash string) (vulnManagement dto.VulnManagement, err error)
 	UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error)
-	UpdateVulnStatus(vulnerabilityID uuid.UUID, vulnStatus *dto.UpdateVulnStatus) (*horusec.Vulnerability, error)
 }
 
 type Controller struct {
-	managementRepository management.IManagementRepository
+	managementRepository vulnerability.IRepository
 }
 
 func NewManagementController(postgresRead relational.InterfaceRead,
 	postgresWrite relational.InterfaceWrite) IController {
 	return &Controller{
-		managementRepository: management.NewManagementRepository(postgresRead, postgresWrite),
+		managementRepository: vulnerability.NewManagementRepository(postgresRead, postgresWrite),
 	}
 }
 
 func (c *Controller) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
-	vulnType horusecEnums.VulnerabilityType,
-	vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error) {
-	return c.managementRepository.GetAllVulnManagementData(repositoryID, page, size, vulnType, vulnStatus)
+	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error) {
+	return c.managementRepository.ListVulnManagementData(repositoryID, page, size, vulnType, vulnHash)
 }
 
 func (c *Controller) UpdateVulnType(vulnerabilityID uuid.UUID,
-	vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
-	toUpdate, err := c.managementRepository.GetVulnByID(vulnerabilityID)
-	if err != nil {
-		return nil, err
-	}
-
-	toUpdate.SetType(vulnType.Type)
-	return c.managementRepository.Update(vulnerabilityID, toUpdate)
-}
-
-func (c *Controller) UpdateVulnStatus(vulnerabilityID uuid.UUID,
-	vulnStatus *dto.UpdateVulnStatus) (*horusec.Vulnerability, error) {
-	toUpdate, err := c.managementRepository.GetVulnByID(vulnerabilityID)
-	if err != nil {
-		return nil, err
-	}
-
-	toUpdate.SetStatus(vulnStatus.Status)
-	return c.managementRepository.Update(vulnerabilityID, toUpdate)
+	updateTypeData *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
+	return c.managementRepository.UpdateVulnerabilityType(vulnerabilityID, updateTypeData)
 }
