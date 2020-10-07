@@ -22,7 +22,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -121,8 +120,7 @@ func (f *Formatter) setupVulnerabilitiesSeverities(reportOutput []engine.Finding
 		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
 		SecurityTool: tools.HorusecLeaks,
 		Language:     languages.Leaks,
-		Severity: utilsHorusec.GetSeverityOrNoSec(severity.ParseStringToSeverity(reportOutput[index].Severity),
-			reportOutput[index].CodeSample),
+		Severity:     severity.ParseStringToSeverity(reportOutput[index].Severity),
 	}
 }
 

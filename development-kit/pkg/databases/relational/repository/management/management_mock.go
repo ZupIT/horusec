@@ -42,4 +42,3 @@ func (m *Mock) GetVulnByID(vulnerabilityID uuid.UUID) (*horusec.Vulnerability, e
 	args := m.MethodCalled("GetVulnByID")
 	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
 }
-

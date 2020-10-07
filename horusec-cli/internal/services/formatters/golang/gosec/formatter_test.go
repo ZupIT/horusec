@@ -64,7 +64,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 			{"severity":"HIGH","confidence":"HIGH","cwe":{"ID":"746","URL":"https://cwe.mitre.org/data/definitions/746.html"},"rule_id":"G746","details":"Password hard codede","file":"/go/src/code/api/server.go","code":"password","line":"2","column":"6"},
 			{"severity":"LOW","confidence":"HIGH","cwe":{"ID":"001","URL":"https://cwe.mitre.org/data/definitions/001.html"},"rule_id":"G001","details":"Rename Import","file":"/go/src/code/api/server.go","code":"cache := cache.NewCache() //nohorus","line":"15","column":"2"}
 		],
-		"Stats":{"files":4,"lines":70,"nosec":1,"found":4}
+		"Stats":{"files":4,"lines":70,"found":4}
 		}`
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)

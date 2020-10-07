@@ -23,7 +23,7 @@ import (
 func TestValidateUpdateVulnStatus(t *testing.T) {
 	t.Run("should return no error when valid data", func(t *testing.T) {
 		updateManagementData := &UpdateVulnStatus{
-			Status:   horusecEnum.Approved,
+			Status: horusecEnum.Approved,
 		}
 
 		err := updateManagementData.Validate()
@@ -32,7 +32,7 @@ func TestValidateUpdateVulnStatus(t *testing.T) {
 
 	t.Run("should return error invalid type", func(t *testing.T) {
 		updateManagementData := &UpdateVulnType{
-			Type:   "test",
+			Type: "test",
 		}
 
 		err := updateManagementData.Validate()

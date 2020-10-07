@@ -25,7 +25,7 @@ func GenerateSHA1(i ...string) (string, error) {
 	j := strings.Join(i, "")
 	b := []byte(j)
 
-	h := sha1.New() // #nosec
+	h := sha1.New() //nolint week cryptographic is necessary to generate hash unique
 	if _, err := h.Write(b); err != nil {
 		return "", err
 	}

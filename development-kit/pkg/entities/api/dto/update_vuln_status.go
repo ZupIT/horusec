@@ -37,4 +37,3 @@ func (u UpdateVulnStatus) StatusValues() []interface{} {
 		"",
 	}
 }
-

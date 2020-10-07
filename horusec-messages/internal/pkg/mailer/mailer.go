@@ -40,7 +40,7 @@ func NewMailer(config mailerConfig.IMailerConfig) (IMailer, error) {
 
 	mailer := &Mailer{config: config}
 	mailer.dialer = gomail.NewDialer(config.GetHost(), config.GetPort(), config.GetUsername(), config.GetPassword())
-	mailer.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true} // #nosec : should not be used in production
+	mailer.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true} //nolint is necessary to send without use tls check
 
 	return mailer, nil
 }

@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"os"
 	"path/filepath"
 	"strings"
@@ -116,12 +117,17 @@ func (pr *PrintResults) runPrintResultsSonarQube() error {
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 	for key := range pr.analysis.AnalysisVulnerabilities {
 		severityType := pr.analysis.AnalysisVulnerabilities[key].Vulnerability.Severity.ToString()
-		if severityType != "" {
+		if severityType != "" && !pr.isFalsePositiveOrRiskAccept(&pr.analysis.AnalysisVulnerabilities[key].Vulnerability) {
 			if !pr.isIgnoredVulnerability(severityType) {
 				pr.totalVulns++
 			}
 		}
 	}
+}
+
+func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
+	return (vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted) &&
+		(vuln.Status == horusec.Approved || vuln.Status == horusec.PendingRetest || vuln.Status == horusec.NoAction)
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {

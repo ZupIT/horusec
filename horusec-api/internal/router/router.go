@@ -141,6 +141,7 @@ func (r *Router) RouterTokensRepository(
 	return r
 }
 
+// nolint methods aren't duplicated
 func (r *Router) RouterTokensCompany(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensCompany.NewHandler(postgresRead, postgresWrite)
@@ -156,8 +157,9 @@ func (r *Router) RouterTokensCompany(
 	return r
 }
 
-func (r *Router) RouterManagement(postgresRead relational.InterfaceRead,
-	postgresWrite relational.InterfaceWrite) *Router {
+// nolint methods aren't duplicated
+func (r *Router) RouterManagement(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
