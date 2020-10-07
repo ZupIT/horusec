@@ -23,5 +23,7 @@ jobs:
       run: make install-manager
     - name: Lint
       run: make lint-manager
+    - name: Unit Testing
+      run: make unit-test-manager
     - name: build
       run: make build-manager

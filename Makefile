@@ -56,6 +56,9 @@ install-manager:
 lint-manager:
 	cd ./horusec-manager && npm run lint && cd ..
 
+unit-test-manager:
+	cd ./horusec-manager && npm run test && cd ..
+
 build-manager:
 	cd ./horusec-manager && npm run build && cd ..
 

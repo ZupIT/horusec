@@ -18,7 +18,7 @@ import React, { ButtonHTMLAttributes } from 'react';
 import Styled from './styled';
 import { Icon } from 'components';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
   outline?: boolean;
   rounded?: boolean;
@@ -32,7 +32,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabledColor?: string;
 }
 
-const RoundButton: React.FC<ButtonProps> = ({
+const RoundButton = ({
   text,
   outline,
   rounded,
@@ -45,10 +45,11 @@ const RoundButton: React.FC<ButtonProps> = ({
   icon,
   disabledColor,
   ...props
-}) => {
+}: Props) => {
   return (
     <Styled.Button
       {...props}
+      data-testid={props.id}
       isLoading={isLoading}
       outline={outline}
       rounded={rounded}
