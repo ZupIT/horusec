@@ -25,8 +25,8 @@ import (
 )
 
 type IManagementRepository interface {
-	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.AnalysisVulnerabilitiesType,
-		vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error)
+	GetAllVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
+		vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error)
 	Update(vulnerabilityID uuid.UUID, data *dto.UpdateVulnManagementData) (*horusec.Vulnerability, error)
 }
 
@@ -42,31 +42,27 @@ func NewManagementRepository(databaseRead SQL.InterfaceRead, databaseWrite SQL.I
 	}
 }
 
-//nolint
 func (r *Repository) GetAllVulnManagementData(repositoryID uuid.UUID, page, size int,
-	vulnType horusecEnums.AnalysisVulnerabilitiesType,
-	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (vulnManagement dto.VulnManagement, err error) {
-	query := r.databaseRead.
-		GetConnection().
-		Select("analysis.analysis_id, vulnerabilities.vulnerability_id, analysis.repository_id," +
-			" analysis.company_id, vulnerabilities.status, vulnerabilities.type, vulnerabilities.vuln_hash," +
-			" vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence, vulnerabilities.file," +
-			" vulnerabilities.code, vulnerabilities.details, vulnerabilities.security_tool, vulnerabilities.language," +
-			"vulnerabilities.severity").
+	vulnType horusecEnums.VulnerabilityType,
+	vulnStatus horusecEnums.VulnerabilityStatus) (vulnManagement dto.VulnManagement, err error) {
+	query := r.databaseRead.GetConnection().
+		Select("DISTINCT vulnerabilities.vulnerability_id, vulnerabilities.status, vulnerabilities.type," +
+			" vulnerabilities.vuln_hash, vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence," +
+			" vulnerabilities.file, vulnerabilities.code, vulnerabilities.details, vulnerabilities.security_tool," +
+			" vulnerabilities.language, vulnerabilities.severity").
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Limit(size).
 		Offset(pagination.GetSkip(int64(page), int64(size)))
 
-	query = r.setWhereFilter(query, repositoryID, vulnType, vulnStatus).Find(&vulnManagement.Data)
 	vulnManagement.TotalItems = r.getTotalVulnManagementData(repositoryID, vulnType, vulnStatus)
-	return vulnManagement, query.Error
+	return vulnManagement, r.setWhereFilter(query, repositoryID, vulnType, vulnStatus).Find(&vulnManagement.Data).Error
 }
 
 func (r *Repository) getTotalVulnManagementData(repositoryID uuid.UUID,
-	vulnType horusecEnums.AnalysisVulnerabilitiesType,
-	vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) (count int) {
+	vulnType horusecEnums.VulnerabilityType,
+	vulnStatus horusecEnums.VulnerabilityStatus) (count int) {
 	query := r.databaseRead.
 		GetConnection().
 		Select("COUNT( DISTINCT ( vulnerabilities.vulnerability_id ) )").
@@ -79,7 +75,7 @@ func (r *Repository) getTotalVulnManagementData(repositoryID uuid.UUID,
 }
 
 func (r *Repository) setWhereFilter(query *gorm.DB, repositoryID uuid.UUID,
-	vulnType horusecEnums.AnalysisVulnerabilitiesType, vulnStatus horusecEnums.AnalysisVulnerabilitiesStatus) *gorm.DB {
+	vulnType horusecEnums.VulnerabilityType, vulnStatus horusecEnums.VulnerabilityStatus) *gorm.DB {
 	if vulnStatus != "" && vulnType != "" {
 		return query.Where("repository_id = ? AND vulnerabilities.type = ? AND vulnerabilities.status = ?",
 			repositoryID, vulnType, vulnStatus)
