@@ -120,7 +120,7 @@ func (au *UseCases) validateJSONOutputFilePath(config *cliConfig.Config) error {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid .json file")
 	}
 
-	if _, err := filepath.Abs(config.JSONOutputFilePath); err != nil {
+	if output, err := filepath.Abs(config.JSONOutputFilePath); err != nil || output == "" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
 	}
 	return nil

@@ -94,6 +94,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, configs.GetRepositoryName(), "")
 		assert.NotEqual(t, configs.GetFalsePositiveHashes(), "")
 		assert.NotEqual(t, configs.GetRiskAcceptHashes(), "")
+		assert.NotNil(t, configs.GetWorkDir())
 	})
 	t.Run("Should return horusec config using viper file", func(t *testing.T) {
 		path, err := os.Getwd()
