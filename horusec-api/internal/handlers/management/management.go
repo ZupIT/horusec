@@ -53,12 +53,12 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Param repositoryID path string true "repositoryID of the repository"
 // @Param page query string false "page query string"
 // @Param size query string false "size query string"
-// @Param status query string false "status query string"
-// @Param type query string false "type query string"
+// @Param vulnHash query string false "vulnHash query string"
+// @Param vulnType query string false "vulnType query string"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/repositories/{repositoryID}/vulnerability [get]
+// @Router /api/repositories/{repositoryID}/management [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
@@ -84,7 +84,7 @@ func (h *Handler) getPageSize(r *netHTTP.Request) (page, size int) {
 }
 
 func (h *Handler) getVulnType(r *netHTTP.Request) horusec.VulnerabilityType {
-	return horusec.VulnerabilityType(r.URL.Query().Get("type"))
+	return horusec.VulnerabilityType(r.URL.Query().Get("vulnType"))
 }
 
 func (h *Handler) getVulnHash(r *netHTTP.Request) string {
@@ -104,7 +104,7 @@ func (h *Handler) getVulnHash(r *netHTTP.Request) string {
 // @Success 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Success 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/repositories/{repositoryID}/vulnerability/{vulnerabilityID}/type [put]
+// @Router /api/repositories/{repositoryID}/management/{vulnerabilityID}/type [put]
 func (h *Handler) UpdateVulnType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	updateData, err := h.managementUseCases.NewUpdateVulnTypeFromReadCloser(r.Body)
 	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))

@@ -4,11 +4,6 @@ definitions:
       description:
         type: string
     type: object
-  dto.UpdateVulnStatus:
-    properties:
-      status:
-        type: string
-    type: object
   dto.UpdateVulnType:
     properties:
       type:
@@ -92,8 +87,6 @@ definitions:
       securityTool:
         type: string
       severity:
-        type: string
-      status:
         type: string
       type:
         type: string
@@ -643,7 +636,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all vuln management data in repository
+      description: Get all vuln vulnerability data in repository
       operationId: get-vuln-data
       parameters:
       - description: repositoryID of the repository
@@ -659,13 +652,13 @@ paths:
         in: query
         name: size
         type: string
-      - description: status query string
+      - description: vulnHash query string
         in: query
-        name: status
+        name: vulnHash
         type: string
-      - description: type query string
+      - description: vulnType query string
         in: query
-        name: type
+        name: vulnType
         type: string
       produces:
       - application/json
@@ -681,72 +674,6 @@ paths:
               type: object
         "400":
           description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Management
-  /api/repositories/{repositoryID}/management/{vulnerabilityID}/status:
-    put:
-      consumes:
-      - application/json
-      description: update vulnerability status
-      operationId: update-vuln-status
-      parameters:
-      - description: status of vulnerability
-        in: body
-        name: UpdateVulnStatus
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateVulnStatus'
-      - description: vulnerabilityID of the vulnerability
-        in: path
-        name: vulnerabilityID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "404":
-          description: NOT FOUND
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

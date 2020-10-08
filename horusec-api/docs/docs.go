@@ -1017,7 +1017,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all vuln management data in repository",
+                "description": "Get all vuln vulnerability data in repository",
                 "consumes": [
                     "application/json"
                 ],
@@ -1050,14 +1050,14 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "status query string",
-                        "name": "status",
+                        "description": "vulnHash query string",
+                        "name": "vulnHash",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "type query string",
-                        "name": "type",
+                        "description": "vulnType query string",
+                        "name": "vulnType",
                         "in": "query"
                     }
                 ],
@@ -1082,125 +1082,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/repositories/{repositoryID}/management/{vulnerabilityID}/status": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "update vulnerability status",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Management"
-                ],
-                "operationId": "update-vuln-status",
-                "parameters": [
-                    {
-                        "description": "status of vulnerability",
-                        "name": "UpdateVulnStatus",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateVulnStatus"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "vulnerabilityID of the vulnerability",
-                        "name": "vulnerabilityID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "404": {
-                        "description": "NOT FOUND",
                         "schema": {
                             "allOf": [
                                 {
@@ -1367,14 +1248,6 @@ var doc = `{
                 }
             }
         },
-        "dto.UpdateVulnStatus": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.UpdateVulnType": {
             "type": "object",
             "properties": {
@@ -1501,9 +1374,6 @@ var doc = `{
                     "type": "string"
                 },
                 "severity": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 },
                 "type": {
