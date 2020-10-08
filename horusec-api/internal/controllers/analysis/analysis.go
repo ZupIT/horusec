@@ -51,7 +51,6 @@ func NewAnalysisController(postgresRead relational.InterfaceRead, postgresWrite 
 }
 
 func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.UUID, error) {
-	c.postgresWrite.SetLogMode(true)
 	company, err := c.repoCompany.GetByID(analysisData.Analysis.CompanyID)
 	if err != nil {
 		return uuid.Nil, err
@@ -86,7 +85,6 @@ func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysi
 
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {
 	conn := c.postgresWrite.StartTransaction()
-	conn.SetLogMode(true)
 	if err := c.repoAnalysis.Create(analysis, conn); err != nil {
 		logger.LogError(
 			"{HORUSEC_API} Error in rollback transaction analysis",
