@@ -47,22 +47,22 @@ func CreateAnalysisMock() *horusec.Analysis {
 
 func GetGoVulnerabilityWithSeverity(severity severity.Severity) horusec.Vulnerability {
 	return horusec.Vulnerability{
-		Line:            "10",
-		Column:          "0",
-		Confidence:      "HIGH",
-		File:            "main.go",
-		Code:            "password = 'test'",
-		Details:         "hard coded password",
-		SecurityTool:    tools.GoSec,
-		Language:        languages.Go,
-		Severity:        severity,
-		VulnHash:        "123456789",
-		Type:            enumHorusec.Vulnerability,
-		CommitAuthor:    "User",
-		CommitEmail:     "user@email.com",
-		CommitHash:      "123456789",
-		CommitMessage:   "Some commit",
-		CommitDate:      time.Now().String(),
+		Line:          "10",
+		Column:        "0",
+		Confidence:    "HIGH",
+		File:          "main.go",
+		Code:          "password = 'test'",
+		Details:       "hard coded password",
+		SecurityTool:  tools.GoSec,
+		Language:      languages.Go,
+		Severity:      severity,
+		VulnHash:      "123456789",
+		Type:          enumHorusec.Vulnerability,
+		CommitAuthor:  "User",
+		CommitEmail:   "user@email.com",
+		CommitHash:    "123456789",
+		CommitMessage: "Some commit",
+		CommitDate:    time.Now().String(),
 	}
 }
 
