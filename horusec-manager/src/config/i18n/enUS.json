@@ -88,7 +88,11 @@
     "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
     "TOKEN_SUCCESS": "Token created successfully!",
     "TOKEN_INFO":"This token grants you access to perform analyzes for the selected organization! Save it in a safe place and don't share it!",
-    "CONFIRM":"Ok, I got it."
+    "CONFIRM":"Ok, I got it.",
+    "CREATE_SUCCESS": "Organization successfully created!",
+    "UPDATE_SUCCESS": "Organization edited successfully!",
+    "REMOVE_SUCCESS": "Organization removed successfully!",
+    "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!"
   },
 
   "DASHBOARD_SCREEN": {
@@ -154,7 +158,13 @@
     "CREATE_TOKEN_BELOW": "Enter the description for the new token:",
     "TOKEN_INFO": "This token grants you access to perform analyzes for the selected repository! Save it in a safe place and don't share it!",
     "TOKEN_SUCCESS": "Token created successfully!",
-    "CONFIRM": "Ok, I got it."
+    "CONFIRM": "Ok, I got it.",
+    "SUCCESS_ADD_USER": "Success in adding user to the repository!",
+    "SUCCESS_CREATE_REPO": "Repository successfully created!",
+    "SUCCESS_EDIT_REPO": "Repository successfully edited!",
+    "SUCCESS_REMOVE_USER": "User removed from the repository successfully!",
+    "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
+    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!"
   },
 
   "GENERAL": {
@@ -217,7 +227,10 @@
         "ADMIN": "Administrator",
         "MEMBER": "Member"
       }
-    }
+    },
+    "REMOVE_SUCCESS": "User removed successfully!",
+    "INVITE_SUCCESS": "User added successfully!",
+    "EDIT_SUCCESS": "User edited successfully!"
   },
 
   "SIDE_MENU": {

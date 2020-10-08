@@ -88,7 +88,11 @@
     "CONFIRM_DELETE_TOKEN":"Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
     "TOKEN_SUCCESS": "Token criado com sucesso!",
     "TOKEN_INFO":"Este token lhe concede acesso a realizar análises para a organização selecionada! Salve ele em um lugar seguro e não compartilhe!",
-    "CONFIRM":"Ok, entendi."
+    "CONFIRM":"Ok, entendi.",
+    "CREATE_SUCCESS": "Organização criada com sucesso!",
+    "UPDATE_SUCCESS": "Organização editada com sucesso!",
+    "REMOVE_SUCCESS": "Organização removida com sucesso!",
+    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!"
   },
 
   "DASHBOARD_SCREEN": {
@@ -154,7 +158,13 @@
     "CREATE_TOKEN_BELOW": "Insira a descrição para o novo token:",
     "TOKEN_INFO": "Este token lhe concede acesso a realizar análises para o repositório selecionado! Salve ele em um lugar seguro e não compartilhe!",
     "TOKEN_SUCCESS": "Token criado com sucesso!",
-    "CONFIRM": "Ok, entendi."
+    "CONFIRM": "Ok, entendi.",
+    "SUCCESS_ADD_USER": "Sucesso ao adicionar usuário ao repositório!",
+    "SUCCESS_CREATE_REPO": "Repositório criado com sucesso!",
+    "SUCCESS_EDIT_REPO": "Repositório editado com sucesso!",
+    "SUCCESS_REMOVE_USER": "Usuário removido do repositório com sucesso!",
+    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
+    "REMOVE_SUCCESS_REPO": "Repositório removido com sucesso!"
   },
 
   "GENERAL": {
@@ -217,7 +227,10 @@
         "ADMIN": "Administrador",
         "MEMBER": "Membro"
       }
-    }
+    },
+    "REMOVE_SUCCESS": "Usuário removido com sucesso!",
+    "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
+    "EDIT_SUCCESS": "Usuário editado com sucesso!"
   },
 
   "SIDE_MENU": {
