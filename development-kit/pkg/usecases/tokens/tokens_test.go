@@ -90,3 +90,71 @@ func TestNewTokenFromRequestBodyBindingURLParamRepositoryID(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestValidateTokenCompany(t *testing.T) {
+	t.Run("should return no error when valid token", func(t *testing.T) {
+		data := api.Token{
+			CompanyID:   uuid.New(),
+			Description: "test",
+		}
+
+		bytes, _ := json.Marshal(data)
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("companyID", data.CompanyID.String())
+		r, _ := http.NewRequest(http.MethodOptions, "api/account", readCloser)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		useCases := NewTokenUseCases()
+		token, err := useCases.ValidateTokenCompany(r)
+		assert.NoError(t, err)
+		assert.Equal(t, data.Description, token.Description)
+	})
+
+	t.Run("should return error when invalid token", func(t *testing.T) {
+		data := api.Token{
+			CompanyID: uuid.New(),
+		}
+
+		bytes, _ := json.Marshal(data)
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("companyID", data.CompanyID.String())
+		r, _ := http.NewRequest(http.MethodOptions, "api/account", readCloser)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		useCases := NewTokenUseCases()
+		_, err := useCases.ValidateTokenCompany(r)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when invalid company id from token", func(t *testing.T) {
+		data := api.Token{}
+
+		bytes, _ := json.Marshal(data)
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("companyID", data.CompanyID.String())
+		r, _ := http.NewRequest(http.MethodOptions, "api/account", readCloser)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		useCases := NewTokenUseCases()
+		_, err := useCases.ValidateTokenCompany(r)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when decoding invalid token data", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+
+		ctx := chi.NewRouteContext()
+		r, _ := http.NewRequest(http.MethodOptions, "api/account", readCloser)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		useCases := NewTokenUseCases()
+		_, err := useCases.ValidateTokenCompany(r)
+		assert.Error(t, err)
+	})
+}
