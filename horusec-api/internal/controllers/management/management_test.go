@@ -15,7 +15,6 @@
 package management
 
 import (
-	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/vulnerability"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
@@ -36,11 +35,11 @@ func TestNewManagementController(t *testing.T) {
 	})
 }
 
-func TestGetAllVulnManagementData(t *testing.T) {
+func TestListVulnManagementData(t *testing.T) {
 	t.Run("should success get vuln management data", func(t *testing.T) {
 		repositoryMock := &vulnerability.Mock{}
 
-		repositoryMock.On("GetAllVulnManagementData").Return(dto.VulnManagement{
+		repositoryMock.On("ListVulnManagementData").Return(dto.VulnManagement{
 			TotalItems: 1,
 			Data: []dto.Data{
 				{
@@ -62,23 +61,12 @@ func TestUpdateVulnType(t *testing.T) {
 	t.Run("should success update data with no errors", func(t *testing.T) {
 		repositoryMock := &vulnerability.Mock{}
 
-		repositoryMock.On("Update").Return(&horusec.Vulnerability{}, nil)
+		repositoryMock.On("UpdateVulnType").Return(&horusec.Vulnerability{}, nil)
 		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, nil)
 
 		controller := Controller{managementRepository: repositoryMock}
 
 		_, err := controller.UpdateVulnType(uuid.New(), &dto.UpdateVulnType{})
 		assert.NoError(t, err)
-	})
-
-	t.Run("should return error while getting vulnerability", func(t *testing.T) {
-		repositoryMock := &vulnerability.Mock{}
-
-		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, errors.New("test"))
-
-		controller := Controller{managementRepository: repositoryMock}
-
-		_, err := controller.UpdateVulnType(uuid.New(), &dto.UpdateVulnType{})
-		assert.Error(t, err)
 	})
 }
