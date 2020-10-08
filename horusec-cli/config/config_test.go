@@ -50,6 +50,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, configs.RepositoryName, "")
 		assert.Equal(t, configs.FalsePositiveHashes, "")
 		assert.Equal(t, configs.RiskAcceptHashes, "")
+		assert.Equal(t, 0, len(configs.GetFalsePositiveHashesList()))
+		assert.Equal(t, 0, len(configs.GetRiskAcceptHashesList()))
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		configs := &Config{}
@@ -167,8 +169,10 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableGitHistoryAnalysis)
 		assert.Equal(t, true, configs.CertInsecureSkipVerify)
 		assert.Equal(t, "horus", configs.RepositoryName)
-		assert.Equal(t, "hash1, hash2", configs.RepositoryName)
-		assert.Equal(t, "hash3, hash4", configs.RepositoryName)
+		assert.Equal(t, "hash1, hash2", configs.FalsePositiveHashes)
+		assert.Equal(t, 2, len(configs.GetFalsePositiveHashesList()))
+		assert.Equal(t, "hash3, hash4", configs.RiskAcceptHashes)
+		assert.Equal(t, 2, len(configs.GetRiskAcceptHashesList()))
 	})
 }
 

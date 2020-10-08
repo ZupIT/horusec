@@ -153,29 +153,29 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 		analysis := &Analysis{
 			AnalysisVulnerabilities: []AnalysisVulnerabilities{
 				{
-					Vulnerability: Vulnerability{Severity: severity.Low},
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
 				},
 				{
-					Vulnerability: Vulnerability{Severity: severity.Audit},
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Audit},
 				},
 				{
-					Vulnerability: Vulnerability{Severity: severity.Medium},
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Medium},
 				},
 				{
-					Vulnerability: Vulnerability{Severity: severity.High},
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.High},
 				},
 				{
-					Vulnerability: Vulnerability{Severity: severity.Info},
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Info},
 				},
 			},
 		}
 
-		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Low])
-		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Medium])
-		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[severity.High])
-		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Audit])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[severity.NoSec])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Info])
+		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Low])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Medium])
+		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.High])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Audit])
+		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.NoSec])
+		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Info])
 	})
 }
 

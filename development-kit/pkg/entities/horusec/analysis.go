@@ -133,19 +133,33 @@ func (a *Analysis) GetTotalVulnerabilities() int {
 	return len(a.AnalysisVulnerabilities)
 }
 
-func (a *Analysis) GetTotalVulnerabilitiesBySeverity() (total map[severity.Severity]int) {
-	total = map[severity.Severity]int{
+func (a *Analysis) GetTotalVulnerabilitiesBySeverity() (total map[horusec.VulnerabilityType]map[severity.Severity]int) {
+	total = a.getDefaultTotalVulnerabilitiesBySeverity()
+	for index := range a.AnalysisVulnerabilities {
+		vuln := a.AnalysisVulnerabilities[index].Vulnerability
+		total[vuln.Type][vuln.Severity]++
+	}
+	return total
+}
+
+func (a *Analysis) getDefaultTotalVulnerabilitiesBySeverity() map[horusec.VulnerabilityType]map[severity.Severity]int {
+	return map[horusec.VulnerabilityType]map[severity.Severity]int{
+		horusec.Vulnerability: a.getDefaultCountBySeverity(),
+		horusec.RiskAccepted:  a.getDefaultCountBySeverity(),
+		horusec.FalsePositive: a.getDefaultCountBySeverity(),
+		horusec.Corrected:     a.getDefaultCountBySeverity(),
+	}
+}
+
+func (a *Analysis) getDefaultCountBySeverity() map[severity.Severity]int {
+	return map[severity.Severity]int{
 		severity.High:   0,
 		severity.Medium: 0,
 		severity.Low:    0,
-		severity.Info:   0,
 		severity.Audit:  0,
+		severity.Info:   0,
 		severity.NoSec:  0,
 	}
-	for index := range a.AnalysisVulnerabilities {
-		total[a.AnalysisVulnerabilities[index].Vulnerability.Severity]++
-	}
-	return total
 }
 
 func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
@@ -155,6 +169,15 @@ func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Info)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Audit)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.NoSec)...)
+	a.AnalysisVulnerabilities = analysisVulnerabilities
+	return a
+}
+
+func (a *Analysis) SortVulnerabilitiesByType() *Analysis {
+	analysisVulnerabilities := a.getVulnerabilitiesByType(horusec.Vulnerability)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.RiskAccepted)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.FalsePositive)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.Corrected)...)
 	a.AnalysisVulnerabilities = analysisVulnerabilities
 	return a
 }
@@ -176,6 +199,15 @@ func (a *Analysis) GetAnalysisWithoutAnalysisVulnerabilities() *Analysis {
 func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (response []AnalysisVulnerabilities) {
 	for index := range a.AnalysisVulnerabilities {
 		if a.AnalysisVulnerabilities[index].Vulnerability.Severity == search {
+			response = append(response, a.AnalysisVulnerabilities[index])
+		}
+	}
+	return response
+}
+
+func (a *Analysis) getVulnerabilitiesByType(vulnType horusec.VulnerabilityType) (response []AnalysisVulnerabilities) {
+	for index := range a.AnalysisVulnerabilities {
+		if a.AnalysisVulnerabilities[index].Vulnerability.Type == vulnType {
 			response = append(response, a.AnalysisVulnerabilities[index])
 		}
 	}

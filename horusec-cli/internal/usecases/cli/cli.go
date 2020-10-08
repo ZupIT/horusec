@@ -75,11 +75,9 @@ func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 
 func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		listFalsePositive := strings.Split(config.FalsePositiveHashes, ",")
-		listRiskAccept := strings.Split(config.RiskAcceptHashes, ",")
-		for _, falsePositive := range listFalsePositive {
-			for _, riskAccept := range listRiskAccept {
-				if falsePositive != "" && strings.TrimSpace(falsePositive) == strings.TrimSpace(riskAccept) {
+		for _, falsePositive := range config.GetFalsePositiveHashesList() {
+			for _, riskAccept := range config.GetRiskAcceptHashesList() {
+				if falsePositive == riskAccept {
 					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
 				}
 			}
@@ -90,11 +88,9 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig
 
 func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		listFalsePositive := strings.Split(config.FalsePositiveHashes, ",")
-		listRiskAccept := strings.Split(config.RiskAcceptHashes, ",")
-		for _, riskAccept := range listRiskAccept {
-			for _, falsePositive := range listFalsePositive {
-				if riskAccept != "" && strings.TrimSpace(riskAccept) == strings.TrimSpace(falsePositive) {
+		for _, riskAccept := range config.GetRiskAcceptHashesList() {
+			for _, falsePositive := range config.GetFalsePositiveHashesList() {
+				if riskAccept == falsePositive {
 					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
 				}
 			}

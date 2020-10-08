@@ -66,6 +66,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		horusecAPIMock := &horusecAPI.Mock{}
 		horusecAPIMock.On("SendAnalysis").Return(nil)
+		horusecAPIMock.On("GetAnalysis").Return(&horusec.Analysis{}, nil)
 
 		dockerMocker := &dockerClient.Mock{}
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)

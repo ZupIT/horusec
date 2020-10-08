@@ -85,16 +85,16 @@ func (pr *PrintResults) factoryPrintByType() error {
 
 // nolint
 func (pr *PrintResults) runPrintResultsText() error {
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	fmt.Println(fmt.Sprintf("HORUSEC ENDED THE ANALYSIS COM STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status))
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	fmt.Println(fmt.Sprintf("Analysis StartedAt: %s", pr.analysis.CreatedAt.Format("2006-01-02 15:04:05")))
 	fmt.Println(fmt.Sprintf("Analysis FinishedAt: %s", pr.analysis.FinishedAt.Format("2006-01-02 15:04:05")))
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	pr.printTextOutputVulnerability()
 	return nil
@@ -116,26 +116,27 @@ func (pr *PrintResults) runPrintResultsSonarQube() error {
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 	for key := range pr.analysis.AnalysisVulnerabilities {
 		vuln := pr.analysis.AnalysisVulnerabilities[key].Vulnerability
-		severityType := vuln.Severity.ToString()
-		if severityType != "" && !pr.isFalsePositiveOrRiskAccept(&vuln) {
-			if !pr.isIgnoredVulnerability(severityType) {
-				logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash,
-					logger.DebugLevel)
-				fmt.Print("\n")
-				pr.totalVulns++
+		pr.validateVulnerabilityToCheckTotalErrors(&vuln)
+	}
+	if logger.CurrentLevel >= logger.DebugLevel {
+		pr.logSeparator(len(pr.analysis.AnalysisVulnerabilities) > 0)
+	}
+}
+
+func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *horusecEntities.Vulnerability) {
+	if vuln.Severity.ToString() != "" && !pr.isFalsePositiveOrRiskAccept(vuln) {
+		if !pr.isIgnoredVulnerability(vuln.Severity.ToString()) {
+			logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash, logger.DebugLevel)
+			if logger.CurrentLevel >= logger.DebugLevel {
+				fmt.Println("")
 			}
+			pr.totalVulns++
 		}
 	}
 }
 
 func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
-	if vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted {
-		logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability was considered to be a "+
-			"FALSE POSITIVE or ACCEPTED RISK: "+vuln.VulnHash, logger.DebugLevel)
-		fmt.Print("\n")
-		return true
-	}
-	return false
+	return vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
@@ -204,22 +205,23 @@ func (pr *PrintResults) printTextOutputVulnerability() {
 
 	pr.printTotalVulnerabilities()
 
-	pr.logSeparator()
+	pr.logSeparator(len(pr.analysis.AnalysisVulnerabilities) > 0)
 }
 
 func (pr *PrintResults) printTotalVulnerabilities() {
 	totalVulnerabilities := pr.analysis.GetTotalVulnerabilities()
-	totalVulnerabilitiesBySeverity := pr.analysis.GetTotalVulnerabilitiesBySeverity()
-	for severityName, count := range totalVulnerabilitiesBySeverity {
-		if count > 0 {
-			fmt.Println(fmt.Sprintf("Total of Vulnerabilities %s is: %v",
-				severityName.ToString(), count))
-		}
-	}
-	pr.logSeparator()
 	if totalVulnerabilities > 0 {
-		fmt.Println(fmt.Sprintf("A total of %v vulnerabilities were found in this analysis",
-			totalVulnerabilities))
+		fmt.Println(fmt.Sprintf("In this analysis, a total of %v possible vulnerabilities "+
+			"were found and we classified them into:", totalVulnerabilities))
+		fmt.Println("")
+	}
+	totalVulnerabilitiesBySeverity := pr.analysis.GetTotalVulnerabilitiesBySeverity()
+	for vulnType, countBySeverity := range totalVulnerabilitiesBySeverity {
+		for severityName, count := range countBySeverity {
+			if count > 0 {
+				fmt.Println(fmt.Sprintf("Total of %s %s is: %v", vulnType.ToString(), severityName.ToString(), count))
+			}
+		}
 	}
 }
 
@@ -242,7 +244,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 
 	fmt.Print("\n")
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 }
 
 // nolint
@@ -284,6 +286,8 @@ func (pr *PrintResults) printResponseAnalysis() {
 	fmt.Print("\n")
 }
 
-func (pr *PrintResults) logSeparator() {
-	fmt.Println(fmt.Sprintf("\n==================================================================================\n"))
+func (pr *PrintResults) logSeparator(isToShow bool) {
+	if isToShow {
+		fmt.Println(fmt.Sprintf("\n==================================================================================\n"))
+	}
 }

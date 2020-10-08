@@ -125,15 +125,14 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 
 func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	a.analysis = a.analysis.SetAnalysisFinishedData().SetupIDInAnalysisContents().
-		SortVulnerabilitiesByCriticality().SetDefaultVulnerabilityType()
+		SortVulnerabilitiesByCriticality().SetDefaultVulnerabilityType().SortVulnerabilitiesByType()
 	a.horusecAPIService.SendAnalysis(a.analysis)
 	analysisSaved := a.horusecAPIService.GetAnalysis(a.analysis.ID)
 	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
 		a.analysis = analysisSaved
 	}
-	listFalsePositive := strings.Split(a.config.FalsePositiveHashes, ",")
-	listRiskAccept := strings.Split(a.config.RiskAcceptHashes, ",")
-	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(listFalsePositive, listRiskAccept)
+	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(a.config.GetFalsePositiveHashesList(),
+		a.config.GetRiskAcceptHashesList())
 	return a.printController.StartPrintResults()
 }
 

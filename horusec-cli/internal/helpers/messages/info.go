@@ -32,7 +32,8 @@ const (
 	// Fired when monitor log timeout
 	MsgInfoMonitorTimeoutIn = "Hold on! Horusec still analysis your code. Timeout in: "
 	// Fired in print results service when analysis is finished
-	MsgAnalysisFoundVulns = "[HORUSEC] %d VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN"
+	MsgAnalysisFoundVulns = "[HORUSEC] %d VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, " +
+		"SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN"
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFinishedWithoutVulns = "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"
 )

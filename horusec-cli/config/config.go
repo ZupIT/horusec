@@ -17,6 +17,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 
@@ -396,12 +397,32 @@ func (c *Config) GetRiskAcceptHashes() string {
 	return c.RiskAcceptHashes
 }
 
+func (c *Config) GetRiskAcceptHashesList() (list []string) {
+	for _, item := range strings.Split(c.RiskAcceptHashes, ",") {
+		itemFormatted := strings.TrimSpace(item)
+		if len(itemFormatted) > 0 {
+			list = append(list, itemFormatted)
+		}
+	}
+	return list
+}
+
 func (c *Config) SetRiskAcceptHashes(riskAccept string) {
 	c.RiskAcceptHashes = riskAccept
 }
 
 func (c *Config) GetFalsePositiveHashes() string {
 	return c.FalsePositiveHashes
+}
+
+func (c *Config) GetFalsePositiveHashesList() (list []string) {
+	for _, item := range strings.Split(c.FalsePositiveHashes, ",") {
+		itemFormatted := strings.TrimSpace(item)
+		if len(itemFormatted) > 0 {
+			list = append(list, itemFormatted)
+		}
+	}
+	return list
 }
 
 func (c *Config) SetFalsePositiveHashes(falsePositive string) {
