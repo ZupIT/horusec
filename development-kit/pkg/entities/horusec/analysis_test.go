@@ -112,10 +112,15 @@ func TestSetRepositoryName(t *testing.T) {
 
 func TestGenerateID(t *testing.T) {
 	t.Run("should success return a new id", func(t *testing.T) {
-		analysis := &Analysis{}
+		analysis := &Analysis{
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{},
+			},
+		}
 		analysis.SetupIDInAnalysisContents()
 
 		assert.NotEmpty(t, analysis)
+		assert.NotEqual(t, uuid.Nil, analysis.AnalysisVulnerabilities[0].VulnerabilityID)
 	})
 }
 
@@ -156,10 +161,16 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
 				},
 				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
+				},
+				{
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Audit},
 				},
 				{
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Medium},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.High},
 				},
 				{
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.High},
@@ -175,7 +186,7 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.High])
 		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Audit])
 		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.NoSec])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Info])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Info])
 	})
 }
 

@@ -169,7 +169,7 @@ func (ar *Repository) GetByID(analysisID uuid.UUID) (*horusec.Analysis, error) {
 		SetFilter(map[string]interface{}{"analysis_id": analysisID.String()}).
 		Limit(1).
 		Preload("AnalysisVulnerabilities").
-		Preload("Vulnerability")
+		Preload("AnalysisVulnerabilities.Vulnerability")
 	response := ar.databaseRead.Find(analysis, query, analysis.GetTable())
 	if err := response.GetError(); err != nil {
 		return nil, err
