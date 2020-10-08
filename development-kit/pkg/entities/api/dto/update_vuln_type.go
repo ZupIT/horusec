@@ -34,6 +34,7 @@ func (u UpdateVulnType) TypeValues() []interface{} {
 		horusecEnums.FalsePositive,
 		horusecEnums.RiskAccepted,
 		horusecEnums.Vulnerability,
+		horusecEnums.Corrected,
 		"",
 	}
 }
