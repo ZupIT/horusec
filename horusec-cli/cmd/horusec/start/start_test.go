@@ -16,6 +16,7 @@ package start
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -111,6 +112,178 @@ func TestStartCommand_Execute(t *testing.T) {
 		output := string(outputBytes)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
+
+		promptMock.AssertNotCalled(t, "Ask")
+	})
+	t.Run("Should execute command exec and return error because found vulnerabilities", func(t *testing.T) {
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-p", "./", "-e", "true"})
+
+		assert.Error(t, cobraCmd.Execute())
+
+		promptMock.AssertNotCalled(t, "Ask")
+	})
+	t.Run("Should execute command exec and return error because found error when ask", func(t *testing.T) {
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("", errors.New("some error"))
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-e", "true"})
+
+		assert.Error(t, cobraCmd.Execute())
+
+		promptMock.AssertCalled(t, "Ask")
+	})
+	t.Run("Should execute command exec and return error because found not accept proceed", func(t *testing.T) {
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("N", nil)
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-e", "true"})
+
+		assert.Error(t, cobraCmd.Execute())
+
+		promptMock.AssertCalled(t, "Ask")
+	})
+	t.Run("Should execute command exec without error and not ask because is different project path", func(t *testing.T) {
+		_ = os.Setenv(config.EnvProjectPath, "/tmp")
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-e", "true"})
+
+		assert.NoError(t, cobraCmd.Execute())
+
+		promptMock.AssertNotCalled(t, "Ask")
+		_ = os.Setenv(config.EnvProjectPath, "")
+	})
+	t.Run("Should execute command exec without error and validate if git is installed", func(t *testing.T) {
+		_ = os.Setenv(config.EnvEnableGitHistoryAnalysis, "true")
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-e", "true"})
+
+		assert.NoError(t, cobraCmd.Execute())
+
+		promptMock.AssertCalled(t, "Ask")
+		_ = os.Setenv(config.EnvEnableGitHistoryAnalysis, "")
+	})
+	t.Run("Should execute command exec and return error because found error in configs", func(t *testing.T) {
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetConfigsFromEnvironments()
+		analyserControllerMock := &analyser.Mock{}
+		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
+
+		cmd := &Start{
+			useCases:           cli.NewCLIUseCases(),
+			configs:            configs,
+			startPrompt:        promptMock,
+			analyserController: analyserControllerMock,
+		}
+
+		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd.SetOut(stdoutMock)
+		cobraCmd.SetArgs([]string{"-p", "./", "-a", "NOT_VALID_AUTHORIZATION", "-e", "true"})
+
+		assert.Error(t, cobraCmd.Execute())
 
 		promptMock.AssertNotCalled(t, "Ask")
 	})
