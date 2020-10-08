@@ -15,7 +15,9 @@
 package horusapi
 
 import (
+	"bytes"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -115,8 +117,118 @@ func TestSendAnalysis(t *testing.T) {
 			service.SendAnalysis(analysis)
 		})
 	})
+	t.Run("should get analysis with error when set tls in request", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
 
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("test"))
+		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config.SetCertPath("./horus_api.go")
+		config.SetCertInsecureSkipVerify(true)
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   config,
+		}
+
+		assert.NotPanics(t, func() {
+			service.SendAnalysis(analysis)
+		})
+	})
+	t.Run("should get analysis with error when set tls in request", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("test"))
+		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config.SetCertPath("./invalid_path")
+		config.SetCertInsecureSkipVerify(true)
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   config,
+		}
+
+		assert.NotPanics(t, func() {
+			service.SendAnalysis(analysis)
+		})
+	})
 	t.Run("should return a new service", func(t *testing.T) {
 		assert.NotEmpty(t, NewHorusecAPIService(&cliConfig.Config{}))
+	})
+}
+
+func TestService_GetAnalysis(t *testing.T) {
+	t.Run("should get analysis with no errors", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+		body := ioutil.NopCloser(bytes.NewReader(analysis.ToBytes()))
+
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{StatusCode: 200, Body: body}), nil)
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+		}
+
+		analysisResponse := service.GetAnalysis(analysis.ID)
+		assert.NotEmpty(t, analysisResponse)
+		assert.NotEqual(t, uuid.Nil, analysisResponse.ID)
+		assert.Len(t, analysisResponse.AnalysisVulnerabilities, 11)
+	})
+	t.Run("should get analysis with error because response is 400", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+		body := ioutil.NopCloser(bytes.NewReader([]byte("uuid not valid in path")))
+
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{StatusCode: 400, Body: body}), nil)
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+		}
+
+		analysisResponse := service.GetAnalysis(analysis.ID)
+		assert.Empty(t, analysisResponse)
+	})
+	t.Run("should get analysis with error when send request", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("some error"))
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+		}
+
+		analysisResponse := service.GetAnalysis(analysis.ID)
+		assert.Empty(t, analysisResponse)
+	})
+	t.Run("should get analysis with error when set tls in request", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+
+		httpMock := &client.Mock{}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("some error"))
+		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config.SetCertPath("./invalid_path")
+		config.SetCertInsecureSkipVerify(true)
+
+		service := Service{
+			httpUtil: httpMock,
+			config:   config,
+		}
+
+		analysisResponse := service.GetAnalysis(analysis.ID)
+		assert.Empty(t, analysisResponse)
+	})
+
+	t.Run("should return nil when no authorization token", func(t *testing.T) {
+		service := Service{
+			config: &cliConfig.Config{},
+		}
+
+		analysisResponse := service.GetAnalysis(uuid.Nil)
+		assert.Empty(t, analysisResponse)
 	})
 }
