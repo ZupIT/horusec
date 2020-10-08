@@ -61,7 +61,7 @@ func TestGet(t *testing.T) {
 	t.Run("should return 200 when everything its ok", func(t *testing.T) {
 		controllerMock := &management.Mock{}
 
-		controllerMock.On("GetAllVulnManagementData").Return(dto.VulnManagement{}, nil)
+		controllerMock.On("ListVulnManagementData").Return(dto.VulnManagement{}, nil)
 
 		handler := Handler{managementController: controllerMock}
 		r, _ := http.NewRequest(http.MethodGet, "api/management", nil)
@@ -79,7 +79,7 @@ func TestGet(t *testing.T) {
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
 		controllerMock := &management.Mock{}
 
-		controllerMock.On("GetAllVulnManagementData").Return(dto.VulnManagement{}, errors.New("test"))
+		controllerMock.On("ListVulnManagementData").Return(dto.VulnManagement{}, errors.New("test"))
 
 		handler := Handler{managementController: controllerMock}
 		r, _ := http.NewRequest(http.MethodGet, "api/management", nil)
@@ -97,7 +97,7 @@ func TestGet(t *testing.T) {
 	t.Run("should return 400 when missing or wrong repositoryID", func(t *testing.T) {
 		controllerMock := &management.Mock{}
 
-		controllerMock.On("GetAllVulnManagementData").Return(dto.VulnManagement{}, errors.New("test"))
+		controllerMock.On("ListVulnManagementData").Return(dto.VulnManagement{}, errors.New("test"))
 
 		handler := Handler{managementController: controllerMock}
 		r, _ := http.NewRequest(http.MethodGet, "api/management", nil)
