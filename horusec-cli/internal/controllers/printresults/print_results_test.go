@@ -16,6 +16,7 @@ package printresults
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -100,6 +101,41 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		assert.Error(t, err)
 	})
 
+	t.Run("Should return 12 vulnerabilities with timeout occurs", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Low)})
+
+		printResults := &PrintResults{
+			analysis: analysis,
+			configs:  &config.Config{
+				IsTimeout: true,
+			},
+		}
+
+		totalVulns, err := printResults.StartPrintResults()
+
+		assert.NoError(t, err)
+		assert.Equal(t, 12, totalVulns)
+	})
+
+	t.Run("Should return 12 vulnerabilities with logger debug", func(t *testing.T) {
+		logger.SetLogLevel(logger.DebugLevel.String())
+		analysis := test.CreateAnalysisMock()
+
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Low)})
+
+		printResults := &PrintResults{
+			analysis: analysis,
+			configs:  &config.Config{},
+		}
+
+		totalVulns, err := printResults.StartPrintResults()
+
+		assert.NoError(t, err)
+		assert.Equal(t, 12, totalVulns)
+	})
+
 	t.Run("Should return 12 vulnerabilities", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 
@@ -111,6 +147,21 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		totalVulns, err := printResults.StartPrintResults()
+
+		assert.NoError(t, err)
+		assert.Equal(t, 12, totalVulns)
+	})
+
+	t.Run("Should return 12 vulnerabilities with commit authors", func(t *testing.T) {
+		configs := &config.Config{
+			EnableCommitAuthor: true,
+		}
+
+		analysis := test.CreateAnalysisMock()
+
+		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Medium)})
+
+		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 12, totalVulns)

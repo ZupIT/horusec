@@ -15,7 +15,9 @@
 package workdir
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/stretchr/testify/assert"
+	"math"
 	"testing"
 )
 
@@ -27,6 +29,13 @@ func TestString(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
+	t.Run("should error parse interface to workdir", func(t *testing.T) {
+		workDir := &WorkDir{}
+
+		assert.NotPanics(t, func() {
+			workDir.ParseInterfaceToStruct(math.NaN())
+		})
+	})
 	t.Run("should success parse interface to workdir", func(t *testing.T) {
 		workDir := &WorkDir{}
 
@@ -47,5 +56,14 @@ func TestMap(t *testing.T) {
 	t.Run("should success return a new map of workdir", func(t *testing.T) {
 		workDir := &WorkDir{}
 		assert.NotEmpty(t, workDir.Map())
+	})
+}
+
+func TestGetArrayByLanguage(t *testing.T) {
+	t.Run("should success return a GetArrayByLanguage", func(t *testing.T) {
+		workDir := &WorkDir{
+			JavaScript: []string{"frontend"},
+		}
+		assert.NotEmpty(t, workDir.GetArrayByLanguage(languages.Javascript))
 	})
 }

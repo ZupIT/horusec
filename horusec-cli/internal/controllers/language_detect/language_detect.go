@@ -16,7 +16,6 @@ package languagedetect
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -179,63 +178,6 @@ func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 		fmt.Print("\n")
 		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, logger.WarnLevel, folderDstName)
 		fmt.Print("\n")
-	}
-	return err
-}
-
-// WARNING: This method not be called because is feature is deprecated
-func (ld *LanguageDetect) addIgnoreHorusecInGitFolder(directory string) error {
-	err := ld.runAddIgnoreHorusecInGitFolder(directory)
-	if err == nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInAddHorusecFolderInGitIgnore, err, logger.ErrorLevel)
-	}
-	return err
-}
-
-func (ld *LanguageDetect) runAddIgnoreHorusecInGitFolder(directory string) error {
-	gitignorePath := directory + file.ReplacePathSeparator("/.gitignore")
-	horusecPath := directory + file.ReplacePathSeparator("/.horusec")
-
-	if err := ld.checkIfExistHorusecAndGitIgnoreFolders(horusecPath, gitignorePath); err != nil {
-		return err
-	}
-	content, err := ioutil.ReadFile(gitignorePath)
-	if err != nil {
-		return err
-	}
-	if strings.Contains(string(content), ".horusec") {
-		return nil
-	}
-	return ld.writeInGitIgnoreHorusecFolder(gitignorePath)
-}
-
-func (ld *LanguageDetect) checkIfExistHorusecAndGitIgnoreFolders(horusecPath, gitignorePath string) error {
-	if _, err := os.Stat(horusecPath); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorNotFoundHorusecFolder, err, logger.ErrorLevel)
-		return err
-	}
-	if _, err := os.Stat(gitignorePath); err != nil {
-		if _, err := os.Create(gitignorePath); err != nil {
-			return err
-		}
-		logger.LogDebugWithLevel(messages.MsgDebugGitIgnoreGenerated, logger.DebugLevel, gitignorePath)
-	}
-	return nil
-}
-
-func (ld *LanguageDetect) writeInGitIgnoreHorusecFolder(gitignorePath string) error {
-	fileOpened, err := os.OpenFile(gitignorePath, os.O_APPEND|os.O_WRONLY, 0600)
-	if fileOpened != nil {
-		defer func() {
-			logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close(), logger.ErrorLevel)
-		}()
-	}
-	if err != nil {
-		return err
-	}
-	_, err = fileOpened.Write([]byte(".horusec"))
-	if err == nil {
-		logger.LogDebugWithLevel(messages.MsgDebugAddingHorusecFolderInGitIgnore, logger.DebugLevel, gitignorePath)
 	}
 	return err
 }

@@ -16,6 +16,8 @@ package analyser
 
 import (
 	"bytes"
+	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"testing"
 
@@ -45,7 +47,10 @@ func TestNewAnalyser(t *testing.T) {
 
 func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
-		configs := &config.Config{}
+		configs := &config.Config{
+			EnableGitHistoryAnalysis: true,
+			EnableCommitAuthor: true,
+		}
 		configs.WorkDir = &workdir.WorkDir{}
 
 		languageDetectMock := &languageDetect.Mock{}
@@ -94,6 +99,100 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 		controller.analysis = controller.analysisUseCases.NewAnalysisRunning()
 		totalVulns, err := controller.AnalysisDirectory()
 		assert.NoError(t, err)
+		assert.Equal(t, 0, totalVulns)
+	})
+	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+
+		languageDetectMock := &languageDetect.Mock{}
+		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
+			languages.Go,
+			languages.Leaks,
+			languages.DotNet,
+			languages.Ruby,
+			languages.Python,
+			languages.Java,
+			languages.Kotlin,
+			languages.Javascript,
+			languages.HCL,
+		}, nil)
+
+		printResultMock := &printresults.Mock{}
+		printResultMock.On("StartPrintResults").Return(0, nil)
+
+		horusecAPIMock := &horusecAPI.Mock{}
+		horusecAPIMock.On("SendAnalysis").Return(nil)
+		horusecAPIMock.On("GetAnalysis").Return(test.CreateAnalysisMock(), nil)
+
+		dockerMocker := &dockerClient.Mock{}
+		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
+		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
+		dockerMocker.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
+		dockerMocker.On("ContainerStart").Return(nil)
+		dockerMocker.On("ContainerWait").Return(int64(0), nil)
+		dockerMocker.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerRemove").Return(nil)
+		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
+
+		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
+
+		controller := &Analyser{
+			dockerSDK:         dockerSDK,
+			config:            configs,
+			languageDetect:    languageDetectMock,
+			analysisUseCases:  analysisUseCases.NewAnalysisUseCases(),
+			printController:   printResultMock,
+			horusecAPIService: horusecAPIMock,
+			formatterService:  formatters.NewFormatterService(&horusec.Analysis{}, dockerSDK, configs, &horusec.Monitor{}),
+		}
+
+		controller.analysis = controller.analysisUseCases.NewAnalysisRunning()
+		totalVulns, err := controller.AnalysisDirectory()
+		assert.NoError(t, err)
+		assert.Equal(t, 0, totalVulns)
+	})
+	t.Run("Should run error in language detect", func(t *testing.T) {
+		configs := &config.Config{}
+		configs.WorkDir = &workdir.WorkDir{}
+
+		languageDetectMock := &languageDetect.Mock{}
+		languageDetectMock.On("LanguageDetect").Return([]languages.Language{}, errors.New("test"))
+
+		printResultMock := &printresults.Mock{}
+		printResultMock.On("StartPrintResults").Return(0, nil)
+
+		horusecAPIMock := &horusecAPI.Mock{}
+		horusecAPIMock.On("SendAnalysis").Return(nil)
+		horusecAPIMock.On("GetAnalysis").Return(&horusec.Analysis{}, nil)
+
+		dockerMocker := &dockerClient.Mock{}
+		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
+		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
+		dockerMocker.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
+		dockerMocker.On("ContainerStart").Return(nil)
+		dockerMocker.On("ContainerWait").Return(int64(0), nil)
+		dockerMocker.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerRemove").Return(nil)
+		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
+
+		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
+
+		controller := &Analyser{
+			dockerSDK:         dockerSDK,
+			config:            configs,
+			languageDetect:    languageDetectMock,
+			analysisUseCases:  analysisUseCases.NewAnalysisUseCases(),
+			printController:   printResultMock,
+			horusecAPIService: horusecAPIMock,
+			formatterService:  formatters.NewFormatterService(&horusec.Analysis{}, dockerSDK, configs, &horusec.Monitor{}),
+		}
+
+		controller.analysis = controller.analysisUseCases.NewAnalysisRunning()
+		totalVulns, err := controller.AnalysisDirectory()
+		assert.Error(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
 }
