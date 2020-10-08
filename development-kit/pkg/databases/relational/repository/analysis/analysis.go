@@ -259,7 +259,7 @@ func (ar *Repository) GetVulnByDeveloper(companyID, repositoryID uuid.UUID, init
 	finalDate time.Time) (vulnByDeveloper []dashboard.VulnByDeveloper, err error) {
 	query := ar.databaseRead.
 		GetConnection().
-		Select("vulnerabilities.commit_email AS developer, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total," +
+		Select("vulnerabilities.commit_email AS developer, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total,"+
 			" (?) AS low, (?) AS medium, (?) AS high, (?) AS audit, (?) AS no_sec, (?) AS info",
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "LOW"),
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "MEDIUM"),
