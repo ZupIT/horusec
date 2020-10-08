@@ -105,6 +105,8 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 							SecurityTool: tools.GoSec,
 							Language:     languages.Go,
 							Severity:     severity.NoSec,
+							Type: 		  horusec.Vulnerability,
+							VulnHash: 	  uuid.New().String(),
 						},
 					},
 				},
