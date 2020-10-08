@@ -25,6 +25,7 @@ import (
 func Bind(vuln *horusec.Vulnerability) *horusec.Vulnerability {
 	vulnHash, _ := hash.GenerateSHA1(
 		toOneLine(vuln.Code),
+		vuln.Line,
 		vuln.File,
 	)
 

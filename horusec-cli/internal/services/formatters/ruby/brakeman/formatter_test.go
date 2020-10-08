@@ -50,6 +50,52 @@ func TestParseOutput(t *testing.T) {
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
+	t.Run("Should success parse output empty to analysis", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+
+		output := ""
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		assert.NotPanics(t, func() {
+			formatter.StartAnalysis("")
+		})
+
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
+	})
+	t.Run("Should error rails not found when parse output to analysis", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+
+		output := "Please supply the path to a Rails application"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		assert.NotPanics(t, func() {
+			formatter.StartAnalysis("")
+		})
+
+		assert.NotEmpty(t, analysis.Errors)
+	})
 
 	t.Run("Should return error when parsing invalid output", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
