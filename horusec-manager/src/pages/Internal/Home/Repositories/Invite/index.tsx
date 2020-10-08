@@ -57,7 +57,7 @@ const InviteToRepository: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      name: t('PERMISSIONS.USER'),
       value: 'member',
     },
   ];

@@ -87,8 +87,11 @@
     "DELETE": "Delete",
     "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
     "TOKEN_SUCCESS": "Token created successfully!",
-    "TOKEN_INFO":"This token grants you access to perform analyzes for the selected organization! Save it in a safe place and don't share it!",
-    "CONFIRM":"Ok, I got it."
+    "TOKEN_INFO":"With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
+    "CONFIRM":"Ok, I got it.",
+    "CREATE_NEW_TOKEN": "Add new token",
+    "CREATE_TOKEN_BELOW": "Add a new token below:",
+    "INVALID_DESCRIPTION": "Invalid description"
   },
 
   "DASHBOARD_SCREEN": {
@@ -99,7 +102,7 @@
     "TOTAL_REPOSITORIES": "Total repositories",
     "ALL_VULNERABILITIES": "All vulnerabilities",
     "REPOSITORY": "Repository",
-    "CHART_NO_DATA": "No data for the selected period",
+    "CHART_NO_DATA": "No results found",
     "VULNERABILITIES_BY_LANG": "Language vulnerabilities",
     "VULNERABILITIES_BY_DEV": "Vulnerabilities by developer",
     "VULNERABILITIES_BY_REPO": "Vulnerabilities by repository",
@@ -130,7 +133,6 @@
     "TOKENS": "Tokens",
     "CONFIRM_DELETE_REPO": "Do you really want to delete the repository? This action cannot be undone.",
     "YES": "Yes",
-    "CREATE_NEW_REPO": "Create a new repository below:",
     "NAME_REPO": "Repository name",
     "INVALID_NAME": "Enter the name",
     "DESCRIPTION_REPO": "Repository description",
@@ -138,7 +140,7 @@
     "EDIT_REPO": "Edit repository",
     "EDIT_REPO_BELOW": "Edit the repository below:",
     "INVITE_TO_REPOSITORY": "Invite to the repository",
-    "INVITE_USER_BELOW": "Invite a user to the repository below:",
+    "INVITE_USER_BELOW": "Invite a new user below:",
     "SEARCH_USER_EMAIL_BELOW": "Search for user by email",
     "USER": "User",
     "EMAIL": "Email",
@@ -152,7 +154,7 @@
     "CREATE_NEW_TOKEN": "Add new token",
     "INVALID_DESCRIPTION": "Invalid description",
     "CREATE_TOKEN_BELOW": "Enter the description for the new token:",
-    "TOKEN_INFO": "This token grants you access to perform analyzes for the selected repository! Save it in a safe place and don't share it!",
+    "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "TOKEN_SUCCESS": "Token created successfully!",
     "CONFIRM": "Ok, I got it."
   },
@@ -169,26 +171,24 @@
 
   "PERMISSIONS": {
     "ADMIN": "Administrator",
-    "MEMBER": "Member",
+    "USER": "User",
     "TITLE": "Permissions",
     "REPOSITORY": {
-      "ADMIN": "Administrator permissions allow you to perform on the repository:",
-      "MEMBER": "Member permissions allow you to perform in the repository:",
       "RULES": {
-        "TOKENS": "Manage Tokens",
-        "OTHER_USERS": "Manage other users' access",
-        "ANALYTIC": "View the analytic",
-        "YOUR_REPOSITORY": "View the repository that he has access to"
+        "HANDLER": "You have access to view/edit/remove the repository.",
+        "HANDLER_TOKENS": "Has access to view/edit/remove access tokens to the repository.",
+        "HANDLER_USER": "Has access to view/create/edit/remove user access to the repository.",
+        "ANALYTIC_REPO": "You have access to view the repository graphics.",
+        "NOTHING": "N/A"
       }
     },
     "COMPANY": {
-      "ADMIN": "Administrator permissions allow you to perform in the organization:",
-      "MEMBER": "Member permissions allow you to perform in the organization:",
       "RULES": {
-        "HANDLER": "Manage other users' access",
-        "REMOVE": "Remove user from organization",
-        "INVITE": "Invite new users to the organization",
-        "ANALYTIC": "View the analytic"
+        "HANDLER": "You have access to edit/remove the company.",
+        "HANDLER_USER": "Has access to view/invite/edit/remove users within the company.",
+        "CREATE": "You have access to create new repositories.",
+        "ANALYTIC_COMPANY": "You have access to view the company's graphics.",
+        "ANALYTIC_REPO": "Has access to view the graphics of the repository that he has access to."
       }
     }
   },
@@ -215,7 +215,7 @@
       "EDIT": "Edit",
       "ROLE": {
         "ADMIN": "Administrator",
-        "MEMBER": "Member"
+        "User": "User"
       }
     }
   },
