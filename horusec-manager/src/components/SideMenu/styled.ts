@@ -27,7 +27,7 @@ interface SubMenuProps {
 
 const SideMenu = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
-  max-width: 135px;
+  max-width: 145px;
   display: flex;
   flex-direction: column;
   z-index: 2;
@@ -98,7 +98,7 @@ const RouteName = styled.span`
 const SubMenu = styled.div<SubMenuProps>`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   height: 96.3vh;
-  min-width: 160px;
+  min-width: 180px;
   top: 0;
   left: -165px;
   transition: left 0.6s;

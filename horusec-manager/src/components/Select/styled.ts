@@ -21,6 +21,7 @@ interface OptionsListProps {
   isOpen: boolean;
   rounded: boolean;
   width: string;
+  height: string;
 }
 
 interface WrapperProps {
@@ -101,10 +102,10 @@ const OptionsList = styled.div<OptionsListProps>`
   height: 0;
   z-index: 5;
 
-  ${({ isOpen }) =>
+  ${({ isOpen, height }) =>
     isOpen &&
     css`
-      height: 64px;
+      height: ${height ? height : '64px'};
     `};
 
   ${({ rounded }) =>

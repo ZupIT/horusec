@@ -38,7 +38,7 @@ const SideMenu: React.FC = () => {
   const routes: InternalRoute[] = [
     {
       name: t('SIDE_MENU.DASHBOARD'),
-      icon: 'list',
+      icon: 'pie',
       type: 'route',
       path: '/home/dashboard',
       subRoutes: [
@@ -58,6 +58,13 @@ const SideMenu: React.FC = () => {
       ],
     },
     {
+      name: t('SIDE_MENU.VULNERABILITIES'),
+      icon: 'shield',
+      path: '/home/vulnerabilities',
+      type: 'route',
+      adminOnly: true,
+    },
+    {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
       path: '/home/repositories',
@@ -65,7 +72,7 @@ const SideMenu: React.FC = () => {
     },
     {
       name: t('SIDE_MENU.ORGANIZATION_USERS'),
-      icon: 'grid',
+      icon: 'users',
       path: '/home/organization-users',
       type: 'route',
       adminOnly: true,

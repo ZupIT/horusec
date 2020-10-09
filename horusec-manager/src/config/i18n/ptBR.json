@@ -234,8 +234,28 @@
     "EDIT_SUCCESS": "Usuário editado com sucesso!"
   },
 
+  "VULNERABILITIES_SCREEN": {
+    "SEARCH": "Pesquisar vulnerabilidade por hash",
+    "TITLE": "Vulnerabilidades",
+    "REPOSITORY": "Repositório",
+    "TABLE": {
+      "EMPTY": "Não há vulnerabilidades para este repositorio",
+      "HASH": "Hash",
+      "DETAILS": "Detalhes",
+      "SEVERITY": "Severidade",
+      "TYPE": "Tipo de vulnerabilidade"
+    },
+    "TYPES": {
+      "VULNERABILITY": "Vulnerabilidade",
+      "RISKACCEPTED": "Risco aceito",
+      "FALSEPOSITIVE": "Falso Positivo",
+      "CORRECTED": "Corrigido"
+    }
+  },
+
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
+    "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
     "ORGANIZATION": "Organização",
     "REPOSITORY": "Repositório",

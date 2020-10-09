@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import http from 'services/axios/forceRenewToken';
-import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
+import renewHTTP from 'services/axios/forceRenewToken';
+import defaultHTTP from 'services/axios/default';
+
+import { SERVICE_COMPANY, SERVICE_API, SERVICE_REPOSITORY } from './enpoints';
 
 const getAll = (companyId: string) => {
-  return http.get(`${SERVICE_COMPANY}/${companyId}/repositories`);
+  return renewHTTP.get(`${SERVICE_COMPANY}/${companyId}/repositories`);
 };
 
 const create = (companyId: string, name: string, description: string) => {
-  return http.post(`${SERVICE_COMPANY}/${companyId}/repositories`, {
+  return renewHTTP.post(`${SERVICE_COMPANY}/${companyId}/repositories`, {
     name,
     description,
   });
@@ -34,20 +36,20 @@ const update = (
   name: string,
   description: string
 ) => {
-  return http.patch(
+  return renewHTTP.patch(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}`,
     { name, description }
   );
 };
 
 const remove = (companyId: string, repositoryId: string) => {
-  return http.delete(
+  return renewHTTP.delete(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}`
   );
 };
 
 const getAllTokens = (companyId: string, repositoryId: string) => {
-  return http.get(
+  return renewHTTP.get(
     `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens`
   );
 };
@@ -57,7 +59,7 @@ const createToken = (
   repositoryId: string,
   description: string
 ) => {
-  return http.post(
+  return renewHTTP.post(
     `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens`,
     {
       description,
@@ -70,13 +72,13 @@ const removeToken = (
   repositoryId: string,
   tokenId: string
 ) => {
-  return http.delete(
+  return renewHTTP.delete(
     `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
 const getUsersInRepository = (companyId: string, repositoryId: string) => {
-  return http.get(
+  return renewHTTP.get(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles`
   );
 };
@@ -87,7 +89,7 @@ const includeUser = (
   email: string,
   role: string
 ) => {
-  return http.post(
+  return renewHTTP.post(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles`,
     {
       email,
@@ -101,7 +103,7 @@ const removeUser = (
   repositoryId: string,
   accountId: string
 ) => {
-  return http.delete(
+  return renewHTTP.delete(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
@@ -112,10 +114,35 @@ const updateUserRole = (
   accountId: string,
   role: string
 ) => {
-  return http.patch(
+  return renewHTTP.patch(
     `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,
+    }
+  );
+};
+
+const getAllVulnerabilities = (
+  repositoryId: string,
+  page: number,
+  size: number,
+  vulnHash?: string,
+  vulnType?: string
+) => {
+  return defaultHTTP.get(`${SERVICE_REPOSITORY}/${repositoryId}/management`, {
+    params: { page, size, vulnType, vulnHash },
+  });
+};
+
+const updateVulnerabilityType = (
+  repositoryId: string,
+  vulnerabilityId: string,
+  type: string
+) => {
+  return defaultHTTP.put(
+    `${SERVICE_REPOSITORY}/${repositoryId}/management/${vulnerabilityId}/type`,
+    {
+      type,
     }
   );
 };
@@ -132,4 +159,6 @@ export default {
   includeUser,
   removeUser,
   updateUserRole,
+  getAllVulnerabilities,
+  updateVulnerabilityType,
 };

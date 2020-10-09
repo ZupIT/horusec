@@ -66,7 +66,7 @@ const EditRepository: React.FC<Props> = ({
           description.value
         )
         .then(() => {
-          showSuccessFlash('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO');
+          showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
           onConfirm();
         })
         .catch((err) => {
