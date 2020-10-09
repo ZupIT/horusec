@@ -16,6 +16,7 @@ package brakeman
 
 import (
 	"encoding/json"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/ruby"
@@ -27,7 +28,6 @@ import (
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {

@@ -16,6 +16,7 @@ package email
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/streadway/amqp"
@@ -38,6 +39,21 @@ func TestSendEmail(t *testing.T) {
 	t.Run("should call controller send email", func(t *testing.T) {
 		mailerMock := &mailer.Mock{}
 		mailerMock.On("SendEmail").Return(nil)
+		mailerMock.On("GetFromHeader").Return("")
+
+		emailData := messagesEntity.EmailMessage{To: "test@horusec.com.br", TemplateName: "email-confirmation"}
+		byteEmail, _ := json.Marshal(&emailData)
+
+		brokerPacket := packet.NewPacket(&amqp.Delivery{Body: byteEmail})
+
+		consumer := NewConsumer(mailerMock)
+		consumer.SendEmail(brokerPacket)
+
+		mailerMock.AssertCalled(t, "SendEmail")
+	})
+	t.Run("should controller return error when send email", func(t *testing.T) {
+		mailerMock := &mailer.Mock{}
+		mailerMock.On("SendEmail").Return(errors.New("unexpected error"))
 		mailerMock.On("GetFromHeader").Return("")
 
 		emailData := messagesEntity.EmailMessage{To: "test@horusec.com.br", TemplateName: "email-confirmation"}

@@ -14,69 +14,12 @@
 
 package analysis
 
-/*
-{
-  "id":"2807a8e2-3e69-426e-846b-2d2a4485d143",
-  "repositoryID":"00000000-0000-0000-0000-000000000000",
-  "repositoryName":"",
-  "companyID":"00000000-0000-0000-0000-000000000000",
-  "companyName":"",
-  "status":"success",
-  "errors":"",
-  "createdAt":"2020-08-20T15:10:01.103499818-03:00",
-  "finishedAt":"2020-08-20T15:10:16.231245518-03:00",
-  "vulnerabilities":[
-    {
-      "line":"4",
-      "column":"2",
-      "confidence":"HIGH",
-      "file":"/src/api/util/util.go",
-      "code":"3: import (\n4: \t\"crypto/md5\"\n5: \t\"fmt\"\n",
-      "details":"Blocklisted import crypto/md5: weak cryptographic primitive",
-      "type":"",
-      "vulnerableBelow":"",
-      "version":"",
-      "securityTool":"GoSec",
-      "language":"Go",
-      "severity":"MEDIUM",
-      "commitAuthor":{
-        "author":"Wilian Gabriel",
-        "email":"wilian.silva@zup.com.br",
-        "commitHash":"da439ca06ebed13b7d565dc88b43efe2f1ea7947",
-        "message":"Change golang go-sec",
-        "date":"2020-05-27 14:01:22 -0300"
-      }
-    },
-    {
-      "line":"23",
-      "column":"7",
-      "confidence":"HIGH",
-      "file":"/src/api/util/util.go",
-      "code":"22: func GetMD5(s string) string {\n23: \th := md5.New()\n24: \tio.WriteString(h, s) // #nohorus\n",
-      "details":"Use of weak cryptographic primitive",
-      "type":"",
-      "vulnerableBelow":"",
-      "version":"",
-      "securityTool":"GoSec",
-      "language":"Go",
-      "severity":"NOSEC",
-      "commitAuthor":{
-        "author":"Wilian Gabriel",
-        "email":"wilian.silva@zup.com.br",
-        "commitHash":"da439ca06ebed13b7d565dc88b43efe2f1ea7947",
-        "message":"Change golang go-sec",
-        "date":"2020-05-27 14:01:22 -0300"
-      }
-    }
-  ]
-}
-*/
-
 import (
 	"bytes"
 	"context"
 	"errors"
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -145,7 +88,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("Find").Return(mockResponse.SetError(errors.New("test")))
 
 		handler := NewHandler(mockRead, mockWrite)
-		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/", nil)
+		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -157,17 +100,18 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
-	t.Run("should return 200 when everything its ok", func(t *testing.T) {
+	t.Run("should return 404 when failed to get analysis", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
+		mockResponse := &response.Response{}
 		conn, err := gorm.Open("sqlite3", ":memory:")
 		assert.NoError(t, err)
 		mockRead.On("SetFilter").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, errorsEnum.ErrNotFoundRecords, &horusec.Analysis{}))
+		mockRead.On("Find").Return(mockResponse.SetError(errorsEnum.ErrNotFoundRecords))
 
 		handler := NewHandler(mockRead, mockWrite)
-		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/", nil)
+		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -186,10 +130,10 @@ func TestGet(t *testing.T) {
 		conn, err := gorm.Open("sqlite3", ":memory:")
 		assert.NoError(t, err)
 		mockRead.On("SetFilter").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &horusec.Analysis{}))
+		mockRead.On("Find").Return(response.NewResponse(1, nil, test.CreateAnalysisMock()))
 
 		handler := NewHandler(mockRead, mockWrite)
-		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/", nil)
+		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -237,21 +181,24 @@ func TestPost(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
+		conn, err := gorm.Open("sqlite3", ":memory:")
+		assert.NoError(t, err)
+		conn.Table("analysis").AutoMigrate(&horusec.Analysis{})
+		conn.Table("analysis_vulnerabilities").AutoMigrate(&horusec.AnalysisVulnerabilities{})
+		conn.Table("vulnerabilities").AutoMigrate(&horusec.Vulnerability{})
+		conn.LogMode(true)
 		resp := &response.Response{}
 
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("Create").Return(resp)
 		mockWrite.On("CommitTransaction").Return(resp)
+		mockWrite.On("GetConnection").Return(conn)
 
 		mockRead.On("Find").Return(resp)
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 
 		analysisData := apiEntities.AnalysisData{
-			Analysis: &horusec.Analysis{
-				Status:     enumsHorusec.Success,
-				CreatedAt:  time.Now(),
-				FinishedAt: time.Now(),
-			},
+			Analysis: test.CreateAnalysisMock(),
 			RepositoryName: "",
 		}
 

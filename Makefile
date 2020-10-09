@@ -18,10 +18,10 @@ coverage-horusec-api:
 	deployments/scripts/coverage.sh 99 "./horusec-api"
 coverage-horusec-cli:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 82 "./horusec-cli"
+	deployments/scripts/coverage.sh 90 "./horusec-cli"
 coverage-horusec-messages:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 85 "./horusec-messages"
+	deployments/scripts/coverage.sh 98 "./horusec-messages"
 coverage-horusec-account:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-account"
