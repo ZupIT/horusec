@@ -21,7 +21,7 @@ import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 const useResponseMessage = () => {
   const { t } = useTranslation();
-  const { setMessage } = useFlashMessage();
+  const { showErrorFlash } = useFlashMessage();
 
   const dispatchMessage = (response: APIResponse): void => {
     const messages: ObjectLiteral = {
@@ -51,7 +51,7 @@ const useResponseMessage = () => {
 
     const msg = messages[response?.content] || messages.generic;
 
-    setMessage(msg);
+    showErrorFlash(msg);
   };
 
   return {

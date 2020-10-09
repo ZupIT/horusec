@@ -87,7 +87,11 @@
     "DELETE": "Delete",
     "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
     "TOKEN_SUCCESS": "Token created successfully!",
-    "TOKEN_INFO":"With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
+    "CREATE_SUCCESS": "Organization successfully created!",
+    "UPDATE_SUCCESS": "Organization edited successfully!",
+    "REMOVE_SUCCESS": "Organization removed successfully!",
+    "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
+    "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "CONFIRM":"Ok, I got it.",
     "CREATE_NEW_TOKEN": "Add new token",
     "CREATE_TOKEN_BELOW": "Add a new token below:",
@@ -156,7 +160,13 @@
     "CREATE_TOKEN_BELOW": "Enter the description for the new token:",
     "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "TOKEN_SUCCESS": "Token created successfully!",
-    "CONFIRM": "Ok, I got it."
+    "CONFIRM": "Ok, I got it.",
+    "SUCCESS_ADD_USER": "Success in adding user to the repository!",
+    "SUCCESS_CREATE_REPO": "Repository successfully created!",
+    "SUCCESS_EDIT_REPO": "Repository successfully edited!",
+    "SUCCESS_REMOVE_USER": "User removed from the repository successfully!",
+    "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
+    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!"
   },
 
   "GENERAL": {
@@ -217,7 +227,10 @@
         "ADMIN": "Administrator",
         "User": "User"
       }
-    }
+    },
+    "REMOVE_SUCCESS": "User removed successfully!",
+    "INVITE_SUCCESS": "User added successfully!",
+    "EDIT_SUCCESS": "User edited successfully!"
   },
 
   "SIDE_MENU": {

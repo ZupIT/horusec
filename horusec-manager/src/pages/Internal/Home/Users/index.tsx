@@ -25,11 +25,15 @@ import { Account } from 'helpers/interfaces/Account';
 
 import InviteToCompany from './Invite';
 import EditUserRole from './Edit';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 const Users: React.FC = () => {
   const { t } = useTranslation();
   const { companyID } = getCurrentCompany();
+  const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [users, setUsers] = useState<Account[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Account[]>([]);
@@ -75,6 +79,7 @@ const Users: React.FC = () => {
     companyService
       .removeUserInCompany(companyID, userToDelete.accountID)
       .then(() => {
+        showSuccessFlash(t('USERS_SCREEN.REMOVE_SUCCESS'));
         setUserToDelete(null);
         fetchData();
       })
@@ -141,27 +146,31 @@ const Users: React.FC = () => {
                 </Styled.Cell>
 
                 <Styled.Cell className="row">
-                  <Button
-                    rounded
-                    outline
-                    opaque
-                    text={t('USERS_SCREEN.TABLE.DELETE')}
-                    width={90}
-                    height={30}
-                    icon="delete"
-                    onClick={() => setUserToDelete(user)}
-                  />
+                  {user.email === currentUser.email ? (
+                    <>
+                      <Button
+                        rounded
+                        outline
+                        opaque
+                        text={t('USERS_SCREEN.TABLE.DELETE')}
+                        width={90}
+                        height={30}
+                        icon="delete"
+                        onClick={() => setUserToDelete(user)}
+                      />
 
-                  <Button
-                    outline
-                    rounded
-                    opaque
-                    text={t('USERS_SCREEN.TABLE.EDIT')}
-                    width={90}
-                    height={30}
-                    icon="edit"
-                    onClick={() => setUserToEdit(user)}
-                  />
+                      <Button
+                        outline
+                        rounded
+                        opaque
+                        text={t('USERS_SCREEN.TABLE.EDIT')}
+                        width={90}
+                        height={30}
+                        icon="edit"
+                        onClick={() => setUserToEdit(user)}
+                      />
+                    </>
+                  ) : null}
                 </Styled.Cell>
               </Styled.Row>
             ))}

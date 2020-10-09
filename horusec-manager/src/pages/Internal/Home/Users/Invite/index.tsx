@@ -24,6 +24,7 @@ import { useTheme } from 'styled-components';
 import companyService from 'services/company';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -45,6 +46,7 @@ const InviteToCompany: React.FC<Props> = ({
   const { colors } = useTheme();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const roles: Role[] = [
     {
@@ -76,6 +78,7 @@ const InviteToCompany: React.FC<Props> = ({
       companyService
         .createUserInCompany(companyID, email.value, role.value)
         .then(() => {
+          showSuccessFlash(t('USERS_SCREEN.INVITE_SUCCESS'));
           onConfirm();
           resetFields();
         })

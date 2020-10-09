@@ -22,6 +22,7 @@ import companyService from 'services/company';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Account } from 'helpers/interfaces/Account';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -44,6 +45,7 @@ const EditUserRole: React.FC<Props> = ({
   const { t } = useTranslation();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const roles: Role[] = [
     {
@@ -67,6 +69,7 @@ const EditUserRole: React.FC<Props> = ({
     companyService
       .editUserInCompany(companyID, userToEdit.accountID, role.value)
       .then(() => {
+        showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
         onConfirm();
       })
       .catch((err) => {

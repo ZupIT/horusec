@@ -26,6 +26,7 @@ import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
 import moment from 'moment';
 import AddToken from './Add';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -40,6 +41,7 @@ const Tokens: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [tokens, setTokens] = useState<RepositoryToken[]>([]);
   const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
@@ -78,6 +80,7 @@ const Tokens: React.FC<Props> = ({
         tokenToDelete.tokenID
       )
       .then(() => {
+        showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
         setTokenToDelete(null);
         fetchData();
       })
