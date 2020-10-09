@@ -29,31 +29,29 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
 
   const renderRulesOfPermissions = () => {
     const admin: string[] = [];
-    const member: string[] = [];
+    const user: string[] = [];
 
     if (rolesType === 'REPOSITORY') {
       admin.push(
-        t('PERMISSIONS.REPOSITORY.RULES.TOKENS'),
-        t('PERMISSIONS.REPOSITORY.RULES.OTHER_USERS'),
-        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC')
+        t('PERMISSIONS.REPOSITORY.RULES.HANDLER'),
+        t('PERMISSIONS.REPOSITORY.RULES.HANDLER_TOKENS'),
+        t('PERMISSIONS.REPOSITORY.RULES.HANDLER_USER'),
+        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO')
       );
-      member.push(
-        t('PERMISSIONS.REPOSITORY.RULES.YOUR_REPOSITORY'),
-        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC')
-      );
+      user.push(t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'));
     }
 
     if (rolesType === 'COMPANY') {
       admin.push(
         t('PERMISSIONS.COMPANY.RULES.HANDLER'),
-        t('PERMISSIONS.COMPANY.RULES.REMOVE'),
-        t('PERMISSIONS.COMPANY.RULES.INVITE'),
-        t('PERMISSIONS.COMPANY.RULES.ANALYTIC')
+        t('PERMISSIONS.COMPANY.RULES.HANDLER_USER'),
+        t('PERMISSIONS.COMPANY.RULES.CREATE'),
+        t('PERMISSIONS.COMPANY.RULES.ANALYTIC_COMPANY')
       );
-      member.push(t('PERMISSIONS.COMPANY.RULES.ANALYTIC'));
+      user.push(t('PERMISSIONS.COMPANY.RULES.ANALYTIC_REPO'));
     }
 
-    return { admin, member };
+    return { admin, user };
   };
 
   return isOpen ? (
@@ -68,7 +66,7 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
           <Styled.Close name="close" size="24px" onClick={onClose} />
         </Styled.Header>
 
-        <Styled.Subtitle>{t(`PERMISSIONS.${rolesType}.ADMIN`)}</Styled.Subtitle>
+        <Styled.Subtitle>{t(`PERMISSIONS.ADMIN`)}</Styled.Subtitle>
 
         <Styled.List>
           {renderRulesOfPermissions().admin.map((rule, index) => (
@@ -76,12 +74,10 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
           ))}
         </Styled.List>
 
-        <Styled.Subtitle>
-          {t(`PERMISSIONS.${rolesType}.MEMBER`)}
-        </Styled.Subtitle>
+        <Styled.Subtitle>{t(`PERMISSIONS.USER`)}</Styled.Subtitle>
 
         <Styled.List>
-          {renderRulesOfPermissions().member.map((rule, index) => (
+          {renderRulesOfPermissions().user.map((rule, index) => (
             <Styled.Item key={index}>{rule}</Styled.Item>
           ))}
         </Styled.List>
