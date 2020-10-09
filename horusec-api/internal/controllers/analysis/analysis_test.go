@@ -144,6 +144,57 @@ func TestController_SaveAnalysis(t *testing.T) {
 		_, err := controller.SaveAnalysis(analysis)
 		assert.Error(t, err)
 	})
+
+	t.Run("should success remove duplicated", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		company := &account.Company{Name: "test"}
+		repository := &account.Repository{Name: "test"}
+
+		respComp := &response.Response{}
+		respRepo := &response.Response{}
+		createResponse := &response.Response{}
+		mockRead.On("Find").Once().Return(respComp.SetData(company))
+		mockRead.On("Find").Return(respRepo.SetData(repository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(&response.Response{})
+		mockWrite.On("Create").Return(createResponse.SetError(errors.New("test")))
+		mockWrite.On("GetConnection").Return(&gorm.DB{})
+		mockWrite.On("RollbackTransaction").Return(&response.Response{})
+
+		controller := NewAnalysisController(mockRead, mockWrite)
+
+		analysis := &apiEntities.AnalysisData{
+			Analysis: &horusec.Analysis{
+				Status:     enumHorusec.Success,
+				CreatedAt:  time.Now(),
+				FinishedAt: time.Now(),
+				AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{
+					{
+						Vulnerability: horusec.Vulnerability{
+							VulnHash: "1",
+						},
+					},
+					{
+						Vulnerability: horusec.Vulnerability{
+							VulnHash: "2",
+						},
+					},
+					{
+						Vulnerability: horusec.Vulnerability{
+							VulnHash: "2",
+						},
+					},
+				},
+			},
+			RepositoryName: "test",
+		}
+		id, err := controller.SaveAnalysis(analysis)
+		assert.Error(t, err)
+		assert.NotEmpty(t, id)
+	})
 }
 
 func TestController_GetAnalysis(t *testing.T) {
