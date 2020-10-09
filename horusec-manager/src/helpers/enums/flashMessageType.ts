@@ -14,26 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
-import { Icon } from 'components';
-
-interface Props {
-  isVisible: boolean;
-  message: string;
-  type: 'success' | 'error';
+export enum flashMessageType {
+  SUCCESS = 'success',
+  ERROR = 'error',
 }
-
-const Flash: React.FC<Props> = ({ isVisible, message, type }) => {
-  return (
-    <>
-      <Styled.Wrapper type={type} isVisible={isVisible}>
-        <Icon name={type} size="16px" />
-
-        <Styled.Text>{message}</Styled.Text>
-      </Styled.Wrapper>
-    </>
-  );
-};
-
-export default Flash;

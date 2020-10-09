@@ -24,6 +24,7 @@ import { useTheme } from 'styled-components';
 import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Repository } from 'helpers/interfaces/Repository';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -41,6 +42,7 @@ const EditRepository: React.FC<Props> = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
   const [name, setName] = useState<Field>({
@@ -64,6 +66,7 @@ const EditRepository: React.FC<Props> = ({
           description.value
         )
         .then(() => {
+          showSuccessFlash('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO');
           onConfirm();
         })
         .catch((err) => {
@@ -93,7 +96,6 @@ const EditRepository: React.FC<Props> = ({
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={600}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>

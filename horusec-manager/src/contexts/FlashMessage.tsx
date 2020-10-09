@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Flash } from 'components';
-
+import { flashMessageType } from 'helpers/enums/flashMessageType';
 interface FlashMessageProps {
   children: JSX.Element;
 }
@@ -24,18 +24,21 @@ interface FlashMessageProps {
 interface FlashContext {
   isVisible: boolean;
   message: string;
-  setMessage: Function;
+  showErrorFlash: Function;
+  showSuccessFlash: Function;
 }
 
 const FlashMessageContext = React.createContext<FlashContext>({
   isVisible: false,
   message: '',
-  setMessage: () => '',
+  showErrorFlash: (message: string) => message,
+  showSuccessFlash: (message: string) => message,
 });
 
 const FlashMessageProvider = ({ children }: FlashMessageProps) => {
   const [isVisible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
+  const [type, setType] = useState(flashMessageType.SUCCESS);
 
   useEffect(() => {
     if (message) {
@@ -43,16 +46,30 @@ const FlashMessageProvider = ({ children }: FlashMessageProps) => {
 
       setTimeout(() => {
         setVisible(false);
-        setMessage('');
+        setTimeout(() => {
+          setMessage('');
+        }, 500);
       }, 3200);
     }
   }, [message]);
 
+  const showSuccessFlash = (message: string) => {
+    setType(flashMessageType.SUCCESS);
+    setMessage(message);
+  };
+
+  const showErrorFlash = (message: string) => {
+    setType(flashMessageType.ERROR);
+    setMessage(message);
+  };
+
   return (
-    <FlashMessageContext.Provider value={{ isVisible, message, setMessage }}>
+    <FlashMessageContext.Provider
+      value={{ isVisible, message, showSuccessFlash, showErrorFlash }}
+    >
       {children}
 
-      <Flash isVisible={isVisible} message={message} />
+      <Flash type={type} isVisible={isVisible} message={message} />
     </FlashMessageContext.Provider>
   );
 };

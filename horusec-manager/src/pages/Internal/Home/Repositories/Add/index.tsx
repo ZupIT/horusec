@@ -24,6 +24,7 @@ import { useTheme } from 'styled-components';
 import repositoryService from 'services/repository';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -36,6 +37,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { colors } = useTheme();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
   const [name, setName] = useState<Field>({ value: '', isValid: false });
@@ -58,6 +60,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
         .create(companyID, name.value, description.value)
         .then(() => {
           onConfirm();
+          showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_CREATE_REPO'));
           resetFields();
         })
         .catch((err) => {
@@ -83,13 +86,8 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={600}
-      defaultButton
       hasCancel
     >
-      <Styled.SubTitle>
-        {t('REPOSITORIES_SCREEN.CREATE_NEW_REPO')}
-      </Styled.SubTitle>
-
       <Styled.Form onSubmit={handleConfirmSave}>
         <Styled.Field
           label={t('REPOSITORIES_SCREEN.NAME_REPO')}

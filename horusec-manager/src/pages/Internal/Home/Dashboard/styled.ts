@@ -20,6 +20,19 @@ const Wrapper = styled.div`
   width: 100%;
   padding: 35px 40px 10px 35px;
   overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.background.highlight};
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: ${({ theme }) => theme.colors.scrollbar};
+  }
 `;
 
 const Row = styled.div`

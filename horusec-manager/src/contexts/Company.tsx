@@ -20,6 +20,8 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Company } from 'helpers/interfaces/Company';
 import { useHistory } from 'react-router-dom';
 import { setCurrentCompany } from 'helpers/localStorage/currentCompany';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { useTranslation } from 'react-i18next';
 
 interface CompanyProviderPops {
   children: JSX.Element;
@@ -53,9 +55,11 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const filterAllCompanies = (search: string) => {
     if (search) {
@@ -90,6 +94,7 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
     companyService
       .create(name)
       .then(() => {
+        showSuccessFlash(t('COMPANY_SCREEN.CREATE_SUCCESS'));
         setLoading(false);
         history.push('/organization');
       })
@@ -104,6 +109,7 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
     companyService
       .update(companyId, name)
       .then(() => {
+        showSuccessFlash(t('COMPANY_SCREEN.UPDATE_SUCCESS'));
         setLoading(false);
         history.push('/organization');
       })
@@ -118,6 +124,7 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
     companyService
       .remove(companyId)
       .then(() => {
+        showSuccessFlash(t('COMPANY_SCREEN.REMOVE_SUCCESS'));
         fetchAll();
       })
       .catch((err) => {

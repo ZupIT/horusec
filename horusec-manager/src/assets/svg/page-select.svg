@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="11px" height="6px" viewBox="0 0 11 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M4.66683333,5.3335 C4.49616667,5.3335 4.3255,5.26816667 4.1955,5.13816667 L0.1955,1.13816667 C-0.0651666667,0.8775 -0.0651666667,0.456166667 0.1955,0.1955 C0.456166667,-0.0651666667 0.8775,-0.0651666667 1.13816667,0.1955 L4.66683333,3.72416667 L8.1955,0.1955 C8.45616667,-0.0651666667 8.8775,-0.0651666667 9.13816667,0.1955 C9.39883333,0.456166667 9.39883333,0.8775 9.13816667,1.13816667 L5.13816667,5.13816667 C5.00816667,5.26816667 4.8375,5.3335 4.66683333,5.3335" id="path-1"></path>
+    </defs>
+    <g id="1.0-Dash-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="7.0-Dash" transform="translate(-1323.000000, -1818.000000)">
+            <g id="Group-11" transform="translate(473.000000, 1337.000000)">
+                <g id="Pagination-/-1---Table-bar-/-1---Advanced" transform="translate(615.000000, 473.000000)">
+                    <g id="Icons/Chevron/Down" transform="translate(235.000000, 8.000000)">
+                        <g transform="translate(0.333333, 0.000000)">
+                            <mask id="mask-2" fill="white">
+                                <use xlink:href="#path-1"></use>
+                            </mask>
+                            <use id="Icon-Chevron-Down" fill="#B9B9BE" xlink:href="#path-1"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
