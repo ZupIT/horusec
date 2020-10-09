@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"os"
 	"strconv"
 	"strings"
@@ -33,7 +34,6 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {

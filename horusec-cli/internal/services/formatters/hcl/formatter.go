@@ -17,6 +17,7 @@ package hcl
 import (
 	"encoding/json"
 	"fmt"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/hcl"
@@ -27,7 +28,6 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
