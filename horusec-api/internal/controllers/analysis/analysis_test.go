@@ -79,7 +79,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		analysis.CompanyID = uuid.Nil
 		analysis.RepositoryID = uuid.Nil
 		analysisData := &apiEntities.AnalysisData{
-			Analysis: analysis,
+			Analysis:       analysis,
 			RepositoryName: "test",
 		}
 		id, err := controller.SaveAnalysis(analysisData)
@@ -117,7 +117,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		newAnalysis := controller.removeAnalysisVulnerabilityWithHashDuplicate(analysis)
 		assert.Equal(t, 11, len(newAnalysis.AnalysisVulnerabilities))
 		analysisData := &apiEntities.AnalysisData{
-			Analysis: newAnalysis,
+			Analysis:       newAnalysis,
 			RepositoryName: "test",
 		}
 		id, err := controller.SaveAnalysis(analysisData)

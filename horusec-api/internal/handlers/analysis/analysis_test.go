@@ -198,7 +198,7 @@ func TestPost(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 
 		analysisData := apiEntities.AnalysisData{
-			Analysis: test.CreateAnalysisMock(),
+			Analysis:       test.CreateAnalysisMock(),
 			RepositoryName: "",
 		}
 
