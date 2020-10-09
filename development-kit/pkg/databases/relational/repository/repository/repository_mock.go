@@ -47,6 +47,11 @@ func (m *Mock) List(accountID, companyID uuid.UUID) (*[]accountEntities.Reposito
 	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
+func (m *Mock) ListAllInCompany(companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
+	args := m.MethodCalled("ListAllInCompany")
+	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
+}
+
 func (m *Mock) Delete(repositoryID uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)

@@ -31,6 +31,7 @@ type IRepository interface {
 	Delete(repositoryID uuid.UUID) error
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
+	ListAllInCompany(companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error)
 }
 
 type Repository struct {
@@ -87,6 +88,20 @@ func (r *Repository) Get(repositoryID uuid.UUID) (*accountEntities.Repository, e
 		r.databaseRead.SetFilter(map[string]interface{}{"repository_id": repositoryID}), repository.GetTable())
 
 	return repository, response.GetError()
+}
+
+func (r *Repository) ListAllInCompany(companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, accountRepo.role,"+
+			" repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("accountRepo.company_id = ?", companyID).
+		Find(&repositories)
+
+	return repositories, query.Error
 }
 
 func (r *Repository) List(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {

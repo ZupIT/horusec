@@ -16,6 +16,8 @@ package repositories
 
 import (
 	"errors"
+	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"testing"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -263,25 +265,79 @@ func TestCreateAccountRepository(t *testing.T) {
 }
 
 func TestList(t *testing.T) {
-	t.Run("should successfully retrieve repositories list", func(t *testing.T) {
+	t.Run("should successfully retrieve repositories list with user member", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 		brokerMock := &broker.Mock{}
 		repositoryMock := &repositoryRepo.Mock{}
-
-		repositoryMock.On("List").Return(&[]accountEntities.RepositoryResponse{}, nil)
+		repositoryMock.On("List").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
 
 		controller := &Controller{
-			databaseWrite: mockWrite,
-			databaseRead:  mockRead,
-			repository:    repositoryMock,
-			broker:        brokerMock,
-			appConfig:     &app.Config{},
+			databaseWrite:            mockWrite,
+			databaseRead:             mockRead,
+			repository:               repositoryMock,
+			accountRepositoryRepo:    nil,
+			accountRepository:        nil,
+			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			broker:                   brokerMock,
+			appConfig:                &app.Config{},
+			repositoriesUseCases:     nil,
 		}
 
 		repositories, err := controller.List(uuid.New(), uuid.New())
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
+	})
+	t.Run("should successfully retrieve repositories list with user admin", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Admin}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		brokerMock := &broker.Mock{}
+		repositoryMock := &repositoryRepo.Mock{}
+		repositoryMock.On("ListAllInCompany").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
+
+		controller := &Controller{
+			databaseWrite:            mockWrite,
+			databaseRead:             mockRead,
+			repository:               repositoryMock,
+			accountRepositoryRepo:    nil,
+			accountRepository:        nil,
+			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			broker:                   brokerMock,
+			appConfig:                &app.Config{},
+			repositoriesUseCases:     nil,
+		}
+
+		repositories, err := controller.List(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, repositories)
+	})
+	t.Run("should return error in repositories list", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		brokerMock := &broker.Mock{}
+		repositoryMock := &repositoryRepo.Mock{}
+		repositoryMock.On("List").Return(&[]accountEntities.RepositoryResponse{{}}, errors.New("unexpected error"))
+
+		controller := &Controller{
+			databaseWrite:            mockWrite,
+			databaseRead:             mockRead,
+			repository:               repositoryMock,
+			accountRepositoryRepo:    nil,
+			accountRepository:        nil,
+			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			broker:                   brokerMock,
+			appConfig:                &app.Config{},
+			repositoriesUseCases:     nil,
+		}
+
+		_, err := controller.List(uuid.New(), uuid.New())
+		assert.Error(t, err)
 	})
 }
 
