@@ -18,22 +18,35 @@ import styled, { css } from 'styled-components';
 
 interface FlashWrapperProps {
   isVisible: boolean;
+  type: 'success' | 'error';
 }
 
 const Wrapper = styled.div<FlashWrapperProps>`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.flashMessage.error};
   position: fixed;
   padding: 15px 0;
   bottom: -50px;
   transition: bottom 0.5s;
   z-index: 5;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   ${({ isVisible }) =>
     isVisible &&
     css`
       bottom: 0;
     `};
+
+  ${({ type }) =>
+    type === 'success'
+      ? css`
+          background-color: ${({ theme }) => theme.colors.flashMessage.success};
+        `
+      : css`
+          background-color: ${({ theme }) => theme.colors.flashMessage.error};
+        `};
 `;
 
 const Text = styled.span`
@@ -42,6 +55,7 @@ const Text = styled.span`
   color: ${({ theme }) => theme.colors.flashMessage.text};
   text-transform: uppercase;
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  margin-left: 10px;
 `;
 
 export default { Wrapper, Text };

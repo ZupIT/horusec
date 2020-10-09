@@ -26,6 +26,7 @@ import { find } from 'lodash';
 import moment from 'moment';
 import AddToken from './Add';
 import { Company } from 'helpers/interfaces/Company';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -36,6 +37,7 @@ interface Props {
 const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [tokens, setTokens] = useState<RepositoryToken[]>([]);
   const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
@@ -67,6 +69,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
     companyService
       .removeToken(tokenToDelete.companyID, tokenToDelete.tokenID)
       .then(() => {
+        showSuccessFlash(t('COMPANY_SCREEN.REMOVE_SUCCESS_TOKEN'));
         setTokenToDelete(null);
         fetchData();
       })

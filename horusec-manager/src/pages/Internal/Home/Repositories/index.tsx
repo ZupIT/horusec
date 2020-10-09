@@ -30,11 +30,13 @@ import AddRepository from './Add';
 import EditRepository from './Edit';
 import InviteToRepository from './Invite';
 import Tokens from './Tokens';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
@@ -84,6 +86,7 @@ const Repositories: React.FC = () => {
     repositoryService
       .remove(repoTodelete.companyID, repoTodelete.repositoryID)
       .then(() => {
+        showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
         setRepoToDelete(null);
         fetchData();
       })

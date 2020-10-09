@@ -25,6 +25,7 @@ import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { findIndex, cloneDeep } from 'lodash';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible?: boolean;
@@ -39,6 +40,7 @@ const InviteToRepository: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
   const currentUser = getCurrentUser();
 
   const [userAccounts, setUserAccounts] = useState<Account[]>([]);
@@ -57,7 +59,7 @@ const InviteToRepository: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      name: t('PERMISSIONS.USER'),
       value: 'member',
     },
   ];
@@ -121,6 +123,7 @@ const InviteToRepository: React.FC<Props> = ({
         account.role
       )
       .then(() => {
+        showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_ADD_USER'));
         setAccountsInRepository([...accountsInRepository, account.accountID]);
       })
       .catch((err) => {
@@ -136,6 +139,7 @@ const InviteToRepository: React.FC<Props> = ({
         account.accountID
       )
       .then(() => {
+        showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_REMOVE_USER'));
         const filteredIds = accountsInRepository.filter(
           (item) => item !== account.accountID
         );
