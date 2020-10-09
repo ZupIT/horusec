@@ -290,10 +290,11 @@ func getChartDetailsUsingGraphQLAndReturnBody(t *testing.T, repositoryID string)
         securityTool
         language
         severity
-        commitAuthor {
-          author
-          email
-        }
+        commitAuthor 
+		commitEmail
+		commitHash
+		commitMessage
+		commitDate
       }
     }
    }`
