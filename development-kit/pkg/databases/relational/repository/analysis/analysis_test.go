@@ -15,6 +15,8 @@
 package analysis
 
 import (
+	"errors"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	dashboardEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/dashboard"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
@@ -22,6 +24,8 @@ import (
 	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/jinzhu/gorm"
 	"os"
 	"testing"
 	"time"
@@ -160,6 +164,35 @@ func insertAnalysisData() error {
 	return nil
 }
 
+func TestMock(t *testing.T) {
+	t.Run("Should run mock", func(t *testing.T) {
+		mock := &Mock{}
+		mock.On("Create").Return(nil)
+		mock.On("GetByID").Return(&horusec.Analysis{}, nil)
+		mock.On("GetDetailsPaginated").Return([]dashboardEntities.VulnDetails{}, nil)
+		mock.On("GetDetailsCount").Return(0, nil)
+		mock.On("GetDeveloperCount").Return(0, nil)
+		mock.On("GetRepositoryCount").Return(0, nil)
+		mock.On("GetVulnBySeverity").Return([]dashboardEntities.VulnBySeverity{}, nil)
+		mock.On("GetVulnByDeveloper").Return([]dashboardEntities.VulnByDeveloper{}, nil)
+		mock.On("GetVulnByLanguage").Return([]dashboardEntities.VulnByLanguage{}, nil)
+		mock.On("GetVulnByRepository").Return([]dashboardEntities.VulnByRepository{}, nil)
+		mock.On("GetVulnByTime").Return([]dashboardEntities.VulnByTime{}, nil)
+		var tx SQL.InterfaceWrite
+		_ = mock.Create(&horusec.Analysis{}, tx)
+		_, _ = mock.GetByID(uuid.New())
+		_, _ = mock.GetDetailsPaginated(uuid.New(), uuid.New(), 1, 1, time.Now(), time.Now())
+		_, _ = mock.GetDetailsCount(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetDeveloperCount(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetRepositoryCount(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetVulnBySeverity(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetVulnByDeveloper(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetVulnByLanguage(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetVulnByRepository(uuid.New(), uuid.New(), time.Now(), time.Now())
+		_, _ = mock.GetVulnByTime(uuid.New(), uuid.New(), time.Now(), time.Now())
+	})
+}
+
 func getCreatedAtTime() time.Time {
 	return time.Date(2020, 1, 1, 00, 00, 00, 00, time.UTC)
 }
@@ -284,36 +317,37 @@ func TestRunDashboardTests(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp2.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
-
-	databaseRead := adapter.NewRepositoryRead()
-	databaseWrite := adapter.NewRepositoryWrite()
-
-	company := &accountEntities.Company{
-		CompanyID:   companyID,
-		Name:        "test",
-		Description: "test",
-		CreatedAt:   time.Now(),
-	}
-
-	repository := &accountEntities.Repository{
-		RepositoryID: repositoryID,
-		CompanyID:    company.CompanyID,
-		Name:         "test",
-		CreatedAt:    time.Now(),
-	}
-
-	databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
-	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
-	analysis := &horusec.Analysis{}
-	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{}
-	vulnerabilities := &horusec.Vulnerability{}
-	databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
-	databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
-	databaseWrite.GetConnection().Table(vulnerabilities.GetTable()).AutoMigrate(vulnerabilities)
 	t.Run("should success create a new analysis", func(t *testing.T) {
+		dbFile := uuid.New().String() + "-tmp.db"
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+		_ = os.Setenv(config.EnvRelationalURI,  dbFile)
+		_ = os.Setenv(config.EnvRelationalLogMode, "false")
+
+		databaseRead := adapter.NewRepositoryRead()
+		databaseWrite := adapter.NewRepositoryWrite()
+
+		company := &accountEntities.Company{
+			CompanyID:   companyID,
+			Name:        "test",
+			Description: "test",
+			CreatedAt:   time.Now(),
+		}
+
+		repository := &accountEntities.Repository{
+			RepositoryID: repositoryID,
+			CompanyID:    company.CompanyID,
+			Name:         "test",
+			CreatedAt:    time.Now(),
+		}
+
+		databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+		databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+		analysis := &horusec.Analysis{}
+		analysisVulnerabilities := &horusec.AnalysisVulnerabilities{}
+		vulnerabilities := &horusec.Vulnerability{}
+		databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+		databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
+		databaseWrite.GetConnection().Table(vulnerabilities.GetTable()).AutoMigrate(vulnerabilities)
 		analysisRepository := NewAnalysisRepository(databaseRead, databaseWrite)
 		err := analysisRepository.Create(&horusec.Analysis{
 			ID:             analysisID,
@@ -349,40 +383,238 @@ func TestCreate(t *testing.T) {
 		}, nil)
 
 		assert.NoError(t, err)
+		assert.NoError(t, os.RemoveAll(dbFile))
+	})
+	t.Run("Should create analysis in transaction", func(t *testing.T) {
+		dbFile := uuid.New().String() + "-tmp.db"
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+		_ = os.Setenv(config.EnvRelationalURI, dbFile)
+		_ = os.Setenv(config.EnvRelationalLogMode, "false")
+
+		databaseRead := adapter.NewRepositoryRead()
+		databaseWrite := adapter.NewRepositoryWrite()
+
+		company := &accountEntities.Company{
+			CompanyID:   companyID,
+			Name:        "test",
+			Description: "test",
+			CreatedAt:   time.Now(),
+		}
+
+		repository := &accountEntities.Repository{
+			RepositoryID: repositoryID,
+			CompanyID:    company.CompanyID,
+			Name:         "test",
+			CreatedAt:    time.Now(),
+		}
+
+		databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+		databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+		analysis := &horusec.Analysis{}
+		analysisVulnerabilities := &horusec.AnalysisVulnerabilities{}
+		vulnerabilities := &horusec.Vulnerability{}
+		databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+		databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
+		databaseWrite.GetConnection().Table(vulnerabilities.GetTable()).AutoMigrate(vulnerabilities)
+		transaction := databaseWrite.StartTransaction()
+		analysisRepository := NewAnalysisRepository(databaseRead, databaseWrite)
+		err := analysisRepository.Create(&horusec.Analysis{
+			ID:             analysisID,
+			RepositoryID:   repository.RepositoryID,
+			RepositoryName: "test",
+			CompanyID:      company.CompanyID,
+			CompanyName:    "test",
+			Status:         enumHorusec.Success,
+			Errors:         "",
+			CreatedAt:      time.Now(),
+			FinishedAt:     time.Now(),
+			AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: vulnerabilityID,
+					AnalysisID:      analysisID,
+					CreatedAt:       time.Now(),
+					Vulnerability: horusec.Vulnerability{
+						VulnerabilityID: vulnerabilityID,
+						Line:            "1",
+						Column:          "1",
+						Confidence:      confidence.High.ToString(),
+						File:            "vul.file",
+						Code:            "code",
+						Details:         "details",
+						SecurityTool:    tools.HorusecLeaks,
+						Language:        languages.Leaks,
+						Severity:        severity.High,
+						VulnHash:        "123456789",
+						Type:            enumHorusec.Vulnerability,
+					},
+				},
+			},
+		}, transaction)
+
+		assert.NoError(t, err)
+		if err != nil {
+			assert.NoError(t, transaction.RollbackTransaction().GetError())
+		} else {
+			assert.NoError(t, transaction.CommitTransaction().GetError())
+		}
+		assert.NoError(t, os.RemoveAll(dbFile))
+	})
+	t.Run("Should return error whe create analysis with transaction", func(t *testing.T) {
+		databaseRead := &SQL.MockRead{}
+		databaseWrite := &SQL.MockWrite{}
+		databaseWrite.On("Create").Return(response.NewResponse(0, errors.New("some error"), nil))
+
+		company := &accountEntities.Company{
+			CompanyID:   companyID,
+			Name:        "test",
+			Description: "test",
+			CreatedAt:   time.Now(),
+		}
+
+		repository := &accountEntities.Repository{
+			RepositoryID: repositoryID,
+			CompanyID:    company.CompanyID,
+			Name:         "test",
+			CreatedAt:    time.Now(),
+		}
+
+		analysisRepository := NewAnalysisRepository(databaseRead, databaseWrite)
+		err := analysisRepository.Create(&horusec.Analysis{
+			ID:             analysisID,
+			RepositoryID:   repository.RepositoryID,
+			RepositoryName: "test",
+			CompanyID:      company.CompanyID,
+			CompanyName:    "test",
+			Status:         enumHorusec.Success,
+			Errors:         "",
+			CreatedAt:      time.Now(),
+			FinishedAt:     time.Now(),
+			AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: vulnerabilityID,
+					AnalysisID:      analysisID,
+					CreatedAt:       time.Now(),
+					Vulnerability: horusec.Vulnerability{
+						VulnerabilityID: vulnerabilityID,
+						Line:            "1",
+						Column:          "1",
+						Confidence:      confidence.High.ToString(),
+						File:            "vul.file",
+						Code:            "code",
+						Details:         "details",
+						SecurityTool:    tools.HorusecLeaks,
+						Language:        languages.Leaks,
+						Severity:        severity.High,
+						VulnHash:        "123456789",
+						Type:            enumHorusec.Vulnerability,
+					},
+				},
+			},
+		}, nil)
+
+		assert.Error(t, err)
+	})
+	t.Run("Should return error whe find analysis and found unexpected error", func(t *testing.T) {
+		dbFile := uuid.New().String() + "-tmp.db"
+		databaseRead := &SQL.MockRead{}
+		databaseWrite := &SQL.MockWrite{}
+
+		conn, err := gorm.Open("sqlite3", dbFile)
+		assert.NoError(t, err)
+		conn.Table("analysis").AutoMigrate(&horusec.Analysis{})
+		conn.Table("analysis_vulnerabilities").AutoMigrate(&horusec.AnalysisVulnerabilities{})
+		conn.Table("vulnerabilities").AutoMigrate(&horusec.Vulnerability{})
+		conn.LogMode(true)
+		databaseWrite.On("Create").Return(response.NewResponse(0, nil, nil))
+		getConnectionMock := conn
+		getConnectionMock.Error = errors.New("unexpected")
+		databaseWrite.On("GetConnection").Return(getConnectionMock)
+
+		company := &accountEntities.Company{
+			CompanyID:   companyID,
+			Name:        "test",
+			Description: "test",
+			CreatedAt:   time.Now(),
+		}
+
+		repository := &accountEntities.Repository{
+			RepositoryID: repositoryID,
+			CompanyID:    company.CompanyID,
+			Name:         "test",
+			CreatedAt:    time.Now(),
+		}
+
+		analysisRepository := NewAnalysisRepository(databaseRead, databaseWrite)
+		err = analysisRepository.Create(&horusec.Analysis{
+			ID:             analysisID,
+			RepositoryID:   repository.RepositoryID,
+			RepositoryName: "test",
+			CompanyID:      company.CompanyID,
+			CompanyName:    "test",
+			Status:         enumHorusec.Success,
+			Errors:         "",
+			CreatedAt:      time.Now(),
+			FinishedAt:     time.Now(),
+			AnalysisVulnerabilities: []horusec.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: vulnerabilityID,
+					AnalysisID:      analysisID,
+					CreatedAt:       time.Now(),
+					Vulnerability: horusec.Vulnerability{
+						VulnerabilityID: vulnerabilityID,
+						Line:            "1",
+						Column:          "1",
+						Confidence:      confidence.High.ToString(),
+						File:            "vul.file",
+						Code:            "code",
+						Details:         "details",
+						SecurityTool:    tools.HorusecLeaks,
+						Language:        languages.Leaks,
+						Severity:        severity.High,
+						VulnHash:        "123456789",
+						Type:            enumHorusec.Vulnerability,
+					},
+				},
+			},
+		}, nil)
+
+		assert.Error(t, err)
+		assert.NoError(t, os.RemoveAll(dbFile))
 	})
 }
 
 func TestGetByID(t *testing.T) {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp2.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
-
-	databaseRead := adapter.NewRepositoryRead()
-	databaseWrite := adapter.NewRepositoryWrite()
-
-	company := &accountEntities.Company{
-		CompanyID:   companyID,
-		Name:        "test",
-		Description: "test",
-		CreatedAt:   time.Now(),
-	}
-
-	repository := &accountEntities.Repository{
-		RepositoryID: repositoryID,
-		CompanyID:    company.CompanyID,
-		Name:         "test",
-		CreatedAt:    time.Now(),
-	}
-
-	databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
-	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
-	analysis := &horusec.Analysis{}
-	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{}
-	vulnerabilities := &horusec.Vulnerability{}
-	databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
-	databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
-	databaseWrite.GetConnection().Table(vulnerabilities.GetTable()).AutoMigrate(vulnerabilities)
 	t.Run("should success create a new analysis", func(t *testing.T) {
+		dbFile := uuid.New().String() + "-tmp.db"
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+		_ = os.Setenv(config.EnvRelationalURI, dbFile)
+		_ = os.Setenv(config.EnvRelationalLogMode, "false")
+
+		databaseRead := adapter.NewRepositoryRead()
+		databaseWrite := adapter.NewRepositoryWrite()
+
+		company := &accountEntities.Company{
+			CompanyID:   companyID,
+			Name:        "test",
+			Description: "test",
+			CreatedAt:   time.Now(),
+		}
+
+		repository := &accountEntities.Repository{
+			RepositoryID: repositoryID,
+			CompanyID:    company.CompanyID,
+			Name:         "test",
+			CreatedAt:    time.Now(),
+		}
+
+		databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+		databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+		analysis := &horusec.Analysis{}
+		analysisVulnerabilities := &horusec.AnalysisVulnerabilities{}
+		vulnerabilities := &horusec.Vulnerability{}
+		databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+		databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
+		databaseWrite.GetConnection().Table(vulnerabilities.GetTable()).AutoMigrate(vulnerabilities)
 		analysisRepository := NewAnalysisRepository(databaseRead, databaseWrite)
 		err := analysisRepository.Create(&horusec.Analysis{
 			ID:             analysisID,
@@ -427,5 +659,6 @@ func TestGetByID(t *testing.T) {
 			assert.NotEqual(t, uuid.Nil, result.AnalysisVulnerabilities[0].VulnerabilityID)
 			assert.NotEqual(t, uuid.Nil, result.AnalysisVulnerabilities[0].Vulnerability.VulnerabilityID)
 		}
+		assert.NoError(t, os.RemoveAll(dbFile))
 	})
 }
