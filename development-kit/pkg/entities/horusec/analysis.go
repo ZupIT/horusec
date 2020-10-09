@@ -242,7 +242,8 @@ func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
 
 func (a *Analysis) ParseResponseBytesToAnalysis(body []byte) (analysis *Analysis, err error) {
 	var response map[string]interface{}
-	if err := json.Unmarshal(body, &response); err != nil {
+	err = json.Unmarshal(body, &response)
+	if err != nil {
 		return nil, err
 	}
 	body, err = json.Marshal(response["content"])

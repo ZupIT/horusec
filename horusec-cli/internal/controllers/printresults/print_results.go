@@ -46,6 +46,7 @@ type PrintResults struct {
 
 type Interface interface {
 	StartPrintResults() (totalVulns int, err error)
+	SetAnalysis(analysis *horusecEntities.Analysis)
 }
 
 func NewPrintResults(analysis *horusecEntities.Analysis, configs *config.Config) Interface {
@@ -54,6 +55,10 @@ func NewPrintResults(analysis *horusecEntities.Analysis, configs *config.Config)
 		configs:          configs,
 		sonarqubeService: sonarqube.NewSonarQube(analysis),
 	}
+}
+
+func (pr *PrintResults) SetAnalysis(analysis *horusecEntities.Analysis) {
+	pr.analysis = analysis
 }
 
 func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
