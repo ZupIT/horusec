@@ -320,7 +320,7 @@ func TestCreate(t *testing.T) {
 	t.Run("should success create a new analysis", func(t *testing.T) {
 		dbFile := uuid.New().String() + "-tmp.db"
 		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI,  dbFile)
+		_ = os.Setenv(config.EnvRelationalURI, dbFile)
 		_ = os.Setenv(config.EnvRelationalLogMode, "false")
 
 		databaseRead := adapter.NewRepositoryRead()
