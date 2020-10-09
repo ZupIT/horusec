@@ -49,7 +49,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
 		configs := &config.Config{
 			EnableGitHistoryAnalysis: true,
-			EnableCommitAuthor: true,
+			EnableCommitAuthor:       true,
 		}
 		configs.WorkDir = &workdir.WorkDir{}
 

@@ -108,7 +108,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 		printResults := &PrintResults{
 			analysis: analysis,
-			configs:  &config.Config{
+			configs: &config.Config{
 				IsTimeout: true,
 			},
 		}
