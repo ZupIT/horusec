@@ -88,10 +88,6 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       width={600}
       hasCancel
     >
-      <Styled.SubTitle>
-        {t('REPOSITORIES_SCREEN.CREATE_NEW_REPO')}
-      </Styled.SubTitle>
-
       <Styled.Form onSubmit={handleConfirmSave}>
         <Styled.Field
           label={t('REPOSITORIES_SCREEN.NAME_REPO')}

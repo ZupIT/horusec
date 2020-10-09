@@ -149,6 +149,7 @@ function PasswordForm() {
         confirmText={t('CREATE_ACCOUNT_SCREEN.CONFIRM')}
         message={t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')}
         onConfirm={() => history.push('/login')}
+        roundedButton
       />
     </>
   );

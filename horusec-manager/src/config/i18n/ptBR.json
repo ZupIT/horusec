@@ -86,13 +86,17 @@
     "NO_TOKENS":"Não há tokens registrados para esta organização.",
     "DELETE": "Deletar",
     "CONFIRM_DELETE_TOKEN":"Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
-    "TOKEN_SUCCESS": "Token criado com sucesso!",
-    "TOKEN_INFO":"Este token lhe concede acesso a realizar análises para a organização selecionada! Salve ele em um lugar seguro e não compartilhe!",
-    "CONFIRM":"Ok, entendi.",
     "CREATE_SUCCESS": "Organização criada com sucesso!",
     "UPDATE_SUCCESS": "Organização editada com sucesso!",
     "REMOVE_SUCCESS": "Organização removida com sucesso!",
-    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!"
+    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
+    "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
+    "TOKEN_INFO":"Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
+    "CONFIRM":"Ok, entendi.",
+    "CREATE_NEW_TOKEN": "Adicionar novo token ",
+    "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
+    "INVALID_DESCRIPTION": "Descrição inválida"
+
   },
 
   "DASHBOARD_SCREEN": {
@@ -103,7 +107,7 @@
     "TOTAL_REPOSITORIES": "Total de repositórios",
     "ALL_VULNERABILITIES": "Todas as vulnerabilidades",
     "REPOSITORY": "Repositório",
-    "CHART_NO_DATA": "Sem dados para o período selecionado",
+    "CHART_NO_DATA": "Nenhum resultado encontrado",
     "VULNERABILITIES_BY_LANG": "Vulnerabilidades por linguagem",
     "VULNERABILITIES_BY_DEV": "Vulnerabilidades por desenvolvedor",
     "VULNERABILITIES_BY_REPO": "Vulnerabilidades por repositório",
@@ -134,7 +138,6 @@
     "TOKENS": "Tokens",
     "CONFIRM_DELETE_REPO": "Deseja realmente deletar o repositório? Essa ação não poderá ser desfeita.",
     "YES": "Sim",
-    "CREATE_NEW_REPO": "Crie um novo repositório abaixo:",
     "NAME_REPO": "Nome do repositório",
     "INVALID_NAME": "Informe o nome",
     "DESCRIPTION_REPO": "Descrição do repositório",
@@ -142,7 +145,7 @@
     "EDIT_REPO": "Editar repositório",
     "EDIT_REPO_BELOW": "Edite o repositório abaixo:",
     "INVITE_TO_REPOSITORY": "Convidar para o repositório",
-    "INVITE_USER_BELOW": "Convide um usuário para o repositorio abaixo:",
+    "INVITE_USER_BELOW": "Convide um novo usuário abaixo:",
     "SEARCH_USER_EMAIL_BELOW": "Pesquisar usuário pelo email",
     "USER": "Usuário",
     "EMAIL": "Email",
@@ -155,16 +158,16 @@
     "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
     "CREATE_NEW_TOKEN": "Adicionar novo token ",
     "INVALID_DESCRIPTION": "Descrição inválida",
-    "CREATE_TOKEN_BELOW": "Insira a descrição para o novo token:",
-    "TOKEN_INFO": "Este token lhe concede acesso a realizar análises para o repositório selecionado! Salve ele em um lugar seguro e não compartilhe!",
-    "TOKEN_SUCCESS": "Token criado com sucesso!",
-    "CONFIRM": "Ok, entendi.",
     "SUCCESS_ADD_USER": "Sucesso ao adicionar usuário ao repositório!",
     "SUCCESS_CREATE_REPO": "Repositório criado com sucesso!",
     "SUCCESS_EDIT_REPO": "Repositório editado com sucesso!",
     "SUCCESS_REMOVE_USER": "Usuário removido do repositório com sucesso!",
     "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
-    "REMOVE_SUCCESS_REPO": "Repositório removido com sucesso!"
+    "REMOVE_SUCCESS_REPO": "Repositório removido com sucesso!",
+    "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
+    "TOKEN_INFO": "Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
+    "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
+    "CONFIRM": "Ok, entendi."
   },
 
   "GENERAL": {
@@ -179,26 +182,24 @@
 
   "PERMISSIONS": {
     "ADMIN": "Administrador",
-    "MEMBER": "Membro",
+    "USER": "Usuário",
     "TITLE": "Permissões",
     "REPOSITORY": {
-      "ADMIN": "As permissões de Administrador permitem realizar no repositório:",
-      "MEMBER": "As permissões de Membro permitem realizar no repositório:",
       "RULES": {
-        "TOKENS": "Gerenciar Tokens",
-        "OTHER_USERS": "Gerenciar acesso de outros usuários",
-        "ANALYTIC": "Visualizar o análitico",
-        "YOUR_REPOSITORY": "Visualizar o repositório que ele tem acesso"
+        "HANDLER": "Tem acesso visualizar/editar/remover o repositório.",
+        "HANDLER_TOKENS": "Tem acesso visualizar/editar/remover tokens de acesso ao repositório.",
+        "HANDLER_USER": "Tem acesso visualizar/criar/editar/remover acesso de usuários ao repositório.",
+        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório.",
+        "NOTHING": "N/A"
       }
     },
     "COMPANY": {
-      "ADMIN": "As permissões de Administrador permitem realizar na organização:",
-      "MEMBER": "As permissões de Membro permitem realizar na organização:",
       "RULES": {
-        "HANDLER": "Gerenciar acesso de outros usuários",
-        "REMOVE": "Remover usuário da organização",
-        "INVITE": "Convidar novos usuários para a organização",
-        "ANALYTIC": "Visualizar o análitico"
+        "HANDLER": "Tem acesso editar/remover a empresa.",
+        "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro da empresa.",
+        "CREATE": "Tem acesso para criar novos repositórios.",
+        "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos da empresa.",
+        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
   },
@@ -225,7 +226,7 @@
       "EDIT": "Editar",
       "ROLE": {
         "ADMIN": "Administrador",
-        "MEMBER": "Membro"
+        "USER": "Usuário"
       }
     },
     "REMOVE_SUCCESS": "Usuário removido com sucesso!",

@@ -142,7 +142,7 @@ const Users: React.FC = () => {
                 <Styled.Cell>
                   {user.role === 'admin'
                     ? t('USERS_SCREEN.TABLE.ROLE.ADMIN')
-                    : t('USERS_SCREEN.TABLE.ROLE.MEMBER')}
+                    : t('USERS_SCREEN.TABLE.ROLE.USER')}
                 </Styled.Cell>
 
                 <Styled.Cell className="row">

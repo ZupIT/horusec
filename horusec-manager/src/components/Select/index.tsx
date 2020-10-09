@@ -65,7 +65,7 @@ const Select: React.FC<Props> = ({
       );
     }
     // eslint-disable-next-line
-  }, [initialValue, keyValue]);
+  }, [initialValue]);
 
   return (
     <Styled.Wrapper
