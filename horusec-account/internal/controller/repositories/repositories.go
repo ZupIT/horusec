@@ -110,22 +110,7 @@ func (c *Controller) Get(repositoryID, accountID uuid.UUID) (*accountEntities.Re
 
 func (c *Controller) List(accountID,
 	companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error) {
-	isAdminInCompany, err := c.checkIfAccountIsAdminInCompany(accountID, companyID)
-	if err != nil {
-		return repositories, err
-	}
-	if isAdminInCompany {
-		return c.repository.ListAllInCompany(companyID)
-	}
 	return c.repository.List(accountID, companyID)
-}
-
-func (c *Controller) checkIfAccountIsAdminInCompany(accountID uuid.UUID, companyID uuid.UUID) (bool, error) {
-	accountRole, err := c.accountCompanyRepository.GetAccountCompany(accountID, companyID)
-	if err != nil {
-		return false, err
-	}
-	return accountRole.Role == accountEnum.Admin, nil
 }
 
 func (c *Controller) UpdateAccountRepository(companyID uuid.UUID, accountRepository *roles.AccountRepository) error {
