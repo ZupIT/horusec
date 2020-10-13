@@ -106,6 +106,9 @@ func TestIsRepositoryMember(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
 		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
 
 		middleware.IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
