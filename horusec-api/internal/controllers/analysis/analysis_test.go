@@ -18,6 +18,7 @@ package analysis
 import (
 	"errors"
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"testing"
 	"time"
 
@@ -68,6 +69,36 @@ func TestController_SaveAnalysis(t *testing.T) {
 				Status:     enumHorusec.Success,
 				CreatedAt:  time.Now(),
 				FinishedAt: time.Now(),
+			},
+			RepositoryName: "test",
+		}
+		id, err := controller.SaveAnalysis(analysis)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, id)
+	})
+	t.Run("should send a new analysis without errors and create repository", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		company := &account.Company{Name: "test"}
+
+		respComp := &response.Response{}
+		respRepo := &response.Response{}
+		mockRead.On("Find").Once().Return(respComp.SetData(company))
+		mockRead.On("Find").Return(respRepo.SetError(errorsEnums.ErrNotFoundRecords))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(&response.Response{})
+		mockWrite.On("Create").Return(&response.Response{})
+
+		controller := NewAnalysisController(mockRead, mockWrite)
+
+		analysis := &apiEntities.AnalysisData{
+			Analysis: &horusec.Analysis{
+				Status:     enumHorusec.Success,
+				CreatedAt:  time.Now(),
+				FinishedAt: time.Now(),
+				CompanyID:  uuid.New(),
 			},
 			RepositoryName: "test",
 		}
