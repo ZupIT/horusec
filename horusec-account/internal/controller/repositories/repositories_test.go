@@ -290,31 +290,6 @@ func TestList(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
 	})
-	t.Run("should successfully retrieve repositories list with user admin", func(t *testing.T) {
-		mockWrite := &relational.MockWrite{}
-		mockRead := &relational.MockRead{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Admin}))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		brokerMock := &broker.Mock{}
-		repositoryMock := &repositoryRepo.Mock{}
-		repositoryMock.On("ListAllInCompany").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
-
-		controller := &Controller{
-			databaseWrite:            mockWrite,
-			databaseRead:             mockRead,
-			repository:               repositoryMock,
-			accountRepositoryRepo:    nil,
-			accountRepository:        nil,
-			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
-			broker:                   brokerMock,
-			appConfig:                &app.Config{},
-			repositoriesUseCases:     nil,
-		}
-
-		repositories, err := controller.List(uuid.New(), uuid.New())
-		assert.NoError(t, err)
-		assert.NotNil(t, repositories)
-	})
 	t.Run("should return error in repositories list", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
