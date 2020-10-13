@@ -25,6 +25,8 @@ import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
 import { debounce } from 'lodash';
+import i18n from 'config/i18n';
+import Details from './Details';
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
@@ -34,6 +36,9 @@ const Vulnerabilities: React.FC = () => {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [currentRepository, setCurrentRepository] = useState<Repository>(null);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
+  const [selectedVulnerability, setSelectedVulnerability] = useState<
+    Vulnerability
+  >(null);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
     totalItems: 0,
@@ -102,7 +107,7 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData(pagination.currentPage, pagination.pageSize, null, searchString);
+    fetchData(1, pagination.pageSize, null, searchString);
   }, 500);
 
   const handleUpdateVulnerabilityType = (
@@ -140,7 +145,7 @@ const Vulnerabilities: React.FC = () => {
 
     fetchRepositories();
     // eslint-disable-next-line
-  }, []);
+  }, [i18n.language]);
 
   return (
     <Styled.Wrapper>
@@ -184,6 +189,8 @@ const Vulnerabilities: React.FC = () => {
             <Styled.Column>
               {t('VULNERABILITIES_SCREEN.TABLE.TYPE')}
             </Styled.Column>
+
+            <Styled.Column />
           </Styled.Head>
 
           <Styled.Body>
@@ -202,18 +209,28 @@ const Vulnerabilities: React.FC = () => {
                 <Styled.Cell>{vul.severity}</Styled.Cell>
 
                 <Styled.Cell>
-                  <Select
-                    keyLabel="description"
-                    keyValue="value"
-                    width="250px"
-                    optionsHeight="130px"
-                    className="select-type"
-                    rounded
-                    initialValue={vul.type}
-                    options={vulnTypes}
-                    onChangeValue={(value) =>
-                      handleUpdateVulnerabilityType(vul, value.value)
-                    }
+                  {!isLoading ? (
+                    <Select
+                      keyLabel="description"
+                      keyValue="value"
+                      width="250px"
+                      optionsHeight="130px"
+                      className="select-type"
+                      rounded
+                      initialValue={vul.type}
+                      options={vulnTypes}
+                      onChangeValue={(value) =>
+                        handleUpdateVulnerabilityType(vul, value.value)
+                      }
+                    />
+                  ) : null}
+                </Styled.Cell>
+
+                <Styled.Cell>
+                  <Icon
+                    name="help"
+                    size="20px"
+                    onClick={() => setSelectedVulnerability(vul)}
                   />
                 </Styled.Cell>
               </Styled.Row>
@@ -228,6 +245,12 @@ const Vulnerabilities: React.FC = () => {
           ) : null}
         </Styled.Table>
       </Styled.Content>
+
+      <Details
+        isOpen={!!selectedVulnerability}
+        onClose={() => setSelectedVulnerability(null)}
+        vulnerability={selectedVulnerability}
+      />
     </Styled.Wrapper>
   );
 };

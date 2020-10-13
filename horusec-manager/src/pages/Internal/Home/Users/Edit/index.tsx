@@ -53,6 +53,10 @@ const EditUserRole: React.FC<Props> = ({
       value: 'admin',
     },
     {
+      name: t('PERMISSIONS.SUPERVISOR'),
+      value: 'supervisor',
+    },
+    {
       name: t('PERMISSIONS.USER'),
       value: 'member',
     },
@@ -103,6 +107,7 @@ const EditUserRole: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
+          optionsHeight="96px"
           initialValue={userToEdit?.role}
           options={roles}
           onChangeValue={(item) => setRole(item)}

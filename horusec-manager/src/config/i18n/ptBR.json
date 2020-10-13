@@ -183,6 +183,7 @@
   "PERMISSIONS": {
     "ADMIN": "Administrador",
     "USER": "Usuário",
+    "SUPERVISOR": "Supervisor",
     "TITLE": "Permissões",
     "REPOSITORY": {
       "RULES": {
@@ -190,6 +191,7 @@
         "HANDLER_TOKENS": "Tem acesso visualizar/editar/remover tokens de acesso ao repositório.",
         "HANDLER_USER": "Tem acesso visualizar/criar/editar/remover acesso de usuários ao repositório.",
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório.",
+        "VULNERABILITIES": "Tem acesso para visualizar/gerenciar as vulnerabilidades. (Falso Positivo)",
         "NOTHING": "N/A"
       }
     },
@@ -199,7 +201,8 @@
         "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro da empresa.",
         "CREATE": "Tem acesso para criar novos repositórios.",
         "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos da empresa.",
-        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
+        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso.",
+        "VULNERABILITIES": "Tem acesso para visualizar/gerenciar as vulnerabilidades. (Falso Positivo)"
       }
     }
   },
@@ -226,7 +229,8 @@
       "EDIT": "Editar",
       "ROLE": {
         "ADMIN": "Administrador",
-        "USER": "Usuário"
+        "SUPERVISOR": "Supervisor",
+        "MEMBER": "Usuário"
       }
     },
     "REMOVE_SUCCESS": "Usuário removido com sucesso!",
@@ -250,6 +254,19 @@
       "RISKACCEPTED": "Risco aceito",
       "FALSEPOSITIVE": "Falso Positivo",
       "CORRECTED": "Corrigido"
+    },
+    "DETAILS": {
+      "TITLE": "Detalhes da Vulnerabilidade",
+      "HASH": "Hash",
+      "FILE": "Arquivo",
+      "LINE": "Linha",
+      "COLUMN": "Coluna",
+      "CODE": "Código",
+      "LANGUAGE": "Linguagem",
+      "SECURITY_TOOL": "Ferramenta de segurança",
+      "SEVERITY": "Severidade",
+      "DETAILS": "Detalhes",
+      "CONFIDENCE": "Confidência"
     }
   },
 

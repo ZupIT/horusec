@@ -182,6 +182,7 @@
   "PERMISSIONS": {
     "ADMIN": "Administrator",
     "USER": "User",
+    "SUPERVISOR": "Supervisor",
     "TITLE": "Permissions",
     "REPOSITORY": {
       "RULES": {
@@ -189,6 +190,7 @@
         "HANDLER_TOKENS": "Has access to view/edit/remove access tokens to the repository.",
         "HANDLER_USER": "Has access to view/create/edit/remove user access to the repository.",
         "ANALYTIC_REPO": "You have access to view the repository graphics.",
+        "VULNERABILITIES": "Has access to view/manage vulnerabilities. (False Positive)",
         "NOTHING": "N/A"
       }
     },
@@ -198,7 +200,8 @@
         "HANDLER_USER": "Has access to view/invite/edit/remove users within the company.",
         "CREATE": "You have access to create new repositories.",
         "ANALYTIC_COMPANY": "You have access to view the company's graphics.",
-        "ANALYTIC_REPO": "Has access to view the graphics of the repository that he has access to."
+        "ANALYTIC_REPO": "Has access to view the graphics of the repository that he has access to.",
+        "VULNERABILITIES": "Has access to view/manage vulnerabilities. (False Positive)"
       }
     }
   },
@@ -225,7 +228,8 @@
       "EDIT": "Edit",
       "ROLE": {
         "ADMIN": "Administrator",
-        "User": "User"
+        "SUPERVISOR": "Supervisor",
+        "MEMBER": "User"
       }
     },
     "REMOVE_SUCCESS": "User removed successfully!",
@@ -249,6 +253,19 @@
       "RISKACCEPTED": "Risk Accepted",
       "FALSEPOSITIVE": "False Positive",
       "CORRECTED": "Corrected"
+    },
+    "DETAILS": {
+      "TITLE": "Vulnerability Details",
+      "HASH": "Hash",
+      "FILE": "File",
+      "LINE": "Line",
+      "COLUMN": "Column",
+      "CODE": "Code",
+      "LANGUAGE": "Language",
+      "SECURITY_TOOL": "Security Tool",
+      "SEVERITY": "Severity",
+      "DETAILS": "Details",
+      "CONFIDENCE": "Confidence"
     }
   },
 

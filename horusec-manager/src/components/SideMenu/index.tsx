@@ -24,6 +24,7 @@ import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
 import {
   isAdminOfCompany,
+  userRoleInCurrentCompany,
   clearCurrentCompany,
 } from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
@@ -41,19 +42,21 @@ const SideMenu: React.FC = () => {
       icon: 'pie',
       type: 'route',
       path: '/home/dashboard',
+      roles: ['admin', 'supervisor', 'member'],
       subRoutes: [
         {
           name: t('SIDE_MENU.ORGANIZATION'),
           icon: 'grid',
           path: '/home/dashboard/organization',
           type: 'subRoute',
-          adminOnly: true,
+          roles: ['admin'],
         },
         {
           name: t('SIDE_MENU.REPOSITORIES'),
           icon: 'columns',
           path: '/home/dashboard/repositories',
           type: 'subRoute',
+          roles: ['admin', 'supervisor', 'member'],
         },
       ],
     },
@@ -62,20 +65,21 @@ const SideMenu: React.FC = () => {
       icon: 'shield',
       path: '/home/vulnerabilities',
       type: 'route',
-      adminOnly: true,
+      roles: ['admin', 'supervisor'],
     },
     {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
       path: '/home/repositories',
       type: 'route',
+      roles: ['admin', 'supervisor', 'member'],
     },
     {
       name: t('SIDE_MENU.ORGANIZATION_USERS'),
       icon: 'users',
       path: '/home/organization-users',
       type: 'route',
-      adminOnly: true,
+      roles: ['admin'],
     },
   ];
 
@@ -104,7 +108,7 @@ const SideMenu: React.FC = () => {
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
-    if (!route.adminOnly || (route.adminOnly && isAdminOfCompany())) {
+    if (route.roles.includes(userRoleInCurrentCompany())) {
       return (
         <Styled.RouteItem
           key={index}
@@ -128,7 +132,7 @@ const SideMenu: React.FC = () => {
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
   const renderSubRoute = (subRoute: InternalRoute, index: number) => {
-    if (!subRoute.adminOnly || (subRoute.adminOnly && isAdminOfCompany())) {
+    if (subRoute.roles.includes(userRoleInCurrentCompany())) {
       return (
         <Styled.SubRouteItem
           key={index}

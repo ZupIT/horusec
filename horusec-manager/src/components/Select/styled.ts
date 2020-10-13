@@ -111,7 +111,7 @@ const OptionsList = styled.div<OptionsListProps>`
   ${({ rounded }) =>
     rounded &&
     css`
-      top: 30px !important;
+      top: 33px !important;
     `};
 
   ::-webkit-scrollbar {

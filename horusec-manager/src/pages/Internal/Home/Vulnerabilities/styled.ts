@@ -73,10 +73,15 @@ const Column = styled.span`
 
   &:nth-child(2) {
     max-width: 580px;
+    margin-right: 0px;
   }
 
   &:nth-child(3) {
     max-width: 80px;
+  }
+
+  &:nth-child(5) {
+    max-width: 30px;
   }
 `;
 
@@ -116,17 +121,19 @@ const Cell = styled.span`
     max-width: 80px;
   }
 
-  .select-type {
-    position: absolute !important;
+  &:nth-child(5) {
+    max-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      cursor: pointer;
+    }
   }
 
-  &.row {
-    display: flex;
-    flex-direction: row;
-
-    button {
-      margin-right: 10px;
-    }
+  .select-type {
+    position: absolute !important;
   }
 `;
 
