@@ -17,6 +17,7 @@ package horusapi
 import (
 	"bytes"
 	"errors"
+	http2 "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"net/http"
@@ -160,7 +161,12 @@ func TestSendAnalysis(t *testing.T) {
 
 func TestService_GetAnalysis(t *testing.T) {
 	t.Run("should get analysis with no errors", func(t *testing.T) {
-		analysis := test.CreateAnalysisMock()
+		analysisContent := test.CreateAnalysisMock()
+		analysis := http2.Response{
+			Code:    http.StatusOK,
+			Status:  http.StatusText(http.StatusOK),
+			Content: analysisContent,
+		}
 		body := ioutil.NopCloser(bytes.NewReader(analysis.ToBytes()))
 
 		httpMock := &client.Mock{}
@@ -171,7 +177,7 @@ func TestService_GetAnalysis(t *testing.T) {
 			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
 		}
 
-		analysisResponse := service.GetAnalysis(analysis.ID)
+		analysisResponse := service.GetAnalysis(analysisContent.ID)
 		assert.NotEmpty(t, analysisResponse)
 		assert.NotEqual(t, uuid.Nil, analysisResponse.ID)
 		assert.Len(t, analysisResponse.AnalysisVulnerabilities, 11)

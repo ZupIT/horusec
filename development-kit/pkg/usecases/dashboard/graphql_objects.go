@@ -82,26 +82,18 @@ func createVulnerabilityType() *graphql.Object {
 			Type: graphql.String,
 		},
 		"commitAuthor": &graphql.Field{
-			Type: createCommitAuthor(),
-		},
-	}})
-}
-
-func createCommitAuthor() *graphql.Object {
-	return graphql.NewObject(graphql.ObjectConfig{Name: "commitAuthor", Fields: graphql.Fields{
-		"author": &graphql.Field{
 			Type: graphql.String,
 		},
-		"email": &graphql.Field{
+		"commitEmail": &graphql.Field{
 			Type: graphql.String,
 		},
 		"commitHash": &graphql.Field{
 			Type: graphql.String,
 		},
-		"message": &graphql.Field{
+		"commitMessage": &graphql.Field{
 			Type: graphql.String,
 		},
-		"date": &graphql.Field{
+		"commitDate": &graphql.Field{
 			Type: graphql.String,
 		},
 	}})

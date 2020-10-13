@@ -30,7 +30,7 @@ interface Props {
 interface DatatableValue {
   language: string;
   severity: string;
-  author: string;
+  commitEmail: string;
   details: string;
   file: string;
   line: string | number;
@@ -56,6 +56,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
       const {
         language,
         severity,
+        commitEmail,
         details,
         file,
         line,
@@ -65,7 +66,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
       formattedData.push({
         language,
         severity,
-        author: item?.vulnerability?.commitAuthor.author,
+        commitEmail,
         details,
         file,
         line,
@@ -148,8 +149,8 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
                   {item.severity || '-'}
                 </Styled.Cell>
 
-                <Styled.Cell data-for="main" data-tip={item.author}>
-                  {item.author || '-'}
+                <Styled.Cell data-for="main" data-tip={item.commitEmail}>
+                  {item.commitEmail || '-'}
                 </Styled.Cell>
 
                 <Styled.Cell data-for="main" data-tip={item.details}>

@@ -133,6 +133,7 @@ func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	}
 	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(a.config.GetFalsePositiveHashesList(),
 		a.config.GetRiskAcceptHashesList())
+	a.printController.SetAnalysis(a.analysis)
 	return a.printController.StartPrintResults()
 }
 

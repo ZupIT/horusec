@@ -68,6 +68,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		printResultMock := &printresults.Mock{}
 		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
 		horusecAPIMock.On("SendAnalysis").Return(nil)
@@ -120,6 +121,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		printResultMock := &printresults.Mock{}
 		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
 		horusecAPIMock.On("SendAnalysis").Return(nil)
@@ -162,6 +164,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		printResultMock := &printresults.Mock{}
 		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
 		horusecAPIMock.On("SendAnalysis").Return(nil)

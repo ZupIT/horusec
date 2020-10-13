@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/google/uuid"
@@ -122,6 +121,7 @@ func (s *Service) verifyResponseCreateAnalysis(response httpResponse.Interface) 
 }
 
 func (s *Service) verifyResponseFindAnalysis(response httpResponse.Interface) (analysis *horusec.Analysis, err error) {
+	analysis = &horusec.Analysis{}
 	body, err := response.GetBody()
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (s *Service) verifyResponseFindAnalysis(response httpResponse.Interface) (a
 	if response.GetStatusCode() != 200 {
 		return nil, fmt.Errorf("something went wrong while finding analysis to horusec -> %s", string(body))
 	}
-	return analysis, json.Unmarshal(body, &analysis)
+	return analysis.ParseResponseBytesToAnalysis(body)
 }
 
 func (s *Service) getHorusecAPIURL() string {
