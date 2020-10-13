@@ -32,6 +32,7 @@ type IRepository interface {
 	Delete(repositoryID uuid.UUID) error
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
+	GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error)
 }
 
 type Repository struct {
@@ -91,12 +92,9 @@ func (r *Repository) Get(repositoryID uuid.UUID) (*accountEntities.Repository, e
 }
 
 func (r *Repository) List(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
-	accountCompany := &roles.AccountCompany{}
-
-	response := r.databaseRead.Find(accountCompany, r.databaseRead.SetFilter(
-		map[string]interface{}{"account_id": accountID, "company_id": companyID}), accountCompany.GetTable())
-	if response.GetError() != nil {
-		return nil, nil
+	accountCompany, err := r.GetAccountCompanyRole(accountID, companyID)
+	if err != nil {
+		return nil, err
 	}
 
 	if accountCompany.Role == account.Admin {
@@ -104,6 +102,15 @@ func (r *Repository) List(accountID, companyID uuid.UUID) (*[]accountEntities.Re
 	}
 
 	return r.listByRoles(accountID, companyID)
+}
+
+func (r *Repository) GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error) {
+	accountCompany := &roles.AccountCompany{}
+
+	response := r.databaseRead.Find(accountCompany, r.databaseRead.SetFilter(
+		map[string]interface{}{"account_id": accountID, "company_id": companyID}), accountCompany.GetTable())
+
+	return accountCompany, response.GetError()
 }
 
 func (r *Repository) listByRoles(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {

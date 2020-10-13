@@ -61,3 +61,8 @@ func (m *Mock) GetByName(companyID uuid.UUID, repositoryName string) (*accountEn
 	args := m.MethodCalled("GetByName")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error) {
+	args := m.MethodCalled("GetAccountCompanyRole")
+	return args.Get(0).(*roles.AccountCompany), mockUtils.ReturnNilOrError(args, 1)
+}

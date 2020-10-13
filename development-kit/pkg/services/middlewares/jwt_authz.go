@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package middlewares
 
 import (
 	"context"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -26,9 +31,25 @@ import (
 
 const RepositoryPermissionsCtxKey CtxKey = "repositoryPermissions"
 
-func IsRepositoryMember(next http.Handler) http.Handler {
+type IJWTAuthMiddleware interface {
+	IsRepositoryMember(next http.Handler) http.Handler
+	IsRepositoryAdmin(next http.Handler) http.Handler
+	BindRepositoryPermissions(next http.Handler) http.Handler
+}
+
+type JWTAuthMiddleware struct {
+	repositoryRepo repositoryRepo.IRepository
+}
+
+func NewJWTAuthMiddleware(databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite) IJWTAuthMiddleware {
+	return &JWTAuthMiddleware{
+		repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
+	}
+}
+
+func (j *JWTAuthMiddleware) IsRepositoryMember(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		permissions, err := getPermissionsOrFail(w, r)
+		permissions, err := j.getPermissionsOrFail(w, r)
 		if err != nil {
 			return
 		}
@@ -44,27 +65,31 @@ func IsRepositoryMember(next http.Handler) http.Handler {
 	})
 }
 
-func IsRepositoryAdmin(next http.Handler) http.Handler {
+func (j *JWTAuthMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		permissions, err := getPermissionsOrFail(w, r)
+		permissions, err := j.getPermissionsOrFail(w, r)
 		if err != nil {
 			return
 		}
 
 		repositoryID := chi.URLParam(r, "repositoryID")
-
 		if role, isMember := permissions[repositoryID]; !isMember || role != "admin" {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := j.repositoryRepo.GetAccountCompanyRole(j.getAccountIDByToken(r), companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
 
 		next.ServeHTTP(w, r)
 	})
 }
 
-func BindRepositoryPermissions(next http.Handler) http.Handler {
+func (j *JWTAuthMiddleware) BindRepositoryPermissions(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		permissions, err := getPermissionsOrFail(w, r)
+		permissions, err := j.getPermissionsOrFail(w, r)
 		if err != nil {
 			return
 		}
@@ -73,7 +98,7 @@ func BindRepositoryPermissions(next http.Handler) http.Handler {
 	})
 }
 
-func getPermissionsOrFail(w http.ResponseWriter, r *http.Request) (map[string]string, error) {
+func (j *JWTAuthMiddleware) getPermissionsOrFail(w http.ResponseWriter, r *http.Request) (map[string]string, error) {
 	permissions, err := jwt.GetRepositoryPermissionsByJWTTOken(r.Header.Get("Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
@@ -81,4 +106,9 @@ func getPermissionsOrFail(w http.ResponseWriter, r *http.Request) (map[string]st
 	}
 
 	return permissions, nil
+}
+
+func (j *JWTAuthMiddleware) getAccountIDByToken(r *http.Request) uuid.UUID {
+	accountID, _ := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	return accountID
 }
