@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package middlewares
 
 import (
@@ -49,7 +50,6 @@ func NewRepositoryAuthzMiddleware(
 	}
 }
 
-//nolint
 func (rm *repositoryAuthzMiddleware) IsRepositoryMember(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
@@ -61,14 +61,18 @@ func (rm *repositoryAuthzMiddleware) IsRepositoryMember(next http.Handler) http.
 		repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 		_, err = rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
 		if err != nil {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := rm.repositoryRepo.GetAccountCompanyRole(accountID, companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-//nolint
 func (rm *repositoryAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))

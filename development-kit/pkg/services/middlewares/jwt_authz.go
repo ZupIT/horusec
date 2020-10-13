@@ -57,8 +57,13 @@ func (j *JWTAuthMiddleware) IsRepositoryMember(next http.Handler) http.Handler {
 		repositoryID := chi.URLParam(r, "repositoryID")
 
 		if _, isMember := permissions[repositoryID]; !isMember {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := j.repositoryRepo.GetAccountCompanyRole(j.getAccountIDByToken(r), companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
 
 		next.ServeHTTP(w, r)
