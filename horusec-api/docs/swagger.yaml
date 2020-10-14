@@ -236,6 +236,134 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Analysis
+  /api/companies/{companyID}/repositories/{repositoryID}/management:
+    get:
+      consumes:
+      - application/json
+      description: Get all vuln vulnerability data in repository
+      operationId: get-vuln-data
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      - description: vulnHash query string
+        in: query
+        name: vulnHash
+        type: string
+      - description: vulnType query string
+        in: query
+        name: vulnType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
+  /api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/type:
+    put:
+      consumes:
+      - application/json
+      description: update vulnerability type
+      operationId: update-vuln-type
+      parameters:
+      - description: type of vulnerability
+        in: body
+        name: UpdateVulnType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVulnType'
+      - description: vulnerabilityID of the vulnerability
+        in: path
+        name: vulnerabilityID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
   /api/companies/{companyID}/repositories/{repositoryID}/tokens:
     get:
       description: Delete a repository token
@@ -632,134 +760,6 @@ paths:
               type: object
       tags:
       - Health
-  /api/repositories/{repositoryID}/management:
-    get:
-      consumes:
-      - application/json
-      description: Get all vuln vulnerability data in repository
-      operationId: get-vuln-data
-      parameters:
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: page query string
-        in: query
-        name: page
-        type: string
-      - description: size query string
-        in: query
-        name: size
-        type: string
-      - description: vulnHash query string
-        in: query
-        name: vulnHash
-        type: string
-      - description: vulnType query string
-        in: query
-        name: vulnType
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Management
-  /api/repositories/{repositoryID}/management/{vulnerabilityID}/type:
-    put:
-      consumes:
-      - application/json
-      description: update vulnerability type
-      operationId: update-vuln-type
-      parameters:
-      - description: type of vulnerability
-        in: body
-        name: UpdateVulnType
-        required: true
-        schema:
-          $ref: '#/definitions/dto.UpdateVulnType'
-      - description: vulnerabilityID of the vulnerability
-        in: path
-        name: vulnerabilityID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "404":
-          description: NOT FOUND
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Management
 securityDefinitions:
   ApiKeyAuth:
     in: header
