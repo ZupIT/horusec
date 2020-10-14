@@ -255,7 +255,7 @@ func getChartRESTContentAndReturnBody(t *testing.T, route string, repositoryID s
 	finalDateStr := now.Format("2006-01-02") + "T23:59:59Z"
 	URL := fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/%s?initialDate=%s&finalDate=%s", CompanyID, route, initialDateStr, finalDateStr)
 	if repositoryID != "" {
-		URL = fmt.Sprintf("http://localhost:8005/api/dashboard/repositories/%s/%s?initialDate=%s&finalDate=%s", repositoryID, route, initialDateStr, finalDateStr)
+		URL = fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/repositories/%s/%s?initialDate=%s&finalDate=%s", CompanyID, repositoryID, route, initialDateStr, finalDateStr)
 	}
 	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": BearerToken, "Content-type": "application/json"})
 	assert.NoError(t, err)
@@ -305,7 +305,7 @@ func getChartDetailsUsingGraphQLAndReturnBody(t *testing.T, repositoryID string)
 	queryGraphQL = strings.ReplaceAll(queryGraphQL, " ", "%20")
 	URL := fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/details?query=%s&page=1&size=1000", CompanyID, queryGraphQL)
 	if repositoryID != "" {
-		URL = fmt.Sprintf("http://localhost:8005/api/dashboard/repositories/%s/details?query=%s&page=1&size=1000", repositoryID, queryGraphQL)
+		URL = fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/repositories/%s/details?query=%s&page=1&size=1000", CompanyID, repositoryID, queryGraphQL)
 	}
 	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": BearerToken, "Content-Type": "application/json"})
 	assert.NoError(t, err)

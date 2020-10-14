@@ -114,15 +114,15 @@ func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *R
 	authz := middlewares.NewCompanyAuthzMiddleware(postgresRead, nil)
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
 		router.Use(jwt.AuthMiddleware)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/details", handler.GetVulnDetails)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/total-repositories", handler.GetCompanyTotalRepositories)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/all-vulnerabilities", handler.GetCompanyVulnBySeverity)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/vulnerabilities-by-language", handler.GetCompanyVulnByLanguage)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/vulnerabilities-by-author", handler.GetCompanyVulnByDeveloper)
-		router.With(authz.IsCompanyMember).Get(
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/details", handler.GetVulnDetails)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-repositories", handler.GetCompanyTotalRepositories)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/all-vulnerabilities", handler.GetCompanyVulnBySeverity)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/vulnerabilities-by-language", handler.GetCompanyVulnByLanguage)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/vulnerabilities-by-author", handler.GetCompanyVulnByDeveloper)
+		router.With(authz.IsCompanyAdmin).Get(
 			"/{companyID}/vulnerabilities-by-repository", handler.GetCompanyVulnByRepository)
-		router.With(authz.IsCompanyMember).Get("/{companyID}/vulnerabilities-by-time", handler.GetCompanyVulnByTime)
+		router.With(authz.IsCompanyAdmin).Get("/{companyID}/vulnerabilities-by-time", handler.GetCompanyVulnByTime)
 		router.Options("/", handler.Options)
 	})
 
