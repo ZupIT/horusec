@@ -71,23 +71,18 @@ const Vulnerabilities: React.FC = () => {
     repository: Repository,
     vulnHash?: string
   ) => {
-    setLoading(true);
+    setCurrentRepository(repository)
 
-    if (repository) {
-      setCurrentRepository(repository);
-    }
+    setLoading(true);
 
     if (pageSize !== pagination.pageSize) {
       currentPage = 1;
     }
 
-    const repositoryID =
-      currentRepository?.repositoryID || repository?.repositoryID;
-
     repositoryService
       .getAllVulnerabilities(
         companyID,
-        repositoryID,
+        repository?.repositoryID,
         currentPage,
         pageSize,
         vulnHash
@@ -113,7 +108,7 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData(1, pagination.pageSize, null, searchString);
+    fetchData(1, pagination.pageSize, currentRepository, searchString);
   }, 500);
 
   const handleUpdateVulnerabilityType = (
@@ -128,7 +123,7 @@ const Vulnerabilities: React.FC = () => {
         type
       )
       .then(() => {
-        fetchData(pagination.currentPage, pagination.pageSize, null);
+        fetchData(pagination.currentPage, pagination.pageSize, currentRepository);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -170,7 +165,7 @@ const Vulnerabilities: React.FC = () => {
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
           onChangeValue={(value) =>
-            fetchData(pagination.currentPage, pagination.pageSize, value)
+            fetchData(1, pagination.pageSize, value)
           }
         />
       </Styled.Options>
@@ -247,7 +242,7 @@ const Vulnerabilities: React.FC = () => {
           {vulnerabilities && vulnerabilities.length > 0 ? (
             <Pagination
               pagination={pagination}
-              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize, null)}
+              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize, currentRepository)}
             />
           ) : null}
         </Styled.Table>
