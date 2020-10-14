@@ -110,8 +110,13 @@ func (rm *repositoryAuthzMiddleware) IsRepositorySupervisor(next http.Handler) h
 		repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 		accountRepository, err := rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
 		if err != nil || accountRepository.Role != accountEnums.Supervisor && accountRepository.Role != accountEnums.Admin {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := rm.repositoryRepo.GetAccountCompanyRole(accountID, companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})

@@ -85,7 +85,13 @@ const Vulnerabilities: React.FC = () => {
       currentRepository?.repositoryID || repository?.repositoryID;
 
     repositoryService
-      .getAllVulnerabilities(repositoryID, currentPage, pageSize, vulnHash)
+      .getAllVulnerabilities(
+        companyID,
+        repositoryID,
+        currentPage,
+        pageSize,
+        vulnHash
+      )
       .then((result) => {
         setVulnerabilities(result.data?.content?.data);
         const totalItems = result?.data?.content?.totalItems;
@@ -116,6 +122,7 @@ const Vulnerabilities: React.FC = () => {
   ) => {
     repositoryService
       .updateVulnerabilityType(
+        companyID,
         currentRepository?.repositoryID,
         vulnerability.vulnerabilityID,
         type

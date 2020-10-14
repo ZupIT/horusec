@@ -17,7 +17,7 @@
 import renewHTTP from 'services/axios/forceRenewToken';
 import defaultHTTP from 'services/axios/default';
 
-import { SERVICE_COMPANY, SERVICE_API, SERVICE_REPOSITORY } from './enpoints';
+import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
 
 const getAll = (companyId: string) => {
   return renewHTTP.get(`${SERVICE_COMPANY}/${companyId}/repositories`);
@@ -123,24 +123,29 @@ const updateUserRole = (
 };
 
 const getAllVulnerabilities = (
+  companyId: string,
   repositoryId: string,
   page: number,
   size: number,
   vulnHash?: string,
   vulnType?: string
 ) => {
-  return defaultHTTP.get(`${SERVICE_REPOSITORY}/${repositoryId}/management`, {
-    params: { page, size, vulnType, vulnHash },
-  });
+  return defaultHTTP.get(
+    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/management`,
+    {
+      params: { page, size, vulnType, vulnHash },
+    }
+  );
 };
 
 const updateVulnerabilityType = (
+  companyId: string,
   repositoryId: string,
   vulnerabilityId: string,
   type: string
 ) => {
   return defaultHTTP.put(
-    `${SERVICE_REPOSITORY}/${repositoryId}/management/${vulnerabilityId}/type`,
+    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
     {
       type,
     }
