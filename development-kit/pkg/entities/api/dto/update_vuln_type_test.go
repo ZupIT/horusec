@@ -12,19 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horusec
+package dto
 
 import (
-	"testing"
-
-	"github.com/google/uuid"
-
+	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-func TestToAnalysis(t *testing.T) {
-	t.Run("should success parse repository to analysis", func(t *testing.T) {
-		repository := &Attachment{}
-		assert.IsType(t, &Analysis{}, repository.ToAnalysis(uuid.New(), uuid.New()))
+func TestValidateUpdateVulnType(t *testing.T) {
+	t.Run("should return no error when valid data", func(t *testing.T) {
+		updateManagementData := &UpdateVulnType{
+			Type: horusecEnum.RiskAccepted,
+		}
+
+		err := updateManagementData.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error invalid type", func(t *testing.T) {
+		updateManagementData := &UpdateVulnType{
+			Type: "test",
+		}
+
+		err := updateManagementData.Validate()
+		assert.Error(t, err)
+		assert.Equal(t, "type: must be a valid value.", err.Error())
 	})
 }

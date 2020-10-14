@@ -19,13 +19,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 	"strconv"
 )
 
@@ -90,7 +89,7 @@ func (f *Formatter) setGoSecOutPutInHorusecAnalysis(golangOutput golang.Output) 
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = utilsHorusec.GetSeverityOrNoSec(issue.Severity, issue.Code)
+	vulnerability.Severity = issue.Severity
 	vulnerability.Details = issue.Details
 	vulnerability.Code = f.getCode(issue.Code, issue.Column)
 	vulnerability.Line = issue.Line
@@ -129,7 +128,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) addVulnerabilityBySeverityGoSec(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }
 
 func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {

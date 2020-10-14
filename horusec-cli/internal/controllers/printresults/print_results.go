@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,6 +46,7 @@ type PrintResults struct {
 
 type Interface interface {
 	StartPrintResults() (totalVulns int, err error)
+	SetAnalysis(analysis *horusecEntities.Analysis)
 }
 
 func NewPrintResults(analysis *horusecEntities.Analysis, configs *config.Config) Interface {
@@ -53,6 +55,10 @@ func NewPrintResults(analysis *horusecEntities.Analysis, configs *config.Config)
 		configs:          configs,
 		sonarqubeService: sonarqube.NewSonarQube(analysis),
 	}
+}
+
+func (pr *PrintResults) SetAnalysis(analysis *horusecEntities.Analysis) {
+	pr.analysis = analysis
 }
 
 func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
@@ -64,7 +70,6 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
-
 	if pr.configs.IsTimeout {
 		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs, logger.ErrorLevel)
 	}
@@ -85,16 +90,16 @@ func (pr *PrintResults) factoryPrintByType() error {
 
 // nolint
 func (pr *PrintResults) runPrintResultsText() error {
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	fmt.Println(fmt.Sprintf("HORUSEC ENDED THE ANALYSIS COM STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status))
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	fmt.Println(fmt.Sprintf("Analysis StartedAt: %s", pr.analysis.CreatedAt.Format("2006-01-02 15:04:05")))
 	fmt.Println(fmt.Sprintf("Analysis FinishedAt: %s", pr.analysis.FinishedAt.Format("2006-01-02 15:04:05")))
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 
 	pr.printTextOutputVulnerability()
 	return nil
@@ -114,14 +119,29 @@ func (pr *PrintResults) runPrintResultsSonarQube() error {
 }
 
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
-	for key := range pr.analysis.Vulnerabilities {
-		severityType := pr.analysis.Vulnerabilities[key].Severity.ToString()
-		if severityType != "" {
-			if !pr.isIgnoredVulnerability(severityType) {
-				pr.totalVulns++
+	for key := range pr.analysis.AnalysisVulnerabilities {
+		vuln := pr.analysis.AnalysisVulnerabilities[key].Vulnerability
+		pr.validateVulnerabilityToCheckTotalErrors(&vuln)
+	}
+	if logger.CurrentLevel >= logger.DebugLevel {
+		pr.logSeparator(len(pr.analysis.AnalysisVulnerabilities) > 0)
+	}
+}
+
+func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *horusecEntities.Vulnerability) {
+	if vuln.Severity.ToString() != "" && !pr.isFalsePositiveOrRiskAccept(vuln) {
+		if !pr.isIgnoredVulnerability(vuln.Severity.ToString()) {
+			logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash, logger.DebugLevel)
+			if logger.CurrentLevel >= logger.DebugLevel {
+				fmt.Println("")
 			}
+			pr.totalVulns++
 		}
 	}
+}
+
+func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
+	return vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
@@ -183,29 +203,30 @@ func (pr *PrintResults) openJSONFileAndWriteBytes(bytesToWrite []byte, completeP
 }
 
 func (pr *PrintResults) printTextOutputVulnerability() {
-	for index := range pr.analysis.Vulnerabilities {
-		vulnerability := pr.analysis.Vulnerabilities[index]
+	for index := range pr.analysis.AnalysisVulnerabilities {
+		vulnerability := pr.analysis.AnalysisVulnerabilities[index].Vulnerability
 		pr.printTextOutputVulnerabilityData(&vulnerability)
 	}
 
 	pr.printTotalVulnerabilities()
 
-	pr.logSeparator()
+	pr.logSeparator(len(pr.analysis.AnalysisVulnerabilities) > 0)
 }
 
 func (pr *PrintResults) printTotalVulnerabilities() {
 	totalVulnerabilities := pr.analysis.GetTotalVulnerabilities()
-	totalVulnerabilitiesBySeverity := pr.analysis.GetTotalVulnerabilitiesBySeverity()
-	for severityName, count := range totalVulnerabilitiesBySeverity {
-		if count > 0 {
-			fmt.Println(fmt.Sprintf("Total of Vulnerabilities %s is: %v",
-				severityName.ToString(), count))
-		}
-	}
-
 	if totalVulnerabilities > 0 {
-		fmt.Println(fmt.Sprintf("A total of %v vulnerabilities were found in this analysis",
-			totalVulnerabilities))
+		fmt.Println(fmt.Sprintf("In this analysis, a total of %v possible vulnerabilities "+
+			"were found and we classified them into:", totalVulnerabilities))
+		fmt.Println("")
+	}
+	totalVulnerabilitiesBySeverity := pr.analysis.GetTotalVulnerabilitiesBySeverity()
+	for vulnType, countBySeverity := range totalVulnerabilitiesBySeverity {
+		for severityName, count := range countBySeverity {
+			if count > 0 {
+				fmt.Println(fmt.Sprintf("Total of %s %s is: %v", vulnType.ToString(), severityName.ToString(), count))
+			}
+		}
 	}
 }
 
@@ -220,6 +241,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("File: %s", vulnerability.File))
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
+	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
 
 	pr.printCommitAuthor(vulnerability)
 
@@ -227,7 +249,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 
 	fmt.Print("\n")
 
-	pr.logSeparator()
+	pr.logSeparator(true)
 }
 
 // nolint
@@ -269,6 +291,8 @@ func (pr *PrintResults) printResponseAnalysis() {
 	fmt.Print("\n")
 }
 
-func (pr *PrintResults) logSeparator() {
-	fmt.Println(fmt.Sprintf("\n==================================================================================\n"))
+func (pr *PrintResults) logSeparator(isToShow bool) {
+	if isToShow {
+		fmt.Println(fmt.Sprintf("\n==================================================================================\n"))
+	}
 }

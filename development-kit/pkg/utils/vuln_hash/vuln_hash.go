@@ -12,31 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horusec
+package vulnhash
 
 import (
-	"mime/multipart"
-	"net/textproto"
-	"time"
+	"regexp"
+	"strings"
 
-	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
-	"github.com/google/uuid"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
 )
 
-type Attachment struct {
-	FileZip    multipart.File `json:"fileZip"`
-	FileName   string
-	FileSize   int64
-	FileHeader textproto.MIMEHeader
+func Bind(vuln *horusec.Vulnerability) *horusec.Vulnerability {
+	vulnHash, _ := hash.GenerateSHA1(
+		toOneLine(vuln.Code),
+		vuln.Line,
+		vuln.Details,
+		vuln.File,
+	)
+
+	vuln.VulnHash = vulnHash
+
+	return vuln
 }
 
-func (r *Attachment) ToAnalysis(repositoryID, companyID uuid.UUID) *Analysis {
-	return &Analysis{
-		ID:              uuid.New(),
-		CreatedAt:       time.Now(),
-		RepositoryID:    repositoryID,
-		CompanyID:       companyID,
-		Status:          horusecEnum.Running,
-		Vulnerabilities: []Vulnerability{},
-	}
+func toOneLine(code string) string {
+	re := regexp.MustCompile(`\r?\n?\t`)
+	// remove line break
+	oneLineCode := re.ReplaceAllString(code, " ")
+	// remove white space
+	oneLineCode = strings.ReplaceAll(oneLineCode, " ", "")
+
+	return oneLineCode
 }

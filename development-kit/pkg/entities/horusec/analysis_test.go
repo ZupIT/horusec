@@ -16,12 +16,11 @@ package horusec
 
 import (
 	"errors"
-	"testing"
-
 	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestTableName(t *testing.T) {
@@ -112,10 +111,15 @@ func TestSetRepositoryName(t *testing.T) {
 
 func TestGenerateID(t *testing.T) {
 	t.Run("should success return a new id", func(t *testing.T) {
-		analysis := &Analysis{}
-		analysis.GenerateID()
+		analysis := &Analysis{
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{},
+			},
+		}
+		analysis.SetupIDInAnalysisContents()
 
 		assert.NotEmpty(t, analysis)
+		assert.NotEqual(t, uuid.Nil, analysis.AnalysisVulnerabilities[0].VulnerabilityID)
 	})
 }
 
@@ -141,7 +145,7 @@ func TestSetAnalysisFinishedData(t *testing.T) {
 func TestGetTotalVulnerabilities(t *testing.T) {
 	t.Run("should return total of 1 vulnerability", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{{}},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{{}},
 		}
 
 		assert.Equal(t, 1, analysis.GetTotalVulnerabilities())
@@ -151,54 +155,150 @@ func TestGetTotalVulnerabilities(t *testing.T) {
 func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 	t.Run("should return total vulns by severity", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{
-				{Severity: severity.Low},
-				{Severity: severity.Low},
-				{Severity: severity.Audit},
-				{Severity: severity.Medium},
-				{Severity: severity.High},
-				{Severity: severity.High},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Audit},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Medium},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.High},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.High},
+				},
+				{
+					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Info},
+				},
 			},
 		}
 
-		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Low])
-		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Medium])
-		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[severity.High])
-		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Audit])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[severity.NoSec])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[severity.Info])
+		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Low])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Medium])
+		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.High])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Audit])
+		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.NoSec])
+		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Info])
 	})
 }
 
 func TestSortVulnerabilitiesByCriticality(t *testing.T) {
 	t.Run("should return total of 1 vulnerability", func(t *testing.T) {
 		analysis := &Analysis{
-			Vulnerabilities: []Vulnerability{
-				{Severity: severity.Low},
-				{Severity: severity.Medium},
-				{Severity: severity.High},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{Severity: severity.Low},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.Medium},
+				},
+				{
+					Vulnerability: Vulnerability{Severity: severity.High},
+				},
 			},
 		}
 
 		analysis.SortVulnerabilitiesByCriticality()
 
-		assert.Equal(t, severity.High, analysis.Vulnerabilities[0].Severity)
-		assert.Equal(t, severity.Medium, analysis.Vulnerabilities[1].Severity)
-		assert.Equal(t, severity.Low, analysis.Vulnerabilities[2].Severity)
+		assert.Equal(t, severity.High, analysis.AnalysisVulnerabilities[0].Vulnerability.Severity)
+		assert.Equal(t, severity.Medium, analysis.AnalysisVulnerabilities[1].Vulnerability.Severity)
+		assert.Equal(t, severity.Low, analysis.AnalysisVulnerabilities[2].Vulnerability.Severity)
 	})
 }
 
-func TestSetAnalysisIDAndNewIDInVulnerabilities(t *testing.T) {
-	t.Run("vulnerabilities id and analysis id should not be nil", func(t *testing.T) {
+func TestSetRepositoryID(t *testing.T) {
+	t.Run("should success set repository id", func(t *testing.T) {
+		analysis := &Analysis{}
+		analysis.SetRepositoryID(uuid.New())
+		assert.NotEmpty(t, analysis.RepositoryID)
+	})
+}
+
+func TestSortVulnerabilitiesByType(t *testing.T) {
+	t.Run("should success set repository id", func(t *testing.T) {
 		analysis := &Analysis{
-			ID:              uuid.New(),
-			Vulnerabilities: []Vulnerability{{}},
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{
+						Type: horusecEnum.Corrected,
+					},
+				},
+				{
+					Vulnerability: Vulnerability{
+						Type: horusecEnum.Vulnerability,
+					},
+				},
+				{
+					Vulnerability: Vulnerability{
+						Type: horusecEnum.FalsePositive,
+					},
+				},
+				{
+					Vulnerability: Vulnerability{
+						Type: horusecEnum.RiskAccepted,
+					},
+				},
+			},
 		}
 
-		analysis.SetAnalysisIDAndNewIDInVulnerabilities()
-		for _, item := range analysis.Vulnerabilities {
-			assert.NotEqual(t, uuid.Nil, item.VulnerabilityID)
-			assert.NotEqual(t, uuid.Nil, item.AnalysisID)
+		result := analysis.SortVulnerabilitiesByType()
+		assert.Equal(t, result.AnalysisVulnerabilities[0].Vulnerability.Type, horusecEnum.Vulnerability)
+		assert.Equal(t, result.AnalysisVulnerabilities[1].Vulnerability.Type, horusecEnum.RiskAccepted)
+		assert.Equal(t, result.AnalysisVulnerabilities[2].Vulnerability.Type, horusecEnum.FalsePositive)
+		assert.Equal(t, result.AnalysisVulnerabilities[3].Vulnerability.Type, horusecEnum.Corrected)
+	})
+}
+
+func TestGetAnalysisWithoutAnalysisVulnerabilities(t *testing.T) {
+	t.Run("should success get analysis without vulnerabilities", func(t *testing.T) {
+		analysis := &Analysis{
+			ID: uuid.New(),
 		}
+		assert.Empty(t, analysis.GetAnalysisWithoutAnalysisVulnerabilities().AnalysisVulnerabilities)
+	})
+}
+
+func TestSetDefaultVulnerabilityType(t *testing.T) {
+	t.Run("should success set vuln type default", func(t *testing.T) {
+		analysis := &Analysis{
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{},
+				},
+			},
+		}
+
+		analysis.SetDefaultVulnerabilityType()
+		assert.Equal(t, analysis.AnalysisVulnerabilities[0].Vulnerability.Type, horusecEnum.Vulnerability)
+	})
+}
+
+func TestSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
+	t.Run("should success set false positive and risk accepted types", func(t *testing.T) {
+		analysis := &Analysis{
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{
+						VulnHash: "1",
+					},
+				},
+				{
+					Vulnerability: Vulnerability{
+						VulnHash: "2",
+					},
+				},
+			},
+		}
+
+		analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities([]string{"1"}, []string{"2"})
+		assert.Equal(t, analysis.AnalysisVulnerabilities[0].Vulnerability.Type, horusecEnum.FalsePositive)
+		assert.Equal(t, analysis.AnalysisVulnerabilities[1].Vulnerability.Type, horusecEnum.RiskAccepted)
 	})
 }

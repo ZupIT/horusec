@@ -35,6 +35,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	t.Run("Should mock correctly", func(t *testing.T) {
+		mock := &Mock{}
+		mock.On("Create").Return(&accountEntities.Repository{}, nil)
+		mock.On("Update").Return(&accountEntities.Repository{}, nil)
+		mock.On("Get").Return(&accountEntities.RepositoryResponse{}, nil)
+		mock.On("List").Return(&[]accountEntities.RepositoryResponse{}, nil)
+		mock.On("CreateAccountRepository").Return(nil)
+		mock.On("UpdateAccountRepository").Return(nil)
+		mock.On("InviteUser").Return(nil)
+		mock.On("Delete").Return(nil)
+		mock.On("GetAllAccountsInRepository").Return(&[]roles.AccountRole{}, nil)
+		mock.On("RemoveUser").Return(nil)
+		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{})
+		_, _ = mock.Update(uuid.New(), &accountEntities.Repository{})
+		_, _ = mock.Get(uuid.New(), uuid.New())
+		_, _ = mock.List(uuid.New(), uuid.New())
+		_ = mock.CreateAccountRepository(&roles.AccountRepository{})
+		_ = mock.UpdateAccountRepository(uuid.New(), &roles.AccountRepository{})
+		_ = mock.InviteUser(&accountEntities.InviteUser{})
+		_ = mock.Delete(uuid.New())
+		_, _ = mock.GetAllAccountsInRepository(uuid.New())
+		_ = mock.RemoveUser(&accountEntities.RemoveUser{})
+	})
+}
 func TestCreate(t *testing.T) {
 	t.Run("should success create repository", func(t *testing.T) {
 		mockRead := &relational.MockRead{}

@@ -33,6 +33,7 @@ import (
 type IRepositoryAuthzMiddleware interface {
 	IsRepositoryMember(next http.Handler) http.Handler
 	IsRepositoryAdmin(next http.Handler) http.Handler
+	IsRepositorySupervisor(next http.Handler) http.Handler
 }
 
 type repositoryAuthzMiddleware struct {
@@ -93,6 +94,25 @@ func (rm *repositoryAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.H
 			}
 		}
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+//nolint
+func (rm *repositoryAuthzMiddleware) IsRepositorySupervisor(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+		if err != nil {
+			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+			return
+		}
+
+		repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
+		accountRepository, err := rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
+		if err != nil || accountRepository.Role != accountEnums.Supervisor && accountRepository.Role != accountEnums.Admin {
+			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }

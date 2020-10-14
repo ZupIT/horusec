@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"os"
 	"os/signal"
@@ -118,10 +119,22 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 
 	a.setMonitor(monitor)
 	a.startDetectVulnerabilities(langs)
-	a.analysis = a.analysis.SetAnalysisFinishedData().SortVulnerabilitiesByCriticality()
-	totalVulns, err = a.printController.StartPrintResults()
+
+	return a.sendAnalysisAndStartPrintResults()
+}
+
+func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
+	a.analysis = a.analysis.SetAnalysisFinishedData().SetupIDInAnalysisContents().
+		SortVulnerabilitiesByCriticality().SetDefaultVulnerabilityType().SortVulnerabilitiesByType()
 	a.horusecAPIService.SendAnalysis(a.analysis)
-	return totalVulns, err
+	analysisSaved := a.horusecAPIService.GetAnalysis(a.analysis.ID)
+	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
+		a.analysis = analysisSaved
+	}
+	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(a.config.GetFalsePositiveHashesList(),
+		a.config.GetRiskAcceptHashesList())
+	a.printController.SetAnalysis(a.analysis)
+	return a.printController.StartPrintResults()
 }
 
 func (a *Analyser) setMonitor(monitor *horusec.Monitor) {

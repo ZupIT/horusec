@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horusec
+package swagger
 
 import (
-	"strings"
-
-	enumSeverity "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+	"github.com/go-chi/chi"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-const NoHorus = "nohorus"
-const NoHorusec = "nohorusec"
-
-func GetSeverityOrNoSec(severity enumSeverity.Severity, code string) enumSeverity.Severity {
-	if strings.Contains(code, NoHorus) || strings.Contains(code, NoHorusec) {
-		return enumSeverity.NoSec
-	}
-
-	return severity
+func TestSetupSwagger(t *testing.T) {
+	t.Run("should panic when invalid mux", func(t *testing.T) {
+		assert.Panics(t, func() {
+			SetupSwagger(&chi.Mux{}, "8004")
+		})
+	})
 }

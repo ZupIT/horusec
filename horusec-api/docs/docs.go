@@ -1009,6 +1009,234 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/api/repositories/{repositoryID}/management": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all vuln vulnerability data in repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "get-vuln-data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "page query string",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "size query string",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnHash query string",
+                        "name": "vulnHash",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnType query string",
+                        "name": "vulnType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/repositories/{repositoryID}/management/{vulnerabilityID}/type": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update vulnerability type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "update-vuln-type",
+                "parameters": [
+                    {
+                        "description": "type of vulnerability",
+                        "name": "UpdateVulnType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVulnType"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnerabilityID of the vulnerability",
+                        "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1020,9 +1248,23 @@ var doc = `{
                 }
             }
         },
+        "dto.UpdateVulnType": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "horusec.Analysis": {
             "type": "object",
             "properties": {
+                "analysisVulnerabilities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/horusec.AnalysisVulnerabilities"
+                    }
+                },
                 "companyID": {
                     "type": "string"
                 },
@@ -1049,12 +1291,23 @@ var doc = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "horusec.AnalysisVulnerabilities": {
+            "type": "object",
+            "properties": {
+                "analysisID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
                 },
                 "vulnerabilities": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/horusec.Vulnerability"
-                    }
+                    "$ref": "#/definitions/horusec.Vulnerability"
+                },
+                "vulnerabilityID": {
+                    "type": "string"
                 }
             }
         },
@@ -1081,9 +1334,6 @@ var doc = `{
         "horusec.Vulnerability": {
             "type": "object",
             "properties": {
-                "analysisID": {
-                    "type": "string"
-                },
                 "code": {
                     "type": "string"
                 },
@@ -1129,16 +1379,10 @@ var doc = `{
                 "type": {
                     "type": "string"
                 },
-                "version": {
-                    "type": "string"
-                },
                 "vulnHash": {
                     "type": "string"
                 },
                 "vulnerabilityID": {
-                    "type": "string"
-                },
-                "vulnerableBelow": {
                     "type": "string"
                 }
             }

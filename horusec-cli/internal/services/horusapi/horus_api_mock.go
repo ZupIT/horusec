@@ -16,6 +16,7 @@ package horusapi
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -25,4 +26,9 @@ type Mock struct {
 
 func (m *Mock) SendAnalysis(analysis *horusec.Analysis) {
 	m.MethodCalled("SendAnalysis")
+}
+
+func (m *Mock) GetAnalysis(analysisID uuid.UUID) *horusec.Analysis {
+	args := m.MethodCalled("GetAnalysis")
+	return args.Get(0).(*horusec.Analysis)
 }

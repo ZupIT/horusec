@@ -12,33 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package vulnhash
+package management
 
 import (
-	"regexp"
-	"strings"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
+	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	"io"
 )
 
-func Bind(vuln *horusec.Vulnerability) *horusec.Vulnerability {
-	vulnHash, _ := hash.GenerateSHA1(
-		toOneLine(vuln.Code),
-		vuln.File,
-	)
-
-	vuln.VulnHash = vulnHash
-
-	return vuln
+type IUseCases interface {
+	NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnType, err error)
 }
 
-func toOneLine(code string) string {
-	re := regexp.MustCompile(`\r?\n?\t`)
-	// remove line break
-	oneLineCode := re.ReplaceAllString(code, " ")
-	// remove white space
-	oneLineCode = strings.ReplaceAll(oneLineCode, " ", "")
+type UseCases struct {
+}
 
-	return oneLineCode
+func NewManagementUseCases() IUseCases {
+	return &UseCases{}
+}
+
+func (u *UseCases) NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnType, err error) {
+	err = json.NewDecoder(body).Decode(&updateData)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return updateData, updateData.Validate()
 }

@@ -32,6 +32,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	t.Run("Should mock correctly", func(t *testing.T) {
+		mock := &Mock{}
+		mock.On("Create").Return(&accountEntities.Company{}, nil)
+		mock.On("Update").Return(&accountEntities.Company{}, nil)
+		mock.On("Get").Return(&accountEntities.CompanyResponse{}, nil)
+		mock.On("List").Return(&[]accountEntities.CompanyResponse{}, nil)
+		mock.On("UpdateAccountCompany").Return(nil)
+		mock.On("InviteUser").Return(nil)
+		mock.On("Delete").Return(nil)
+		mock.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
+		mock.On("RemoveUser").Return(nil)
+		_, _ = mock.Create(uuid.New(), &accountEntities.Company{})
+		_, _ = mock.Update(uuid.New(), &accountEntities.Company{})
+		_, _ = mock.Get(uuid.New(), uuid.New())
+		_, _ = mock.List(uuid.New())
+		_ = mock.UpdateAccountCompany(&roles.AccountCompany{})
+		_ = mock.InviteUser(&accountEntities.InviteUser{})
+		_ = mock.Delete(uuid.New())
+		_, _ = mock.GetAllAccountsInCompany(uuid.New())
+		_ = mock.RemoveUser(&accountEntities.RemoveUser{})
+	})
+}
+
 func TestNewCompaniesController(t *testing.T) {
 	t.Run("should create a new controller", func(t *testing.T) {
 		mockRead := &relational.MockRead{}

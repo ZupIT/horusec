@@ -45,6 +45,28 @@ func TestParseOutputYarn(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
+	})
+
+	t.Run("Should run analysis with output empty", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		output := ""
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
 	t.Run("Should parse output with not found error", func(t *testing.T) {
@@ -65,6 +87,7 @@ func TestParseOutputYarn(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
 	t.Run("Should parse output with audit error", func(t *testing.T) {
@@ -85,6 +108,7 @@ func TestParseOutputYarn(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
 	t.Run("Should return error when executing container", func(t *testing.T) {
@@ -102,6 +126,7 @@ func TestParseOutputYarn(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 }
 
@@ -123,5 +148,6 @@ func TestParseOutputNpm(t *testing.T) {
 
 		err := formatter.parseOutput("invalid output")
 		assert.Error(t, err)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 }

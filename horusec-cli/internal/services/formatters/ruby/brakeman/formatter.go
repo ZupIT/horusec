@@ -16,7 +16,7 @@ package brakeman
 
 import (
 	"encoding/json"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/ruby"
@@ -28,7 +28,6 @@ import (
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -88,7 +87,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 
 func (f *Formatter) setVulnerabilityData(output *ruby.Warning) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = utilsHorusec.GetSeverityOrNoSec(output.GetSeverity(), output.Code)
+	data.Severity = output.GetSeverity()
 	data.Confidence = output.GetSeverity().ToString()
 	data.Details = output.GetDetails()
 	data.Line = output.GetLine()
@@ -121,7 +120,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

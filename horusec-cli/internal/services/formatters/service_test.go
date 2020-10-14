@@ -29,6 +29,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock_AddWorkDirInCmd(t *testing.T) {
+	mock := &Mock{}
+	t.Run("Should mock with success", func(t *testing.T) {
+		mock.On("LogDebugWithReplace")
+		mock.On("GetAnalysisID").Return("")
+		mock.On("SetAnalysisError").Return()
+		mock.On("ExecuteContainer").Return("", nil)
+		mock.On("GetAnalysisIDErrorMessage").Return("")
+		mock.On("GetCommitAuthor").Return(horusec.CommitAuthor{})
+		mock.On("AddWorkDirInCmd").Return("")
+		mock.On("GetConfigProjectPath").Return("")
+		mock.On("GetAnalysis").Return(&horusec.Analysis{})
+		mock.On("SetLanguageIsFinished").Return()
+		mock.On("LogAnalysisError").Return()
+		mock.On("SetMonitor").Return()
+		mock.On("RemoveSrcFolderFromPath").Return("")
+		mock.On("GetCodeWithMaxCharacters").Return("")
+		mock.LogDebugWithReplace("", "")
+		_ = mock.GetAnalysisID()
+		mock.SetAnalysisError(errors.New(""))
+		_, _ = mock.ExecuteContainer(&dockerEntities.AnalysisData{})
+		_ = mock.GetAnalysisIDErrorMessage("", "")
+		_ = mock.GetCommitAuthor("", "")
+		_ = mock.AddWorkDirInCmd("", "", "")
+		_ = mock.GetConfigProjectPath()
+		_ = mock.GetAnalysis()
+		mock.SetLanguageIsFinished()
+		mock.LogAnalysisError(errors.New(""), "", "")
+		mock.SetMonitor(&horusec.Monitor{})
+		_ = mock.RemoveSrcFolderFromPath("")
+		_ = mock.GetCodeWithMaxCharacters("", 0)
+	})
+}
+
 func TestExecuteContainer(t *testing.T) {
 	t.Run("should return no error when success set is finished", func(t *testing.T) {
 		analysis := &horusec.Analysis{}

@@ -61,8 +61,9 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	if err != nil {
 		return uuid.Nil, err
 	}
-	c.setDefaultContentToCreate(analysisData.Analysis, company.Name, repo)
-	return c.createAnalyzeAndVulnerabilities(analysisData.Analysis)
+	c.setDefaultContentToCreate(analysisData.Analysis, company, repo)
+	analysis := c.removeAnalysisVulnerabilityWithHashDuplicate(analysisData.Analysis)
+	return c.createAnalyzeAndVulnerabilities(analysis)
 }
 
 func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
@@ -78,6 +79,15 @@ func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 	return c.repoRepository.Get(analysisData.Analysis.RepositoryID)
 }
 
+func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysis,
+	company *accountEntities.Company, repo *accountEntities.Repository) {
+	analysis.
+		SetCompanyName(company.Name).
+		SetRepositoryName(repo.Name).
+		SetRepositoryID(repo.RepositoryID).
+		SetupIDInAnalysisContents()
+}
+
 func (c *Controller) createRepository(analysisData *apiEntities.AnalysisData) (*accountEntities.Repository, error) {
 	repo := &accountEntities.Repository{
 		RepositoryID: uuid.New(),
@@ -89,18 +99,9 @@ func (c *Controller) createRepository(analysisData *apiEntities.AnalysisData) (*
 	return repo, c.repoRepository.Create(repo, nil)
 }
 
-func (c *Controller) setDefaultContentToCreate(
-	analysis *horusecEntities.Analysis, companyName string, repo *accountEntities.Repository) {
-	analysis.GenerateID()
-	analysis.SetCompanyName(companyName)
-	analysis.SetRepositoryName(repo.Name)
-	analysis.SetRepositoryID(repo.RepositoryID)
-	analysis.SetAnalysisIDAndNewIDInVulnerabilities()
-}
-
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {
 	conn := c.postgresWrite.StartTransaction()
-	if err := c.createAnalyze(analysis, conn); err != nil {
+	if err := c.repoAnalysis.Create(analysis, conn); err != nil {
 		logger.LogError(
 			"{HORUSEC_API} Error in rollback transaction analysis",
 			conn.RollbackTransaction().GetError(),
@@ -114,6 +115,25 @@ func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*horusecEntities.Analysi
 	return c.repoAnalysis.GetByID(analysisID)
 }
 
-func (c *Controller) createAnalyze(analysis *horusecEntities.Analysis, conn relational.InterfaceWrite) error {
-	return c.repoAnalysis.Create(analysis, conn)
+func (c *Controller) removeAnalysisVulnerabilityWithHashDuplicate(
+	analysis *horusecEntities.Analysis) *horusecEntities.Analysis {
+	newAnalysis := analysis.GetAnalysisWithoutAnalysisVulnerabilities()
+	for keyObservable := range analysis.AnalysisVulnerabilities {
+		observable := analysis.AnalysisVulnerabilities[keyObservable]
+		if !c.existsHashDuplicated(newAnalysis, &observable) {
+			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
+		}
+	}
+	return newAnalysis
+}
+
+func (c *Controller) existsHashDuplicated(
+	newAnalysis *horusecEntities.Analysis, observable *horusecEntities.AnalysisVulnerabilities) bool {
+	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
+		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
+		if observable.Vulnerability.VulnHash == current.Vulnerability.VulnHash {
+			return true
+		}
+	}
+	return false
 }

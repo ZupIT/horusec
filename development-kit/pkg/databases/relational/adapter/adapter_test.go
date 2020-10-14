@@ -115,14 +115,14 @@ func executeCRUD(instanceRead relational.InterfaceRead, instanceWrite relational
 
 func getAnalysisData() EntitiesHorusec.Analysis {
 	return EntitiesHorusec.Analysis{
-		ID:              uuid.New(),
-		CreatedAt:       time.Now(),
-		RepositoryID:    uuid.New(),
-		CompanyID:       uuid.New(),
-		Status:          EnumHorusec.Success,
-		Errors:          "",
-		FinishedAt:      time.Now(),
-		Vulnerabilities: []EntitiesHorusec.Vulnerability{},
+		ID:                      uuid.New(),
+		CreatedAt:               time.Now(),
+		RepositoryID:            uuid.New(),
+		CompanyID:               uuid.New(),
+		Status:                  EnumHorusec.Success,
+		Errors:                  "",
+		FinishedAt:              time.Now(),
+		AnalysisVulnerabilities: []EntitiesHorusec.AnalysisVulnerabilities{},
 	}
 }
 func TestCRUD_Relational(t *testing.T) {

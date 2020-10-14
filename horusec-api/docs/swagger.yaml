@@ -4,8 +4,17 @@ definitions:
       description:
         type: string
     type: object
+  dto.UpdateVulnType:
+    properties:
+      type:
+        type: string
+    type: object
   horusec.Analysis:
     properties:
+      analysisVulnerabilities:
+        items:
+          $ref: '#/definitions/horusec.AnalysisVulnerabilities'
+        type: array
       companyID:
         type: string
       companyName:
@@ -24,10 +33,17 @@ definitions:
         type: string
       status:
         type: string
+    type: object
+  horusec.AnalysisVulnerabilities:
+    properties:
+      analysisID:
+        type: string
+      createdAt:
+        type: string
       vulnerabilities:
-        items:
-          $ref: '#/definitions/horusec.Vulnerability'
-        type: array
+        $ref: '#/definitions/horusec.Vulnerability'
+      vulnerabilityID:
+        type: string
     type: object
   horusec.CommitAuthor:
     properties:
@@ -44,8 +60,6 @@ definitions:
     type: object
   horusec.Vulnerability:
     properties:
-      analysisID:
-        type: string
       code:
         type: string
       column:
@@ -76,13 +90,9 @@ definitions:
         type: string
       type:
         type: string
-      version:
-        type: string
       vulnHash:
         type: string
       vulnerabilityID:
-        type: string
-      vulnerableBelow:
         type: string
     type: object
   http.Response:
@@ -622,6 +632,134 @@ paths:
               type: object
       tags:
       - Health
+  /api/repositories/{repositoryID}/management:
+    get:
+      consumes:
+      - application/json
+      description: Get all vuln vulnerability data in repository
+      operationId: get-vuln-data
+      parameters:
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      - description: vulnHash query string
+        in: query
+        name: vulnHash
+        type: string
+      - description: vulnType query string
+        in: query
+        name: vulnType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
+  /api/repositories/{repositoryID}/management/{vulnerabilityID}/type:
+    put:
+      consumes:
+      - application/json
+      description: update vulnerability type
+      operationId: update-vuln-type
+      parameters:
+      - description: type of vulnerability
+        in: body
+        name: UpdateVulnType
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVulnType'
+      - description: vulnerabilityID of the vulnerability
+        in: path
+        name: vulnerabilityID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
 securityDefinitions:
   ApiKeyAuth:
     in: header

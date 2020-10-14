@@ -161,10 +161,11 @@ const getVulnerabilitiesDetails = (
         securityTool
         language
         severity
-        commitAuthor {
-          author
-          email
-        }
+        commitAuthor
+        commitEmail
+        commitHash
+        commitMessage
+        commitDate
       }
     }
   }`;

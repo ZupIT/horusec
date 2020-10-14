@@ -15,6 +15,7 @@
 package horuseckotlin
 
 import (
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strconv"
 
 	engine "github.com/ZupIT/horusec-engine"
@@ -22,13 +23,11 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -100,7 +99,10 @@ func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) er
 		// Set vulnerabilitySeverity.VulnHash value
 		vulnerability = vulnhash.Bind(vulnerability)
 
-		f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+			horusec.AnalysisVulnerabilities{
+				Vulnerability: *vulnerability,
+			})
 	}
 	return nil
 }
@@ -117,8 +119,7 @@ func (f *Formatter) setupVulnerabilitiesSeverities(reportOutput []engine.Finding
 		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
 		SecurityTool: tools.HorusecKotlin,
 		Language:     languages.Kotlin,
-		Severity: utilsHorusec.GetSeverityOrNoSec(severity.ParseStringToSeverity(reportOutput[index].Severity),
-			reportOutput[index].CodeSample),
+		Severity:     severity.ParseStringToSeverity(reportOutput[index].Severity),
 	}
 }
 

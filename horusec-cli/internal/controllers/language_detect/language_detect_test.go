@@ -115,33 +115,6 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Contains(t, langs, languages.Go)
 		assert.Len(t, langs, 2)
 	})
-
-	t.Run("Test to check if will generate .gitignore correctly", func(t *testing.T) {
-		ld := &LanguageDetect{}
-		assert.NoError(t, os.MkdirAll("./.horusec", os.ModeTemporary))
-		assert.NoError(t, ld.addIgnoreHorusecInGitFolder("."))
-	})
-
-	t.Run("Test to check if will append horusec folder in .gitignore correctly", func(t *testing.T) {
-		ld := &LanguageDetect{}
-		assert.NoError(t, os.MkdirAll("./.horusec", os.ModeTemporary))
-		_, err := os.Create("./.gitignore")
-		assert.NoError(t, err)
-		assert.NoError(t, ld.addIgnoreHorusecInGitFolder("."))
-		assert.NoError(t, os.RemoveAll("./.gitignore"))
-	})
-
-	t.Run("Test to check if will skip because already exist horusec folder in .gitignore correctly", func(t *testing.T) {
-		ld := &LanguageDetect{}
-		assert.NoError(t, os.MkdirAll("./.horusec", os.ModeTemporary))
-		file, err := os.Create("./.gitignore")
-		assert.NoError(t, err)
-		_, err = file.Write([]byte(".horusec"))
-		assert.NoError(t, err)
-		assert.NoError(t, ld.addIgnoreHorusecInGitFolder("."))
-		assert.NoError(t, os.RemoveAll("./.gitignore"))
-	})
-
 	t.Run("Should run language detect and return GO and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()

@@ -22,6 +22,7 @@ import (
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/health"
+	"github.com/ZupIT/horusec/horusec-api/internal/handlers/management"
 	tokensCompany "github.com/ZupIT/horusec/horusec-api/internal/handlers/tokens/company"
 	tokensRepository "github.com/ZupIT/horusec/horusec-api/internal/handlers/tokens/repository"
 	"github.com/ZupIT/horusec/horusec-api/internal/router/routes"
@@ -59,6 +60,7 @@ func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite 
 	r.RouterAnalysis(postgresRead, postgresWrite)
 	r.RouterTokensRepository(postgresRead, postgresWrite)
 	r.RouterTokensCompany(postgresRead, postgresWrite)
+	r.RouterManagement(postgresRead, postgresWrite)
 	return r.router
 }
 
@@ -150,6 +152,21 @@ func (r *Router) RouterTokensCompany(
 		router.With(companyMiddleware.IsCompanyAdmin).Post("/", handler.Post)
 		router.With(companyMiddleware.IsCompanyAdmin).Get("/", handler.Get)
 		router.With(companyMiddleware.IsCompanyAdmin).Delete("/{tokenID}", handler.Delete)
+		router.Options("/", handler.Options)
+	})
+
+	return r
+}
+
+func (r *Router) RouterManagement(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
+	handler := management.NewHandler(postgresRead, postgresWrite)
+	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
+		router.Use(jwt.AuthMiddleware)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Get("/", handler.Get)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/type",
+			handler.UpdateVulnType)
 		router.Options("/", handler.Options)
 	})
 

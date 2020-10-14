@@ -15,6 +15,7 @@
 package printresults
 
 import (
+	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	utilsMock "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/stretchr/testify/mock"
 )
@@ -26,4 +27,8 @@ type Mock struct {
 func (m *Mock) StartPrintResults() (totalVulns int, err error) {
 	args := m.MethodCalled("StartPrintResults")
 	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 0)
+}
+
+func (m *Mock) SetAnalysis(analysis *horusecEntities.Analysis) {
+	_ = m.MethodCalled("SetAnalysis")
 }

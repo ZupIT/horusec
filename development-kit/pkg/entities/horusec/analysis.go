@@ -16,6 +16,7 @@ package horusec
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -25,16 +26,16 @@ import (
 )
 
 type Analysis struct {
-	ID              uuid.UUID       `json:"id" gorm:"Column:analysis_id"`
-	RepositoryID    uuid.UUID       `json:"repositoryID" gorm:"Column:repository_id"`
-	RepositoryName  string          `json:"repositoryName" gorm:"Column:repository_name"`
-	CompanyID       uuid.UUID       `json:"companyID" gorm:"Column:company_id"`
-	CompanyName     string          `json:"companyName" gorm:"Column:company_name"`
-	Status          horusec.Status  `json:"status" gorm:"Column:status"`
-	Errors          string          `json:"errors" gorm:"Column:errors"`
-	CreatedAt       time.Time       `json:"createdAt" gorm:"Column:created_at"`
-	FinishedAt      time.Time       `json:"finishedAt" gorm:"Column:finished_at"`
-	Vulnerabilities []Vulnerability `json:"vulnerabilities" gorm:"foreignkey:AnalysisID;association_foreignkey:ID"`
+	ID                      uuid.UUID                 `json:"id" gorm:"Column:analysis_id"`
+	RepositoryID            uuid.UUID                 `json:"repositoryID" gorm:"Column:repository_id"`
+	RepositoryName          string                    `json:"repositoryName" gorm:"Column:repository_name"`
+	CompanyID               uuid.UUID                 `json:"companyID" gorm:"Column:company_id"`
+	CompanyName             string                    `json:"companyName" gorm:"Column:company_name"`
+	Status                  horusec.Status            `json:"status" gorm:"Column:status"`
+	Errors                  string                    `json:"errors" gorm:"Column:errors"`
+	CreatedAt               time.Time                 `json:"createdAt" gorm:"Column:created_at"`
+	FinishedAt              time.Time                 `json:"finishedAt" gorm:"Column:finished_at"`
+	AnalysisVulnerabilities []AnalysisVulnerabilities `json:"analysisVulnerabilities" gorm:"foreignkey:AnalysisID;association_foreignkey:ID"` //nolint:lll gorm usage
 }
 
 func (a *Analysis) GetTable() string {
@@ -60,16 +61,16 @@ func (a *Analysis) ToString() string {
 
 func (a *Analysis) Map() map[string]interface{} {
 	return map[string]interface{}{
-		"id":              a.ID,
-		"createdAt":       a.CreatedAt,
-		"repositoryID":    a.RepositoryID,
-		"repositoryName":  a.RepositoryName,
-		"companyName":     a.CompanyName,
-		"companyID":       a.CompanyID,
-		"status":          a.Status,
-		"errors":          a.Errors,
-		"finishedAt":      a.FinishedAt,
-		"vulnerabilities": a.Vulnerabilities,
+		"id":                      a.ID,
+		"createdAt":               a.CreatedAt,
+		"repositoryID":            a.RepositoryID,
+		"repositoryName":          a.RepositoryName,
+		"companyName":             a.CompanyName,
+		"companyID":               a.CompanyID,
+		"status":                  a.Status,
+		"errors":                  a.Errors,
+		"finishedAt":              a.FinishedAt,
+		"analysisVulnerabilities": a.AnalysisVulnerabilities,
 	}
 }
 
@@ -88,27 +89,28 @@ func (a *Analysis) SetAnalysisError(err error) {
 	}
 }
 
-func (a *Analysis) GenerateID() {
-	a.ID = uuid.New()
-}
-
-func (a *Analysis) SetCompanyName(companyName string) {
-	a.CompanyName = companyName
-}
-
-func (a *Analysis) SetRepositoryName(repositoryName string) {
-	a.RepositoryName = repositoryName
-}
-
-func (a *Analysis) SetRepositoryID(repositoryID uuid.UUID) {
-	a.RepositoryID = repositoryID
-}
-
-func (a *Analysis) SetAnalysisIDAndNewIDInVulnerabilities() {
-	for key := range a.Vulnerabilities {
-		a.Vulnerabilities[key].AnalysisID = a.ID
-		a.Vulnerabilities[key].VulnerabilityID = uuid.New()
+func (a *Analysis) SetupIDInAnalysisContents() *Analysis {
+	for key := range a.AnalysisVulnerabilities {
+		a.AnalysisVulnerabilities[key].SetCreatedAt()
+		a.AnalysisVulnerabilities[key].SetAnalysisID(a.ID)
+		a.AnalysisVulnerabilities[key].SetVulnerabilityID(uuid.New())
 	}
+	return a
+}
+
+func (a *Analysis) SetCompanyName(companyName string) *Analysis {
+	a.CompanyName = companyName
+	return a
+}
+
+func (a *Analysis) SetRepositoryName(repositoryName string) *Analysis {
+	a.RepositoryName = repositoryName
+	return a
+}
+
+func (a *Analysis) SetRepositoryID(repositoryID uuid.UUID) *Analysis {
+	a.RepositoryID = repositoryID
+	return a
 }
 
 func (a *Analysis) SetAnalysisFinishedData() *Analysis {
@@ -128,40 +130,125 @@ func (a *Analysis) HasErrors() bool {
 }
 
 func (a *Analysis) GetTotalVulnerabilities() int {
-	return len(a.Vulnerabilities)
+	return len(a.AnalysisVulnerabilities)
 }
 
-func (a *Analysis) GetTotalVulnerabilitiesBySeverity() (total map[severity.Severity]int) {
-	total = map[severity.Severity]int{
-		severity.High:   0,
-		severity.Medium: 0,
-		severity.Low:    0,
-		severity.Info:   0,
-		severity.Audit:  0,
-		severity.NoSec:  0,
-	}
-	for index := range a.Vulnerabilities {
-		total[a.Vulnerabilities[index].Severity]++
+func (a *Analysis) GetTotalVulnerabilitiesBySeverity() (total map[horusec.VulnerabilityType]map[severity.Severity]int) {
+	total = a.getDefaultTotalVulnerabilitiesBySeverity()
+	for index := range a.AnalysisVulnerabilities {
+		vuln := a.AnalysisVulnerabilities[index].Vulnerability
+		total[vuln.Type][vuln.Severity]++
 	}
 	return total
 }
 
+func (a *Analysis) getDefaultTotalVulnerabilitiesBySeverity() map[horusec.VulnerabilityType]map[severity.Severity]int {
+	return map[horusec.VulnerabilityType]map[severity.Severity]int{
+		horusec.Vulnerability: a.getDefaultCountBySeverity(),
+		horusec.RiskAccepted:  a.getDefaultCountBySeverity(),
+		horusec.FalsePositive: a.getDefaultCountBySeverity(),
+		horusec.Corrected:     a.getDefaultCountBySeverity(),
+	}
+}
+
+func (a *Analysis) getDefaultCountBySeverity() map[severity.Severity]int {
+	return map[severity.Severity]int{
+		severity.High:   0,
+		severity.Medium: 0,
+		severity.Low:    0,
+		severity.Audit:  0,
+		severity.Info:   0,
+		severity.NoSec:  0,
+	}
+}
+
 func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
-	vulnerabilities := a.getVulnerabilitiesBySeverity(severity.High)
-	vulnerabilities = append(vulnerabilities, a.getVulnerabilitiesBySeverity(severity.Medium)...)
-	vulnerabilities = append(vulnerabilities, a.getVulnerabilitiesBySeverity(severity.Low)...)
-	vulnerabilities = append(vulnerabilities, a.getVulnerabilitiesBySeverity(severity.Info)...)
-	vulnerabilities = append(vulnerabilities, a.getVulnerabilitiesBySeverity(severity.Audit)...)
-	vulnerabilities = append(vulnerabilities, a.getVulnerabilitiesBySeverity(severity.NoSec)...)
-	a.Vulnerabilities = vulnerabilities
+	analysisVulnerabilities := a.getVulnerabilitiesBySeverity(severity.High)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Medium)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Low)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Info)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Audit)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.NoSec)...)
+	a.AnalysisVulnerabilities = analysisVulnerabilities
 	return a
 }
 
-func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (response []Vulnerability) {
-	for index := range a.Vulnerabilities {
-		if a.Vulnerabilities[index].Severity == search {
-			response = append(response, a.Vulnerabilities[index])
+func (a *Analysis) SortVulnerabilitiesByType() *Analysis {
+	analysisVulnerabilities := a.getVulnerabilitiesByType(horusec.Vulnerability)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.RiskAccepted)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.FalsePositive)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesByType(horusec.Corrected)...)
+	a.AnalysisVulnerabilities = analysisVulnerabilities
+	return a
+}
+
+func (a *Analysis) GetAnalysisWithoutAnalysisVulnerabilities() *Analysis {
+	return &Analysis{
+		ID:             a.ID,
+		RepositoryID:   a.RepositoryID,
+		RepositoryName: a.RepositoryName,
+		CompanyID:      a.CompanyID,
+		CompanyName:    a.CompanyName,
+		Status:         a.Status,
+		Errors:         a.Errors,
+		CreatedAt:      a.CreatedAt,
+		FinishedAt:     a.FinishedAt,
+	}
+}
+
+func (a *Analysis) getVulnerabilitiesBySeverity(search severity.Severity) (response []AnalysisVulnerabilities) {
+	for index := range a.AnalysisVulnerabilities {
+		if a.AnalysisVulnerabilities[index].Vulnerability.Severity == search {
+			response = append(response, a.AnalysisVulnerabilities[index])
 		}
 	}
 	return response
+}
+
+func (a *Analysis) getVulnerabilitiesByType(vulnType horusec.VulnerabilityType) (response []AnalysisVulnerabilities) {
+	for index := range a.AnalysisVulnerabilities {
+		if a.AnalysisVulnerabilities[index].Vulnerability.Type == vulnType {
+			response = append(response, a.AnalysisVulnerabilities[index])
+		}
+	}
+	return response
+}
+
+func (a *Analysis) SetDefaultVulnerabilityType() *Analysis {
+	for key := range a.AnalysisVulnerabilities {
+		a.AnalysisVulnerabilities[key].Vulnerability.Type = horusec.Vulnerability
+	}
+	return a
+}
+
+func (a *Analysis) SetFalsePositivesAndRiskAcceptInVulnerabilities(
+	listFalsePositive, listRiskAccept []string) *Analysis {
+	for key := range a.AnalysisVulnerabilities {
+		a.setVulnerabilityType(key, listFalsePositive, horusec.FalsePositive)
+		a.setVulnerabilityType(key, listRiskAccept, horusec.RiskAccepted)
+	}
+	return a
+}
+
+func (a *Analysis) setVulnerabilityType(keyAnalysisVulnerabilities int,
+	listToCheck []string, vulnerabilityType horusec.VulnerabilityType) {
+	currentHash := a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
+	for _, flagVulnerabilityHash := range listToCheck {
+		if flagVulnerabilityHash != "" && strings.TrimSpace(currentHash) == strings.TrimSpace(flagVulnerabilityHash) {
+			a.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
+		}
+	}
+}
+
+func (a *Analysis) ParseResponseBytesToAnalysis(body []byte) (analysis *Analysis, err error) {
+	var response map[string]interface{}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+	body, err = json.Marshal(response["content"])
+	if err != nil {
+		return nil, err
+	}
+	return analysis, json.Unmarshal(body, &analysis)
 }

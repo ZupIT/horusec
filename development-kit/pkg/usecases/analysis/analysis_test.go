@@ -99,11 +99,15 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 				Status:     horusec.Success,
 				CreatedAt:  time.Now(),
 				FinishedAt: time.Now(),
-				Vulnerabilities: []horusecEntities.Vulnerability{
+				AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{
 					{
-						SecurityTool: tools.GoSec,
-						Language:     languages.Go,
-						Severity:     severity.NoSec,
+						Vulnerability: horusecEntities.Vulnerability{
+							SecurityTool: tools.GoSec,
+							Language:     languages.Go,
+							Severity:     severity.NoSec,
+							Type:         horusec.Vulnerability,
+							VulnHash:     uuid.New().String(),
+						},
 					},
 				},
 			},
@@ -151,10 +155,14 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 
 		analysisData := &apiEntities.AnalysisData{
 			Analysis: &horusecEntities.Analysis{
-				Status:          horusec.Success,
-				CreatedAt:       time.Now(),
-				FinishedAt:      time.Now(),
-				Vulnerabilities: []horusecEntities.Vulnerability{{}},
+				Status:     horusec.Success,
+				CreatedAt:  time.Now(),
+				FinishedAt: time.Now(),
+				AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{
+					{
+						Vulnerability: horusecEntities.Vulnerability{},
+					},
+				},
 			},
 			RepositoryName: "",
 		}
@@ -176,11 +184,13 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 				Status:     "other status",
 				CreatedAt:  time.Now(),
 				FinishedAt: time.Now(),
-				Vulnerabilities: []horusecEntities.Vulnerability{
+				AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{
 					{
-						SecurityTool: tools.GoSec,
-						Language:     languages.Go,
-						Severity:     severity.NoSec,
+						Vulnerability: horusecEntities.Vulnerability{
+							SecurityTool: tools.GoSec,
+							Language:     languages.Go,
+							Severity:     severity.NoSec,
+						},
 					},
 				},
 			},
@@ -201,11 +211,13 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 				Status:     horusec.Success,
 				CreatedAt:  time.Time{},
 				FinishedAt: time.Now(),
-				Vulnerabilities: []horusecEntities.Vulnerability{
+				AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{
 					{
-						SecurityTool: tools.GoSec,
-						Language:     languages.Go,
-						Severity:     severity.NoSec,
+						Vulnerability: horusecEntities.Vulnerability{
+							SecurityTool: tools.GoSec,
+							Language:     languages.Go,
+							Severity:     severity.NoSec,
+						},
 					},
 				},
 			},
@@ -226,11 +238,13 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 				Status:     horusec.Success,
 				CreatedAt:  time.Now(),
 				FinishedAt: time.Time{},
-				Vulnerabilities: []horusecEntities.Vulnerability{
+				AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{
 					{
-						SecurityTool: tools.GoSec,
-						Language:     languages.Go,
-						Severity:     severity.NoSec,
+						Vulnerability: horusecEntities.Vulnerability{
+							SecurityTool: tools.GoSec,
+							Language:     languages.Go,
+							Severity:     severity.NoSec,
+						},
 					},
 				},
 			},

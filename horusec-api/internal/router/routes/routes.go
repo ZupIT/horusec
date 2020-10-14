@@ -19,4 +19,5 @@ const (
 	TokensRepositoryHandler = "/api/companies/{companyID}/repositories/{repositoryID}/tokens" // nolint
 	TokensCompanyHandler    = "/api/companies/{companyID}/tokens"                             // nolint
 	HealthHandler           = "/api/health"
+	ManagementHandler       = "/api/repositories/{repositoryID}/management"
 )

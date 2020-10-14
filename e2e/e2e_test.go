@@ -76,6 +76,9 @@ func TestMain(m *testing.M) {
 }
 
 func TestE2E(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	createAccount(t)
 	validateAccount(t)
 	login(t)
@@ -85,9 +88,6 @@ func TestE2E(t *testing.T) {
 	//generateCompanyToken(t)
 
 	t.Run("Should run analysis and check if your response exist on analytics by company", func(t *testing.T) {
-		if testing.Short() {
-			t.Skip("skipping integration test")
-		}
 		var wgGolang sync.WaitGroup
 		wgGolang.Add(1)
 		go runGolangTest(t, RepositoryToken, &wgGolang)
@@ -126,9 +126,6 @@ func TestE2E(t *testing.T) {
 		assert.NotEmpty(t, bodyDetailsChartString)
 	})
 	t.Run("Should run analysis and check if your response exist on analytics by repository", func(t *testing.T) {
-		if testing.Short() {
-			t.Skip("skipping integration test")
-		}
 		var wgGolang sync.WaitGroup
 		wgGolang.Add(1)
 		go runGolangTest(t, RepositoryToken, &wgGolang)
@@ -173,7 +170,7 @@ func TestE2E(t *testing.T) {
 	//	repositoryName := uuid.New().String()
 	//	//fileOutput := runHorusecCLIUsingZip(t, "go-gosec", CompanyToken, map[string]string{"-n": repositoryName})
 	//	//analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	//	//assert.Equal(t, 2, len(analysis.Vulnerabilities), "Vulnerabilities in golang is not expected")
+	//	//assert.Equal(t, 2, len(analysis.AnalysisVulnerabilities), "Vulnerabilities in golang is not expected")
 	//
 	//	req, _ := http.NewRequest(
 	//		http.MethodGet,
@@ -244,7 +241,7 @@ func TestE2E(t *testing.T) {
 	t.Run("test ignore files flag", func(t *testing.T) {
 		fileOutput := runHorusecCLIUsingZip(t, "go-gosec", "**/*.go")
 		analysis := extractVulnerabilitiesFromOutput(fileOutput)
-		assert.Equal(t, 0, len(analysis.Vulnerabilities), "Vulnerabilities in golang is not expected")
+		assert.Equal(t, 0, len(analysis.AnalysisVulnerabilities), "Vulnerabilities in golang is not expected")
 	})
 }
 
@@ -281,25 +278,26 @@ func getChartDetailsUsingGraphQLAndReturnBody(t *testing.T, repositoryID string)
 		fmt.Sprintf("totalItems%s", filterTotalItemsAndAnalysis) +
 		fmt.Sprintf("analysis%s", filterTotalItemsAndAnalysis) +
 		`{
-       repositoryName
-       companyName
-       vulnerability {
-         line
-         column
-         confidence
-         file
-         code
-         details
-         securityTool
-         language
-         severity
-         commitAuthor {
-           author
-           email
-         }
-       }
-     }
-    }`
+      repositoryName
+      companyName
+      vulnerability {
+        line
+        column
+        confidence
+        file
+        code
+        details
+        securityTool
+        language
+        severity
+        commitAuthor 
+		commitEmail
+		commitHash
+		commitMessage
+		commitDate
+      }
+    }
+   }`
 	queryGraphQL = strings.ReplaceAll(queryGraphQL, "\n", "%20")
 	queryGraphQL = strings.ReplaceAll(queryGraphQL, "\t", "%20")
 	queryGraphQL = strings.ReplaceAll(queryGraphQL, " ", "%20")
@@ -532,28 +530,28 @@ func runGitTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "gitleaks", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 6, len(analysis.Vulnerabilities), "Vulnerabilities in leaks is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in leaks is not expected")
 }
 
 func runPythonBanditTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "python-bandit", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 6, len(analysis.Vulnerabilities), "Vulnerabilities in python-bandit is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in python-bandit is not expected")
 }
 
 func runPythonSafetyTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "python-safety", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Greater(t, len(analysis.Vulnerabilities), 10, "Vulnerabilities in python-safety is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in python-safety is not expected")
 }
 
 func runJavascriptNpmTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "javascript-npm", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 12, len(analysis.Vulnerabilities), "Vulnerabilities in javascript-npm is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-npm is not expected")
 
 }
 
@@ -561,49 +559,49 @@ func runJavascriptYarnTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "javascript-yarn", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 19, len(analysis.Vulnerabilities), "Vulnerabilities in javascript-yarn is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-yarn is not expected")
 }
 
 func runKotlinTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "kotlin-spotbug", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 6, len(analysis.Vulnerabilities), "Vulnerabilities in kotlin is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in kotlin is not expected")
 }
 
 func runNetCoreTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "netcore3-1", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 6, len(analysis.Vulnerabilities), "Vulnerabilities in netcore is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in netcore is not expected")
 }
 
 func runRubyTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "ruby-brakeman", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 2, len(analysis.Vulnerabilities), "Vulnerabilities in ruby is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in ruby is not expected")
 }
 
 func runJavaTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "java-spotbug", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 3, len(analysis.Vulnerabilities), "Vulnerabilities in java is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in java is not expected")
 }
 
 func runGolangTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "go-gosec", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 2, len(analysis.Vulnerabilities), "Vulnerabilities in golang is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in golang is not expected")
 }
 
 func runHclTest(t *testing.T, apiToken string, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingZip(t, "hcl-tfsec", apiToken)
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.Equal(t, 5, len(analysis.Vulnerabilities), "Vulnerabilities in hcl is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in hcl is not expected")
 }
 
 func extractVulnerabilitiesFromOutput(fileOutput string) horusec.Analysis {
