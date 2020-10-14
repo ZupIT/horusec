@@ -59,6 +59,10 @@ const InviteToRepository: React.FC<Props> = ({
       value: 'admin',
     },
     {
+      name: t('PERMISSIONS.SUPERVISOR'),
+      value: 'supervisor',
+    },
+    {
       name: t('PERMISSIONS.USER'),
       value: 'member',
     },
@@ -239,6 +243,7 @@ const InviteToRepository: React.FC<Props> = ({
                     className="select-role"
                     rounded
                     width="150px"
+                    optionsHeight="96px"
                     keyLabel="name"
                     keyValue="value"
                     initialValue={account.role}

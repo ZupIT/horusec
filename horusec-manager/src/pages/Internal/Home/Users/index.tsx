@@ -140,13 +140,13 @@ const Users: React.FC = () => {
                 <Styled.Cell>{user.email}</Styled.Cell>
 
                 <Styled.Cell>
-                  {user.role === 'admin'
-                    ? t('USERS_SCREEN.TABLE.ROLE.ADMIN')
-                    : t('USERS_SCREEN.TABLE.ROLE.USER')}
+                  {t(
+                    `USERS_SCREEN.TABLE.ROLE.${user.role.toLocaleUpperCase()}`
+                  )}
                 </Styled.Cell>
 
                 <Styled.Cell className="row">
-                  {user.email === currentUser.email ? (
+                  {user.email !== currentUser.email ? (
                     <>
                       <Button
                         rounded
