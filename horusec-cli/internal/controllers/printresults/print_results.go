@@ -92,7 +92,7 @@ func (pr *PrintResults) factoryPrintByType() error {
 func (pr *PrintResults) runPrintResultsText() error {
 	pr.logSeparator(true)
 
-	fmt.Println(fmt.Sprintf("HORUSEC ENDED THE ANALYSIS COM STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status))
+	fmt.Println(fmt.Sprintf("HORUSEC ENDED THE ANALYSIS WITH STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status))
 
 	pr.logSeparator(true)
 
