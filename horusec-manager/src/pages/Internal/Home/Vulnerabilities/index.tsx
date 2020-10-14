@@ -71,7 +71,7 @@ const Vulnerabilities: React.FC = () => {
     repository: Repository,
     vulnHash?: string
   ) => {
-    setCurrentRepository(repository)
+    setCurrentRepository(repository);
 
     setLoading(true);
 
@@ -123,7 +123,11 @@ const Vulnerabilities: React.FC = () => {
         type
       )
       .then(() => {
-        fetchData(pagination.currentPage, pagination.pageSize, currentRepository);
+        fetchData(
+          pagination.currentPage,
+          pagination.pageSize,
+          currentRepository
+        );
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -164,9 +168,7 @@ const Vulnerabilities: React.FC = () => {
           initialValue={repositories[0]}
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-          onChangeValue={(value) =>
-            fetchData(1, pagination.pageSize, value)
-          }
+          onChangeValue={(value) => fetchData(1, pagination.pageSize, value)}
         />
       </Styled.Options>
 
@@ -242,7 +244,9 @@ const Vulnerabilities: React.FC = () => {
           {vulnerabilities && vulnerabilities.length > 0 ? (
             <Pagination
               pagination={pagination}
-              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize, currentRepository)}
+              onChange={(pag) =>
+                fetchData(pag.currentPage, pag.pageSize, currentRepository)
+              }
             />
           ) : null}
         </Styled.Table>
