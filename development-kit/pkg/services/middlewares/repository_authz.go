@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package middlewares
 
 import (
@@ -19,6 +20,7 @@ import (
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
@@ -36,6 +38,7 @@ type IRepositoryAuthzMiddleware interface {
 
 type repositoryAuthzMiddleware struct {
 	repoAccountRepository repoAccountRepository.IAccountRepository
+	repositoryRepo        repositoryRepo.IRepository
 	accountUseCases       accountUseCases.IAccount
 }
 
@@ -44,10 +47,10 @@ func NewRepositoryAuthzMiddleware(
 	return &repositoryAuthzMiddleware{
 		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(databaseRead, databaseWrite),
 		accountUseCases:       accountUseCases.NewAccountUseCases(),
+		repositoryRepo:        repositoryRepo.NewRepository(databaseRead, databaseWrite),
 	}
 }
 
-//nolint
 func (rm *repositoryAuthzMiddleware) IsRepositoryMember(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
@@ -59,14 +62,18 @@ func (rm *repositoryAuthzMiddleware) IsRepositoryMember(next http.Handler) http.
 		repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
 		_, err = rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
 		if err != nil {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := rm.repositoryRepo.GetAccountCompanyRole(accountID, companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-//nolint
 func (rm *repositoryAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
@@ -76,11 +83,17 @@ func (rm *repositoryAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.H
 		}
 
 		repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
-		accountRepository, err := rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
-		if err != nil || accountRepository.Role != accountEnums.Admin {
-			httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
-			return
+		accountRepository, errRepository := rm.repoAccountRepository.GetAccountRepository(accountID, repositoryID)
+		if errRepository != nil || accountRepository.Role != accountEnums.Admin {
+			companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
+			accountCompany, errCompany := rm.repositoryRepo.GetAccountCompanyRole(accountID, companyID)
+
+			if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+				httpUtil.StatusForbidden(w, errors.ErrorUnauthorized)
+				return
+			}
 		}
+
 		next.ServeHTTP(w, r)
 	})
 }

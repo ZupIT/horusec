@@ -22,9 +22,11 @@ import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	analysisUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/google/uuid"
+	"time"
 )
 
 type IController interface {
@@ -68,6 +70,9 @@ func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
 	repo *accountEntities.Repository, err error) {
 	if analysisData.RepositoryName != "" && analysisData.Analysis.RepositoryID == uuid.Nil {
 		repo, err = c.repoRepository.GetByName(analysisData.Analysis.CompanyID, analysisData.RepositoryName)
+		if err == errorsEnums.ErrNotFoundRecords {
+			return c.createRepository(analysisData)
+		}
 		return repo, err
 	}
 
@@ -81,6 +86,17 @@ func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysi
 		SetRepositoryName(repo.Name).
 		SetRepositoryID(repo.RepositoryID).
 		SetupIDInAnalysisContents()
+}
+
+func (c *Controller) createRepository(analysisData *apiEntities.AnalysisData) (*accountEntities.Repository, error) {
+	repo := &accountEntities.Repository{
+		RepositoryID: uuid.New(),
+		CompanyID:    analysisData.Analysis.CompanyID,
+		Name:         analysisData.RepositoryName,
+		CreatedAt:    time.Now(),
+	}
+
+	return repo, c.repoRepository.Create(repo, nil)
 }
 
 func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.Analysis) (uuid.UUID, error) {

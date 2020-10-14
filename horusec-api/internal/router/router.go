@@ -131,11 +131,12 @@ func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead,
 func (r *Router) RouterTokensRepository(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensRepository.NewHandler(postgresRead, postgresWrite)
+	authMiddleware := middlewares.NewJWTAuthMiddleware(postgresRead, postgresWrite)
 	r.router.Route(routes.TokensRepositoryHandler, func(router chi.Router) {
 		router.Use(jwt.AuthMiddleware)
-		router.With(middlewares.IsRepositoryAdmin).Post("/", handler.Post)
-		router.With(middlewares.IsRepositoryMember).Get("/", handler.Get)
-		router.With(middlewares.IsRepositoryAdmin).Delete("/{tokenID}", handler.Delete)
+		router.With(authMiddleware.IsRepositoryAdmin).Post("/", handler.Post)
+		router.With(authMiddleware.IsRepositoryAdmin).Get("/", handler.Get)
+		router.With(authMiddleware.IsRepositoryAdmin).Delete("/{tokenID}", handler.Delete)
 		router.Options("/", handler.Options)
 	})
 
