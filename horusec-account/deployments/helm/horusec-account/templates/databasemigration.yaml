@@ -26,14 +26,14 @@ spec:
         image: "horuszup/horusec-migration"
         args: ["up"]
         env:          
-          {{- range .Values.env }}
-            - name: {{ .name }}
-              value: "{{ .value }}" 
-          {{- end }}
-          {{- range .Values.envFromSecret }}
-            - name: {{ .name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .key }}
-                  key: {{ .key }}
-          {{- end }}
+        {{- range .Values.env }}
+          - name: {{ .name }}
+            value: "{{ .value }}" 
+        {{- end }}
+        {{- range .Values.envFromSecret }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .key }}
+                key: {{ .key }}
+        {{- end }}
