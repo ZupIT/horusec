@@ -8,7 +8,7 @@ on:
 
 jobs:
   horusec-security-latest:
-    name: horusec-security
+    name: horusec-security-download-latest
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
@@ -20,7 +20,7 @@ jobs:
           curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
           horusec start -p="./"
   horusec-security-current:
-    name: horusec-security
+    name: horusec-security-run-current
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
