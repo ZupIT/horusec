@@ -129,7 +129,7 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 }
 
 func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *horusecEntities.Vulnerability) {
-	if vuln.Severity.ToString() != "" && !pr.isFalsePositiveOrRiskAccept(vuln) {
+	if vuln.Severity.ToString() != "" && !pr.isTypeVulnToSkip(vuln) {
 		if !pr.isIgnoredVulnerability(vuln.Severity.ToString()) {
 			logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash, logger.DebugLevel)
 			if logger.CurrentLevel >= logger.DebugLevel {
@@ -140,8 +140,8 @@ func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *horusecEnt
 	}
 }
 
-func (pr *PrintResults) isFalsePositiveOrRiskAccept(vuln *horusecEntities.Vulnerability) bool {
-	return vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted
+func (pr *PrintResults) isTypeVulnToSkip(vuln *horusecEntities.Vulnerability) bool {
+	return vuln.Type == horusec.FalsePositive || vuln.Type == horusec.RiskAccepted || vuln.Type == horusec.Corrected
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {

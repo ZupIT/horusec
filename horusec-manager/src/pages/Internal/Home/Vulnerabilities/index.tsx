@@ -71,21 +71,22 @@ const Vulnerabilities: React.FC = () => {
     repository: Repository,
     vulnHash?: string
   ) => {
-    setLoading(true);
+    setCurrentRepository(repository);
 
-    if (repository) {
-      setCurrentRepository(repository);
-    }
+    setLoading(true);
 
     if (pageSize !== pagination.pageSize) {
       currentPage = 1;
     }
 
-    const repositoryID =
-      currentRepository?.repositoryID || repository?.repositoryID;
-
     repositoryService
-      .getAllVulnerabilities(repositoryID, currentPage, pageSize, vulnHash)
+      .getAllVulnerabilities(
+        companyID,
+        repository?.repositoryID,
+        currentPage,
+        pageSize,
+        vulnHash
+      )
       .then((result) => {
         setVulnerabilities(result.data?.content?.data);
         const totalItems = result?.data?.content?.totalItems;
@@ -107,7 +108,7 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData(1, pagination.pageSize, null, searchString);
+    fetchData(1, pagination.pageSize, currentRepository, searchString);
   }, 500);
 
   const handleUpdateVulnerabilityType = (
@@ -116,12 +117,17 @@ const Vulnerabilities: React.FC = () => {
   ) => {
     repositoryService
       .updateVulnerabilityType(
+        companyID,
         currentRepository?.repositoryID,
         vulnerability.vulnerabilityID,
         type
       )
       .then(() => {
-        fetchData(pagination.currentPage, pagination.pageSize, null);
+        fetchData(
+          pagination.currentPage,
+          pagination.pageSize,
+          currentRepository
+        );
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -162,9 +168,7 @@ const Vulnerabilities: React.FC = () => {
           initialValue={repositories[0]}
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-          onChangeValue={(value) =>
-            fetchData(pagination.currentPage, pagination.pageSize, value)
-          }
+          onChangeValue={(value) => fetchData(1, pagination.pageSize, value)}
         />
       </Styled.Options>
 
@@ -240,7 +244,9 @@ const Vulnerabilities: React.FC = () => {
           {vulnerabilities && vulnerabilities.length > 0 ? (
             <Pagination
               pagination={pagination}
-              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize, null)}
+              onChange={(pag) =>
+                fetchData(pag.currentPage, pag.pageSize, currentRepository)
+              }
             />
           ) : null}
         </Styled.Table>
