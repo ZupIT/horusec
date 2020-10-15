@@ -8,6 +8,24 @@
 <p></p>
 <p></p>
 
+# Table of Contents
+
+ * [What is Horusec](#what-is-horusec)
+ * [Project roadmap](#project-roadmap)
+ * [Getting started](#getting-started)
+ * [Installing](#installing)
+ * [Usage](#usage)
+      * [Requirements for usage horusec-cli](#requirements-for-usage-horusec-cli)
+ * [Usage locally](#usage-locally)
+      * [Default Development account](#default-development-account)
+      * [Requirements for use complete horusec locally](#requirements-for-use-complete-horusec-locally)
+ * [Horusec manager](#horusec-manager)
+ * [Contributing](#contributing)
+ * [Communication](#communication)
+ * [Contributors](#contributors) 
+ 
+ 
+
 ## What is Horusec?
 Horusec is a security tool that centralizes many security test into one result.
 Currently, performance analysis consists of:
