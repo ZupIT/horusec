@@ -7,26 +7,19 @@ on:
     branches: [ "**" ]
 
 jobs:
-  horusec-security-latest:
-    name: horusec-security-download-latest
+  horusec-security:
+    name: horusec-security
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - name: Running Horusec Security
+      - name: Running Horusec Security Download latest version
         shell: bash
         run: |
           curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
           horusec start -p="./"
-  horusec-security-current:
-    name: horusec-security-run-current
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-      - name: Running Horusec Security
+      - name: Running Horusec Security Running current version
         shell: bash
         run: |
           go build -o horusec ./horusec-cli/cmd/horusec/main.go
