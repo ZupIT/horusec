@@ -15,15 +15,18 @@
 package auth
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	netHTTP "net/http"
 )
 
 type Handler struct {
-	authUseCases authUseCases.IUseCases
+	authUseCases   authUseCases.IUseCases
+	authController authController.IController
 }
 
 func NewAuthHandler() *Handler {
@@ -36,21 +39,33 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) Login(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	authType := auth.AuthorizationType(r.Header.Get("X_AUTH_TYPE"))
-	if authType.IsInvalid() {
-		httpUtil.StatusBadRequest(w, errors.ErrorInvalidAuthType)
+func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	credentials, authType, err := h.getCredentialsAndAuthType(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
 		return
+	}
+
+	response, err := h.authController.AuthByType(credentials, authType)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, response)
+}
+
+func (h *Handler) getCredentialsAndAuthType(
+	r *netHTTP.Request) (*authEntities.Credentials, authEnums.AuthorizationType, error) {
+	authType := authEnums.AuthorizationType(r.Header.Get("X_AUTH_TYPE"))
+	if authType.IsInvalid() {
+		return nil, "", errors.ErrorInvalidAuthType
 	}
 
 	credentials, err := h.authUseCases.NewCredentialsFromReadCloser(r.Body)
 	if err != nil {
-		httpUtil.StatusBadRequest(w, errors.ErrorInvalidAuthType)
-		return
+		return credentials, "", err
 	}
 
-	print(credentials)
-	//TODO call controller
-	//TODO add login response
-	httpUtil.StatusOK(w, "login data")
+	return credentials, authType, nil
 }

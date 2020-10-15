@@ -19,21 +19,15 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 )
 
 type Handler struct {
 	httpUtil.Interface
-	postgresRead  relational.InterfaceRead
-	postgresWrite relational.InterfaceWrite
 }
 
 func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
-	return &Handler{
-		postgresRead:  postgresRead,
-		postgresWrite: postgresWrite,
-	}
+	return &Handler{}
 }
 
 func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
@@ -49,9 +43,5 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if !h.postgresRead.IsAvailable() || !h.postgresWrite.IsAvailable() {
-		httpUtil.StatusInternalServerError(w, errors.ErrorDatabaseIsNotHealth)
-		return
-	}
 	httpUtil.StatusOK(w, "service is healthy")
 }

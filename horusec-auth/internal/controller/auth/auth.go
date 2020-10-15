@@ -12,23 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package services
+package auth
 
 import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/stretchr/testify/mock"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 )
 
-type MockAuthService struct {
-	mock.Mock
+type IController interface {
+	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
 }
 
-func (m *MockAuthService) Authenticate(credentials authEntities.Credentials) (bool, map[string]string, error) {
-	args := m.MethodCalled("Authenticate", credentials)
-	return args.Bool(0), args.Get(1).(map[string]string), args.Error(2)
+type Controller struct {
 }
 
-func (m *MockAuthService) IsAuthorized(userID string, group []string) (bool, error) {
-	args := m.MethodCalled("IsAuthorized", userID, group)
-	return args.Bool(0), args.Error(1)
+func NewAuthController() IController {
+	return &Controller{}
+}
+
+// TODO add each service to authenticate
+func (c *Controller) AuthByType(credentials *authEntities.Credentials,
+	authorizationType authEnums.AuthorizationType) (interface{}, error) {
+	switch authorizationType {
+	case authEnums.Horus:
+	case authEnums.Keycloak:
+	case authEnums.Ldap:
+	}
+
+	return nil, nil
 }
