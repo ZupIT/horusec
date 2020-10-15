@@ -20,12 +20,12 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockAuthService struct {
+type MockAuthController struct {
 	mock.Mock
 }
 
-func (m *MockAuthService) AuthByType(credentials *authEntities.Credentials,
+func (m *MockAuthController) AuthByType(credentials *authEntities.Credentials,
 	authorizationType authEnums.AuthorizationType) (interface{}, error) {
-	args := m.MethodCalled("AuthByType", credentials)
+	args := m.MethodCalled("AuthByType")
 	return args.Get(0).(interface{}), args.Error(1)
 }
