@@ -220,7 +220,7 @@ func NewJavaRegularGetWindowFlagSecure() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`getWindow\(.*\)\.\(set|add\)Flags\(.*\.FLAG_SECURE`),
+			regexp.MustCompile(`getWindow\(.*\)\.(set|add)Flags\(.*\.FLAG_SECURE`),
 		},
 	}
 }
