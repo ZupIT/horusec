@@ -20,7 +20,7 @@ ADD . /horusec
 
 WORKDIR /horusec
 
-RUN GOOS=linux go build -a -o horusec-auth-main ./horusec-account/cmd/app/main.go
+RUN GOOS=linux go build -a -o horusec-auth-main ./horusec-auth/cmd/app/main.go
 
 FROM alpine
 

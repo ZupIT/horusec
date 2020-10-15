@@ -17,7 +17,6 @@ package health
 import (
 	netHTTP "net/http"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 )
@@ -26,7 +25,7 @@ type Handler struct {
 	httpUtil.Interface
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
+func NewHandler() httpUtil.Interface {
 	return &Handler{}
 }
 
