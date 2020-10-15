@@ -29,5 +29,7 @@ jobs:
       - name: Running Horusec Security
         shell: bash
         run: |
-          make build-install-cli
+          go build -o horusec ./horusec-cli/cmd/horusec/main.go
+          chmod +x horusec
+          mv horusec /usr/local/bin
           horusec start -p="./" -e="true"
