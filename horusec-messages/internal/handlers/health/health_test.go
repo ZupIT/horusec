@@ -66,12 +66,12 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("should return 500 when mailer or broker is not healthy", func(t *testing.T) {
+	t.Run("should return 500 when mailer is not healthy", func(t *testing.T) {
 		mailerMock := &mailer.Mock{}
 		brokerMock := &broker.Mock{}
 
 		mailerMock.On("IsAvailable").Return(false)
-		mailerMock.On("IsAvailable").Return(true)
+		brokerMock.On("IsAvailable").Return(true)
 
 		handler := NewHandler(mailerMock, brokerMock)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
@@ -79,12 +79,20 @@ func TestGet(t *testing.T) {
 
 		handler.Get(w, r)
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
+		mailerMock := &mailer.Mock{}
+		brokerMock := &broker.Mock{}
 
 		mailerMock.On("IsAvailable").Return(true)
-		mailerMock.On("IsAvailable").Return(false)
+		brokerMock.On("IsAvailable").Return(false)
+
+		handler := NewHandler(mailerMock, brokerMock)
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
 
 		handler.Get(w, r)
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
-
 }

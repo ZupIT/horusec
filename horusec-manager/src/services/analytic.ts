@@ -24,7 +24,7 @@ const getTotalDevelopers = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -38,7 +38,7 @@ const getTotalRepositories = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -52,7 +52,7 @@ const getAllVulnerabilities = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -66,7 +66,7 @@ const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -83,7 +83,7 @@ const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -100,7 +100,7 @@ const getVulnerabilitiesByRepository = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -117,7 +117,7 @@ const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
   let ID = filters.companyID;
 
   if (filters.repositoryID) {
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -137,7 +137,7 @@ const getVulnerabilitiesDetails = (
 
   if (filters.repositoryID) {
     filter = `repositoryID: "${filters.repositoryID}"`;
-    path = 'repositories';
+    path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -161,10 +161,11 @@ const getVulnerabilitiesDetails = (
         securityTool
         language
         severity
-        commitAuthor {
-          author
-          email
-        }
+        commitAuthor
+        commitEmail
+        commitHash
+        commitMessage
+        commitDate
       }
     }
   }`;

@@ -17,6 +17,9 @@ package middlewares
 import (
 	"context"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -49,7 +52,12 @@ func TestIsRepositoryMember(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -68,7 +76,12 @@ func TestIsRepositoryMember(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
@@ -90,7 +103,15 @@ func TestIsRepositoryMember(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryMember(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
@@ -115,7 +136,15 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -134,7 +163,15 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
@@ -156,7 +193,15 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
@@ -179,7 +224,15 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
@@ -204,7 +257,15 @@ func TestBindRepositoryPermissions(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		BindRepositoryPermissions(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.BindRepositoryPermissions(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -223,7 +284,15 @@ func TestBindRepositoryPermissions(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		BindRepositoryPermissions(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		mockRead.On("Find").Return(&response.Response{})
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		middleware := NewJWTAuthMiddleware(mockRead, mockWrite)
+
+		middleware.BindRepositoryPermissions(http.HandlerFunc(test.Handler)).ServeHTTP(w, r)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})

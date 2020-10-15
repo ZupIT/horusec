@@ -31,6 +31,7 @@ interface Props {
   keyValue?: string;
   rounded?: boolean;
   width?: string;
+  optionsHeight?: string;
 }
 
 const Select: React.FC<Props> = ({
@@ -44,6 +45,7 @@ const Select: React.FC<Props> = ({
   keyValue,
   rounded,
   width,
+  optionsHeight,
 }) => {
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);
@@ -90,6 +92,8 @@ const Select: React.FC<Props> = ({
           isOpen={openOptionsList}
           rounded={rounded}
           width={width}
+          height={optionsHeight}
+          className="options-list"
         >
           {options.map((option, index) => (
             <Styled.OptionItem

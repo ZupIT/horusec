@@ -198,10 +198,10 @@ func TestList(t *testing.T) {
 	t.Run("should return empty when not found", func(t *testing.T) {
 		repository := NewRepository(databaseRead, databaseWrite)
 
-		retrievedCompanies, err := repository.List(uuid.New(), uuid.New())
+		retrievedCompanies, err := repository.List(account.AccountID, company.CompanyID)
 
 		assert.NoError(t, err)
-		assert.Empty(t, retrievedCompanies)
+		assert.NotEmpty(t, retrievedCompanies)
 	})
 }
 

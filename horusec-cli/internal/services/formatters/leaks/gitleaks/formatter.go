@@ -15,6 +15,7 @@
 package gitleaks
 
 import (
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/leaks"
@@ -22,13 +23,11 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -92,7 +91,7 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []leaks.Issue) {
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
 	vulnerabilitySeverity *horusec.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = utilsHorusec.GetSeverityOrNoSec(severity.High, issue.Line)
+	vulnerabilitySeverity.Severity = severity.High
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File
@@ -104,7 +103,10 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
 }
 
 func (f *Formatter) factoryAddVulnerabilityBySeverityGitLeaks(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability, issue *leaks.Issue) *horusec.Vulnerability {

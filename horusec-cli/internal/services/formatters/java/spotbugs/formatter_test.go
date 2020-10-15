@@ -97,7 +97,7 @@ func TestJava_StartAnalysis(t *testing.T) {
 
 			NewFormatter(service).StartAnalysis("")
 			assert.Empty(t, analysis.Errors)
-			assert.Len(t, analysis.Vulnerabilities, 1)
+			assert.Len(t, analysis.AnalysisVulnerabilities, 1)
 		})
 	})
 

@@ -33,7 +33,7 @@ func (i *InviteUser) Validate() error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.Email, validation.Length(1, 255), validation.Required, is.Email),
 		validation.Field(&i.Role, validation.Length(1, 255),
-			validation.In(accountEnums.Admin, accountEnums.Member), validation.Required),
+			validation.In(accountEnums.Admin, accountEnums.Member, accountEnums.Supervisor), validation.Required),
 		validation.Field(&i.RepositoryID, is.UUID),
 		validation.Field(&i.CompanyID, is.UUID),
 	)

@@ -29,6 +29,7 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
 
   const renderRulesOfPermissions = () => {
     const admin: string[] = [];
+    const supervisor: string[] = [];
     const user: string[] = [];
 
     if (rolesType === 'REPOSITORY') {
@@ -38,6 +39,12 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
         t('PERMISSIONS.REPOSITORY.RULES.HANDLER_USER'),
         t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO')
       );
+
+      supervisor.push(
+        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'),
+        t('PERMISSIONS.REPOSITORY.RULES.VULNERABILITIES')
+      );
+
       user.push(t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'));
     }
 
@@ -48,10 +55,16 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
         t('PERMISSIONS.COMPANY.RULES.CREATE'),
         t('PERMISSIONS.COMPANY.RULES.ANALYTIC_COMPANY')
       );
+
+      supervisor.push(
+        t('PERMISSIONS.COMPANY.RULES.ANALYTIC_REPO'),
+        t('PERMISSIONS.COMPANY.RULES.VULNERABILITIES')
+      );
+
       user.push(t('PERMISSIONS.COMPANY.RULES.ANALYTIC_REPO'));
     }
 
-    return { admin, user };
+    return { admin, user, supervisor };
   };
 
   return isOpen ? (
@@ -70,6 +83,14 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
 
         <Styled.List>
           {renderRulesOfPermissions().admin.map((rule, index) => (
+            <Styled.Item key={index}>{rule}</Styled.Item>
+          ))}
+        </Styled.List>
+
+        <Styled.Subtitle>{t(`PERMISSIONS.SUPERVISOR`)}</Styled.Subtitle>
+
+        <Styled.List>
+          {renderRulesOfPermissions().supervisor.map((rule, index) => (
             <Styled.Item key={index}>{rule}</Styled.Item>
           ))}
         </Styled.List>

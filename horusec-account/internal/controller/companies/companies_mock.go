@@ -62,7 +62,7 @@ func (m *Mock) Delete(companyID uuid.UUID) error {
 }
 
 func (m *Mock) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error) {
-	args := m.MethodCalled("Delete")
+	args := m.MethodCalled("GetAllAccountsInCompany")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 

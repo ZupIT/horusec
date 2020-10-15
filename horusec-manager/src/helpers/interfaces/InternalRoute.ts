@@ -18,7 +18,7 @@ export interface InternalRoute {
   name: string;
   icon: string;
   path?: string;
-  adminOnly?: boolean;
+  roles?: string[];
   subRoutes?: InternalRoute[];
   type: 'route' | 'subRoute';
 }

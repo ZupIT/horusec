@@ -72,12 +72,14 @@ const ListItems = styled.ul<ListItemProps>`
   height: 0;
   opacity: 0;
   transition: all 0.5s;
+  visibility: hidden;
 
   ${({ isVisible }) =>
     isVisible &&
     css`
       height: 80px;
       opacity: 1;
+      visibility: visible;
     `};
 `;
 

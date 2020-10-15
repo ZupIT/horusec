@@ -8,6 +8,24 @@
 <p></p>
 <p></p>
 
+# Table of Contents
+
+ * [What is Horusec](#what-is-horusec)
+ * [Project roadmap](#project-roadmap)
+ * [Getting started](#getting-started)
+ * [Installing](#installing)
+ * [Usage](#usage)
+      * [Requirements for usage horusec-cli](#requirements-for-usage-horusec-cli)
+ * [Usage locally](#usage-locally)
+      * [Default Development account](#default-development-account)
+      * [Requirements for use complete horusec locally](#requirements-for-use-complete-horusec-locally)
+ * [Horusec manager](#horusec-manager)
+ * [Contributing](#contributing)
+ * [Communication](#communication)
+ * [Contributors](#contributors) 
+ 
+ 
+
 ## What is Horusec?
 Horusec is a security tool that centralizes many security test into one result.
 Currently, performance analysis consists of:
@@ -23,6 +41,8 @@ Currently, performance analysis consists of:
 * Leaks(optional search in git history) => ([GitLeaks][Gitleaks])
 
 You can see more details about the horusec <a href="assets/horusec-complete-architecture.jpg">/assets/horusec-complete-architecture.jpg</a>
+
+### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
 
 ## Project roadmap
 

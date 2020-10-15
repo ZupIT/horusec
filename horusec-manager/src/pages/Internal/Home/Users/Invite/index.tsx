@@ -54,6 +54,10 @@ const InviteToCompany: React.FC<Props> = ({
       value: 'admin',
     },
     {
+      name: t('PERMISSIONS.SUPERVISOR'),
+      value: 'supervisor',
+    },
+    {
       name: t('PERMISSIONS.USER'),
       value: 'member',
     },
@@ -63,12 +67,12 @@ const InviteToCompany: React.FC<Props> = ({
   const [permissionsIsOpen, setPermissionsIsOpen] = useState(false);
 
   const [email, setEmail] = useState<Field>({ value: '', isValid: false });
-  const [role, setRole] = useState<Role>(roles[0]);
+  const [role, setRole] = useState<Role>(null);
 
   const resetFields = () => {
     const defaultValue = { value: '', isValid: false };
     setEmail(defaultValue);
-    setRole(roles[0]);
+    setRole(null);
   };
 
   const handleConfirmSave = () => {
@@ -101,7 +105,7 @@ const InviteToCompany: React.FC<Props> = ({
       }}
       onConfirm={handleConfirmSave}
       confirmText={t('USERS_SCREEN.SAVE')}
-      disableConfirm={!email.isValid}
+      disableConfirm={!email.isValid || !role}
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={450}
@@ -125,7 +129,7 @@ const InviteToCompany: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
-          initialValue={roles[0]}
+          optionsHeight="96px"
           options={roles}
           onChangeValue={(item) => setRole(item)}
         />

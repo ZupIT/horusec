@@ -19,6 +19,7 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
 )
@@ -31,6 +32,7 @@ type IRepository interface {
 	Delete(repositoryID uuid.UUID) error
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
+	GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error)
 }
 
 type Repository struct {
@@ -90,6 +92,28 @@ func (r *Repository) Get(repositoryID uuid.UUID) (*accountEntities.Repository, e
 }
 
 func (r *Repository) List(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
+	accountCompany, err := r.GetAccountCompanyRole(accountID, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	if accountCompany.Role == account.Admin {
+		return r.listAllInCompany(accountID, companyID)
+	}
+
+	return r.listByRoles(accountID, companyID)
+}
+
+func (r *Repository) GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error) {
+	accountCompany := &roles.AccountCompany{}
+
+	response := r.databaseRead.Find(accountCompany, r.databaseRead.SetFilter(
+		map[string]interface{}{"account_id": accountID, "company_id": companyID}), accountCompany.GetTable())
+
+	return accountCompany, response.GetError()
+}
+
+func (r *Repository) listByRoles(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
 
 	query := r.databaseRead.
@@ -100,6 +124,22 @@ func (r *Repository) List(accountID, companyID uuid.UUID) (*[]accountEntities.Re
 		Joins("JOIN account_repository AS accountRepo ON accountRepo.repository_id = repo.repository_id"+
 			" AND accountRepo.account_id = ?", accountID).
 		Where("accountRepo.company_id = ? AND accountRepo.account_id = ?", companyID, accountID).
+		Find(&repositories)
+
+	return repositories, query.Error
+}
+
+func (r *Repository) listAllInCompany(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
+			" repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Joins("JOIN account_company AS accountCompany ON accountCompany.company_id = repo.company_id "+
+			"AND accountCompany.account_id = ?", accountID).
+		Where("repo.company_id = ?", companyID).
 		Find(&repositories)
 
 	return repositories, query.Error
