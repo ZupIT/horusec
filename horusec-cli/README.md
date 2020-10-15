@@ -389,7 +389,7 @@ Line: 1
 Column: 27
 SecurityTool: HorusecLeaks
 Confidence: MEDIUM
-File: deployments/certs/client-huskyapi-cert.pem
+File: deployments/certs/client-api-cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
@@ -437,7 +437,7 @@ Line: 1
 Column: 31
 SecurityTool: HorusecLeaks
 Confidence: MEDIUM
-File: deployments/certs/client-huskyapi-key.pem
+File: deployments/certs/client-api-key.pem
 Code: -----BEGIN RSA PRIVATE KEY-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
@@ -486,7 +486,7 @@ Column: 17
 SecurityTool: HorusecLeaks
 Confidence: HIGH
 File: tmp.json
-Code: "code": "password = 'thisisnotapassword' #nohusky",
+Code: "code": "password = 'thisisnotapassword'",
 Details: Hard-coded password
 The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
 Type: Vulnerability
@@ -550,7 +550,7 @@ Column: 29
 SecurityTool: HorusecLeaks
 Confidence: HIGH
 File: tmp.json
-Code: "code": "1 secret = 'password123!'\n2 \n3 password = 'thisisnotapassword' #nohusky\n4 \n",
+Code: "code": "1 secret = 'password123!'\n2 \n3 password = 'thisisnotapassword'\n4 \n",
 Details: Hard-coded password
 The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
 Type: Vulnerability
@@ -566,7 +566,7 @@ Column: 23
 SecurityTool: HorusecLeaks
 Confidence: HIGH
 File: tmp.json
-Code:  = 'thisisnotapassword' #nohusky\n4 \n5 command = 'print \"this command is not secure!!\"'\n",
+Code:  = 'thisisnotapassword' \n4 \n5 command = 'print \"this command is not secure!!\"'\n",
 Details: Hard-coded password
 The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
 Type: Vulnerability
