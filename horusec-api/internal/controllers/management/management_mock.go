@@ -28,8 +28,8 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) 	ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
-	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error){
+func (m *Mock) ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
+	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error) {
 	args := m.MethodCalled("ListVulnManagementData")
 	return args.Get(0).(dto.VulnManagement), mockUtils.ReturnNilOrError(args, 1)
 }
