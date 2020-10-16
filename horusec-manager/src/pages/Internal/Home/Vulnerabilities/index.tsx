@@ -29,11 +29,14 @@ import i18n from 'config/i18n';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { useTheme } from 'styled-components';
+import { get } from 'lodash';
 
 const INITIAL_PAGE = 1;
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
   const { companyID } = getCurrentCompany();
@@ -288,7 +291,17 @@ const Vulnerabilities: React.FC = () => {
 
                 <Styled.Cell>{vul.details}</Styled.Cell>
 
-                <Styled.Cell>{vul.severity}</Styled.Cell>
+                <Styled.Cell className="center">
+                  <Styled.Tag
+                    color={get(
+                      colors.vulnerabilities,
+                      vul.severity,
+                      colors.vulnerabilities.DEFAULT
+                    )}
+                  >
+                    {vul.severity}
+                  </Styled.Tag>
+                </Styled.Cell>
 
                 <Styled.Cell>
                   {!isLoading ? (
