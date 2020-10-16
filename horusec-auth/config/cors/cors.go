@@ -12,23 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package services
+package cors
 
-import (
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/stretchr/testify/mock"
-)
+import "github.com/go-chi/cors"
 
-type MockAuthService struct {
-	mock.Mock
-}
-
-func (m *MockAuthService) Authenticate(credentials authEntities.Credentials) (bool, map[string]interface{}, error) {
-	args := m.MethodCalled("Authenticate", credentials)
-	return args.Bool(0), args.Get(1).(map[string]interface{}), args.Error(2)
-}
-
-func (m *MockAuthService) IsAuthorized(userID string, group []string) (bool, error) {
-	args := m.MethodCalled("IsAuthorized", userID, group)
-	return args.Bool(0), args.Error(1)
+func NewCorsConfig() *cors.Options {
+	return &cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "headers", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}
 }

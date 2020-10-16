@@ -12,8 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint
 package main
+
+import (
+	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
+	"github.com/ZupIT/horusec/horusec-auth/config/cors"
+	"github.com/ZupIT/horusec/horusec-auth/config/swagger"
+	"github.com/ZupIT/horusec/horusec-auth/internal/router"
+	"log"
+	"net/http"
+)
 
 // @title Horusec-Auth
 // @description Service of Horusec.
@@ -27,5 +35,11 @@ package main
 // @in header
 // @name Authorization
 func main() {
+	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
+	chiRouter := router.NewRouter(server).GetRouter()
 
+	log.Println("service running on port", server.GetPort())
+	swagger.SetupSwagger(chiRouter, "8006")
+
+	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
 }

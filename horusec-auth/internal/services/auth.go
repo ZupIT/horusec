@@ -16,7 +16,7 @@ package services
 
 import authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 
-type AuthService interface {
-	Authenticate(credentials authEntities.Credentials) (bool, map[string]string, error)
+type IAuthService interface {
+	Authenticate(credentials authEntities.Credentials) (bool, map[string]interface{}, error)
 	IsAuthorized(token string, groups []string) (bool, error)
 }

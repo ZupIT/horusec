@@ -15,6 +15,7 @@
 package auth
 
 import (
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -39,13 +40,23 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// @Tags Auth
+// @Description authenticate login by type!
+// @ID authenticate login
+// @Accept  json
+// @Produce  json
+// @Param Credentials body auth.Credentials true "auth info"
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/auth/authenticate [post]
 func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	credentials, authType, err := h.getCredentialsAndAuthType(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-
+	
 	response, err := h.authController.AuthByType(credentials, authType)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)

@@ -12,23 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package services
+package swagger
 
 import (
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/stretchr/testify/mock"
+	"fmt"
+	"log"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/services/swagger"
+	"github.com/ZupIT/horusec/horusec-auth/docs"
+	"github.com/go-chi/chi"
 )
 
-type MockAuthService struct {
-	mock.Mock
-}
-
-func (m *MockAuthService) Authenticate(credentials authEntities.Credentials) (bool, map[string]interface{}, error) {
-	args := m.MethodCalled("Authenticate", credentials)
-	return args.Bool(0), args.Get(1).(map[string]interface{}), args.Error(2)
-}
-
-func (m *MockAuthService) IsAuthorized(userID string, group []string) (bool, error) {
-	args := m.MethodCalled("IsAuthorized", userID, group)
-	return args.Bool(0), args.Error(1)
+func SetupSwagger(router *chi.Mux, defaultPort string) {
+	sw := swagger.NewSwagger(router, defaultPort)
+	sw.RouterSwagger()
+	docs.SwaggerInfo.Host = sw.GetSwaggerDocsHost()
+	log.Println("swagger running on url: ", fmt.Sprintf("http://%s/swagger/index.html", docs.SwaggerInfo.Host))
 }

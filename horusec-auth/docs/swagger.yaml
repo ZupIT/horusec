@@ -1,0 +1,106 @@
+definitions:
+  auth.Credentials:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  http.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec
+  description: Service of Horusec.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Auth
+paths:
+  /api/auth/authenticate:
+    post:
+      consumes:
+      - application/json
+      description: authenticate login by type!
+      operationId: authenticate login
+      parameters:
+      - description: auth info
+        in: body
+        name: Credentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

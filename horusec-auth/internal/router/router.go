@@ -15,8 +15,10 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
+	"github.com/ZupIT/horusec/horusec-auth/internal/handler/auth"
+	"github.com/ZupIT/horusec/horusec-auth/internal/handler/health"
+	"github.com/ZupIT/horusec/horusec-auth/internal/router/routes"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -45,8 +47,10 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *chi.Mux {
+func (r *Router) GetRouter() *chi.Mux {
 	r.setMiddleware()
+	r.RouterAnalysis()
+	r.RouterHealth()
 	return r.router
 }
 
@@ -87,5 +91,25 @@ func (r *Router) EnableCORS() *Router {
 
 func (r *Router) RouterMetrics() *Router {
 	r.router.Handle("/metrics", promhttp.Handler())
+	return r
+}
+
+func (r *Router) RouterHealth() *Router {
+	handler := health.NewHandler()
+	r.router.Route(routes.HealthHandler, func(router chi.Router) {
+		router.Get("/", handler.Get)
+		router.Options("/", handler.Options)
+	})
+
+	return r
+}
+
+func (r *Router) RouterAnalysis() *Router {
+	handler := auth.NewAuthHandler()
+	r.router.Route(routes.AuthHandler, func(router chi.Router) {
+		router.Post("/authenticate", handler.AuthByType)
+		router.Options("/", handler.Options)
+	})
+
 	return r
 }
