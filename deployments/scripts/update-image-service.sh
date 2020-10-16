@@ -43,19 +43,22 @@ getDirectoryAndImageNameByToolName () {
     case "$SERVICE_NAME" in
         "horusec-account")
             IMAGE_NAME="horuszup/horusec-account"
-            DIRECTORY="./horusec-account";;
+            DIRECTORY="./horusec-account/deployments/Dockerfile";;
         "horusec-analytic")
             IMAGE_NAME="horuszup/horusec-analytic"
-            DIRECTORY="./horusec-analytic";;
+            DIRECTORY="./horusec-analytic/deployments/Dockerfile";;
         "horusec-api")
             IMAGE_NAME="horuszup/horusec-api"
-            DIRECTORY="./horusec-api";;
+            DIRECTORY="./horusec-api/deployments/Dockerfile";;
         "horusec-manager")
             IMAGE_NAME="horuszup/horusec-manager"
-            DIRECTORY="./horusec-manager";;
+            DIRECTORY="./horusec-manager/deployments/Dockerfile";;
         "horusec-messages")
             IMAGE_NAME="horuszup/horusec-messages"
-            DIRECTORY="./horusec-messages";;
+            DIRECTORY="./horusec-messages/deployments/Dockerfile";;
+        "horusec-migration")
+            IMAGE_NAME="horuszup/horusec-migration"
+            DIRECTORY="./deployments/dockerfiles/migration/Dockerfile";;
         *)
             echo "Param Service Name is invalid, please use the examples bellow allowed and try again!"
             echo "Params Service Name allowed: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages"
@@ -116,11 +119,11 @@ updateVersion () {
 
     if [ "$IS_TO_UPDATE_LATEST" == "true" ]
     then
-        docker build -t "$IMAGE_NAME:latest" -f $DIRECTORY/deployments/Dockerfile .
+        docker build -t "$IMAGE_NAME:latest" -f $DIRECTORY .
         docker push "$IMAGE_NAME:latest"
     fi
 
-    docker build -t "$IMAGE_NAME:$LATEST_VERSION" -f $DIRECTORY/deployments/Dockerfile .
+    docker build -t "$IMAGE_NAME:$LATEST_VERSION" -f $DIRECTORY .
     docker push "$IMAGE_NAME:$LATEST_VERSION"
 
     rollback_version_packagejson
