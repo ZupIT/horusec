@@ -28,12 +28,14 @@ import { debounce } from 'lodash';
 import i18n from 'config/i18n';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 const INITIAL_PAGE = 1;
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
   const { companyID } = getCurrentCompany();
   const [isLoading, setLoading] = useState(true);
   const [repositories, setRepositories] = useState<Repository[]>([]);
@@ -157,6 +159,7 @@ const Vulnerabilities: React.FC = () => {
       )
       .then(() => {
         fetchData(filters, pagination);
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);

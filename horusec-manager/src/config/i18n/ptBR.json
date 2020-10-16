@@ -246,6 +246,7 @@
     "ALL_SEVERITIES": "Todas as severidades",
     "ALL_STATUS": "Todos os status",
     "STATUS_TITLE": "Status",
+    "SUCCESS_UPDATE": "Status da vulnerabilidade alterada com sucesso!",
     "TABLE": {
       "EMPTY": "Não há vulnerabilidades para este repositorio",
       "HASH": "Hash",
