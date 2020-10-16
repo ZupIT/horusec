@@ -139,6 +139,7 @@ const Vulnerabilities: React.FC = () => {
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
+        setVulnerabilities([]);
       })
       .finally(() => {
         setLoading(false);
@@ -179,6 +180,8 @@ const Vulnerabilities: React.FC = () => {
             { ...filters, repositoryID: result.data?.content[0].repositoryID },
             pagination
           );
+        } else {
+          setLoading(false);
         }
       });
     };

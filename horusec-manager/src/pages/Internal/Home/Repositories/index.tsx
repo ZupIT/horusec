@@ -152,17 +152,6 @@ const Repositories: React.FC = () => {
                 {repo.role === 'admin' ? (
                   <Styled.Cell className="row">
                     <Button
-                      rounded
-                      outline
-                      opaque
-                      text={t('REPOSITORIES_SCREEN.DELETE')}
-                      width={90}
-                      height={30}
-                      icon="delete"
-                      onClick={() => setRepoToDelete(repo)}
-                    />
-
-                    <Button
                       outline
                       rounded
                       opaque
@@ -174,16 +163,29 @@ const Repositories: React.FC = () => {
                     />
 
                     {isAdminOfCompany() ? (
-                      <Button
-                        outline
-                        rounded
-                        opaque
-                        text={t('REPOSITORIES_SCREEN.INVITE')}
-                        width={90}
-                        height={30}
-                        icon="users"
-                        onClick={() => setRepoToInvite(repo)}
-                      />
+                      <>
+                        <Button
+                          rounded
+                          outline
+                          opaque
+                          text={t('REPOSITORIES_SCREEN.DELETE')}
+                          width={90}
+                          height={30}
+                          icon="delete"
+                          onClick={() => setRepoToDelete(repo)}
+                        />
+
+                        <Button
+                          outline
+                          rounded
+                          opaque
+                          text={t('REPOSITORIES_SCREEN.INVITE')}
+                          width={90}
+                          height={30}
+                          icon="users"
+                          onClick={() => setRepoToInvite(repo)}
+                        />
+                      </>
                     ) : null}
 
                     <Button
