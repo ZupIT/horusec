@@ -56,6 +56,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Param size query string false "size query string"
 // @Param vulnHash query string false "vulnHash query string"
 // @Param vulnType query string false "vulnType query string"
+// @Param vulnSeverity query string false "vulnSeverity query string"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
