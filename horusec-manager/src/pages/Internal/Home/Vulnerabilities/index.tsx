@@ -30,7 +30,7 @@ import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 
 const INITIAL_PAGE = 1;
 
@@ -139,10 +139,18 @@ const Vulnerabilities: React.FC = () => {
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
+        setVulnerabilities([]);
       })
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const isAdminOrSupervisorOfRepository = () => {
+    const repository = find(repositories, {
+      repositoryID: filters.repositoryID,
+    });
+    return repository.role === 'admin' || repository.role === 'supervisor';
   };
 
   const handleSearch = debounce((searchString: string) => {
@@ -179,6 +187,8 @@ const Vulnerabilities: React.FC = () => {
             { ...filters, repositoryID: result.data?.content[0].repositoryID },
             pagination
           );
+        } else {
+          setLoading(false);
         }
       });
     };
@@ -314,6 +324,7 @@ const Vulnerabilities: React.FC = () => {
                       rounded
                       initialValue={vul.type}
                       options={vulnTypes}
+                      disabled={!isAdminOrSupervisorOfRepository()}
                       onChangeValue={(value) =>
                         handleUpdateVulnerabilityType(vul, value.value)
                       }

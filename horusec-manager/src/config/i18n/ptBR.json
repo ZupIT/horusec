@@ -191,7 +191,8 @@
         "HANDLER_TOKENS": "Tem acesso visualizar/editar/remover tokens de acesso ao repositório.",
         "HANDLER_USER": "Tem acesso visualizar/criar/editar/remover acesso de usuários ao repositório.",
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório.",
-        "VULNERABILITIES": "Tem acesso para visualizar/gerenciar as vulnerabilidades. (Falso Positivo)",
+        "VULNERABILITIES_VIEW": "Tem acesso somente visualização do repositório na tela Vulnerabilidades.",
+        "VULNERABILITIES_HANDLE": "Tem acesso para visualização/gerenciamento do repositório na tela Vulnerabilidades.",
         "NOTHING": "N/A"
       }
     },
@@ -201,8 +202,7 @@
         "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro da empresa.",
         "CREATE": "Tem acesso para criar novos repositórios.",
         "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos da empresa.",
-        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso.",
-        "VULNERABILITIES": "Tem acesso para visualizar/gerenciar as vulnerabilidades. (Falso Positivo)"
+        "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
   },
