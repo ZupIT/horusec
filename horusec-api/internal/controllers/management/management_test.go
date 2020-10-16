@@ -50,7 +50,8 @@ func TestListVulnManagementData(t *testing.T) {
 
 		controller := Controller{managementRepository: repositoryMock}
 
-		result, err := controller.ListVulnManagementData(uuid.New(), 1, 10, "", "")
+		result, err := controller.ListVulnManagementData(uuid.New(), 1, 10,
+			"","", "")
 		assert.NoError(t, err)
 		assert.Equal(t, 1, result.TotalItems)
 		assert.Len(t, result.Data, 1)
