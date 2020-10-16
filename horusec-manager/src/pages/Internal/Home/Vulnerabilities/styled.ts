@@ -15,9 +15,14 @@
  */
 
 import styled, { css } from 'styled-components';
+import { Select as SelectComponent } from 'components';
 
 interface LoadingWrapperProps {
   isLoading: boolean;
+}
+
+interface TagProps {
+  color: string;
 }
 
 const Wrapper = styled.div`
@@ -73,15 +78,22 @@ const Column = styled.span`
 
   &:nth-child(2) {
     max-width: 580px;
-    margin-right: 0px;
+    margin-right: -10px;
   }
 
   &:nth-child(3) {
-    max-width: 80px;
+    max-width: 130px;
+    padding-left: 25px;
+  }
+
+  &:nth-child(4) {
+    margin-right: 0px;
+    margin-left: 15px;
   }
 
   &:nth-child(5) {
     max-width: 30px;
+    margin-right: 40px;
   }
 `;
 
@@ -118,7 +130,7 @@ const Cell = styled.span`
   }
 
   &:nth-child(3) {
-    max-width: 80px;
+    max-width: 130px;
   }
 
   &:nth-child(5) {
@@ -130,6 +142,11 @@ const Cell = styled.span`
     i {
       cursor: pointer;
     }
+  }
+
+  &.center {
+    display: flex;
+    align-items: center;
   }
 
   .select-type {
@@ -181,8 +198,28 @@ const EmptyText = styled.span`
   line-height: 170px;
 `;
 
+const Select = styled(SelectComponent)`
+  margin-right: 15px;
+`;
+
+const Tag = styled.span<TagProps>`
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  height: 23px;
+  line-height: 25px;
+  width: 84px;
+  border-radius: 64px;
+
+  ${({ color }) => css`
+    background-color: ${color};
+  `};
+`;
+
 export default {
   Wrapper,
+  Tag,
+  Select,
   Options,
   Content,
   Title,

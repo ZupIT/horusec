@@ -27,20 +27,32 @@ import { Vulnerability } from 'helpers/interfaces/Vulnerability';
 import { debounce } from 'lodash';
 import i18n from 'config/i18n';
 import Details from './Details';
+import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { useTheme } from 'styled-components';
+import { get } from 'lodash';
+
+const INITIAL_PAGE = 1;
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
   const { companyID } = getCurrentCompany();
   const [isLoading, setLoading] = useState(true);
   const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [currentRepository, setCurrentRepository] = useState<Repository>(null);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
-  const [selectedVulnerability, setSelectedVulnerability] = useState<
-    Vulnerability
-  >(null);
+  const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
+  const [filters, setFilters] = useState<FilterVuln>({
+    companyID: companyID,
+    repositoryID: null,
+    vulnHash: null,
+    vulnSeverity: null,
+    vulnType: null,
+  });
   const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 1,
+    currentPage: INITIAL_PAGE,
     totalItems: 0,
     pageSize: 10,
     totalPages: 10,
@@ -49,55 +61,81 @@ const Vulnerabilities: React.FC = () => {
   const vulnTypes = [
     {
       value: 'Vulnerability',
-      description: t('VULNERABILITIES_SCREEN.TYPES.VULNERABILITY'),
+      description: t('VULNERABILITIES_SCREEN.STATUS.VULNERABILITY'),
     },
     {
       value: 'Risk Accepted',
-      description: t('VULNERABILITIES_SCREEN.TYPES.RISKACCEPTED'),
+      description: t('VULNERABILITIES_SCREEN.STATUS.RISKACCEPTED'),
     },
     {
       value: 'False Positive',
-      description: t('VULNERABILITIES_SCREEN.TYPES.FALSEPOSITIVE'),
+      description: t('VULNERABILITIES_SCREEN.STATUS.FALSEPOSITIVE'),
     },
     {
       value: 'Corrected',
-      description: t('VULNERABILITIES_SCREEN.TYPES.CORRECTED'),
+      description: t('VULNERABILITIES_SCREEN.STATUS.CORRECTED'),
     },
   ];
 
-  const fetchData = (
-    currentPage: number,
-    pageSize: number,
-    repository: Repository,
-    vulnHash?: string
-  ) => {
-    setCurrentRepository(repository);
+  const severities = [
+    {
+      value: null,
+      description: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
+    },
+    {
+      value: 'HIGH',
+      description: 'HIGH',
+    },
+    {
+      value: 'MEDIUM',
+      description: 'MEDIUM',
+    },
+    {
+      value: 'LOW',
+      description: 'LOW',
+    },
+    {
+      value: 'AUDIT',
+      description: 'AUDIT',
+    },
+    {
+      value: 'NOSEC',
+      description: 'NOSEC',
+    },
+    {
+      value: 'INFO',
+      description: 'INFO',
+    },
+  ];
 
+  const fetchData = (filt: FilterVuln, pag: PaginationInfo) => {
     setLoading(true);
 
-    if (pageSize !== pagination.pageSize) {
-      currentPage = 1;
+    if (pag.pageSize !== pagination.pageSize) {
+      pag.currentPage = INITIAL_PAGE;
     }
 
+    setFilters(filt);
+
+    filt = {
+      ...filt,
+      vulnSeverity: filt.vulnHash ? null : filt.vulnSeverity,
+      vulnType: filt.vulnHash ? null : filt.vulnType,
+    };
+
     repositoryService
-      .getAllVulnerabilities(
-        companyID,
-        repository?.repositoryID,
-        currentPage,
-        pageSize,
-        vulnHash
-      )
+      .getAllVulnerabilities(filt, pag)
       .then((result) => {
         setVulnerabilities(result.data?.content?.data);
         const totalItems = result?.data?.content?.totalItems;
 
-        let totalPages = totalItems ? Math.round(totalItems / pageSize) : 1;
+        let totalPages = totalItems ? Math.round(totalItems / pag.pageSize) : 1;
 
         if (totalPages <= 0) {
           totalPages = 1;
         }
 
-        setPagination({ currentPage, pageSize, totalPages, totalItems });
+        setPagination({ ...pag, totalPages, totalItems });
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -108,7 +146,7 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData(1, pagination.pageSize, currentRepository, searchString);
+    fetchData({ ...filters, vulnHash: searchString }, pagination);
   }, 500);
 
   const handleUpdateVulnerabilityType = (
@@ -117,17 +155,14 @@ const Vulnerabilities: React.FC = () => {
   ) => {
     repositoryService
       .updateVulnerabilityType(
-        companyID,
-        currentRepository?.repositoryID,
+        filters.companyID,
+        filters.repositoryID,
         vulnerability.vulnerabilityID,
         type
       )
       .then(() => {
-        fetchData(
-          pagination.currentPage,
-          pagination.pageSize,
-          currentRepository
-        );
+        fetchData(filters, pagination);
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -141,9 +176,8 @@ const Vulnerabilities: React.FC = () => {
 
         if (result.data?.content.length > 0) {
           fetchData(
-            pagination.currentPage,
-            pagination.pageSize,
-            result.data.content[0]
+            { ...filters, repositoryID: result.data?.content[0].repositoryID },
+            pagination
           );
         }
       });
@@ -161,14 +195,60 @@ const Vulnerabilities: React.FC = () => {
           onSearch={(value) => handleSearch(value)}
         />
 
+        <Styled.Select
+          keyLabel="description"
+          width="180px"
+          optionsHeight="145px"
+          selectText={t('VULNERABILITIES_SCREEN.ALL_SEVERITIES')}
+          rounded
+          disabled={!!filters.vulnHash}
+          options={severities}
+          title={t('VULNERABILITIES_SCREEN.SEVERITY')}
+          onChangeValue={(item) =>
+            fetchData(
+              { ...filters, vulnSeverity: item.value },
+              { ...pagination, currentPage: INITIAL_PAGE }
+            )
+          }
+        />
+
+        <Styled.Select
+          keyLabel="description"
+          width="150px"
+          selectText={t('VULNERABILITIES_SCREEN.ALL_STATUS')}
+          optionsHeight="160px"
+          disabled={!!filters.vulnHash}
+          rounded
+          options={[
+            {
+              description: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
+              value: null,
+            },
+            ...vulnTypes,
+          ]}
+          title={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
+          onChangeValue={(item) =>
+            fetchData(
+              { ...filters, vulnType: item.value },
+              { ...pagination, currentPage: INITIAL_PAGE }
+            )
+          }
+        />
+
         <Select
           keyLabel="name"
-          width="250px"
+          width="220px"
+          optionsHeight="100px"
           rounded
           initialValue={repositories[0]}
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-          onChangeValue={(value) => fetchData(1, pagination.pageSize, value)}
+          onChangeValue={(item) =>
+            fetchData(
+              { ...filters, repositoryID: item.repositoryID },
+              { ...pagination, currentPage: INITIAL_PAGE }
+            )
+          }
         />
       </Styled.Options>
 
@@ -185,16 +265,17 @@ const Vulnerabilities: React.FC = () => {
               {t('VULNERABILITIES_SCREEN.TABLE.HASH')}
             </Styled.Column>
             <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.DETAILS')}
+              {t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION')}
             </Styled.Column>
             <Styled.Column>
               {t('VULNERABILITIES_SCREEN.TABLE.SEVERITY')}
             </Styled.Column>
             <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.TYPE')}
+              {t('VULNERABILITIES_SCREEN.TABLE.STATUS')}
             </Styled.Column>
-
-            <Styled.Column />
+            <Styled.Column>
+              {t('VULNERABILITIES_SCREEN.TABLE.DETAILS')}
+            </Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
@@ -210,7 +291,17 @@ const Vulnerabilities: React.FC = () => {
 
                 <Styled.Cell>{vul.details}</Styled.Cell>
 
-                <Styled.Cell>{vul.severity}</Styled.Cell>
+                <Styled.Cell className="center">
+                  <Styled.Tag
+                    color={get(
+                      colors.vulnerabilities,
+                      vul.severity,
+                      colors.vulnerabilities.DEFAULT
+                    )}
+                  >
+                    {vul.severity}
+                  </Styled.Tag>
+                </Styled.Cell>
 
                 <Styled.Cell>
                   {!isLoading ? (
@@ -232,9 +323,9 @@ const Vulnerabilities: React.FC = () => {
 
                 <Styled.Cell>
                   <Icon
-                    name="help"
+                    name="info"
                     size="20px"
-                    onClick={() => setSelectedVulnerability(vul)}
+                    onClick={() => setSelectedVuln(vul)}
                   />
                 </Styled.Cell>
               </Styled.Row>
@@ -244,18 +335,16 @@ const Vulnerabilities: React.FC = () => {
           {vulnerabilities && vulnerabilities.length > 0 ? (
             <Pagination
               pagination={pagination}
-              onChange={(pag) =>
-                fetchData(pag.currentPage, pag.pageSize, currentRepository)
-              }
+              onChange={(pag) => fetchData(filters, { ...pag })}
             />
           ) : null}
         </Styled.Table>
       </Styled.Content>
 
       <Details
-        isOpen={!!selectedVulnerability}
-        onClose={() => setSelectedVulnerability(null)}
-        vulnerability={selectedVulnerability}
+        isOpen={!!selectedVuln}
+        onClose={() => setSelectedVuln(null)}
+        vulnerability={selectedVuln}
       />
     </Styled.Wrapper>
   );
