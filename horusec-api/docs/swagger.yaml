@@ -264,6 +264,10 @@ paths:
         in: query
         name: vulnType
         type: string
+      - description: vulnSeverity query string
+        in: query
+        name: vulnSeverity
+        type: string
       produces:
       - application/json
       responses:
