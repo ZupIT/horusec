@@ -56,7 +56,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	
+
 	response, err := h.authController.AuthByType(credentials, authType)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
