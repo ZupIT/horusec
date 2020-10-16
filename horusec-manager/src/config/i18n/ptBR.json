@@ -242,14 +242,19 @@
     "SEARCH": "Pesquisar vulnerabilidade por hash",
     "TITLE": "Vulnerabilidades",
     "REPOSITORY": "Repositório",
+    "SEVERITY": "Severidade",
+    "ALL_SEVERITIES": "Todas as severidades",
+    "ALL_STATUS": "Todos os status",
+    "STATUS_TITLE": "Status",
     "TABLE": {
       "EMPTY": "Não há vulnerabilidades para este repositorio",
       "HASH": "Hash",
       "DETAILS": "Detalhes",
       "SEVERITY": "Severidade",
-      "TYPE": "Tipo de vulnerabilidade"
+      "STATUS": "Status",
+      "DESCRIPTION": "Descrição"
     },
-    "TYPES": {
+    "STATUS": {
       "VULNERABILITY": "Vulnerabilidade",
       "RISKACCEPTED": "Risco aceito",
       "FALSEPOSITIVE": "Falso Positivo",

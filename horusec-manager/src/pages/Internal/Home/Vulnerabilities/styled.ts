@@ -15,6 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
+import { Select as SelectComponent } from 'components';
 
 interface LoadingWrapperProps {
   isLoading: boolean;
@@ -73,15 +74,21 @@ const Column = styled.span`
 
   &:nth-child(2) {
     max-width: 580px;
-    margin-right: 0px;
+    margin-right: -10px;
   }
 
   &:nth-child(3) {
     max-width: 80px;
   }
 
+  &:nth-child(4) {
+    margin-right: 0px;
+    margin-left: 15px;
+  }
+
   &:nth-child(5) {
     max-width: 30px;
+    margin-right: 40px;
   }
 `;
 
@@ -181,8 +188,13 @@ const EmptyText = styled.span`
   line-height: 170px;
 `;
 
+const Select = styled(SelectComponent)`
+  margin-right: 15px;
+`;
+
 export default {
   Wrapper,
+  Select,
   Options,
   Content,
   Title,

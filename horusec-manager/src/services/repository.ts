@@ -18,6 +18,8 @@ import renewHTTP from 'services/axios/forceRenewToken';
 import defaultHTTP from 'services/axios/default';
 
 import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
+import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
+import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 const getAll = (companyId: string) => {
   return renewHTTP.get(`${SERVICE_COMPANY}/${companyId}/repositories`);
@@ -123,17 +125,19 @@ const updateUserRole = (
 };
 
 const getAllVulnerabilities = (
-  companyId: string,
-  repositoryId: string,
-  page: number,
-  size: number,
-  vulnHash?: string,
-  vulnType?: string
+  filters: FilterVuln,
+  pagination: PaginationInfo
 ) => {
   return defaultHTTP.get(
-    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/management`,
+    `${SERVICE_API}/${filters.companyID}/repositories/${filters.repositoryID}/management`,
     {
-      params: { page, size, vulnType, vulnHash },
+      params: {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+        vulnSeverity: filters.vulnSeverity,
+        vulnHash: filters.vulnHash,
+        vulnType: filters.vulnType,
+      },
     }
   );
 };

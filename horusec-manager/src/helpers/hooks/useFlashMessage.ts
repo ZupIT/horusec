@@ -18,9 +18,8 @@ import { useContext } from 'react';
 import { FlashMessageContext } from 'contexts/FlashMessage';
 
 const useFlashMessage = () => {
-  const { showErrorFlash, showSuccessFlash } = useContext(FlashMessageContext);
-
-  return { showErrorFlash, showSuccessFlash };
+  const context = useContext(FlashMessageContext);
+  return { ...context };
 };
 
 export default useFlashMessage;
