@@ -19,7 +19,7 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
-	horusService "github.com/ZupIT/horusec/horusec-auth/internal/services/horus"
+	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
 )
 
 type IController interface {
@@ -34,7 +34,7 @@ type Controller struct {
 
 func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
-		horusAuthService: horusService.NewHorusAuthService(postgresRead),
+		horusAuthService: horusecService.NewHorusAuthService(postgresRead),
 	}
 }
 
