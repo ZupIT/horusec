@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
@@ -31,9 +32,9 @@ type Controller struct {
 	horusAuthService services.IAuthService
 }
 
-func NewAuthController() IController {
+func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
-		horusAuthService: horusService.NewHorusAuthService(),
+		horusAuthService: horusService.NewHorusAuthService(postgresRead),
 	}
 }
 

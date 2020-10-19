@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"net/http"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -29,12 +30,14 @@ import (
 )
 
 type Service struct {
-	httpUtil httpClient.Interface
+	httpUtil     httpClient.Interface
+	postgresRead relational.InterfaceRead
 }
 
-func NewHorusAuthService() services.IAuthService {
+func NewHorusAuthService(postgresRead relational.InterfaceRead) services.IAuthService {
 	return &Service{
-		httpUtil: httpClient.NewHTTPClient(10),
+		httpUtil:     httpClient.NewHTTPClient(10),
+		postgresRead: postgresRead,
 	}
 }
 

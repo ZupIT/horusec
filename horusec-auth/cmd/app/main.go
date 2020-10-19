@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-auth/config/cors"
 	"github.com/ZupIT/horusec/horusec-auth/config/swagger"
@@ -35,8 +36,10 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	postgresRead := adapter.NewRepositoryRead()
+
 	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter()
+	chiRouter := router.NewRouter(server).GetRouter(postgresRead)
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")

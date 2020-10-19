@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
@@ -30,10 +31,10 @@ type Handler struct {
 	authController authController.IController
 }
 
-func NewAuthHandler() *Handler {
+func NewAuthHandler(postgresRead relational.InterfaceRead) *Handler {
 	return &Handler{
 		authUseCases:   authUseCases.NewAuthUseCases(),
-		authController: authController.NewAuthController(),
+		authController: authController.NewAuthController(postgresRead),
 	}
 }
 
