@@ -15,6 +15,7 @@
 package router
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/health"
@@ -47,9 +48,9 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter() *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead) *chi.Mux {
 	r.setMiddleware()
-	r.RouterAnalysis()
+	r.RouterAnalysis(postgresRead)
 	r.RouterHealth()
 	return r.router
 }
@@ -104,8 +105,8 @@ func (r *Router) RouterHealth() *Router {
 	return r
 }
 
-func (r *Router) RouterAnalysis() *Router {
-	handler := auth.NewAuthHandler()
+func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead) *Router {
+	handler := auth.NewAuthHandler(postgresRead)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
 		router.Post("/authenticate", handler.AuthByType)
 		router.Options("/", handler.Options)

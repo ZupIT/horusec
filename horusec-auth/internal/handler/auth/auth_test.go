@@ -15,14 +15,14 @@ import (
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create new controller", func(t *testing.T) {
-		handler := NewAuthHandler()
+		handler := NewAuthHandler(nil)
 		assert.NotEmpty(t, handler)
 	})
 }
 
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
-		handler := NewAuthHandler()
+		handler := NewAuthHandler(nil)
 		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
 		w := httptest.NewRecorder()
 
