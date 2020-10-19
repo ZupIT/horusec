@@ -48,7 +48,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -70,7 +70,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -90,7 +90,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -132,7 +132,7 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 
@@ -154,7 +154,7 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 
@@ -174,7 +174,7 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 

@@ -49,11 +49,11 @@ type Service struct {
 func NewKeycloakService(databaseRead relational.InterfaceRead) IService {
 	return &Service{
 		ctx:          context.Background(),
-		client:       gocloak.NewClient(env.GetEnvOrDefault("HORUS_KEYCLOAK_BASE_PATH", "")),
-		clientID:     env.GetEnvOrDefault("HORUS_KEYCLOAK_CLIENT_ID", ""),
-		clientSecret: env.GetEnvOrDefault("HORUS_KEYCLOAK_CLIENT_SECRET", ""),
-		realm:        env.GetEnvOrDefault("HORUS_KEYCLOAK_REALM", ""),
-		otp:          env.GetEnvOrDefaultBool("HORUS_KEYCLOAK_OTP", false),
+		client:       gocloak.NewClient(env.GetEnvOrDefault("HORUSEC_KEYCLOAK_BASE_PATH", "")),
+		clientID:     env.GetEnvOrDefault("HORUSEC_KEYCLOAK_CLIENT_ID", ""),
+		clientSecret: env.GetEnvOrDefault("HORUSEC_KEYCLOAK_CLIENT_SECRET", ""),
+		realm:        env.GetEnvOrDefault("HORUSEC_KEYCLOAK_REALM", ""),
+		otp:          env.GetEnvOrDefaultBool("HORUSEC_KEYCLOAK_OTP", false),
 		databaseRead: databaseRead,
 	}
 }

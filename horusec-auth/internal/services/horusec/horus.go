@@ -102,14 +102,14 @@ func (s *Service) parseToLoginResponse(
 
 func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	for _, group := range authorizationData.Groups {
-		return s.authorizeByRole()[authEnums.HorusRoles(group)](authorizationData)
+		return s.authorizeByRole()[authEnums.HorusecRoles(group)](authorizationData)
 	}
 
 	return false, errors.ErrorUnauthorized
 }
 
-func (s *Service) authorizeByRole() map[authEnums.HorusRoles]func(*authEntities.AuthorizationData) (bool, error) {
-	return map[authEnums.HorusRoles]func(*authEntities.AuthorizationData) (bool, error){
+func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error) {
+	return map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error){
 		authEnums.CompanyMember:        s.isCompanyMember,
 		authEnums.CompanyAdmin:         s.isCompanyAdmin,
 		authEnums.RepositoryMember:     s.isRepositoryMember,

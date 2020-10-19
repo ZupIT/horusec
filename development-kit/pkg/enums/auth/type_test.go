@@ -32,7 +32,7 @@ func TestIsInvalid(t *testing.T) {
 		testType = "ldap"
 		assert.False(t, testType.IsInvalid())
 
-		testType = "horus"
+		testType = "horusec"
 		assert.False(t, testType.IsInvalid())
 	})
 }

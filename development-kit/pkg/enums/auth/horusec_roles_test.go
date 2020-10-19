@@ -7,12 +7,12 @@ import (
 
 func TestIsInvalidRoles(t *testing.T) {
 	t.Run("should true when invalid role", func(t *testing.T) {
-		testType := HorusRoles("test")
+		testType := HorusecRoles("test")
 		assert.True(t, testType.IsInvalid())
 	})
 
 	t.Run("should false when valid role", func(t *testing.T) {
-		testType := HorusRoles("companyMember")
+		testType := HorusecRoles("companyMember")
 		assert.False(t, testType.IsInvalid())
 
 		testType = "companyAdmin"

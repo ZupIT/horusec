@@ -19,7 +19,7 @@ type AuthorizationType string
 const (
 	Keycloak AuthorizationType = "keycloak"
 	Ldap     AuthorizationType = "ldap"
-	Horus    AuthorizationType = "horus"
+	Horusec  AuthorizationType = "horusec"
 )
 
 func (a AuthorizationType) IsInvalid() bool {
@@ -36,6 +36,6 @@ func (a AuthorizationType) Values() []AuthorizationType {
 	return []AuthorizationType{
 		Keycloak,
 		Ldap,
-		Horus,
+		Horusec,
 	}
 }

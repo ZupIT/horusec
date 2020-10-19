@@ -42,7 +42,7 @@ func NewAuthController(postgresRead relational.InterfaceRead) IController {
 func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 	authorizationType authEnums.AuthorizationType) (interface{}, error) {
 	switch authorizationType {
-	case authEnums.Horus:
+	case authEnums.Horusec:
 		return c.horusAuthService.Authenticate(credentials)
 	case authEnums.Keycloak:
 	case authEnums.Ldap:
@@ -54,7 +54,7 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
 	authorizationType authEnums.AuthorizationType) (interface{}, error) {
 	switch authorizationType {
-	case authEnums.Horus:
+	case authEnums.Horusec:
 		return c.horusAuthService.IsAuthorized(authorizationData)
 	case authEnums.Keycloak:
 	case authEnums.Ldap:

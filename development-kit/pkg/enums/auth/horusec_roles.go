@@ -1,16 +1,16 @@
 package auth
 
-type HorusRoles string
+type HorusecRoles string
 
 const (
-	CompanyMember        HorusRoles = "companyMember"
-	CompanyAdmin         HorusRoles = "companyAdmin"
-	RepositoryMember     HorusRoles = "repositoryMember"
-	RepositorySupervisor HorusRoles = "repositorySupervisor"
-	RepositoryAdmin      HorusRoles = "repositoryAdmin"
+	CompanyMember        HorusecRoles = "companyMember"
+	CompanyAdmin         HorusecRoles = "companyAdmin"
+	RepositoryMember     HorusecRoles = "repositoryMember"
+	RepositorySupervisor HorusecRoles = "repositorySupervisor"
+	RepositoryAdmin      HorusecRoles = "repositoryAdmin"
 )
 
-func (h HorusRoles) IsInvalid() bool {
+func (h HorusecRoles) IsInvalid() bool {
 	for _, v := range h.Values() {
 		if v == h {
 			return false
@@ -20,8 +20,8 @@ func (h HorusRoles) IsInvalid() bool {
 	return true
 }
 
-func (h HorusRoles) Values() []HorusRoles {
-	return []HorusRoles{
+func (h HorusecRoles) Values() []HorusecRoles {
+	return []HorusecRoles{
 		CompanyMember,
 		CompanyAdmin,
 		RepositoryMember,
@@ -30,10 +30,10 @@ func (h HorusRoles) Values() []HorusRoles {
 	}
 }
 
-func (h HorusRoles) IsEqual(value string) bool {
+func (h HorusecRoles) IsEqual(value string) bool {
 	return value == h.ToString()
 }
 
-func (h HorusRoles) ToString() string {
+func (h HorusecRoles) ToString() string {
 	return string(h)
 }
