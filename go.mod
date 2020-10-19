@@ -29,6 +29,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/iancoleman/strcase v0.1.2
 	github.com/jinzhu/gorm v1.9.16
+	github.com/jtblin/go-ldap-client v0.0.0-20170223121919-b73f66626b33 // indirect
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.4
@@ -59,9 +60,11 @@ require (
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0
 	golang.org/x/sys v0.0.0-20201018230417-eeed37f84f13 // indirect
-	golang.org/x/tools v0.0.0-20201017001424-6003fad69a88 // indirect
+	golang.org/x/tools v0.0.0-20201019160706-0a3dcccdcf7a // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/ini.v1 v1.62.0 // indirect
+	gopkg.in/ldap.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
