@@ -38,7 +38,4 @@ runMigration() {
         $MIGRATE_TYPE "$MIGRATE_NUMBERS"
 }
 
-chmod +x ./deployments/scripts/migration-install.sh
-./deployments/scripts/migration-install.sh
-
 runMigration
