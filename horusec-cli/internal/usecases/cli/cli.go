@@ -68,7 +68,35 @@ func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 		validation.Field(&config.WorkDir, validation.By(au.validateWorkDir(config.WorkDir, config.ProjectPath))),
 		validation.Field(&config.CertInsecureSkipVerify, validation.In(true, false)),
 		validation.Field(&config.CertPath, validation.By(au.validateCertPath(config.CertPath))),
+		validation.Field(&config.FalsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
+		validation.Field(&config.RiskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
 	)
+}
+
+func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
+	return func(value interface{}) error {
+		for _, falsePositive := range config.GetFalsePositiveHashesList() {
+			for _, riskAccept := range config.GetRiskAcceptHashesList() {
+				if falsePositive == riskAccept {
+					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
+				}
+			}
+		}
+		return nil
+	}
+}
+
+func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
+	return func(value interface{}) error {
+		for _, riskAccept := range config.GetRiskAcceptHashesList() {
+			for _, falsePositive := range config.GetFalsePositiveHashesList() {
+				if riskAccept == falsePositive {
+					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
+				}
+			}
+		}
+		return nil
+	}
 }
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config) func(value interface{}) error {
@@ -92,7 +120,7 @@ func (au *UseCases) validateJSONOutputFilePath(config *cliConfig.Config) error {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid .json file")
 	}
 
-	if _, err := filepath.Abs(config.JSONOutputFilePath); err != nil {
+	if output, err := filepath.Abs(config.JSONOutputFilePath); err != nil || output == "" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
 	}
 	return nil

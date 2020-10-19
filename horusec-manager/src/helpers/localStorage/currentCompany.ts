@@ -45,9 +45,15 @@ const isAdminOfCompany = (): boolean => {
   }
 };
 
+const userRoleInCurrentCompany = (): string => {
+  const currentCompany = getCurrentCompany();
+  return currentCompany?.role;
+};
+
 export {
   getCurrentCompany,
   setCurrentCompany,
   clearCurrentCompany,
   isAdminOfCompany,
+  userRoleInCurrentCompany,
 };

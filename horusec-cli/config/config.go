@@ -17,6 +17,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 
@@ -139,6 +140,12 @@ const (
 	// Used to send the repository name to the server, must be used together with the company token.
 	// By default is empty
 	EnvRepositoryName = "HORUSEC_CLI_REPOSITORY_NAME"
+	// Used to skip vulnerability of type false positive
+	// By default is empty
+	EnvFalsePositiveHashes = "HORUSEC_CLI_FALSE_POSITIVE_HASHES"
+	// Used to skip vulnerability of type risk accept
+	// By default is empty
+	EnvRiskAcceptHashes = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
 )
 
 type Config struct {
@@ -162,6 +169,8 @@ type Config struct {
 	CertPath                        string
 	EnableCommitAuthor              bool
 	RepositoryName                  string
+	FalsePositiveHashes             string
+	RiskAcceptHashes                string
 }
 
 //nolint
@@ -187,6 +196,8 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetCertPath(viper.GetString(c.toLowerCamel(EnvCertPath)))
 	c.SetEnableCommitAuthor(viper.GetBool(c.toLowerCamel(EnvEnableCommitAuthor)))
 	c.SetRepositoryName(viper.GetString(c.toLowerCamel(EnvRepositoryName)))
+	c.SetFalsePositiveHashes(viper.GetString(c.toLowerCamel(EnvFalsePositiveHashes)))
+	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
 }
 
 //nolint
@@ -210,6 +221,8 @@ func (c *Config) SetConfigsFromEnvironments() {
 	c.SetCertPath(env.GetEnvOrDefault(EnvCertPath, c.CertPath))
 	c.SetEnableCommitAuthor(env.GetEnvOrDefaultBool(EnvEnableCommitAuthor, c.EnableCommitAuthor))
 	c.SetRepositoryName(env.GetEnvOrDefault(EnvRepositoryName, c.RepositoryName))
+	c.SetFalsePositiveHashes(env.GetEnvOrDefault(EnvFalsePositiveHashes, c.FalsePositiveHashes))
+	c.SetRiskAcceptHashes(env.GetEnvOrDefault(EnvRiskAcceptHashes, c.RiskAcceptHashes))
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -378,4 +391,40 @@ func (c *Config) SetRepositoryName(repositoryName string) {
 
 func (c *Config) GetRepositoryName() string {
 	return c.RepositoryName
+}
+
+func (c *Config) GetRiskAcceptHashes() string {
+	return c.RiskAcceptHashes
+}
+
+func (c *Config) GetRiskAcceptHashesList() (list []string) {
+	for _, item := range strings.Split(c.RiskAcceptHashes, ",") {
+		itemFormatted := strings.TrimSpace(item)
+		if len(itemFormatted) > 0 {
+			list = append(list, itemFormatted)
+		}
+	}
+	return list
+}
+
+func (c *Config) SetRiskAcceptHashes(riskAccept string) {
+	c.RiskAcceptHashes = riskAccept
+}
+
+func (c *Config) GetFalsePositiveHashes() string {
+	return c.FalsePositiveHashes
+}
+
+func (c *Config) GetFalsePositiveHashesList() (list []string) {
+	for _, item := range strings.Split(c.FalsePositiveHashes, ",") {
+		itemFormatted := strings.TrimSpace(item)
+		if len(itemFormatted) > 0 {
+			list = append(list, itemFormatted)
+		}
+	}
+	return list
+}
+
+func (c *Config) SetFalsePositiveHashes(falsePositive string) {
+	c.FalsePositiveHashes = falsePositive
 }

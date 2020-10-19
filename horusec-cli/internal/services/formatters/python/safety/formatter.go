@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"os"
 	"strconv"
 	"strings"
@@ -33,7 +34,6 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -102,7 +102,10 @@ func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput pytho
 func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []python.SafetyIssues) {
 	for index := range issues {
 		vulnerability := f.setupVulnerabilitiesSeveritiesSafety(issues, index)
-		f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+			horusec.AnalysisVulnerabilities{
+				Vulnerability: *vulnerability,
+			})
 	}
 }
 

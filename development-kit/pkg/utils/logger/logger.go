@@ -41,6 +41,8 @@ const (
 	TraceLevel = logrus.TraceLevel
 )
 
+var CurrentLevel = InfoLevel
+
 func LogPanic(msg string, err error, args ...map[string]interface{}) {
 	if err != nil {
 		if len(args) > 0 {
@@ -85,6 +87,7 @@ func SetLogLevel(level string) {
 		logLevel = InfoLevel
 	}
 	logrus.SetLevel(logLevel)
+	CurrentLevel = logLevel
 }
 
 func LogPanicWithLevel(msg string, err error, level logrus.Level, args ...map[string]interface{}) {

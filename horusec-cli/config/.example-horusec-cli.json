@@ -14,5 +14,7 @@
   "horusecCliEnableGitHistoryAnalysis": true,
   "horusecCliCertInsecureSkipVerify": true,
   "horusecCliWorkDir": {},
-  "horusecCliRepositoryName": "horus"
+  "horusecCliRepositoryName": "horus",
+  "horusecCliFalsePositiveHashes": "hash1, hash2",
+  "horusecCliRiskAcceptHashes": "hash3, hash4"
 }

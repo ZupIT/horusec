@@ -32,6 +32,7 @@ import HomeLayout from '../layouts/Home';
 import Dashboard from '../pages/Internal/Home/Dashboard';
 import Repositories from '../pages/Internal/Home/Repositories';
 import Users from '../pages/Internal/Home/Users';
+import Vulnerabilities from '../pages/Internal/Home/Vulnerabilities';
 
 function HomeRoutes() {
   const history = useHistory();
@@ -64,6 +65,12 @@ function HomeRoutes() {
         <Route
           path={`${path}/dashboard/repositories`}
           component={() => <Dashboard type="repository" />}
+        />
+
+        <Route
+          exact
+          path={`${path}/vulnerabilities`}
+          component={() => <Vulnerabilities />}
         />
 
         <Route

@@ -24,6 +24,7 @@ import { useTheme } from 'styled-components';
 import companyService from 'services/company';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -45,6 +46,7 @@ const InviteToCompany: React.FC<Props> = ({
   const { colors } = useTheme();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const roles: Role[] = [
     {
@@ -52,7 +54,7 @@ const InviteToCompany: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      name: t('PERMISSIONS.USER'),
       value: 'member',
     },
   ];
@@ -61,12 +63,12 @@ const InviteToCompany: React.FC<Props> = ({
   const [permissionsIsOpen, setPermissionsIsOpen] = useState(false);
 
   const [email, setEmail] = useState<Field>({ value: '', isValid: false });
-  const [role, setRole] = useState<Role>(roles[0]);
+  const [role, setRole] = useState<Role>(null);
 
   const resetFields = () => {
     const defaultValue = { value: '', isValid: false };
     setEmail(defaultValue);
-    setRole(roles[0]);
+    setRole(null);
   };
 
   const handleConfirmSave = () => {
@@ -76,6 +78,7 @@ const InviteToCompany: React.FC<Props> = ({
       companyService
         .createUserInCompany(companyID, email.value, role.value)
         .then(() => {
+          showSuccessFlash(t('USERS_SCREEN.INVITE_SUCCESS'));
           onConfirm();
           resetFields();
         })
@@ -98,11 +101,10 @@ const InviteToCompany: React.FC<Props> = ({
       }}
       onConfirm={handleConfirmSave}
       confirmText={t('USERS_SCREEN.SAVE')}
-      disableConfirm={!email.isValid}
+      disableConfirm={!email.isValid || !role}
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
       width={450}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>{t('USERS_SCREEN.INVITE_SUBTITLE')}</Styled.SubTitle>
@@ -123,7 +125,7 @@ const InviteToCompany: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
-          initialValue={roles[0]}
+          optionsHeight="65px"
           options={roles}
           onChangeValue={(item) => setRole(item)}
         />

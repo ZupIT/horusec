@@ -32,7 +32,7 @@ const Background = styled.div`
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.dialog.background};
-  width: 520px;
+  width: 580px;
   padding: 30px 50px;
   border-radius: 4px;
 `;

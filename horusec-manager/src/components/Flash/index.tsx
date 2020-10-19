@@ -16,16 +16,20 @@
 
 import React from 'react';
 import Styled from './styled';
+import { Icon } from 'components';
 
 interface Props {
   isVisible: boolean;
   message: string;
+  type: 'success' | 'error';
 }
 
-const Flash: React.FC<Props> = ({ isVisible, message }) => {
+const Flash: React.FC<Props> = ({ isVisible, message, type }) => {
   return (
     <>
-      <Styled.Wrapper isVisible={isVisible}>
+      <Styled.Wrapper type={type} isVisible={isVisible}>
+        <Icon name={type} size="16px" />
+
         <Styled.Text>{message}</Styled.Text>
       </Styled.Wrapper>
     </>

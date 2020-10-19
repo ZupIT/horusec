@@ -163,3 +163,84 @@ func TestIsAdminRepository(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, rr.Code)
 	})
 }
+
+func TestIsRepositorySupervisor(t *testing.T) {
+	t.Run("should return 200 when everything its alright", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		accountCompany := &roles.AccountRepository{
+			AccountID: uuid.New(),
+			Role:      "supervisor",
+		}
+
+		resp := response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+
+		middleware := NewRepositoryAuthzMiddleware(mockRead, mockWrite)
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req = setRequestAuthorizationHeader(req)
+
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("should return 403 when invalid role", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		accountCompany := &roles.AccountCompany{
+			AccountID: uuid.New(),
+			Role:      "member",
+		}
+
+		resp := response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+
+		middleware := NewRepositoryAuthzMiddleware(mockRead, mockWrite)
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req = setRequestAuthorizationHeader(req)
+
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusForbidden, rr.Code)
+	})
+
+	t.Run("should return 403 when find return error", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := response.Response{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+
+		middleware := NewRepositoryAuthzMiddleware(mockRead, mockWrite)
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req = setRequestAuthorizationHeader(req)
+
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusForbidden, rr.Code)
+	})
+
+	t.Run("should return 401 when invalid jwt token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		middleware := NewRepositoryAuthzMiddleware(mockRead, mockWrite)
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+		req, _ := http.NewRequest("GET", "http://test", nil)
+
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusUnauthorized, rr.Code)
+	})
+}

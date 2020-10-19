@@ -53,11 +53,11 @@ func NewAnalysisUseCases() Interface {
 
 func (au *UseCases) NewAnalysisRunning() *horusecEntities.Analysis {
 	return &horusecEntities.Analysis{
-		ID:              uuid.New(),
-		Status:          horusec.Running,
-		Errors:          "",
-		CreatedAt:       time.Now(),
-		Vulnerabilities: []horusecEntities.Vulnerability{},
+		ID:                      uuid.New(),
+		Status:                  horusec.Running,
+		Errors:                  "",
+		CreatedAt:               time.Now(),
+		AnalysisVulnerabilities: []horusecEntities.AnalysisVulnerabilities{},
 	}
 }
 
@@ -104,26 +104,36 @@ func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {
 			validation.Required, validation.In(horusec.Running, horusec.Success, horusec.Error)),
 		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
 		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
-		validation.Field(&analysis.Vulnerabilities, validation.By(au.validateVulnerabilities(analysis.Vulnerabilities))),
+		validation.Field(&analysis.AnalysisVulnerabilities,
+			validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
 	)
 }
 
-func (au *UseCases) validateVulnerabilities(vulnerabilities []horusecEntities.Vulnerability) validation.RuleFunc {
+func (au *UseCases) validateVulnerabilities(
+	analysisVulnerabilities []horusecEntities.AnalysisVulnerabilities) validation.RuleFunc {
 	return func(value interface{}) error {
-		if len(vulnerabilities) == 0 {
-			return nil
-		}
-		for key := range vulnerabilities {
-			if err := validation.ValidateStruct(&vulnerabilities[key],
-				validation.Field(&vulnerabilities[key].SecurityTool, validation.Required, validation.In(au.sliceTools()...)),
-				validation.Field(&vulnerabilities[key].Language, validation.Required, validation.In(au.sliceLanguages()...)),
-				validation.Field(&vulnerabilities[key].Severity, validation.Required, validation.In(au.sliceSeverities()...)),
-			); err != nil {
+		for key := range analysisVulnerabilities {
+			if err := au.setupValidationVulnerabilities(&analysisVulnerabilities[key].Vulnerability); err != nil {
 				return err
 			}
 		}
 		return nil
 	}
+}
+
+func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntities.Vulnerability) error {
+	return validation.ValidateStruct(vulnerability,
+		validation.Field(&vulnerability.SecurityTool, validation.Required,
+			validation.In(au.sliceTools()...)),
+		validation.Field(&vulnerability.VulnHash, validation.Required),
+		validation.Field(&vulnerability.Language, validation.Required,
+			validation.In(au.sliceLanguages()...)),
+		validation.Field(&vulnerability.Severity, validation.Required,
+			validation.In(au.sliceSeverities()...)),
+		validation.Field(&vulnerability.Type,
+			validation.Required, validation.In(horusec.FalsePositive, horusec.RiskAccepted,
+				horusec.Vulnerability, horusec.Corrected)),
+	)
 }
 
 func (au *UseCases) sliceTools() []interface{} {

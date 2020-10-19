@@ -17,9 +17,10 @@ package account
 type Role string
 
 const (
-	Admin   Role = "admin"
-	Member  Role = "member"
-	Unknown Role = "unknown"
+	Admin      Role = "admin"
+	Member     Role = "member"
+	Supervisor Role = "supervisor"
+	Unknown    Role = "unknown"
 )
 
 func (r Role) IsValid() bool {

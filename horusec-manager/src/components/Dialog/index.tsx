@@ -28,6 +28,7 @@ interface DialogProps {
   onCancel?: Function;
   confirmText: string;
   defaultButton?: boolean;
+  roundedButton?: boolean;
   width?: number;
   disableConfirm?: boolean;
   disabledColor?: string;
@@ -47,6 +48,7 @@ const Dialog: React.FC<DialogProps> = ({
   disableConfirm,
   disabledColor,
   loadingConfirm,
+  roundedButton,
 }) => {
   const [visibility, setVisibility] = useState(false);
   const { t } = useTranslation();
@@ -76,7 +78,7 @@ const Dialog: React.FC<DialogProps> = ({
                   text={t('GENERAL.CANCEL')}
                   width={105}
                   height={35}
-                  rounded={!defaultButton}
+                  rounded={roundedButton}
                   outline
                   onClick={() => onCancel()}
                 />
@@ -87,7 +89,7 @@ const Dialog: React.FC<DialogProps> = ({
                 width={105}
                 height={35}
                 onClick={(e) => handleConfirm(e)}
-                rounded={!defaultButton}
+                rounded={roundedButton}
                 color={defaultButton ? colors.dialog.confirmBtn : null}
                 disabledColor={disabledColor}
                 isDisabled={disableConfirm}

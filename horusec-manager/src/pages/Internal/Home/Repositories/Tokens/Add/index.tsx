@@ -94,7 +94,6 @@ const AddToken: React.FC<Props> = ({
         disabledColor={colors.button.disableInDark}
         loadingConfirm={isLoading}
         width={600}
-        defaultButton
         hasCancel
       >
         <Styled.SubTitle>

@@ -15,21 +15,19 @@
 package bandit
 
 import (
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strconv"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/python"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsHorusec "github.com/ZupIT/horusec/development-kit/pkg/utils/horusec"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	vulnhash "github.com/ZupIT/horusec/horusec-cli/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -97,7 +95,8 @@ func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []python.BanditResul
 	for index := range issues {
 		if f.notSkipVulnerabilityBecauseIsInformation(issues, index) {
 			vulnerability := f.setupVulnerabilitiesSeveritiesBandit(issues, index)
-			f.GetAnalysis().Vulnerabilities = append(f.GetAnalysis().Vulnerabilities, *vulnerability)
+			f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+				horusec.AnalysisVulnerabilities{Vulnerability: *vulnerability})
 		} else {
 			totalInformation++
 		}
@@ -112,7 +111,7 @@ func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []python.BanditResul
 func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
 	issues []python.BanditResult, index int) *horusec.Vulnerability {
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverity()
-	vulnerabilitySeverity.Severity = f.getSeverity(issues, index)
+	vulnerabilitySeverity.Severity = issues[index].IssueSeverity
 	vulnerabilitySeverity.Details = issues[index].IssueText
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Code, 0)
 	vulnerabilitySeverity.Line = strconv.Itoa(issues[index].LineNumber)
@@ -143,10 +142,6 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity.SecurityTool = tools.Bandit
 	vulnerabilitySeverity.Column = "0"
 	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getSeverity(issues []python.BanditResult, index int) severity.Severity {
-	return utilsHorusec.GetSeverityOrNoSec(issues[index].IssueSeverity, issues[index].Code)
 }
 
 func (f *Formatter) notSkipVulnerabilityBecauseIsInformation(issues []python.BanditResult, index int) bool {

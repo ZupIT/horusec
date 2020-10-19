@@ -31,6 +31,8 @@ interface Props {
   keyValue?: string;
   rounded?: boolean;
   width?: string;
+  optionsHeight?: string;
+  selectText?: string;
 }
 
 const Select: React.FC<Props> = ({
@@ -44,6 +46,8 @@ const Select: React.FC<Props> = ({
   keyValue,
   rounded,
   width,
+  optionsHeight,
+  selectText,
 }) => {
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);
@@ -65,7 +69,12 @@ const Select: React.FC<Props> = ({
       );
     }
     // eslint-disable-next-line
-  }, [initialValue, keyValue]);
+  }, [initialValue]);
+
+  const renderSelectText = () => {
+    if (selectText) return selectText;
+    else return t('GENERAL.SELECT');
+  };
 
   return (
     <Styled.Wrapper
@@ -83,13 +92,15 @@ const Select: React.FC<Props> = ({
         width={width}
       >
         <Styled.CurrentValue>
-          {currentValue ? currentValue[keyLabel] : t('GENERAL.SELECT')}
+          {currentValue ? currentValue[keyLabel] : renderSelectText()}
         </Styled.CurrentValue>
 
         <Styled.OptionsList
           isOpen={openOptionsList}
           rounded={rounded}
           width={width}
+          height={optionsHeight}
+          className="options-list"
         >
           {options.map((option, index) => (
             <Styled.OptionItem

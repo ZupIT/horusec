@@ -98,12 +98,11 @@ workflows:
 
 * Example using `code-build`:
     *   Environment:
-        - `Managed Image`
-            - Operating system: `Ubuntu` 
-            - Runtime(s): `Standard`
-            - Image: `aws/codebuild/standard:4.0`
+        - `CUstom Image`
+            - Environment type: `Linux` 
+            - Image registry: `Other registry`
+            - External registry URL: `horuszup/horusec-cli`
             - Image Version: `Alway use the latest image for this runtime version`
-            - Environment Type: `Linux`
             - Privileged: `true`
             - Allow AWS CodeBuild to modify this service role so it can be used with this build project: `true`
 
@@ -114,9 +113,7 @@ workflows:
     phases:
       build:
         commands:
-           - curl -fsSL https://horusec-cli.s3.amazonaws.com/latest/linux_x64/horusec -o horusec
-           - chmod +x horusec
-           - ./horusec start -p="./" -e="true"
+           - sh /usr/local/bin/hoursec-cli.sh -p="./" -e="true"
     ```
 
 #### Check the installation
@@ -167,6 +164,8 @@ The configuration file receive an object with the content follow:
       "horusecCliCertInsecureSkipVerify":  false,
       "horusecCliEnableCommitAuthor": false,
       "horusecCliRepositoryName": "",
+      "horusecCliFalsePositiveHashes": "",
+      "horusecCliRiskAcceptHashes": "",
       "horusecCliWorkDir": {
 	        "go":         [],
 	        "netCore":    [],
@@ -175,8 +174,8 @@ The configuration file receive an object with the content follow:
 	        "java" :      [],
 	        "kotlin":     [],
 	        "javaScript": [],
-	        "git":        [],
-          "hlc":        []    
+	        "leaks":      [],
+                "hlc":        []    
       }
 }
 ```
@@ -205,6 +204,8 @@ export HORUSEC_CLI_CERT_INSECURE_SKIP_VERIFY="false"
 export HORUSEC_CLI_CERT_PATH=""
 export HORUSEC_CLI_ENABLE_COMMIT_AUTHOR="false"
 export HORUSEC_CLI_REPOSITORY_NAME=""
+export HORUSEC_CLI_FALSE_POSITIVE_HASHES=""
+export HORUSEC_CLI_RISK_ACCEPT_HASHES=""
 ```
 
 ### Using Flags
@@ -235,6 +236,8 @@ All available flags are:
 | HORUSEC_CLI_ENABLE_GIT_HISTORY_ANALYSIS         | horusecCliEnableGitHistoryAnalysis         | enable-git-history       |               | false                                   | This setting is to know if I want enable run gitleaks tools and analysis in all git history searching vulnerabilities. |
 | HORUSEC_CLI_ENABLE_COMMIT_AUTHOR                | horusecCliEnableCommitAuthor               | enable-commit-author     | G             | false                                   | Used to enable and disable commit author. Ex.: `G="true"`|
 | HORUSEC_CLI_REPOSITORY_NAME                     | horusecCliRepositoryName                   | repository-name          | n             |                                         | Used to send the repository name to the server, must be used together with the company token. |
+| HORUSEC_CLI_FALSE_POSITIVE_HASHES               | horusecCliFalsePositiveHashes              | false-positive           | F             |                                         | Used to ignore vulnerability on analysis and setup with type `False positive`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
+| HORUSEC_CLI_RISK_ACCEPT_HASHES                  | horusecCliRiskAcceptHashes                 | risk-accept              | R             |                                         | Used to ignore vulnerability on analysis and setup with type `Risk accept`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 |                                                 | horusecCliWorkDir                          |                          |               |                                         | This setting tells to horusec the right directory to run a specific language. |
 
 #### Authorization
@@ -295,7 +298,7 @@ The interface of languages accepts is:
     java       []string
     kotlin     []string
     javaScript []string
-    git        []string
+    leaks      []string
     hlc        []string
 }
 ```
@@ -318,7 +321,7 @@ horusec start --authorization="REPOSITORY_TOKEN" --project-path="/home/user/proj
 
 Example to ignore folders or paths
 ```bash
-horusec start -p="/home/user/project" -a="REPOSITORY_TOKEN" -i="./node_modules,./vendor,./public"
+horusec start -p="/home/user/project" -a="REPOSITORY_TOKEN" -i="./node_modules,./vendor,./public, **/*test.go"
 ```
 
 Example to get output json
@@ -354,61 +357,45 @@ By default, we ignore some files of the type:
 ```bash
 The folder selected is: [/home/user/go/src/github.com/ZupIT/examples]. Proceed? [Y/n]: Y|
 
-WARN[0001] {HORUSEC_CLI} When starting the analysis WE SKIP A TOTAL OF 5 FILES that are not considered to be analyzed. To see more details use flag --log-level=debug 
-WARN[0002] {HORUSEC_CLI} Project sent to .horusec folder in location: [/home/user/go/src/github.com/ZupIT/examples/.horusec/aef94c3b-87e2-43b2-a5e5-380ef18b253f]  
+WARN[0000] {HORUSEC_CLI} When starting the analysis WE SKIP A TOTAL OF 5 FILES that are not considered to be analyzed. To see more details use flag --log-level=debug 
 ```
 
 Before the analysis starts it will send your project to `.horusec` folder to not change your code!
 ```bash
-WARN[0002] {HORUSEC_CLI} Project sent to .horusec folder in location: [/home/user/go/src/github.com/ZupIT/examples/.horusec/aef94c3b-87e2-43b2-a5e5-380ef18b253f] 
-WARN[0002] {HORUSEC_CLI} PLEASE DON'T REMOVE ".horusec" FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: [/home/user/go/src/github.com/ZupIT/examples/.horusec/2606972e-a3c9-4acf-9afa-30305c3bfaf6] 
+WARN[0000] {HORUSEC_CLI} PLEASE DON'T REMOVE ".horusec" FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: [/home/user/go/src/github.com/ZupIT/examples/horus-example-vulnerabilities/.horusec/b490ca3f-9fd9-479f-bcb7-511ad586fafc] 
 ```
 
 Now you can wait horusec work in your files search vulnerabilities.
 ```bash
-INFO[0001] Hold on! Horusec still analysis your code. Timeout in: 600s
+INFO[0000] Hold on! Horusec still analysis your code. Timeout in: 600s
 ```
 
 If your analysis not contains vulnerabilities you can see an proccess of exit with `success`!
 ```bash
 ==================================================================================
 
-HORUSEC ENDED THE ANALYSIS COM STATUS OF "success" AND WITH THE FOLLOWING RESULTS:
+HORUSEC ENDED THE ANALYSIS WITH STATUS OF "success" AND WITH THE FOLLOWING RESULTS:
 
 ==================================================================================
 
-Analysis StartedAt: 2020-09-18 14:23:33
-Analysis FinishedAt: 2020-09-18 14:23:48
+Analysis StartedAt: 2020-10-15 15:07:30
+Analysis FinishedAt: 2020-10-15 15:07:45
 
 ==================================================================================
 
+Language: Leaks
+Severity: HIGH
+Line: 1
+Column: 27
+SecurityTool: HorusecLeaks
+Confidence: MEDIUM
+File: deployments/certs/client-api-cert.pem
+Code: -----BEGIN CERTIFICATE-----
+Details: Asymmetric Private Key
+Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
+Type: Vulnerability
+ReferenceHash: a777f0cc3ef58361800f8e837ef142bb5b1da23d09c9bd6ad51040e21a46a82d
 
-==================================================================================
-
-
-WARN[0016] {HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis 
-
-WARN[0016] YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!
-```
-
-
-If your analysis not contains vulnerabilities you can see an proccess of exit with `error`!
-```bash
-==================================================================================
-
-HORUSEC ENDED THE ANALYSIS COM STATUS OF "success" AND WITH THE FOLLOWING RESULTS:
-
-==================================================================================
-
-Analysis StartedAt: 2020-09-18 14:20:18
-Analysis FinishedAt: 2020-09-18 14:21:18
-
-==================================================================================
-
-Total of Vulnerabilities HIGH is: 6
-Total of Vulnerabilities MEDIUM is: 1
-Total of Vulnerabilities NOSEC is: 1
-A total of 8 vulnerabilities were found in this analysis
 
 ==================================================================================
 
@@ -422,25 +409,9 @@ File: deployments/certs/ca-key.pem
 Code: -----BEGIN RSA PRIVATE KEY-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: 5f561d3de881caa747d0b465e4d4892e2b7e2798491a3336ff1b2db7feae03a9
 
-==================================================================================
-
-Language: Leaks
-Severity: HIGH
-Line: 1
-Column: 31
-SecurityTool: HorusecLeaks
-Confidence: MEDIUM
-File: deployments/certs/server-key.pem
-Code: -----BEGIN RSA PRIVATE KEY-----
-Details: Asymmetric Private Key
-Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
 
 ==================================================================================
 
@@ -454,25 +425,9 @@ File: deployments/certs/ca.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: decf93ed7744547378332b3e4cb5afa73a837a4a5bff968a3a9d1cc9d5e00009
 
-==================================================================================
-
-Language: Leaks
-Severity: HIGH
-Line: 1
-Column: 27
-SecurityTool: HorusecLeaks
-Confidence: MEDIUM
-File: deployments/certs/client-horusecapi-cert.pem
-Code: -----BEGIN CERTIFICATE-----
-Details: Asymmetric Private Key
-Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
 
 ==================================================================================
 
@@ -482,13 +437,13 @@ Line: 1
 Column: 31
 SecurityTool: HorusecLeaks
 Confidence: MEDIUM
-File: deployments/certs/client-horusecapi-key.pem
+File: deployments/certs/client-api-key.pem
 Code: -----BEGIN RSA PRIVATE KEY-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: b89ba62ab42e6c9d8d0dfa387e812583a66ea1f8f68b7d9af689bcda1830e1e6
+
 
 ==================================================================================
 
@@ -502,9 +457,121 @@ File: deployments/certs/server-cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Asymmetric Private Key
 Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: 178bf5090b749f5eb7b081bccb0112eadac3d9ed3229d813e727ede62a3c6f15
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 1
+Column: 31
+SecurityTool: HorusecLeaks
+Confidence: MEDIUM
+File: deployments/certs/server-key.pem
+Code: -----BEGIN RSA PRIVATE KEY-----
+Details: Asymmetric Private Key
+Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.
+Type: Vulnerability
+ReferenceHash: be6d266459bdfb52341fdbd36924dcac6259de0acd91b61b71e7d2335b329d67
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 22
+Column: 17
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code: "code": "password = 'thisisnotapassword'",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: f385c57fea769b3cab37d5697f245733aa10ba0a4260ac139a9bf0de2075c2d2
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 46
+Column: 29
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code: "code": "\"code\": \"password = 'thisisnotapassword' #nohorus\",",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: 6d0a3695ca2b381c45a211eec9d7a70698b5ef76c871608591c4f6788395e03f
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 70
+Column: 41
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code: 123!'\\n2 \\n3 password = 'thisisnotapassword' #nohorus\\n4 \\n\",",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: 95921a4bcbe27cc826c9aeaed1d5888ca4858e10e29a237cb7905bcadd9d3247
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 94
+Column: 31
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code: ' #nohorus\\n4 \\n5 command = 'print \\\"this command is not secure!!\\\"'\\n\",",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: 3e10e7961d29cc18db5b5fa714c6038ddd767abacaeeec519d1fd7c8bf938412
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 142
+Column: 29
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code: "code": "1 secret = 'password123!'\n2 \n3 password = 'thisisnotapassword'\n4 \n",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: 234c325a526a25c26eba2ec7e10d7bfd77beb921c6ca68ddadf2b78694addd5f
+
+
+==================================================================================
+
+Language: Leaks
+Severity: HIGH
+Line: 166
+Column: 23
+SecurityTool: HorusecLeaks
+Confidence: HIGH
+File: tmp.json
+Code:  = 'thisisnotapassword' \n4 \n5 command = 'print \"this command is not secure!!\"'\n",
+Details: Hard-coded password
+The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.
+Type: Vulnerability
+ReferenceHash: 8fcfe8daaac2e7aac63c5447abd2486b8d09d1448a7aca5455c5da33f9091f15
+
 
 ==================================================================================
 
@@ -516,38 +583,63 @@ SecurityTool: GoSec
 Confidence: HIGH
 File: api/util/util.go
 Code: 3: import (
-4:      "crypto/md5"
-5:      "fmt"
+4: 	"crypto/md5"
+5: 	"fmt"
 
 Details: Blocklisted import crypto/md5: weak cryptographic primitive
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: 52b41d4a4201cff3da8a5fd6303a97ec5c7ce07e24353b8e94e19daa41ce0a87
+
 
 ==================================================================================
 
 Language: Go
-Severity: NOSEC
+Severity: MEDIUM
 Line: 23
 Column: 7
 SecurityTool: GoSec
 Confidence: HIGH
 File: api/util/util.go
 Code: 22: func GetMD5(s string) string {
-23:     h := md5.New()
-24:     io.WriteString(h, s) // #nohorus
+23: 	h := md5.New()
+24: 	io.WriteString(h, s) // #nohorus
 
 Details: Use of weak cryptographic primitive
-Type: 
-VulnerableBelow: 
-Version: 
+Type: Vulnerability
+ReferenceHash: ce77f584d135e67bf1b877710b97a9046e4f69b15f940014c346f7f0cc8810aa
+
+
+==================================================================================
+
+Language: Go
+Severity: LOW
+Line: 24
+Column: 2
+SecurityTool: GoSec
+Confidence: HIGH
+File: api/util/util.go
+Code: : 	h := md5.New()
+24: 	io.WriteString(h, s) // #nohorus
+25: 	md5Result := fmt.Sprintf("%x", h.Sum(ni
+Details: Errors unhandled.
+Type: Vulnerability
+ReferenceHash: 37c571ac9bdead7b161a7b152c320428c5372b0beeaa94d1311649354b4d579f
+
+WARN[0001] {HORUSEC_CLI} When starting the analysis WE SKIP A TOTAL OF 5 FILES that are not considered to be analyzed. To see more details use flag --log-level=debug
+==================================================================================
+
+In this analysis, a total of 15 possible vulnerabilities were found and we classified them into:
+
+Total of Vulnerability HIGH is: 12
+Total of Vulnerability MEDIUM is: 2
+Total of Vulnerability LOW is: 1
 
 ==================================================================================
 
 
-WARN[0061] {HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis 
+WARN[0015] {HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis 
 
-WARN[0061] [HORUSEC] 7 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, CHECK AND TRY AGAIN
+WARN[0015] [HORUSEC] 15 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN
 ```
 
 Attention if you received a warn of type:

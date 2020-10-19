@@ -22,6 +22,7 @@ import companyService from 'services/company';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Account } from 'helpers/interfaces/Account';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface Props {
   isVisible: boolean;
@@ -44,6 +45,7 @@ const EditUserRole: React.FC<Props> = ({
   const { t } = useTranslation();
   const { companyID } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const roles: Role[] = [
     {
@@ -51,7 +53,11 @@ const EditUserRole: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      name: t('PERMISSIONS.SUPERVISOR'),
+      value: 'supervisor',
+    },
+    {
+      name: t('PERMISSIONS.USER'),
       value: 'member',
     },
   ];
@@ -67,6 +73,7 @@ const EditUserRole: React.FC<Props> = ({
     companyService
       .editUserInCompany(companyID, userToEdit.accountID, role.value)
       .then(() => {
+        showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
         onConfirm();
       })
       .catch((err) => {
@@ -86,7 +93,6 @@ const EditUserRole: React.FC<Props> = ({
       confirmText={t('USERS_SCREEN.SAVE')}
       loadingConfirm={isLoading}
       width={450}
-      defaultButton
       hasCancel
     >
       <Styled.SubTitle>{t('USERS_SCREEN.EDIT_SUBTITLE')}</Styled.SubTitle>
@@ -101,6 +107,7 @@ const EditUserRole: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
+          optionsHeight="96px"
           initialValue={userToEdit?.role}
           options={roles}
           onChangeValue={(item) => setRole(item)}

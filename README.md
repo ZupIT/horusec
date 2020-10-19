@@ -42,6 +42,8 @@ Currently, performance analysis consists of:
 
 You can see more details about the horusec <a href="assets/horusec-complete-architecture.jpg">/assets/horusec-complete-architecture.jpg</a>
 
+### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
+
 ## Project roadmap
 
 We started the project to aggregate within our company, but as the search grew more and more we chose to apply good practices and open it up for everyone to collaborate with this incredible project.

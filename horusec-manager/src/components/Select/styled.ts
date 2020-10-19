@@ -21,12 +21,14 @@ interface OptionsListProps {
   isOpen: boolean;
   rounded: boolean;
   width: string;
+  height: string;
 }
 
 interface WrapperProps {
   disabled: boolean;
   rounded: boolean;
   width: string;
+  height?: string;
 }
 
 interface OptionItem {
@@ -92,6 +94,7 @@ const OptionsList = styled.div<OptionsListProps>`
   position: absolute;
   top: 25px;
   left: 0;
+  background-color: ${({ theme }) => theme.colors.select.background};
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   width: ${({ width }) => (width ? width : '100%')};
@@ -100,16 +103,16 @@ const OptionsList = styled.div<OptionsListProps>`
   height: 0;
   z-index: 5;
 
-  ${({ isOpen }) =>
+  ${({ isOpen, height }) =>
     isOpen &&
     css`
-      height: 64px;
+      height: ${height ? height : '64px'};
     `};
 
   ${({ rounded }) =>
     rounded &&
     css`
-      top: 30px !important;
+      top: 33px !important;
     `};
 
   ::-webkit-scrollbar {
@@ -130,7 +133,6 @@ const OptionItem = styled.div<OptionItem>`
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   line-height: ${({ theme }) => theme.metrics.fontSize.small} !important;
   color: ${({ theme }) => theme.colors.select.text};
-  background-color: ${({ theme }) => theme.colors.select.background};
   cursor: pointer;
   padding: 10px;
 

@@ -31,7 +31,7 @@ func (m *Mock) IsAvailable() bool {
 
 func (m *Mock) Noop() error {
 	args := m.MethodCalled("Noop")
-	return args.Get(0).(error)
+	return mockUtils.ReturnNilOrError(args, 0)
 }
 
 func (m *Mock) SendEmail(msg *gomail.Message) error {

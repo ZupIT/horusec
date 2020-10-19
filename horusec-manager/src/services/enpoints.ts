@@ -38,8 +38,18 @@ const SERVICE_API = isLocalHost
   ? `${API_HOST()}:8000/api/companies`
   : `${API_HOST()}/service_api/api/companies`;
 
+const SERVICE_REPOSITORY = isLocalHost
+  ? `${API_HOST()}:8000/api/repositories`
+  : `${API_HOST()}/service_api/api/repositories`;
+
 const SERVICE_ANALYTIC = isLocalHost
   ? `${API_HOST()}:8005/api/dashboard`
   : `${API_HOST()}/service_account/api/dashboard`;
 
-export { SERVICE_ACCOUNT, SERVICE_COMPANY, SERVICE_ANALYTIC, SERVICE_API };
+export {
+  SERVICE_ACCOUNT,
+  SERVICE_COMPANY,
+  SERVICE_ANALYTIC,
+  SERVICE_API,
+  SERVICE_REPOSITORY,
+};
