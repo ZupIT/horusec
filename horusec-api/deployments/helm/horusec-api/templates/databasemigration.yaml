@@ -24,7 +24,7 @@ spec:
       containers:
       - name: horusec-database-migration
         image: "horuszup/horusec-migration"
-        args: ["up"]
+        command: ["migrate.sh"]
         env:          
         {{- range .Values.env }}
           - name: {{ .name }}
