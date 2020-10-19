@@ -17,9 +17,8 @@ package account
 import (
 	"net/http"
 
-	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -49,7 +48,7 @@ func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	}
 }
 
-func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 

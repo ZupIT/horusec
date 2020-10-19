@@ -32,7 +32,8 @@ type Handler struct {
 
 func NewAuthHandler() *Handler {
 	return &Handler{
-		authUseCases: authUseCases.NewAuthUseCases(),
+		authUseCases:   authUseCases.NewAuthUseCases(),
+		authController: authController.NewAuthController(),
 	}
 }
 

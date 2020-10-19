@@ -17,6 +17,8 @@ package auth
 import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/horusec-auth/internal/services"
+	horusService "github.com/ZupIT/horusec/horusec-auth/internal/services/horus"
 )
 
 type IController interface {
@@ -24,10 +26,13 @@ type IController interface {
 }
 
 type Controller struct {
+	horusAuthService services.IAuthService
 }
 
 func NewAuthController() IController {
-	return &Controller{}
+	return &Controller{
+		horusAuthService: horusService.NewHorusAuthService(),
+	}
 }
 
 // TODO add each service to authenticate
@@ -35,6 +40,7 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 	authorizationType authEnums.AuthorizationType) (interface{}, error) {
 	switch authorizationType {
 	case authEnums.Horus:
+		return c.horusAuthService.Authenticate(credentials)
 	case authEnums.Keycloak:
 	case authEnums.Ldap:
 	}
