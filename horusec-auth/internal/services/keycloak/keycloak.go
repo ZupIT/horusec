@@ -25,7 +25,6 @@ import (
 
 type Service struct {
 	keycloak.IService
-
 }
 
 func NewKeycloakAuthService(databaseRead relational.InterfaceRead) services.IAuthService {

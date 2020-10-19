@@ -31,11 +31,7 @@ func (h HorusRoles) Values() []HorusRoles {
 }
 
 func (h HorusRoles) IsEqual(value string) bool {
-	if value == h.ToString() {
-		return true
-	}
-
-	return false
+	return value == h.ToString()
 }
 
 func (h HorusRoles) ToString() string {

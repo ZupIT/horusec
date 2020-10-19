@@ -19,6 +19,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
+	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"net/http"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -30,14 +37,18 @@ import (
 )
 
 type Service struct {
-	httpUtil     httpClient.Interface
-	postgresRead relational.InterfaceRead
+	httpUtil              httpClient.Interface
+	repoAccountCompany    repositoryAccountCompany.IAccountCompany
+	repoAccountRepository repoAccountRepository.IAccountRepository
+	repositoryRepo        repositoryRepo.IRepository
 }
 
 func NewHorusAuthService(postgresRead relational.InterfaceRead) services.IAuthService {
 	return &Service{
-		httpUtil:     httpClient.NewHTTPClient(10),
-		postgresRead: postgresRead,
+		httpUtil:              httpClient.NewHTTPClient(10),
+		repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(postgresRead, nil),
+		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, nil),
+		repositoryRepo:        repositoryRepo.NewRepository(postgresRead, nil),
 	}
 }
 
@@ -90,5 +101,101 @@ func (s *Service) parseToLoginResponse(
 }
 
 func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
-	return false, nil
+	for _, group := range authorizationData.Groups {
+		return s.authorizeByRole()[authEnums.HorusRoles(group)](authorizationData)
+	}
+
+	return false, errors.ErrorUnauthorized
+}
+
+func (s *Service) authorizeByRole() map[authEnums.HorusRoles]func(*authEntities.AuthorizationData) (bool, error) {
+	return map[authEnums.HorusRoles]func(*authEntities.AuthorizationData) (bool, error){
+		authEnums.CompanyMember:        s.isCompanyMember,
+		authEnums.CompanyAdmin:         s.isCompanyAdmin,
+		authEnums.RepositoryMember:     s.isRepositoryMember,
+		authEnums.RepositorySupervisor: s.isRepositorySupervisor,
+		authEnums.RepositoryAdmin:      s.isRepositoryAdmin,
+	}
+}
+
+func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	_, err = s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	return true, nil
+}
+
+func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	accountCompany, err := s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID)
+	if err != nil || accountCompany.Role != accountEnums.Admin {
+		return false, errors.ErrorUnauthorized
+	}
+
+	return true, nil
+}
+
+func (s *Service) isRepositoryMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	_, err = s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID)
+	if err != nil {
+		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
+		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+			return false, errors.ErrorUnauthorized
+		}
+	}
+
+	return true, nil
+}
+
+//nolint TODO improve this method
+func (s *Service) isRepositorySupervisor(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	accountRepository, err := s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID)
+	if err != nil || accountRepository.Role != accountEnums.Supervisor && accountRepository.Role != accountEnums.Admin {
+		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
+		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+			return false, errors.ErrorUnauthorized
+		}
+	}
+
+	return true, nil
+}
+
+//nolint TODO improve this method
+func (s *Service) isRepositoryAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	accountRepository, errRepository := s.repoAccountRepository.GetAccountRepository(accountID,
+		authorizationData.RepositoryID)
+	if errRepository != nil || accountRepository.Role != accountEnums.Admin {
+		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
+		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+			return false, errors.ErrorUnauthorized
+		}
+	}
+
+	return true, nil
 }
