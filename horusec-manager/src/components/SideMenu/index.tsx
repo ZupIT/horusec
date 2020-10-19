@@ -42,7 +42,7 @@ const SideMenu: React.FC = () => {
       icon: 'pie',
       type: 'route',
       path: '/home/dashboard',
-      roles: ['admin', 'supervisor', 'member'],
+      roles: ['admin', 'member'],
       subRoutes: [
         {
           name: t('SIDE_MENU.ORGANIZATION'),
@@ -56,7 +56,7 @@ const SideMenu: React.FC = () => {
           icon: 'columns',
           path: '/home/dashboard/repositories',
           type: 'subRoute',
-          roles: ['admin', 'supervisor', 'member'],
+          roles: ['admin', 'member'],
         },
       ],
     },
@@ -65,14 +65,14 @@ const SideMenu: React.FC = () => {
       icon: 'shield',
       path: '/home/vulnerabilities',
       type: 'route',
-      roles: ['admin', 'supervisor'],
+      roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
       path: '/home/repositories',
       type: 'route',
-      roles: ['admin', 'supervisor', 'member'],
+      roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.ORGANIZATION_USERS'),

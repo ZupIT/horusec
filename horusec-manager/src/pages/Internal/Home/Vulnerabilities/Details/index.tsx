@@ -37,7 +37,7 @@ const VulnerabilityDetails: React.FC<Props> = ({
       <Styled.Wrapper>
         <Styled.Header>
           <Styled.TitleWrapper>
-            <Styled.Close name="shield" size="22px" onClick={onClose} />
+            <Styled.Close name="info" size="22px" onClick={onClose} />
             <Styled.Title>
               {t('VULNERABILITIES_SCREEN.DETAILS.TITLE')}
             </Styled.Title>

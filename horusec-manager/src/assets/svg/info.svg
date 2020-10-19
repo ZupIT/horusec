@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M11,0 C17.065,0 22,4.935 22,11 C22,17.065 17.065,22 11,22 C4.935,22 0,17.065 0,11 C0,4.935 4.935,0 11,0 Z M11,2 C6.038,2 2,6.038 2,11 C2,15.963 6.038,20 11,20 C15.963,20 20,15.963 20,11 C20,6.038 15.963,2 11,2 Z M11.71,14.292 C11.8,14.382 11.87,14.492 11.92,14.622 C11.98,14.742 12,14.872 12,15.002 C12,15.272 11.9,15.522 11.71,15.702 C11.52,15.892 11.27,16.002 11,16.002 C10.73,16.002 10.48,15.892 10.29,15.702 C10.1,15.522 10,15.272 10,15.002 C10,14.872 10.03,14.742 10.08,14.622 C10.13,14.492 10.2,14.382 10.29,14.292 C10.39,14.202 10.49,14.122 10.62,14.071 C10.98,13.922 11.43,14.012 11.71,14.292 Z M11,6 C11.552,6 12,6.448 12,7 L12,11 C12,11.552 11.552,12 11,12 C10.448,12 10,11.552 10,11 L10,7 C10,6.448 10.448,6 11,6 Z" id="path-1"></path>
+    </defs>
+    <g id="DS---Website" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Website-/-Desktop-/-Design-tokens-/-Icons-/-Specs-" transform="translate(-875.000000, -938.000000)">
+            <g id="Icons" transform="translate(874.000000, 938.000000)">
+                <g id="Icons/Alert/Alert-Circle" transform="translate(1.000000, 0.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Icon-Alert-Circle" fill="#98989E" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

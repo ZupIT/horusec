@@ -111,6 +111,7 @@ export default {
       LOW: '#10AA80',
       AUDIT: '#64D2FF',
       NOSEC: '#34495e',
+      INFO: '#746dda',
       DEFAULT: '#8E8E93',
     },
 

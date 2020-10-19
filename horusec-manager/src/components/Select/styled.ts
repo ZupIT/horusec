@@ -28,6 +28,7 @@ interface WrapperProps {
   disabled: boolean;
   rounded: boolean;
   width: string;
+  height?: string;
 }
 
 interface OptionItem {
