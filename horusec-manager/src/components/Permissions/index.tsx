@@ -37,15 +37,19 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
         t('PERMISSIONS.REPOSITORY.RULES.HANDLER'),
         t('PERMISSIONS.REPOSITORY.RULES.HANDLER_TOKENS'),
         t('PERMISSIONS.REPOSITORY.RULES.HANDLER_USER'),
-        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO')
+        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'),
+        t('PERMISSIONS.REPOSITORY.RULES.VULNERABILITIES_HANDLE')
       );
 
       supervisor.push(
         t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'),
-        t('PERMISSIONS.REPOSITORY.RULES.VULNERABILITIES')
+        t('PERMISSIONS.REPOSITORY.RULES.VULNERABILITIES_HANDLE')
       );
 
-      user.push(t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'));
+      user.push(
+        t('PERMISSIONS.REPOSITORY.RULES.ANALYTIC_REPO'),
+        t('PERMISSIONS.REPOSITORY.RULES.VULNERABILITIES_VIEW')
+      );
     }
 
     if (rolesType === 'COMPANY') {
@@ -54,11 +58,6 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
         t('PERMISSIONS.COMPANY.RULES.HANDLER_USER'),
         t('PERMISSIONS.COMPANY.RULES.CREATE'),
         t('PERMISSIONS.COMPANY.RULES.ANALYTIC_COMPANY')
-      );
-
-      supervisor.push(
-        t('PERMISSIONS.COMPANY.RULES.ANALYTIC_REPO'),
-        t('PERMISSIONS.COMPANY.RULES.VULNERABILITIES')
       );
 
       user.push(t('PERMISSIONS.COMPANY.RULES.ANALYTIC_REPO'));
@@ -87,13 +86,17 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
           ))}
         </Styled.List>
 
-        <Styled.Subtitle>{t(`PERMISSIONS.SUPERVISOR`)}</Styled.Subtitle>
+        {rolesType === 'REPOSITORY' ? (
+          <>
+            <Styled.Subtitle>{t(`PERMISSIONS.SUPERVISOR`)}</Styled.Subtitle>
 
-        <Styled.List>
-          {renderRulesOfPermissions().supervisor.map((rule, index) => (
-            <Styled.Item key={index}>{rule}</Styled.Item>
-          ))}
-        </Styled.List>
+            <Styled.List>
+              {renderRulesOfPermissions().supervisor.map((rule, index) => (
+                <Styled.Item key={index}>{rule}</Styled.Item>
+              ))}
+            </Styled.List>
+          </>
+        ) : null}
 
         <Styled.Subtitle>{t(`PERMISSIONS.USER`)}</Styled.Subtitle>
 

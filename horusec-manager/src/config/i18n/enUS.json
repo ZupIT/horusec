@@ -190,7 +190,8 @@
         "HANDLER_TOKENS": "Has access to view/edit/remove access tokens to the repository.",
         "HANDLER_USER": "Has access to view/create/edit/remove user access to the repository.",
         "ANALYTIC_REPO": "You have access to view the repository graphics.",
-        "VULNERABILITIES": "Has access to view/manage vulnerabilities. (False Positive)",
+        "VULNERABILITIES_VIEW": "You only have access to the repository view on the Vulnerabilities screen.",
+        "VULNERABILITIES_HANDLE": "Has access to view/manage the repository on the Vulnerabilities screen.",
         "NOTHING": "N/A"
       }
     },
@@ -200,8 +201,7 @@
         "HANDLER_USER": "Has access to view/invite/edit/remove users within the company.",
         "CREATE": "You have access to create new repositories.",
         "ANALYTIC_COMPANY": "You have access to view the company's graphics.",
-        "ANALYTIC_REPO": "Has access to view the graphics of the repository that he has access to.",
-        "VULNERABILITIES": "Has access to view/manage vulnerabilities. (False Positive)"
+        "ANALYTIC_REPO": "Has access to view the graphics of the repository that he has access to."
       }
     }
   },
@@ -241,14 +241,20 @@
     "SEARCH": "Search for hash Vulnerability",
     "TITLE": "Vulnerabilities",
     "REPOSITORY": "Repository",
+    "SEVERITY": "Severity",
+    "ALL_SEVERITIES": "All severities",
+    "ALL_STATUS": "All Status",
+    "STATUS_TITLE": "Status",
+    "SUCCESS_UPDATE": "Vulnerability status successfully changed!",
     "TABLE": {
       "EMPTY": "There are no vulnerabilities for this repository",
       "HASH": "Hash",
       "DETAILS": "Details",
       "SEVERITY": "Severity",
-      "TYPE": "Vulnerability type"
+      "STATUS": "Status",
+      "DESCRIPTION": "Descrição"
     },
-    "TYPES": {
+    "STATUS": {
       "VULNERABILITY": "Vulnerability",
       "RISKACCEPTED": "Risk Accepted",
       "FALSEPOSITIVE": "False Positive",

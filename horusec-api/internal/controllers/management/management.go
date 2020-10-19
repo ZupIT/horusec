@@ -20,12 +20,13 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/google/uuid"
 )
 
 type IController interface {
-	ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnType horusecEnums.VulnerabilityType,
-		vulnHash string) (vulnManagement dto.VulnManagement, err error)
+	ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
+		vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error)
 	UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error)
 }
 
@@ -40,9 +41,9 @@ func NewManagementController(postgresRead relational.InterfaceRead,
 	}
 }
 
-func (c *Controller) ListVulnManagementData(repositoryID uuid.UUID, page, size int,
+func (c *Controller) ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
 	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error) {
-	return c.managementRepository.ListVulnManagementData(repositoryID, page, size, vulnType, vulnHash)
+	return c.managementRepository.ListVulnManagementData(repositoryID, page, size, vulnSeverity, vulnType, vulnHash)
 }
 
 func (c *Controller) UpdateVulnType(vulnerabilityID uuid.UUID,

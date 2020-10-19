@@ -54,10 +54,6 @@ const InviteToCompany: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.SUPERVISOR'),
-      value: 'supervisor',
-    },
-    {
       name: t('PERMISSIONS.USER'),
       value: 'member',
     },
@@ -129,7 +125,7 @@ const InviteToCompany: React.FC<Props> = ({
           keyLabel="name"
           keyValue="value"
           width="340px"
-          optionsHeight="96px"
+          optionsHeight="65px"
           options={roles}
           onChangeValue={(item) => setRole(item)}
         />

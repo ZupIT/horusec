@@ -18,7 +18,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	managementUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/management"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-api/internal/controllers/management"
@@ -55,6 +56,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Param size query string false "size query string"
 // @Param vulnHash query string false "vulnHash query string"
 // @Param vulnType query string false "vulnType query string"
+// @Param vulnSeverity query string false "vulnSeverity query string"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -68,7 +70,7 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	page, size := h.getPageSize(r)
 	result, err := h.managementController.ListVulnManagementData(repositoryID, page, size,
-		h.getVulnType(r), h.getVulnHash(r))
+		h.getVulnSeverity(r), h.getVulnType(r), h.getVulnHash(r))
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
@@ -83,8 +85,12 @@ func (h *Handler) getPageSize(r *netHTTP.Request) (page, size int) {
 	return page, size
 }
 
-func (h *Handler) getVulnType(r *netHTTP.Request) horusec.VulnerabilityType {
-	return horusec.VulnerabilityType(r.URL.Query().Get("vulnType"))
+func (h *Handler) getVulnSeverity(r *netHTTP.Request) severity.Severity {
+	return severity.Severity(r.URL.Query().Get("vulnSeverity"))
+}
+
+func (h *Handler) getVulnType(r *netHTTP.Request) horusecEnums.VulnerabilityType {
+	return horusecEnums.VulnerabilityType(r.URL.Query().Get("vulnType"))
 }
 
 func (h *Handler) getVulnHash(r *netHTTP.Request) string {

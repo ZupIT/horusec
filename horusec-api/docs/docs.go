@@ -327,6 +327,12 @@ var doc = `{
                         "description": "vulnType query string",
                         "name": "vulnType",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnSeverity query string",
+                        "name": "vulnSeverity",
+                        "in": "query"
                     }
                 ],
                 "responses": {
