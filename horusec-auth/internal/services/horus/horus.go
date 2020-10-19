@@ -86,6 +86,6 @@ func (s *Service) parseToLoginResponse(
 	return loginResponse, json.Unmarshal(body, &loginResponse)
 }
 
-func (s *Service) IsAuthorized(token string, groups []string) (bool, error) {
+func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	return false, nil
 }

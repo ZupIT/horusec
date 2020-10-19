@@ -24,11 +24,11 @@ type MockAuthService struct {
 }
 
 func (m *MockAuthService) Authenticate(credentials authEntities.Credentials) (bool, map[string]interface{}, error) {
-	args := m.MethodCalled("Authenticate", credentials)
+	args := m.MethodCalled("Authenticate")
 	return args.Bool(0), args.Get(1).(map[string]interface{}), args.Error(2)
 }
 
-func (m *MockAuthService) IsAuthorized(userID string, group []string) (bool, error) {
-	args := m.MethodCalled("IsAuthorized", userID, group)
+func (m *MockAuthService) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	args := m.MethodCalled("IsAuthorized")
 	return args.Bool(0), args.Error(1)
 }

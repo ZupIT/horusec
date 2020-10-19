@@ -54,7 +54,7 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 	authorizationType authEnums.AuthorizationType) (interface{}, error) {
 	switch authorizationType {
 	case authEnums.Horus:
-		return c.horusAuthService.IsAuthorized(authorizationData.Token, authorizationData.Groups)
+		return c.horusAuthService.IsAuthorized(authorizationData)
 	case authEnums.Keycloak:
 	case authEnums.Ldap:
 	}
