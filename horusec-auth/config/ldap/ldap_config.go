@@ -1,7 +1,7 @@
 package ldapconfig
 
 import (
-	"github.com/ZupIT/horus/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/jtblin/go-ldap-client"
 )
 
