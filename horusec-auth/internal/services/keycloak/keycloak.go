@@ -15,12 +15,10 @@
 package keycloak
 
 import (
-	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
-	"strings"
 )
 
 type Service struct {
@@ -38,10 +36,5 @@ func (s *Service) Authenticate(credentials *authEntities.Credentials) (interface
 }
 
 func (s *Service) IsAuthorized(authorization *authEntities.AuthorizationData) (bool, error) {
-	accessToken := strings.Replace(authorization.Token, "Bearer ", "", 1)
-
-	if _, err := s.GetUserInfo(accessToken); err != nil {
-		return false, errors.New("Authorization blocked because: " + err.Error())
-	}
-	return true, nil
+	return s.IsActiveToken(authorization.Token)
 }
