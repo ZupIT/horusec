@@ -22,10 +22,10 @@ import (
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
+	"github.com/google/uuid"
 	"net/http"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -124,8 +124,7 @@ func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationD
 		return false, errors.ErrorUnauthorized
 	}
 
-	_, err = s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID)
-	if err != nil {
+	if _, err = s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID); err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
@@ -138,8 +137,7 @@ func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationDa
 		return false, errors.ErrorUnauthorized
 	}
 
-	accountCompany, err := s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID)
-	if err != nil || accountCompany.Role != accountEnums.Admin {
+	if s.isNotCompanyAdmin(authorizationData, accountID) {
 		return false, errors.ErrorUnauthorized
 	}
 
@@ -152,10 +150,8 @@ func (s *Service) isRepositoryMember(authorizationData *authEntities.Authorizati
 		return false, errors.ErrorUnauthorized
 	}
 
-	_, err = s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID)
-	if err != nil {
-		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
-		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+	if _, err = s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID); err != nil {
+		if s.isNotCompanyAdmin(authorizationData, accountID) {
 			return false, errors.ErrorUnauthorized
 		}
 	}
@@ -163,17 +159,15 @@ func (s *Service) isRepositoryMember(authorizationData *authEntities.Authorizati
 	return true, nil
 }
 
-//nolint TODO improve this method
 func (s *Service) isRepositorySupervisor(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	accountRepository, err := s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID)
-	if err != nil || accountRepository.Role != accountEnums.Supervisor && accountRepository.Role != accountEnums.Admin {
-		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
-		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+	if accountRepository, err := s.repoAccountRepository.GetAccountRepository(accountID,
+		authorizationData.RepositoryID); err != nil || accountRepository.IsNotSupervisorOrAdmin() {
+		if s.isNotCompanyAdmin(authorizationData, accountID) {
 			return false, errors.ErrorUnauthorized
 		}
 	}
@@ -181,21 +175,23 @@ func (s *Service) isRepositorySupervisor(authorizationData *authEntities.Authori
 	return true, nil
 }
 
-//nolint TODO improve this method
 func (s *Service) isRepositoryAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	accountRepository, errRepository := s.repoAccountRepository.GetAccountRepository(accountID,
-		authorizationData.RepositoryID)
-	if errRepository != nil || accountRepository.Role != accountEnums.Admin {
-		accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
-		if errCompany != nil || accountCompany.Role != accountEnums.Admin {
+	if accountRepository, errRepository := s.repoAccountRepository.GetAccountRepository(accountID,
+		authorizationData.RepositoryID); errRepository != nil || accountRepository.IsNotAdmin() {
+		if s.isNotCompanyAdmin(authorizationData, accountID) {
 			return false, errors.ErrorUnauthorized
 		}
 	}
 
 	return true, nil
+}
+
+func (s *Service) isNotCompanyAdmin(authorizationData *authEntities.AuthorizationData, accountID uuid.UUID) bool {
+	accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
+	return errCompany != nil || accountCompany.IsNotAdmin()
 }
