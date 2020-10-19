@@ -22,6 +22,7 @@ import (
 
 type IUseCases interface {
 	NewCredentialsFromReadCloser(body io.ReadCloser) (*authEntities.Credentials, error)
+	NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*authEntities.AuthorizationData, error)
 }
 
 type UseCases struct {
@@ -40,4 +41,15 @@ func (u *UseCases) NewCredentialsFromReadCloser(body io.ReadCloser) (*authEntiti
 	}
 
 	return credentials, credentials.Validate()
+}
+
+func (u *UseCases) NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*authEntities.AuthorizationData, error) {
+	authorizationData := &authEntities.AuthorizationData{}
+	err := json.NewDecoder(body).Decode(&authorizationData)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return authorizationData, authorizationData.Validate()
 }

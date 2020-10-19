@@ -12,14 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horus
+package auth
 
-import (
-	"testing"
-)
+import validation "github.com/go-ozzo/ozzo-validation/v4"
 
-func TestAuthenticate(t *testing.T) {
-	t.Run("", func(t *testing.T) {
+type AuthorizationData struct {
+	Token  string
+	Groups []string
+}
 
-	})
+func (a *AuthorizationData) Validate() error {
+	return validation.ValidateStruct(a,
+		validation.Field(&a.Token, validation.Required, validation.Length(1, 500), validation.Required),
+		validation.Field(&a.Groups, validation.NotNil, validation.Required),
+	)
 }

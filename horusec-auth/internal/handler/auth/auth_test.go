@@ -23,7 +23,7 @@ func TestNewAuthController(t *testing.T) {
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
 		handler := NewAuthHandler()
-		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
+		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
 		w := httptest.NewRecorder()
 
 		handler.Options(w, r)
@@ -45,7 +45,7 @@ func TestAuthByType(t *testing.T) {
 
 		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
 
-		r, _ := http.NewRequest(http.MethodOptions, "api/health", bytes.NewReader(credentialsBytes))
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
 		r.Header.Add("X_AUTH_TYPE", "horus")
@@ -67,7 +67,7 @@ func TestAuthByType(t *testing.T) {
 
 		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
 
-		r, _ := http.NewRequest(http.MethodOptions, "api/health", bytes.NewReader(credentialsBytes))
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
 		r.Header.Add("X_AUTH_TYPE", "horus")
@@ -87,7 +87,7 @@ func TestAuthByType(t *testing.T) {
 
 		credentialsBytes, _ := json.Marshal(authEntities.Credentials{})
 
-		r, _ := http.NewRequest(http.MethodOptions, "api/health", bytes.NewReader(credentialsBytes))
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
 		r.Header.Add("X_AUTH_TYPE", "horus")
@@ -105,12 +105,94 @@ func TestAuthByType(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
+		r, _ := http.NewRequest(http.MethodPost, "test", nil)
 		w := httptest.NewRecorder()
 
 		r.Header.Add("X_AUTH_TYPE", "test")
 
 		handler.AuthByType(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestAuthorize(t *testing.T) {
+	t.Run("should return 200 when successful authorize", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthorizeByType").Return(true, nil)
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Groups: []string{"test"}})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horus")
+
+		handler.Authorize(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthorizeByType").Return(false, errors.New("test"))
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Groups: []string{"test"}})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horus")
+
+		handler.Authorize(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when invalid authorization data", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horus")
+
+		handler.Authorize(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when missing header", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		r, _ := http.NewRequest(http.MethodPost, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.Authorize(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

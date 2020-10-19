@@ -24,7 +24,7 @@ import (
 )
 
 func TestNewCredentialsFromReadCloser(t *testing.T) {
-	t.Run("should success parse read closer to account", func(t *testing.T) {
+	t.Run("should success parse read closer to credentials", func(t *testing.T) {
 		bytes, _ := json.Marshal(&authEntities.Credentials{
 			Username: "test",
 			Password: "test",
@@ -41,6 +41,28 @@ func TestNewCredentialsFromReadCloser(t *testing.T) {
 		readCloser := ioutil.NopCloser(strings.NewReader(""))
 		useCases := NewAuthUseCases()
 		_, err := useCases.NewCredentialsFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+}
+
+func TestNewAuthorizationDataFromReadCloser(t *testing.T) {
+	t.Run("should success parse read closer to authorization data", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.AuthorizationData{
+			Token:  "test",
+			Groups: []string{"admin"},
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		credentials, err := useCases.NewAuthorizationDataFromReadCloser(readCloser)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, credentials)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAuthorizationDataFromReadCloser(readCloser)
 		assert.Error(t, err)
 	})
 }

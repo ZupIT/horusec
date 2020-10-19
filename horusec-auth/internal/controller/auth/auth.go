@@ -23,6 +23,8 @@ import (
 
 type IController interface {
 	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
+	AuthorizeByType(authorizationData *authEntities.AuthorizationData,
+		authorizationType authEnums.AuthorizationType) (interface{}, error)
 }
 
 type Controller struct {
@@ -41,6 +43,18 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 	switch authorizationType {
 	case authEnums.Horus:
 		return c.horusAuthService.Authenticate(credentials)
+	case authEnums.Keycloak:
+	case authEnums.Ldap:
+	}
+
+	return nil, nil
+}
+
+func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
+	authorizationType authEnums.AuthorizationType) (interface{}, error) {
+	switch authorizationType {
+	case authEnums.Horus:
+		return c.horusAuthService.IsAuthorized(authorizationData.Token, authorizationData.Groups)
 	case authEnums.Keycloak:
 	case authEnums.Ldap:
 	}

@@ -69,9 +69,9 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 func (h *Handler) getCredentialsAndAuthType(
 	r *netHTTP.Request) (*authEntities.Credentials, authEnums.AuthorizationType, error) {
-	authType := authEnums.AuthorizationType(r.Header.Get("X_AUTH_TYPE"))
-	if authType.IsInvalid() {
-		return nil, "", errors.ErrorInvalidAuthType
+	authType, err := h.getAuthType(r)
+	if err != nil {
+		return nil, "", err
 	}
 
 	credentials, err := h.authUseCases.NewCredentialsFromReadCloser(r.Body)
@@ -80,4 +80,54 @@ func (h *Handler) getCredentialsAndAuthType(
 	}
 
 	return credentials, authType, nil
+}
+
+func (h *Handler) getAuthType(r *netHTTP.Request) (authEnums.AuthorizationType, error) {
+	authType := authEnums.AuthorizationType(r.Header.Get("X_AUTH_TYPE"))
+	if authType.IsInvalid() {
+		return "", errors.ErrorInvalidAuthType
+	}
+
+	return authType, nil
+}
+
+// @Tags Auth
+// @Description verify if request is valid!
+// @ID authenticate request
+// @Accept  json
+// @Produce  json
+// @Param AuthorizationData body auth.AuthorizationData true "authorization data"
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/auth/authorize [post]
+func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	authorizationData, authType, err := h.getAuthorizationDataAndAuthType(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	response, err := h.authController.AuthorizeByType(authorizationData, authType)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, response)
+}
+
+func (h *Handler) getAuthorizationDataAndAuthType(
+	r *netHTTP.Request) (*authEntities.AuthorizationData, authEnums.AuthorizationType, error) {
+	authType, err := h.getAuthType(r)
+	if err != nil {
+		return nil, "", err
+	}
+
+	authorizationData, err := h.authUseCases.NewAuthorizationDataFromReadCloser(r.Body)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return authorizationData, authType, nil
 }

@@ -15,23 +15,34 @@
 package auth
 
 import (
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestValidateCredentials(t *testing.T) {
+func TestAuthorizationDataValidate(t *testing.T) {
 	t.Run("should return no error when valid data", func(t *testing.T) {
-		credentials := &Credentials{
-			Username: "horus@test.com",
-			Password: "UltraSafePass",
+		token, _, _ := jwt.CreateToken(&accountEntities.Account{
+			AccountID:   uuid.New(),
+			Email:       "test@test.com",
+			Password:    "safePassword!123",
+			Username:    "test",
+			IsConfirmed: false,
+		}, map[string]string{"role": "admin"})
+
+		authorizationData := &AuthorizationData{
+			Token:  token,
+			Groups: []string{"admin"},
 		}
 
-		assert.NoError(t, credentials.Validate())
+		assert.NoError(t, authorizationData.Validate())
 	})
 
 	t.Run("should return error when invalid data", func(t *testing.T) {
-		credentials := &Credentials{}
+		authorizationData := &AuthorizationData{}
 
-		assert.Error(t, credentials.Validate())
+		assert.Error(t, authorizationData.Validate())
 	})
 }

@@ -1,4 +1,13 @@
 definitions:
+  auth.AuthorizationData:
+    properties:
+      groups:
+        items:
+          type: string
+        type: array
+      token:
+        type: string
+    type: object
   auth.Credentials:
     properties:
       password:
@@ -37,6 +46,51 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/auth.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/auth/authorize:
+    post:
+      consumes:
+      - application/json
+      description: verify if request is valid!
+      operationId: authenticate request
+      parameters:
+      - description: authorization data
+        in: body
+        name: AuthorizationData
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AuthorizationData'
       produces:
       - application/json
       responses:
