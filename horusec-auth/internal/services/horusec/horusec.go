@@ -68,11 +68,7 @@ func (s *Service) Authenticate(
 }
 
 func (s *Service) sendLoginRequest(credentials *authEntities.Credentials) (httpResponse.Interface, error) {
-	req, err := http.NewRequest(http.MethodPost, s.getHorusecAPIURL(), bytes.NewReader(s.newLoginRequestData(credentials)))
-	if err != nil {
-		return nil, err
-	}
-
+	req, _ := http.NewRequest(http.MethodPost, s.getHorusecAPIURL(), bytes.NewReader(s.newLoginRequestData(credentials)))
 	return s.httpUtil.DoRequest(req, nil)
 }
 
@@ -92,11 +88,7 @@ func (s *Service) getHorusecAPIURL() string {
 
 func (s *Service) parseToLoginResponse(
 	requestResponse httpResponse.Interface) (loginResponse map[string]interface{}, err error) {
-	body, err := requestResponse.GetBody()
-	if err != nil {
-		return nil, err
-	}
-
+	body, _ := requestResponse.GetBody()
 	return loginResponse, json.Unmarshal(body, &loginResponse)
 }
 
