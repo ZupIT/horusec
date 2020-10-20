@@ -32,7 +32,7 @@ runMigration() {
     fi
 
     docker run --rm -v $(pwd)/$MIGRATION_PATH:/migrations \
-        --network deployments_horus_net migrate/migrate \
+        --network=container:postgresql migrate/migrate \
         -path=/migrations/ \
         -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
         $MIGRATE_TYPE "$MIGRATE_NUMBERS"
