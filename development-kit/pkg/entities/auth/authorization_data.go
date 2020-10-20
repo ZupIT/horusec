@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -34,4 +35,9 @@ func (a *AuthorizationData) Validate() error {
 		validation.Field(&a.CompanyID, is.UUID),
 		validation.Field(&a.RepositoryID, is.UUID),
 	)
+}
+
+func (a *AuthorizationData) ToBytes() []byte {
+	bytes, _ := json.Marshal(a)
+	return bytes
 }

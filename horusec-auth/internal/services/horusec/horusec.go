@@ -68,7 +68,8 @@ func (s *Service) Authenticate(
 }
 
 func (s *Service) sendLoginRequest(credentials *authEntities.Credentials) (httpResponse.Interface, error) {
-	req, _ := http.NewRequest(http.MethodPost, s.getHorusecAPIURL(), bytes.NewReader(s.newLoginRequestData(credentials)))
+	req, _ := http.NewRequest(http.MethodPost, s.getHorusecAccountURL(),
+		bytes.NewReader(s.newLoginRequestData(credentials)))
 	return s.httpUtil.DoRequest(req, nil)
 }
 
@@ -81,7 +82,7 @@ func (s *Service) newLoginRequestData(credentials *authEntities.Credentials) []b
 	return loginData.ToBytes()
 }
 
-func (s *Service) getHorusecAPIURL() string {
+func (s *Service) getHorusecAccountURL() string {
 	return fmt.Sprintf("%s/api/account/login",
 		env.GetEnvOrDefault("HORUSEC_ACCOUNT_URL", "http://0.0.0.0:8003"))
 }
