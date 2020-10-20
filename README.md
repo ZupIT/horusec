@@ -4,7 +4,7 @@
 
 <p></p>
 <p></p>
-<p align="center" margin="20 0"><img src="assets/horusec_logo.png" alt="logo_header" width="100%" style="max-width:100%;"/></p>
+<p align="center" margin="20 0"><img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></p>
 <p></p>
 <p></p>
 
@@ -40,7 +40,7 @@ Currently, performance analysis consists of:
 * Leaks => ([HorusecLeaks][HorusecLeaks])
 * Leaks(optional search in git history) => ([GitLeaks][Gitleaks])
 
-<p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="65%" style="max-width:100%;"/></p>
+<p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
 ### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
 
