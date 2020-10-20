@@ -18,7 +18,6 @@ import (
 	"context"
 	"github.com/Nerzal/gocloak/v7"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
-	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -30,10 +29,6 @@ type GoCloakMock struct {
 func (m *GoCloakMock) LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*gocloak.JWT, error) {
 	args := m.MethodCalled("LoginOtp")
 	return args.Get(0).(*gocloak.JWT), mockUtils.ReturnNilOrError(args, 1)
-}
-func (m *GoCloakMock) DecodeAccessTokenCustomClaims(ctx context.Context, accessToken, realm, expectedAudience string, claims jwt.Claims) (*jwt.Token, error) {
-	args := m.MethodCalled("DecodeAccessTokenCustomClaims")
-	return args.Get(0).(*jwt.Token), mockUtils.ReturnNilOrError(args, 1)
 }
 func (m *GoCloakMock) RetrospectToken(ctx context.Context, accessToken, clientID, clientSecret, realm string) (*gocloak.RetrospecTokenResult, error) {
 	args := m.MethodCalled("RetrospectToken")

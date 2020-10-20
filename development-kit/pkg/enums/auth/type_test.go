@@ -43,3 +43,11 @@ func TestValues(t *testing.T) {
 		assert.Len(t, testType.Values(), 3)
 	})
 }
+
+func TestToString(t *testing.T) {
+	t.Run("should types is correctly parse to string", func(t *testing.T) {
+		assert.Equal(t, "horusec", Horusec.ToString())
+		assert.Equal(t, "ldap", Ldap.ToString())
+		assert.Equal(t, "keycloak", Keycloak.ToString())
+	})
+}

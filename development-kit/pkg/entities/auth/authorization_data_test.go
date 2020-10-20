@@ -46,3 +46,9 @@ func TestAuthorizationDataValidate(t *testing.T) {
 		assert.Error(t, authorizationData.Validate())
 	})
 }
+
+func TestAuthorizationData_ToBytes(t *testing.T) {
+	authorizationData := &AuthorizationData{}
+
+	assert.NotEmpty(t, authorizationData.ToBytes())
+}

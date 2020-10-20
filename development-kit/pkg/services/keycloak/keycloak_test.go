@@ -39,6 +39,21 @@ type HandlerMock struct {
 
 func (f HandlerMock) ServeHTTP(w http.ResponseWriter, r *http.Request) {}
 
+func TestMock(t *testing.T) {
+	h := HandlerMock{}
+	mock := &Mock{}
+	mock.On("LoginOtp").Return(&gocloak.JWT{}, nil)
+	mock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+	mock.On("ValidateJWTToken").Return(h.ServeHTTP)
+	mock.On("IsActiveToken").Return(false, nil)
+	mock.On("GetUserInfo").Return(&gocloak.UserInfo{}, nil)
+
+	_, _ = mock.LoginOtp("", "", "")
+	_, _ = mock.GetAccountIDByJWTToken("")
+	_, _ = mock.IsActiveToken("")
+	_, _ = mock.GetUserInfo("")
+}
+
 func TestNewKeycloakService(t *testing.T) {
 	t.Run("Should return default type service keycloak", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
@@ -135,6 +150,7 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 		mockRead.On("Find").Return(response.NewResponse(0, nil, entity))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		goCloakMock := &GoCloakMock{}
+		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("some error"))
 		goCloakMock.On("IsActiveToken").Return(false, errors.New("error"))
 		service := &Service{
 			ctx:          context.Background(),

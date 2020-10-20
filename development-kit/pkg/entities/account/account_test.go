@@ -15,6 +15,7 @@
 package account
 
 import (
+	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -126,5 +127,20 @@ func TestToLoginResponse(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, account.ToLoginResponse("test", "test", time.Now()))
+	})
+}
+
+func TestNewAccountFromKeyCloakUserInfo(t *testing.T) {
+	t.Run("Should parse correctly", func(t *testing.T) {
+		email := "email@user.com"
+		sub := uuid.New().String()
+		preferredUsername := "username"
+		accountData := NewAccountFromKeyCloakUserInfo(&gocloak.UserInfo{
+			Sub:                 &sub,
+			PreferredUsername:   &preferredUsername,
+			Email:               &email,
+		})
+
+		assert.NotEmpty(t, accountData)
 	})
 }
