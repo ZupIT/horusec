@@ -23,9 +23,9 @@ type MockAuthService struct {
 	mock.Mock
 }
 
-func (m *MockAuthService) Authenticate(credentials authEntities.Credentials) (bool, map[string]interface{}, error) {
+func (m *MockAuthService) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
 	args := m.MethodCalled("Authenticate")
-	return args.Bool(0), args.Get(1).(map[string]interface{}), args.Error(2)
+	return args.Get(0).(interface{}), args.Error(1)
 }
 
 func (m *MockAuthService) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
