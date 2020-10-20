@@ -14,149 +14,242 @@
 
 package middlewares
 
-//func setRequestAuthorizationHeader(req *http.Request) *http.Request {
-//	account := &accountEntities.Account{
-//		Email:     "test@test.com",
-//		Username:  "test",
-//		AccountID: uuid.New(),
-//	}
-//
-//	token, _, _ := jwt.CreateToken(account, nil)
-//	req.Header.Add("Authorization", "Bearer "+token)
-//	return req
-//}
-//
-//func TestIsMember(t *testing.T) {
-//	t.Run("should return 200 when everything its alright", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//
-//		resp := response.Response{}
-//		mockRead.On("SetFilter").Return(&gorm.DB{})
-//		mockRead.On("Find").Return(resp.SetData(&roles.AccountCompany{}))
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//		req = setRequestAuthorizationHeader(req)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusOK, rr.Code)
-//	})
-//
-//	t.Run("should return 403 when unable to find account", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//
-//		resp := response.Response{}
-//		mockRead.On("SetFilter").Return(&gorm.DB{})
-//		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//		req = setRequestAuthorizationHeader(req)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusForbidden, rr.Code)
-//	})
-//
-//	t.Run("should return 401 when invalid jwt token", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusUnauthorized, rr.Code)
-//	})
-//}
-//
-//func TestIsAdmin(t *testing.T) {
-//	t.Run("should return 200 when everything its alright", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//		accountCompany := &roles.AccountCompany{
-//			AccountID: uuid.New(),
-//			Role:      "admin",
-//		}
-//
-//		resp := response.Response{}
-//		mockRead.On("SetFilter").Return(&gorm.DB{})
-//		mockRead.On("Find").Return(resp.SetData(accountCompany))
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//		req = setRequestAuthorizationHeader(req)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusOK, rr.Code)
-//	})
-//
-//	t.Run("should return 403 when invalid role", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//		accountCompany := &roles.AccountCompany{
-//			AccountID: uuid.New(),
-//			Role:      "member",
-//		}
-//
-//		resp := response.Response{}
-//		mockRead.On("SetFilter").Return(&gorm.DB{})
-//		mockRead.On("Find").Return(resp.SetData(accountCompany))
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//		req = setRequestAuthorizationHeader(req)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusForbidden, rr.Code)
-//	})
-//
-//	t.Run("should return 403 when find return error", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//
-//		resp := response.Response{}
-//		mockRead.On("SetFilter").Return(&gorm.DB{})
-//		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//		req = setRequestAuthorizationHeader(req)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusForbidden, rr.Code)
-//	})
-//
-//	t.Run("should return 401 when invalid jwt token", func(t *testing.T) {
-//		mockRead := &relational.MockRead{}
-//		mockWrite := &relational.MockWrite{}
-//
-//		middleware := NewCompanyAuthzMiddleware(mockRead, mockWrite)
-//		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
-//		req, _ := http.NewRequest("GET", "http://test", nil)
-//
-//		rr := httptest.NewRecorder()
-//		handler.ServeHTTP(rr, req)
-//
-//		assert.Equal(t, http.StatusUnauthorized, rr.Code)
-//	})
-//}
+import (
+	"errors"
+	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
+	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+func TestNewHorusAuthzMiddleware(t *testing.T) {
+	t.Run("should create a new middleware service", func(t *testing.T) {
+		middleware := NewHorusAuthzMiddleware()
+		assert.NotNil(t, middleware)
+	})
+}
+
+func TestIsMember(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestIsCompanyAdmin(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestIsRepositoryMember(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestIsRepositorySupervisor(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestIsRepositoryAdmin(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
