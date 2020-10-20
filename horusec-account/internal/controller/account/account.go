@@ -115,7 +115,7 @@ func (a *Account) newAccountFromKeycloakToken(accessToken string) (*accountEntit
 	if userInfo.PreferredUsername == nil {
 		userInfo.PreferredUsername = userInfo.Name
 	}
-	return accountEntities.NewAccountFromKeyCloakUserInfo(userInfo), nil
+	return a.useCases.NewAccountFromKeyCloakUserInfo(userInfo), nil
 }
 
 func (a *Account) Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {

@@ -47,3 +47,11 @@ func TestIsEqual(t *testing.T) {
 		assert.False(t, testRole.IsEqual("test"))
 	})
 }
+
+func TestToStringRoles(t *testing.T) {
+	t.Run("should parse to string", func(t *testing.T) {
+		testType := RepositorySupervisor
+
+		assert.IsType(t, "", testType.ToString())
+	})
+}

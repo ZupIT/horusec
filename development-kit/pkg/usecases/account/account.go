@@ -18,6 +18,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Nerzal/gocloak/v7"
+	"github.com/google/uuid"
 	"io"
 	"math/rand"
 	"time"
@@ -44,6 +46,7 @@ type IAccount interface {
 	NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error)
 	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error)
 	NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error)
+	NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
 }
 
 type Account struct {
@@ -204,4 +207,15 @@ func (a *Account) NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEn
 		return nil, err
 	}
 	return keycloakToken, keycloakToken.Validate()
+}
+
+func (a *Account) NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account {
+	accountID, _ := uuid.Parse(*userInfo.Sub)
+	return &accountEntities.Account{
+		AccountID:   accountID,
+		Email:       *userInfo.Email,
+		Username:    *userInfo.PreferredUsername,
+		CreatedAt:   time.Now(),
+		IsConfirmed: true,
+	}
 }
