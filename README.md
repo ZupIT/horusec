@@ -40,7 +40,7 @@ Currently, performance analysis consists of:
 * Leaks => ([HorusecLeaks][HorusecLeaks])
 * Leaks(optional search in git history) => ([GitLeaks][Gitleaks])
 
-You can see more details about the horusec <a href="assets/horusec-complete-architecture.jpg">/assets/horusec-complete-architecture.jpg</a>
+<p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
 ### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
 
