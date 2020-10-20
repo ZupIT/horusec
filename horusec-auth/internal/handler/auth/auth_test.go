@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -201,6 +202,7 @@ func TestAuthorize(t *testing.T) {
 
 func TestHandler_AuthTypes(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
 		handler := NewAuthHandler(nil)
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
@@ -210,11 +212,21 @@ func TestHandler_AuthTypes(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
-	t.Run("should return 200 when get auth types", func(t *testing.T) {
+	t.Run("should return 400 when get auth types", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
+		handler := NewAuthHandler(nil)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.AuthTypes(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+	t.Run("should return 200 when get auth types mocked", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
 		controllerMock := &authController.MockAuthController{}
-
-		controllerMock.On("GetAuthTypes").Return(authEnums.AuthorizationType("").Values())
-
+		controllerMock.On("GetAuthType").Return(authEnums.Horusec, nil)
 		handler := Handler{
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,

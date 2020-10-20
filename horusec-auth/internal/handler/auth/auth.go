@@ -53,7 +53,13 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/auth-types [get]
 func (h *Handler) AuthTypes(w http.ResponseWriter, r *http.Request) {
-	httpUtil.StatusOK(w, h.authController.GetAuthTypes())
+	authType, err := h.authController.GetAuthType()
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, authType)
 }
 
 // @Tags Auth

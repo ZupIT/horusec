@@ -39,3 +39,7 @@ func (a AuthorizationType) Values() []AuthorizationType {
 		Horusec,
 	}
 }
+
+func (a AuthorizationType) ToString() string {
+	return string(a)
+}

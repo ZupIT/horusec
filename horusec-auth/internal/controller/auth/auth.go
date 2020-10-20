@@ -19,6 +19,7 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
@@ -28,7 +29,7 @@ type IController interface {
 	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
 	AuthorizeByType(authorizationData *authEntities.AuthorizationData,
 		authorizationType authEnums.AuthorizationType) (bool, error)
-	GetAuthTypes() []authEnums.AuthorizationType
+	GetAuthType() (authEnums.AuthorizationType, error)
 }
 
 type Controller struct {
@@ -71,7 +72,12 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 	return false, errors.ErrorUnauthorized
 }
 
-func (c *Controller) GetAuthTypes() []authEnums.AuthorizationType {
-	var authType authEnums.AuthorizationType
-	return authType.Values()
+func (c *Controller) GetAuthType() (authorizationType authEnums.AuthorizationType, err error) {
+	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	for _, v := range authorizationType.Values() {
+		if v.ToString() == authType {
+			return v, nil
+		}
+	}
+	return "", errors.ErrorInvalidAuthType
 }
