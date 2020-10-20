@@ -17,15 +17,15 @@ package account
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"strings"
-	"testing"
-
+	"github.com/Nerzal/gocloak/v7"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"strings"
+	"testing"
 )
 
 func TestNewAccountFromReadCloser(t *testing.T) {
@@ -323,5 +323,25 @@ func TestNewValidateUniqueFromReadCloser(t *testing.T) {
 		useCases := NewAccountUseCases()
 		_, err := useCases.NewValidateUniqueFromReadCloser(readCloser)
 		assert.Error(t, err)
+	})
+}
+
+func TestNewAccountFromKeyCloakUserInfo(t *testing.T) {
+	t.Run("should create a new account from keycloak user info", func(t *testing.T) {
+		accountId := uuid.New().String()
+		email := "test@test.com"
+		username := "test"
+
+		userInfo := &gocloak.UserInfo{
+			Sub:               &accountId,
+			PreferredUsername: &username,
+			Email:             &email,
+		}
+
+		useCases := NewAccountUseCases()
+
+		account := useCases.NewAccountFromKeyCloakUserInfo(userInfo)
+
+		assert.NotEmpty(t, account)
 	})
 }

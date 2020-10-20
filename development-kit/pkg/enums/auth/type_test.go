@@ -43,3 +43,11 @@ func TestValues(t *testing.T) {
 		assert.Len(t, testType.Values(), 3)
 	})
 }
+
+func TestToStringTypes(t *testing.T) {
+	t.Run("should parse to string", func(t *testing.T) {
+		testType := Ldap
+
+		assert.IsType(t, "", testType.ToString())
+	})
+}
