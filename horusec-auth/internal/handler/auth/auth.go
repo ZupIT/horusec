@@ -23,7 +23,7 @@ import (
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
-	netHTTP "net/http"
+	"net/http"
 )
 
 type Handler struct {
@@ -38,7 +38,7 @@ func NewAuthHandler(postgresRead relational.InterfaceRead) *Handler {
 	}
 }
 
-func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -51,8 +51,22 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/auth/auth-types [get]
+func (h *Handler) AuthTypes(w http.ResponseWriter, r *http.Request) {
+	httpUtil.StatusOK(w, h.authController.GetAuthTypes())
+}
+
+// @Tags Auth
+// @Description authenticate login by type!
+// @ID authenticate login
+// @Accept  json
+// @Produce  json
+// @Param Credentials body auth.Credentials true "auth info"
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/authenticate [post]
-func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+func (h *Handler) AuthByType(w http.ResponseWriter, r *http.Request) {
 	credentials, authType, err := h.getCredentialsAndAuthType(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -69,7 +83,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 }
 
 func (h *Handler) getCredentialsAndAuthType(
-	r *netHTTP.Request) (*authEntities.Credentials, authEnums.AuthorizationType, error) {
+	r *http.Request) (*authEntities.Credentials, authEnums.AuthorizationType, error) {
 	authType, err := h.getAuthType(r)
 	if err != nil {
 		return nil, "", err
@@ -83,7 +97,7 @@ func (h *Handler) getCredentialsAndAuthType(
 	return credentials, authType, nil
 }
 
-func (h *Handler) getAuthType(r *netHTTP.Request) (authEnums.AuthorizationType, error) {
+func (h *Handler) getAuthType(r *http.Request) (authEnums.AuthorizationType, error) {
 	authType := authEnums.AuthorizationType(r.Header.Get("X_AUTH_TYPE"))
 	if authType.IsInvalid() {
 		return "", errors.ErrorInvalidAuthType
@@ -102,7 +116,7 @@ func (h *Handler) getAuthType(r *netHTTP.Request) (authEnums.AuthorizationType, 
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/authorize [post]
-func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+func (h *Handler) Authorize(w http.ResponseWriter, r *http.Request) {
 	authorizationData, authType, err := h.getAuthorizationDataAndAuthType(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -119,7 +133,7 @@ func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 }
 
 func (h *Handler) getAuthorizationDataAndAuthType(
-	r *netHTTP.Request) (*authEntities.AuthorizationData, authEnums.AuthorizationType, error) {
+	r *http.Request) (*authEntities.AuthorizationData, authEnums.AuthorizationType, error) {
 	authType, err := h.getAuthType(r)
 	if err != nil {
 		return nil, "", err
