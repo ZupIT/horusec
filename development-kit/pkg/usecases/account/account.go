@@ -43,6 +43,7 @@ type IAccount interface {
 	MapRepositoriesRoles(accountRepositories *[]roles.AccountRepository) map[string]string
 	NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error)
 	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error)
+	NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error)
 }
 
 type Account struct {
@@ -88,6 +89,10 @@ func (a *Account) CheckCreateAccountErrorType(err error) error {
 	}
 
 	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_accounts_username\"" {
+		return errors.ErrorUsernameAlreadyInUse
+	}
+
+	if err.Error() == "pq: duplicate key value violates unique constraint \"accounts_pkey\"" {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
@@ -183,4 +188,14 @@ func (a *Account) NewValidateUniqueFromReadCloser(
 	}
 
 	return validateUnique, validateUnique.Validate()
+}
+
+func (a *Account) NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error) {
+	keycloakToken := &accountEntities.KeycloakToken{}
+	err := json.NewDecoder(body).Decode(&keycloakToken)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+	return keycloakToken, keycloakToken.Validate()
 }

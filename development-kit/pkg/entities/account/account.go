@@ -16,6 +16,7 @@ package account
 
 import (
 	"encoding/json"
+	"github.com/Nerzal/gocloak/v7"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -36,6 +37,17 @@ type Account struct {
 	UpdatedAt    time.Time    `json:"updatedAt"`
 	Companies    []Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
 	Repositories []Repository `gorm:"many2many:account_repository;association_jointable_foreignkey:repository_id;jointable_foreignkey:account_id"` // nolint
+}
+
+func NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *Account {
+	accountID, _ := uuid.Parse(*userInfo.Sub)
+	return &Account{
+		AccountID:   accountID,
+		Email:       *userInfo.Email,
+		Username:    *userInfo.PreferredUsername,
+		CreatedAt:   time.Now(),
+		IsConfirmed: true,
+	}
 }
 
 func (a *Account) SetPasswordHash() {

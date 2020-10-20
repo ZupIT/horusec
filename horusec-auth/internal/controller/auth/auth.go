@@ -20,6 +20,7 @@ import (
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
+	"github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
 )
 
 type IController interface {
@@ -30,11 +31,13 @@ type IController interface {
 
 type Controller struct {
 	horusAuthService services.IAuthService
+	keycloakAuthService services.IAuthService
 }
 
 func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
 		horusAuthService: horusecService.NewHorusAuthService(postgresRead),
+		keycloakAuthService: keycloak.NewKeycloakAuthService(postgresRead),
 	}
 }
 
@@ -45,6 +48,7 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 	case authEnums.Horusec:
 		return c.horusAuthService.Authenticate(credentials)
 	case authEnums.Keycloak:
+		return c.keycloakAuthService.Authenticate(credentials)
 	case authEnums.Ldap:
 	}
 
@@ -57,6 +61,7 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 	case authEnums.Horusec:
 		return c.horusAuthService.IsAuthorized(authorizationData)
 	case authEnums.Keycloak:
+		return c.keycloakAuthService.IsAuthorized(authorizationData)
 	case authEnums.Ldap:
 	}
 
