@@ -170,3 +170,15 @@ func TestAuthorizeByType(t *testing.T) {
 		assert.False(t, result)
 	})
 }
+
+func TestController_GetAuthTypes(t *testing.T) {
+	t.Run("Should return quantity authorized equals 3", func(t *testing.T) {
+		mockService := &services.MockAuthService{}
+		controller := Controller{
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+		}
+		response := controller.GetAuthTypes()
+		assert.Equal(t, 3, len(response))
+	})
+}

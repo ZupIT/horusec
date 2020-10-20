@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"github.com/stretchr/testify/assert"
@@ -195,5 +196,35 @@ func TestAuthorize(t *testing.T) {
 		handler.Authorize(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestHandler_AuthTypes(t *testing.T) {
+	t.Run("should return 200 when get auth types", func(t *testing.T) {
+		handler := NewAuthHandler(nil)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.AuthTypes(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+	t.Run("should return 200 when get auth types", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("GetAuthTypes").Return(authEnums.AuthorizationType("").Values())
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.AuthTypes(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }
