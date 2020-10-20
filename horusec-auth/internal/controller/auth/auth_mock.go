@@ -35,3 +35,8 @@ func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.Aut
 	args := m.MethodCalled("AuthorizeByType")
 	return args.Get(0).(bool), args.Error(1)
 }
+
+func (m *MockAuthController) GetAuthTypes() []authEnums.AuthorizationType {
+	args := m.MethodCalled("GetAuthTypes")
+	return args.Get(0).([]authEnums.AuthorizationType)
+}

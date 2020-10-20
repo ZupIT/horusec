@@ -96,12 +96,12 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 	if err := h.controller.CreateAccountFromKeycloak(keyCloakToken); err != nil {
 		if err == errors.ErrorUsernameAlreadyInUse {
 			httpUtil.StatusOK(w, "")
-			return
+		} else {
+			h.checkCreateAccountErrors(w, err)
 		}
-		h.checkCreateAccountErrors(w, err)
-		return
+	} else {
+		httpUtil.StatusCreated(w, "account created")
 	}
-	httpUtil.StatusCreated(w, "account created")
 }
 
 func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
