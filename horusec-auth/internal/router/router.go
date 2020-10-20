@@ -51,7 +51,7 @@ func (r *Router) setMiddleware() {
 func (r *Router) GetRouter(postgresRead relational.InterfaceRead) *chi.Mux {
 	r.setMiddleware()
 	r.RouterAnalysis(postgresRead)
-	r.RouterHealth()
+	r.RouterHealth(postgresRead)
 	return r.router
 }
 
@@ -95,8 +95,8 @@ func (r *Router) RouterMetrics() *Router {
 	return r
 }
 
-func (r *Router) RouterHealth() *Router {
-	handler := health.NewHandler()
+func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
+	handler := health.NewHandler(postgresRead)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
 		router.Options("/", handler.Options)
