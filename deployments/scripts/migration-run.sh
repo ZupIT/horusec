@@ -19,7 +19,7 @@ POSTGRES_USER="root"
 POSTGRES_PASSWORD="root"
 POSTGRES_HOST="localhost"
 POSTGRES_PORT="5432"
-POSTGRES_DB_NAME="horusec_db"
+POSTGRES_DB_NAME="horusDB"
 POSTGRES_SSL_MODE="disable"
 MIGRATE_TYPE=$1
 MIGRATE_NUMBERS=$2
@@ -32,7 +32,7 @@ runMigration() {
     fi
 
     docker run --rm -v $(pwd)/$MIGRATION_PATH:/migrations \
-        --network deployments_horus_net migrate/migrate \
+        --network=container:postgresql migrate/migrate \
         -path=/migrations/ \
         -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
         $MIGRATE_TYPE "$MIGRATE_NUMBERS"
