@@ -21,19 +21,19 @@ import (
 
 func TestKeycloakTokenToBytes(t *testing.T) {
 	t.Run("should success parse to bytes", func(t *testing.T) {
-		livePassToken := &KeycloakToken{}
-		assert.NotEmpty(t, livePassToken.ToBytes())
+		keyCloakToken := &KeycloakToken{}
+		assert.NotEmpty(t, keyCloakToken.ToBytes())
 	})
 }
 
 func TestKeycloakTokenValidate(t *testing.T) {
 	t.Run("should return no error when not empty", func(t *testing.T) {
-		livePassToken := &KeycloakToken{AccessToken: "test"}
-		assert.NoError(t, livePassToken.Validate())
+		keyCloakToken := &KeycloakToken{AccessToken: "test"}
+		assert.NoError(t, keyCloakToken.Validate())
 	})
 
 	t.Run("should return error when empty access token", func(t *testing.T) {
-		livePassToken := &KeycloakToken{}
-		assert.Error(t, livePassToken.Validate())
+		keyCloakToken := &KeycloakToken{}
+		assert.Error(t, keyCloakToken.Validate())
 	})
 }
