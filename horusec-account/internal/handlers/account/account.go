@@ -94,14 +94,20 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	if err := h.controller.CreateAccountFromKeycloak(keyCloakToken); err != nil {
-		if err == errors.ErrorUsernameAlreadyInUse {
-			httpUtil.StatusOK(w, "")
-		} else {
-			h.checkCreateAccountErrors(w, err)
-		}
-	} else {
-		httpUtil.StatusCreated(w, "account created")
+		h.checkCreateAccountFromKeycloakErrors(w, err)
+		return
 	}
+
+	httpUtil.StatusCreated(w, "account created")
+}
+
+func (h *Handler) checkCreateAccountFromKeycloakErrors(w http.ResponseWriter, err error) {
+	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
+		httpUtil.StatusOK(w, "")
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }
 
 func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {

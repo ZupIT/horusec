@@ -181,6 +181,9 @@ func (a *Account) NewRefreshTokenFromReadCloser(body io.ReadCloser) (token strin
 
 func (a *Account) NewValidateUniqueFromReadCloser(
 	body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error) {
+	if body == nil {
+		return &accountEntities.ValidateUnique{}, errors.ErrorErrorEmptyBody
+	}
 	err = json.NewDecoder(body).Decode(&validateUnique)
 	_ = body.Close()
 	if err != nil {
@@ -191,6 +194,9 @@ func (a *Account) NewValidateUniqueFromReadCloser(
 }
 
 func (a *Account) NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error) {
+	if body == nil {
+		return &accountEntities.KeycloakToken{}, errors.ErrorErrorEmptyBody
+	}
 	keycloakToken := &accountEntities.KeycloakToken{}
 	err := json.NewDecoder(body).Decode(&keycloakToken)
 	_ = body.Close()

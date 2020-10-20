@@ -39,7 +39,7 @@ func TestIsInvalid(t *testing.T) {
 
 func TestValues(t *testing.T) {
 	t.Run("should 3 valid auth types", func(t *testing.T) {
-		testType := Ldap
+		var testType AuthorizationType
 		assert.Len(t, testType.Values(), 3)
 	})
 }

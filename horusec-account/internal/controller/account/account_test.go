@@ -16,6 +16,10 @@ package account
 
 import (
 	"errors"
+	"github.com/Nerzal/gocloak/v7"
+	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"os"
 	"testing"
 	"time"
@@ -37,6 +41,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	controllerMock := &Mock{}
+	controllerMock.On("CreateAccount").Return(nil)
+	controllerMock.On("CreateAccountFromKeycloak").Return(nil)
+	controllerMock.On("Login").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("ValidateEmail").Return(nil)
+	controllerMock.On("SendResetPasswordCode").Return(nil)
+	controllerMock.On("VerifyResetPasswordCode").Return("", nil)
+	controllerMock.On("ChangePassword").Return(nil)
+	controllerMock.On("RenewToken").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("Logout").Return(nil)
+	controllerMock.On("createTokenWithAccountPermissions").Return("", time.Now(), nil)
+	controllerMock.On("VerifyAlreadyInUse").Return(nil)
+
+	_ = controllerMock.CreateAccount(&accountEntities.Account{})
+	_ = controllerMock.CreateAccountFromKeycloak(&accountEntities.KeycloakToken{})
+	_, _ = controllerMock.Login(&accountEntities.LoginData{})
+	_ = controllerMock.ValidateEmail(uuid.New())
+	_ = controllerMock.SendResetPasswordCode("")
+	_, _ = controllerMock.VerifyResetPasswordCode(&accountEntities.ResetCodeData{})
+	_ = controllerMock.ChangePassword(uuid.New(), "")
+	_, _ = controllerMock.RenewToken("", "")
+	_ = controllerMock.Logout(uuid.New())
+	_, _, _ = controllerMock.createTokenWithAccountPermissions(&accountEntities.Account{})
+	_ = controllerMock.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+}
 func TestNewAccountController(t *testing.T) {
 	t.Run("should create a new controller", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
@@ -833,5 +863,182 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
+	})
+}
+
+func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
+	t.Run("should success create account from keycloak", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockWrite.On("Create").Return(response.NewResponse(0, nil, nil))
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+		appConfig := app.SetupApp()
+		keycloakMock := &keycloak.Mock{}
+		email := "test@email.com"
+		sub := uuid.New().String()
+		name := uuid.New().String()
+		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
+			Email: &email,
+			Sub:   &sub,
+			Name:  &name,
+		}, nil)
+		controller := &Account{
+			useCases:              useCases,
+			broker:                brokerMock,
+			databaseWrite:         mockWrite,
+			databaseRead:          mockRead,
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+			appConfig:             appConfig,
+			keycloakService:       keycloakMock,
+		}
+		assert.NotNil(t, controller)
+
+		account := &accountEntities.KeycloakToken{
+			AccessToken: "some token",
+		}
+
+		err := controller.CreateAccountFromKeycloak(account)
+		assert.NoError(t, err)
+	})
+	t.Run("should return errror when email not exists in token", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockWrite.On("Create").Return(response.NewResponse(0, nil, nil))
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+		appConfig := app.SetupApp()
+		keycloakMock := &keycloak.Mock{}
+		name := uuid.New().String()
+		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
+			Name: &name,
+		}, nil)
+		controller := &Account{
+			useCases:              useCases,
+			broker:                brokerMock,
+			databaseWrite:         mockWrite,
+			databaseRead:          mockRead,
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+			appConfig:             appConfig,
+			keycloakService:       keycloakMock,
+		}
+		assert.NotNil(t, controller)
+
+		account := &accountEntities.KeycloakToken{
+			AccessToken: "some token",
+		}
+
+		err := controller.CreateAccountFromKeycloak(account)
+		assert.Error(t, err)
+	})
+	t.Run("Should return error when get user info", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockWrite.On("Create").Return(response.NewResponse(0, nil, nil))
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+		appConfig := app.SetupApp()
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("some return error"))
+		controller := &Account{
+			useCases:              useCases,
+			broker:                brokerMock,
+			databaseWrite:         mockWrite,
+			databaseRead:          mockRead,
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+			appConfig:             appConfig,
+			keycloakService:       keycloakMock,
+		}
+		assert.NotNil(t, controller)
+
+		account := &accountEntities.KeycloakToken{
+			AccessToken: "some token",
+		}
+
+		err := controller.CreateAccountFromKeycloak(account)
+		assert.Error(t, err)
+	})
+	t.Run("should return error unique username key when create user from keycloak", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockWrite.On("Create").Return(response.NewResponse(0, errors.New("pq: duplicate key value violates unique constraint \"uk_accounts_username\""), nil))
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+		appConfig := app.SetupApp()
+		keycloakMock := &keycloak.Mock{}
+		email := "test@email.com"
+		sub := uuid.New().String()
+		name := uuid.New().String()
+		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
+			Email: &email,
+			Sub:   &sub,
+			Name:  &name,
+		}, nil)
+		controller := &Account{
+			useCases:              useCases,
+			broker:                brokerMock,
+			databaseWrite:         mockWrite,
+			databaseRead:          mockRead,
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+			appConfig:             appConfig,
+			keycloakService:       keycloakMock,
+		}
+		assert.NotNil(t, controller)
+
+		account := &accountEntities.KeycloakToken{
+			AccessToken: "some token",
+		}
+
+		err := controller.CreateAccountFromKeycloak(account)
+		assert.Error(t, err)
+	})
+	t.Run("should return error unique account key when create user from keycloak", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockWrite.On("Create").Return(response.NewResponse(0, errors.New("pq: duplicate key value violates unique constraint \"accounts_pkey\""), nil))
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+		appConfig := app.SetupApp()
+		keycloakMock := &keycloak.Mock{}
+		email := "test@email.com"
+		sub := uuid.New().String()
+		name := uuid.New().String()
+		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
+			Email: &email,
+			Sub:   &sub,
+			Name:  &name,
+		}, nil)
+		controller := &Account{
+			useCases:              useCases,
+			broker:                brokerMock,
+			databaseWrite:         mockWrite,
+			databaseRead:          mockRead,
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+			appConfig:             appConfig,
+			keycloakService:       keycloakMock,
+		}
+		assert.NotNil(t, controller)
+
+		account := &accountEntities.KeycloakToken{
+			AccessToken: "some token",
+		}
+
+		err := controller.CreateAccountFromKeycloak(account)
+		assert.Error(t, err)
 	})
 }
