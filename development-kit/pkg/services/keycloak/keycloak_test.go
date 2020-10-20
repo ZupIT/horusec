@@ -109,6 +109,9 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		goCloakMock := &GoCloakMock{}
 		goCloakMock.On("IsActiveToken").Return(true, nil)
+		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
+			Email: &email,
+		}, nil)
 		service := &Service{
 			ctx:          context.Background(),
 			client:       goCloakMock,
