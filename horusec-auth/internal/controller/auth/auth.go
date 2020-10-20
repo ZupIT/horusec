@@ -27,6 +27,7 @@ type IController interface {
 	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
 	AuthorizeByType(authorizationData *authEntities.AuthorizationData,
 		authorizationType authEnums.AuthorizationType) (interface{}, error)
+	GetAuthTypes() []authEnums.AuthorizationType
 }
 
 type Controller struct {
@@ -66,4 +67,9 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 	}
 
 	return nil, nil
+}
+
+func (c *Controller) GetAuthTypes() []authEnums.AuthorizationType {
+	var authType authEnums.AuthorizationType
+	return authType.Values()
 }

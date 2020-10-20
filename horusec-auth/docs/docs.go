@@ -24,11 +24,94 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/auth/auth-types": {
+            "get": {
+                "description": "authenticate login by type!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "authenticate login",
+                "parameters": [
+                    {
+                        "description": "auth info",
+                        "name": "Credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.Credentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "STATUS OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/authenticate": {
             "post": {
                 "description": "authenticate login by type!",
@@ -251,11 +334,17 @@ var doc = `{
         "auth.AuthorizationData": {
             "type": "object",
             "properties": {
+                "companyID": {
+                    "type": "string"
+                },
                 "groups": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "repositoryID": {
+                    "type": "string"
                 },
                 "token": {
                     "type": "string"
@@ -265,6 +354,9 @@ var doc = `{
         "auth.Credentials": {
             "type": "object",
             "properties": {
+                "otp": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },

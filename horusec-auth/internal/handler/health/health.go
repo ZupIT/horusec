@@ -15,7 +15,7 @@
 package health
 
 import (
-	netHTTP "net/http"
+	"net/http"
 
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -29,7 +29,7 @@ func NewHandler() httpUtil.Interface {
 	return &Handler{}
 }
 
-func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -41,6 +41,6 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
-func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+func (h *Handler) Get(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusOK(w, "service is healthy")
 }
