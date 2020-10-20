@@ -158,6 +158,14 @@ func TestCheckCreateAccountErrorType(t *testing.T) {
 		assert.Error(t, result)
 		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
 	})
+
+	t.Run("should return error username already in use", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		err := errors.New("pq: duplicate key value violates unique constraint \"accounts_pkey\"")
+		result := useCases.CheckCreateAccountErrorType(err)
+		assert.Error(t, result)
+		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
+	})
 }
 
 func TestGenerateResetPasswordCode(t *testing.T) {
@@ -324,6 +332,12 @@ func TestNewValidateUniqueFromReadCloser(t *testing.T) {
 		_, err := useCases.NewValidateUniqueFromReadCloser(readCloser)
 		assert.Error(t, err)
 	})
+
+	t.Run("should return error when nil body", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewValidateUniqueFromReadCloser(nil)
+		assert.Error(t, err)
+	})
 }
 
 func TestNewAccountFromKeyCloakUserInfo(t *testing.T) {
@@ -343,5 +357,31 @@ func TestNewAccountFromKeyCloakUserInfo(t *testing.T) {
 		account := useCases.NewAccountFromKeyCloakUserInfo(userInfo)
 
 		assert.NotEmpty(t, account)
+	})
+}
+
+func TestNewKeycloakTokenFromReadCloser(t *testing.T) {
+	t.Run("should parse and return no error when valid token", func(t *testing.T) {
+		bytes, _ := json.Marshal(&accountEntities.KeycloakToken{AccessToken: "test"})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewKeycloakTokenFromReadCloser(readCloser)
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+
+		readCloser := ioutil.NopCloser(strings.NewReader("test"))
+
+		_, err := useCases.NewKeycloakTokenFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewKeycloakTokenFromReadCloser(nil)
+		assert.Error(t, err)
 	})
 }

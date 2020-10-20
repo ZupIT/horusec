@@ -71,3 +71,30 @@ func TestSetRepositoryAndAccountID(t *testing.T) {
 		assert.NotEqual(t, uuid.UUID{}, accountRepository.AccountID)
 	})
 }
+
+func TestIsNotSupervisorOrAdmin(t *testing.T) {
+	t.Run("should return true when its not admin or supervisor", func(t *testing.T) {
+		accountRepository := &AccountRepository{Role: "member"}
+		assert.True(t, accountRepository.IsNotSupervisorOrAdmin())
+	})
+
+	t.Run("should return false when is admin or supervisor", func(t *testing.T) {
+		accountRepository := &AccountRepository{Role: "admin"}
+		assert.False(t, accountRepository.IsNotSupervisorOrAdmin())
+
+		accountRepository = &AccountRepository{Role: "supervisor"}
+		assert.False(t, accountRepository.IsNotSupervisorOrAdmin())
+	})
+}
+
+func TestIsNotAdminRepository(t *testing.T) {
+	t.Run("should return true when its not admin", func(t *testing.T) {
+		accountRepository := &AccountRepository{Role: "member"}
+		assert.True(t, accountRepository.IsNotAdmin())
+	})
+
+	t.Run("should return false when is admin ", func(t *testing.T) {
+		accountRepository := &AccountRepository{Role: "admin"}
+		assert.False(t, accountRepository.IsNotAdmin())
+	})
+}
