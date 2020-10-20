@@ -56,6 +56,9 @@ func TestService_IsAuthorized(t *testing.T) {
 		mock.On("GetUserInfo").Return(&gocloak.UserInfo{
 			Email: &email,
 		}, nil)
+
+		mock.On("IsActiveToken").Return(true, nil)
+
 		k := &Service{mock}
 		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
 			Token:  "Access token",
@@ -67,6 +70,9 @@ func TestService_IsAuthorized(t *testing.T) {
 	t.Run("Should run is_authorized with error", func(t *testing.T) {
 		mock := &keycloak.Mock{}
 		mock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("unexpected error"))
+
+		mock.On("IsActiveToken").Return(false, errors.New("test"))
+
 		k := &Service{mock}
 		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
 			Token:  "Access token",
