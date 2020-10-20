@@ -15,7 +15,9 @@
 package health
 
 import (
-	"net/http"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	netHTTP "net/http"
 
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -23,13 +25,16 @@ import (
 
 type Handler struct {
 	httpUtil.Interface
+	postgresRead relational.InterfaceRead
 }
 
-func NewHandler() httpUtil.Interface {
-	return &Handler{}
+func NewHandler(postgresRead relational.InterfaceRead) httpUtil.Interface {
+	return &Handler{
+		postgresRead: postgresRead,
+	}
 }
 
-func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -41,6 +46,11 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
-func (h *Handler) Get(w http.ResponseWriter, _ *http.Request) {
+func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+	if !h.postgresRead.IsAvailable() {
+		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorDatabaseIsNotHealth)
+		return
+	}
+
 	httpUtil.StatusOK(w, "service is healthy")
 }
