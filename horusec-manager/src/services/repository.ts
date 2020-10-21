@@ -22,14 +22,19 @@ import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 const getAll = (companyId: string) => {
-  return renewHTTP.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`);
+  return renewHTTP.get(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`
+  );
 };
 
 const create = (companyId: string, name: string, description: string) => {
-  return renewHTTP.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`, {
-    name,
-    description,
-  });
+  return renewHTTP.post(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
+    {
+      name,
+      description,
+    }
+  );
 };
 
 const update = (

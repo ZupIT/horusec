@@ -46,7 +46,10 @@ const createUserInCompany = (
   email: string,
   role: string
 ) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`, { email, role });
+  return http.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`, {
+    email,
+    role,
+  });
 };
 
 const editUserInCompany = (
@@ -54,13 +57,18 @@ const editUserInCompany = (
   accountId: string,
   role: string
 ) => {
-  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`, {
-    role,
-  });
+  return http.patch(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`,
+    {
+      role,
+    }
+  );
 };
 
 const removeUserInCompany = (companyId: string, accountId: string) => {
-  return http.delete(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`);
+  return http.delete(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`
+  );
 };
 
 const getAllTokens = (companyId: string) => {
@@ -74,7 +82,9 @@ const createToken = (companyId: string, description: string) => {
 };
 
 const removeToken = (companyId: string, tokenId: string) => {
-  return http.delete(`${SERVICE_API}/api/companies/${companyId}/tokens/${tokenId}`);
+  return http.delete(
+    `${SERVICE_API}/api/companies/${companyId}/tokens/${tokenId}`
+  );
 };
 
 export default {

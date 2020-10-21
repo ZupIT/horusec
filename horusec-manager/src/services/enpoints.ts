@@ -16,10 +16,18 @@
 
 const isLocalHost = window.location.origin.includes('localhost');
 
-
-let SERVICE_ACCOUNT = window.location.origin.replace('manager-horusec', 'account-horusec');
-let SERVICE_API = window.location.origin.replace('manager-horusec', 'api-horusec');
-let SERVICE_ANALYTIC = window.location.origin.replace('manager-horusec', 'analytics-horusec');
+let SERVICE_ACCOUNT = window.location.origin.replace(
+  'manager-horusec',
+  'account-horusec'
+);
+let SERVICE_API = window.location.origin.replace(
+  'manager-horusec',
+  'api-horusec'
+);
+let SERVICE_ANALYTIC = window.location.origin.replace(
+  'manager-horusec',
+  'analytics-horusec'
+);
 
 if (isLocalHost) {
   SERVICE_ACCOUNT = 'http://localhost:8003';
@@ -27,8 +35,4 @@ if (isLocalHost) {
   SERVICE_ANALYTIC = 'http://localhost:8005';
 }
 
-export {
-  SERVICE_ACCOUNT,
-  SERVICE_API,
-  SERVICE_ANALYTIC
-}
+export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC };

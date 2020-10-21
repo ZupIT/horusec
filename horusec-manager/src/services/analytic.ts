@@ -28,9 +28,12 @@ const getTotalDevelopers = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-developers`, {
-    params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-  });
+  return http.get(
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-developers`,
+    {
+      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
+    }
+  );
 };
 
 const getTotalRepositories = (filters: FilterValues) => {
@@ -42,9 +45,12 @@ const getTotalRepositories = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-repositories`, {
-    params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-  });
+  return http.get(
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-repositories`,
+    {
+      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
+    }
+  );
 };
 
 const getAllVulnerabilities = (filters: FilterValues) => {
@@ -56,9 +62,12 @@ const getAllVulnerabilities = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/all-vulnerabilities`, {
-    params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-  });
+  return http.get(
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/all-vulnerabilities`,
+    {
+      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
+    }
+  );
 };
 
 const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
@@ -121,9 +130,12 @@ const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-time`, {
-    params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-  });
+  return http.get(
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-time`,
+    {
+      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
+    }
+  );
 };
 
 const getVulnerabilitiesDetails = (
