@@ -17,7 +17,7 @@
 const isLocalHost = window.location.origin.includes('localhost');
 
 function API_HOST() {
-  const ENV_ENDPOINT = process.env.REACT_APP_HORUS_ENDPOINT;
+  const ENV_ENDPOINT = (window as any).REACT_APP_HORUSEC_ENDPOINT;
 
   if (!ENV_ENDPOINT) {
     return isLocalHost ? 'http://localhost' : window.location.host;
