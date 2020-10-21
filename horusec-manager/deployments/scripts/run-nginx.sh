@@ -1,3 +1,4 @@
+#! /bin/bash
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:14.5.0-alpine AS builder
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_API=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_API=\"$REACT_APP_HORUSEC_ENDPOINT_API\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"$REACT_APP_HORUSEC_ENDPOINT_ANALYTIC\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"$REACT_APP_HORUSEC_ENDPOINT_ACCOUNT\"/g" "/var/www/index.html"
 
-WORKDIR /usr/src/app
-
-COPY ./horusec-manager/ .
-
-RUN ls
-
-RUN npm install
-RUN npm run build
-RUN npm run lint
-
-FROM nginx:1.18.0-alpine
-
-COPY --from=builder /usr/src/app/build /var/www
-COPY ./horusec-manager/deployments/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./horusec-manager/deployments/scripts/run-nginx.sh /var/www/run-nginx.sh
-
-CMD ["sh", "/var/www/run-nginx.sh"]
+nginx -g "daemon off;"
