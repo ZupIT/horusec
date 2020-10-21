@@ -16,23 +16,26 @@
 
 const isLocalHost = window.location.origin.includes('localhost');
 
-let SERVICE_ACCOUNT = window.location.origin.replace(
-  'manager-horusec',
-  'account-horusec'
-);
-let SERVICE_API = window.location.origin.replace(
-  'manager-horusec',
-  'api-horusec'
-);
-let SERVICE_ANALYTIC = window.location.origin.replace(
-  'manager-horusec',
-  'analytics-horusec'
-);
+function API_HOST() {
+  const ENV_ENDPOINT = process.env.REACT_APP_HORUS_ENDPOINT;
 
-if (isLocalHost) {
-  SERVICE_ACCOUNT = 'http://localhost:8003';
-  SERVICE_API = 'http://localhost:8000';
-  SERVICE_ANALYTIC = 'http://localhost:8005';
+  if (!ENV_ENDPOINT) {
+    return isLocalHost ? 'http://localhost' : window.location.host;
+  } else {
+    return ENV_ENDPOINT;
+  }
 }
+
+const SERVICE_ACCOUNT = isLocalHost
+  ? `${API_HOST()}:8003`
+  : `://account-horusec.${API_HOST()}`;
+
+const SERVICE_API = isLocalHost
+  ? `${API_HOST()}:8000`
+  : `://api-horusec.${API_HOST()}`;
+
+const SERVICE_ANALYTIC = isLocalHost
+  ? `${API_HOST()}:8005`
+  : `://analytic-horusec.${API_HOST()}`;
 
 export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC };
