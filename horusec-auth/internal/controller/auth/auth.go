@@ -23,6 +23,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
+	"github.com/ZupIT/horusec/horusec-auth/internal/services/ldap"
 )
 
 type IController interface {
@@ -34,12 +35,14 @@ type IController interface {
 type Controller struct {
 	horusAuthService    services.IAuthService
 	keycloakAuthService services.IAuthService
+	ldapAuthService     services.IAuthService
 }
 
 func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
 		keycloakAuthService: keycloak.NewKeycloakAuthService(postgresRead),
+		ldapAuthService:     ldap.NewService(),
 	}
 }
 
@@ -50,7 +53,7 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials) (interfac
 	case authEnums.Keycloak:
 		return c.keycloakAuthService.Authenticate(credentials)
 	case authEnums.Ldap:
-		return nil, errors.ErrorUnauthorized
+		return c.ldapAuthService.Authenticate(credentials)
 	}
 
 	return nil, errors.ErrorUnauthorized
@@ -63,7 +66,7 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 	case authEnums.Keycloak:
 		return c.keycloakAuthService.IsAuthorized(authorizationData)
 	case authEnums.Ldap:
-		return false, errors.ErrorUnauthorized
+		return c.ldapAuthService.IsAuthorized(authorizationData)
 	}
 
 	return false, errors.ErrorUnauthorized
