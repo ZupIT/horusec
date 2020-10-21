@@ -17,7 +17,7 @@
 import renewHTTP from 'services/axios/forceRenewToken';
 import defaultHTTP from 'services/axios/default';
 
-import { SERVICE_ACCOUNT, SERVICE_API } from './enpoints';
+import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 

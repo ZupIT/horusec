@@ -15,7 +15,7 @@
  */
 
 import http from 'services/axios/default';
-import { SERVICE_ANALYTIC } from './enpoints';
+import { SERVICE_ANALYTIC } from './endpoints';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
 

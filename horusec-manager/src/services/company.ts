@@ -15,7 +15,7 @@
  */
 
 import http from 'services/axios/default';
-import { SERVICE_ACCOUNT, SERVICE_API } from './enpoints';
+import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
 
 const getAll = () => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies`);

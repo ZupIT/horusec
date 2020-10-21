@@ -16,7 +16,7 @@
 
 import http from 'services/axios/default';
 import axios from 'axios';
-import { SERVICE_ACCOUNT } from './enpoints';
+import { SERVICE_ACCOUNT } from './endpoints';
 import {
   getCurrentUser,
   setCurrentUser,
