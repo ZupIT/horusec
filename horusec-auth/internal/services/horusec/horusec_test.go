@@ -45,7 +45,7 @@ func generateToken() string {
 		Email:     "test@test.com",
 		Password:  "test",
 		Username:  "test",
-	}, map[string]string{})
+		}, map[string]string{})
 
 	return token
 }
@@ -168,7 +168,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyMember.ToString()},
+			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -200,7 +200,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyMember.ToString()},
+			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -228,7 +228,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyMember.ToString()},
+			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -254,7 +254,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzNmNDg1Yy0xMmNiLTExZWItYWRjMS0wMjQyYWMxM" +
 				"jAwMDIiLCJuYW1lIjoiSm9obiBEb2UiLJpYXQiOjE1MTYyMzkwMjIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEB0Z" +
 				"XN0LmNvbSJ9.fsqlUToV55E1s-ll4Db8AZgPbf3QF_IvIojun1QNECo",
-			Groups:       []string{authEnums.CompanyMember.ToString()},
+			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -288,7 +288,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyAdmin.ToString()},
+			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -320,7 +320,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyAdmin.ToString()},
+			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -352,7 +352,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.CompanyAdmin.ToString()},
+			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -378,7 +378,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzNmNDg1Yy0xMmNiLTExZWItYWRjMS0wMjQyYWMxM" +
 				"jAwMDIiLCJuYW1lIjoiSm9obiBEb2UiLJpYXQiOjE1MTYyMzkwMjIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEB0Z" +
 				"XN0LmNvbSJ9.fsqlUToV55E1s-ll4Db8AZgPbf3QF_IvIojun1QNECo",
-			Groups:       []string{authEnums.CompanyAdmin.ToString()},
+			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -412,7 +412,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -444,7 +444,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -476,7 +476,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -504,7 +504,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -530,7 +530,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzNmNDg1Yy0xMmNiLTExZWItYWRjMS0wMjQyYWMx" +
 				"MjAwMDIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEB" +
 				"0ZXN0LmNvbSJ9.fsqlUToV55E1s-ll4Db8AZgPbf3QF_IvIojun1QNEo",
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -564,7 +564,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryMember.ToString()},
+			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -598,7 +598,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -630,7 +630,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -664,7 +664,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -698,7 +698,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -726,7 +726,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -756,7 +756,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzNmNDg1Yy0xMmNiLTExZWItYWRjMS0wMjQyYWMx" +
 				"MjAwMDIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEB" +
 				"0ZXN0LmNvbSJ9.fsqlUToV55E1s-ll4Db8AZgPbf3QF_IvIojun1QNEo",
-			Groups:       []string{authEnums.RepositorySupervisor.ToString()},
+			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -790,7 +790,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -824,7 +824,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -856,7 +856,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -888,7 +888,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -916,7 +916,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -946,7 +946,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NzNmNDg1Yy0xMmNiLTExZWItYWRjMS0wMjQyYWMx" +
 				"MjAwMDIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidGVzdEB" +
 				"0ZXN0LmNvbSJ9.fsqlUToV55E1s-ll4Db8AZgPbf3QF_IvIojun1QNEo",
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -980,7 +980,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
-			Groups:       []string{authEnums.RepositoryAdmin.ToString()},
+			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
@@ -992,28 +992,3 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 	})
 }
 
-func TestIsAuthorized(t *testing.T) {
-	t.Run("should return error when no role was sent", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
-
-		service := Service{
-			httpUtil:              httpMock,
-			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
-			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
-			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
-		}
-
-		authorizationData := &authEntities.AuthorizationData{
-			Token:        generateToken(),
-			Groups:       []string{},
-			CompanyID:    uuid.New(),
-			RepositoryID: uuid.New(),
-		}
-
-		result, err := service.IsAuthorized(authorizationData)
-
-		assert.Error(t, err)
-		assert.False(t, result)
-	})
-}

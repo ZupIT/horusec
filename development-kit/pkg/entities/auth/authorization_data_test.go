@@ -33,8 +33,8 @@ func TestAuthorizationDataValidate(t *testing.T) {
 		}, map[string]string{"role": "admin"})
 
 		authorizationData := &AuthorizationData{
-			Token:  token,
-			Groups: []string{"admin"},
+			Token: token,
+			Role:  "admin",
 		}
 
 		assert.NoError(t, authorizationData.Validate())
