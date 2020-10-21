@@ -26,12 +26,15 @@ import (
 )
 
 type Repository struct {
-	RepositoryID uuid.UUID `json:"repositoryID" gorm:"primary_key" swaggerignore:"true"`
-	CompanyID    uuid.UUID `json:"companyID" swaggerignore:"true"`
-	Name         string    `json:"name"`
-	Description  string    `json:"description"`
-	CreatedAt    time.Time `json:"createdAt" swaggerignore:"true"`
-	UpdatedAt    time.Time `json:"updatedAt" swaggerignore:"true"`
+	RepositoryID    uuid.UUID `json:"repositoryID" gorm:"primary_key" swaggerignore:"true"`
+	CompanyID       uuid.UUID `json:"companyID" swaggerignore:"true"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description"`
+	AuthzMember     string    `json:"-"`
+	AuthzAdmin      string    `json:"-"`
+	AuthzSupervisor string    `json:"-"`
+	CreatedAt       time.Time `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt       time.Time `json:"updatedAt" swaggerignore:"true"`
 }
 
 type RepositoryResponse struct {
@@ -91,4 +94,16 @@ func (r *Repository) ToRepositoryResponse(role accountEnum.Role) *RepositoryResp
 		CreatedAt:    r.CreatedAt,
 		UpdatedAt:    r.UpdatedAt,
 	}
+}
+
+func (r *Repository) GetAuthzMember() string {
+	return r.AuthzMember
+}
+
+func (r *Repository) GetAuthzAdmin() string {
+	return r.AuthzMember
+}
+
+func (r *Repository) GetAuthzSupervisor() string {
+	return r.AuthzMember
 }
