@@ -55,8 +55,8 @@ func TestService_IsAuthorized(t *testing.T) {
 		mock.On("IsActiveToken").Return(true, nil)
 		k := &Service{mock}
 		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token:  "Access token",
-			Role: "",
+			Token: "Access token",
+			Role:  "",
 		})
 		assert.NoError(t, err)
 		assert.True(t, isValid)
@@ -66,8 +66,8 @@ func TestService_IsAuthorized(t *testing.T) {
 		mock.On("IsActiveToken").Return(false, nil)
 		k := &Service{mock}
 		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token:  "Access token",
-			Role: "",
+			Token: "Access token",
+			Role:  "",
 		})
 		assert.NoError(t, err)
 		assert.False(t, isValid)
@@ -77,8 +77,8 @@ func TestService_IsAuthorized(t *testing.T) {
 		mock.On("IsActiveToken").Return(false, errors.New("unexpected error"))
 		k := &Service{mock}
 		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token:  "Access token",
-			Role: "",
+			Token: "Access token",
+			Role:  "",
 		})
 		assert.Error(t, err)
 		assert.False(t, isValid)

@@ -16,6 +16,7 @@ package auth
 
 import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +35,7 @@ func TestAuthorizationDataValidate(t *testing.T) {
 
 		authorizationData := &AuthorizationData{
 			Token: token,
-			Role:  "admin",
+			Role:  authEnums.CompanyAdmin,
 		}
 
 		assert.NoError(t, authorizationData.Validate())
