@@ -11,7 +11,6 @@ import (
 	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapconfig "github.com/ZupIT/horusec/horusec-auth/config/ldap"
@@ -67,25 +66,20 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 	}
 
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
-	refreshToken := jwt.CreateRefreshToken()
-	cacheData := &entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}
-	err = s.cacheRepo.Set(cacheData, time.Hour*2)
 	if err != nil {
 		return nil, err
 	}
 
 	return struct {
-		AccessToken  string
-		RefreshToken string
-		ExpiresAt    time.Time
-		Username     string
-		Email        string
+		AccessToken string
+		ExpiresAt   time.Time
+		Username    string
+		Email       string
 	}{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresAt:    expiresAt,
-		Username:     account.Username,
-		Email:        account.Email,
+		AccessToken: accessToken,
+		ExpiresAt:   expiresAt,
+		Username:    account.Username,
+		Email:       account.Email,
 	}, nil
 }
 
