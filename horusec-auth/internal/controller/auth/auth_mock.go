@@ -25,14 +25,12 @@ type MockAuthController struct {
 	mock.Mock
 }
 
-func (m *MockAuthController) AuthByType(credentials *authEntities.Credentials,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
+func (m *MockAuthController) AuthByType(credentials *authEntities.Credentials) (interface{}, error) {
 	args := m.MethodCalled("AuthByType")
 	return args.Get(0), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-	authorizationType authEnums.AuthorizationType) (bool, error) {
+func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	args := m.MethodCalled("AuthorizeByType")
 	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
 }

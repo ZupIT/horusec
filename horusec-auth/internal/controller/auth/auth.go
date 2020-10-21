@@ -26,9 +26,8 @@ import (
 )
 
 type IController interface {
-	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
-	AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-		authorizationType authEnums.AuthorizationType) (bool, error)
+	AuthByType(credentials *authEntities.Credentials) (interface{}, error)
+	AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error)
 	GetAuthType() (authEnums.AuthorizationType, error)
 }
 
@@ -44,9 +43,8 @@ func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	}
 }
 
-func (c *Controller) AuthByType(credentials *authEntities.Credentials,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
-	switch authorizationType {
+func (c *Controller) AuthByType(credentials *authEntities.Credentials) (interface{}, error) {
+	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
 		return c.horusAuthService.Authenticate(credentials)
 	case authEnums.Keycloak:
@@ -58,9 +56,8 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials,
 	return nil, errors.ErrorUnauthorized
 }
 
-func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-	authorizationType authEnums.AuthorizationType) (bool, error) {
-	switch authorizationType {
+func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
 		return c.horusAuthService.IsAuthorized(authorizationData)
 	case authEnums.Keycloak:
@@ -73,11 +70,17 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 }
 
 func (c *Controller) GetAuthType() (authorizationType authEnums.AuthorizationType, err error) {
-	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	authType := c.getAuthorizationType()
 	for _, v := range authorizationType.Values() {
-		if v.ToString() == authType {
+		if v == authType {
 			return v, nil
 		}
 	}
+
 	return "", errors.ErrorInvalidAuthType
+}
+
+func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
+	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	return authEnums.AuthorizationType(authType)
 }

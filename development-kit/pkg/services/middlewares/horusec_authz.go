@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	httpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
@@ -146,7 +147,8 @@ func (h *HorusAuthzMiddleware) parseResponse(response httpResponse.Interface, er
 		return false, err
 	}
 
-	var isValid bool
+	responseContent := httpEntities.Response{}
 	body, _ := response.GetBody()
-	return isValid, json.Unmarshal(body, &isValid)
+	err = json.Unmarshal(body, &responseContent)
+	return responseContent.Content.(bool), err
 }

@@ -98,24 +98,6 @@ func TestAuthByType(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
-
-	t.Run("should return 400 when invalid auth type", func(t *testing.T) {
-		controllerMock := &authController.MockAuthController{}
-
-		handler := Handler{
-			authUseCases:   authUseCases.NewAuthUseCases(),
-			authController: controllerMock,
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", nil)
-		w := httptest.NewRecorder()
-
-		r.Header.Add("X_AUTH_TYPE", "test")
-
-		handler.AuthByType(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
 }
 
 func TestAuthorize(t *testing.T) {
@@ -177,22 +159,6 @@ func TestAuthorize(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		r.Header.Add("X_AUTH_TYPE", "horusec")
-
-		handler.Authorize(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-
-	t.Run("should return 400 when missing header", func(t *testing.T) {
-		controllerMock := &authController.MockAuthController{}
-
-		handler := Handler{
-			authUseCases:   authUseCases.NewAuthUseCases(),
-			authController: controllerMock,
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", nil)
-		w := httptest.NewRecorder()
 
 		handler.Authorize(w, r)
 

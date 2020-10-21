@@ -36,7 +36,6 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
@@ -44,15 +43,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: authenticate login by type!
-      operationId: authenticate login
-      parameters:
-      - description: auth info
-        in: body
-        name: Credentials
-        required: true
-        schema:
-          $ref: '#/definitions/auth.Credentials'
+      description: get actual type!
+      operationId: get type
       produces:
       - application/json
       responses:
@@ -67,15 +59,6 @@ paths:
               type: object
         "400":
           description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

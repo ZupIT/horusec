@@ -24,7 +24,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -32,7 +31,7 @@ var doc = `{
     "paths": {
         "/api/auth/auth-types": {
             "get": {
-                "description": "authenticate login by type!",
+                "description": "get actual type!",
                 "consumes": [
                     "application/json"
                 ],
@@ -42,18 +41,7 @@ var doc = `{
                 "tags": [
                     "Auth"
                 ],
-                "operationId": "authenticate login",
-                "parameters": [
-                    {
-                        "description": "auth info",
-                        "name": "Credentials",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/auth.Credentials"
-                        }
-                    }
-                ],
+                "operationId": "get type",
                 "responses": {
                     "200": {
                         "description": "STATUS OK",
@@ -75,24 +63,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
                         "schema": {
                             "allOf": [
                                 {

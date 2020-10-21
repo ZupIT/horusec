@@ -15,7 +15,9 @@
 package middlewares
 
 import (
+	"encoding/json"
 	"errors"
+	httpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
@@ -38,7 +40,9 @@ func TestIsMember(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -59,7 +63,8 @@ func TestIsMember(t *testing.T) {
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
@@ -82,7 +87,8 @@ func TestIsCompanyAdmin(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -103,7 +109,8 @@ func TestIsCompanyAdmin(t *testing.T) {
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
@@ -126,7 +133,8 @@ func TestIsRepositoryMember(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -147,7 +155,8 @@ func TestIsRepositoryMember(t *testing.T) {
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
@@ -170,7 +179,8 @@ func TestIsRepositorySupervisor(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -191,7 +201,8 @@ func TestIsRepositorySupervisor(t *testing.T) {
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
@@ -214,7 +225,8 @@ func TestIsRepositoryAdmin(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("true"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -235,7 +247,8 @@ func TestIsRepositoryAdmin(t *testing.T) {
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader("false"))}
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
