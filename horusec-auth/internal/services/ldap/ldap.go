@@ -2,11 +2,13 @@ package ldap
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
+	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapconfig "github.com/ZupIT/horusec/horusec-auth/config/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
@@ -17,7 +19,13 @@ import (
 type Service struct {
 	client      ldapclient.LDAPClient
 	accountRepo account.IAccount
-	companyRepo company.ICompanyRepository
+	companyRepo companyrepo.ICompanyRepository
+}
+
+type AuthzEntity interface {
+	GetAuthzMember() string
+	GetAuthzAdmin() string
+	GetAuthzSupervisor() string
 }
 
 func NewService(
@@ -25,7 +33,7 @@ func NewService(
 	return &Service{
 		client:      ldapconfig.NewLDAPClient(),
 		accountRepo: account.NewAccountRepository(databaseRead, databaseWrite),
-		companyRepo: company.NewCompanyRepository(databaseRead, databaseWrite),
+		companyRepo: companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 	}
 }
 
@@ -48,9 +56,17 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 	if err != nil {
 		return false, err
 	}
+	groups, err := s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
+	if err != nil {
+		return false, err
+	}
 
+	return s.checkIsAuthorized(userGroups, groups)
+}
+
+func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
 	for _, userGroup := range userGroups {
-		if s.contains(authzData.Groups, userGroup) {
+		if s.contains(groups, userGroup) {
 			return true, nil
 		}
 	}
@@ -58,11 +74,30 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 	return false, errors.New("not authorized")
 }
 
-func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID) ([]string, error) {
+func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
 	company, err := s.companyRepo.GetByID(companyID)
 	if err != nil {
 		return nil, err
 	}
+
+	return s.getEntityGroupsNameByRole(company, role), nil
+}
+
+func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authEnums.HorusecRoles) []string {
+	var groupsName string
+
+	switch role {
+	case authEnums.RepositoryMember, authEnums.CompanyMember:
+		groupsName = entity.GetAuthzMember()
+
+	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
+		groupsName = entity.GetAuthzAdmin()
+
+	case authEnums.RepositorySupervisor:
+		groupsName = entity.GetAuthzSupervisor()
+	}
+
+	return strings.Split(groupsName, ",")
 }
 
 func (s *Service) getUserGroups(tokenStr string) ([]string, error) {

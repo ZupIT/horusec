@@ -79,6 +79,18 @@ func (c *Company) ToCompanyResponse(role rolesEnum.Role) *CompanyResponse {
 	}
 }
 
+func (c *Company) GetAuthzMember() string {
+	return c.AuthzMember
+}
+
+func (c *Company) GetAuthzAdmin() string {
+	return c.AuthzMember
+}
+
+func (c *Company) GetAuthzSupervisor() string {
+	return c.AuthzMember
+}
+
 func (c *Company) ToBytes() []byte {
 	bytes, _ := json.Marshal(c)
 	return bytes
