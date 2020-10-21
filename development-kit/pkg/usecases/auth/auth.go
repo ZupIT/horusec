@@ -16,13 +16,18 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"io"
 )
 
 type IUseCases interface {
 	NewCredentialsFromReadCloser(body io.ReadCloser) (*authEntities.Credentials, error)
 	NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*authEntities.AuthorizationData, error)
+	IsInvalidAuthType(authType authEnums.AuthorizationType) error
 }
 
 type UseCases struct {
@@ -52,4 +57,13 @@ func (u *UseCases) NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*auth
 	}
 
 	return authorizationData, authorizationData.Validate()
+}
+
+func (u *UseCases) IsInvalidAuthType(authType authEnums.AuthorizationType) error {
+	validType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	if authType.ToString() != validType {
+		return fmt.Errorf(errors.ErrorAuthTypeNotActive, validType)
+	}
+
+	return nil
 }

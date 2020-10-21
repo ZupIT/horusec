@@ -17,6 +17,7 @@ package auth
 import (
 	"encoding/json"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"strings"
@@ -64,5 +65,25 @@ func TestNewAuthorizationDataFromReadCloser(t *testing.T) {
 		useCases := NewAuthUseCases()
 		_, err := useCases.NewAuthorizationDataFromReadCloser(readCloser)
 		assert.Error(t, err)
+	})
+}
+
+func TestIsInvalidAuthType(t *testing.T) {
+	t.Run("should return true when invalid type", func(t *testing.T) {
+		useCases := NewAuthUseCases()
+		isInvalid := useCases.IsInvalidAuthType(authEnums.Keycloak)
+		assert.Error(t, isInvalid)
+
+		isInvalid = useCases.IsInvalidAuthType(authEnums.Ldap)
+		assert.Error(t, isInvalid)
+
+		isInvalid = useCases.IsInvalidAuthType("test")
+		assert.Error(t, isInvalid)
+	})
+
+	t.Run("should false when valid", func(t *testing.T) {
+		useCases := NewAuthUseCases()
+		isInvalid := useCases.IsInvalidAuthType(authEnums.Horusec)
+		assert.NoError(t, isInvalid)
 	})
 }

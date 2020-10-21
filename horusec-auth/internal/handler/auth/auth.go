@@ -100,7 +100,7 @@ func (h *Handler) getCredentialsAndAuthType(
 		return credentials, "", err
 	}
 
-	return credentials, authType, nil
+	return credentials, authType, h.authUseCases.IsInvalidAuthType(authType)
 }
 
 func (h *Handler) getAuthType(r *http.Request) (authEnums.AuthorizationType, error) {
