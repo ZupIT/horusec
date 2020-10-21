@@ -95,7 +95,11 @@
     "CONFIRM":"Ok, I got it.",
     "CREATE_NEW_TOKEN": "Add new token",
     "CREATE_TOKEN_BELOW": "Add a new token below:",
-    "INVALID_DESCRIPTION": "Invalid description"
+    "INVALID_DESCRIPTION": "Invalid description",
+    "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
+    "ADMIN": "Administrator:",
+    "USER": "User:",
+    "GROUP_NAME": "Group Name"
   },
 
   "DASHBOARD_SCREEN": {
@@ -166,7 +170,11 @@
     "SUCCESS_EDIT_REPO": "Repository successfully edited!",
     "SUCCESS_REMOVE_USER": "User removed from the repository successfully!",
     "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
-    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!"
+    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!",
+    "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
+    "ADMIN": "Administrator:",
+    "SUPERVISOR": "Supervisor:",
+    "GROUP_NAME": "Group Name"
   },
 
   "GENERAL": {

@@ -54,6 +54,21 @@ const EditRepository: React.FC<Props> = ({
     isValid: true,
   });
 
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [supervisorGroup, setSupervisorGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
   const handleConfirmSave = () => {
     if (name.isValid) {
       setLoading(true);
@@ -122,6 +137,46 @@ const EditRepository: React.FC<Props> = ({
           width="100%"
           initialValue={description.value}
         />
+
+        <Styled.SubTitle>
+          {t('REPOSITORIES_SCREEN.REFERENCE_GROUP')}
+        </Styled.SubTitle>
+
+        <Styled.Wrapper>
+          <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
+
+          <Styled.Field
+            label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+            onChangeValue={(field: Field) => setAdminGroup(field)}
+            name="adminGroup"
+            type="text"
+            width="100%"
+          />
+        </Styled.Wrapper>
+
+        <Styled.Wrapper>
+          <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
+
+          <Styled.Field
+            label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+            onChangeValue={(field: Field) => setSupervisorGroup(field)}
+            name="adminGroup"
+            type="text"
+            width="100%"
+          />
+        </Styled.Wrapper>
+
+        <Styled.Wrapper>
+          <Styled.Label>{t('REPOSITORIES_SCREEN.USER')}</Styled.Label>
+
+          <Styled.Field
+            label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+            onChangeValue={(field: Field) => setUserGroup(field)}
+            name="adminGroup"
+            type="text"
+            width="100%"
+          />
+        </Styled.Wrapper>
       </Styled.Form>
     </Dialog>
   );

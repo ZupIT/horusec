@@ -95,8 +95,11 @@
     "CONFIRM":"Ok, entendi.",
     "CREATE_NEW_TOKEN": "Adicionar novo token ",
     "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
-    "INVALID_DESCRIPTION": "Descrição inválida"
-
+    "INVALID_DESCRIPTION": "Descrição inválida",
+    "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
+    "ADMIN": "Administrador:",
+    "USER": "Usuário:",
+    "GROUP_NAME": "Nome do grupo"
   },
 
   "DASHBOARD_SCREEN": {
@@ -167,7 +170,11 @@
     "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
     "TOKEN_INFO": "Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
     "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
-    "CONFIRM": "Ok, entendi."
+    "CONFIRM": "Ok, entendi.",
+    "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
+    "ADMIN": "Administrador:",
+    "SUPERVISOR": "Supervisor:",
+    "GROUP_NAME": "Nome do grupo"
   },
 
   "GENERAL": {

@@ -43,6 +43,16 @@ function EditCompany({
     value: '',
   });
 
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
   const { isLoading, updateCompany } = useContext(CompanyContext);
 
   const handleSubmit = (event: FormEvent) => {
@@ -74,6 +84,28 @@ function EditCompany({
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
           initialValue={companyName.value}
         />
+
+        <Styled.SubTitle>{t('COMPANY_SCREEN.REFERENCE_GROUP')}</Styled.SubTitle>
+
+        <Styled.Wrapper>
+          <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
+
+          <Input
+            name="adminGroup"
+            label={t('COMPANY_SCREEN.GROUP_NAME')}
+            onChangeValue={(field: Field) => setAdminGroup(field)}
+          />
+        </Styled.Wrapper>
+
+        <Styled.Wrapper>
+          <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
+
+          <Input
+            name="userGroup"
+            label={t('COMPANY_SCREEN.GROUP_NAME')}
+            onChangeValue={(field: Field) => setUserGroup(field)}
+          />
+        </Styled.Wrapper>
 
         <Styled.OptionsWrapper>
           <Styled.Btn

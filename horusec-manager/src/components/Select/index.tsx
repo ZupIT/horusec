@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Icon from 'components/Icon';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { isObject, isString } from 'lodash';
+import useOutsideClick from 'helpers/hooks/useClickOutside';
 
 interface Props {
   title?: string;
@@ -52,6 +53,12 @@ const Select: React.FC<Props> = ({
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);
   const { t } = useTranslation();
+
+  const optionsRef = useRef<HTMLDivElement>();
+
+  useOutsideClick(optionsRef, () => {
+    if (openOptionsList) setOpenOptionsList(false);
+  });
 
   const handleSelectedValue = (option: any) => {
     if (!disabled) {
@@ -101,6 +108,7 @@ const Select: React.FC<Props> = ({
           width={width}
           height={optionsHeight}
           className="options-list"
+          ref={optionsRef}
         >
           {options.map((option, index) => (
             <Styled.OptionItem
