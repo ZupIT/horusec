@@ -20,6 +20,8 @@ ADD . /go/src/github.com/ZupIT/horusec
 WORKDIR /go/src/github.com/ZupIT/horusec
 COPY . .
 
+RUN go get -t -v -u ./...
+
 RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec-kotlin ./horusec-kotlin/cmd/app/main.go
 
 FROM golang:alpine
