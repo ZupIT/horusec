@@ -32,14 +32,22 @@ func TestIsInvalid(t *testing.T) {
 		testType = "ldap"
 		assert.False(t, testType.IsInvalid())
 
-		testType = "horus"
+		testType = "horusec"
 		assert.False(t, testType.IsInvalid())
 	})
 }
 
 func TestValues(t *testing.T) {
 	t.Run("should 3 valid auth types", func(t *testing.T) {
-		testType := Ldap
+		var testType AuthorizationType
 		assert.Len(t, testType.Values(), 3)
+	})
+}
+
+func TestToString(t *testing.T) {
+	t.Run("should types is correctly parse to string", func(t *testing.T) {
+		assert.Equal(t, "horusec", Horusec.ToString())
+		assert.Equal(t, "ldap", Ldap.ToString())
+		assert.Equal(t, "keycloak", Keycloak.ToString())
 	})
 }

@@ -46,6 +46,7 @@ func (m *Mock) IsActiveToken(accessToken string) (bool, error) {
 	args := m.MethodCalled("IsActiveToken")
 	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
 }
+
 func (m *Mock) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
 	args := m.MethodCalled("GetUserInfo")
 	return args.Get(0).(*gocloak.UserInfo), mockUtils.ReturnNilOrError(args, 1)

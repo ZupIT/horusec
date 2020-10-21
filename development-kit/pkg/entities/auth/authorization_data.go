@@ -14,16 +14,30 @@
 
 package auth
 
-import validation "github.com/go-ozzo/ozzo-validation/v4"
+import (
+	"encoding/json"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/google/uuid"
+)
 
 type AuthorizationData struct {
-	Token  string
-	Groups []string
+	Token        string    `json:"token"`
+	Groups       []string  `json:"groups"`
+	CompanyID    uuid.UUID `json:"companyID"`
+	RepositoryID uuid.UUID `json:"repositoryID"`
 }
 
 func (a *AuthorizationData) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Token, validation.Required, validation.Length(1, 500), validation.Required),
 		validation.Field(&a.Groups, validation.NotNil, validation.Required),
+		validation.Field(&a.CompanyID, is.UUID),
+		validation.Field(&a.RepositoryID, is.UUID),
 	)
+}
+
+func (a *AuthorizationData) ToBytes() []byte {
+	bytes, _ := json.Marshal(a)
+	return bytes
 }

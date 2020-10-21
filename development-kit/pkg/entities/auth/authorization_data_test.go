@@ -46,3 +46,10 @@ func TestAuthorizationDataValidate(t *testing.T) {
 		assert.Error(t, authorizationData.Validate())
 	})
 }
+
+func TestToBytes(t *testing.T) {
+	t.Run("should parse to bytes", func(t *testing.T) {
+		authorizationData := &AuthorizationData{}
+		assert.NotEmpty(t, authorizationData.ToBytes())
+	})
+}

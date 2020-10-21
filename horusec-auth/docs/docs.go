@@ -29,6 +29,59 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/auth/auth-types": {
+            "get": {
+                "description": "get actual type!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "get type",
+                "responses": {
+                    "200": {
+                        "description": "STATUS OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/authenticate": {
             "post": {
                 "description": "authenticate login by type!",
@@ -251,11 +304,17 @@ var doc = `{
         "auth.AuthorizationData": {
             "type": "object",
             "properties": {
+                "companyID": {
+                    "type": "string"
+                },
                 "groups": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "repositoryID": {
+                    "type": "string"
                 },
                 "token": {
                     "type": "string"
@@ -265,6 +324,9 @@ var doc = `{
         "auth.Credentials": {
             "type": "object",
             "properties": {
+                "otp": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },

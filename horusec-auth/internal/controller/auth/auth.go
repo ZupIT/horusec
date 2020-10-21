@@ -18,47 +18,69 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
-	horusService "github.com/ZupIT/horusec/horusec-auth/internal/services/horus"
+	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
+	"github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
 )
 
 type IController interface {
-	AuthByType(credentials *authEntities.Credentials, authorizationType authEnums.AuthorizationType) (interface{}, error)
-	AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-		authorizationType authEnums.AuthorizationType) (interface{}, error)
+	AuthByType(credentials *authEntities.Credentials) (interface{}, error)
+	AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error)
+	GetAuthType() (authEnums.AuthorizationType, error)
 }
 
 type Controller struct {
-	horusAuthService services.IAuthService
+	horusAuthService    services.IAuthService
+	keycloakAuthService services.IAuthService
 }
 
 func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
-		horusAuthService: horusService.NewHorusAuthService(postgresRead),
+		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
+		keycloakAuthService: keycloak.NewKeycloakAuthService(postgresRead),
 	}
 }
 
-// TODO add each service to authenticate
-func (c *Controller) AuthByType(credentials *authEntities.Credentials,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
-	switch authorizationType {
-	case authEnums.Horus:
+func (c *Controller) AuthByType(credentials *authEntities.Credentials) (interface{}, error) {
+	switch c.getAuthorizationType() {
+	case authEnums.Horusec:
 		return c.horusAuthService.Authenticate(credentials)
 	case authEnums.Keycloak:
+		return c.keycloakAuthService.Authenticate(credentials)
 	case authEnums.Ldap:
+		return nil, errors.ErrorUnauthorized
 	}
 
-	return nil, nil
+	return nil, errors.ErrorUnauthorized
 }
 
-func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
-	switch authorizationType {
-	case authEnums.Horus:
+func (c *Controller) AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	switch c.getAuthorizationType() {
+	case authEnums.Horusec:
 		return c.horusAuthService.IsAuthorized(authorizationData)
 	case authEnums.Keycloak:
+		return c.keycloakAuthService.IsAuthorized(authorizationData)
 	case authEnums.Ldap:
+		return false, errors.ErrorUnauthorized
 	}
 
-	return nil, nil
+	return false, errors.ErrorUnauthorized
+}
+
+func (c *Controller) GetAuthType() (authorizationType authEnums.AuthorizationType, err error) {
+	authType := c.getAuthorizationType()
+	for _, v := range authorizationType.Values() {
+		if v == authType {
+			return v, nil
+		}
+	}
+
+	return "", errors.ErrorInvalidAuthType
+}
+
+func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
+	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	return authEnums.AuthorizationType(authType)
 }

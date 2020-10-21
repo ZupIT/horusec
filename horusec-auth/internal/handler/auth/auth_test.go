@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -48,7 +50,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -70,7 +72,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -90,25 +92,7 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
-
-		handler.AuthByType(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-
-	t.Run("should return 400 when invalid auth type", func(t *testing.T) {
-		controllerMock := &authController.MockAuthController{}
-
-		handler := Handler{
-			authUseCases:   authUseCases.NewAuthUseCases(),
-			authController: controllerMock,
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", nil)
-		w := httptest.NewRecorder()
-
-		r.Header.Add("X_AUTH_TYPE", "test")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -132,7 +116,7 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 
@@ -154,7 +138,7 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 
@@ -174,26 +158,51 @@ func TestAuthorize(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horus")
+		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.Authorize(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
+}
 
-	t.Run("should return 400 when missing header", func(t *testing.T) {
+func TestHandler_AuthTypes(t *testing.T) {
+	t.Run("should return 200 when get auth types", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
+		handler := NewAuthHandler(nil)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.AuthTypes(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+	t.Run("should return 400 when get auth types", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
+		handler := NewAuthHandler(nil)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.AuthTypes(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+	t.Run("should return 200 when get auth types mocked", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
 		controllerMock := &authController.MockAuthController{}
-
+		controllerMock.On("GetAuthType").Return(authEnums.Horusec, nil)
 		handler := Handler{
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
 
-		r, _ := http.NewRequest(http.MethodPost, "test", nil)
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
 
-		handler.Authorize(w, r)
+		handler.AuthTypes(w, r)
 
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }

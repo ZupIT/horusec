@@ -1,15 +1,21 @@
 definitions:
   auth.AuthorizationData:
     properties:
+      companyID:
+        type: string
       groups:
         items:
           type: string
         type: array
+      repositoryID:
+        type: string
       token:
         type: string
     type: object
   auth.Credentials:
     properties:
+      otp:
+        type: string
       password:
         type: string
       username:
@@ -33,6 +39,35 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
+  /api/auth/auth-types:
+    get:
+      consumes:
+      - application/json
+      description: get actual type!
+      operationId: get type
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
   /api/auth/authenticate:
     post:
       consumes:

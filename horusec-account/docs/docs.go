@@ -38,6 +38,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -149,6 +150,88 @@ var doc = `{
             }
         },
         "/api/account/create-account": {
+            "post": {
+                "description": "Create a new account!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "create-account",
+                "parameters": [
+                    {
+                        "description": "create account info",
+                        "name": "CreateAccount",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.CreateAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "STATUS CREATED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/create-account-from-keycloak": {
             "post": {
                 "description": "Create a new account!",
                 "consumes": [
@@ -2842,14 +2925,50 @@ var doc = `{
         "http.Response": {
             "type": "object",
             "properties": {
-                "code": {
+                "body": {
+                    "type": "string"
+                },
+                "close": {
+                    "type": "boolean"
+                },
+                "contentLength": {
                     "type": "integer"
                 },
-                "content": {
-                    "type": "object"
+                "header": {
+                    "type": "Header"
+                },
+                "proto": {
+                    "type": "string"
+                },
+                "protoMajor": {
+                    "type": "integer"
+                },
+                "protoMinor": {
+                    "type": "integer"
+                },
+                "request": {
+                    "type": "Request"
                 },
                 "status": {
                     "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                },
+                "tls": {
+                    "type": "string"
+                },
+                "trailer": {
+                    "type": "Header"
+                },
+                "transferEncoding": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "uncompressed": {
+                    "type": "boolean"
                 }
             }
         },

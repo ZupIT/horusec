@@ -17,6 +17,7 @@ package auth
 import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -24,14 +25,17 @@ type MockAuthController struct {
 	mock.Mock
 }
 
-func (m *MockAuthController) AuthByType(credentials *authEntities.Credentials,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
+func (m *MockAuthController) AuthByType(credentials *authEntities.Credentials) (interface{}, error) {
 	args := m.MethodCalled("AuthByType")
-	return args.Get(0).(interface{}), args.Error(1)
+	return args.Get(0), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.AuthorizationData,
-	authorizationType authEnums.AuthorizationType) (interface{}, error) {
+func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error) {
 	args := m.MethodCalled("AuthorizeByType")
-	return args.Get(0).(interface{}), args.Error(1)
+	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *MockAuthController) GetAuthType() (authEnums.AuthorizationType, error) {
+	args := m.MethodCalled("GetAuthType")
+	return args.Get(0).(authEnums.AuthorizationType), mockUtils.ReturnNilOrError(args, 1)
 }

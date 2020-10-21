@@ -191,6 +191,10 @@ github.com/jtblin/go-ldap-client
 # github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a
 github.com/juju/ansiterm
 github.com/juju/ansiterm/tabwriter
+# github.com/labstack/echo v3.3.10+incompatible
+## explicit
+# github.com/labstack/gommon v0.3.0
+## explicit
 # github.com/lib/pq v1.8.0
 ## explicit
 github.com/lib/pq
@@ -227,6 +231,10 @@ github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/mitchellh/mapstructure v1.3.3
 ## explicit
 github.com/mitchellh/mapstructure
+# github.com/onsi/ginkgo v1.12.0
+## explicit
+# github.com/onsi/gomega v1.9.0
+## explicit
 # github.com/opencontainers/go-digest v1.0.0
 ## explicit
 github.com/opencontainers/go-digest
@@ -298,9 +306,11 @@ github.com/swaggo/files
 # github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
 ## explicit
 github.com/swaggo/http-swagger
-# github.com/swaggo/swag v1.6.8
+# github.com/swaggo/swag v1.6.9
 ## explicit
 github.com/swaggo/swag
+# github.com/valyala/fasttemplate v1.2.1
+## explicit
 # github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77
 ## explicit
 # golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
@@ -308,7 +318,7 @@ github.com/swaggo/swag
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/md4
-# golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0
+# golang.org/x/net v0.0.0-20201021035429-f5854403a974
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -318,7 +328,7 @@ golang.org/x/net/proxy
 golang.org/x/net/publicsuffix
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20201018230417-eeed37f84f13
+# golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -335,7 +345,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.0.0-20201019160706-0a3dcccdcf7a
+# golang.org/x/tools v0.0.0-20201021122455-2be66b663cb6
 ## explicit
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/buildutil

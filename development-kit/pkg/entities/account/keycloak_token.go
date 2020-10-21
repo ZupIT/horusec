@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package services
+package account
 
 import (
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/stretchr/testify/mock"
+	"encoding/json"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
-type MockAuthService struct {
-	mock.Mock
+type KeycloakToken struct {
+	AccessToken string `json:"accessToken"`
 }
 
-func (m *MockAuthService) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
-	args := m.MethodCalled("Authenticate")
-	return args.Get(0).(interface{}), args.Error(1)
+func (l *KeycloakToken) Validate() error {
+	return validation.ValidateStruct(l,
+		validation.Field(&l.AccessToken, validation.Required),
+	)
 }
 
-func (m *MockAuthService) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
-	args := m.MethodCalled("IsAuthorized")
-	return args.Bool(0), args.Error(1)
+func (l *KeycloakToken) ToBytes() []byte {
+	bytes, _ := json.Marshal(l)
+	return bytes
 }

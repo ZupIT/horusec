@@ -325,6 +325,7 @@ func createAccount(t *testing.T) {
 	createAccountResp, err := http.Post("http://localhost:8003/api/account/create-account", "text/json", bytes.NewReader(accountBytes))
 	assert.NoError(t, err, "create account")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account")
+
 	assert.NoError(t, createAccountResp.Body.Close())
 }
 

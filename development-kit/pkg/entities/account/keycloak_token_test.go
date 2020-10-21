@@ -12,14 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horus
+package account
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestAuthenticate(t *testing.T) {
-	t.Run("", func(t *testing.T) {
+func TestKeycloakTokenToBytes(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		keyCloakToken := &KeycloakToken{}
+		assert.NotEmpty(t, keyCloakToken.ToBytes())
+	})
+}
 
+func TestKeycloakTokenValidate(t *testing.T) {
+	t.Run("should return no error when not empty", func(t *testing.T) {
+		keyCloakToken := &KeycloakToken{AccessToken: "test"}
+		assert.NoError(t, keyCloakToken.Validate())
+	})
+
+	t.Run("should return error when empty access token", func(t *testing.T) {
+		keyCloakToken := &KeycloakToken{}
+		assert.Error(t, keyCloakToken.Validate())
 	})
 }
