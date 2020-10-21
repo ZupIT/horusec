@@ -14,42 +14,21 @@
  * limitations under the License.
  */
 
-const isLocalHost = window.location.host.includes('localhost');
+const isLocalHost = window.location.origin.includes('localhost')
 
-function API_HOST() {
-  const ENV_ENDPOINT = process.env.REACT_APP_HORUS_ENDPOINT;
 
-  if (!ENV_ENDPOINT) {
-    return isLocalHost ? 'http://localhost' : window.location.host;
-  } else {
-    return ENV_ENDPOINT;
-  }
+let SERVICE_ACCOUNT = window.location.origin.replace('manager-horusec', 'account-horusec')
+let SERVICE_API = window.location.origin.replace('manager-horusec', 'api-horusec')
+let SERVICE_ANALYTIC = window.location.origin.replace('manager-horusec', 'analytics-horusec')
+
+if (isLocalHost) {
+  SERVICE_ACCOUNT = 'http://localhost:8003'
+  SERVICE_API = 'http://localhost:8000'
+  SERVICE_ANALYTIC = 'http://localhost:8005'
 }
-
-const SERVICE_ACCOUNT = isLocalHost
-  ? `${API_HOST()}:8003/api/account`
-  : `${API_HOST()}/service_account/api/account`;
-
-const SERVICE_COMPANY = isLocalHost
-  ? `${API_HOST()}:8003/api/companies`
-  : `${API_HOST()}/service_account/api/companies`;
-
-const SERVICE_API = isLocalHost
-  ? `${API_HOST()}:8000/api/companies`
-  : `${API_HOST()}/service_api/api/companies`;
-
-const SERVICE_REPOSITORY = isLocalHost
-  ? `${API_HOST()}:8000/api/repositories`
-  : `${API_HOST()}/service_api/api/repositories`;
-
-const SERVICE_ANALYTIC = isLocalHost
-  ? `${API_HOST()}:8005/api/dashboard`
-  : `${API_HOST()}/service_account/api/dashboard`;
 
 export {
   SERVICE_ACCOUNT,
-  SERVICE_COMPANY,
-  SERVICE_ANALYTIC,
   SERVICE_API,
-  SERVICE_REPOSITORY,
-};
+  SERVICE_ANALYTIC
+}

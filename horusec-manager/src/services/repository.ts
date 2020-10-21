@@ -17,16 +17,16 @@
 import renewHTTP from 'services/axios/forceRenewToken';
 import defaultHTTP from 'services/axios/default';
 
-import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
+import { SERVICE_ACCOUNT, SERVICE_API } from './enpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 const getAll = (companyId: string) => {
-  return renewHTTP.get(`${SERVICE_COMPANY}/${companyId}/repositories`);
+  return renewHTTP.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`);
 };
 
 const create = (companyId: string, name: string, description: string) => {
-  return renewHTTP.post(`${SERVICE_COMPANY}/${companyId}/repositories`, {
+  return renewHTTP.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`, {
     name,
     description,
   });
@@ -39,20 +39,20 @@ const update = (
   description: string
 ) => {
   return renewHTTP.patch(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}`,
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`,
     { name, description }
   );
 };
 
 const remove = (companyId: string, repositoryId: string) => {
   return renewHTTP.delete(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}`
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`
   );
 };
 
 const getAllTokens = (companyId: string, repositoryId: string) => {
   return renewHTTP.get(
-    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens`
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`
   );
 };
 
@@ -62,7 +62,7 @@ const createToken = (
   description: string
 ) => {
   return renewHTTP.post(
-    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens`,
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
       description,
     }
@@ -75,13 +75,13 @@ const removeToken = (
   tokenId: string
 ) => {
   return renewHTTP.delete(
-    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
 const getUsersInRepository = (companyId: string, repositoryId: string) => {
   return renewHTTP.get(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles`
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`
   );
 };
 
@@ -92,7 +92,7 @@ const includeUser = (
   role: string
 ) => {
   return renewHTTP.post(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles`,
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`,
     {
       email,
       role,
@@ -106,7 +106,7 @@ const removeUser = (
   accountId: string
 ) => {
   return renewHTTP.delete(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles/${accountId}`
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
 
@@ -117,7 +117,7 @@ const updateUserRole = (
   role: string
 ) => {
   return renewHTTP.patch(
-    `${SERVICE_COMPANY}/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,
     }
@@ -129,7 +129,7 @@ const getAllVulnerabilities = (
   pagination: PaginationInfo
 ) => {
   return defaultHTTP.get(
-    `${SERVICE_API}/${filters.companyID}/repositories/${filters.repositoryID}/management`,
+    `${SERVICE_API}/api/companies/${filters.companyID}/repositories/${filters.repositoryID}/management`,
     {
       params: {
         page: pagination.currentPage,
@@ -149,7 +149,7 @@ const updateVulnerabilityType = (
   type: string
 ) => {
   return defaultHTTP.put(
-    `${SERVICE_API}/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
     {
       type,
     }

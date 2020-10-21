@@ -28,7 +28,7 @@ const getTotalDevelopers = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/${path}/${ID}/total-developers`, {
+  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-developers`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
   });
 };
@@ -42,7 +42,7 @@ const getTotalRepositories = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/${path}/${ID}/total-repositories`, {
+  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/total-repositories`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
   });
 };
@@ -56,7 +56,7 @@ const getAllVulnerabilities = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/${path}/${ID}/all-vulnerabilities`, {
+  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/all-vulnerabilities`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
   });
 };
@@ -71,7 +71,7 @@ const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
   }
 
   return http.get(
-    `${SERVICE_ANALYTIC}/${path}/${ID}/vulnerabilities-by-language`,
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-language`,
     {
       params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
     }
@@ -88,7 +88,7 @@ const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
   }
 
   return http.get(
-    `${SERVICE_ANALYTIC}/${path}/${ID}/vulnerabilities-by-author`,
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-author`,
     {
       params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
     }
@@ -105,7 +105,7 @@ const getVulnerabilitiesByRepository = (filters: FilterValues) => {
   }
 
   return http.get(
-    `${SERVICE_ANALYTIC}/${path}/${ID}/vulnerabilities-by-repository`,
+    `${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-repository`,
     {
       params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
     }
@@ -121,7 +121,7 @@ const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
     ID = filters.repositoryID;
   }
 
-  return http.get(`${SERVICE_ANALYTIC}/${path}/${ID}/vulnerabilities-by-time`, {
+  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/vulnerabilities-by-time`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
   });
 };
@@ -170,7 +170,7 @@ const getVulnerabilitiesDetails = (
     }
   }`;
 
-  return http.get(`${SERVICE_ANALYTIC}/${path}/${ID}/details`, {
+  return http.get(`${SERVICE_ANALYTIC}/api/dashboard/${path}/${ID}/details`, {
     params: { query, page, size },
   });
 };
