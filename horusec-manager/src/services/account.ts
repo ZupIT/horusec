@@ -16,7 +16,7 @@
 
 import http from 'services/axios/default';
 import axios from 'axios';
-import { SERVICE_ACCOUNT } from './enpoints';
+import { SERVICE_ACCOUNT } from './endpoints';
 import {
   getCurrentUser,
   setCurrentUser,
@@ -26,13 +26,13 @@ import { AxiosResponse, AxiosError } from 'axios';
 import { User } from 'helpers/interfaces/User';
 
 const login = (email: string, password: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/login`, { email, password });
+  return http.post(`${SERVICE_ACCOUNT}/api/account/login`, { email, password });
 };
 
-const logout = () => http.post(`${SERVICE_ACCOUNT}/logout`);
+const logout = () => http.post(`${SERVICE_ACCOUNT}/api/account/logout`);
 
 const createAccount = (username: string, password: string, email: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/create-account`, {
+  return http.post(`${SERVICE_ACCOUNT}/api/account/create-account`, {
     username,
     email,
     password,
@@ -40,18 +40,18 @@ const createAccount = (username: string, password: string, email: string) => {
 };
 
 const sendCode = (email: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/send-code`, { email });
+  return http.post(`${SERVICE_ACCOUNT}/api/account/send-code`, { email });
 };
 
 const validateCode = (email: string, code: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/validate-code`, {
+  return http.post(`${SERVICE_ACCOUNT}/api/account/validate-code`, {
     email,
     code,
   });
 };
 
 const changePassword = (token: string, password: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/change-password`, password, {
+  return http.post(`${SERVICE_ACCOUNT}/api/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
       Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const changePassword = (token: string, password: string) => {
 };
 
 const verifyUniqueUsernameEmail = (email: string, username: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/verify-already-used`, {
+  return http.post(`${SERVICE_ACCOUNT}/api/account/verify-already-used`, {
     email,
     username,
   });
@@ -71,7 +71,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
 
   return new Promise((resolve, reject) => {
     axios
-      .post(`${SERVICE_ACCOUNT}/renew-token`, refreshToken, {
+      .post(`${SERVICE_ACCOUNT}/api/account/renew-token`, refreshToken, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-type': 'text/plain',
