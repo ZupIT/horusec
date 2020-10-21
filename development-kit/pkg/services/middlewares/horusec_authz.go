@@ -134,7 +134,7 @@ func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums
 	repositoryID uuid.UUID) []byte {
 	authorizationData := &authEntities.AuthorizationData{
 		Token:        token,
-		Groups:       []string{role.ToString()},
+		Role:         role,
 		CompanyID:    companyID,
 		RepositoryID: repositoryID,
 	}
