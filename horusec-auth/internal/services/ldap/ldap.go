@@ -3,12 +3,15 @@ package ldap
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	accountrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapconfig "github.com/ZupIT/horusec/horusec-auth/config/ldap"
@@ -19,9 +22,10 @@ import (
 
 type Service struct {
 	client         ldapclient.LDAPClient
-	accountRepo    account.IAccount
+	accountRepo    accountrepo.IAccount
 	companyRepo    companyrepo.ICompanyRepository
 	repositoryRepo repositoryrepo.IRepository
+	cacheRepo      cache.Interface
 }
 
 type AuthzEntity interface {
@@ -34,24 +38,55 @@ func NewService(
 	databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
 	return &Service{
 		client:         ldapconfig.NewLDAPClient(),
-		accountRepo:    account.NewAccountRepository(databaseRead, databaseWrite),
+		accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
 		companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 		repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+		cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 	}
 }
 
 func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, error) {
-	var result map[string]interface{}
-
 	ok, data, err := s.client.Authenticate(credentials.Username, credentials.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	result["ok"] = ok
-	result["data"] = data
+	if !ok {
+		return nil, errors.New("not authorzed")
+	}
 
-	return result, nil
+	account, err := s.accountRepo.GetByEmail(data["email"])
+	if account == nil || err != nil {
+		account.Email = data["email"]
+		account.Username = data["username"]
+
+		err = s.accountRepo.Create(account.SetAccountData())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
+	refreshToken := jwt.CreateRefreshToken()
+	cacheData := &entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}
+	err = s.cacheRepo.Set(cacheData, time.Hour*2)
+	if err != nil {
+		return nil, err
+	}
+
+	return struct {
+		AccessToken  string
+		RefreshToken string
+		ExpiresAt    time.Time
+		Username     string
+		Email        string
+	}{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresAt:    expiresAt,
+		Username:     account.Username,
+		Email:        account.Email,
+	}, nil
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
