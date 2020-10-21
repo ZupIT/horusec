@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-const isLocalHost = window.location.origin.includes('localhost')
+const isLocalHost = window.location.origin.includes('localhost');
 
 
-let SERVICE_ACCOUNT = window.location.origin.replace('manager-horusec', 'account-horusec')
-let SERVICE_API = window.location.origin.replace('manager-horusec', 'api-horusec')
-let SERVICE_ANALYTIC = window.location.origin.replace('manager-horusec', 'analytics-horusec')
+let SERVICE_ACCOUNT = window.location.origin.replace('manager-horusec', 'account-horusec');
+let SERVICE_API = window.location.origin.replace('manager-horusec', 'api-horusec');
+let SERVICE_ANALYTIC = window.location.origin.replace('manager-horusec', 'analytics-horusec');
 
 if (isLocalHost) {
-  SERVICE_ACCOUNT = 'http://localhost:8003'
-  SERVICE_API = 'http://localhost:8000'
-  SERVICE_ANALYTIC = 'http://localhost:8005'
+  SERVICE_ACCOUNT = 'http://localhost:8003';
+  SERVICE_API = 'http://localhost:8000';
+  SERVICE_ANALYTIC = 'http://localhost:8005';
 }
 
 export {
