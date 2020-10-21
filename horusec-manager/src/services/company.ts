@@ -15,30 +15,30 @@
  */
 
 import http from 'services/axios/default';
-import { SERVICE_COMPANY, SERVICE_API } from './enpoints';
+import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
 
 const getAll = () => {
-  return http.get(SERVICE_COMPANY);
+  return http.get(`${SERVICE_ACCOUNT}/api/companies`);
 };
 
 const getOne = (companyId: string) => {
-  return http.get(`${SERVICE_COMPANY}/${companyId}`);
+  return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
 const create = (name: string) => {
-  return http.post(SERVICE_COMPANY, { name });
+  return http.post(`${SERVICE_ACCOUNT}/api/companies`, { name });
 };
 
 const update = (companyId: string, name: string) => {
-  return http.patch(`${SERVICE_COMPANY}/${companyId}`, { name });
+  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, { name });
 };
 
 const remove = (companyId: string) => {
-  return http.delete(`${SERVICE_COMPANY}/${companyId}`);
+  return http.delete(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
 const getUsersInCompany = (companyId: string) => {
-  return http.get(`${SERVICE_COMPANY}/${companyId}/roles`);
+  return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`);
 };
 
 const createUserInCompany = (
@@ -46,7 +46,10 @@ const createUserInCompany = (
   email: string,
   role: string
 ) => {
-  return http.post(`${SERVICE_COMPANY}/${companyId}/roles`, { email, role });
+  return http.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`, {
+    email,
+    role,
+  });
 };
 
 const editUserInCompany = (
@@ -54,27 +57,34 @@ const editUserInCompany = (
   accountId: string,
   role: string
 ) => {
-  return http.patch(`${SERVICE_COMPANY}/${companyId}/roles/${accountId}`, {
-    role,
-  });
+  return http.patch(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`,
+    {
+      role,
+    }
+  );
 };
 
 const removeUserInCompany = (companyId: string, accountId: string) => {
-  return http.delete(`${SERVICE_COMPANY}/${companyId}/roles/${accountId}`);
+  return http.delete(
+    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`
+  );
 };
 
 const getAllTokens = (companyId: string) => {
-  return http.get(`${SERVICE_API}/${companyId}/tokens`);
+  return http.get(`${SERVICE_API}/api/companies/${companyId}/tokens`);
 };
 
 const createToken = (companyId: string, description: string) => {
-  return http.post(`${SERVICE_API}/${companyId}/tokens`, {
+  return http.post(`${SERVICE_API}/api/companies/${companyId}/tokens`, {
     description,
   });
 };
 
 const removeToken = (companyId: string, tokenId: string) => {
-  return http.delete(`${SERVICE_API}/${companyId}/tokens/${tokenId}`);
+  return http.delete(
+    `${SERVICE_API}/api/companies/${companyId}/tokens/${tokenId}`
+  );
 };
 
 export default {
