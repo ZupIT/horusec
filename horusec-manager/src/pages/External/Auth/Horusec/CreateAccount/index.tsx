@@ -14,11 +14,24 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: string;
-  authType: 'horusec' | 'ldap' | 'keycloak';
+import React, { useState } from 'react';
+import { CreateAccounteProvider } from 'contexts/CreateAccount';
+
+import UserInfoForm from './UserInfo';
+import PasswordForm from './Password';
+
+function CreateAccountScreen() {
+  const [showUserInfoStep, setShowUserInfoStep] = useState(true);
+
+  return (
+    <CreateAccounteProvider>
+      {showUserInfoStep ? (
+        <UserInfoForm onNextStep={() => setShowUserInfoStep(false)} />
+      ) : (
+        <PasswordForm />
+      )}
+    </CreateAccounteProvider>
+  );
 }
+
+export default CreateAccountScreen;

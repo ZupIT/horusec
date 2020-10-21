@@ -23,7 +23,6 @@ import emailValidator from 'helpers/validators/isValidEmail';
 import { Field } from 'helpers/interfaces/Field';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import ExternalLayout from 'layouts/External';
 
 function SendEmailScreen() {
   const { t } = useTranslation();
@@ -55,46 +54,44 @@ function SendEmailScreen() {
   };
 
   return (
-    <ExternalLayout>
-      <>
-        <Styled.SubTitle>
-          {t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}
-        </Styled.SubTitle>
+    <>
+      <Styled.SubTitle>
+        {t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}
+      </Styled.SubTitle>
 
-        <Styled.Form onSubmit={handleSubmit}>
-          <Styled.Field
-            onChangeValue={(field: Field) => setEmail(field)}
-            label={t('RECOVERY_PASS_SCREEN.EMAIL')}
-            name="email"
-            type="email"
-            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
-            validation={emailValidator}
-          />
-
-          <Styled.Submit
-            isLoading={isLoading}
-            isDisabled={!email.isValid}
-            text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
-            type="submit"
-            rounded
-          />
-
-          <Styled.BackToLogin
-            onClick={() => history.push('/login')}
-            outline
-            text={t('RECOVERY_PASS_SCREEN.BACK')}
-            rounded
-          />
-        </Styled.Form>
-
-        <Dialog
-          isVisible={successDialogVisible}
-          confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}
-          message={t('RECOVERY_PASS_SCREEN.SUCCESS')}
-          onConfirm={() => history.push('/login')}
+      <Styled.Form onSubmit={handleSubmit}>
+        <Styled.Field
+          onChangeValue={(field: Field) => setEmail(field)}
+          label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+          name="email"
+          type="email"
+          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
+          validation={emailValidator}
         />
-      </>
-    </ExternalLayout>
+
+        <Styled.Submit
+          isLoading={isLoading}
+          isDisabled={!email.isValid}
+          text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
+          type="submit"
+          rounded
+        />
+
+        <Styled.BackToLogin
+          onClick={() => history.push('/login')}
+          outline
+          text={t('RECOVERY_PASS_SCREEN.BACK')}
+          rounded
+        />
+      </Styled.Form>
+
+      <Dialog
+        isVisible={successDialogVisible}
+        confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}
+        message={t('RECOVERY_PASS_SCREEN.SUCCESS')}
+        onConfirm={() => history.push('/login')}
+      />
+    </>
   );
 }
 

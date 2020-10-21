@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: string;
-  authType: 'horusec' | 'ldap' | 'keycloak';
+import React from 'react';
+import ExternalLayout from 'layouts/External';
+
+function LDAPAuth() {
+  return (
+    <ExternalLayout>
+      <h1>LDAP</h1>
+    </ExternalLayout>
+  );
 }
+
+export default LDAPAuth;

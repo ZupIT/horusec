@@ -30,7 +30,6 @@ import {
   hasSpecialCharacter,
   hasUpperCase,
 } from 'helpers/validators';
-import ExternalLayout from 'layouts/External';
 
 function NewPasswordScreen() {
   const { t } = useTranslation();
@@ -95,87 +94,85 @@ function NewPasswordScreen() {
   };
 
   return (
-    <ExternalLayout>
-      <>
-        <Styled.SubTitle>
-          {t('RECOVERY_PASS_SCREEN.CREATE_NEW_PASS')}
-        </Styled.SubTitle>
+    <>
+      <Styled.SubTitle>
+        {t('RECOVERY_PASS_SCREEN.CREATE_NEW_PASS')}
+      </Styled.SubTitle>
 
-        <Styled.PassRequirements>
-          <Styled.Info>
-            {t('RECOVERY_PASS_SCREEN.PASSWORD_REQUIREMENTS')}
-          </Styled.Info>
+      <Styled.PassRequirements>
+        <Styled.Info>
+          {t('RECOVERY_PASS_SCREEN.PASSWORD_REQUIREMENTS')}
+        </Styled.Info>
 
-          <Styled.Item isInvalid={passValidations.minCharacters}>
-            {t('RECOVERY_PASS_SCREEN.MIN_CHARACTERS')}
-          </Styled.Item>
+        <Styled.Item isInvalid={passValidations.minCharacters}>
+          {t('RECOVERY_PASS_SCREEN.MIN_CHARACTERS')}
+        </Styled.Item>
 
-          <Styled.Item isInvalid={passValidations.alpha}>
-            {t('RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS')}
-          </Styled.Item>
+        <Styled.Item isInvalid={passValidations.alpha}>
+          {t('RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS')}
+        </Styled.Item>
 
-          <Styled.Item isInvalid={passValidations.number}>
-            {t('RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT')}
-          </Styled.Item>
+        <Styled.Item isInvalid={passValidations.number}>
+          {t('RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT')}
+        </Styled.Item>
 
-          <Styled.Item isInvalid={passValidations.characterSpecial}>
-            {t('RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER')}
-          </Styled.Item>
+        <Styled.Item isInvalid={passValidations.characterSpecial}>
+          {t('RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER')}
+        </Styled.Item>
 
-          <Styled.Info>{t('RECOVERY_PASS_SCREEN.NO_EQUALS')}</Styled.Info>
+        <Styled.Info>{t('RECOVERY_PASS_SCREEN.NO_EQUALS')}</Styled.Info>
 
-          <Styled.Item>{t('RECOVERY_PASS_SCREEN.USER_NAME')}</Styled.Item>
-        </Styled.PassRequirements>
+        <Styled.Item>{t('RECOVERY_PASS_SCREEN.USER_NAME')}</Styled.Item>
+      </Styled.PassRequirements>
 
-        <Styled.Form onSubmit={handleSubmit}>
-          <Styled.Field
-            onChangeValue={(field: Field) => handlePasswordValue(field)}
-            label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
-            name="password"
-            type="password"
-            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_PASS')}
-            validation={isEmptyString}
-          />
-
-          <Styled.Field
-            label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
-            onChangeValue={(field: Field) => setConfirmPass(field)}
-            name="confirm-pass"
-            type="password"
-            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')}
-            validation={validateEqualsPassword}
-          />
-
-          <Styled.Submit
-            isDisabled={
-              !confirmPass.isValid ||
-              !password.isValid ||
-              passValidations.alpha ||
-              passValidations.characterSpecial ||
-              passValidations.minCharacters ||
-              passValidations.number
-            }
-            text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
-            type="submit"
-            rounded
-          />
-
-          <Styled.BackToLogin
-            onClick={() => history.push('/login')}
-            text={t('RECOVERY_PASS_SCREEN.BACK')}
-            rounded
-            outline
-          />
-        </Styled.Form>
-
-        <Dialog
-          isVisible={successDialogVisible}
-          confirmText={t('RECOVERY_PASS_SCREEN.BACK')}
-          message={t('RECOVERY_PASS_SCREEN.SUCCESS_ALTER_PASS')}
-          onConfirm={() => history.push('/login')}
+      <Styled.Form onSubmit={handleSubmit}>
+        <Styled.Field
+          onChangeValue={(field: Field) => handlePasswordValue(field)}
+          label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
+          name="password"
+          type="password"
+          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_PASS')}
+          validation={isEmptyString}
         />
-      </>
-    </ExternalLayout>
+
+        <Styled.Field
+          label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
+          onChangeValue={(field: Field) => setConfirmPass(field)}
+          name="confirm-pass"
+          type="password"
+          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')}
+          validation={validateEqualsPassword}
+        />
+
+        <Styled.Submit
+          isDisabled={
+            !confirmPass.isValid ||
+            !password.isValid ||
+            passValidations.alpha ||
+            passValidations.characterSpecial ||
+            passValidations.minCharacters ||
+            passValidations.number
+          }
+          text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
+          type="submit"
+          rounded
+        />
+
+        <Styled.BackToLogin
+          onClick={() => history.push('/login')}
+          text={t('RECOVERY_PASS_SCREEN.BACK')}
+          rounded
+          outline
+        />
+      </Styled.Form>
+
+      <Dialog
+        isVisible={successDialogVisible}
+        confirmText={t('RECOVERY_PASS_SCREEN.BACK')}
+        message={t('RECOVERY_PASS_SCREEN.SUCCESS_ALTER_PASS')}
+        onConfirm={() => history.push('/login')}
+      />
+    </>
   );
 }
 

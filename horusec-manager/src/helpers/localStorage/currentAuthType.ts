@@ -15,23 +15,22 @@
  */
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
-import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 
-const getCurrentRoute = (): InternalRoute | null => {
-  const localData: InternalRoute = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.ROUTE)
+const getCurrentAuthType = (): string => {
+  const localData: string = JSON.parse(
+    window.localStorage.getItem(localStorageKeys.AUTH_TYPE)
   );
 
   return localData;
 };
 
-const setCurrenRoute = (value: InternalRoute) => {
-  const route = JSON.stringify(value);
-  window.localStorage.setItem(localStorageKeys.ROUTE, route);
+const setCurrenAuthType = (value: string) => {
+  const authType = JSON.stringify(value);
+  window.localStorage.setItem(localStorageKeys.AUTH_TYPE, authType);
 };
 
-const clearCurrentRoute = () => {
-  window.localStorage.removeItem(localStorageKeys.ROUTE);
+const clearCurrentAuthType = () => {
+  window.localStorage.removeItem(localStorageKeys.AUTH_TYPE);
 };
 
-export { getCurrentRoute, setCurrenRoute, clearCurrentRoute };
+export { getCurrentAuthType, setCurrenAuthType, clearCurrentAuthType };

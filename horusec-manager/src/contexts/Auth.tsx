@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { User } from 'helpers/interfaces/User';
 import {
-  getCurrentUser,
   setCurrentUser,
   clearCurrentUser,
 } from 'helpers/localStorage/currentUser';
@@ -31,7 +30,6 @@ interface AuthProviderPops {
 
 interface AuthCtx {
   user: User;
-  isLogged: boolean;
   loginInProgress: boolean;
   login: Function;
   logout: Function;
@@ -39,7 +37,6 @@ interface AuthCtx {
 
 const AuthContext = React.createContext<AuthCtx>({
   user: null,
-  isLogged: false,
   loginInProgress: false,
   login: null,
   logout: null,
@@ -48,7 +45,6 @@ const AuthContext = React.createContext<AuthCtx>({
 const AuthProvider = ({ children }: AuthProviderPops) => {
   const [user, setUser] = useState<User>(null);
   const [loginInProgress, setLoginInProgress] = useState(false);
-  const [isLogged, setLogged] = useState(false);
 
   const { dispatchMessage } = useResponseMessage();
 
@@ -62,7 +58,6 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
           const userData = result?.data?.content as User;
           setUser(userData);
           setCurrentUser(userData);
-          setLogged(true);
           setLoginInProgress(false);
           resolve();
         })
@@ -88,16 +83,9 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     });
   };
 
-  useEffect(() => {
-    const user = getCurrentUser();
-    setUser(user);
-    if (user?.accessToken) setLogged(true);
-  }, [isLogged]);
-
   return (
     <AuthContext.Provider
       value={{
-        isLogged,
         user,
         loginInProgress,
         login,

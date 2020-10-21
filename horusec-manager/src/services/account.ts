@@ -94,6 +94,10 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
   });
 };
 
+const getAuthType = () => {
+  return http.get('http://localhost:8006/api/auth/auth-types');
+};
+
 export default {
   login,
   logout,
@@ -103,4 +107,5 @@ export default {
   changePassword,
   callRenewToken,
   verifyUniqueUsernameEmail,
+  getAuthType,
 };

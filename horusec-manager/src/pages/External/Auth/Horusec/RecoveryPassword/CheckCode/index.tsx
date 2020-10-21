@@ -24,7 +24,6 @@ import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import queryString from 'query-string';
 import { isValidEmail } from 'helpers/validators';
-import ExternalLayout from 'layouts/External';
 
 function CheckCode() {
   const { t } = useTranslation();
@@ -65,49 +64,47 @@ function CheckCode() {
   };
 
   return (
-    <ExternalLayout>
-      <>
-        <Styled.SubTitle>
-          {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
-        </Styled.SubTitle>
+    <>
+      <Styled.SubTitle>
+        {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
+      </Styled.SubTitle>
 
-        <Styled.Form onSubmit={handleSubmit}>
-          <Styled.Field
-            label={t('RECOVERY_PASS_SCREEN.EMAIL')}
-            name="email"
-            type="text"
-            onChangeValue={(value: Field) => setEmail(value)}
-            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
-            validation={isValidEmail}
-            initialValue={email.value}
-          />
+      <Styled.Form onSubmit={handleSubmit}>
+        <Styled.Field
+          label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+          name="email"
+          type="text"
+          onChangeValue={(value: Field) => setEmail(value)}
+          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
+          validation={isValidEmail}
+          initialValue={email.value}
+        />
 
-          <Styled.Field
-            label={t('CODE')}
-            name="code"
-            type="text"
-            onChangeValue={(value: Field) => setCode(value)}
-            invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CODE')}
-            validation={isEmptyString}
-            initialValue={code.value}
-          />
+        <Styled.Field
+          label={t('CODE')}
+          name="code"
+          type="text"
+          onChangeValue={(value: Field) => setCode(value)}
+          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CODE')}
+          validation={isEmptyString}
+          initialValue={code.value}
+        />
 
-          <Styled.Submit
-            isDisabled={!code.isValid}
-            text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
-            type="submit"
-            rounded
-          />
+        <Styled.Submit
+          isDisabled={!code.isValid}
+          text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
+          type="submit"
+          rounded
+        />
 
-          <Styled.BackToLogin
-            onClick={() => history.push('/login')}
-            text={t('RECOVERY_PASS_SCREEN.BACK')}
-            rounded
-            outline
-          />
-        </Styled.Form>
-      </>
-    </ExternalLayout>
+        <Styled.BackToLogin
+          onClick={() => history.push('/login')}
+          text={t('RECOVERY_PASS_SCREEN.BACK')}
+          rounded
+          outline
+        />
+      </Styled.Form>
+    </>
   );
 }
 

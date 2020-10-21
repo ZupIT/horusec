@@ -14,29 +14,39 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logo/horusec.svg';
-import { Signature, Language } from 'components';
 
-function ExternalLayout({ children }: { children: JSX.Element }) {
-  return (
-    <Styled.Wrapper>
-      <Styled.LogoContent>
-        <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
-
-        <Styled.Content>{children}</Styled.Content>
-      </Styled.LogoContent>
-
-      <Styled.Footer>
-        <Signature />
-
-        <Styled.LanguageWrapper>
-          <Language />
-        </Styled.LanguageWrapper>
-      </Styled.Footer>
-    </Styled.Wrapper>
-  );
+interface Props {
+  isVisible: boolean;
 }
 
-export default ExternalLayout;
+const Splash: React.FC<Props> = ({ isVisible }) => {
+  const [visible, setVisible] = useState(true);
+  const [startAnimation, setStartAnimation] = useState(true);
+
+  useEffect(() => {
+    if (!isVisible) {
+      setTimeout(() => {
+        setStartAnimation(false);
+      }, 1500);
+
+      setTimeout(() => {
+        setVisible(false);
+      }, 3200);
+    }
+  }, [isVisible]);
+
+  return (
+    <Styled.Container isVisible={visible}>
+      <Styled.Logo
+        isVisible={startAnimation}
+        src={HorusecLogo}
+        alt="Horusec Logo"
+      />
+    </Styled.Container>
+  );
+};
+
+export default Splash;

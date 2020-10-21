@@ -14,52 +14,15 @@
  * limitations under the License.
  */
 
-import React, { lazy } from 'react';
+import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { tokenIsExpired } from 'helpers/localStorage/currentUser';
-import LoginPage from 'pages/External/Login';
+import Auth from 'pages/External/Auth';
 
 const AuthRoutes = () => (
   <Switch>
-    <Redirect exact from="/" to="/login" />
+    <Redirect exact from="/" to="/auth" />
 
-    <Route
-      exact
-      path="/login"
-      component={() =>
-        !tokenIsExpired() ? <Redirect to="/home" /> : LoginPage()
-      }
-    />
-
-    <Route
-      exact
-      path="/create-account"
-      component={lazy(() => import('pages/External/CreateAccount'))}
-    />
-
-    <Route
-      exact
-      path="/recovery-password"
-      component={lazy(() =>
-        import('pages/External/RecoveryPassword/SendEmail')
-      )}
-    />
-
-    <Route
-      exact
-      path="/recovery-password/check-code"
-      component={lazy(() =>
-        import('pages/External/RecoveryPassword/CheckCode')
-      )}
-    />
-
-    <Route
-      exact
-      path="/recovery-password/new-password"
-      component={lazy(() =>
-        import('pages/External/RecoveryPassword/NewPassword')
-      )}
-    />
+    <Route exact path="/auth" component={Auth} />
   </Switch>
 );
 

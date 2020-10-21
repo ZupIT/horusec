@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import { CreateAccounteProvider } from 'contexts/CreateAccount';
+import React from 'react';
 import ExternalLayout from 'layouts/External';
 
-import UserInfoForm from './UserInfo';
-import PasswordForm from './Password';
-
-function CreateAccountScreen() {
-  const [showUserInfoStep, setShowUserInfoStep] = useState(true);
-
+function KeycloakAuth() {
   return (
-    <CreateAccounteProvider>
-      <ExternalLayout>
-        {showUserInfoStep ? (
-          <UserInfoForm onNextStep={() => setShowUserInfoStep(false)} />
-        ) : (
-          <PasswordForm />
-        )}
-      </ExternalLayout>
-    </CreateAccounteProvider>
+    <ExternalLayout>
+      <h1>Keycloak</h1>
+    </ExternalLayout>
   );
 }
 
-export default CreateAccountScreen;
+export default KeycloakAuth;
