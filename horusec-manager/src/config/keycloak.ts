@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-}
+import Keycloak from 'keycloak-js';
+
+const keycloak = Keycloak({
+  url: process.env.REACT_APP_KEYCLOACK_BASE_PATH,
+  clientId: process.env.REACT_APP_KEYCLOACK_CLIENT_ID,
+  realm: process.env.REACT_APP_KEYCLOACK_REALM,
+});
+
+export default keycloak;

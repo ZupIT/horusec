@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { tokenIsExpired } from 'helpers/localStorage/currentUser';
+import { tokenIsExpired } from 'helpers/localStorage/tokens';
 
 interface PrivateRouteProps {
   component: React.FC;

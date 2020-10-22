@@ -16,7 +16,7 @@
 
 import React from 'react';
 import Styled from './styled';
-import HorusecLogo from 'assets/logo/horusec.svg';
+import HorusecLogo from 'assets/logos/horusec.svg';
 import { Signature, Language } from 'components';
 
 function ExternalLayout({ children }: { children: JSX.Element }) {

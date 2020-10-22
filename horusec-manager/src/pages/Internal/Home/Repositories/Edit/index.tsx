@@ -160,7 +160,7 @@ const EditRepository: React.FC<Props> = ({
           <Styled.Field
             label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
             onChangeValue={(field: Field) => setSupervisorGroup(field)}
-            name="adminGroup"
+            name="supervisorGroup"
             type="text"
             width="100%"
           />
@@ -172,7 +172,7 @@ const EditRepository: React.FC<Props> = ({
           <Styled.Field
             label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
             onChangeValue={(field: Field) => setUserGroup(field)}
-            name="adminGroup"
+            name="userGroup"
             type="text"
             width="100%"
           />

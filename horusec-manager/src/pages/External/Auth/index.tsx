@@ -19,6 +19,7 @@ import { setCurrenAuthType } from 'helpers/localStorage/currentAuthType';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
+import { useKeycloak } from '@react-keycloak/web';
 import { Splash } from 'components';
 
 import HorusecAuth from './Horusec';
@@ -27,6 +28,7 @@ import LDAPAuth from './LDAP';
 
 const Auth = () => {
   const { dispatchMessage } = useResponseMessage();
+  const { keycloak } = useKeycloak();
 
   const [authType, setAuthType] = useState(null);
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -53,6 +55,7 @@ const Auth = () => {
         })
         .catch((err) => {
           dispatchMessage(err?.response?.data);
+          console.log(err);
         })
         .finally(() => {
           setLoading(false);

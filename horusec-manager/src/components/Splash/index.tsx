@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import HorusecLogo from 'assets/logo/horusec.svg';
+import HorusecLogo from 'assets/logos/horusec.svg';
 
 interface Props {
   isVisible: boolean;

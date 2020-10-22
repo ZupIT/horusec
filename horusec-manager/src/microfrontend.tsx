@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import 'helpers/setPublicPath';
 
-export interface User {
-  username: string;
-  email: string;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
+
+import './config/i18n';
+
+setPublicPath('@devcraft/horusec');
+
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content'),
+});
+
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;

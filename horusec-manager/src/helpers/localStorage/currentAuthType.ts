@@ -17,16 +17,11 @@
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 
 const getCurrentAuthType = (): string => {
-  const localData: string = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.AUTH_TYPE)
-  );
-
-  return localData;
+  return window.localStorage.getItem(localStorageKeys.AUTH_TYPE);
 };
 
 const setCurrenAuthType = (value: string) => {
-  const authType = JSON.stringify(value);
-  window.localStorage.setItem(localStorageKeys.AUTH_TYPE, authType);
+  window.localStorage.setItem(localStorageKeys.AUTH_TYPE, value);
 };
 
 const clearCurrentAuthType = () => {

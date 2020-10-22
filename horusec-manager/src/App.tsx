@@ -19,13 +19,15 @@ import React from 'react';
 import Routes from './routes';
 import GlobalStyle from 'assets/style/global';
 import { ThemeProvider } from 'styled-components';
-
 import { FlashMessageProvider } from 'contexts/FlashMessage';
 import { AuthProvider } from 'contexts/Auth';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
+import { setIsMicrofrontend } from 'helpers/localStorage/microfrontend';
 
-function App() {
+function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   const theme = getCurrentTheme();
+
+  setIsMicrofrontend(isMicrofrontend || false);
 
   return (
     <ThemeProvider theme={theme}>

@@ -20,11 +20,14 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 
 const getCurrentTheme = () => {
   const currentTheme =
-    window.localStorage.getItem(localStorageKeys.THEME) || 'dark';
+    window.localStorage.getItem(localStorageKeys.THEME) ||
+    process.env.REACT_APP_HORUSEC_MANAGER_THEME ||
+    'dark';
+
   return get(THEME, currentTheme, THEME.dark);
 };
 
-const setCurrentTheme = (value: 'dark' | 'light') => {
+const setCurrentTheme = (value: 'dark' | 'light' | 'galapagos') => {
   window.localStorage.setItem(localStorageKeys.USER, value);
 };
 

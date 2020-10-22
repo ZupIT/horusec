@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-}
+import dark from './dark';
+
+export default {
+  ...dark,
+  colors: {
+    ...dark.colors,
+
+    button: {
+      primary: '#5C6BC0',
+      secundary: '#5C6BC0',
+      text: '#F2F2F9',
+      border: '#F2F2F7',
+      disabled: '#2C2C2E',
+      disableInDark: '#636366',
+    },
+  },
+};

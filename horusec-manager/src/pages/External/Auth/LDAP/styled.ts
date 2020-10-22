@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-}
+import styled from 'styled-components';
+import { Input, Button } from 'components';
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Field = styled(Input)`
+  margin-top: 25px;
+`;
+
+const Submit = styled(Button)`
+  margin-top: 35px;
+`;
+
+export default {
+  Form,
+  Field,
+  Submit,
+};

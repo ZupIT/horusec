@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
-import { getCurrentUser } from 'helpers/localStorage/currentUser';
-import moment from 'moment';
+import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import accountService from 'services/account';
+import { getAccessToken } from 'helpers/localStorage/tokens';
 
 const instance: AxiosInstance = axios.create({
   timeout: 5000,
@@ -27,26 +26,19 @@ const instance: AxiosInstance = axios.create({
 });
 
 instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
-  const expiresAt = getCurrentUser()?.expiresAt;
-  const expiresRemaining = moment(expiresAt).diff(moment(), 'minutes');
-  const isRenewTokenRoute = config.url.includes('renew-token');
-  const MINUTES_RENEW = 5;
-
-  if (
-    expiresAt &&
-    Math.abs(expiresRemaining) <= MINUTES_RENEW &&
-    !isRenewTokenRoute
-  ) {
-    await accountService.callRenewToken();
-  }
-
-  const accessToken = getCurrentUser()?.accessToken;
+  const accessToken = getAccessToken();
 
   if (accessToken) {
     config.headers.common['Authorization'] = `Bearer ${accessToken}`;
   }
 
   return config;
+});
+
+instance.interceptors.response.use(async (response: AxiosResponse) => {
+  await accountService.callRenewToken();
+
+  return response;
 });
 
 export default instance;

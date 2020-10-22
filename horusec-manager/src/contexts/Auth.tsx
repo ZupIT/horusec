@@ -17,33 +17,30 @@
 import React, { useState } from 'react';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import { User } from 'helpers/interfaces/User';
 import {
   setCurrentUser,
   clearCurrentUser,
 } from 'helpers/localStorage/currentUser';
 import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
+import { clearTokens, setTokens } from 'helpers/localStorage/tokens';
 
 interface AuthProviderPops {
   children: JSX.Element;
 }
 
 interface AuthCtx {
-  user: User;
   loginInProgress: boolean;
   login: Function;
   logout: Function;
 }
 
 const AuthContext = React.createContext<AuthCtx>({
-  user: null,
   loginInProgress: false,
   login: null,
   logout: null,
 });
 
 const AuthProvider = ({ children }: AuthProviderPops) => {
-  const [user, setUser] = useState<User>(null);
   const [loginInProgress, setLoginInProgress] = useState(false);
 
   const { dispatchMessage } = useResponseMessage();
@@ -55,9 +52,11 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
       accountService
         .login(email, password)
         .then((result) => {
-          const userData = result?.data?.content as User;
-          setUser(userData);
+          const userData = result?.data?.content;
+          const { accessToken, refreshToken, expiresAt } = userData;
+
           setCurrentUser(userData);
+          setTokens(accessToken, refreshToken, expiresAt);
           setLoginInProgress(false);
           resolve();
         })
@@ -75,6 +74,7 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
         .then(() => {
           clearCurrentUser();
           clearCurrentCompany();
+          clearTokens();
           resolve();
         })
         .catch((err) => {
@@ -86,7 +86,6 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
   return (
     <AuthContext.Provider
       value={{
-        user,
         loginInProgress,
         login,
         logout,

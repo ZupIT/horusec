@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import http from 'services/axios/default';
-import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
+import http from 'config/axios/default';
+import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 
 const getAll = () => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies`);

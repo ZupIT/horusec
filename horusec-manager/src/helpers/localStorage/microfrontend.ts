@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-export interface User {
-  username: string;
-  email: string;
-}
+import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+
+const isMicrofrontend = (): boolean => {
+  return window.localStorage.getItem(localStorageKeys.MICROFRONTEND) === 'true';
+};
+
+const setIsMicrofrontend = (value: boolean) => {
+  window.localStorage.setItem(
+    localStorageKeys.MICROFRONTEND,
+    JSON.stringify(value)
+  );
+};
+
+export { isMicrofrontend, setIsMicrofrontend };

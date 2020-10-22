@@ -14,13 +14,62 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState, FormEvent } from 'react';
+import Styled from './styled';
+import { isValidEmail, isEmptyString } from 'helpers/validators';
+import { useTranslation } from 'react-i18next';
+import { Field } from 'helpers/interfaces/Field';
 import ExternalLayout from 'layouts/External';
 
 function LDAPAuth() {
+  const { t } = useTranslation();
+  const [isLoading, setLoading] = useState(false);
+  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
+  const [password, setPassword] = useState<Field>({
+    value: '',
+    isValid: false,
+  });
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    if (email.isValid && password.isValid) {
+      console.log('submit ldap', email, password);
+    }
+
+    setLoading(false);
+  };
+
   return (
     <ExternalLayout>
-      <h1>LDAP</h1>
+      <Styled.Form onSubmit={handleSubmit}>
+        <Styled.Field
+          label={t('LOGIN_SCREEN.EMAIL')}
+          name="email"
+          type="text"
+          onChangeValue={(field: Field) => setEmail(field)}
+          invalidMessage={t('LOGIN_SCREEN.INVALID_EMAIL')}
+          validation={isValidEmail}
+        />
+
+        <Styled.Field
+          label={t('LOGIN_SCREEN.PASSWORD')}
+          name="password"
+          type="password"
+          onChangeValue={(field: Field) => setPassword(field)}
+          validation={isEmptyString}
+          invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
+        />
+
+        <Styled.Submit
+          isDisabled={!password.isValid || !email.isValid}
+          isLoading={isLoading}
+          text={t('LOGIN_SCREEN.SUBMIT')}
+          type="submit"
+          rounded
+        />
+      </Styled.Form>
     </ExternalLayout>
   );
 }
