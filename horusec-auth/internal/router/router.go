@@ -48,9 +48,9 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *chi.Mux {
 	r.setMiddleware()
-	r.RouterAnalysis(postgresRead)
+	r.RouterAuth(postgresRead, postgresWrite)
 	r.RouterHealth(postgresRead)
 	return r.router
 }
@@ -105,8 +105,8 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 	return r
 }
 
-func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead) *Router {
-	handler := auth.NewAuthHandler(postgresRead)
+func (r *Router) RouterAuth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	handler := auth.NewAuthHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
 		router.Get("/auth-types", handler.AuthTypes)
 		router.Post("/authenticate", handler.AuthByType)

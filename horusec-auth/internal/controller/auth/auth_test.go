@@ -16,21 +16,23 @@ package auth
 
 import (
 	"errors"
+	"os"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create a new controller", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
-		controller := NewAuthController(mockRead)
+		controller := NewAuthController(mockRead, mockWrite)
 
 		assert.NotNil(t, controller)
 	})

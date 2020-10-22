@@ -15,13 +15,14 @@
 package auth
 
 import (
+	"net/http"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
-	"net/http"
 )
 
 type Handler struct {
@@ -29,10 +30,10 @@ type Handler struct {
 	authController authController.IController
 }
 
-func NewAuthHandler(postgresRead relational.InterfaceRead) *Handler {
+func NewAuthHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Handler {
 	return &Handler{
 		authUseCases:   authUseCases.NewAuthUseCases(),
-		authController: authController.NewAuthController(postgresRead),
+		authController: authController.NewAuthController(postgresRead, postgresWrite),
 	}
 }
 

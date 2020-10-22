@@ -38,11 +38,11 @@ type Controller struct {
 	ldapAuthService     services.IAuthService
 }
 
-func NewAuthController(postgresRead relational.InterfaceRead) IController {
+func NewAuthController(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) IController {
 	return &Controller{
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
 		keycloakAuthService: keycloak.NewKeycloakAuthService(postgresRead),
-		ldapAuthService:     ldap.NewService(),
+		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 	}
 }
 

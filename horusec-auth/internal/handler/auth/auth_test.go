@@ -4,27 +4,28 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"testing"
+
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"testing"
 )
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create new controller", func(t *testing.T) {
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, nil)
 		assert.NotEmpty(t, handler)
 	})
 }
 
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
 		w := httptest.NewRecorder()
 
@@ -169,7 +170,7 @@ func TestAuthorize(t *testing.T) {
 func TestHandler_AuthTypes(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
 		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, nil)
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -180,7 +181,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 	})
 	t.Run("should return 400 when get auth types", func(t *testing.T) {
 		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, nil)
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
