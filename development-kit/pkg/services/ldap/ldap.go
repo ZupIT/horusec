@@ -1,12 +1,20 @@
-package ldapconfig
+package ldap
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/jtblin/go-ldap-client"
+	goldapclient "github.com/jtblin/go-ldap-client"
 )
 
-func NewLDAPClient() ldap.LDAPClient {
-	client := ldap.LDAPClient{
+type ILDAPService interface {
+	Authenticate(username, password string) (bool, map[string]string, error)
+}
+
+type LDAPService struct {
+	client goldapclient.LDAPClient
+}
+
+func NewLDAPClient() ILDAPService {
+	client := goldapclient.LDAPClient{
 		Base:               env.GetEnvOrDefault("HORUS_LDAP_BASE", ""),
 		Host:               env.GetEnvOrDefault("HORUS_LDAP_HOST", ""),
 		Port:               env.GetEnvOrDefaultInt("HORUS_LDAP_PORT", 0),
@@ -18,7 +26,16 @@ func NewLDAPClient() ldap.LDAPClient {
 		UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
 		GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
 	}
-	defer client.Close()
 
-	return client
+	return &LDAPService{
+		client: client,
+	}
+}
+
+func (s *LDAPService) Authenticate(username, password string) (bool, map[string]string, error) {
+	return s.client.Authenticate(username, password)
+}
+
+func (s *LDAPService) GetGroupsOfUser(username string) ([]string, error) {
+	return s.client.GetGroupsOfUser(username)
 }
