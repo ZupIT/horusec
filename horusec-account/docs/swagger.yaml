@@ -184,6 +184,46 @@ paths:
               type: object
       tags:
       - Account
+  /api/account/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete account and all permissions!
+      operationId: delete-account
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: STATUS CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
   /api/account/login:
     post:
       consumes:

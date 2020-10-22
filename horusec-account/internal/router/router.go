@@ -122,6 +122,7 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 		router.With(jwt.AuthMiddleware).Post("/change-password", handler.ChangePassword)
 		router.Post("/renew-token", handler.RenewToken)
 		router.Post("/logout", handler.Logout)
+		router.Delete("/delete", handler.DeleteAccount)
 		router.Post("/verify-already-used", handler.VerifyAlreadyInUse)
 		router.Options("/", handler.Options)
 	})

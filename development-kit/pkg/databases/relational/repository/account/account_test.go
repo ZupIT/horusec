@@ -103,3 +103,17 @@ func TestGetByUsername(t *testing.T) {
 		assert.NotNil(t, account)
 	})
 }
+
+func TestDeleteAccount(t *testing.T) {
+	t.Run("should success delete account", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+		mockWrite.On("Delete").Return(resp)
+
+		repository := NewAccountRepository(mockRead, mockWrite)
+		err := repository.DeleteAccount(uuid.New())
+		assert.NoError(t, err)
+	})
+}
