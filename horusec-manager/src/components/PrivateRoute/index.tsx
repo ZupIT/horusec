@@ -26,7 +26,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = (props) => {
   return tokenIsExpired() ? (
-    <Redirect to="/login" />
+    <Redirect to="/auth" />
   ) : (
     <Route path={props.path} exact={props.exact} component={props.component} />
   );

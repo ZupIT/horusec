@@ -36,4 +36,8 @@ const SERVICE_ANALYTIC = isLocalHost
   ? 'http://localhost:8005'
   : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_ANALYTIC);
 
-export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC };
+const SERVICE_AUTH = isLocalHost
+  ? 'http://localhost:8006'
+  : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_AUTH);
+
+export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC, SERVICE_AUTH };

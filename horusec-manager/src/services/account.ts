@@ -16,7 +16,7 @@
 
 import http from 'services/axios/default';
 import axios from 'axios';
-import { SERVICE_ACCOUNT } from './endpoints';
+import { SERVICE_ACCOUNT, SERVICE_AUTH } from './endpoints';
 import {
   getCurrentUser,
   setCurrentUser,
@@ -89,13 +89,13 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
       .catch((err: AxiosError) => {
         reject(err);
         clearCurrentUser();
-        window.location.replace('/login');
+        window.location.replace('/auth');
       });
   });
 };
 
 const getAuthType = () => {
-  return http.get('http://localhost:8006/api/auth/auth-types');
+  return http.get(`${SERVICE_AUTH}/api/auth/auth-types`);
 };
 
 export default {
