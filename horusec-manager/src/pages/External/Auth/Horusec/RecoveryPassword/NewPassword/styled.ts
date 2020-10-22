@@ -21,6 +21,11 @@ interface ItemProps {
   isInvalid?: boolean;
 }
 
+const Container = styled.div`
+  display: block;
+  margin-top: 200px;
+`;
+
 const PassRequirements = styled.div`
   margin-bottom: 40px;
 `;
@@ -78,4 +83,5 @@ export default {
   Field,
   Submit,
   BackToLogin,
+  Container,
 };

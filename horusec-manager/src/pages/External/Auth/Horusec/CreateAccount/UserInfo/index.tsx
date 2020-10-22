@@ -82,7 +82,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
         />
 
         <Styled.BackToLogin
-          onClick={() => history.push('/login')}
+          onClick={() => history.push('/auth')}
           text={t('CREATE_ACCOUNT_SCREEN.BACK')}
           outline
           rounded

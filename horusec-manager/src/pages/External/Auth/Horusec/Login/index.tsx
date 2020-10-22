@@ -17,7 +17,7 @@
 import React, { useState, FormEvent } from 'react';
 import Styled from './styled';
 import { isValidEmail, isEmptyString } from 'helpers/validators';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Field } from 'helpers/interfaces/Field';
 import useAuth from 'helpers/hooks/useAuth';
@@ -25,6 +25,7 @@ import useAuth from 'helpers/hooks/useAuth';
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();
+  const { path } = useRouteMatch();
   const { login, loginInProgress } = useAuth();
 
   const [email, setEmail] = useState<Field>({ value: '', isValid: false });
@@ -63,7 +64,9 @@ function LoginScreen() {
         invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
       />
 
-      <Styled.ForgotPass onClick={() => history.push('/recovery-password')}>
+      <Styled.ForgotPass
+        onClick={() => history.push(`${path}/recovery-password`)}
+      >
         {t('LOGIN_SCREEN.FORGOT_PASS')}
       </Styled.ForgotPass>
 
@@ -76,7 +79,7 @@ function LoginScreen() {
       />
 
       <Styled.Register
-        onClick={() => history.push('/create-account')}
+        onClick={() => history.push(`${path}/create-account`)}
         outline
         text={t('LOGIN_SCREEN.NO_ACCOUNT')}
         rounded

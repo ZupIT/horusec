@@ -64,7 +64,7 @@ function CheckCode() {
   };
 
   return (
-    <>
+    <Styled.Container>
       <Styled.SubTitle>
         {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
       </Styled.SubTitle>
@@ -98,13 +98,13 @@ function CheckCode() {
         />
 
         <Styled.BackToLogin
-          onClick={() => history.push('/login')}
+          onClick={() => history.push('/auth')}
           text={t('RECOVERY_PASS_SCREEN.BACK')}
           rounded
           outline
         />
       </Styled.Form>
-    </>
+    </Styled.Container>
   );
 }
 

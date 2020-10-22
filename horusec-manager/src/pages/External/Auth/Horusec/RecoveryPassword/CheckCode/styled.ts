@@ -17,6 +17,10 @@
 import styled from 'styled-components';
 import { Input, Button } from 'components';
 
+const Container = styled.div`
+  margin-top: 50px;
+`;
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -49,4 +53,5 @@ export default {
   Field,
   Submit,
   BackToLogin,
+  Container,
 };

@@ -59,7 +59,7 @@ function NewPasswordScreen() {
       const value = params?.token as string;
       setToken(value);
     } else {
-      history.replace('/recovery-password');
+      history.replace('/auth/recovery-password');
     }
   }, [history]);
 
@@ -94,7 +94,7 @@ function NewPasswordScreen() {
   };
 
   return (
-    <>
+    <Styled.Container>
       <Styled.SubTitle>
         {t('RECOVERY_PASS_SCREEN.CREATE_NEW_PASS')}
       </Styled.SubTitle>
@@ -159,7 +159,7 @@ function NewPasswordScreen() {
         />
 
         <Styled.BackToLogin
-          onClick={() => history.push('/login')}
+          onClick={() => history.push('/auth')}
           text={t('RECOVERY_PASS_SCREEN.BACK')}
           rounded
           outline
@@ -170,9 +170,9 @@ function NewPasswordScreen() {
         isVisible={successDialogVisible}
         confirmText={t('RECOVERY_PASS_SCREEN.BACK')}
         message={t('RECOVERY_PASS_SCREEN.SUCCESS_ALTER_PASS')}
-        onConfirm={() => history.push('/login')}
+        onConfirm={() => history.push('/auth')}
       />
-    </>
+    </Styled.Container>
   );
 }
 

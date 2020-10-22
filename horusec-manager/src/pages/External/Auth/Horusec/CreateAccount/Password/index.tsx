@@ -32,7 +32,6 @@ import { CreateAccountContext } from 'contexts/CreateAccount';
 function PasswordForm() {
   const { t } = useTranslation();
   const history = useHistory();
-
   const {
     password,
     setPassword,
@@ -71,7 +70,7 @@ function PasswordForm() {
   };
 
   return (
-    <>
+    <Styled.Container>
       <Styled.SubTitle>
         {t('CREATE_ACCOUNT_SCREEN.CREATE_NEW_PASS')}
       </Styled.SubTitle>
@@ -137,7 +136,7 @@ function PasswordForm() {
         />
 
         <Styled.BackToLogin
-          onClick={() => history.push('/login')}
+          onClick={() => history.push('/auth')}
           text={t('CREATE_ACCOUNT_SCREEN.BACK')}
           outline
           rounded
@@ -148,10 +147,10 @@ function PasswordForm() {
         isVisible={successDialogVisible}
         confirmText={t('CREATE_ACCOUNT_SCREEN.CONFIRM')}
         message={t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')}
-        onConfirm={() => history.push('/login')}
+        onConfirm={() => history.push('/auth')}
         roundedButton
       />
-    </>
+    </Styled.Container>
   );
 }
 

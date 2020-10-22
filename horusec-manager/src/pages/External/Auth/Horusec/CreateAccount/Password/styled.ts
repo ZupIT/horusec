@@ -21,6 +21,11 @@ interface ItemProps {
   isInvalid?: boolean;
 }
 
+const Container = styled.div`
+  display: block;
+  margin-top: 200px;
+`;
+
 const SubTitle = styled.h2`
   color: ${({ theme }) => theme.colors.text.primary};
   font-weight: normal;
@@ -86,4 +91,5 @@ export default {
   BackToLogin,
   Subject,
   Info,
+  Container,
 };

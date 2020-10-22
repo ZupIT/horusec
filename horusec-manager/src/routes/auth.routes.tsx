@@ -22,7 +22,7 @@ const AuthRoutes = () => (
   <Switch>
     <Redirect exact from="/" to="/auth" />
 
-    <Route exact path="/auth" component={Auth} />
+    <Route path="/auth" component={Auth} />
   </Switch>
 );
 

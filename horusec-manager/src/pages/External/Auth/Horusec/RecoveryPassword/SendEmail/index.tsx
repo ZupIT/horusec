@@ -55,9 +55,7 @@ function SendEmailScreen() {
 
   return (
     <>
-      <Styled.SubTitle>
-        {t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}
-      </Styled.SubTitle>
+      <Styled.SubTitle>{t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}</Styled.SubTitle>
 
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
@@ -78,7 +76,7 @@ function SendEmailScreen() {
         />
 
         <Styled.BackToLogin
-          onClick={() => history.push('/login')}
+          onClick={() => history.push('/auth')}
           outline
           text={t('RECOVERY_PASS_SCREEN.BACK')}
           rounded
@@ -89,7 +87,7 @@ function SendEmailScreen() {
         isVisible={successDialogVisible}
         confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}
         message={t('RECOVERY_PASS_SCREEN.SUCCESS')}
-        onConfirm={() => history.push('/login')}
+        onConfirm={() => history.push('/auth')}
       />
     </>
   );

@@ -27,26 +27,25 @@ function HorusecAuth() {
         <Route exact path={path} component={lazy(() => import('./Login'))} />
 
         <Route
-          exact
-          path="/create-account"
+          path={`${path}/create-account`}
           component={lazy(() => import('./CreateAccount'))}
         />
 
         <Route
           exact
-          path="/recovery-password"
+          path={`${path}/recovery-password`}
           component={lazy(() => import('./RecoveryPassword/SendEmail'))}
         />
 
         <Route
           exact
-          path="/recovery-password/check-code"
+          path={`${path}/recovery-password/check-code`}
           component={lazy(() => import('./RecoveryPassword/CheckCode'))}
         />
 
         <Route
           exact
-          path="/recovery-password/new-password"
+          path={`${path}/recovery-password/new-password`}
           component={lazy(() => import('./RecoveryPassword/NewPassword'))}
         />
       </Switch>
