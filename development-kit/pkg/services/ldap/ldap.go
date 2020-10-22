@@ -21,6 +21,7 @@ import (
 
 type ILDAPService interface {
 	Authenticate(username, password string) (bool, map[string]string, error)
+	GetGroupsOfUser(username string) ([]string, error)
 }
 
 type LDAPService struct {
