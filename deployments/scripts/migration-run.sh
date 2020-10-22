@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-MIGRATION_PATH="./development-kit/pkg/databases/relational/migration"
+MIGRATION_PATH="development-kit/pkg/databases/relational/migration"
 POSTGRES_USER="root"
 POSTGRES_PASSWORD="root"
 POSTGRES_HOST="localhost"
@@ -31,12 +31,11 @@ runMigration() {
         MIGRATE_TYPE="up"
     fi
 
-    migrate -path $MIGRATION_PATH \
+    docker run --rm -v $(pwd)/$MIGRATION_PATH:/migrations \
+        --network=container:postgresql migrate/migrate \
+        -path=/migrations/ \
         -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
         $MIGRATE_TYPE "$MIGRATE_NUMBERS"
 }
-
-chmod +x ./deployments/scripts/migration-install.sh
-./deployments/scripts/migration-install.sh
 
 runMigration
