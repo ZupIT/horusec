@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package keycloak
+package ldap
 
 import (
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"

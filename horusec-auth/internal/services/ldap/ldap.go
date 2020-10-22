@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package ldap
 
 import (
@@ -13,14 +27,13 @@ import (
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	ldapconfig "github.com/ZupIT/horusec/horusec-auth/config/ldap"
+	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
-	ldapclient "github.com/jtblin/go-ldap-client"
 )
 
 type Service struct {
-	client         ldapclient.LDAPClient
+	client         ldapservice.ILDAPService
 	accountRepo    accountrepo.IAccount
 	companyRepo    companyrepo.ICompanyRepository
 	repositoryRepo repositoryrepo.IRepository
@@ -33,10 +46,10 @@ type AuthzEntity interface {
 	GetAuthzSupervisor() string
 }
 
-func NewService(
-	databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
+func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite,
+	ldapClient ldapservice.ILDAPService) services.IAuthService {
 	return &Service{
-		client:         ldapconfig.NewLDAPClient(),
+		client:         ldapClient,
 		accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
 		companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 		repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
