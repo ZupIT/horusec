@@ -12,4 +12,6 @@ ADD COLUMN
     "authz_admin" VARCHAR(255),
     "authz_supervisor" VARCHAR(255);
 
+ALTER TABLE "accounts" ALTER COLUMN "password" DROP NOT NULL
+
 COMMIT;
