@@ -1,6 +1,6 @@
 interface AuthFunctions {
-  login: Function;
-  logout: Function;
+  login(email?: string, password?: string): Promise<any>;
+  logout(): Promise<any>;
 }
 
 export interface Authenticator {

@@ -20,6 +20,7 @@ import { getCurrentAuthType } from './currentAuthType';
 import { authTypes } from 'helpers/enums/authTypes';
 import keycloak from 'config/keycloak';
 import accountService from 'services/account';
+import { setCurrentUser } from './currentUser';
 
 const getAccessToken = (): string => {
   return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
@@ -48,9 +49,16 @@ const setTokens = (
     window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
-const handleSetTokenKeycloak = (accessToken: string, refreshToken: string) => {
+const handleSetKeyclockData = async (
+  accessToken: string,
+  refreshToken: string
+) => {
   if (accessToken) {
     accountService.createAccountFromKeycloak(accessToken);
+
+    const userData: any = await keycloak.loadUserInfo();
+
+    setCurrentUser({ email: userData?.email, username: userData?.name });
   }
 
   setTokens(accessToken, refreshToken);
@@ -93,5 +101,5 @@ export {
   setTokens,
   isLogged,
   getExpiresTokenTime,
-  handleSetTokenKeycloak,
+  handleSetKeyclockData,
 };

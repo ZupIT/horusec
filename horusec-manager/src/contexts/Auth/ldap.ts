@@ -1,6 +1,6 @@
-const login = () => console.info('ldap login');
+const login = () => new Promise(() => console.log('ldap login'));
 
-const logout = () => console.info('ldap logout');
+const logout = () => new Promise(() => console.log('ldap logout'));
 
 export default {
   login,

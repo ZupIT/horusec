@@ -26,7 +26,11 @@ function KeycloakAuth() {
 
   return (
     <ExternalLayout>
-      <Button text={t('LOGIN_SCREEN.KEYCLOAK')} onClick={() => login()} />
+      <Button
+        rounded
+        text={t('LOGIN_SCREEN.KEYCLOAK')}
+        onClick={() => login()}
+      />
     </ExternalLayout>
   );
 }

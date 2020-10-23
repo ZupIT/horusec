@@ -22,6 +22,8 @@ import { Field } from 'helpers/interfaces/Field';
 import { isEmptyString } from 'helpers/validators';
 import { useHistory } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
+import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { authTypes } from 'helpers/enums/authTypes';
 
 function AddCompany() {
   const { t } = useTranslation();
@@ -47,6 +49,9 @@ function AddCompany() {
     event.preventDefault();
     if (companyName.isValid) {
       createCompany(companyName.value);
+
+      // TODO: Remover este console.log
+      console.log(adminGroup, userGroup);
     }
   };
 
@@ -68,27 +73,33 @@ function AddCompany() {
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
         />
 
-        <Styled.SubTitle>{t('COMPANY_SCREEN.REFERENCE_GROUP')}</Styled.SubTitle>
+        {getCurrentAuthType() === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('COMPANY_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
 
-        <Styled.Wrapper>
-          <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
 
-          <Input
-            name="adminGroup"
-            label={t('COMPANY_SCREEN.GROUP_NAME')}
-            onChangeValue={(field: Field) => setAdminGroup(field)}
-          />
-        </Styled.Wrapper>
+              <Input
+                name="adminGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+              />
+            </Styled.Wrapper>
 
-        <Styled.Wrapper>
-          <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
 
-          <Input
-            name="userGroup"
-            label={t('COMPANY_SCREEN.GROUP_NAME')}
-            onChangeValue={(field: Field) => setUserGroup(field)}
-          />
-        </Styled.Wrapper>
+              <Input
+                name="userGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
 
         <Styled.OptionsWrapper>
           <Styled.Btn

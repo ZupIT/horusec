@@ -25,7 +25,7 @@ import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
 import { setIsMicrofrontend } from 'helpers/localStorage/microfrontend';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import keycloakConfig from 'config/keycloak';
-import { handleSetTokenKeycloak } from 'helpers/localStorage/tokens';
+import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
 
 function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   const theme = getCurrentTheme();
@@ -36,7 +36,7 @@ function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
     <ReactKeycloakProvider
       authClient={keycloakConfig}
       onTokens={(tokens) =>
-        handleSetTokenKeycloak(tokens.token, tokens.refreshToken)
+        handleSetKeyclockData(tokens.token, tokens.refreshToken)
       }
     >
       <ThemeProvider theme={theme}>
