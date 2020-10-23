@@ -16,8 +16,14 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -54,6 +60,8 @@ func main() {
 	databaseWrite := databaseSQL.NewRepositoryWrite()
 	cacheRepository := cache.NewCacheRepository(databaseRead, databaseWrite)
 
+	createSuperAdmin(appConfig, databaseRead, databaseWrite)
+
 	server := serverUtil.NewServerConfig("8003", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
 
@@ -61,4 +69,28 @@ func main() {
 	swagger.SetupSwagger(chiRouter, "8003")
 
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
+}
+
+func createSuperAdmin(appConfig app.IAppConfig, databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) {
+	if appConfig.IsEnableSuperUserAdmin() {
+		err := account.NewAccountRepository(databaseRead, databaseWrite).Create(&accountEntities.Account{
+			AccountID:    uuid.New(),
+			Email:        "horusec-admin@example.com",
+			Password:     "$2a$10$hWoL3d6iUUl3wFBXouGDB.p/uE/K3t1k5vVFdN981IpoZJY8wftPm", // Devpass0*
+			Username:     "horusec-admin",
+			IsConfirmed:  true,
+			IsSuperAdmin: true,
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+		})
+		if err != nil {
+			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
+				logger.LogPanic("Some error occurs when create super admin", err)
+			} else {
+				logger.LogInfo("Super admin already exists")
+			}
+		} else {
+			logger.LogInfo("Super admin created with success")
+		}
+	}
 }

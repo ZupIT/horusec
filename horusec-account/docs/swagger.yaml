@@ -140,6 +140,44 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Account
+  /api/account/config:
+    get:
+      consumes:
+      - application/json
+      description: config
+      operationId: config
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
   /api/account/create-account:
     post:
       consumes:

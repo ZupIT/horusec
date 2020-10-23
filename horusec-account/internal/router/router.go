@@ -115,6 +115,7 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 	handler := account.NewHandler(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/login", handler.Login)
+		router.Post("/config", handler.Config)
 		router.Post("/create-account", handler.CreateAccount)
 		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)
 		router.Get("/validate/{accountID}", handler.ValidateEmail)

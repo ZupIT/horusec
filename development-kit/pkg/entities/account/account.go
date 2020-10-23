@@ -32,6 +32,7 @@ type Account struct {
 	Password     string       `json:"password"`
 	Username     string       `json:"username"`
 	IsConfirmed  bool         `json:"isConfirmed"`
+	IsSuperAdmin bool         `json:"isSuperAdmin"`
 	CreatedAt    time.Time    `json:"createdAt"`
 	UpdatedAt    time.Time    `json:"updatedAt"`
 	Companies    []Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
@@ -101,6 +102,7 @@ func (a *Account) ToMap() map[string]interface{} {
 		"email":        a.Email,
 		"username":     a.Username,
 		"is_confirmed": a.IsConfirmed,
+		"is_super_admin": a.IsSuperAdmin,
 		"created_at":   a.CreatedAt,
 		"updated_at":   a.UpdatedAt,
 	}
@@ -112,6 +114,7 @@ func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt ti
 		RefreshToken: refreshToken,
 		ExpiresAt:    expiresAt,
 		Username:     a.Username,
+		IsSuperAdmin: a.IsSuperAdmin,
 		Email:        a.Email,
 	}
 }

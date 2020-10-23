@@ -36,6 +36,7 @@ import (
 type Handler struct {
 	controller accountController.IAccount
 	useCases   accountUseCases.IAccount
+	appConfig  app.IAppConfig
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -45,6 +46,7 @@ func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 		controller: accountController.NewAccountController(
 			broker, databaseRead, databaseWrite, cache, useCases, appConfig),
 		useCases: useCases,
+		appConfig: appConfig,
 	}
 }
 
@@ -158,6 +160,22 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 	}
 
 	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Account
+// @Description config
+// @ID config
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} http.Response{content=string} "OK"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/account/config [get]
+func (h *Handler) Config(w http.ResponseWriter, r *http.Request) {
+	config := map[string]interface{}{
+		"super_admin_enable": h.appConfig.IsEnableSuperUserAdmin(),
+	}
+	httpUtil.StatusOK(w, config)
 }
 
 // @Tags Account

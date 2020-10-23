@@ -22,4 +22,5 @@ type LoginResponse struct {
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
 	ExpiresAt    time.Time `json:"expiresAt"`
+	IsSuperAdmin bool      `json:"isSuperAdmin"`
 }
