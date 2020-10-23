@@ -24,6 +24,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
@@ -38,6 +39,13 @@ type Service struct {
 	companyRepo    companyrepo.ICompanyRepository
 	repositoryRepo repositoryrepo.IRepository
 	cacheRepo      cache.Interface
+}
+
+type ldapAuthResponse struct {
+	AccessToken string
+	ExpiresAt   time.Time
+	Username    string
+	Email       string
 }
 
 type AuthzEntity interface {
@@ -66,7 +74,27 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 		return nil, errors.New("not authorzed")
 	}
 
+	account, err := s.getAccountAndCreateIfNotExist(data)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ldapAuthResponse{
+		AccessToken: accessToken,
+		ExpiresAt:   expiresAt,
+		Username:    account.Username,
+		Email:       account.Email,
+	}, nil
+}
+
+func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountentities.Account, error) {
 	account, err := s.accountRepo.GetByEmail(data["email"])
+
 	if account == nil || err != nil {
 		account.Email = data["email"]
 		account.Username = data["username"]
@@ -77,22 +105,7 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 		}
 	}
 
-	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return struct {
-		AccessToken string
-		ExpiresAt   time.Time
-		Username    string
-		Email       string
-	}{
-		AccessToken: accessToken,
-		ExpiresAt:   expiresAt,
-		Username:    account.Username,
-		Email:       account.Email,
-	}, nil
+	return account, nil
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
