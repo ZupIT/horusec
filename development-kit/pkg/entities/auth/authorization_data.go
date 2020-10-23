@@ -31,7 +31,7 @@ type AuthorizationData struct {
 
 func (a *AuthorizationData) Validate() error {
 	return validation.ValidateStruct(a,
-		validation.Field(&a.Token, validation.Required, validation.Length(1, 500), validation.Required),
+		validation.Field(&a.Token, validation.Required, validation.Length(1, 1500), validation.Required),
 		validation.Field(&a.Role, validation.Required, validation.In(authEnums.CompanyMember, authEnums.CompanyAdmin,
 			authEnums.RepositoryMember, authEnums.RepositorySupervisor, authEnums.RepositoryAdmin)),
 		validation.Field(&a.CompanyID, is.UUID),

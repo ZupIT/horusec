@@ -79,11 +79,12 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Tags Account
-// @Description Create a new account!
-// @ID create-account
+// @Description Create a new account with keycloak data!
+// @ID create-account-keycloak
 // @Accept  json
 // @Produce  json
-// @Param CreateAccount body account.CreateAccount true "create account info"
+// @Param KeycloakToken body account.KeycloakToken true "keycloak token info"
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
