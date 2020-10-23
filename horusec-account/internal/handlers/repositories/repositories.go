@@ -15,6 +15,8 @@
 package repositories
 
 import (
+	"fmt"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -25,7 +27,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
@@ -65,7 +66,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountID, _ := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
 	if err != nil {
 		h.checkCreateRepositoryErrors(w, err)
@@ -154,7 +155,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountID, _ := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	repository, err := h.controller.Get(repositoryID, accountID)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
@@ -213,7 +214,7 @@ func (h *Handler) getCompanyIDAndAccountIDToList(r *http.Request) (uuid.UUID, uu
 	if err != nil || companyID == uuid.Nil {
 		return uuid.Nil, uuid.Nil, errorsEnum.ErrorInvalidCompanyID
 	}
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	return companyID, accountID, err
 }
 

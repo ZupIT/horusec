@@ -130,7 +130,7 @@ func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead,
 func (r *Router) RouterTokensRepository(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensRepository.NewHandler(postgresRead, postgresWrite)
-	authMiddleware := middlewares.NewHorusAuthzMiddleware()
+	authMiddleware := middlewares.NewHorusAuthzMiddleware(postgresRead)
 	r.router.Route(routes.TokensRepositoryHandler, func(router chi.Router) {
 		router.With(authMiddleware.IsRepositoryAdmin).Post("/", handler.Post)
 		router.With(authMiddleware.IsRepositoryAdmin).Get("/", handler.Get)
@@ -144,7 +144,7 @@ func (r *Router) RouterTokensRepository(
 func (r *Router) RouterTokensCompany(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensCompany.NewHandler(postgresRead, postgresWrite)
-	companyMiddleware := middlewares.NewHorusAuthzMiddleware()
+	companyMiddleware := middlewares.NewHorusAuthzMiddleware(postgresRead)
 	r.router.Route(routes.TokensCompanyHandler, func(router chi.Router) {
 		router.With(companyMiddleware.IsCompanyAdmin).Post("/", handler.Post)
 		router.With(companyMiddleware.IsCompanyAdmin).Get("/", handler.Get)
@@ -157,7 +157,7 @@ func (r *Router) RouterTokensCompany(
 
 func (r *Router) RouterManagement(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	repositoryMiddleware := middlewares.NewHorusAuthzMiddleware()
+	repositoryMiddleware := middlewares.NewHorusAuthzMiddleware(postgresRead)
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
 		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)

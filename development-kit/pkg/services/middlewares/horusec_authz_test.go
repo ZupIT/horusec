@@ -31,7 +31,7 @@ import (
 
 func TestNewHorusAuthzMiddleware(t *testing.T) {
 	t.Run("should create a new middleware service", func(t *testing.T) {
-		middleware := NewHorusAuthzMiddleware()
+		middleware := NewHorusAuthzMiddleware(nil)
 		assert.NotNil(t, middleware)
 	})
 }

@@ -16,11 +16,15 @@ package middlewares
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	httpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -33,6 +37,7 @@ import (
 )
 
 type IHorusAuthzMiddleware interface {
+	SetContextAccountID(next http.Handler) http.Handler
 	IsCompanyMember(next http.Handler) http.Handler
 	IsCompanyAdmin(next http.Handler) http.Handler
 	IsRepositoryMember(next http.Handler) http.Handler
@@ -42,12 +47,20 @@ type IHorusAuthzMiddleware interface {
 
 type HorusAuthzMiddleware struct {
 	httpUtil httpClient.Interface
+	keycloak keycloak.IService
 }
 
-func NewHorusAuthzMiddleware() IHorusAuthzMiddleware {
+func NewHorusAuthzMiddleware(databaseRead SQL.InterfaceRead) IHorusAuthzMiddleware {
 	return &HorusAuthzMiddleware{
 		httpUtil: httpClient.NewHTTPClient(10),
+		keycloak: keycloak.NewKeycloakService(databaseRead),
 	}
+}
+
+func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h.setContextAndReturn(next, w, r)
+	})
 }
 
 func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
@@ -58,7 +71,7 @@ func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -70,7 +83,7 @@ func (h *HorusAuthzMiddleware) IsCompanyAdmin(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -82,7 +95,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryMember(next http.Handler) http.Handle
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -94,7 +107,7 @@ func (h *HorusAuthzMiddleware) IsRepositorySupervisor(next http.Handler) http.Ha
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -106,8 +119,18 @@ func (h *HorusAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
+}
+
+func (h *HorusAuthzMiddleware) setContextAndReturn(next http.Handler, w http.ResponseWriter, r *http.Request) {
+	ctx, err := h.setAccountIDInContext(r, r.Header.Get("Authorization"))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+		return
+	}
+
+	next.ServeHTTP(w, r.WithContext(ctx))
 }
 
 func (h *HorusAuthzMiddleware) validateRequest(r *http.Request, role authEnums.HorusecRoles) (bool, error) {
@@ -151,4 +174,31 @@ func (h *HorusAuthzMiddleware) parseResponse(response httpResponse.Interface, er
 	body, _ := response.GetBody()
 	err = json.Unmarshal(body, &responseContent)
 	return responseContent.Content.(bool), err
+}
+
+func (h *HorusAuthzMiddleware) setAccountIDInContext(r *http.Request, token string) (context.Context, error) {
+	accountID, err := h.getAccountIDByAuthType(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return context.WithValue(r.Context(), authEnums.AccountID, accountID.String()), nil
+}
+
+func (h *HorusAuthzMiddleware) getAccountIDByAuthType(token string) (uuid.UUID, error) {
+	switch h.getAuthorizationType() {
+	case authEnums.Horusec:
+		return jwt.GetAccountIDByJWTToken(token)
+	case authEnums.Keycloak:
+		return h.keycloak.GetAccountIDByJWTToken(token)
+	case authEnums.Ldap:
+		return jwt.GetAccountIDByJWTToken(token)
+	}
+
+	return uuid.Nil, errors.ErrorUnauthorized
+}
+
+func (h *HorusAuthzMiddleware) getAuthorizationType() authEnums.AuthorizationType {
+	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+	return authEnums.AuthorizationType(authType)
 }
