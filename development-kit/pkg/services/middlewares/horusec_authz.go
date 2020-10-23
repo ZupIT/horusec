@@ -33,6 +33,7 @@ import (
 )
 
 type IHorusAuthzMiddleware interface {
+	IsApplicationAdmin(next http.Handler) http.Handler
 	IsCompanyMember(next http.Handler) http.Handler
 	IsCompanyAdmin(next http.Handler) http.Handler
 	IsRepositoryMember(next http.Handler) http.Handler
@@ -48,6 +49,18 @@ func NewHorusAuthzMiddleware() IHorusAuthzMiddleware {
 	return &HorusAuthzMiddleware{
 		httpUtil: httpClient.NewHTTPClient(10),
 	}
+}
+
+func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		isValid, err := h.validateRequest(r, authEnums.ApplicationAdmin)
+		if err != nil || !isValid {
+			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
