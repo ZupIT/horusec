@@ -23,7 +23,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Authenticate(username, password, totp string) (bool, map[string]string, error) {
+func (m *Mock) Authenticate(username, password string) (bool, map[string]string, error) {
 	args := m.MethodCalled("Authenticate")
 	return args.Bool(0), args.Get(1).(map[string]string), mockUtils.ReturnNilOrError(args, 2)
 }

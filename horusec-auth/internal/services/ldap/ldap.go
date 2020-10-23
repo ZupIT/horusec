@@ -108,8 +108,10 @@ func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accoun
 	account, err := s.accountRepo.GetByEmail(data["email"])
 
 	if account == nil || err != nil {
-		account.Email = data["email"]
-		account.Username = data["username"]
+		account = &accountentities.Account{
+			Email:    data["email"],
+			Username: data["username"],
+		}
 
 		err = s.accountRepo.Create(account.SetAccountData())
 		if err != nil {
