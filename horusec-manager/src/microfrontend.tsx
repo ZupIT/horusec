@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'helpers/setPublicPath';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SingleSpaReact from 'single-spa-react';
@@ -23,7 +21,7 @@ import App from './App';
 
 import './config/i18n';
 
-setPublicPath('@devcraft/horusec');
+setPublicPath(process.env.REACT_APP_MICROFRONTEND_PUBLIC_PATH);
 
 const lifeCycle = SingleSpaReact({
   React,

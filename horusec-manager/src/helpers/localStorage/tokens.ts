@@ -17,6 +17,9 @@
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import moment from 'moment';
 import { getCurrentAuthType } from './currentAuthType';
+import { authTypes } from 'helpers/enums/authTypes';
+import keycloak from 'config/keycloak';
+import accountService from 'services/account';
 
 const getAccessToken = (): string => {
   return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
@@ -45,26 +48,42 @@ const setTokens = (
     window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
+const handleSetTokenKeycloak = (accessToken: string, refreshToken: string) => {
+  if (accessToken) {
+    accountService.createAccountFromKeycloak(accessToken);
+  }
+
+  setTokens(accessToken, refreshToken);
+};
+
 const clearTokens = () => {
   window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
   window.localStorage.removeItem(localStorageKeys.REFRESH_TOKEN);
   window.localStorage.removeItem(localStorageKeys.TOKEN_EXPIRES);
 };
 
-const tokenIsExpired = (): boolean => {
+const isLogged = (): boolean => {
   const authType = getCurrentAuthType();
+  const accessToken = getAccessToken();
 
-  if (authType === 'keycloack') return false;
+  if (authType === authTypes.KEYCLOAK && accessToken) {
+    return keycloak.authenticated;
+  }
 
-  const token = getAccessToken();
-  const expiresAt = window.localStorage.getItem(localStorageKeys.TOKEN_EXPIRES);
+  if (authType === authTypes.HORUSEC) {
+    const expiresAt = window.localStorage.getItem(
+      localStorageKeys.TOKEN_EXPIRES
+    );
 
-  if (!token || !expiresAt) return true;
+    if (!accessToken || !expiresAt) return false;
 
-  const now = moment();
-  const expiresTime = moment(expiresAt);
+    const now = moment();
+    const expiresTime = moment(expiresAt);
 
-  return expiresTime.isSameOrBefore(now);
+    return expiresTime.isSameOrAfter(now);
+  }
+
+  return false;
 };
 
 export {
@@ -72,6 +91,7 @@ export {
   getRefreshToken,
   clearTokens,
   setTokens,
-  tokenIsExpired,
+  isLogged,
   getExpiresTokenTime,
+  handleSetTokenKeycloak,
 };

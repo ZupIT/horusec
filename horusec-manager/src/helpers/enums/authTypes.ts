@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { isLogged } from 'helpers/localStorage/tokens';
-
-interface PrivateRouteProps {
-  component: React.FC;
-  path: string;
-  exact: boolean;
+export enum authTypes {
+  LDAP = 'ldap',
+  KEYCLOAK = 'keycloak',
+  HORUSEC = 'horusec',
 }
-
-const PrivateRoute: React.FC<PrivateRouteProps> = (props) => {
-  return isLogged() ? (
-    <Route path={props.path} exact={props.exact} component={props.component} />
-  ) : (
-    <Redirect to="/auth" />
-  );
-};
-
-export default PrivateRoute;

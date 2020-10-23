@@ -15,14 +15,17 @@
  */
 
 import React, { useState } from 'react';
-import accountService from 'services/account';
+
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import {
-  setCurrentUser,
-  clearCurrentUser,
-} from 'helpers/localStorage/currentUser';
+import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
-import { clearTokens, setTokens } from 'helpers/localStorage/tokens';
+import { clearTokens } from 'helpers/localStorage/tokens';
+import { Authenticator } from 'helpers/interfaces/Authenticator';
+
+import horusec from './horusec';
+import keycloak from './keycloak';
+import ldap from './ldap';
 
 interface AuthProviderPops {
   children: JSX.Element;
@@ -34,6 +37,18 @@ interface AuthCtx {
   logout: Function;
 }
 
+const getAuthenticator = () => {
+  const authType = getCurrentAuthType();
+
+  const authenticators: Authenticator = {
+    horusec,
+    ldap,
+    keycloak,
+  };
+
+  return authenticators[authType];
+};
+
 const AuthContext = React.createContext<AuthCtx>({
   loginInProgress: false,
   login: null,
@@ -42,26 +57,27 @@ const AuthContext = React.createContext<AuthCtx>({
 
 const AuthProvider = ({ children }: AuthProviderPops) => {
   const [loginInProgress, setLoginInProgress] = useState(false);
-
   const { dispatchMessage } = useResponseMessage();
 
-  const login = (email: string, password: string): Promise<void> => {
+  const clearLocalStorage = () => {
+    clearCurrentUser();
+    clearCurrentCompany();
+    clearTokens();
+  };
+
+  const login = (email?: string, password?: string): Promise<void> => {
     return new Promise((resolve) => {
       setLoginInProgress(true);
 
-      accountService
+      getAuthenticator()
         .login(email, password)
-        .then((result) => {
-          const userData = result?.data?.content;
-          const { accessToken, refreshToken, expiresAt } = userData;
-
-          setCurrentUser(userData);
-          setTokens(accessToken, refreshToken, expiresAt);
-          setLoginInProgress(false);
+        .then(() => {
           resolve();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
           setLoginInProgress(false);
         });
     });
@@ -69,16 +85,14 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
 
   const logout = () => {
     return new Promise((resolve) => {
-      accountService
+      getAuthenticator()
         .logout()
-        .then(() => {
-          clearCurrentUser();
-          clearCurrentCompany();
-          clearTokens();
-          resolve();
-        })
-        .catch((err) => {
+        .catch((err: any) => {
           dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          clearLocalStorage();
+          resolve();
         });
     });
   };

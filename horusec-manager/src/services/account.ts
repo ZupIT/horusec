@@ -39,6 +39,15 @@ const createAccount = (username: string, password: string, email: string) => {
   });
 };
 
+const createAccountFromKeycloak = (accessToken: string) => {
+  return http.post(
+    `${SERVICE_ACCOUNT}/api/account/create-account-from-keycloak`,
+    {
+      accessToken,
+    }
+  );
+};
+
 const sendCode = (email: string) => {
   return http.post(`${SERVICE_ACCOUNT}/api/account/send-code`, { email });
 };
@@ -96,7 +105,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
 };
 
 const getAuthType = () => {
-  return http.get(`${SERVICE_AUTH}/api/auth/auth-types`);
+  return axios.get(`${SERVICE_AUTH}/api/auth/auth-types`);
 };
 
 export default {
@@ -109,4 +118,5 @@ export default {
   callRenewToken,
   verifyUniqueUsernameEmail,
   getAuthType,
+  createAccountFromKeycloak,
 };

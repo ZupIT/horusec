@@ -19,16 +19,17 @@ import { setCurrenAuthType } from 'helpers/localStorage/currentAuthType';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-import { useKeycloak } from '@react-keycloak/web';
 import { Splash } from 'components';
+import { isLogged } from 'helpers/localStorage/tokens';
 
 import HorusecAuth from './Horusec';
 import KeycloakAuth from './Keycloak';
 import LDAPAuth from './LDAP';
+import { useHistory } from 'react-router-dom';
 
 const Auth = () => {
   const { dispatchMessage } = useResponseMessage();
-  const { keycloak } = useKeycloak();
+  const history = useHistory();
 
   const [authType, setAuthType] = useState(null);
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -45,8 +46,6 @@ const Auth = () => {
 
   useEffect(() => {
     const getAuthType = () => {
-      setLoading(true);
-
       accountService
         .getAuthType()
         .then((result) => {
@@ -55,14 +54,20 @@ const Auth = () => {
         })
         .catch((err) => {
           dispatchMessage(err?.response?.data);
-          console.log(err);
         })
         .finally(() => {
           setLoading(false);
         });
     };
 
-    getAuthType();
+    setTimeout(() => {
+      if (isLogged()) {
+        history.replace('/home');
+      } else {
+        getAuthType();
+      }
+    }, 1000);
+
     // eslint-disable-next-line
   }, []);
 

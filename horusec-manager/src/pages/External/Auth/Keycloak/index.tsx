@@ -14,34 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import ExternalLayout from 'layouts/External';
 import { Button } from 'components';
 import { useTranslation } from 'react-i18next';
-import { useKeycloak } from '@react-keycloak/web';
-import { useHistory } from 'react-router-dom';
+import useAuth from 'helpers/hooks/useAuth';
 
 function KeycloakAuth() {
   const { t } = useTranslation();
-  const { keycloak } = useKeycloak();
-  const history = useHistory();
-
-  useEffect(() => {
-    if (keycloak?.authenticated) {
-      history.replace('/home');
-    }
-  }, []);
-
-  const handleLoginWithKeycloack = () => {
-    keycloak.login();
-  };
+  const { login } = useAuth();
 
   return (
     <ExternalLayout>
-      <Button
-        text={t('LOGIN_SCREEN.KEYCLOAK')}
-        onClick={handleLoginWithKeycloack}
-      />
+      <Button text={t('LOGIN_SCREEN.KEYCLOAK')} onClick={() => login()} />
     </ExternalLayout>
   );
 }

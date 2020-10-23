@@ -18,18 +18,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './config/i18n';
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import keycloakConfig from 'config/keycloak';
-import { setTokens } from 'helpers/localStorage/tokens';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ReactKeycloakProvider
-      authClient={keycloakConfig}
-      onTokens={(tokens) => setTokens(tokens.token, tokens.refreshToken)}
-    >
-      <App />
-    </ReactKeycloakProvider>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

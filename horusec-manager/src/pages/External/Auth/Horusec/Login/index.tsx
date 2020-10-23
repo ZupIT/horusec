@@ -38,9 +38,9 @@ function LoginScreen() {
     event.preventDefault();
 
     if (email.isValid && password.isValid) {
-      login(email.value, password.value).then(() =>
-        history.push('/organization')
-      );
+      login(email.value, password.value).then(() => {
+        history.push('/organization');
+      });
     }
   };
 
