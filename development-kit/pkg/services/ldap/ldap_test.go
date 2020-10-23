@@ -13,3 +13,16 @@
 // limitations under the License.
 
 package ldap
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNewLDAPClient(t *testing.T) {
+	t.Run("should create a new ldap client instance", func(t *testing.T) {
+		ldapClient := NewLDAPClient()
+		assert.NotNil(t, ldapClient)
+	})
+}

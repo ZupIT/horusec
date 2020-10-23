@@ -41,14 +41,17 @@ func NewLDAPClient() ILDAPService {
 			BindPassword:       env.GetEnvOrDefault("HORUS_LDAP_BINDPASSWORD", ""),
 			UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
 			GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
+			Attributes:         []string{"username", "email"},
 		},
 	}
 }
 
 func (s *Service) Authenticate(username, password string) (bool, map[string]string, error) {
+	defer s.client.Close()
 	return s.client.Authenticate(username, password)
 }
 
 func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
+	defer s.client.Close()
 	return s.client.GetGroupsOfUser(username)
 }
