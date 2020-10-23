@@ -18,15 +18,12 @@ package main
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
-	"time"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 
 	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
@@ -73,16 +70,7 @@ func main() {
 
 func createSuperAdmin(appConfig app.IAppConfig, databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) {
 	if appConfig.IsEnableApplicationAdmin() {
-		err := account.NewAccountRepository(databaseRead, databaseWrite).Create(&accountEntities.Account{
-			AccountID:          uuid.New(),
-			Email:              "horusec-admin@example.com",
-			Password:           "$2a$10$hWoL3d6iUUl3wFBXouGDB.p/uE/K3t1k5vVFdN981IpoZJY8wftPm", // Devpass0*
-			Username:           "horusec-admin",
-			IsConfirmed:        true,
-			IsApplicationAdmin: true,
-			CreatedAt:          time.Now(),
-			UpdatedAt:          time.Now(),
-		})
+		err := account.NewAccountRepository(databaseRead, databaseWrite).Create(getDefaultAccountApplicationAdmin(appConfig).SetAccountData())
 		if err != nil {
 			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
 				logger.LogPanic("Some error occurs when create super admin", err)
@@ -92,5 +80,20 @@ func createSuperAdmin(appConfig app.IAppConfig, databaseRead relational.Interfac
 		} else {
 			logger.LogInfo("Super admin created with success")
 		}
+	}
+}
+
+func getDefaultAccountApplicationAdmin(appConfig app.IAppConfig) *accountEntities.Account {
+	entity, err := appConfig.GetApplicationAdminData()
+	if err != nil {
+		logger.LogPanic("Some error occurs when parse Application Admin Data to Account", err)
+	}
+	pass := entity.Password
+	return &accountEntities.Account{
+		Email:              entity.Email,
+		Password:           pass,
+		Username:           entity.Username,
+		IsConfirmed:        true,
+		IsApplicationAdmin: true,
 	}
 }
