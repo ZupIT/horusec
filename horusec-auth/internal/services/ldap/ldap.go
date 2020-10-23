@@ -76,16 +76,32 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 	}
 
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
+
+	return s.setLdapAuthResponse(account, accessToken, expiresAt), nil
+}
+
+func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
+	userGroups, err := s.getUserGroups(authzData.Token)
 	if err != nil {
-		return nil, err
+		return false, errors.ErrorUnauthorized
 	}
 
+	authzGroups, err := s.getAuthzGroupsName(authzData)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	return s.checkIsAuthorized(userGroups, authzGroups), nil
+}
+
+func (s *Service) setLdapAuthResponse(
+	account *accountentities.Account, accessToken string, expiresAt time.Time) *ldapAuthResponse {
 	return &ldapAuthResponse{
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
 		Username:    account.Username,
 		Email:       account.Email,
-	}, nil
+	}
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountentities.Account, error) {
@@ -104,20 +120,6 @@ func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accoun
 	return account, nil
 }
 
-func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
-	userGroups, err := s.getUserGroups(authzData.Token)
-	if err != nil {
-		return false, err
-	}
-
-	authzGroups, err := s.getAuthzGroupsName(authzData)
-	if err != nil {
-		return false, err
-	}
-
-	return s.checkIsAuthorized(userGroups, authzGroups)
-}
-
 func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]string, error) {
 	switch authzData.Role {
 	case authEnums.CompanyAdmin, authEnums.CompanyMember:
@@ -127,17 +129,17 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 		return s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
 	}
 
-	return nil, errors.New("")
+	return []string{}, nil
 }
 
-func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
+func (s *Service) checkIsAuthorized(userGroups, groups []string) bool {
 	for _, userGroup := range userGroups {
 		if s.contains(groups, userGroup) {
-			return true, nil
+			return true
 		}
 	}
 
-	return false, errors.New("not authorized")
+	return false
 }
 
 func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
