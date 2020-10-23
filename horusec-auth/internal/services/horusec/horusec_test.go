@@ -45,7 +45,7 @@ func generateToken() string {
 		Email:     "test@test.com",
 		Password:  "test",
 		Username:  "test",
-		}, map[string]string{})
+	}, map[string]string{})
 
 	return token
 }
@@ -991,4 +991,3 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		assert.False(t, result)
 	})
 }
-

@@ -126,7 +126,7 @@ func TestAuthorize(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Role: "test"})
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Role: authEnums.RepositoryMember})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -148,7 +148,7 @@ func TestAuthorize(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Role: "test"})
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{Token: "test", Role: authEnums.RepositoryMember})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()

@@ -50,7 +50,7 @@ func TestNewAuthorizationDataFromReadCloser(t *testing.T) {
 	t.Run("should success parse read closer to authorization data", func(t *testing.T) {
 		bytes, _ := json.Marshal(&authEntities.AuthorizationData{
 			Token: "test",
-			Role:  "admin",
+			Role:  authEnums.RepositoryAdmin,
 		})
 		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
 
