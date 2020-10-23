@@ -25,7 +25,7 @@ import (
 	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	authenums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
@@ -122,10 +122,10 @@ func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accoun
 
 func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]string, error) {
 	switch authzData.Role {
-	case authEnums.CompanyAdmin, authEnums.CompanyMember:
+	case authenums.CompanyAdmin, authenums.CompanyMember:
 		return s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
 
-	case authEnums.RepositoryAdmin, authEnums.RepositoryMember, authEnums.RepositorySupervisor:
+	case authenums.RepositoryAdmin, authenums.RepositoryMember, authenums.RepositorySupervisor:
 		return s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
 	}
 
@@ -142,7 +142,7 @@ func (s *Service) checkIsAuthorized(userGroups, groups []string) bool {
 	return false
 }
 
-func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
+func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authenums.HorusecRoles) ([]string, error) {
 	company, err := s.companyRepo.GetByID(companyID)
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.
 	return s.getEntityGroupsNameByRole(company, role), nil
 }
 
-func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
+func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role authenums.HorusecRoles) ([]string, error) {
 	repository, err := s.repositoryRepo.Get(repositoryID)
 	if err != nil {
 		return nil, err
@@ -160,17 +160,17 @@ func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role auth
 	return s.getEntityGroupsNameByRole(repository, role), nil
 }
 
-func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authEnums.HorusecRoles) []string {
+func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authenums.HorusecRoles) []string {
 	var groupsName string
 
 	switch role {
-	case authEnums.RepositoryMember, authEnums.CompanyMember:
+	case authenums.RepositoryMember, authenums.CompanyMember:
 		groupsName = entity.GetAuthzMember()
 
-	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
+	case authenums.CompanyAdmin, authenums.RepositoryAdmin:
 		groupsName = entity.GetAuthzAdmin()
 
-	case authEnums.RepositorySupervisor:
+	case authenums.RepositorySupervisor:
 		groupsName = entity.GetAuthzSupervisor()
 	}
 
