@@ -15,7 +15,6 @@
 package ldap
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -27,6 +26,7 @@ import (
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
@@ -66,12 +66,8 @@ func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.
 
 func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, error) {
 	ok, data, err := s.client.Authenticate(credentials.Username, credentials.Password)
-	if err != nil {
-		return nil, err
-	}
-
-	if !ok {
-		return nil, errors.New("not authorzed")
+	if err != nil || !ok {
+		return nil, errors.ErrorUnauthorized
 	}
 
 	account, err := s.getAccountAndCreateIfNotExist(data)
