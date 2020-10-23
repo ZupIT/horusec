@@ -17,24 +17,24 @@ package app
 import "github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 
 const (
-	DisableEmailServiceEnv = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"
-	EnableSuperAdminEnv    = "HORUSEC_ENABLE_SUPER_ADMIN"
+	DisableEmailServiceEnv    = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"
+	EnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 )
 
 type Config struct {
-	DisableEmailService  bool
-	EnableSuperUserAdmin bool
+	DisableEmailService    bool
+	EnableApplicationAdmin bool
 }
 
 type IAppConfig interface {
 	IsEmailServiceDisabled() bool
-	IsEnableSuperUserAdmin() bool
+	IsEnableApplicationAdmin() bool
 }
 
 func SetupApp() IAppConfig {
 	return &Config{
-		DisableEmailService:  env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
-		EnableSuperUserAdmin: env.GetEnvOrDefaultBool(EnableSuperAdminEnv, false),
+		DisableEmailService:    env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
+		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnableApplicationAdminEnv, false),
 	}
 }
 
@@ -42,6 +42,6 @@ func (a *Config) IsEmailServiceDisabled() bool {
 	return a.DisableEmailService
 }
 
-func (a *Config) IsEnableSuperUserAdmin() bool {
-	return a.EnableSuperUserAdmin
+func (a *Config) IsEnableApplicationAdmin() bool {
+	return a.EnableApplicationAdmin
 }

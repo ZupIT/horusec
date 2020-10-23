@@ -72,16 +72,16 @@ func main() {
 }
 
 func createSuperAdmin(appConfig app.IAppConfig, databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) {
-	if appConfig.IsEnableSuperUserAdmin() {
+	if appConfig.IsEnableApplicationAdmin() {
 		err := account.NewAccountRepository(databaseRead, databaseWrite).Create(&accountEntities.Account{
-			AccountID:    uuid.New(),
-			Email:        "horusec-admin@example.com",
-			Password:     "$2a$10$hWoL3d6iUUl3wFBXouGDB.p/uE/K3t1k5vVFdN981IpoZJY8wftPm", // Devpass0*
-			Username:     "horusec-admin",
-			IsConfirmed:  true,
-			IsSuperAdmin: true,
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
+			AccountID:          uuid.New(),
+			Email:              "horusec-admin@example.com",
+			Password:           "$2a$10$hWoL3d6iUUl3wFBXouGDB.p/uE/K3t1k5vVFdN981IpoZJY8wftPm", // Devpass0*
+			Username:           "horusec-admin",
+			IsConfirmed:        true,
+			IsApplicationAdmin: true,
+			CreatedAt:          time.Now(),
+			UpdatedAt:          time.Now(),
 		})
 		if err != nil {
 			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {

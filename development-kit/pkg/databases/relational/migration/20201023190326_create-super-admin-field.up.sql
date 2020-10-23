@@ -1,5 +1,5 @@
 BEGIN;
 
-ALTER TABLE accounts ADD COLUMN "is_super_admin" boolean NOT NULL DEFAULT false;
+ALTER TABLE accounts ADD COLUMN "is_application_admin" boolean NOT NULL DEFAULT false;
 
 COMMIT;

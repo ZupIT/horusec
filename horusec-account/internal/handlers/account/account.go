@@ -45,7 +45,7 @@ func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	return &Handler{
 		controller: accountController.NewAccountController(
 			broker, databaseRead, databaseWrite, cache, useCases, appConfig),
-		useCases: useCases,
+		useCases:  useCases,
 		appConfig: appConfig,
 	}
 }
@@ -173,7 +173,7 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 // @Router /api/account/config [get]
 func (h *Handler) Config(w http.ResponseWriter, r *http.Request) {
 	config := map[string]interface{}{
-		"super_admin_enable": h.appConfig.IsEnableSuperUserAdmin(),
+		"super_admin_enable": h.appConfig.IsEnableApplicationAdmin(),
 	}
 	httpUtil.StatusOK(w, config)
 }

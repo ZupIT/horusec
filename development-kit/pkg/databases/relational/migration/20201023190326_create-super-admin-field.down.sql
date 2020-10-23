@@ -1,5 +1,5 @@
 BEGIN;
 
-ALTER TABLE accounts DROP COLUMN "is_super_admin";
+ALTER TABLE accounts DROP COLUMN "is_application_admin";
 
 COMMIT;
