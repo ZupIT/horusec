@@ -46,10 +46,9 @@ type AuthzEntity interface {
 	GetAuthzSupervisor() string
 }
 
-func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite,
-	ldapClient ldapservice.ILDAPService) services.IAuthService {
+func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
 	return &Service{
-		client:         ldapClient,
+		client:         ldapservice.NewLDAPClient(),
 		accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
 		companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 		repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
