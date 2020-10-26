@@ -136,4 +136,3 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 }
-
