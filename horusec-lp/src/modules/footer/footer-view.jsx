@@ -69,31 +69,31 @@ export default () => {
 
           <div className="row no-gutters align-items-center">
             <div className="col-auto">
-              <a href="https://www.instagram.com/zupinnovation" blank="_blank" rel="noreferrer">
+              <a href="https://www.instagram.com/zupinnovation" target="_blank" rel="noreferrer">
                 <IconInstagram />
               </a>
             </div>
 
             <div className="col-auto ml-1">
-                <a href="https://www.linkedin.com/company/zup-it-solutions" blank="_blank" rel="noreferrer">
+                <a href="https://www.linkedin.com/company/zup-it-solutions" target="_blank" rel="noreferrer">
                   <IconLinkedin />
                 </a>
             </div>
 
             <div className="col-auto ml-1">
-                <a href="https://www.youtube.com/channel/UCJWZyJ-36yNscqnnHiwjkhQ" blank="_blank" rel="noreferrer">
+                <a href="https://www.youtube.com/channel/UCJWZyJ-36yNscqnnHiwjkhQ" target="_blank" rel="noreferrer">
                   <IconYoutube />
                 </a>
             </div>
 
             <div className="col-auto ml-1">
-                <a href="https://medium.com/zup-it" blank="_blank" rel="noreferrer">
+                <a href="https://medium.com/zup-it" target="_blank" rel="noreferrer">
                   <IconMedium />
                 </a>
             </div>
 
             <div className="col-auto ml-1">
-                <a href="https://twitter.com/ZupInnovation" blank="_blank" rel="noreferrer">
+                <a href="https://twitter.com/ZupInnovation" target="_blank" rel="noreferrer">
                   <IconTwitter />
                 </a>
             </div>
