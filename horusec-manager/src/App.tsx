@@ -19,24 +19,36 @@ import React from 'react';
 import Routes from './routes';
 import GlobalStyle from 'assets/style/global';
 import { ThemeProvider } from 'styled-components';
-
 import { FlashMessageProvider } from 'contexts/FlashMessage';
 import { AuthProvider } from 'contexts/Auth';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
+import { setIsMicrofrontend } from 'helpers/localStorage/microfrontend';
+import { ReactKeycloakProvider } from '@react-keycloak/web';
+import keycloakConfig from 'config/keycloak';
+import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
 
-function App() {
+function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   const theme = getCurrentTheme();
 
-  return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
+  setIsMicrofrontend(isMicrofrontend || false);
 
-      <FlashMessageProvider>
-        <AuthProvider>
-          <Routes />
-        </AuthProvider>
-      </FlashMessageProvider>
-    </ThemeProvider>
+  return (
+    <ReactKeycloakProvider
+      authClient={keycloakConfig}
+      onTokens={(tokens) =>
+        handleSetKeyclockData(tokens.token, tokens.refreshToken)
+      }
+    >
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+
+        <FlashMessageProvider>
+          <AuthProvider>
+            <Routes />
+          </AuthProvider>
+        </FlashMessageProvider>
+      </ThemeProvider>
+    </ReactKeycloakProvider>
   );
 }
 

@@ -28,7 +28,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Content = styled.div`
+const LogoContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,9 +37,17 @@ const Content = styled.div`
   width: 252px;
 `;
 
+const Content = styled.div`
+  margin-top: 60px;
+`;
+
 const Logo = styled.img`
-  margin-bottom: 35px;
   width: 266px;
+
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const Footer = styled.footer`
@@ -73,4 +81,5 @@ export default {
   Content,
   Footer,
   LanguageWrapper,
+  LogoContent,
 };

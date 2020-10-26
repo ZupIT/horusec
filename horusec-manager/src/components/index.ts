@@ -33,6 +33,7 @@ import SearchBar from './SearchBar';
 import Checkbox from './Checkbox';
 import Permissions from './Permissions';
 import Pagination from './Pagination';
+import Splash from './Splash';
 
 export {
   Button,
@@ -54,4 +55,5 @@ export {
   Checkbox,
   Permissions,
   Pagination,
+  Splash,
 };

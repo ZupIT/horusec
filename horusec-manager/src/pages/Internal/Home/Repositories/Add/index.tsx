@@ -25,6 +25,8 @@ import repositoryService from 'services/repository';
 import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { authTypes } from 'helpers/enums/authTypes';
 
 interface Props {
   isVisible: boolean;
@@ -46,6 +48,21 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     isValid: false,
   });
 
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [supervisorGroup, setSupervisorGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
   const resetFields = () => {
     const defaultValue = { value: '', isValid: false };
     setDescription(defaultValue);
@@ -55,6 +72,9 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const handleConfirmSave = () => {
     if (name.isValid) {
       setLoading(true);
+
+      // TODO: Remover este console.log
+      console.log(supervisorGroup, adminGroup, userGroup);
 
       repositoryService
         .create(companyID, name.value, description.value)
@@ -106,6 +126,50 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           type="text"
           width="100%"
         />
+
+        {getCurrentAuthType() === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('REPOSITORIES_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+                name="adminGroup"
+                type="text"
+                width="100%"
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setSupervisorGroup(field)}
+                name="supervisorGroup"
+                type="text"
+                width="100%"
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.USER')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+                name="userGroup"
+                type="text"
+                width="100%"
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
       </Styled.Form>
     </Dialog>
   );

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import http from 'services/axios/default';
+import http from 'config/axios/default';
 import axios from 'axios';
-import { SERVICE_ACCOUNT } from './endpoints';
+import { SERVICE_ACCOUNT, SERVICE_AUTH } from '../config/endpoints';
 import {
-  getCurrentUser,
   setCurrentUser,
   clearCurrentUser,
 } from 'helpers/localStorage/currentUser';
 import { AxiosResponse, AxiosError } from 'axios';
 import { User } from 'helpers/interfaces/User';
+import { getAccessToken, getRefreshToken } from 'helpers/localStorage/tokens';
 
 const login = (email: string, password: string) => {
   return http.post(`${SERVICE_ACCOUNT}/api/account/login`, { email, password });
@@ -37,6 +37,15 @@ const createAccount = (username: string, password: string, email: string) => {
     email,
     password,
   });
+};
+
+const createAccountFromKeycloak = (accessToken: string) => {
+  return http.post(
+    `${SERVICE_ACCOUNT}/api/account/create-account-from-keycloak`,
+    {
+      accessToken,
+    }
+  );
 };
 
 const sendCode = (email: string) => {
@@ -67,7 +76,8 @@ const verifyUniqueUsernameEmail = (email: string, username: string) => {
 };
 
 const callRenewToken = async (): Promise<User | AxiosError> => {
-  const { accessToken, refreshToken } = getCurrentUser();
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
 
   return new Promise((resolve, reject) => {
     axios
@@ -89,9 +99,13 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
       .catch((err: AxiosError) => {
         reject(err);
         clearCurrentUser();
-        window.location.replace('/login');
+        window.location.replace('/auth');
       });
   });
+};
+
+const getAuthType = () => {
+  return axios.get(`${SERVICE_AUTH}/api/auth/auth-types`);
 };
 
 export default {
@@ -103,4 +117,6 @@ export default {
   changePassword,
   callRenewToken,
   verifyUniqueUsernameEmail,
+  getAuthType,
+  createAccountFromKeycloak,
 };
