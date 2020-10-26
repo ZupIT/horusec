@@ -77,7 +77,7 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 
-	return s.setLdapAuthResponse(account, accessToken, expiresAt), nil
+	return s.setLDAPAuthResponse(account, accessToken, expiresAt), nil
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
@@ -94,7 +94,7 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 	return s.checkIsAuthorized(userGroups, authzGroups), nil
 }
 
-func (s *Service) setLdapAuthResponse(
+func (s *Service) setLDAPAuthResponse(
 	account *accountentities.Account, accessToken string, expiresAt time.Time) *ldapAuthResponse {
 	return &ldapAuthResponse{
 		AccessToken: accessToken,
