@@ -8,6 +8,7 @@ import (
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -204,5 +205,60 @@ func TestHandler_AuthTypes(t *testing.T) {
 		handler.AuthTypes(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+}
+
+func TestGetAccountIDByAuthType(t *testing.T) {
+	t.Run("should return 200 when get auth types", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
+
+		controllerMock := &authController.MockAuthController{}
+		controllerMock.On("GetAccountIDByAuthType").Return(uuid.New(), nil)
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", "test")
+
+		handler.GetAccountIDByAuthType(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong getting id", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
+
+		controllerMock := &authController.MockAuthController{}
+		controllerMock.On("GetAccountIDByAuthType").Return(uuid.Nil, errors.New("test"))
+
+		handler := Handler{
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", "test")
+
+		handler.GetAccountIDByAuthType(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong getting id", func(t *testing.T) {
+		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
+
+		handler := Handler{}
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.GetAccountIDByAuthType(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }

@@ -17,10 +17,14 @@ package auth
 import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
+	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -196,5 +200,96 @@ func TestController_GetAuthTypes(t *testing.T) {
 		authType, err := controller.GetAuthType()
 		assert.NoError(t, err)
 		assert.Equal(t, authEnums.Horusec, authType)
+	})
+}
+
+func TestGetAccountIDByAuthType(t *testing.T) {
+	t.Run("should return account id when horusec", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		mockService := &services.MockAuthService{}
+
+		controller := Controller{
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+		}
+
+		accountID, err := controller.GetAccountIDByAuthType(token)
+
+		assert.NoError(t, err)
+		assert.NotEqual(t, uuid.Nil, accountID)
+	})
+
+	t.Run("should return account id when keycloak", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_AUTH_TYPE", authEnums.Keycloak.ToString())
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		keycloakMock := &keycloakService.Mock{}
+		mockService := &services.MockAuthService{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		controller := Controller{
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+			keycloak:            keycloakMock,
+		}
+
+		accountID, err := controller.GetAccountIDByAuthType(token)
+
+		assert.NoError(t, err)
+		assert.NotEqual(t, uuid.Nil, accountID)
+	})
+
+	t.Run("should return account id when horusec", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_AUTH_TYPE", authEnums.Ldap.ToString())
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		mockService := &services.MockAuthService{}
+
+		controller := Controller{
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+		}
+
+		accountID, err := controller.GetAccountIDByAuthType(token)
+
+		assert.NoError(t, err)
+		assert.NotEqual(t, uuid.Nil, accountID)
+	})
+
+	t.Run("should return account id when horusec", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_AUTH_TYPE", "test")
+
+		mockService := &services.MockAuthService{}
+
+		controller := Controller{
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+		}
+
+		accountID, err := controller.GetAccountIDByAuthType("test")
+
+		assert.Error(t, err)
+		assert.Equal(t, uuid.Nil, accountID)
 	})
 }
