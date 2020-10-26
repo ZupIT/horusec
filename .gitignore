@@ -10,7 +10,7 @@ tmp-analysis/
 .aws/
 *.pem
 deployments/certs
-images
+./images
 *.srl
 .horusec/
 horusec-analysis-*.json
