@@ -175,7 +175,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
 
-		handler.AuthTypes(w, r)
+		handler.Config(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -186,7 +186,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
 
-		handler.AuthTypes(w, r)
+		handler.Config(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -202,7 +202,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
 
-		handler.AuthTypes(w, r)
+		handler.Config(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})

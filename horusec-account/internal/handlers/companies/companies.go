@@ -17,6 +17,7 @@ package companies
 import (
 	"fmt"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
@@ -87,14 +88,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 	*accountEntities.Company, uuid.UUID, error) {
-	if h.appConfig.IsEnableApplicationAdmin() {
-		if err := h.checkIfUserLoggedIsApplicationAdmin(r); err != nil {
-			httpUtil.StatusForbidden(w, err)
-			return nil, uuid.Nil, err
-		}
+	configAuth, err := auth.ParseContentToConfigAuth(r.Context().Value(authEnums.ConfigAuth))
+	if err != nil {
+		httpUtil.StatusForbidden(w, err)
+		return nil, uuid.Nil, err
+	}
+	if configAuth.ApplicationAdminEnable {
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
-
 	return h.getCreateDataDefault(w, r)
 }
 
@@ -130,8 +131,7 @@ func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
 	return company, accountID, nil
 }
 
-func (h *Handler) getCreateDataApplicationAdmin(
-	w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {
+func (h *Handler) getCreateDataApplicationAdmin(w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {
 	company, err := h.companyUseCases.NewCompanyApplicationAdminFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)

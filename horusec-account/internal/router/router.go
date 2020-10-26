@@ -115,7 +115,6 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/login", handler.Login)
-		router.Post("/config", handler.Config)
 		router.Post("/create-account", handler.CreateAccount)
 		router.Get("/validate/{accountID}", handler.ValidateEmail)
 		router.Post("/send-code", handler.SendResetPasswordCode)
@@ -136,7 +135,7 @@ func (r *Router) RouterCompany(broker brokerLib.IBroker, databaseRead SQL.Interf
 	handler := company.NewHandler(databaseWrite, databaseRead, cacheRepository, broker, appConfig)
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
-		router.With(authzMiddleware.SetContextAccountID).Post("/", handler.Create)
+		router.With(authzMiddleware.IsApplicationAdmin).Post("/", handler.Create)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
 		router.With(authzMiddleware.IsCompanyMember).Get("/{companyID}", handler.Get)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}/roles", handler.GetAccounts)

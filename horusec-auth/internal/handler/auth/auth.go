@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"net/http"
 )
@@ -28,12 +29,14 @@ import (
 type Handler struct {
 	authUseCases   authUseCases.IUseCases
 	authController authController.IController
+	appConfig      *app.Config
 }
 
-func NewAuthHandler(postgresRead relational.InterfaceRead) *Handler {
+func NewAuthHandler(postgresRead relational.InterfaceRead, appConfig *app.Config) *Handler {
 	return &Handler{
+		appConfig: appConfig,
 		authUseCases:   authUseCases.NewAuthUseCases(),
-		authController: authController.NewAuthController(postgresRead),
+		authController: authController.NewAuthController(postgresRead, appConfig),
 	}
 }
 
@@ -46,17 +49,20 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @ID get type
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Success 200 {object} http.Response{content=authEntities.ConfigAuth{}} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Router /api/auth/auth-types [get]
-func (h *Handler) AuthTypes(w http.ResponseWriter, _ *http.Request) {
+// @Router /api/auth/config [get]
+func (h *Handler) Config(w http.ResponseWriter, _ *http.Request) {
 	authType, err := h.authController.GetAuthType()
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, authType)
+	httpUtil.StatusOK(w, authEntities.ConfigAuth{
+		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
+		AuthType:               authType,
+	})
 }
 
 // @Tags Auth

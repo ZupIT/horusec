@@ -16,12 +16,8 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"log"
 	"net/http"
 
@@ -57,8 +53,6 @@ func main() {
 	databaseWrite := databaseSQL.NewRepositoryWrite()
 	cacheRepository := cache.NewCacheRepository(databaseRead, databaseWrite)
 
-	createSuperAdmin(appConfig, databaseRead, databaseWrite)
-
 	server := serverUtil.NewServerConfig("8003", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
 
@@ -66,34 +60,4 @@ func main() {
 	swagger.SetupSwagger(chiRouter, "8003")
 
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
-}
-
-func createSuperAdmin(appConfig app.IAppConfig, databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) {
-	if appConfig.IsEnableApplicationAdmin() {
-		err := account.NewAccountRepository(databaseRead, databaseWrite).Create(getDefaultAccountApplicationAdmin(appConfig).SetAccountData())
-		if err != nil {
-			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
-				logger.LogPanic("Some error occurs when create super admin", err)
-			} else {
-				logger.LogInfo("Super admin already exists")
-			}
-		} else {
-			logger.LogInfo("Super admin created with success")
-		}
-	}
-}
-
-func getDefaultAccountApplicationAdmin(appConfig app.IAppConfig) *accountEntities.Account {
-	entity, err := appConfig.GetApplicationAdminData()
-	if err != nil {
-		logger.LogPanic("Some error occurs when parse Application Admin Data to Account", err)
-	}
-	pass := entity.Password
-	return &accountEntities.Account{
-		Email:              entity.Email,
-		Password:           pass,
-		Username:           entity.Username,
-		IsConfirmed:        true,
-		IsApplicationAdmin: true,
-	}
 }

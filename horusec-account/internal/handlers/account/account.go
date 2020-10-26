@@ -17,7 +17,6 @@ package account
 import (
 	"fmt"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	"github.com/ZupIT/horusec/horusec-account/internal/entity"
 	"net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -129,21 +128,6 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 	}
 
 	httpUtil.StatusInternalServerError(w, err)
-}
-
-// @Tags Account
-// @Description config
-// @ID config
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} http.Response{content=entity.ConfigAccount{}} "OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/config [get]
-func (h *Handler) Config(w http.ResponseWriter, r *http.Request) {
-	httpUtil.StatusOK(w, entity.ConfigAccount{
-		ApplicationAdminEnable: h.appConfig.IsEnableApplicationAdmin(),
-	})
 }
 
 // @Tags Account

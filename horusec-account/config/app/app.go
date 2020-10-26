@@ -15,47 +15,27 @@
 package app
 
 import (
-	"encoding/json"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 )
 
 const (
 	DisableEmailServiceEnv    = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"
-	EnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
-	ApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
 )
 
 type Config struct {
 	DisableEmailService    bool
-	EnableApplicationAdmin bool
-	ApplicationAdminData   string
 }
 
 type IAppConfig interface {
 	IsEmailServiceDisabled() bool
-	IsEnableApplicationAdmin() bool
-	GetApplicationAdminData() (entity *accountEntities.CreateAccount, err error)
 }
 
 func SetupApp() IAppConfig {
 	return &Config{
-		DisableEmailService:    env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
-		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnableApplicationAdminEnv, false),
-		ApplicationAdminData: env.GetEnvOrDefault(
-			ApplicationAdminDataEnv,
-			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
+		DisableEmailService: env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
 	}
 }
 
 func (a *Config) IsEmailServiceDisabled() bool {
 	return a.DisableEmailService
-}
-
-func (a *Config) IsEnableApplicationAdmin() bool {
-	return a.EnableApplicationAdmin
-}
-
-func (a *Config) GetApplicationAdminData() (entity *accountEntities.CreateAccount, err error) {
-	return entity, json.Unmarshal([]byte(a.ApplicationAdminData), &entity)
 }
