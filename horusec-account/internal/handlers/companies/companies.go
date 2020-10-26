@@ -87,10 +87,29 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 	*accountEntities.Company, uuid.UUID, error) {
 	if h.appConfig.IsEnableApplicationAdmin() {
+		if err := h.checkIfUserLoggedIsApplicationAdmin(r); err != nil {
+			httpUtil.StatusForbidden(w, err)
+			return nil, uuid.Nil, err
+		}
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
 
 	return h.getCreateDataDefault(w, r)
+}
+
+func (h *Handler) checkIfUserLoggedIsApplicationAdmin(r *http.Request) error {
+	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	if err != nil {
+		return err
+	}
+	isApplicationAdmin, err := h.accountController.UserIsApplicationAdmin(accountID)
+	if err != nil {
+		return err
+	}
+	if !isApplicationAdmin {
+		return errorsEnum.ErrorUserLoggedIsNotApplicationAdmin
+	}
+	return nil
 }
 
 func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
