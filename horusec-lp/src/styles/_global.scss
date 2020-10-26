@@ -1,0 +1,35 @@
+* {
+  font-family: Dosis;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 125%;
+
+  color: #000;
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  font-weight: bold;
+  color: #0c3455;
+}
+
+h1 {
+  font-size: 61px;
+  line-height: 77px;
+  word-break: break-all;
+}
+
+h2 {
+  font-size: 39px;
+  line-height: 49px;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: #000;
+}
