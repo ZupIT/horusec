@@ -19,8 +19,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
-	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -944,90 +942,5 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		handler.VerifyAlreadyInUse(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-}
-
-func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
-	t.Run("Should return 400 because body is empty", func(t *testing.T) {
-		controllerMock := &accountController.Mock{}
-		handler := &Handler{
-			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", nil)
-		w := httptest.NewRecorder()
-
-		handler.CreateAccountFromKeycloak(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-	t.Run("Should return 400 because body is wrong", func(t *testing.T) {
-		controllerMock := &accountController.Mock{}
-		handler := &Handler{
-			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("invalid body")))
-		w := httptest.NewRecorder()
-
-		handler.CreateAccountFromKeycloak(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-	t.Run("Should return 200 because user already registred", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
-			AccessToken: "Some token",
-		}
-		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(errorsEnum.ErrorUsernameAlreadyInUse)
-		handler := &Handler{
-			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.CreateAccountFromKeycloak(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-	t.Run("Should return 500 unexpected error", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
-			AccessToken: "Some token",
-		}
-		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(errors.New("unexpected error"))
-		handler := &Handler{
-			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.CreateAccountFromKeycloak(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-	t.Run("Should return 201 because new user loggin in system", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
-			AccessToken: "Some token",
-		}
-		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(nil)
-		handler := &Handler{
-			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
-		}
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.CreateAccountFromKeycloak(w, r)
-
-		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 }

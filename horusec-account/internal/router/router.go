@@ -19,7 +19,6 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -113,16 +112,16 @@ func (r *Router) RouterMetrics() *Router {
 func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *Router {
 	handler := account.NewHandler(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/login", handler.Login)
 		router.Post("/create-account", handler.CreateAccount)
-		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)
 		router.Get("/validate/{accountID}", handler.ValidateEmail)
 		router.Post("/send-code", handler.SendResetPasswordCode)
 		router.Post("/validate-code", handler.ValidateResetPasswordCode)
-		router.With(jwt.AuthMiddleware).Post("/change-password", handler.ChangePassword)
+		router.With(authzMiddleware.SetContextAccountID).Post("/change-password", handler.ChangePassword)
 		router.Post("/renew-token", handler.RenewToken)
-		router.Post("/logout", handler.Logout)
+		router.With(authzMiddleware.SetContextAccountID).Post("/logout", handler.Logout)
 		router.Post("/verify-already-used", handler.VerifyAlreadyInUse)
 		router.Options("/", handler.Options)
 	})
@@ -135,8 +134,8 @@ func (r *Router) RouterCompany(databaseRead SQL.InterfaceRead, databaseWrite SQL
 	handler := company.NewHandler(databaseWrite, databaseRead, broker, appConfig)
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
-		router.Post("/", handler.Create)
-		router.Get("/", handler.List)
+		router.With(authzMiddleware.SetContextAccountID).Post("/", handler.Create)
+		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
 		router.With(authzMiddleware.IsCompanyMember).Get("/{companyID}", handler.Get)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}/roles", handler.GetAccounts)
 		router.With(authzMiddleware.IsCompanyAdmin).Patch("/{companyID}", handler.Update)
@@ -157,7 +156,7 @@ func (r *Router) routerCompanyRepositories(databaseRead SQL.InterfaceRead,
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	return func(router chi.Router) {
 		router.Use(authzMiddleware.IsCompanyMember)
-		router.Get("/", handler.List)
+		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
 		router.With(authzMiddleware.IsCompanyAdmin).Post("/", handler.Create)
 		router.With(authzMiddleware.IsRepositoryMember).Get("/{repositoryID}", handler.Get)
 		router.With(authzMiddleware.IsRepositoryAdmin).Patch("/{repositoryID}", handler.Update)

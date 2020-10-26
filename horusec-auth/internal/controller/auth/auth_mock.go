@@ -18,6 +18,7 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -38,4 +39,9 @@ func (m *MockAuthController) AuthorizeByType(authorizationData *authEntities.Aut
 func (m *MockAuthController) GetAuthType() (authEnums.AuthorizationType, error) {
 	args := m.MethodCalled("GetAuthType")
 	return args.Get(0).(authEnums.AuthorizationType), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *MockAuthController) GetAccountIDByAuthType(token string) (uuid.UUID, error) {
+	args := m.MethodCalled("GetAccountIDByAuthType")
+	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }

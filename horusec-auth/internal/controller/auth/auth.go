@@ -19,30 +19,36 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
-	"github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
+	keycloakService "github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services/ldap"
+	"github.com/google/uuid"
 )
 
 type IController interface {
 	AuthByType(credentials *authEntities.Credentials) (interface{}, error)
 	AuthorizeByType(authorizationData *authEntities.AuthorizationData) (bool, error)
 	GetAuthType() (authEnums.AuthorizationType, error)
+	GetAccountIDByAuthType(token string) (uuid.UUID, error)
 }
 
 type Controller struct {
 	horusAuthService    services.IAuthService
 	keycloakAuthService services.IAuthService
 	ldapAuthService     services.IAuthService
+	keycloak            keycloak.IService
 }
 
 func NewAuthController(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) IController {
 	return &Controller{
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
-		keycloakAuthService: keycloak.NewKeycloakAuthService(postgresRead),
 		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
+		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
+		keycloak:            keycloak.NewKeycloakService(postgresRead),
 	}
 }
 
@@ -86,4 +92,17 @@ func (c *Controller) GetAuthType() (authorizationType authEnums.AuthorizationTyp
 func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
 	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
 	return authEnums.AuthorizationType(authType)
+}
+
+func (c *Controller) GetAccountIDByAuthType(token string) (uuid.UUID, error) {
+	switch c.getAuthorizationType() {
+	case authEnums.Horusec:
+		return jwt.GetAccountIDByJWTToken(token)
+	case authEnums.Keycloak:
+		return c.keycloak.GetAccountIDByJWTToken(token)
+	case authEnums.Ldap:
+		return jwt.GetAccountIDByJWTToken(token)
+	}
+
+	return uuid.Nil, errors.ErrorUnauthorized
 }

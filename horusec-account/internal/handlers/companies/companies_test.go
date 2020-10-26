@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"
@@ -79,7 +80,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r)
+		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})

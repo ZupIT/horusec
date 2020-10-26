@@ -17,6 +17,7 @@ package keycloak
 import (
 	"context"
 	"errors"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"net/http"
 	"strings"
 
@@ -66,8 +67,8 @@ func (s *Service) LoginOtp(username, password, otp string) (*gocloak.JWT, error)
 	return s.client.LoginOtp(s.ctx, s.clientID, s.clientSecret, s.realm, username, password, otp)
 }
 
-func (s *Service) IsActiveToken(accessToken string) (bool, error) {
-	result, err := s.client.RetrospectToken(s.ctx, accessToken, s.clientID, s.clientSecret, s.realm)
+func (s *Service) IsActiveToken(token string) (bool, error) {
+	result, err := s.client.RetrospectToken(s.ctx, s.removeBearer(token), s.clientID, s.clientSecret, s.realm)
 	if err != nil {
 		return false, err
 	}
@@ -76,7 +77,7 @@ func (s *Service) IsActiveToken(accessToken string) (bool, error) {
 }
 
 func (s *Service) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
-	userInfo, err := s.GetUserInfo(strings.Replace(token, "Bearer ", "", 1))
+	userInfo, err := s.GetUserInfo(s.removeBearer(token))
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -103,5 +104,13 @@ func (s *Service) ValidateJWTToken(next http.Handler) http.Handler {
 }
 
 func (s *Service) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
+	if isActive, err := s.IsActiveToken(accessToken); err != nil || !isActive {
+		return nil, errorsEnum.ErrorUnauthorized
+	}
+
 	return s.client.GetUserInfo(s.ctx, accessToken, s.realm)
+}
+
+func (s *Service) removeBearer(accessToken string) string {
+	return strings.ReplaceAll(accessToken, "Bearer ", "")
 }

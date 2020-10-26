@@ -15,6 +15,7 @@
 package routes
 
 const (
-	HealthHandler = "/api/health"
-	AuthHandler   = "/api/auth"
+	HealthHandler  = "/api/health"
+	AuthHandler    = "/api/auth"
+	AccountHandler = "/api/account"
 )
