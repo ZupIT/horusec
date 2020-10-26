@@ -27,11 +27,6 @@ definitions:
       role:
         type: string
     type: object
-  account.KeycloakToken:
-    properties:
-      accessToken:
-        type: string
-    type: object
   account.LoginData:
     properties:
       email:
