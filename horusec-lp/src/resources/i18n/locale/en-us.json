@@ -1,0 +1,50 @@
+{
+  "Site": {
+    "description": "Horusec is an open source framework that enhances the identification of vulnerabilities in your project with just one command."
+  },
+
+  "Languages": {
+    "Português": "Português",
+    "English": "English"
+  },
+
+  "LandingPage": {
+    "Github": "Github",
+    "Docs": "Docs",
+
+    "IDENTIFIQUE VULNERABILIDADES DE FORMA SIMPLES E RÁPIDA": "IDENTIFY VULNERABILITIES <br /> SIMPLE AND FAST",
+    "O Horusec é uma estrutura de código aberto que potencializa a identificação de vulnerabilidades em seu projeto com apenas um comando.": "Horusec is an open source framework that enhances the identification<br /> of vulnerabilities in your project with just one command.",
+
+    "Documentação": "Documentation",
+
+    "Texto1": "Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: Net Core 3.x, Java, Python, Ruby, Golang, Terraform and Javascript. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI / CD mats.",
+
+    "GERENCIE AS VULNERABILIDADES ENCONTRADAS DE FORMA ANÁLITICA": "MANAGE THE VULNERABILITIES FOUND ANALYTICAL",
+    "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.": "In addition to identifying and centralizing information, horus provides a tool for managing access and viewing vulnerabilities.",
+
+    "ADICIONE EM SEU PIPELINE E TENHA MAIS SEGURANÇA": "ADD TO YOUR PIPELINE AND HAVE <br /> MORE SAFETY",
+    "Outro objetivo é garantir que a nova funcionalidade do seu projeto esteja segura para isto adicionamos um novo step.": "Another goal is to ensure that your project's new functionality is safe. <br /> For this we add a new step.",
+
+    "SECURITY BY DESIGN": "SECURITY BY DESIGN",
+    "Texto2": "Stimulate the culture of safe development by applying the logic of security by <br /> design, and ensure the safety of projects in the CI and CD process.",
+    "SECURE DEVELOPMENT": "SECURE DEVELOPMENT",
+    "Texto3": "Have a secure development method <br /> in your project, ensuring that <br /> possible unknown vulnerabilities <br /> will be found by Horusec's analysis.",
+
+    "Onde estamos?": "Where are we?",
+    "Endereço": "Av. Rondon Pacheco, 4600 <br /> Tibery, Uberlândia - MG <br /> 38405-142",
+    "Conhecimento": "Knowledge",
+    "Blog": "Blog",
+    "Comunidade": "Community",
+    "Política de Privacidade": "Privacy Policy",
+    "Receba nossas últimas novidades": "Get our <br /> latest news",
+    "Fale com a gente": "Talk to us",
+
+    "PROJETOS QUE JÁ ESTÃO REALIZANDO DESENVOLVIMENTO SEGURO": "PROJECTS THAT ARE ALREADY UNDERTAKING SAFE DEVELOPMENT",
+
+    "Link Github": "https://github.com/ZupIT/horusec",
+    "Link Docs": "https://zup-products.gitbook.io/horusec/v/v1-eng/",
+    "Link Blog": "https://www.zup.com.br/open-code",
+    "Link Comunidade": "https://github.com/ZupIT/horusec",
+    "Link Política de Privacidade": "https://raw.githubusercontent.com/ZupIT/horusec/master/LICENSE"
+  }
+}
