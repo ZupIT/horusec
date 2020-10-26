@@ -27,9 +27,9 @@ export default () => {
         <PipelineArticle />
       </div>
 
-      {/* <div style={{marginTop: '140px'}}>
+      <div style={{marginTop: '140px'}}>
         <ArchitectureArticle />
-      </div> */}
+      </div>
 
       <div style={{marginTop: '100px'}}>
         <FeaturesArticle />

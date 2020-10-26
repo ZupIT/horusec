@@ -41,10 +41,10 @@
 
     "PROJETOS QUE JÁ ESTÃO REALIZANDO DESENVOLVIMENTO SEGURO": "PROJECTS THAT ARE ALREADY UNDERTAKING SAFE DEVELOPMENT",
 
-    "Link Github": "#",
-    "Link Docs": "#",
+    "Link Github": "https://github.com/ZupIT/horusec",
+    "Link Docs": "https://zup-products.gitbook.io/horusec/v/v1-eng/",
     "Link Blog": "https://www.zup.com.br/open-code",
-    "Link Comunidade": "#",
-    "Link Política de Privacidade": "#"
+    "Link Comunidade": "https://github.com/ZupIT/horusec",
+    "Link Política de Privacidade": "https://raw.githubusercontent.com/ZupIT/horusec/master/LICENSE"
   }
 }
