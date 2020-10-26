@@ -384,6 +384,82 @@ var doc = `{
                 }
             }
         },
+        "/api/account/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete account and all permissions!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "delete-account",
+                "responses": {
+                    "204": {
+                        "description": "NO CONTENT",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/account/login": {
             "post": {
                 "description": "login into account!",
@@ -2996,50 +3072,14 @@ var doc = `{
         "http.Response": {
             "type": "object",
             "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "close": {
-                    "type": "boolean"
-                },
-                "contentLength": {
+                "code": {
                     "type": "integer"
                 },
-                "header": {
-                    "type": "Header"
-                },
-                "proto": {
-                    "type": "string"
-                },
-                "protoMajor": {
-                    "type": "integer"
-                },
-                "protoMinor": {
-                    "type": "integer"
-                },
-                "request": {
-                    "type": "Request"
+                "content": {
+                    "type": "object"
                 },
                 "status": {
                     "type": "string"
-                },
-                "statusCode": {
-                    "type": "integer"
-                },
-                "tls": {
-                    "type": "string"
-                },
-                "trailer": {
-                    "type": "Header"
-                },
-                "transferEncoding": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "uncompressed": {
-                    "type": "boolean"
                 }
             }
         },
