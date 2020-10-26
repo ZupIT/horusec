@@ -12,6 +12,7 @@ require (
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
 	github.com/bmatcuk/doublestar/v2 v2.0.1
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/denisenkom/go-mssqldb v0.0.0-20200910202707-1e08a3fab204 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1

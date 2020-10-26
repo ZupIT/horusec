@@ -36,7 +36,7 @@ type Service struct {
 
 func NewKeycloakAuthService(databaseRead relational.InterfaceRead) services.IAuthService {
 	return &Service{
-		keycloak:              keycloak.NewKeycloakService(databaseRead),
+		keycloak:              keycloak.NewKeycloakService(),
 		repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(databaseRead, nil),
 		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(databaseRead, nil),
 		repositoryRepo:        repositoryRepo.NewRepository(databaseRead, nil),

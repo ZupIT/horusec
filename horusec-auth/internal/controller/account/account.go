@@ -38,8 +38,7 @@ func NewAccountController(databaseRead SQL.InterfaceRead, databaseWrite SQL.Inte
 	return &Account{
 		useCases:          useCases,
 		accountRepository: repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
-
-		keycloakService: keycloak.NewKeycloakService(databaseRead)}
+		keycloakService:   keycloak.NewKeycloakService()}
 }
 
 func (a *Account) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) error {

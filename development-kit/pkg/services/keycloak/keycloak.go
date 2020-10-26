@@ -18,22 +18,17 @@ import (
 	"context"
 	"errors"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"net/http"
 	"strings"
 
 	"github.com/Nerzal/gocloak/v7"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/google/uuid"
 )
 
 type IService interface {
-	LoginOtp(username, password, totp string) (*gocloak.JWT, error)
+	LoginOtp(username, password, otp string) (*gocloak.JWT, error)
+	IsActiveToken(token string) (bool, error)
 	GetAccountIDByJWTToken(token string) (uuid.UUID, error)
-	ValidateJWTToken(next http.Handler) http.Handler
-	IsActiveToken(accessToken string) (bool, error)
 	GetUserInfo(accessToken string) (*gocloak.UserInfo, error)
 }
 
@@ -44,10 +39,9 @@ type Service struct {
 	clientSecret string
 	realm        string
 	otp          bool
-	databaseRead relational.InterfaceRead
 }
 
-func NewKeycloakService(databaseRead relational.InterfaceRead) IService {
+func NewKeycloakService() IService {
 	return &Service{
 		ctx:          context.Background(),
 		client:       gocloak.NewClient(env.GetEnvOrDefault("HORUSEC_KEYCLOAK_BASE_PATH", "")),
@@ -55,7 +49,6 @@ func NewKeycloakService(databaseRead relational.InterfaceRead) IService {
 		clientSecret: env.GetEnvOrDefault("HORUSEC_KEYCLOAK_CLIENT_SECRET", ""),
 		realm:        env.GetEnvOrDefault("HORUSEC_KEYCLOAK_REALM", ""),
 		otp:          env.GetEnvOrDefaultBool("HORUSEC_KEYCLOAK_OTP", false),
-		databaseRead: databaseRead,
 	}
 }
 
@@ -81,26 +74,8 @@ func (s *Service) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
-	entity := &account.Account{}
-	response := s.databaseRead.Find(
-		entity, s.databaseRead.SetFilter(map[string]interface{}{"email": *userInfo.Email}), entity.GetTable())
-	if response.GetError() != nil {
-		return uuid.Nil, response.GetError()
-	}
-	return response.GetData().(*account.Account).AccountID, nil
-}
 
-func (s *Service) ValidateJWTToken(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authorization := r.Header.Get("Authorization")
-		accessToken := strings.Replace(authorization, "Bearer ", "", 1)
-
-		if _, err := s.GetUserInfo(accessToken); err != nil {
-			httpUtil.StatusUnauthorized(w, err)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
+	return uuid.Parse(*userInfo.Sub)
 }
 
 func (s *Service) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
