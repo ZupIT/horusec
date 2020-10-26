@@ -59,11 +59,11 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 }
 
 // @Tags Companies
-// @Description create company!
+// @Description create company! If applicationAdmin is enable add field adminEmail in body
 // @ID create-company
 // @Accept  json
 // @Produce  json
-// @Param Company body account.Company true "company info. If applicationAdmin is enable add field adminEmail"
+// @Param Company body account.Company true "company info"
 // @Success 201 {object} http.Response{content=string} "CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"

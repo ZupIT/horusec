@@ -17,53 +17,41 @@ package keycloak
 import (
 	"context"
 	"errors"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
+	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"testing"
 
 	"github.com/Nerzal/gocloak/v7"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-type HandlerMock struct {
+type GoCloakMock struct {
 	mock.Mock
+	gocloak.GoCloak
 }
 
-func (f HandlerMock) ServeHTTP(w http.ResponseWriter, r *http.Request) {}
-
-func TestMock(t *testing.T) {
-	h := HandlerMock{}
-	mock := &Mock{}
-	mock.On("LoginOtp").Return(&gocloak.JWT{}, nil)
-	mock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
-	mock.On("ValidateJWTToken").Return(h.ServeHTTP)
-	mock.On("IsActiveToken").Return(false, nil)
-	mock.On("GetUserInfo").Return(&gocloak.UserInfo{}, nil)
-
-	_, _ = mock.LoginOtp("", "", "")
-	_, _ = mock.GetAccountIDByJWTToken("")
-	_, _ = mock.IsActiveToken("")
-	_, _ = mock.GetUserInfo("")
+func (m *GoCloakMock) LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*gocloak.JWT, error) {
+	args := m.MethodCalled("LoginOtp")
+	return args.Get(0).(*gocloak.JWT), mockUtils.ReturnNilOrError(args, 1)
+}
+func (m *GoCloakMock) RetrospectToken(ctx context.Context, accessToken, clientID, clientSecret, realm string) (*gocloak.RetrospecTokenResult, error) {
+	args := m.MethodCalled("RetrospectToken")
+	return args.Get(0).(*gocloak.RetrospecTokenResult), mockUtils.ReturnNilOrError(args, 1)
+}
+func (m *GoCloakMock) GetUserInfo(ctx context.Context, accessToken, realm string) (*gocloak.UserInfo, error) {
+	args := m.MethodCalled("GetUserInfo")
+	return args.Get(0).(*gocloak.UserInfo), mockUtils.ReturnNilOrError(args, 1)
 }
 
 func TestNewKeycloakService(t *testing.T) {
 	t.Run("Should return default type service keycloak", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		assert.IsType(t, NewKeycloakService(mockRead), &Service{})
+		assert.IsType(t, NewKeycloakService(), &Service{})
 	})
 }
 
 func TestService_LoginOtp(t *testing.T) {
 	t.Run("Should login with success in keycloak", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		goCloakMock.On("LoginOtp").Return(&gocloak.JWT{
 			AccessToken:      "access_token",
@@ -80,15 +68,13 @@ func TestService_LoginOtp(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
-		response, err := service.LoginOtp("root", "root", "")
+		resp, err := service.LoginOtp("root", "root", "")
 		assert.NoError(t, err)
-		assert.NotNil(t, response.AccessToken)
-		assert.Equal(t, "access_token", response.AccessToken)
+		assert.NotNil(t, resp.AccessToken)
+		assert.Equal(t, "access_token", resp.AccessToken)
 	})
 	t.Run("Should login with error in keycloak invalid otp", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		goCloakMock.On("LoginOtp").Return(&gocloak.JWT{
 			AccessToken:      "access_token",
@@ -105,7 +91,6 @@ func TestService_LoginOtp(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          true,
-			databaseRead: mockRead,
 		}
 		_, err := service.LoginOtp("root", "root", "")
 		assert.Error(t, err)
@@ -114,19 +99,18 @@ func TestService_LoginOtp(t *testing.T) {
 
 func Test_GetAccountIDByJWTToken(t *testing.T) {
 	t.Run("Should GetAccountIDByJWTToken with success", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		email := "test@horusec.com"
-		entity := &account.Account{
-			AccountID: uuid.New(),
-			Email:     email,
-		}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, entity))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		valid := true
+		sub := uuid.New().String()
+
 		goCloakMock := &GoCloakMock{}
+		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &valid}, nil)
 		goCloakMock.On("IsActiveToken").Return(true, nil)
 		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{
 			Email: &email,
+			Sub:   &sub,
 		}, nil)
+
 		service := &Service{
 			ctx:          context.Background(),
 			client:       goCloakMock,
@@ -134,24 +118,22 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
+
 		userID, err := service.GetAccountIDByJWTToken("access_token")
 		assert.NoError(t, err)
 		assert.NotEqual(t, uuid.Nil, userID)
 	})
+
 	t.Run("Should GetAccountIDByJWTToken with error because user info return error", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		email := "test@horusec.com"
-		entity := &account.Account{
-			AccountID: uuid.New(),
-			Email:     email,
-		}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, entity))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		valid := true
+		sub := uuid.New().String()
+
 		goCloakMock := &GoCloakMock{}
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("some error"))
+		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &valid}, nil)
+		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Sub: &sub}, errors.New("some error"))
 		goCloakMock.On("IsActiveToken").Return(false, errors.New("error"))
+
 		service := &Service{
 			ctx:          context.Background(),
 			client:       goCloakMock,
@@ -159,144 +141,16 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
-		userID, err := service.GetAccountIDByJWTToken("access_token")
-		assert.Error(t, err)
-		assert.Equal(t, uuid.Nil, userID)
-	})
-	t.Run("Should GetAccountIDByJWTToken with error because find in repository return error", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		email := "test@horusec.com"
-		entity := &account.Account{}
-		mockRead.On("Find").Return(response.NewResponse(0, errors.New("error"), entity))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		goCloakMock := &GoCloakMock{}
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, nil)
-		service := &Service{
-			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
-			databaseRead: mockRead,
-		}
+
 		userID, err := service.GetAccountIDByJWTToken("access_token")
 		assert.Error(t, err)
 		assert.Equal(t, uuid.Nil, userID)
 	})
 }
 
-func Test_ValidateJWTToken(t *testing.T) {
-	t.Run("Should ValidateJWTToken with success", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		goCloakMock := &GoCloakMock{}
-		email := "test@horusec.com"
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, nil)
-		service := &Service{
-			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
-			databaseRead: mockRead,
-		}
-
-		w := httptest.NewRecorder()
-		url := fmt.Sprintf("api/companies/%s/repositories/%s/tokens", uuid.New().String(), uuid.New().String())
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-		ctx := chi.NewRouteContext()
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		var handler HandlerMock
-		newNext := service.ValidateJWTToken(handler)
-		assert.NotEmpty(t, newNext)
-		newNext.ServeHTTP(w, r)
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-	t.Run("Should ValidateJWTToken with error 401 because token is not valid", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		goCloakMock := &GoCloakMock{}
-		email := "test@horusec.com"
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, errors.New("test"))
-		service := &Service{
-			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
-			databaseRead: mockRead,
-		}
-
-		w := httptest.NewRecorder()
-		url := fmt.Sprintf("api/companies/%s/repositories/%s/tokens", uuid.New().String(), uuid.New().String())
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-		ctx := chi.NewRouteContext()
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		var handler HandlerMock
-		newNext := service.ValidateJWTToken(handler)
-		assert.NotEmpty(t, newNext)
-		newNext.ServeHTTP(w, r)
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-	})
-	t.Run("Should ValidateJWTToken with error 401 because token is not active", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		goCloakMock := &GoCloakMock{}
-		email := "test@horusec.com"
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, errors.New("test"))
-		service := &Service{
-			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
-			databaseRead: mockRead,
-		}
-
-		w := httptest.NewRecorder()
-		url := fmt.Sprintf("api/companies/%s/repositories/%s/tokens", uuid.New().String(), uuid.New().String())
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-		ctx := chi.NewRouteContext()
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		var handler HandlerMock
-		newNext := service.ValidateJWTToken(handler)
-		assert.NotEmpty(t, newNext)
-		newNext.ServeHTTP(w, r)
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-	})
-	t.Run("Should ValidateJWTToken with error 401 because token is wrong in decode", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		goCloakMock := &GoCloakMock{}
-		email := "test@horusec.com"
-		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, errors.New("test"))
-		service := &Service{
-			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
-			databaseRead: mockRead,
-		}
-
-		w := httptest.NewRecorder()
-		url := fmt.Sprintf("api/companies/%s/repositories/%s/tokens", uuid.New().String(), uuid.New().String())
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-		ctx := chi.NewRouteContext()
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		var handler HandlerMock
-		newNext := service.ValidateJWTToken(handler)
-		assert.NotEmpty(t, newNext)
-		newNext.ServeHTTP(w, r)
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-	})
-}
 func Test_IsActiveToken(t *testing.T) {
 	t.Run("Should IsActiveToken with success and return active", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		active := true
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &active}, nil)
@@ -307,14 +161,12 @@ func Test_IsActiveToken(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
 		assert.True(t, isActive)
 	})
 	t.Run("Should IsActiveToken with success and return inactive", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		active := false
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &active}, nil)
@@ -325,14 +177,12 @@ func Test_IsActiveToken(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
 		assert.False(t, isActive)
 	})
 	t.Run("Should IsActiveToken with error", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{}, errors.New("error"))
 		service := &Service{
@@ -342,7 +192,6 @@ func Test_IsActiveToken(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
 		_, err := service.IsActiveToken("access_token")
 		assert.Error(t, err)
@@ -351,10 +200,14 @@ func Test_IsActiveToken(t *testing.T) {
 
 func TestService_GetUserInfo(t *testing.T) {
 	t.Run("Should return UserInfo with success", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
 		email := "test@horusec.com"
+		valid := true
+
 		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Email: &email}, nil)
+		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &valid}, nil)
+		goCloakMock.On("IsActiveToken").Return(true, nil)
+
 		service := &Service{
 			ctx:          context.Background(),
 			client:       goCloakMock,
@@ -362,16 +215,19 @@ func TestService_GetUserInfo(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
+
 		user, err := service.GetUserInfo("access_token")
 		assert.NoError(t, err)
 		assert.Equal(t, email, *user.Email)
 	})
+
 	t.Run("Should return UserInfo with error", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
 		goCloakMock := &GoCloakMock{}
+
 		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("error"))
+		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{}, errors.New("test"))
+
 		service := &Service{
 			ctx:          context.Background(),
 			client:       goCloakMock,
@@ -379,8 +235,8 @@ func TestService_GetUserInfo(t *testing.T) {
 			clientSecret: "",
 			realm:        "",
 			otp:          false,
-			databaseRead: mockRead,
 		}
+
 		_, err := service.GetUserInfo("access_token")
 		assert.Error(t, err)
 	})

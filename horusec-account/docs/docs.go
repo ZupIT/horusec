@@ -38,6 +38,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -301,9 +302,14 @@ var doc = `{
                 }
             }
         },
-        "/api/account/create-account-from-keycloak": {
-            "post": {
-                "description": "Create a new account with keycloak data!",
+        "/api/account/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete account and all permissions!",
                 "consumes": [
                     "application/json"
                 ],
@@ -313,21 +319,10 @@ var doc = `{
                 "tags": [
                     "Account"
                 ],
-                "operationId": "create-account-keycloak",
-                "parameters": [
-                    {
-                        "description": "keycloak token info",
-                        "name": "KeycloakToken",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/account.KeycloakToken"
-                        }
-                    }
-                ],
+                "operationId": "delete-account",
                 "responses": {
-                    "200": {
-                        "description": "STATUS OK",
+                    "204": {
+                        "description": "NO CONTENT",
                         "schema": {
                             "allOf": [
                                 {
@@ -344,26 +339,8 @@ var doc = `{
                             ]
                         }
                     },
-                    "201": {
-                        "description": "STATUS CREATED",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
+                    "401": {
+                        "description": "UNAUTHORIZED",
                         "schema": {
                             "allOf": [
                                 {
@@ -3038,14 +3015,6 @@ var doc = `{
                     "type": "string"
                 },
                 "role": {
-                    "type": "string"
-                }
-            }
-        },
-        "account.KeycloakToken": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
                     "type": "string"
                 }
             }

@@ -866,3 +866,47 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
 	})
 }
+
+func TestDeleteAccount(t *testing.T) {
+	t.Run("should success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp)
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.DeleteAccount(uuid.New())
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when getting account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.DeleteAccount(uuid.New())
+
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
+	})
+}

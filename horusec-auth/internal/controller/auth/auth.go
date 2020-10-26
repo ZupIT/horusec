@@ -45,7 +45,7 @@ func NewAuthController(postgresRead relational.InterfaceRead) IController {
 	return &Controller{
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
-		keycloak:            keycloak.NewKeycloakService(postgresRead),
+		keycloak:            keycloak.NewKeycloakService(),
 	}
 }
 

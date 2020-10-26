@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -587,7 +588,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -616,7 +617,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -639,7 +640,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -794,7 +795,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -817,7 +818,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -942,5 +943,80 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		handler.VerifyAlreadyInUse(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestDeleteAccount(t *testing.T) {
+	t.Run("should return 204 when success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp)
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp.SetError(errors.New("test")))
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 401 when invalid token", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", "invalid token")
+
+		handler.DeleteAccount(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 }
