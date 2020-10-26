@@ -1,0 +1,50 @@
+{
+  "Site": {
+    "description": "O Horusec é uma estrutura de código aberto que potencializa a identificação de vulnerabilidades em seu projeto com apenas um comando."
+  },
+
+  "Languages": {
+    "Português": "Português",
+    "English": "English"
+  },
+
+  "LandingPage": {
+    "Github": "Github",
+    "Docs": "Docs",
+
+    "IDENTIFIQUE VULNERABILIDADES DE FORMA SIMPLES E RÁPIDA": "IDENTIFIQUE VULNERABILIDADES<br />DE FORMA SIMPLES E RÁPIDA",
+    "O Horusec é uma estrutura de código aberto que potencializa a identificação de vulnerabilidades em seu projeto com apenas um comando.": "O Horusec é uma estrutura de código aberto que potencializa a identificação<br /> de vulnerabilidades em seu projeto com apenas um comando.",
+
+    "Documentação": "Documentação",
+
+    "Texto1": "O Horusec é uma ferramenta open source que realiza análise estática de códigos para identificar falhas de segurança durante o processo de desenvolvimento. Atualmente, as linguagens para a análise são: Net Core 3.x, Java, Python, Ruby, Golang, Terraform e Javascript. O Horusec pode ser usado pelo desenvolvedor através da CLI e pela equipe de DevSecOps em esteiras de CI/CD.",
+
+    "GERENCIE AS VULNERABILIDADES ENCONTRADAS DE FORMA ANÁLITICA": "GERENCIE AS VULNERABILIDADES ENCONTRADAS DE FORMA ANÁLITICA",
+    "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.": "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.",
+
+    "ADICIONE EM SEU PIPELINE E TENHA MAIS SEGURANÇA": "ADICIONE EM SEU PIPELINE E TENHA<br /> MAIS SEGURANÇA",
+    "Outro objetivo é garantir que a nova funcionalidade do seu projeto esteja segura para isto adicionamos um novo step.": "Outro objetivo é garantir que a nova funcionalidade do seu projeto esteja<br /> segura para isto adicionamos um novo step.",
+
+    "SECURITY BY DESIGN": "SECURITY BY DESIGN",
+    "Texto2": "Estimule a cultura de desenvolvimento<br /> seguro aplicando a lógica de security by<br /> design, e garanta a segurança dos projetos<br /> já no processo de CI e CD.",
+    "SECURE DEVELOPMENT": "SECURE DEVELOPMENT",
+    "Texto3": "Tenha um método de desenvolvimento seguro<br /> no seu projeto, garantindo que<br /> possíveis vulnerabilidades desconhecidas<br /> serão encontradas pela análise do Horusec.",
+
+    "Onde estamos?": "Onde estamos?",
+    "Endereço": "Av. Rondon Pacheco, 4600 <br /> Tibery, Uberlândia - MG <br /> 38405-142",
+    "Conhecimento": "Conhecimento",
+    "Blog": "Blog",
+    "Comunidade": "Comunidade",
+    "Política de Privacidade": "Política de Privacidade",
+    "Receba nossas últimas novidades": "Receba nossas<br />últimas novidades",
+    "Fale com a gente": "Fale com a gente",
+
+    "PROJETOS QUE JÁ ESTÃO REALIZANDO DESENVOLVIMENTO SEGURO": "PROJETOS QUE JÁ ESTÃO REALIZANDO DESENVOLVIMENTO SEGURO",
+
+    "Link Github": "https://github.com/ZupIT/horusec",
+    "Link Docs": "https://zup-products.gitbook.io/horusec",
+    "Link Blog": "https://www.zup.com.br/open-code",
+    "Link Comunidade": "https://github.com/ZupIT/horusec",
+    "Link Política de Privacidade": "https://raw.githubusercontent.com/ZupIT/horusec/master/LICENSE"
+  }
+}
