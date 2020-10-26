@@ -49,6 +49,7 @@ type IAccount interface {
 	Logout(accountID uuid.UUID) error
 	createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error)
 	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
+	DeleteAccount(accountID uuid.UUID) error
 }
 
 type Account struct {
@@ -317,4 +318,13 @@ func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUni
 	}
 
 	return nil
+}
+
+func (a *Account) DeleteAccount(accountID uuid.UUID) error {
+	account, err := a.accountRepository.GetByAccountID(accountID)
+	if err != nil {
+		return err
+	}
+
+	return a.accountRepository.DeleteAccount(account.AccountID)
 }

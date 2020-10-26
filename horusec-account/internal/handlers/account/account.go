@@ -412,3 +412,28 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 
 	httpUtil.StatusOK(w, "")
 }
+
+// @Tags Account
+// @Description Delete account and all permissions!
+// @ID delete-account
+// @Accept  json
+// @Produce  json
+// @Success 204 {object} http.Response{content=string} "NO CONTENT"
+// @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/account/delete [delete]
+// @Security ApiKeyAuth
+func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
+	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
+		return
+	}
+
+	if err = h.controller.DeleteAccount(accountID); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}
