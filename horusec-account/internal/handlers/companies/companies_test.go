@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	"github.com/ZupIT/horusec/horusec-account/config/app"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"
@@ -96,7 +96,7 @@ func TestCreateCompany(t *testing.T) {
 		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
-			Name: "test",
+			Name:       "test",
 			AdminEmail: "admin-horusec@example.com",
 		}
 
@@ -198,7 +198,7 @@ func TestCreateCompany(t *testing.T) {
 		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
-			Name: "test",
+			Name:       "test",
 			AdminEmail: "invalid email",
 		}
 
@@ -237,7 +237,7 @@ func TestCreateCompany(t *testing.T) {
 		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
-			Name: "test",
+			Name:       "test",
 			AdminEmail: "not-found-email@example.com",
 		}
 
@@ -274,7 +274,7 @@ func TestCreateCompany(t *testing.T) {
 		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
-			Name: "test",
+			Name:       "test",
 			AdminEmail: "email@example.com",
 		}
 

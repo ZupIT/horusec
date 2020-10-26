@@ -77,13 +77,13 @@ func (m *Mock) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique
 }
 func (m *Mock) DeleteAccount(accountID uuid.UUID) error {
 	args := m.MethodCalled("DeleteAccount")
-	return mock2.ReturnNilOrError(args, 0)
+	return mockUtils.ReturnNilOrError(args, 0)
 }
 func (m *Mock) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 	args := m.MethodCalled("GetAccountIDByEmail")
-	return args.Get(0).(uuid.UUID), mock2.ReturnNilOrError(args, 1)
+	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }
 func (m *Mock) UserIsApplicationAdmin(accountID uuid.UUID) (bool, error) {
 	args := m.MethodCalled("UserIsApplicationAdmin")
-	return args.Get(0).(bool), mock2.ReturnNilOrError(args, 1)
+	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
 }

@@ -866,4 +866,3 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
 	})
 }
-

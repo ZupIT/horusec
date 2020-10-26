@@ -15,11 +15,11 @@
 package companies
 
 import (
+	"fmt"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
-	"fmt"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -99,9 +99,9 @@ func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 }
 
 func (h *Handler) checkIfUserLoggedIsApplicationAdmin(r *http.Request) error {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
-		return err
+		return errorsEnum.ErrorDoNotHavePermissionToThisAction
 	}
 	isApplicationAdmin, err := h.accountController.UserIsApplicationAdmin(accountID)
 	if err != nil {
