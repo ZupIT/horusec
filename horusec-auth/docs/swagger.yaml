@@ -1,4 +1,9 @@
 definitions:
+  account.KeycloakToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
   auth.AuthorizationData:
     properties:
       companyID:
@@ -37,6 +42,60 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
+  /api/account/create-account-from-keycloak:
+    post:
+      consumes:
+      - application/json
+      description: Create a new account with keycloak data!
+      operationId: create-account-keycloak
+      parameters:
+      - description: keycloak token info
+        in: body
+        name: KeycloakToken
+        required: true
+        schema:
+          $ref: '#/definitions/account.KeycloakToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "201":
+          description: STATUS CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
   /api/auth/account-id:
     get:
       consumes:
