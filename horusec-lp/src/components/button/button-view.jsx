@@ -1,8 +1,8 @@
 import React from 'react';
 import {Button} from './button-styled';
 
-export default ({children}) => {
+export default ({href, target, ref, children}) => {
   return (
-    <Button>{children}</Button>
+    <Button href={href} target={target} ref={ref}>{children}</Button>
   );
 };

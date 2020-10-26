@@ -52,7 +52,7 @@ export default () => {
         </div>
 
         <div className="col-6 col-md-3 mb-3 mb-md-0">
-          <Anchor href="#" dangerouslySetInnerHTML={{
+          <Anchor href="https://github.com/ZupIT/horusec/releases" target="_blank" rel="noreferrer" dangerouslySetInnerHTML={{
               __html: t("Receba nossas últimas novidades", {
                 interpolation: { escapeValue: false },
               }),
