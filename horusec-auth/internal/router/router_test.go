@@ -34,7 +34,7 @@ func TestGetRouter(t *testing.T) {
 		router := NewRouter(server.NewServerConfig("8000", &cors.Options{}))
 		assert.NotNil(t, router)
 
-		mux := router.GetRouter(nil)
+		mux := router.GetRouter(nil, nil)
 		assert.NotNil(t, mux)
 	})
 }

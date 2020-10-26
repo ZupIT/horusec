@@ -37,9 +37,10 @@ import (
 // @name Authorization
 func main() {
 	postgresRead := adapter.NewRepositoryRead()
+	postgresWrite := adapter.NewRepositoryWrite()
 
 	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter(postgresRead)
+	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite)
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")
