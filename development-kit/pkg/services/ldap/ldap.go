@@ -31,9 +31,9 @@ type Service struct {
 func NewLDAPClient() ILDAPService {
 	return &Service{
 		client: goldapclient.LDAPClient{
-			Base:               env.GetEnvOrDefault("HORUS_LDAP_BASE", "cn=test test,dc=example,dc=org"),
+			Base:               env.GetEnvOrDefault("HORUS_LDAP_BASE", ""),
 			Host:               env.GetEnvOrDefault("HORUS_LDAP_HOST", ""),
-			Port:               env.GetEnvOrDefaultInt("HORUS_LDAP_PORT", 0),
+			Port:               env.GetEnvOrDefaultInt("HORUS_LDAP_PORT", 389),
 			UseSSL:             env.GetEnvOrDefaultBool("HORUS_LDAP_USESSL", false),
 			SkipTLS:            env.GetEnvOrDefaultBool("HORUS_LDAP_SKIP_TLS", true),
 			InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUS_LDAP_INSECURE_SKIP_VERIFY", true),
@@ -41,7 +41,7 @@ func NewLDAPClient() ILDAPService {
 			BindPassword:       env.GetEnvOrDefault("HORUS_LDAP_BINDPASSWORD", ""),
 			UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
 			GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
-			Attributes:         []string{"username", "mail"},
+			Attributes:         []string{"uid", "mail", "givenName"},
 		},
 	}
 }

@@ -109,8 +109,8 @@ func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accoun
 
 	if account == nil || err != nil {
 		account = &accountentities.Account{
-			Email:    data["mail"],
-			Username: data["username"],
+			Email:    s.pickOne(data, "mail", "uid"),
+			Username: s.pickOne(data, "givenName", "uid"),
 		}
 
 		err = s.accountRepo.Create(account.SetAccountData())
@@ -120,6 +120,14 @@ func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accoun
 	}
 
 	return account, nil
+}
+
+func (s *Service) pickOne(data map[string]string, first, second string) string {
+	if data[first] == "" {
+		return data[second]
+	}
+
+	return data[first]
 }
 
 func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]string, error) {
