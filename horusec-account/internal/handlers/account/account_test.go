@@ -19,8 +19,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -1104,5 +1106,66 @@ func TestDeleteAccount(t *testing.T) {
 		handler.DeleteAccount(w, r)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestConfig(t *testing.T) {
+	t.Run("should return 200 when success get config account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodGet, "api/config", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.Config(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		respBodyBytes, err := ioutil.ReadAll(w.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		respBody := fmt.Sprintf("%s", respBodyBytes)
+		assert.Equal(t, "{\"code\":200,\"status\":\"OK\",\"content\":{\"applicationAdminEnable\":false}}\n", respBody)
+	})
+	t.Run("should return 200 when success get config account when application admin is enable", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		appConfig := &app.Config{}
+		appConfig.EnableApplicationAdmin = true
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodGet, "api/config", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.Config(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		respBodyBytes, err := ioutil.ReadAll(w.Body)
+		if err != nil {
+			panic(err)
+		}
+		respBody := fmt.Sprintf("%s", respBodyBytes)
+		assert.Equal(t, "{\"code\":200,\"status\":\"OK\",\"content\":{\"applicationAdminEnable\":true}}\n", respBody)
 	})
 }

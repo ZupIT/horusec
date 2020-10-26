@@ -24,7 +24,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// nolint
 type Company struct {
 	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
 	Name        string    `json:"name"`

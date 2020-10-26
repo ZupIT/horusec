@@ -35,8 +35,32 @@ func TestIsEmailConfirmationRequired(t *testing.T) {
 	})
 
 	t.Run("should return false when env is setting it as false", func(t *testing.T) {
-		os.Setenv(DisableEmailServiceEnv, "true")
+		_ = os.Setenv(DisableEmailServiceEnv, "true")
 		appConfig := SetupApp()
 		assert.True(t, appConfig.IsEmailServiceDisabled())
+	})
+}
+
+func TestConfig_IsEnableApplicationAdmin(t *testing.T) {
+	t.Run("should return enable application admin", func(t *testing.T) {
+		appConfig := Config{
+			EnableApplicationAdmin: false,
+		}
+		assert.False(t, appConfig.IsEnableApplicationAdmin())
+	})
+	t.Run("should return enable application admin", func(t *testing.T) {
+		appConfig := Config{
+			EnableApplicationAdmin: true,
+		}
+		assert.True(t, appConfig.IsEnableApplicationAdmin())
+	})
+}
+
+func TestConfig_GetApplicationAdminData(t *testing.T) {
+	t.Run("Should return default application admin", func(t *testing.T) {
+		appConfig := SetupApp()
+		account, err := appConfig.GetApplicationAdminData()
+		assert.NoError(t, err)
+		assert.NotEmpty(t, account)
 	})
 }
