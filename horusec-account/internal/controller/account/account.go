@@ -16,7 +16,6 @@ package account
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"time"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -39,7 +38,6 @@ import (
 
 type IAccount interface {
 	CreateAccount(account *accountEntities.Account) error
-	CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) error
 	Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error)
 	ValidateEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
@@ -63,7 +61,6 @@ type Account struct {
 	accountRepositoryRepo repoAccountRepository.IAccountRepository
 	cacheRepository       cache.Interface
 	appConfig             app.IAppConfig
-	keycloakService       keycloak.IService
 }
 
 func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -78,7 +75,6 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(databaseRead, databaseWrite),
 		cacheRepository:       cacheRepository,
 		appConfig:             appConfig,
-		keycloakService:       keycloak.NewKeycloakService(databaseRead),
 	}
 }
 
@@ -92,33 +88,6 @@ func (a *Account) CreateAccount(account *accountEntities.Account) error {
 	}
 
 	return a.sendValidateAccountEmail(account)
-}
-
-func (a *Account) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) error {
-	account, err := a.newAccountFromKeycloakToken(keyCloakToken.AccessToken)
-	if err != nil {
-		return err
-	}
-
-	if err := a.accountRepository.Create(account); err != nil {
-		return a.useCases.CheckCreateAccountErrorType(err)
-	}
-
-	return nil
-}
-
-func (a *Account) newAccountFromKeycloakToken(accessToken string) (*accountEntities.Account, error) {
-	userInfo, err := a.keycloakService.GetUserInfo(accessToken)
-	if err != nil {
-		return nil, err
-	}
-	if userInfo.Email == nil || userInfo.Sub == nil {
-		return nil, errors.ErrorInvalidKeycloakToken
-	}
-	if userInfo.PreferredUsername == nil {
-		userInfo.PreferredUsername = userInfo.Name
-	}
-	return a.useCases.NewAccountFromKeyCloakUserInfo(userInfo), nil
 }
 
 func (a *Account) Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {

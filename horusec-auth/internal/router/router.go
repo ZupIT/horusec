@@ -17,6 +17,7 @@ package router
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
+	"github.com/ZupIT/horusec/horusec-auth/internal/handler/account"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/health"
 	"github.com/ZupIT/horusec/horusec-auth/internal/router/routes"
@@ -48,10 +49,11 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *chi.Mux {
 	r.setMiddleware()
-	r.RouterAnalysis(postgresRead)
+	r.RouterAuth(postgresRead)
 	r.RouterHealth(postgresRead)
+	r.RouterAccount(postgresRead, postgresWrite)
 	return r.router
 }
 
@@ -105,12 +107,23 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 	return r
 }
 
-func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead) *Router {
+func (r *Router) RouterAuth(postgresRead relational.InterfaceRead) *Router {
 	handler := auth.NewAuthHandler(postgresRead)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
 		router.Get("/auth-types", handler.AuthTypes)
+		router.Get("/account-id", handler.GetAccountIDByAuthType)
 		router.Post("/authenticate", handler.AuthByType)
 		router.Post("/authorize", handler.Authorize)
+		router.Options("/", handler.Options)
+	})
+
+	return r
+}
+
+func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	handler := account.NewHandler(postgresRead, postgresWrite)
+	r.router.Route(routes.AccountHandler, func(router chi.Router) {
+		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)
 		router.Options("/", handler.Options)
 	})
 

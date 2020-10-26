@@ -18,6 +18,8 @@ import (
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
+	"fmt"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -28,7 +30,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	companyUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -120,7 +121,7 @@ func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
 		return nil, uuid.Nil, err
 	}
 
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
 		return nil, uuid.Nil, err
@@ -196,7 +197,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 // @Security ApiKeyAuth
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
-	accountID, _ := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if company, err := h.companyController.Get(companyID, accountID); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
@@ -216,7 +217,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 // @Router /api/companies [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
 		return

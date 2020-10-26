@@ -16,6 +16,8 @@ package account
 
 import (
 	"github.com/ZupIT/horusec/horusec-account/internal/entity"
+	"fmt"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -23,7 +25,6 @@ import (
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -78,39 +79,6 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusCreated(w, "account created")
-}
-
-// @Tags Account
-// @Description Create a new account!
-// @ID create-account
-// @Accept  json
-// @Produce  json
-// @Param CreateAccount body account.CreateAccount true "create account info"
-// @Success 201 {object} http.Response{content=string} "STATUS CREATED"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/create-account-from-keycloak [post]
-func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Request) {
-	keyCloakToken, err := h.useCases.NewKeycloakTokenFromReadCloser(r.Body)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-	if err := h.controller.CreateAccountFromKeycloak(keyCloakToken); err != nil {
-		h.checkCreateAccountFromKeycloakErrors(w, err)
-		return
-	}
-
-	httpUtil.StatusCreated(w, "account created")
-}
-
-func (h *Handler) checkCreateAccountFromKeycloakErrors(w http.ResponseWriter, err error) {
-	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
-		httpUtil.StatusOK(w, "")
-		return
-	}
-
-	httpUtil.StatusInternalServerError(w, err)
 }
 
 func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
@@ -303,7 +271,7 @@ func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getChangePasswordData(w http.ResponseWriter, r *http.Request) (uuid.UUID, string) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return uuid.Nil, ""
@@ -372,7 +340,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Router /api/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return

@@ -38,7 +38,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -304,7 +303,7 @@ var doc = `{
         },
         "/api/account/create-account-from-keycloak": {
             "post": {
-                "description": "Create a new account!",
+                "description": "Create a new account with keycloak data!",
                 "consumes": [
                     "application/json"
                 ],
@@ -314,19 +313,37 @@ var doc = `{
                 "tags": [
                     "Account"
                 ],
-                "operationId": "create-account",
+                "operationId": "create-account-keycloak",
                 "parameters": [
                     {
-                        "description": "create account info",
-                        "name": "CreateAccount",
+                        "description": "keycloak token info",
+                        "name": "KeycloakToken",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/account.CreateAccount"
+                            "$ref": "#/definitions/account.KeycloakToken"
                         }
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "STATUS OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "201": {
                         "description": "STATUS CREATED",
                         "schema": {
@@ -3021,6 +3038,14 @@ var doc = `{
                     "type": "string"
                 },
                 "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "account.KeycloakToken": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
                     "type": "string"
                 }
             }

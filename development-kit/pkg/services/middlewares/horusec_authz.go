@@ -16,6 +16,7 @@ package middlewares
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -33,7 +34,7 @@ import (
 )
 
 type IHorusAuthzMiddleware interface {
-	IsApplicationAdmin(next http.Handler) http.Handler
+	SetContextAccountID(next http.Handler) http.Handler
 	IsCompanyMember(next http.Handler) http.Handler
 	IsCompanyAdmin(next http.Handler) http.Handler
 	IsRepositoryMember(next http.Handler) http.Handler
@@ -51,15 +52,9 @@ func NewHorusAuthzMiddleware() IHorusAuthzMiddleware {
 	}
 }
 
-func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
+func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		isValid, err := h.validateRequest(r, authEnums.ApplicationAdmin)
-		if err != nil || !isValid {
-			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
-			return
-		}
-
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -71,7 +66,7 @@ func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -83,7 +78,7 @@ func (h *HorusAuthzMiddleware) IsCompanyAdmin(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -95,7 +90,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryMember(next http.Handler) http.Handle
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -107,7 +102,7 @@ func (h *HorusAuthzMiddleware) IsRepositorySupervisor(next http.Handler) http.Ha
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
 }
 
@@ -119,8 +114,18 @@ func (h *HorusAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		h.setContextAndReturn(next, w, r)
 	})
+}
+
+func (h *HorusAuthzMiddleware) setContextAndReturn(next http.Handler, w http.ResponseWriter, r *http.Request) {
+	ctx, err := h.setAccountIDInContext(r, r.Header.Get("Authorization"))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+		return
+	}
+
+	next.ServeHTTP(w, r.WithContext(ctx))
 }
 
 func (h *HorusAuthzMiddleware) validateRequest(r *http.Request, role authEnums.HorusecRoles) (bool, error) {
@@ -132,15 +137,15 @@ func (h *HorusAuthzMiddleware) validateRequest(r *http.Request, role authEnums.H
 
 func (h *HorusAuthzMiddleware) sendRequestAuthentication(token string, role authEnums.HorusecRoles, companyID,
 	repositoryID uuid.UUID) (bool, error) {
-	req, _ := http.NewRequest(http.MethodPost, h.getHorusecAuthURL(),
+	req, _ := http.NewRequest(http.MethodPost, h.getHorusecAuthURL("/authorize"),
 		bytes.NewReader(h.newAuthorizationData(token, role, companyID, repositoryID)))
 
-	return h.parseResponse(h.httpUtil.DoRequest(req, nil))
+	return h.parseResponseBool(h.httpUtil.DoRequest(req, nil))
 }
 
-func (h *HorusAuthzMiddleware) getHorusecAuthURL() string {
-	return fmt.Sprintf("%s/api/auth/authorize",
-		env.GetEnvOrDefault("HORUSEC_AUTH_URL", "http://0.0.0.0:8006"))
+func (h *HorusAuthzMiddleware) getHorusecAuthURL(subPath string) string {
+	return fmt.Sprintf("%s/api/auth%s",
+		env.GetEnvOrDefault("HORUSEC_AUTH_URL", "http://0.0.0.0:8006"), subPath)
 }
 
 func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums.HorusecRoles, companyID,
@@ -155,13 +160,46 @@ func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums
 	return authorizationData.ToBytes()
 }
 
-func (h *HorusAuthzMiddleware) parseResponse(response httpResponse.Interface, err error) (bool, error) {
+func (h *HorusAuthzMiddleware) parseResponseBool(response httpResponse.Interface, err error) (bool, error) {
 	if err != nil {
 		return false, err
 	}
 
 	responseContent := httpEntities.Response{}
 	body, _ := response.GetBody()
-	err = json.Unmarshal(body, &responseContent)
+	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
+		return false, errParse
+	}
+
 	return responseContent.Content.(bool), err
+}
+
+func (h *HorusAuthzMiddleware) parseResponseAccountID(response httpResponse.Interface, err error) (uuid.UUID, error) {
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	responseContent := httpEntities.Response{}
+	body, _ := response.GetBody()
+	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
+		return uuid.Nil, errParse
+	}
+
+	return uuid.Parse(responseContent.Content.(string))
+}
+
+func (h *HorusAuthzMiddleware) sendRequestGetAccountID(token string) (uuid.UUID, error) {
+	req, _ := http.NewRequest(http.MethodGet, h.getHorusecAuthURL("/account-id"), nil)
+	req.Header.Add("Authorization", token)
+
+	return h.parseResponseAccountID(h.httpUtil.DoRequest(req, nil))
+}
+
+func (h *HorusAuthzMiddleware) setAccountIDInContext(r *http.Request, token string) (context.Context, error) {
+	accountID, err := h.sendRequestGetAccountID(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return context.WithValue(r.Context(), authEnums.AccountID, accountID.String()), nil
 }

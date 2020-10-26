@@ -27,6 +27,11 @@ definitions:
       role:
         type: string
     type: object
+  account.KeycloakToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
   account.LoginData:
     properties:
       email:
@@ -85,7 +90,6 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
@@ -232,18 +236,27 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new account!
-      operationId: create-account
+      description: Create a new account with keycloak data!
+      operationId: create-account-keycloak
       parameters:
-      - description: create account info
+      - description: keycloak token info
         in: body
-        name: CreateAccount
+        name: KeycloakToken
         required: true
         schema:
-          $ref: '#/definitions/account.CreateAccount'
+          $ref: '#/definitions/account.KeycloakToken'
       produces:
       - application/json
       responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
         "201":
           description: STATUS CREATED
           schema:
