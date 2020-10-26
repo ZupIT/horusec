@@ -15,6 +15,7 @@
 package account
 
 import (
+	"github.com/ZupIT/horusec/horusec-account/internal/entity"
 	"net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -167,15 +168,14 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 // @ID config
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} http.Response{content=string} "OK"
+// @Success 200 {object} http.Response{content=entity.ConfigAccount{}} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/account/config [get]
 func (h *Handler) Config(w http.ResponseWriter, r *http.Request) {
-	config := map[string]interface{}{
-		"super_admin_enable": h.appConfig.IsEnableApplicationAdmin(),
-	}
-	httpUtil.StatusOK(w, config)
+	httpUtil.StatusOK(w, entity.ConfigAccount{
+		ApplicationAdminEnable: h.appConfig.IsEnableApplicationAdmin(),
+	})
 }
 
 // @Tags Account

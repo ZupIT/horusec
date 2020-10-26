@@ -174,7 +174,7 @@ var doc = `{
                                     "type": "object",
                                     "properties": {
                                         "content": {
-                                            "type": "string"
+                                            "$ref": "#/definitions/entity.ConfigAccount"
                                         }
                                     }
                                 }
@@ -3066,6 +3066,14 @@ var doc = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.ConfigAccount": {
+            "type": "object",
+            "properties": {
+                "applicationAdminEnable": {
+                    "type": "boolean"
                 }
             }
         },

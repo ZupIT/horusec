@@ -55,6 +55,11 @@ definitions:
       username:
         type: string
     type: object
+  entity.ConfigAccount:
+    properties:
+      applicationAdminEnable:
+        type: boolean
+    type: object
   http.Response:
     properties:
       code:
@@ -156,7 +161,7 @@ paths:
             - $ref: '#/definitions/http.Response'
             - properties:
                 content:
-                  type: string
+                  $ref: '#/definitions/entity.ConfigAccount'
               type: object
         "400":
           description: BAD REQUEST
