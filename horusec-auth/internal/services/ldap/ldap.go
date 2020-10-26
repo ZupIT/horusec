@@ -105,11 +105,11 @@ func (s *Service) setLDAPAuthResponse(
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountentities.Account, error) {
-	account, err := s.accountRepo.GetByEmail(data["email"])
+	account, err := s.accountRepo.GetByEmail(data["mail"])
 
 	if account == nil || err != nil {
 		account = &accountentities.Account{
-			Email:    data["email"],
+			Email:    data["mail"],
 			Username: data["username"],
 		}
 
