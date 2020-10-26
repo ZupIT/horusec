@@ -77,7 +77,7 @@ func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handle
 	})
 }
 
-func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (authEntities.ConfigAuth, error){
+func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (authEntities.ConfigAuth, error) {
 	configAuth, err := h.getConfigAuth()
 	if err != nil {
 		return authEntities.ConfigAuth{}, errors.ErrorUnauthorized

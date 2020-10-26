@@ -34,7 +34,7 @@ type Handler struct {
 
 func NewAuthHandler(postgresRead relational.InterfaceRead, appConfig *app.Config) *Handler {
 	return &Handler{
-		appConfig: appConfig,
+		appConfig:      appConfig,
 		authUseCases:   authUseCases.NewAuthUseCases(),
 		authController: authController.NewAuthController(postgresRead, appConfig),
 	}

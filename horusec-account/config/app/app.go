@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	DisableEmailServiceEnv    = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"
+	DisableEmailServiceEnv = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"
 )
 
 type Config struct {
-	DisableEmailService    bool
+	DisableEmailService bool
 }
 
 type IAppConfig interface {

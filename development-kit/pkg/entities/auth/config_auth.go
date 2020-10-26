@@ -6,8 +6,8 @@ import (
 )
 
 type ConfigAuth struct {
-	ApplicationAdminEnable bool `json:"applicationAdminEnable"`
-	AuthType auth.AuthorizationType `json:"authType"`
+	ApplicationAdminEnable bool                   `json:"applicationAdminEnable"`
+	AuthType               auth.AuthorizationType `json:"authType"`
 }
 
 func ParseContentToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {

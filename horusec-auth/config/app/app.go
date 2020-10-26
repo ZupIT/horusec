@@ -21,7 +21,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		AuthType: env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString()),
+		AuthType:               env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString()),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
 		ApplicationAdminData: env.GetEnvOrDefault(
 			EnvApplicationAdminDataEnv,
