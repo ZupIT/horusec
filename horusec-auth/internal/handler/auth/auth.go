@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
@@ -126,4 +127,29 @@ func (h *Handler) getAuthorizationData(r *http.Request) (*authEntities.Authoriza
 	}
 
 	return authorizationData, nil
+}
+
+// @Tags Auth
+// @Description get account by token and auth type!
+// @ID get account id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 400 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/auth/account-id [get]
+func (h *Handler) GetAccountIDByAuthType(w http.ResponseWriter, r *http.Request) {
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		httpUtil.StatusBadRequest(w, errors.ErrorTokenCanNotBeEmpty)
+		return
+	}
+
+	accountID, err := h.authController.GetAccountIDByAuthType(token)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, accountID)
 }

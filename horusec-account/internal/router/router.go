@@ -112,7 +112,7 @@ func (r *Router) RouterMetrics() *Router {
 func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *Router {
 	handler := account.NewHandler(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware(databaseRead)
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/login", handler.Login)
 		router.Post("/create-account", handler.CreateAccount)
@@ -133,7 +133,7 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 func (r *Router) RouterCompany(databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite,
 	broker brokerLib.IBroker, appConfig app.IAppConfig) *Router {
 	handler := company.NewHandler(databaseWrite, databaseRead, broker, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware(databaseRead)
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
 		router.With(authzMiddleware.SetContextAccountID).Post("/", handler.Create)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
@@ -154,7 +154,7 @@ func (r *Router) routerCompanyRepositories(databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, broker brokerLib.IBroker,
 	appConfig app.IAppConfig) func(router chi.Router) {
 	handler := repositories.NewRepositoryHandler(databaseWrite, databaseRead, broker, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware(databaseRead)
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	return func(router chi.Router) {
 		router.Use(authzMiddleware.IsCompanyMember)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)

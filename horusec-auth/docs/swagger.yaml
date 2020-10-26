@@ -3,11 +3,9 @@ definitions:
     properties:
       companyID:
         type: string
-      groups:
-        items:
-          type: string
-        type: array
       repositoryID:
+        type: string
+      role:
         type: string
       token:
         type: string
@@ -39,6 +37,35 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
+  /api/auth/account-id:
+    get:
+      consumes:
+      - application/json
+      description: get account by token and auth type!
+      operationId: get account id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
   /api/auth/auth-types:
     get:
       consumes:

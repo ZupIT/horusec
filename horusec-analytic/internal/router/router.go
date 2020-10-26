@@ -110,7 +110,7 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 
 func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewHorusAuthzMiddleware(postgresRead)
+	authz := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/details", handler.GetVulnDetails)
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
@@ -129,7 +129,7 @@ func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *R
 
 func (r *Router) RouterRepositoryAnalytic(postgresRead relational.InterfaceRead) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewHorusAuthzMiddleware(postgresRead)
+	authz := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.RepositoryHandler, func(router chi.Router) {
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/details", handler.GetVulnDetails)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/total-developers", handler.GetRepositoryTotalDevelopers)

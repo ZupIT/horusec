@@ -19,12 +19,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	httpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -47,13 +44,11 @@ type IHorusAuthzMiddleware interface {
 
 type HorusAuthzMiddleware struct {
 	httpUtil httpClient.Interface
-	keycloak keycloak.IService
 }
 
-func NewHorusAuthzMiddleware(databaseRead SQL.InterfaceRead) IHorusAuthzMiddleware {
+func NewHorusAuthzMiddleware() IHorusAuthzMiddleware {
 	return &HorusAuthzMiddleware{
 		httpUtil: httpClient.NewHTTPClient(10),
-		keycloak: keycloak.NewKeycloakService(databaseRead),
 	}
 }
 
@@ -142,15 +137,15 @@ func (h *HorusAuthzMiddleware) validateRequest(r *http.Request, role authEnums.H
 
 func (h *HorusAuthzMiddleware) sendRequestAuthentication(token string, role authEnums.HorusecRoles, companyID,
 	repositoryID uuid.UUID) (bool, error) {
-	req, _ := http.NewRequest(http.MethodPost, h.getHorusecAuthURL(),
+	req, _ := http.NewRequest(http.MethodPost, h.getHorusecAuthURL("/authorize"),
 		bytes.NewReader(h.newAuthorizationData(token, role, companyID, repositoryID)))
 
-	return h.parseResponse(h.httpUtil.DoRequest(req, nil))
+	return h.parseResponseBool(h.httpUtil.DoRequest(req, nil))
 }
 
-func (h *HorusAuthzMiddleware) getHorusecAuthURL() string {
-	return fmt.Sprintf("%s/api/auth/authorize",
-		env.GetEnvOrDefault("HORUSEC_AUTH_URL", "http://0.0.0.0:8006"))
+func (h *HorusAuthzMiddleware) getHorusecAuthURL(subPath string) string {
+	return fmt.Sprintf("%s/api/auth%s",
+		env.GetEnvOrDefault("HORUSEC_AUTH_URL", "http://0.0.0.0:8006"), subPath)
 }
 
 func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums.HorusecRoles, companyID,
@@ -165,40 +160,46 @@ func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums
 	return authorizationData.ToBytes()
 }
 
-func (h *HorusAuthzMiddleware) parseResponse(response httpResponse.Interface, err error) (bool, error) {
+func (h *HorusAuthzMiddleware) parseResponseBool(response httpResponse.Interface, err error) (bool, error) {
 	if err != nil {
 		return false, err
 	}
 
 	responseContent := httpEntities.Response{}
 	body, _ := response.GetBody()
-	err = json.Unmarshal(body, &responseContent)
+	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
+		return false, errParse
+	}
+
 	return responseContent.Content.(bool), err
 }
 
+func (h *HorusAuthzMiddleware) parseResponseAccountID(response httpResponse.Interface, err error) (uuid.UUID, error) {
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	responseContent := httpEntities.Response{}
+	body, _ := response.GetBody()
+	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
+		return uuid.Nil, errParse
+	}
+
+	return uuid.Parse(responseContent.Content.(string))
+}
+
+func (h *HorusAuthzMiddleware) sendRequestGetAccountID(token string) (uuid.UUID, error) {
+	req, _ := http.NewRequest(http.MethodGet, h.getHorusecAuthURL("/account-id"), nil)
+	req.Header.Add("Authorization", token)
+
+	return h.parseResponseAccountID(h.httpUtil.DoRequest(req, nil))
+}
+
 func (h *HorusAuthzMiddleware) setAccountIDInContext(r *http.Request, token string) (context.Context, error) {
-	accountID, err := h.getAccountIDByAuthType(token)
+	accountID, err := h.sendRequestGetAccountID(token)
 	if err != nil {
 		return nil, err
 	}
 
 	return context.WithValue(r.Context(), authEnums.AccountID, accountID.String()), nil
-}
-
-func (h *HorusAuthzMiddleware) getAccountIDByAuthType(token string) (uuid.UUID, error) {
-	switch h.getAuthorizationType() {
-	case authEnums.Horusec:
-		return jwt.GetAccountIDByJWTToken(token)
-	case authEnums.Keycloak:
-		return h.keycloak.GetAccountIDByJWTToken(token)
-	case authEnums.Ldap:
-		return jwt.GetAccountIDByJWTToken(token)
-	}
-
-	return uuid.Nil, errors.ErrorUnauthorized
-}
-
-func (h *HorusAuthzMiddleware) getAuthorizationType() authEnums.AuthorizationType {
-	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
-	return authEnums.AuthorizationType(authType)
 }
