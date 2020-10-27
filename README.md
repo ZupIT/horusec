@@ -4,7 +4,7 @@
 
 <p></p>
 <p></p>
-<p align="center" margin="20 0"><img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></p>
+<p align="center" margin="20 0"><a href="https://horusec.io/"><img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
 <p></p>
 <p></p>
 
