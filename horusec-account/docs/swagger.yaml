@@ -27,11 +27,6 @@ definitions:
       role:
         type: string
     type: object
-  account.KeycloakToken:
-    properties:
-      accessToken:
-        type: string
-    type: object
   account.LoginData:
     properties:
       email:
@@ -85,6 +80,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
@@ -189,31 +185,6 @@ paths:
               type: object
       tags:
       - Account
-  /api/account/create-account-from-keycloak:
-    post:
-      consumes:
-      - application/json
-      description: Create a new account with keycloak data!
-      operationId: create-account-keycloak
-      parameters:
-      - description: keycloak token info
-        in: body
-        name: KeycloakToken
-        required: true
-        schema:
-          $ref: '#/definitions/account.KeycloakToken'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: STATUS OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
   /api/account/delete:
     delete:
       consumes:
@@ -223,8 +194,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: STATUS CREATED
+        "204":
+          description: NO CONTENT
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -232,8 +203,8 @@ paths:
                 content:
                   type: string
               type: object
-        "400":
-          description: BAD REQUEST
+        "401":
+          description: UNAUTHORIZED
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

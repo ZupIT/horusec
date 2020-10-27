@@ -12,36 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package http
+package account
 
-import "encoding/json"
+import (
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
+)
 
-type Response struct {
-	Code    int         `json:"code"`
-	Status  string      `json:"status"`
-	Content interface{} `json:"content,omitempty"`
+type Mock struct {
+	mock.Mock
 }
 
-func (r *Response) ToBytes() []byte {
-	data, _ := json.Marshal(r)
-	return data
-}
-
-func (r *Response) ToString() string {
-	return string(r.ToBytes())
-}
-
-func (r *Response) SetResponseData(code int, status string, content interface{}) {
-	r.Code = code
-	r.Status = status
-	r.Content = content
-}
-
-func (r *Response) GetStatusCode() int {
-	return r.Code
-}
-
-func (r *Response) ContentToBytes() []byte {
-	data, _ := json.Marshal(r.Content)
-	return data
+func (m *Mock) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) error {
+	args := m.MethodCalled("CreateAccountFromKeycloak")
+	return mockUtils.ReturnNilOrError(args, 0)
 }

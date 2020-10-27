@@ -48,7 +48,7 @@ func NewAuthController(postgresRead relational.InterfaceRead, postgresWrite rela
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
 		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
-		keycloak:            keycloak.NewKeycloakService(postgresRead),
+		keycloak:            keycloak.NewKeycloakService(),
 	}
 }
 

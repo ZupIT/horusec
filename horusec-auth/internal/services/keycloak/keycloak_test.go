@@ -18,22 +18,31 @@ import (
 	"errors"
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
+	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestNewKeycloakAuthService(t *testing.T) {
-	dbRead := &relational.MockRead{}
-	k := NewKeycloakAuthService(dbRead)
-	assert.NotEmpty(t, k)
+	mockRead := &relational.MockRead{}
+	service := NewKeycloakAuthService(mockRead)
+	assert.NotEmpty(t, service)
 }
 
 func TestService_Authenticate(t *testing.T) {
 	t.Run("Should run authentication without error", func(t *testing.T) {
-		mock := &keycloak.Mock{}
+		mock := &keycloakService.Mock{}
+
 		mock.On("LoginOtp").Return(&gocloak.JWT{
 			AccessToken:      "access_token",
 			IDToken:          uuid.New().String(),
@@ -42,59 +51,969 @@ func TestService_Authenticate(t *testing.T) {
 			RefreshToken:     "refresh_token",
 			TokenType:        "unique",
 		}, nil)
-		k := &Service{keycloak: mock}
-		content, err := k.Authenticate(&authEntities.Credentials{
+
+		service := &Service{keycloak: mock}
+
+		content, err := service.Authenticate(&authEntities.Credentials{
 			Username: "admin",
 			Password: "admin",
 		})
+
 		assert.NoError(t, err)
 		assert.NotEmpty(t, content)
 	})
-	t.Run("Should run authentication with error", func(t *testing.T) {
-		mock := &keycloak.Mock{}
-		mock.On("LoginOtp").Return(&gocloak.JWT{}, errors.New("unexpected error"))
-		k := &Service{keycloak: mock}
-		content, err := k.Authenticate(&authEntities.Credentials{
-			Username: "admin",
-			Password: "admin",
-		})
+}
+
+func TestIsAuthorizedCompanyMember(t *testing.T) {
+	t.Run("should success authenticate with company member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Member,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with company admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
 		assert.Error(t, err)
-		assert.Empty(t, content)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when invalid token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("test"))
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
 	})
 }
 
-func TestService_IsAuthorized(t *testing.T) {
-	t.Run("Should run is_authorized without error and return true", func(t *testing.T) {
-		mock := &keycloak.Mock{}
-		mock.On("IsActiveToken").Return(true, nil)
-		k := &Service{keycloak: mock}
-		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token: "Access token",
-			Role:  "",
-		})
+func TestIsAuthorizedCompanyAdmin(t *testing.T) {
+	t.Run("should success authenticate with company admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
 		assert.NoError(t, err)
-		assert.True(t, isValid)
+		assert.True(t, result)
 	})
-	t.Run("Should run is_authorized without error and return false", func(t *testing.T) {
-		mock := &keycloak.Mock{}
-		mock.On("IsActiveToken").Return(false, nil)
-		k := &Service{keycloak: mock}
-		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token: "Access token",
-			Role:  "",
-		})
-		assert.NoError(t, err)
-		assert.False(t, isValid)
-	})
-	t.Run("Should run is_authorized with error", func(t *testing.T) {
-		mock := &keycloak.Mock{}
-		mock.On("IsActiveToken").Return(false, errors.New("unexpected error"))
-		k := &Service{keycloak: mock}
-		isValid, err := k.IsAuthorized(&authEntities.AuthorizationData{
-			Token: "Access token",
-			Role:  "",
-		})
+
+	t.Run("should return error when member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Member,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
 		assert.Error(t, err)
-		assert.False(t, isValid)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when supervisor", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Supervisor,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when invalid jwt token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("test"))
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.CompanyAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositoryMember(t *testing.T) {
+	t.Run("should success authenticate with repository member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Member,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with repository supervisor", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Supervisor,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with repository admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when invalid token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("test"))
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should success authenticate with company admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Admin,
+		}
+
+		respRepository := response.Response{}
+		respCompany := response.Response{}
+		mockRead.On("Find").Once().Return(respRepository.SetError(errors.New("test")))
+		mockRead.On("Find").Return(respCompany.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryMember,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
+	t.Run("should success authenticate with repository supervisor", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Supervisor,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with repository admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token: "test",
+
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with company admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Admin,
+		}
+
+		respRepository := response.Response{}
+		respCompany := response.Response{}
+		mockRead.On("Find").Once().Return(respRepository.SetError(errors.New("test")))
+		mockRead.On("Find").Return(respCompany.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should return error when not in repository and company member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Member,
+		}
+
+		respRepository := response.Response{}
+		respCompany := response.Response{}
+		mockRead.On("Find").Once().Return(respRepository.SetError(errors.New("test")))
+		mockRead.On("Find").Return(respCompany.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when invalid token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("test"))
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositorySupervisor,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
+	t.Run("should success authenticate with repository admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should success authenticate with company admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Admin,
+		}
+
+		respRepository := response.Response{}
+		respCompany := response.Response{}
+		mockRead.On("Find").Once().Return(respRepository.SetError(errors.New("test")))
+		mockRead.On("Find").Return(respCompany.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should return error when repository supervisor", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Supervisor,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when repository member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Member,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when invalid token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("test"))
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return error when not in repository and company member", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(true, nil)
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		accountCompany := &roles.AccountCompany{
+			Role: accountEnums.Member,
+		}
+
+		respRepository := response.Response{}
+		respCompany := response.Response{}
+		mockRead.On("Find").Once().Return(respRepository.SetError(errors.New("test")))
+		mockRead.On("Find").Return(respCompany.SetData(accountCompany))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorized(t *testing.T) {
+	t.Run("should success authenticate with repository admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		keycloakMock := &keycloakService.Mock{}
+
+		keycloakMock.On("IsActiveToken").Return(false, errors.New("test"))
+
+		accountRepository := &roles.AccountRepository{
+			Role: accountEnums.Admin,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			keycloak:              keycloakMock,
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "test",
+			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
 	})
 }

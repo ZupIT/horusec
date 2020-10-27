@@ -21,6 +21,7 @@ import (
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
@@ -41,9 +42,12 @@ func TestIsMember(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 
 		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-
 		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil: httpMock,
@@ -89,7 +93,11 @@ func TestIsCompanyAdmin(t *testing.T) {
 
 		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
 		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil: httpMock,
@@ -135,7 +143,11 @@ func TestIsRepositoryMember(t *testing.T) {
 
 		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
 		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil: httpMock,
@@ -181,7 +193,11 @@ func TestIsRepositorySupervisor(t *testing.T) {
 
 		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
 		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil: httpMock,
@@ -219,6 +235,27 @@ func TestIsRepositorySupervisor(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
+
+	t.Run("should return 401 when failed to unmarshall", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(""))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
 }
 
 func TestIsRepositoryAdmin(t *testing.T) {
@@ -227,7 +264,11 @@ func TestIsRepositoryAdmin(t *testing.T) {
 
 		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
 		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil: httpMock,
@@ -256,6 +297,73 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		}
 
 		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestSetContextAccountID(t *testing.T) {
+	t.Run("should return 200 when success set context", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when failed to set context", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		respBytes, _ := json.Marshal(httpEntities.Response{Content: uuid.New()})
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("should return 401 when failed to parse body", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+
+		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(""))}
+		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil: httpMock,
+		}
+
+		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 		req.Header.Add("Authorization", "123")
