@@ -80,6 +80,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
@@ -193,8 +194,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: STATUS CREATED
+        "204":
+          description: NO CONTENT
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -202,8 +203,8 @@ paths:
                 content:
                   type: string
               type: object
-        "400":
-          description: BAD REQUEST
+        "401":
+          description: UNAUTHORIZED
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

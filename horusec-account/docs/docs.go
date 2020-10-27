@@ -38,6 +38,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -249,8 +250,8 @@ var doc = `{
                 ],
                 "operationId": "delete-account",
                 "responses": {
-                    "201": {
-                        "description": "STATUS CREATED",
+                    "204": {
+                        "description": "NO CONTENT",
                         "schema": {
                             "allOf": [
                                 {
@@ -267,8 +268,8 @@ var doc = `{
                             ]
                         }
                     },
-                    "400": {
-                        "description": "BAD REQUEST",
+                    "401": {
+                        "description": "UNAUTHORIZED",
                         "schema": {
                             "allOf": [
                                 {

@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -740,7 +741,7 @@ func TestList(t *testing.T) {
 		r.Header.Add("Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.List(w, r)
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -790,7 +791,7 @@ func TestList(t *testing.T) {
 		r.Header.Add("Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.List(w, r)
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})

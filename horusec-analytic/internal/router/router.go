@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package router
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	configUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-analytic/internal/handlers/dashboard"
@@ -108,12 +108,10 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 	return r
 }
 
-// nolint
 func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewCompanyAuthzMiddleware(postgresRead, nil)
+	authz := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/details", handler.GetVulnDetails)
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-repositories", handler.GetCompanyTotalRepositories)
@@ -129,12 +127,10 @@ func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *R
 	return r
 }
 
-// nolint
 func (r *Router) RouterRepositoryAnalytic(postgresRead relational.InterfaceRead) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewRepositoryAuthzMiddleware(postgresRead, nil)
+	authz := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.RepositoryHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/details", handler.GetVulnDetails)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/total-developers", handler.GetRepositoryTotalDevelopers)
 		router.With(authz.IsRepositoryMember).Get(

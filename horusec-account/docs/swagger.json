@@ -8,7 +8,8 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        }
+        },
+        "license": {}
     },
     "paths": {
         "/api/account/change-password": {
@@ -217,8 +218,8 @@
                 ],
                 "operationId": "delete-account",
                 "responses": {
-                    "201": {
-                        "description": "STATUS CREATED",
+                    "204": {
+                        "description": "NO CONTENT",
                         "schema": {
                             "allOf": [
                                 {
@@ -235,8 +236,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "BAD REQUEST",
+                    "401": {
+                        "description": "UNAUTHORIZED",
                         "schema": {
                             "allOf": [
                                 {

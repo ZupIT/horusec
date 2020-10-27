@@ -39,6 +39,19 @@ services:
       HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
       HORUSEC_SMTP_PORT: "2525"
       HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
+  horusec-auth:
+    image: horuszup/horusec-auth:latest
+    depends_on:
+      - postgresql
+    restart: always
+    container_name: horusec-auth
+    ports:
+      - "8006:8006"
+    environment:
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
+      HORUSEC_AUTH_TYPE: "horusec"
+      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
   horusec-account:
     image: horuszup/horusec-account:latest
     depends_on:
@@ -57,6 +70,7 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
+      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
   horusec-analytic:
     image: horuszup/horusec-analytic:latest
     depends_on:
@@ -68,6 +82,7 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
+      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
   horusec-api:
     image: horuszup/horusec-api:latest
     depends_on:
@@ -81,6 +96,7 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
+      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
   horusec-manager:
     image: horuszup/horusec-manager:latest
     restart: always

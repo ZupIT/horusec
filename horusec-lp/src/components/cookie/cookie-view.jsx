@@ -3,7 +3,7 @@ import CloseIcon from '../../svgs/icon-close-white.svg';
 import ButtonComponent from '../button';
 import { Cookie, Actions, ActionItem, Text } from './cookie-styled';
 
-export default ({ text, onAccept }) => {
+export default ({ text, acceptText, onAccept }) => {
   return (
     <Cookie>
       <Actions>
@@ -24,7 +24,7 @@ export default ({ text, onAccept }) => {
         <div className="col-12 col-md-3">
           <div onClick={onAccept}>
             <ButtonComponent style={{ padding: '15px 20px' }} background="linear-gradient(90deg, #EF4123 0%, #F7941E 100%);">
-              Aceitar
+              {acceptText}
             </ButtonComponent>
           </div>
         </div>

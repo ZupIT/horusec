@@ -37,6 +37,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	controllerMock := &Mock{}
+	controllerMock.On("CreateAccount").Return(nil)
+	controllerMock.On("CreateAccountFromKeycloak").Return(nil)
+	controllerMock.On("Login").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("ValidateEmail").Return(nil)
+	controllerMock.On("SendResetPasswordCode").Return(nil)
+	controllerMock.On("VerifyResetPasswordCode").Return("", nil)
+	controllerMock.On("ChangePassword").Return(nil)
+	controllerMock.On("RenewToken").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("Logout").Return(nil)
+	controllerMock.On("createTokenWithAccountPermissions").Return("", time.Now(), nil)
+	controllerMock.On("VerifyAlreadyInUse").Return(nil)
+
+	_ = controllerMock.CreateAccount(&accountEntities.Account{})
+	_, _ = controllerMock.Login(&accountEntities.LoginData{})
+	_ = controllerMock.ValidateEmail(uuid.New())
+	_ = controllerMock.SendResetPasswordCode("")
+	_, _ = controllerMock.VerifyResetPasswordCode(&accountEntities.ResetCodeData{})
+	_ = controllerMock.ChangePassword(uuid.New(), "")
+	_, _ = controllerMock.RenewToken("", "")
+	_ = controllerMock.Logout(uuid.New())
+	_, _, _ = controllerMock.createTokenWithAccountPermissions(&accountEntities.Account{})
+	_ = controllerMock.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+}
 func TestNewAccountController(t *testing.T) {
 	t.Run("should create a new controller", func(t *testing.T) {
 		brokerMock := &broker.Mock{}

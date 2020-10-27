@@ -18,7 +18,7 @@ jobs:
         shell: bash
         run: |
           curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-          horusec start -p="./"
+          horusec start -p="./" -e="true"
       - name: Running Horusec Security Running current version
         shell: bash
         run: |

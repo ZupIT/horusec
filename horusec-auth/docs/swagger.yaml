@@ -1,0 +1,281 @@
+definitions:
+  account.KeycloakToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
+  auth.AuthorizationData:
+    properties:
+      companyID:
+        type: string
+      repositoryID:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+    type: object
+  auth.Credentials:
+    properties:
+      otp:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  http.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec
+  description: Service of Horusec.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Auth
+paths:
+  /api/account/create-account-from-keycloak:
+    post:
+      consumes:
+      - application/json
+      description: Create a new account with keycloak data!
+      operationId: create-account-keycloak
+      parameters:
+      - description: keycloak token info
+        in: body
+        name: KeycloakToken
+        required: true
+        schema:
+          $ref: '#/definitions/account.KeycloakToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "201":
+          description: STATUS CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
+  /api/auth/account-id:
+    get:
+      consumes:
+      - application/json
+      description: get account by token and auth type!
+      operationId: get account id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/auth/auth-types:
+    get:
+      consumes:
+      - application/json
+      description: get actual type!
+      operationId: get type
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/auth/authenticate:
+    post:
+      consumes:
+      - application/json
+      description: authenticate login by type!
+      operationId: authenticate login
+      parameters:
+      - description: auth info
+        in: body
+        name: Credentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/auth/authorize:
+    post:
+      consumes:
+      - application/json
+      description: verify if request is valid!
+      operationId: authenticate request
+      parameters:
+      - description: authorization data
+        in: body
+        name: AuthorizationData
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AuthorizationData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

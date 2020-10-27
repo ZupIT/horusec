@@ -61,3 +61,7 @@ func (a *AccountCompany) SetCompanyAndAccountID(companyID, accountID uuid.UUID) 
 	a.AccountID = accountID
 	return a
 }
+
+func (a *AccountCompany) IsNotAdmin() bool {
+	return a.Role != accountEnums.Admin
+}
