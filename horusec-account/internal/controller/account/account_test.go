@@ -52,7 +52,6 @@ func TestMock(t *testing.T) {
 	controllerMock.On("VerifyAlreadyInUse").Return(nil)
 	controllerMock.On("DeleteAccount").Return(nil)
 	controllerMock.On("GetAccountIDByEmail").Return(uuid.New(), nil)
-	controllerMock.On("UserIsApplicationAdmin").Return(false, nil)
 
 	_ = controllerMock.CreateAccount(&accountEntities.Account{})
 	_, _ = controllerMock.Login(&accountEntities.LoginData{})
@@ -65,8 +64,7 @@ func TestMock(t *testing.T) {
 	_, _, _ = controllerMock.createTokenWithAccountPermissions(&accountEntities.Account{})
 	_ = controllerMock.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
 	_ = controllerMock.DeleteAccount(uuid.New())
-	_, _ = controllerMock.GetAccountIDByEmail(uuid.New().String(), "")
-	_, _ = controllerMock.UserIsApplicationAdmin(uuid.New())
+	_, _ = controllerMock.GetAccountIDByEmail(uuid.New().String())
 }
 func TestNewAccountController(t *testing.T) {
 	t.Run("should create a new controller", func(t *testing.T) {

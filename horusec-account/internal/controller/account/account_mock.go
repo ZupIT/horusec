@@ -16,7 +16,6 @@ package account
 
 import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -80,11 +79,7 @@ func (m *Mock) DeleteAccount(accountID uuid.UUID) error {
 	args := m.MethodCalled("DeleteAccount")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
-func (m *Mock) GetAccountIDByEmail(email string, authType authEnums.AuthorizationType) (uuid.UUID, error) {
+func (m *Mock) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 	args := m.MethodCalled("GetAccountIDByEmail")
 	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
-}
-func (m *Mock) UserIsApplicationAdmin(accountID uuid.UUID) (bool, error) {
-	args := m.MethodCalled("UserIsApplicationAdmin")
-	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
 }

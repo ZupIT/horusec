@@ -136,6 +136,48 @@ func TestCreateCompany(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 
+	t.Run("should return status code 403 when create a company and not setup config auth correctly in context", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "admin-horusec@example.com",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &accountEntities.Account{
+			AccountID: uuid.New(),
+		}))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, "wrong content"))
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusForbidden, w.Code)
+	})
+
 	t.Run("should return status code 401 when user is unauthorized", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}

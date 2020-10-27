@@ -49,7 +49,6 @@ type IAccount interface {
 	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
-	UserIsApplicationAdmin(accountID uuid.UUID) (bool, error)
 }
 
 type Account struct {
@@ -306,12 +305,4 @@ func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 	return account.AccountID, nil
-}
-
-func (a *Account) UserIsApplicationAdmin(accountID uuid.UUID) (bool, error) {
-	account, err := a.accountRepository.GetByAccountID(accountID)
-	if err != nil {
-		return false, err
-	}
-	return account.IsApplicationAdmin, nil
 }
