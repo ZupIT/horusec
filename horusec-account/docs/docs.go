@@ -233,6 +233,14 @@ var doc = `{
         "/api/account/create-account-from-keycloak": {
             "post": {
                 "description": "Create a new account with keycloak data!",
+        "/api/account/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete account and all permissions!",
                 "consumes": [
                     "application/json"
                 ],
@@ -273,6 +281,8 @@ var doc = `{
                             ]
                         }
                     },
+                "operationId": "delete-account",
+                "responses": {
                     "201": {
                         "description": "STATUS CREATED",
                         "schema": {

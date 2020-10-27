@@ -19,6 +19,7 @@ import ExternalLayout from 'layouts/External';
 import { Button } from 'components';
 import { useTranslation } from 'react-i18next';
 import useAuth from 'helpers/hooks/useAuth';
+import Styled from './styled';
 
 function KeycloakAuth() {
   const { t } = useTranslation();
@@ -26,11 +27,14 @@ function KeycloakAuth() {
 
   return (
     <ExternalLayout>
-      <Button
-        rounded
-        text={t('LOGIN_SCREEN.KEYCLOAK')}
-        onClick={() => login()}
-      />
+      <Styled.Wrapper>
+        <Button
+          width={200}
+          rounded
+          text={t('LOGIN_SCREEN.KEYCLOAK')}
+          onClick={() => login()}
+        />
+      </Styled.Wrapper>
     </ExternalLayout>
   );
 }

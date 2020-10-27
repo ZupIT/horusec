@@ -214,6 +214,15 @@ paths:
                 content:
                   type: string
               type: object
+  /api/account/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete account and all permissions!
+      operationId: delete-account
+      produces:
+      - application/json
+      responses:
         "201":
           description: STATUS CREATED
           schema:
@@ -241,6 +250,8 @@ paths:
                 content:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       tags:
       - Account
   /api/account/login:

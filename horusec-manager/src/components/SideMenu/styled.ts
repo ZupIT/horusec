@@ -16,6 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
+import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
 
 interface RouterItemProps {
   isActive: boolean;
@@ -97,12 +98,19 @@ const RouteName = styled.span`
 
 const SubMenu = styled.div<SubMenuProps>`
   background-color: ${({ theme }) => theme.colors.background.secundary};
-  height: 96.3vh;
   min-width: 180px;
   top: 0;
   left: -165px;
   transition: left 0.6s;
   position: absolute;
+
+  ${isMicrofrontend()
+    ? css`
+        height: calc(96.3vh - 50px);
+      `
+    : css`
+        height: 96.3vh;
+      `}
 
   ${({ isActive }) =>
     isActive &&

@@ -24,4 +24,5 @@ export enum localStorageKeys {
   ACCESS_TOKEN = 'access-token',
   REFRESH_TOKEN = 'refresh-token',
   MICROFRONTEND = 'isMicrofrontend',
+  AUTHENTICATED = 'isAuthenticated',
 }
