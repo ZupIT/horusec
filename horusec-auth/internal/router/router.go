@@ -50,7 +50,8 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *chi.Mux {
+func (r *Router) GetRouter(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *chi.Mux {
 	r.setMiddleware()
 	r.RouterAuth(postgresRead, appConfig)
 	r.RouterHealth(postgresRead)

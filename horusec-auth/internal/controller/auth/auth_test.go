@@ -23,6 +23,7 @@ import (
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -33,8 +34,9 @@ import (
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create a new controller", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		appConfig := &app.Config{}
 
-		controller := NewAuthController(mockRead)
+		controller := NewAuthController(mockRead, appConfig)
 
 		assert.NotNil(t, controller)
 	})

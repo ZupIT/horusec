@@ -7,25 +7,27 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 )
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create new controller", func(t *testing.T) {
-		handler := NewAuthHandler(nil)
+		appConfig := &app.Config{}
+		handler := NewAuthHandler(nil, appConfig)
 		assert.NotEmpty(t, handler)
 	})
 }
 
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
-		handler := NewAuthHandler(nil)
+		appConfig := &app.Config{}
+		handler := NewAuthHandler(nil, appConfig)
 		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
 		w := httptest.NewRecorder()
 
@@ -42,6 +44,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, nil)
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -64,6 +67,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -84,6 +88,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock := &authController.MockAuthController{}
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -108,6 +113,7 @@ func TestAuthorize(t *testing.T) {
 		controllerMock.On("AuthorizeByType").Return(true, nil)
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -130,6 +136,7 @@ func TestAuthorize(t *testing.T) {
 		controllerMock.On("AuthorizeByType").Return(false, errors.New("test"))
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -150,6 +157,7 @@ func TestAuthorize(t *testing.T) {
 		controllerMock := &authController.MockAuthController{}
 
 		handler := Handler{
+			appConfig:      &app.Config{},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -169,8 +177,9 @@ func TestAuthorize(t *testing.T) {
 
 func TestHandler_AuthTypes(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, &app.Config{
+			AuthType: authEnums.Horusec.ToString(),
+		})
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -180,8 +189,9 @@ func TestHandler_AuthTypes(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 	t.Run("should return 400 when get auth types", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
-		handler := NewAuthHandler(nil)
+		handler := NewAuthHandler(nil, &app.Config{
+			AuthType: "test",
+		})
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -191,10 +201,12 @@ func TestHandler_AuthTypes(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 	t.Run("should return 200 when get auth types mocked", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "test"))
 		controllerMock := &authController.MockAuthController{}
 		controllerMock.On("GetAuthType").Return(authEnums.Horusec, nil)
 		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: "test",
+			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -210,12 +222,13 @@ func TestHandler_AuthTypes(t *testing.T) {
 
 func TestGetAccountIDByAuthType(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
-
 		controllerMock := &authController.MockAuthController{}
 		controllerMock.On("GetAccountIDByAuthType").Return(uuid.New(), nil)
 
 		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Horusec.ToString(),
+			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -230,12 +243,13 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong getting id", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
-
 		controllerMock := &authController.MockAuthController{}
 		controllerMock.On("GetAccountIDByAuthType").Return(uuid.Nil, errors.New("test"))
 
 		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Horusec.ToString(),
+			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -250,10 +264,11 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong getting id", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("HORUSEC_AUTH_TYPE", "horusec"))
-
-		handler := Handler{}
-
+		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Horusec.ToString(),
+			},
+		}
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
 

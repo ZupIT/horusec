@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
@@ -93,7 +94,6 @@ func TestCreateCompany(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		cacheRepositoryMock := &cache.Mock{}
 		appConfig := &app.Config{}
-		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
 			Name:       "test",
@@ -121,7 +121,13 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+
+		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
@@ -195,7 +201,6 @@ func TestCreateCompany(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		cacheRepositoryMock := &cache.Mock{}
 		appConfig := &app.Config{}
-		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
 			Name:       "test",
@@ -223,6 +228,12 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -234,7 +245,6 @@ func TestCreateCompany(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		cacheRepositoryMock := &cache.Mock{}
 		appConfig := &app.Config{}
-		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
 			Name:       "test",
@@ -260,6 +270,11 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusNotFound, w.Code)
@@ -271,7 +286,6 @@ func TestCreateCompany(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		cacheRepositoryMock := &cache.Mock{}
 		appConfig := &app.Config{}
-		appConfig.EnableApplicationAdmin = true
 
 		company := &accountEntities.CompanyApplicationAdmin{
 			Name:       "test",
@@ -297,6 +311,11 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -328,7 +347,12 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})

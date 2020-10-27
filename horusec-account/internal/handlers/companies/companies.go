@@ -43,7 +43,6 @@ type Handler struct {
 	companyController  companiesController.IController
 	repositoryUseCases repositories.IRepository
 	companyUseCases    companyUseCases.ICompany
-	appConfig          app.IAppConfig
 	accountController  accountController.IAccount
 }
 
@@ -55,7 +54,6 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 			broker, databaseRead, databaseWrite, cache, accountUseCases.NewAccountUseCases(), appConfig),
 		repositoryUseCases: repositories.NewRepositoryUseCases(),
 		companyUseCases:    companyUseCases.NewCompanyUseCases(),
-		appConfig:          appConfig,
 	}
 }
 
@@ -88,7 +86,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 	*accountEntities.Company, uuid.UUID, error) {
-	configAuth, err := auth.ParseContentToConfigAuth(r.Context().Value(authEnums.ConfigAuth))
+	configAuth, err := auth.ParseInterfaceToConfigAuth(r.Context().Value(authEnums.ConfigAuth))
 	if err != nil {
 		httpUtil.StatusForbidden(w, err)
 		return nil, uuid.Nil, err
@@ -97,21 +95,6 @@ func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
 	return h.getCreateDataDefault(w, r)
-}
-
-func (h *Handler) checkIfUserLoggedIsApplicationAdmin(r *http.Request) error {
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
-	if err != nil {
-		return errorsEnum.ErrorDoNotHavePermissionToThisAction
-	}
-	isApplicationAdmin, err := h.accountController.UserIsApplicationAdmin(accountID)
-	if err != nil {
-		return err
-	}
-	if !isApplicationAdmin {
-		return errorsEnum.ErrorUserLoggedIsNotApplicationAdmin
-	}
-	return nil
 }
 
 func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
@@ -131,7 +114,8 @@ func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
 	return company, accountID, nil
 }
 
-func (h *Handler) getCreateDataApplicationAdmin(w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {
+func (h *Handler) getCreateDataApplicationAdmin(
+	w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {
 	company, err := h.companyUseCases.NewCompanyApplicationAdminFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)

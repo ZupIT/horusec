@@ -242,11 +242,13 @@ func (h *HorusAuthzMiddleware) getConfigAuth() (authEntities.ConfigAuth, error) 
 	return h.parseResponseConfigAuth(res)
 }
 
-func (h *HorusAuthzMiddleware) setConfigAuthInContext(r *http.Request, configAuth authEntities.ConfigAuth) context.Context {
+func (h *HorusAuthzMiddleware) setConfigAuthInContext(
+	r *http.Request, configAuth authEntities.ConfigAuth) context.Context {
 	return context.WithValue(r.Context(), authEnums.ConfigAuth, configAuth)
 }
 
-func (h *HorusAuthzMiddleware) parseResponseConfigAuth(response httpResponse.Interface) (entity authEntities.ConfigAuth, err error) {
+func (h *HorusAuthzMiddleware) parseResponseConfigAuth(
+	response httpResponse.Interface) (entity authEntities.ConfigAuth, err error) {
 	responseContent := httpEntities.Response{}
 	body, _ := response.GetBody()
 	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {

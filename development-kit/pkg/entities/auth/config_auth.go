@@ -10,7 +10,7 @@ type ConfigAuth struct {
 	AuthType               auth.AuthorizationType `json:"authType"`
 }
 
-func ParseContentToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {
+func ParseInterfaceToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {
 	contentBytes, err := json.Marshal(content)
 	if err != nil {
 		return ConfigAuth{}, err
