@@ -53,6 +53,7 @@ const GlobalStyle = createGlobalStyle`
   #root {
     height: 100vh;
     background-color: ${theme.colors.background.primary};
+    overflow-y: hidden;
   }
 
   body,

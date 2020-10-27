@@ -16,11 +16,12 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import moment from 'moment';
-import { getCurrentAuthType } from './currentAuthType';
+import { getCurrentAuthType, setCurrenAuthType } from './currentAuthType';
 import { authTypes } from 'helpers/enums/authTypes';
 import keycloak from 'config/keycloak';
 import accountService from 'services/account';
 import { setCurrentUser } from './currentUser';
+import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
 
 const getAccessToken = (): string => {
   return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
@@ -59,6 +60,8 @@ const handleSetKeyclockData = async (
     const userData: any = await keycloak.loadUserInfo();
 
     setCurrentUser({ email: userData?.email, username: userData?.name });
+
+    setCurrenAuthType(authTypes.KEYCLOAK);
   }
 
   setTokens(accessToken, refreshToken);
@@ -74,8 +77,11 @@ const isLogged = (): boolean => {
   const authType = getCurrentAuthType();
   const accessToken = getAccessToken();
 
-  if (authType === authTypes.KEYCLOAK && accessToken) {
-    return keycloak.authenticated;
+  if (
+    (authType === authTypes.KEYCLOAK && accessToken) ||
+    isAuthenticatedInMicrofrontend()
+  ) {
+    return true;
   }
 
   if (authType === authTypes.HORUSEC) {

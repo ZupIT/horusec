@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
 
 interface SettingsProps {
   isVisible: boolean;
@@ -25,11 +26,18 @@ interface ItemProps {
 }
 
 const Wrapper = styled.div`
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-bottom: 50px;
+
+  ${isMicrofrontend()
+    ? css`
+        height: calc(100vh - 50px);
+      `
+    : css`
+        height: 100vh;
+      `}
 `;
 
 const Container = styled.div`

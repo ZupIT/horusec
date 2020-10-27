@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+import styled from 'styled-components';
 
-const isMicrofrontend = (): boolean => {
-  return window.localStorage.getItem(localStorageKeys.MICROFRONTEND) === 'true';
+const Wrapper = styled.div`
+  padding: 20px;
+`;
+
+export default {
+  Wrapper,
 };
-
-const isAuthenticatedInMicrofrontend = (): boolean => {
-  return window.localStorage.getItem(localStorageKeys.AUTHENTICATED) === 'true';
-};
-
-const setIsMicrofrontend = (value: boolean) => {
-  window.localStorage.setItem(
-    localStorageKeys.MICROFRONTEND,
-    JSON.stringify(value)
-  );
-};
-
-export { isMicrofrontend, isAuthenticatedInMicrofrontend, setIsMicrofrontend };
