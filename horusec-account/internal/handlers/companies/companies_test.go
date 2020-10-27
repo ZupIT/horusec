@@ -55,7 +55,7 @@ func getTestAuthorizationToken() string {
 }
 
 func TestCreateCompany(t *testing.T) {
-	t.Run("should return status code 200 when create a company successfully", func(t *testing.T) {
+	t.Run("should return status code 201 when create a company successfully", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockTx := &relational.MockWrite{}
@@ -81,7 +81,11 @@ func TestCreateCompany(t *testing.T) {
 		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
-
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: false,
+			AuthType:               authEnums.Horusec,
+		}))
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusCreated, w.Code)
@@ -349,7 +353,7 @@ func TestCreateCompany(t *testing.T) {
 
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
-			ApplicationAdminEnable: true,
+			ApplicationAdminEnable: false,
 			AuthType:               authEnums.Horusec,
 		}))
 		handler.Create(w, r)
