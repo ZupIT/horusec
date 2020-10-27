@@ -256,7 +256,7 @@ const ResetPasswordTpl = `<!doctype html>
 </head>
 
 <body class="">
-  <span class="preheader">HORUSEC - Redefinição de senha</span>
+  <span class="preheader">HORUSEC - Password Reset</span>
   <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
       <td>&nbsp;</td>
@@ -271,9 +271,9 @@ const ResetPasswordTpl = `<!doctype html>
                       <p class="align-center logo-wrapper">
                         <img width="150px" src="https://horus-assets.s3.amazonaws.com/images/horus_logo_200921.svg">
                       </p>
-                      <h1 class="align-left">Olá, {{.Username}}!</h1>
-                      <p>Você solicitou uma redefinição de senha de acesso ao HORUSEC. O código é válido por 10 minutos
-                        e deve ser utilizado 1x.</p>
+                      <h1 class="align-left">Hello, {{.Username}}!</h1>
+                      <p>You have requested a password reset to access HORUSEC. The code is valid for 10 minutes
+                      and should be used 1x.</p>
                       <h2 class="align-left">{{.Code}}</h1>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                           <tbody>
@@ -282,7 +282,7 @@ const ResetPasswordTpl = `<!doctype html>
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                   <tbody>
                                     <tr>
-                                      <td> <a href="{{.URL}}" target="_blank">Voltar para o Horusec</a>
+                                      <td> <a href="{{.URL}}" target="_blank">Back to Horusec</a>
                                       </td>
                                     </tr>
                                   </tbody>
@@ -292,7 +292,7 @@ const ResetPasswordTpl = `<!doctype html>
                           </tbody>
                         </table>
                         <div class="footer">
-                          <p class="team">Time Horusec.</p>
+                          <p class="team">Horusec Team</p>
                           <span class="copyright">© 2020 Horusec Sec. All rights reserved.</span>
                           <span class="powered">Powered by Zup I. T. Innovation</span>
                         </div>
