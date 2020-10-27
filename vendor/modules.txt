@@ -31,7 +31,7 @@ github.com/auth0/go-jwt-middleware
 github.com/beorn7/perks/quantile
 # github.com/bmatcuk/doublestar v1.3.2
 ## explicit
-# github.com/bmatcuk/doublestar/v2 v2.0.1
+# github.com/bmatcuk/doublestar/v2 v2.0.3
 ## explicit
 github.com/bmatcuk/doublestar/v2
 # github.com/cespare/xxhash/v2 v2.1.1
@@ -41,6 +41,7 @@ github.com/chzyer/readline
 # github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
 ## explicit
 # github.com/davecgh/go-spew v1.1.1
+## explicit
 github.com/davecgh/go-spew/spew
 # github.com/denisenkom/go-mssqldb v0.0.0-20200910202707-1e08a3fab204
 ## explicit
@@ -106,10 +107,10 @@ github.com/go-enry/go-oniguruma
 github.com/go-openapi/jsonpointer
 # github.com/go-openapi/jsonreference v0.19.4
 github.com/go-openapi/jsonreference
-# github.com/go-openapi/spec v0.19.10
+# github.com/go-openapi/spec v0.19.11
 ## explicit
 github.com/go-openapi/spec
-# github.com/go-openapi/swag v0.19.10
+# github.com/go-openapi/swag v0.19.11
 ## explicit
 github.com/go-openapi/swag
 # github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -318,7 +319,7 @@ github.com/swaggo/swag
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/md4
-# golang.org/x/net v0.0.0-20201021035429-f5854403a974
+# golang.org/x/net v0.0.0-20201027133719-8eef5233e2a1
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -328,7 +329,7 @@ golang.org/x/net/proxy
 golang.org/x/net/publicsuffix
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a
+# golang.org/x/sys v0.0.0-20201027140754-0fcbb8f4928c
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -345,7 +346,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.0.0-20201022035929-9cf592e881e9
+# golang.org/x/tools v0.0.0-20201026223136-e84cfc6dd5ca
 ## explicit
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/buildutil

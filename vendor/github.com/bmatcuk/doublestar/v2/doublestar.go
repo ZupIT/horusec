@@ -41,55 +41,12 @@ var StandardOS OS = standardOS{}
 // ErrBadPattern indicates a pattern was malformed.
 var ErrBadPattern = path.ErrBadPattern
 
-// Split a path on the given separator, respecting escaping.
-func splitPathOnSeparator(path string, separator rune) (ret []string) {
-	idx := 0
-	if separator == '\\' {
-		// if the separator is '\\', then we can just split...
-		ret = strings.Split(path, string(separator))
-		idx = len(ret)
-	} else {
-		// otherwise, we need to be careful of situations where the separator was escaped
-		cnt := strings.Count(path, string(separator))
-		if cnt == 0 {
-			return []string{path}
-		}
-
-		ret = make([]string, cnt+1)
-		pathlen := len(path)
-		separatorLen := utf8.RuneLen(separator)
-		emptyEnd := false
-		for start := 0; start < pathlen; {
-			end := indexRuneWithEscaping(path[start:], separator)
-			if end == -1 {
-				emptyEnd = false
-				end = pathlen
-			} else {
-				emptyEnd = true
-				end += start
-			}
-			ret[idx] = path[start:end]
-			start = end + separatorLen
-			idx++
-		}
-
-		// If the last rune is a path separator, we need to append an empty string to
-		// represent the last, empty path component. By default, the strings from
-		// make([]string, ...) will be empty, so we just need to icrement the count
-		if emptyEnd {
-			idx++
-		}
-	}
-
-	return ret[:idx]
-}
-
 // Find the first index of a rune in a string,
 // ignoring any times the rune is escaped using "\".
 func indexRuneWithEscaping(s string, r rune) int {
 	end := strings.IndexRune(s, r)
-	if end == -1 {
-		return -1
+	if end == -1 || r == '\\' {
+		return end
 	}
 	if end > 0 && s[end-1] == '\\' {
 		start := end + utf8.RuneLen(r)
@@ -227,7 +184,7 @@ func isZeroLengthPattern(pattern string) (ret bool, err error) {
 // is the PathMatch() function below.
 //
 func Match(pattern, name string) (bool, error) {
-	return matchWithSeparator(pattern, name, '/')
+	return doMatching(pattern, name, '/')
 }
 
 // PathMatch is like Match except that it uses your system's path separator.
@@ -244,86 +201,68 @@ func PathMatch(pattern, name string) (bool, error) {
 // PathMatchOS is like PathMatch except that it uses vos's path separator.
 func PathMatchOS(vos OS, pattern, name string) (bool, error) {
 	pattern = filepath.ToSlash(pattern)
-	return matchWithSeparator(pattern, name, vos.PathSeparator())
+	return doMatching(pattern, name, vos.PathSeparator())
 }
 
-// Match returns true if name matches the shell file name pattern.
-// The pattern syntax is:
-//
-//  pattern:
-//    { term }
-//  term:
-//    '*'         matches any sequence of non-path-separators
-//              '**'        matches any sequence of characters, including
-//                          path separators.
-//    '?'         matches any single non-path-separator character
-//    '[' [ '^' ] { character-range } ']'
-//          character class (must be non-empty)
-//    '{' { term } [ ',' { term } ... ] '}'
-//    c           matches character c (c != '*', '?', '\\', '[')
-//    '\\' c      matches character c
-//
-//  character-range:
-//    c           matches character c (c != '\\', '-', ']')
-//    '\\' c      matches character c, unless separator is '\\'
-//    lo '-' hi   matches character c for lo <= c <= hi
-//
-// Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
-// is malformed.
-//
-func matchWithSeparator(pattern, name string, separator rune) (bool, error) {
-	nameComponents := splitPathOnSeparator(name, separator)
-	return doMatching(pattern, nameComponents)
-}
-
-func doMatching(pattern string, nameComponents []string) (matched bool, err error) {
+func doMatching(pattern, name string, separator rune) (matched bool, err error) {
 	// check for some base-cases
-	patternLen, nameLen := len(pattern), len(nameComponents)
-	if patternLen == 0 && nameLen == 0 {
-		return true, nil
-	}
+	patternLen, nameLen := len(pattern), len(name)
 	if patternLen == 0 {
-		if nameLen == 1 && nameComponents[0] == "" {
-			return true, nil
-		} else if nameLen == 0 {
-			return false, nil
-		}
+		return nameLen == 0, nil
+	} else if nameLen == 0 {
+		return isZeroLengthPattern(pattern)
 	}
 
-	slashIdx := indexRuneWithEscaping(pattern, '/')
-	lastComponent := slashIdx == -1
-	if lastComponent {
-		slashIdx = len(pattern)
+	separatorAdj := utf8.RuneLen(separator)
+
+	patIdx := indexRuneWithEscaping(pattern, '/')
+	lastPat := patIdx == -1
+	if lastPat {
+		patIdx = len(pattern)
 	}
-	if pattern[:slashIdx] == "**" {
+	if pattern[:patIdx] == "**" {
 		// if our last pattern component is a doublestar, we're done -
 		// doublestar will match any remaining name components, if any.
-		if lastComponent {
+		if lastPat {
 			return true, nil
 		}
 
 		// otherwise, try matching remaining components
-		for nameIdx := 0; nameIdx < nameLen; nameIdx++ {
-			if m, _ := doMatching(pattern[slashIdx+1:], nameComponents[nameIdx:]); m {
+		nameIdx := 0
+		patIdx += 1
+		for {
+			if m, _ := doMatching(pattern[patIdx:], name[nameIdx:], separator); m {
 				return true, nil
 			}
+
+			nextNameIdx := 0
+			if nextNameIdx = indexRuneWithEscaping(name[nameIdx:], separator); nextNameIdx == -1 {
+				break
+			}
+			nameIdx += separatorAdj + nextNameIdx
 		}
 		return false, nil
 	}
 
+	nameIdx := indexRuneWithEscaping(name, separator)
+	lastName := nameIdx == -1
+	if lastName {
+		nameIdx = nameLen
+	}
+
 	var matches []string
-	matches, err = matchComponent(pattern, nameComponents[0])
+	matches, err = matchComponent(pattern, name[:nameIdx])
 	if matches == nil || err != nil {
 		return
 	}
-	if len(matches) == 0 && nameLen == 1 {
+	if len(matches) == 0 && lastName {
 		return true, nil
 	}
 
-	if nameLen > 1 {
+	if !lastName {
+		nameIdx += separatorAdj
 		for _, alt := range matches {
-			matched, err = doMatching(alt, nameComponents[1:])
+			matched, err = doMatching(alt, name[nameIdx:], separator)
 			if matched || err != nil {
 				return
 			}
@@ -423,6 +362,7 @@ func doGlob(vos OS, basedir, pattern string, matches []string) (m []string, e er
 	}
 
 	// otherwise, we need to check each item in the directory...
+
 	// first, if basedir is a symlink, follow it...
 	if (fi.Mode() & os.ModeSymlink) != 0 {
 		fi, err = vos.Stat(basedir)
@@ -436,21 +376,11 @@ func doGlob(vos OS, basedir, pattern string, matches []string) (m []string, e er
 		return
 	}
 
-	// read directory
-	dir, err := vos.Open(basedir)
+	files, err := filesInDir(vos, basedir)
 	if err != nil {
 		return
 	}
-	defer func() {
-		if err := dir.Close(); e == nil {
-			e = err
-		}
-	}()
 
-	files, err := dir.Readdir(-1)
-	if err != nil {
-		return
-	}
 	sort.Slice(files, func(i, j int) bool { return files[i].Name() < files[j].Name() })
 
 	slashIdx := indexRuneWithEscaping(pattern, '/')
@@ -504,6 +434,25 @@ func doGlob(vos OS, basedir, pattern string, matches []string) (m []string, e er
 			}
 		}
 	}
+	return
+}
+
+func filesInDir(vos OS, dirPath string) (files []os.FileInfo, e error) {
+	dir, err := vos.Open(dirPath)
+	if err != nil {
+		return nil, nil
+	}
+	defer func() {
+		if err := dir.Close(); e == nil {
+			e = err
+		}
+	}()
+
+	files, err = dir.Readdir(-1)
+	if err != nil {
+		return nil, nil
+	}
+
 	return
 }
 

@@ -2,7 +2,8 @@
 
 Path pattern matching and globbing supporting `doublestar` (`**`) patterns.
 
-![Release](https://img.shields.io/github/release/bmatcuk/doublestar.svg?branch=master)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/bmatcuk/doublestar)](https://pkg.go.dev/github.com/bmatcuk/doublestar/v2)
+[![Release](https://img.shields.io/github/release/bmatcuk/doublestar.svg?branch=master)](https://github.com/bmatcuk/doublestar/releases)
 [![Build Status](https://travis-ci.org/bmatcuk/doublestar.svg?branch=master)](https://travis-ci.org/bmatcuk/doublestar)
 [![codecov.io](https://img.shields.io/codecov/c/github/bmatcuk/doublestar.svg?branch=master)](https://codecov.io/github/bmatcuk/doublestar?branch=master)
 
