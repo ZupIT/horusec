@@ -16,14 +16,14 @@ package auth
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
-	"net/http"
+	netHTTP "net/http"
 )
 
 type Handler struct {
@@ -40,7 +40,7 @@ func NewAuthHandler(postgresRead relational.InterfaceRead, appConfig *app.Config
 	}
 }
 
-func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -49,17 +49,17 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @ID get type
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} http.Response{content=authEntities.ConfigAuth{}} "STATUS OK"
+// @Success 200 {object} http.Response{content=auth.ConfigAuth{}} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Router /api/auth/config [get]
-func (h *Handler) Config(w http.ResponseWriter, _ *http.Request) {
+func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	authType, err := h.authController.GetAuthType()
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, authEntities.ConfigAuth{
+	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
 		AuthType:               authType,
 	})
@@ -75,7 +75,7 @@ func (h *Handler) Config(w http.ResponseWriter, _ *http.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/authenticate [post]
-func (h *Handler) AuthByType(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	credentials, err := h.getCredentials(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -91,7 +91,7 @@ func (h *Handler) AuthByType(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getCredentials(r *http.Request) (*authEntities.Credentials, error) {
+func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) {
 	credentials, err := h.authUseCases.NewCredentialsFromReadCloser(r.Body)
 	if err != nil {
 		return credentials, err
@@ -110,7 +110,7 @@ func (h *Handler) getCredentials(r *http.Request) (*authEntities.Credentials, er
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/authorize [post]
-func (h *Handler) Authorize(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	authorizationData, err := h.getAuthorizationData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -126,7 +126,7 @@ func (h *Handler) Authorize(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getAuthorizationData(r *http.Request) (*authEntities.AuthorizationData, error) {
+func (h *Handler) getAuthorizationData(r *netHTTP.Request) (*auth.AuthorizationData, error) {
 	authorizationData, err := h.authUseCases.NewAuthorizationDataFromReadCloser(r.Body)
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (h *Handler) getAuthorizationData(r *http.Request) (*authEntities.Authoriza
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 400 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/account-id [get]
-func (h *Handler) GetAccountIDByAuthType(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetAccountIDByAuthType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	token := r.Header.Get("Authorization")
 	if token == "" {
 		httpUtil.StatusBadRequest(w, errors.ErrorTokenCanNotBeEmpty)
