@@ -23,8 +23,7 @@ func NewConfig() *Config {
 	return &Config{
 		AuthType:               env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString()),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
-		ApplicationAdminData: env.GetEnvOrDefault(
-			EnvApplicationAdminDataEnv,
+		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
 	}
 }

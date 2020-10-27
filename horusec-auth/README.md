@@ -41,6 +41,8 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_KEYCLOAK_CLIENT_SECRET      |                                                                   | This environment get keycloak client secret                  | 
 | HORUSEC_KEYCLOAK_REALM              |                                                                   | This environment get keycloak realm                          |
 | HORUSEC_KEYCLOAK_OTP                | false                                                             | This environment get keycloak opt                            | 
+| HORUSEC_ENABLE_APPLICATION_ADMIN    | false                                                             | This environment set if you need active application admin in system. When this environment is setup to `true` only application admin users can create company in horusec. | 
+| HORUSEC_APPLICATION_ADMIN_DATA      | {\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"} | When application admin is enable and auth-type is `horusec` we need create default user application admin with this content in horusec. Don't forget to **escape the json** at the value of the environment variable. | 
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-auth folder**

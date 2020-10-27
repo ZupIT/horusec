@@ -19,6 +19,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
@@ -58,7 +59,7 @@ func main() {
 }
 
 func createApplicationAdmin(config *app.Config, read relational.InterfaceRead, write relational.InterfaceWrite) {
-	if config.GetEnableApplicationAdmin() {
+	if config.GetEnableApplicationAdmin() && config.GetAuthType() != auth.Horusec.ToString() {
 		err := account.NewAccountRepository(read, write).Create(getDefaultAccountApplicationAdmin(config).SetAccountData())
 		if err != nil {
 			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
