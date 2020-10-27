@@ -160,7 +160,8 @@ func (h *HorusAuthzMiddleware) newAuthorizationData(token string, role authEnums
 	return authorizationData.ToBytes()
 }
 
-func (h *HorusAuthzMiddleware) parseResponseBool(response httpResponse.Interface, err error) (bool, error) {
+func (h *HorusAuthzMiddleware) parseResponseBool(
+	response httpResponse.Interface, err error) (isValid bool, errParse error) {
 	if err != nil {
 		return false, err
 	}
@@ -171,10 +172,11 @@ func (h *HorusAuthzMiddleware) parseResponseBool(response httpResponse.Interface
 		return false, errParse
 	}
 
-	return responseContent.Content.(bool), err
+	return isValid, json.Unmarshal(responseContent.ContentToBytes(), &isValid)
 }
 
-func (h *HorusAuthzMiddleware) parseResponseAccountID(response httpResponse.Interface, err error) (uuid.UUID, error) {
+func (h *HorusAuthzMiddleware) parseResponseAccountID(
+	response httpResponse.Interface, err error) (accountID uuid.UUID, errParse error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -185,7 +187,7 @@ func (h *HorusAuthzMiddleware) parseResponseAccountID(response httpResponse.Inte
 		return uuid.Nil, errParse
 	}
 
-	return uuid.Parse(responseContent.Content.(string))
+	return accountID, json.Unmarshal(responseContent.ContentToBytes(), &accountID)
 }
 
 func (h *HorusAuthzMiddleware) sendRequestGetAccountID(token string) (uuid.UUID, error) {
