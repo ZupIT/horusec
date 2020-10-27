@@ -31,3 +31,4 @@ var ErrorAccessAndRefreshTokenNotMatch = errors.New("{ACCOUNT} access and refres
 var ErrorErrorEmptyBody = errors.New("{ACCOUNT} empty request body")
 var ErrorUsernameAlreadyInUse = errors.New("{ACCOUNT} username already in use")
 var ErrorRepositoryNameAlreadyInUse = errors.New("{ACCOUNT} repository name already in use")
+var ErrorInvalidKeycloakToken = errors.New("{ACCOUNT} keycloak token without email or username")

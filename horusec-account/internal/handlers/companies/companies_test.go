@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"
@@ -79,7 +80,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r)
+		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
@@ -170,7 +171,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r)
+		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -292,7 +293,7 @@ func TestList(t *testing.T) {
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
 		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
 
-		handler.List(w, r)
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -327,7 +328,7 @@ func TestList(t *testing.T) {
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
 		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
 
-		handler.List(w, r)
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

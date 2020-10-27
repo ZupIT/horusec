@@ -15,15 +15,15 @@
 package account
 
 import (
+	"fmt"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
-	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -253,7 +253,7 @@ func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getChangePasswordData(w http.ResponseWriter, r *http.Request) (uuid.UUID, string) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return uuid.Nil, ""
@@ -322,7 +322,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Router /api/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -374,7 +374,7 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 // @Router /api/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return

@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -587,7 +588,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -616,7 +617,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -639,7 +640,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -794,7 +795,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -817,7 +818,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -969,7 +970,7 @@ func TestDeleteAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.DeleteAccount(w, r)
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -997,7 +998,7 @@ func TestDeleteAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.DeleteAccount(w, r)
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})

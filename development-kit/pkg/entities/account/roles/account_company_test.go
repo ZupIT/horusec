@@ -71,3 +71,15 @@ func TestSetCompanyAndAccountID(t *testing.T) {
 		assert.NotEmpty(t, accountCompany.AccountID)
 	})
 }
+
+func TestIsNotAdmin(t *testing.T) {
+	t.Run("should return true when its not admin", func(t *testing.T) {
+		accountCompany := &AccountCompany{Role: "member"}
+		assert.True(t, accountCompany.IsNotAdmin())
+	})
+
+	t.Run("should return false when is admin", func(t *testing.T) {
+		accountCompany := &AccountCompany{Role: "admin"}
+		assert.False(t, accountCompany.IsNotAdmin())
+	})
+}

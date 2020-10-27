@@ -20,6 +20,8 @@ ADD . /horusec
 
 WORKDIR /horusec
 
+RUN go get -t -v -u ./...
+
 RUN GOOS=linux go build -a -o horusec-api-main ./horusec-api/cmd/app/main.go
 
 FROM alpine

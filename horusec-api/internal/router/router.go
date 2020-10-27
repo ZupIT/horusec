@@ -17,7 +17,6 @@ package router
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/analysis"
@@ -131,9 +130,8 @@ func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead,
 func (r *Router) RouterTokensRepository(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensRepository.NewHandler(postgresRead, postgresWrite)
-	authMiddleware := middlewares.NewJWTAuthMiddleware(postgresRead, postgresWrite)
+	authMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.TokensRepositoryHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(authMiddleware.IsRepositoryAdmin).Post("/", handler.Post)
 		router.With(authMiddleware.IsRepositoryAdmin).Get("/", handler.Get)
 		router.With(authMiddleware.IsRepositoryAdmin).Delete("/{tokenID}", handler.Delete)
@@ -146,9 +144,8 @@ func (r *Router) RouterTokensRepository(
 func (r *Router) RouterTokensCompany(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
 	handler := tokensCompany.NewHandler(postgresRead, postgresWrite)
-	companyMiddleware := middlewares.NewCompanyAuthzMiddleware(postgresRead, postgresWrite)
+	companyMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.TokensCompanyHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(companyMiddleware.IsCompanyAdmin).Post("/", handler.Post)
 		router.With(companyMiddleware.IsCompanyAdmin).Get("/", handler.Get)
 		router.With(companyMiddleware.IsCompanyAdmin).Delete("/{tokenID}", handler.Delete)
@@ -160,10 +157,9 @@ func (r *Router) RouterTokensCompany(
 
 func (r *Router) RouterManagement(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
+	repositoryMiddleware := middlewares.NewHorusAuthzMiddleware()
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
 		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/type",
 			handler.UpdateVulnType)
