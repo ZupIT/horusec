@@ -50,8 +50,6 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_JWT_SECRET_KEY                        | horusec-secret                                                                             | This environment get JWT secret key                          | 
 | HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE         | false                                                                                      | Disable email confirmation on user register                  | 
 | HORUSEC_AUTH_URL                              | http://localhost:8006                                                                      | This environment get horusec url to mount horusec auth url   |
-| HORUSEC_ENABLE_APPLICATION_ADMIN              | false                                                                                      | This environment is to enable application admin, when is setup to true only application admin can create companies but only can access the companies that he was invited. |
-| HORUSEC_APPLICATION_ADMIN_DATA                | {"username": "horusec-admin", "email":"horusec-admin@example.com", "password":"Devpass0*"} | This environment is to get application admin content. |
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-account folder**
