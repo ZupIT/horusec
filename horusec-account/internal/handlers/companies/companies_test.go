@@ -23,6 +23,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"

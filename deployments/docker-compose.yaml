@@ -77,8 +77,6 @@ services:
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
       HORUSEC_AUTH_URL: "http://horusec-auth:8006"
-      HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
-      HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
   horusec-analytic:
     image: horuszup/horusec-analytic:latest
     depends_on:
