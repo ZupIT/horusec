@@ -40,3 +40,8 @@ func (r *Response) SetResponseData(code int, status string, content interface{})
 func (r *Response) GetStatusCode() int {
 	return r.Code
 }
+
+func (r *Response) ContentToBytes() []byte {
+	data, _ := json.Marshal(r.Content)
+	return data
+}

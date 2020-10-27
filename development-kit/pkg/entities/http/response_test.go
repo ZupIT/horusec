@@ -52,3 +52,10 @@ func TestGetStatusCode(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.GetStatusCode())
 	})
 }
+
+func TestContentToBytes(t *testing.T) {
+	t.Run("should success parse response struct to bytes", func(t *testing.T) {
+		response := Response{}
+		assert.NotNil(t, response.ContentToBytes())
+	})
+}
