@@ -102,7 +102,7 @@ func (a *Account) ToMap() map[string]interface{} {
 		"email":          a.Email,
 		"username":       a.Username,
 		"is_confirmed":   a.IsConfirmed,
-		"is_super_admin": a.IsApplicationAdmin,
+		"is_application_admin": a.IsApplicationAdmin,
 		"created_at":     a.CreatedAt,
 		"updated_at":     a.UpdatedAt,
 	}

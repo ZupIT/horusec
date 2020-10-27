@@ -256,5 +256,5 @@ func (h *HorusAuthzMiddleware) parseResponseConfigAuth(
 	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
 		return authEntities.ConfigAuth{}, errParse
 	}
-	return responseContent.Content.(authEntities.ConfigAuth), nil
+	return authEntities.ParseInterfaceToConfigAuth(responseContent.Content)
 }
