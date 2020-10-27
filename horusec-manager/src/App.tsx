@@ -24,7 +24,7 @@ import { AuthProvider } from 'contexts/Auth';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
 import { setIsMicrofrontend } from 'helpers/localStorage/microfrontend';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
-import keycloakConfig from 'config/keycloak';
+import { keycloakInstance, keycloackConfig } from 'config/keycloak';
 import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
 
 function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
@@ -32,23 +32,29 @@ function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
 
   setIsMicrofrontend(isMicrofrontend || false);
 
-  return (
+  const AppContent = () => (
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+
+      <FlashMessageProvider>
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
+      </FlashMessageProvider>
+    </ThemeProvider>
+  );
+
+  return keycloackConfig.clientId ? (
     <ReactKeycloakProvider
-      authClient={keycloakConfig}
+      authClient={keycloakInstance}
       onTokens={(tokens) =>
         handleSetKeyclockData(tokens.token, tokens.refreshToken)
       }
     >
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-
-        <FlashMessageProvider>
-          <AuthProvider>
-            <Routes />
-          </AuthProvider>
-        </FlashMessageProvider>
-      </ThemeProvider>
+      <AppContent />
     </ReactKeycloakProvider>
+  ) : (
+    <AppContent />
   );
 }
 

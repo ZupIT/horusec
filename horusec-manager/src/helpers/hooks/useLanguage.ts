@@ -24,18 +24,18 @@ import {
 
 const allLanguages: LanguageItem[] = [
   {
-    name: 'pt - BR',
-    i18nValue: 'ptBR',
-    htmlValue: 'pt-br',
-    icon: 'brazil',
-    dateFormat: 'dd/MM/yyyy',
-  },
-  {
     name: 'en - US',
     i18nValue: 'enUS',
     htmlValue: 'en',
     icon: 'united-states',
     dateFormat: 'MM/dd/yyyy',
+  },
+  {
+    name: 'pt - BR',
+    i18nValue: 'ptBR',
+    htmlValue: 'pt-br',
+    icon: 'brazil',
+    dateFormat: 'dd/MM/yyyy',
   },
 ];
 
@@ -54,7 +54,9 @@ const useLanguage = () => {
   useEffect(() => {
     const defaultLanguage = getCurrentLanguage();
 
-    if (defaultLanguage) setLanguage(defaultLanguage);
+    setUserLanguage(defaultLanguage || allLanguages[0]);
+
+    // eslint-disable-next-line
   }, []);
 
   return {

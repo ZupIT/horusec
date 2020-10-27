@@ -18,7 +18,7 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import moment from 'moment';
 import { getCurrentAuthType, setCurrenAuthType } from './currentAuthType';
 import { authTypes } from 'helpers/enums/authTypes';
-import keycloak from 'config/keycloak';
+import { keycloakInstance } from 'config/keycloak';
 import accountService from 'services/account';
 import { setCurrentUser } from './currentUser';
 import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
@@ -57,7 +57,7 @@ const handleSetKeyclockData = async (
   if (accessToken) {
     accountService.createAccountFromKeycloak(accessToken);
 
-    const userData: any = await keycloak.loadUserInfo();
+    const userData: any = await keycloakInstance.loadUserInfo();
 
     setCurrentUser({ email: userData?.email, username: userData?.name });
 
