@@ -15,6 +15,7 @@
 package horusec
 
 import (
+	"encoding/json"
 	"errors"
 	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -300,5 +301,33 @@ func TestSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 		analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities([]string{"1"}, []string{"2"})
 		assert.Equal(t, analysis.AnalysisVulnerabilities[0].Vulnerability.Type, horusecEnum.FalsePositive)
 		assert.Equal(t, analysis.AnalysisVulnerabilities[1].Vulnerability.Type, horusecEnum.RiskAccepted)
+	})
+}
+
+func TestParseResponseBytesToAnalysis(t *testing.T) {
+	t.Run("Should ParseResponseBytesToAnalysis without errors", func(t *testing.T) {
+		analysis := &Analysis{
+			AnalysisVulnerabilities: []AnalysisVulnerabilities{
+				{
+					Vulnerability: Vulnerability{
+						VulnHash: "1",
+					},
+				},
+			},
+		}
+		body := map[string]interface{}{
+			"content": analysis,
+		}
+		bodyBytes, err := json.Marshal(body)
+		assert.NoError(t, err)
+		newAnalysis, err := analysis.ParseResponseBytesToAnalysis(bodyBytes)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, newAnalysis)
+	})
+	t.Run("Should ParseResponseBytesToAnalysis with errors in unmarshal content", func(t *testing.T) {
+		analysis := &Analysis{}
+		newAnalysis, err := analysis.ParseResponseBytesToAnalysis(nil)
+		assert.Error(t, err)
+		assert.Empty(t, newAnalysis)
 	})
 }

@@ -14,10 +14,32 @@
 
 package auth
 
-import "testing"
+import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/stretchr/testify/assert"
+	"math"
+	"testing"
+)
 
 func TestParseInterfaceToConfigAuth(t *testing.T) {
-	t.Run("", func(t *testing.T) {
-
+	t.Run("Check if parse content correctly to Config auth", func(t *testing.T) {
+		configAuth := ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType: auth.Horusec,
+		}
+		response, err := ParseInterfaceToConfigAuth(configAuth)
+		assert.NoError(t, err)
+		assert.True(t, response.ApplicationAdminEnable)
+		assert.Equal(t, auth.Horusec, response.AuthType)
+	})
+	t.Run("Check if receive string and try parse return error", func(t *testing.T) {
+		response, err := ParseInterfaceToConfigAuth(`{"applicationAdminEnable": "true", "authType": "horusec"}`)
+		assert.Error(t, err)
+		assert.Empty(t, response)
+	})
+	t.Run("Check if receive NaN and try marshal return error", func(t *testing.T) {
+		response, err := ParseInterfaceToConfigAuth(math.NaN())
+		assert.Error(t, err)
+		assert.Empty(t, response)
 	})
 }
