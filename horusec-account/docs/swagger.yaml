@@ -55,11 +55,6 @@ definitions:
       username:
         type: string
     type: object
-  entity.ConfigAccount:
-    properties:
-      applicationAdminEnable:
-        type: boolean
-    type: object
   http.Response:
     properties:
       code:
@@ -143,44 +138,6 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      tags:
-      - Account
-  /api/account/config:
-    get:
-      consumes:
-      - application/json
-      description: config
-      operationId: config
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  $ref: '#/definitions/entity.ConfigAccount'
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
       tags:
       - Account
   /api/account/create-account:
@@ -649,12 +606,12 @@ paths:
     post:
       consumes:
       - application/json
-      description: create company!
+      description: create company! If applicationAdmin is enable add field adminEmail in body
       operationId: create-company
       parameters:
-      - description: company info
+      - description: create company info
         in: body
-        name: Company
+        name: CreateCompany
         required: true
         schema:
           $ref: '#/definitions/account.Company'
@@ -798,9 +755,9 @@ paths:
       description: update company!
       operationId: update-company
       parameters:
-      - description: company info
+      - description: update company info
         in: body
-        name: Company
+        name: UpdateCompany
         required: true
         schema:
           $ref: '#/definitions/account.Company'

@@ -26,8 +26,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -62,7 +61,7 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 // @ID create-company
 // @Accept  json
 // @Produce  json
-// @Param Company body account.Company true "company info"
+// @Param CreateCompany body account.Company true "create company info"
 // @Success 201 {object} http.Response{content=string} "CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
@@ -85,7 +84,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
-	*accountEntities.Company, uuid.UUID, error) {
+	*account.Company, uuid.UUID, error) {
 	configAuth, err := auth.ParseInterfaceToConfigAuth(r.Context().Value(authEnums.ConfigAuth))
 	if err != nil {
 		httpUtil.StatusForbidden(w, err)
@@ -98,7 +97,7 @@ func (h *Handler) factoryGetCreateData(w http.ResponseWriter, r *http.Request) (
 }
 
 func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
-	*accountEntities.Company, uuid.UUID, error) {
+	*account.Company, uuid.UUID, error) {
 	company, err := h.companyUseCases.NewCompanyFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -115,7 +114,7 @@ func (h *Handler) getCreateDataDefault(w http.ResponseWriter, r *http.Request) (
 }
 
 func (h *Handler) getCreateDataApplicationAdmin(
-	w http.ResponseWriter, r *http.Request) (*accountEntities.Company, uuid.UUID, error) {
+	w http.ResponseWriter, r *http.Request) (*account.Company, uuid.UUID, error) {
 	company, err := h.companyUseCases.NewCompanyApplicationAdminFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -146,7 +145,7 @@ func (h *Handler) getAccountIDByEmail(w http.ResponseWriter, email string) (uuid
 // @ID update-company
 // @Accept  json
 // @Produce  json
-// @Param Company body account.Company true "company info"
+// @Param UpdateCompany body account.Company true "update company info"
 // @Param companyID path string true "companyID of the company"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
@@ -322,7 +321,7 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getInviteUserRequestData(r *http.Request) (*accountEntities.InviteUser, error) {
+func (h *Handler) getInviteUserRequestData(r *http.Request) (*account.InviteUser, error) {
 	inviteUser, err := h.repositoryUseCases.NewInviteUserFromReadCloser(r.Body)
 	if err != nil {
 		return nil, err
@@ -406,8 +405,8 @@ func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getRemoveUserRequestData(r *http.Request) (*accountEntities.RemoveUser, error) {
-	removeUser := &accountEntities.RemoveUser{}
+func (h *Handler) getRemoveUserRequestData(r *http.Request) (*account.RemoveUser, error) {
+	removeUser := &account.RemoveUser{}
 	accountID, err := uuid.Parse(chi.URLParam(r, "accountID"))
 	if err != nil {
 		return nil, errorsEnum.ErrorInvalidAccountID

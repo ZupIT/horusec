@@ -149,77 +149,6 @@ var doc = `{
                 }
             }
         },
-        "/api/account/config": {
-            "get": {
-                "description": "config",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "operationId": "config",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "$ref": "#/definitions/entity.ConfigAccount"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/api/account/create-account": {
             "post": {
                 "description": "Create a new account!",
@@ -265,82 +194,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/account/delete": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Delete account and all permissions!",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Account"
-                ],
-                "operationId": "delete-account",
-                "responses": {
-                    "204": {
-                        "description": "NO CONTENT",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "UNAUTHORIZED",
                         "schema": {
                             "allOf": [
                                 {
@@ -1160,7 +1013,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "create company!",
+                "description": "create company! If applicationAdmin is enable add field adminEmail in body",
                 "consumes": [
                     "application/json"
                 ],
@@ -1173,8 +1026,8 @@ var doc = `{
                 "operationId": "create-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "create company info",
+                        "name": "CreateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1444,8 +1297,8 @@ var doc = `{
                 "operationId": "update-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "update company info",
+                        "name": "UpdateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -3060,14 +2913,6 @@ var doc = `{
                 },
                 "username": {
                     "type": "string"
-                }
-            }
-        },
-        "entity.ConfigAccount": {
-            "type": "object",
-            "properties": {
-                "applicationAdminEnable": {
-                    "type": "boolean"
                 }
             }
         },
