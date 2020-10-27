@@ -14,20 +14,10 @@
 
 package auth
 
-import (
-	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-)
+import "testing"
 
-type ConfigAuth struct {
-	ApplicationAdminEnable bool                   `json:"applicationAdminEnable"`
-	AuthType               auth.AuthorizationType `json:"authType"`
-}
+func TestParseInterfaceToConfigAuth(t *testing.T) {
+	t.Run("", func(t *testing.T) {
 
-func ParseInterfaceToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {
-	contentBytes, err := json.Marshal(content)
-	if err != nil {
-		return ConfigAuth{}, err
-	}
-	return configAuth, json.Unmarshal(contentBytes, &configAuth)
+	})
 }
