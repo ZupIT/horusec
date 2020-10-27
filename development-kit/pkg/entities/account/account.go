@@ -97,14 +97,14 @@ func (a *Account) ToBytes() []byte {
 
 func (a *Account) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"account_id":     a.AccountID,
-		"password":       a.Password,
-		"email":          a.Email,
-		"username":       a.Username,
-		"is_confirmed":   a.IsConfirmed,
+		"account_id":           a.AccountID,
+		"password":             a.Password,
+		"email":                a.Email,
+		"username":             a.Username,
+		"is_confirmed":         a.IsConfirmed,
 		"is_application_admin": a.IsApplicationAdmin,
-		"created_at":     a.CreatedAt,
-		"updated_at":     a.UpdatedAt,
+		"created_at":           a.CreatedAt,
+		"updated_at":           a.UpdatedAt,
 	}
 }
 

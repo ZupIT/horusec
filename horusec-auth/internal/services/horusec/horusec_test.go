@@ -1007,8 +1007,8 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
-			accountRepository:    repositoryAccount.NewAccountRepository(mockRead, nil),
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
 		authorizationData := &authEntities.AuthorizationData{
@@ -1036,8 +1036,8 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
-			accountRepository:    repositoryAccount.NewAccountRepository(mockRead, nil),
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
 		authorizationData := &authEntities.AuthorizationData{
@@ -1061,8 +1061,8 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
-			accountRepository:    repositoryAccount.NewAccountRepository(mockRead, nil),
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
 		authorizationData := &authEntities.AuthorizationData{
@@ -1090,8 +1090,8 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
-			accountRepository:    repositoryAccount.NewAccountRepository(mockRead, nil),
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
 		authorizationData := &authEntities.AuthorizationData{

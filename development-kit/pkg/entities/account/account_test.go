@@ -132,14 +132,14 @@ func TestToLoginResponse(t *testing.T) {
 func TestIsNotApplicationAdminAccount(t *testing.T) {
 	t.Run("Should return true when get if user is application admin", func(t *testing.T) {
 		account := &Account{
-			AccountID:   uuid.New(),
-			Email:       "test",
-			Password:    "test",
-			Username:    "test",
-			IsConfirmed: false,
+			AccountID:          uuid.New(),
+			Email:              "test",
+			Password:           "test",
+			Username:           "test",
+			IsConfirmed:        false,
 			IsApplicationAdmin: false,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:          time.Now(),
+			UpdatedAt:          time.Now(),
 		}
 
 		assert.True(t, account.IsNotApplicationAdminAccount())

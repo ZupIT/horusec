@@ -85,8 +85,8 @@ func TestNewCompanyFromReadCloser(t *testing.T) {
 func TestNewCompanyApplicationAdminFromReadCloser(t *testing.T) {
 	t.Run("should success parse to company", func(t *testing.T) {
 		bytes, _ := json.Marshal(&accountEntities.CompanyApplicationAdmin{
-			CompanyID: uuid.New(),
-			Name:      "test",
+			CompanyID:  uuid.New(),
+			Name:       "test",
 			AdminEmail: "admin@example.com",
 		})
 

@@ -25,7 +25,7 @@ func TestParseInterfaceToConfigAuth(t *testing.T) {
 	t.Run("Check if parse content correctly to Config auth", func(t *testing.T) {
 		configAuth := ConfigAuth{
 			ApplicationAdminEnable: true,
-			AuthType: auth.Horusec,
+			AuthType:               auth.Horusec,
 		}
 		response, err := ParseInterfaceToConfigAuth(configAuth)
 		assert.NoError(t, err)
