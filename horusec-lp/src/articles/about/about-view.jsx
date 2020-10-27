@@ -10,7 +10,7 @@ export default () => {
     <div className="row">
       <div className="col-12 mb-3 col-md-7 mb-md-0">
         <PreviewComponent>
-          <AboutImage />
+          <img src="./horus-animation-1.gif" alt="Horus" />
         </PreviewComponent>
       </div>
 

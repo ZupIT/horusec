@@ -26,15 +26,11 @@ export default () => {
 
       <div className="row justify-content-between">
         <div className="col-12 mb-3 col-md-6 mb-md-0">
-          <PreviewComponent>
-            <PipelineFirstImage />
-          </PreviewComponent>
+          <img src="./horus-animation-2.gif" alt="Horus" />
         </div>
 
         <div className="col-12 col-md-6">
-          <PreviewComponent>
-            <PipelineSecondImage />
-          </PreviewComponent>
+          <img src="./horus-animation-3.gif" alt="Horus" />
         </div>
       </div>
     </>
