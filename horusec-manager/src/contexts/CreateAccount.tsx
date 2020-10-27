@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Field } from 'helpers/interfaces/Field';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
@@ -25,17 +25,17 @@ interface CreateAccountProps {
 
 interface CreateAccountContext {
   username: Field;
-  setUsername: Function;
   email: Field;
-  setEmail: Function;
   password: Field;
-  setPassword: Function;
   confirmPass: Field;
-  setConfirmPass: Function;
   isLoading: boolean;
-  createAccount: Function;
   successDialogVisible: boolean;
-  verifyUsernameAndEmail: Function;
+  createAccount(): void;
+  verifyUsernameAndEmail(): Promise<void>;
+  setEmail: Dispatch<SetStateAction<Field>>;
+  setPassword: Dispatch<SetStateAction<Field>>;
+  setConfirmPass: Dispatch<SetStateAction<Field>>;
+  setUsername: Dispatch<SetStateAction<Field>>;
 }
 
 const fieldInitialValue: Field = {
@@ -55,7 +55,7 @@ const CreateAccountContext = React.createContext<CreateAccountContext>({
   isLoading: false,
   createAccount: () => '',
   successDialogVisible: false,
-  verifyUsernameAndEmail: () => '',
+  verifyUsernameAndEmail: () => null,
 });
 
 const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
@@ -81,15 +81,15 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
       });
   };
 
-  const verifyUsernameAndEmail = () => {
+  const verifyUsernameAndEmail = (): Promise<void> => {
     setLoading(true);
 
     return new Promise((resolve, reject) => {
       accountService
         .verifyUniqueUsernameEmail(email.value, username.value)
-        .then((result) => {
+        .then(() => {
           setLoading(false);
-          resolve(result);
+          resolve();
         })
         .catch((err) => {
           dispatchMessage(err?.response?.data);

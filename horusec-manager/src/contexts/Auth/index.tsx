@@ -33,8 +33,8 @@ interface AuthProviderPops {
 
 interface AuthCtx {
   loginInProgress: boolean;
-  login: Function;
-  logout: Function;
+  login(email?: string, password?: string): Promise<void>;
+  logout(): Promise<void>;
 }
 
 const getAuthenticator = () => {
@@ -83,7 +83,7 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     });
   };
 
-  const logout = () => {
+  const logout = (): Promise<void> => {
     return new Promise((resolve) => {
       getAuthenticator()
         .logout()

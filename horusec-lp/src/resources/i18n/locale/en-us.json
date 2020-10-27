@@ -20,7 +20,7 @@
     "Texto1": "Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: Net Core 3.x, Java, Python, Ruby, Golang, Terraform and Javascript. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI / CD mats.",
 
     "GERENCIE AS VULNERABILIDADES ENCONTRADAS DE FORMA ANÁLITICA": "MANAGE THE VULNERABILITIES FOUND ANALYTICAL",
-    "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.": "In addition to identifying and centralizing information, horus provides a tool for managing access and viewing vulnerabilities.",
+    "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.": "In addition to identifying and centralizing information, Horusec provides a tool for managing access and viewing vulnerabilities.",
 
     "ADICIONE EM SEU PIPELINE E TENHA MAIS SEGURANÇA": "ADD TO YOUR PIPELINE AND HAVE <br /> MORE SAFETY",
     "Outro objetivo é garantir que a nova funcionalidade do seu projeto esteja segura para isto adicionamos um novo step.": "Another goal is to ensure that your project's new functionality is safe. <br /> For this we add a new step.",
@@ -41,8 +41,10 @@
 
     "PROJETOS QUE JÁ ESTÃO REALIZANDO DESENVOLVIMENTO SEGURO": "PROJECTS THAT ARE ALREADY UNDERTAKING SAFE DEVELOPMENT",
 
+    "Aceitar": "Accept",
+
     "Link Github": "https://github.com/ZupIT/horusec",
-    "Link Docs": "https://zup-products.gitbook.io/horusec/v/v1-eng/",
+    "Link Docs": "https://docs.horusec.io/v/v1-eng",
     "Link Blog": "https://www.zup.com.br/open-code",
     "Link Comunidade": "https://github.com/ZupIT/horusec",
     "Link Política de Privacidade": "https://raw.githubusercontent.com/ZupIT/horusec/master/LICENSE"

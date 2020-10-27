@@ -16,10 +16,12 @@
 
 import Keycloak from 'keycloak-js';
 
-const keycloak = Keycloak({
-  url: process.env.REACT_APP_KEYCLOAK_BASE_PATH,
+const keycloackConfig: Keycloak.KeycloakConfig = {
   clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID,
   realm: process.env.REACT_APP_KEYCLOAK_REALM,
-});
+  url: process.env.REACT_APP_KEYCLOAK_BASE_PATH,
+};
 
-export default keycloak;
+const keycloakInstance = Keycloak(keycloackConfig);
+
+export { keycloakInstance, keycloackConfig };

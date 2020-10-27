@@ -16,6 +16,8 @@ package keycloak
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
@@ -30,7 +32,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewKeycloakAuthService(t *testing.T) {

@@ -46,7 +46,7 @@ const LogoContent = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 60px;
+  margin-top: 80px;
 `;
 
 const Logo = styled.img`

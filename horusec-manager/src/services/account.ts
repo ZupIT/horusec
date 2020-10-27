@@ -42,9 +42,8 @@ const createAccount = (username: string, password: string, email: string) => {
 
 const createAccountFromKeycloak = (accessToken: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/create-account-from-keycloak`, {
-      accessToken,
-    }
-  );
+    accessToken,
+  });
 };
 
 const sendCode = (email: string) => {

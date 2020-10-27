@@ -1,12 +1,12 @@
-import keycloak from 'config/keycloak';
+import { keycloakInstance } from 'config/keycloak';
 
-const login = () => keycloak.login();
+const login = () => keycloakInstance.login();
 
 const logout = () => {
   return new Promise((resolve) => {
     resolve();
 
-    keycloak.logout();
+    keycloakInstance.logout();
   });
 };
 
