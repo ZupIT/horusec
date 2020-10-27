@@ -31,7 +31,6 @@ type Company struct {
 	Description     string    `json:"description"`
 	AuthzMember     string    `json:"-"`
 	AuthzAdmin      string    `json:"-"`
-	AuthzSupervisor string    `json:"-"`
 	CreatedAt       time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt       time.Time `json:"updatedAt" swaggerignore:"true"`
 }
