@@ -22,6 +22,8 @@ import { Field } from 'helpers/interfaces/Field';
 import { isEmptyString } from 'helpers/validators';
 import { useHistory, useParams } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
+import { authTypes } from 'helpers/enums/authTypes';
+import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
 
 interface RouterStateProps {
   companyName: string;
@@ -43,12 +45,25 @@ function EditCompany({
     value: '',
   });
 
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
   const { isLoading, updateCompany } = useContext(CompanyContext);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (companyName.isValid) {
       updateCompany(companyId, companyName.value);
+
+      // TODO: Remover este console.log
+      console.log(adminGroup, userGroup);
     }
   };
 
@@ -74,6 +89,34 @@ function EditCompany({
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
           initialValue={companyName.value}
         />
+
+        {getCurrentAuthType() === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('COMPANY_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
+
+              <Input
+                name="adminGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
+
+              <Input
+                name="userGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
 
         <Styled.OptionsWrapper>
           <Styled.Btn

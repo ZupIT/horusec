@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import renewHTTP from 'services/axios/forceRenewToken';
-import defaultHTTP from 'services/axios/default';
+import defaultHTTP from 'config/axios/default';
 
-import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
+import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 const getAll = (companyId: string) => {
-  return renewHTTP.get(
+  return defaultHTTP.get(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`
   );
 };
 
 const create = (companyId: string, name: string, description: string) => {
-  return renewHTTP.post(
+  return defaultHTTP.post(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
     {
       name,
@@ -43,20 +42,20 @@ const update = (
   name: string,
   description: string
 ) => {
-  return renewHTTP.patch(
+  return defaultHTTP.patch(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`,
     { name, description }
   );
 };
 
 const remove = (companyId: string, repositoryId: string) => {
-  return renewHTTP.delete(
+  return defaultHTTP.delete(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`
   );
 };
 
 const getAllTokens = (companyId: string, repositoryId: string) => {
-  return renewHTTP.get(
+  return defaultHTTP.get(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`
   );
 };
@@ -66,7 +65,7 @@ const createToken = (
   repositoryId: string,
   description: string
 ) => {
-  return renewHTTP.post(
+  return defaultHTTP.post(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
       description,
@@ -79,13 +78,13 @@ const removeToken = (
   repositoryId: string,
   tokenId: string
 ) => {
-  return renewHTTP.delete(
+  return defaultHTTP.delete(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
 const getUsersInRepository = (companyId: string, repositoryId: string) => {
-  return renewHTTP.get(
+  return defaultHTTP.get(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`
   );
 };
@@ -96,7 +95,7 @@ const includeUser = (
   email: string,
   role: string
 ) => {
-  return renewHTTP.post(
+  return defaultHTTP.post(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`,
     {
       email,
@@ -110,7 +109,7 @@ const removeUser = (
   repositoryId: string,
   accountId: string
 ) => {
-  return renewHTTP.delete(
+  return defaultHTTP.delete(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
@@ -121,7 +120,7 @@ const updateUserRole = (
   accountId: string,
   role: string
 ) => {
-  return renewHTTP.patch(
+  return defaultHTTP.patch(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,

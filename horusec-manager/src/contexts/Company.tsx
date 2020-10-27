@@ -30,13 +30,13 @@ interface CompanyProviderPops {
 interface CompanyCtx {
   allCompanies: Company[];
   filteredCompanies: Company[];
-  fetchAll: Function;
   isLoading: boolean;
-  filterAllCompanies: Function;
-  createCompany: Function;
-  updateCompany: Function;
-  removeCompany: Function;
-  handleCurrentCompany: Function;
+  fetchAll(): void;
+  filterAllCompanies(search: string): void;
+  createCompany(name: string): void;
+  updateCompany(companyId: string, name: string): void;
+  removeCompany(companyId: string): void;
+  handleCurrentCompany(companyId: string): void;
 }
 
 const CompanyContext = React.createContext<CompanyCtx>({

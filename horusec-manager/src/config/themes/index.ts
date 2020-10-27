@@ -16,5 +16,6 @@
 
 import dark from './dark';
 import light from './light';
+import galapagos from './galapagos';
 
-export { dark, light };
+export { dark, light, galapagos };

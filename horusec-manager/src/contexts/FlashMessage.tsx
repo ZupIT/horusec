@@ -24,8 +24,8 @@ interface FlashMessageProps {
 interface FlashContext {
   isVisible: boolean;
   message: string;
-  showErrorFlash: Function;
-  showSuccessFlash: Function;
+  showErrorFlash(message: string): void;
+  showSuccessFlash(message: string): void;
 }
 
 const FlashMessageContext = React.createContext<FlashContext>({
