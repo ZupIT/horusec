@@ -22,7 +22,7 @@ import { Field } from 'helpers/interfaces/Field';
 import { isEmptyString } from 'helpers/validators';
 import { useHistory } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
-import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 
 function AddCompany() {
@@ -73,7 +73,7 @@ function AddCompany() {
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
         />
 
-        {getCurrentAuthType() === authTypes.LDAP ? (
+        {getCurrentConfig().authType === authTypes.LDAP ? (
           <>
             <Styled.SubTitle>
               {t('COMPANY_SCREEN.REFERENCE_GROUP')}

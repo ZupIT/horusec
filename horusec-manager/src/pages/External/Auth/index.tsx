@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { setCurrenAuthType } from 'helpers/localStorage/currentAuthType';
+import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
@@ -45,12 +45,12 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    const getAuthType = () => {
+    const fetchConfiguration = () => {
       accountService
-        .getAuthType()
+        .getHorusecConfig()
         .then((result) => {
-          setCurrenAuthType(result?.data?.content);
-          setAuthType(result?.data?.content);
+          setCurrenConfig(result?.data?.content);
+          setAuthType(result?.data?.content?.authType);
         })
         .catch((err) => {
           dispatchMessage(err?.response?.data);
@@ -64,7 +64,7 @@ const Auth = () => {
       if (isLogged()) {
         history.replace('/home');
       } else {
-        getAuthType();
+        fetchConfiguration();
       }
     }, 1000);
 

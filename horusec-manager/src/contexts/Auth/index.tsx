@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { clearTokens } from 'helpers/localStorage/tokens';
@@ -38,7 +38,7 @@ interface AuthCtx {
 }
 
 const getAuthenticator = () => {
-  const authType = getCurrentAuthType();
+  const { authType } = getCurrentConfig();
 
   const authenticators: Authenticator = {
     horusec,

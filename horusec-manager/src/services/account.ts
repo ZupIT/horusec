@@ -101,8 +101,8 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
   });
 };
 
-const getAuthType = () => {
-  return axios.get(`${SERVICE_AUTH}/api/auth/auth-types`);
+const getHorusecConfig = () => {
+  return axios.get(`${SERVICE_AUTH}/api/auth/config`);
 };
 
 export default {
@@ -114,6 +114,6 @@ export default {
   changePassword,
   callRenewToken,
   verifyUniqueUsernameEmail,
-  getAuthType,
+  getHorusecConfig,
   createAccountFromKeycloak,
 };
