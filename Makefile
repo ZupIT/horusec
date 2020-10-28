@@ -77,6 +77,23 @@ compose-down:
 compose-up:
 	docker-compose -f deployments/$(COMPOSE_FILE_NAME) up -d --build --force-recreate
 
+# ========================================================================================= #
+
+compose-development-kit:
+	docker-compose -f development-kit/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-api:
+	docker-compose -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-messages:
+	docker-compose -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-account:
+	docker-compose -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-analytic:
+	docker-compose -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-auth:
+	docker-compose -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
+
+# ========================================================================================= #
+
 migrate:
 	chmod +x ./deployments/scripts/migration-run.sh
 	sleep 3 && ./deployments/scripts/migration-run.sh up

@@ -36,10 +36,6 @@ To change variables environment to run your analysis also you set new values.
 | Environment Name                              | Default Value                                                    | Description                                                  |
 |-----------------------------------------------|------------------------------------------------------------------|--------------------------------------------------------------|
 | HORUSEC_SWAGGER_HOST                          | localhost                                                        | This environment get host to run in swagger                  | 
-| HORUSEC_BROKER_HOST                           | 127.0.0.1                                                        | This environment get host to connect on broker RABBIT        | 
-| HORUSEC_BROKER_PORT                           | 5672                                                             | This environment get port to connect on broker RABBIT        |
-| HORUSEC_BROKER_USERNAME                       | guest                                                            | This environment get username to connect on broker RABBIT    |
-| HORUSEC_BROKER_PASSWORD                       | guest                                                            | This environment get password to connect on broker RABBIT    |
 | HORUSEC_DATABASE_SQL_URI                      | postgres                                                         | This environment get uri to connect on database POSTGRES     |
 | HORUSEC_DATABASE_SQL_DIALECT                  | postgresql://root:root@localhost:5432/horusec_db?sslmode=disable | This environment get dialect to connect on database POSTGRES |
 | HORUSEC_DIRECTORY_SAVE_ANALYSIS               | /horusec                                                         | This environment get directory path on the volume shared     | 
