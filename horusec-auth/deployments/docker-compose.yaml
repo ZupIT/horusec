@@ -18,7 +18,7 @@ services:
         max-size: 10m
   horusec-account:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./horusec-account/deployments/Dockerfile
     depends_on:
       - "rabbit"

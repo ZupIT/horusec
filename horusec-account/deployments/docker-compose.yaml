@@ -24,7 +24,7 @@ services:
         max-size: 10m
   horusec-auth:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./horusec-auth/deployments/Dockerfile
     depends_on:
       - postgresql
@@ -45,7 +45,7 @@ services:
       HORUSEC_AUTH_TYPE: "horusec"
   horusec-api:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./horusec-api/deployments/Dockerfile
     depends_on:
       - "rabbit"
@@ -61,7 +61,7 @@ services:
       HORUSEC_AUTH_URL: "http://horusec-auth:8006"
   horusec-manager:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./horusec-manager/deployments/Dockerfile
     restart: always
     container_name: horusec-manager
