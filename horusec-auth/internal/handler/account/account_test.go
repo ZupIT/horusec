@@ -21,6 +21,7 @@ import (
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -79,7 +80,12 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(errorsEnum.ErrorUsernameAlreadyInUse)
+		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{
+			AccountID:          uuid.New(),
+			Username:           uuid.New().String(),
+			Email:              uuid.New().String(),
+			IsApplicationAdmin: false,
+		}, errorsEnum.ErrorUsernameAlreadyInUse)
 
 		handler := &Handler{
 			controller: controllerMock,
@@ -100,7 +106,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(errors.New("unexpected error"))
+		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{}, errors.New("unexpected error"))
 
 		handler := &Handler{
 			controller: controllerMock,
@@ -115,13 +121,18 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
-	t.Run("Should return 201 because new user login in system", func(t *testing.T) {
+	t.Run("Should return 200 because new user login in system", func(t *testing.T) {
 		keycloak := &accountEntities.KeycloakToken{
 			AccessToken: "Some token",
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(nil)
+		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{
+			AccountID:          uuid.New(),
+			Username:           uuid.New().String(),
+			Email:              uuid.New().String(),
+			IsApplicationAdmin: false,
+		}, nil)
 
 		handler := &Handler{
 			controller: controllerMock,
@@ -133,6 +144,6 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 
 		handler.CreateAccountFromKeycloak(w, r)
 
-		assert.Equal(t, http.StatusCreated, w.Code)
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }
