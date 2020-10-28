@@ -101,9 +101,9 @@ func (r *Repository) GetAuthzMember() string {
 }
 
 func (r *Repository) GetAuthzAdmin() string {
-	return r.AuthzMember
+	return r.AuthzAdmin
 }
 
 func (r *Repository) GetAuthzSupervisor() string {
-	return r.AuthzMember
+	return r.AuthzSupervisor
 }

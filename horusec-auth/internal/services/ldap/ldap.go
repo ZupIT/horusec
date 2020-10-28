@@ -15,6 +15,7 @@
 package ldap
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -46,12 +47,6 @@ type ldapAuthResponse struct {
 	ExpiresAt   time.Time
 	Username    string
 	Email       string
-}
-
-type AuthzEntity interface {
-	GetAuthzMember() string
-	GetAuthzAdmin() string
-	GetAuthzSupervisor() string
 }
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
@@ -158,7 +153,8 @@ func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.
 		return nil, err
 	}
 
-	return s.getEntityGroupsNameByRole(company, role), nil
+	return s.getEntityGroupsNameByRole(company.GetAuthzMember(),
+		company.GetAuthzSupervisor(), company.GetAuthzAdmin(), role), nil
 }
 
 func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
@@ -167,24 +163,37 @@ func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role auth
 		return nil, err
 	}
 
-	return s.getEntityGroupsNameByRole(repository, role), nil
+	return s.getEntityGroupsNameByRole(repository.GetAuthzMember(),
+		repository.GetAuthzSupervisor(), repository.GetAuthzAdmin(), role), nil
 }
 
-func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authEnums.HorusecRoles) []string {
+func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin string, role authEnums.HorusecRoles) []string {
 	var groupsName string
 
 	switch role {
 	case authEnums.RepositoryMember, authEnums.CompanyMember:
-		groupsName = entity.GetAuthzMember()
-
-	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
-		groupsName = entity.GetAuthzAdmin()
+		groupsName = fmt.Sprintf("%s,%s,%s", member, supervisor, admin)
 
 	case authEnums.RepositorySupervisor:
-		groupsName = entity.GetAuthzSupervisor()
+		groupsName = fmt.Sprintf("%s,%s", supervisor, admin)
+
+	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
+		groupsName = admin
 	}
 
-	return strings.Split(groupsName, ",")
+	return s.removeEmptyGroupsName(strings.Split(groupsName, ","))
+}
+
+func (s *Service) removeEmptyGroupsName(groupsName []string) []string {
+	var updatedGroups []string
+
+	for _, group := range groupsName {
+		if group != "" {
+			updatedGroups = append(updatedGroups, group)
+		}
+	}
+
+	return updatedGroups
 }
 
 func (s *Service) getUserGroups(tokenStr string) ([]string, error) {
@@ -193,17 +202,12 @@ func (s *Service) getUserGroups(tokenStr string) ([]string, error) {
 		return nil, err
 	}
 
-	userGroups, err := s.client.GetGroupsOfUser(token.Username)
-	if err != nil {
-		return nil, err
-	}
-
-	return userGroups, nil
+	return s.client.GetGroupsOfUser(token.Username)
 }
 
-func (s *Service) contains(collection []string, value string) bool {
-	for _, a := range collection {
-		if a == value {
+func (s *Service) contains(groups []string, userGroup string) bool {
+	for _, group := range groups {
+		if group == userGroup {
 			return true
 		}
 	}

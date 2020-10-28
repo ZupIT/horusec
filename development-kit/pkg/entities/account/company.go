@@ -26,13 +26,13 @@ import (
 
 // nolint
 type Company struct {
-	CompanyID       uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
-	Name            string    `json:"name"`
-	Description     string    `json:"description"`
-	AuthzMember     string    `json:"-"`
-	AuthzAdmin      string    `json:"-"`
-	CreatedAt       time.Time `json:"createdAt" swaggerignore:"true"`
-	UpdatedAt       time.Time `json:"updatedAt" swaggerignore:"true"`
+	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	AuthzMember string    `json:"-"`
+	AuthzAdmin  string    `json:"-"`
+	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
 
 type CompanyResponse struct {
@@ -83,11 +83,11 @@ func (c *Company) GetAuthzMember() string {
 }
 
 func (c *Company) GetAuthzAdmin() string {
-	return c.AuthzMember
+	return c.AuthzAdmin
 }
 
 func (c *Company) GetAuthzSupervisor() string {
-	return c.AuthzMember
+	return ""
 }
 
 func (c *Company) ToBytes() []byte {
