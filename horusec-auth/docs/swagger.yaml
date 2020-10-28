@@ -1,4 +1,15 @@
 definitions:
+  account.CreateAccountFromKeycloakResponse:
+    properties:
+      accountID:
+        type: string
+      email:
+        type: string
+      isApplicationAdmin:
+        type: boolean
+      username:
+        type: string
+    type: object
   account.KeycloakToken:
     properties:
       accessToken:
@@ -73,7 +84,7 @@ paths:
             - $ref: '#/definitions/http.Response'
             - properties:
                 content:
-                  type: string
+                  $ref: '#/definitions/account.CreateAccountFromKeycloakResponse'
               type: object
         "201":
           description: STATUS CREATED

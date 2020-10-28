@@ -64,8 +64,9 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 			AccessToken: "some token",
 		}
 
-		err := controller.CreateAccountFromKeycloak(account)
+		accountCreated, err := controller.CreateAccountFromKeycloak(account)
 		assert.NoError(t, err)
+		assert.NotEmpty(t, accountCreated)
 	})
 
 	t.Run("should return error when email not exists in token", func(t *testing.T) {
@@ -92,7 +93,7 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 			AccessToken: "some token",
 		}
 
-		err := controller.CreateAccountFromKeycloak(account)
+		_, err := controller.CreateAccountFromKeycloak(account)
 		assert.Error(t, err)
 	})
 
@@ -116,7 +117,7 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 			AccessToken: "some token",
 		}
 
-		err := controller.CreateAccountFromKeycloak(account)
+		_, err := controller.CreateAccountFromKeycloak(account)
 		assert.Error(t, err)
 	})
 
@@ -148,7 +149,7 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 			AccessToken: "some token",
 		}
 
-		err := controller.CreateAccountFromKeycloak(account)
+		_, err := controller.CreateAccountFromKeycloak(account)
 		assert.Error(t, err)
 	})
 
@@ -181,7 +182,7 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 			AccessToken: "some token",
 		}
 
-		err := controller.CreateAccountFromKeycloak(account)
+		_, err := controller.CreateAccountFromKeycloak(account)
 		assert.Error(t, err)
 	})
 }
