@@ -247,7 +247,7 @@ const OrganizationInviteTpl = `<!doctype html>
   </style>
 </head>
 <body class="">
-  <span class="preheader">HORUSEC - Verificação do e-mail</span>
+  <span class="preheader">HORUSEC - Organization Invite</span>
   <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
       <td>&nbsp;</td>
@@ -262,8 +262,8 @@ const OrganizationInviteTpl = `<!doctype html>
                       <p class="align-center logo-wrapper">
                         <img width="150px" src="https://horus-assets.s3.amazonaws.com/images/horus_logo_200921.svg">
                       </p>
-                      <h1 class="align-left">Olá, {{.Username}}!</h1>
-                      <p>Você foi convidado para participar da organização {{.CompanyName}}.</p>
+                      <h1 class="align-left">Hello, {{.Username}}!</h1>
+                      <p>You have been invited to join the organization {{.CompanyName}}.</p>
                       <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                         <tbody>
                           <tr>
@@ -271,7 +271,7 @@ const OrganizationInviteTpl = `<!doctype html>
                               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                 <tbody>
                                   <tr>
-                                    <td> <a href="{{.URL}}" target="_blank">Aceitar o convite</a>
+                                    <td> <a href="{{.URL}}" target="_blank">Accept the invitation</a>
                                     </td>
                                   </tr>
                                 </tbody>
@@ -281,7 +281,7 @@ const OrganizationInviteTpl = `<!doctype html>
                         </tbody>
                       </table>
                       <div class="footer">
-                        <p class="team">Time Horusec.</p>
+                        <p class="team">Horusec Team</p>
                         <span class="copyright">© 2020 Horusec Sec. All rights reserved.</span>
                         <span class="powered">Powered by Zup I. T. Innovation</span>
                       </div>
