@@ -21,7 +21,6 @@ services:
       context: ../../
       dockerfile: ./horusec-account/deployments/Dockerfile
     depends_on:
-      - "rabbit"
       - postgresql
     restart: always
     container_name: horusec-account
@@ -29,10 +28,6 @@ services:
       - "8003:8003"
     environment:
       HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "true"
-      HORUSEC_BROKER_HOST: rabbit
-      HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
