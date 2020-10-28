@@ -16,9 +16,8 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import moment from 'moment';
-import { getCurrentConfig, setCurrenConfig } from './horusecConfig';
+import { getCurrentConfig } from './horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import { keycloakInstance } from 'config/keycloak';
 import accountService from 'services/account';
 import { setCurrentUser } from './currentUser';
 import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
@@ -57,14 +56,13 @@ const handleSetKeyclockData = async (
   const currentAccessToken = getAccessToken();
 
   if (accessToken && accessToken !== currentAccessToken) {
-    accountService.createAccountFromKeycloak(accessToken).finally(async () => {
-      accountService
-        .getHorusecConfig()
-        .then((result) => setCurrenConfig(result?.data?.content));
+    accountService.createAccountFromKeycloak(accessToken).then((result) => {
+      const userData = result?.data?.content;
+      setCurrentUser(userData);
 
-      const userData: any = await keycloakInstance.loadUserInfo();
-
-      setCurrentUser({ email: userData?.email, username: userData?.name });
+      if (window.location.pathname === '/auth') {
+        window.location.replace('/home');
+      }
     });
   }
 

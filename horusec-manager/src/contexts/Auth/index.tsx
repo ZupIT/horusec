@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -22,6 +22,8 @@ import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { Authenticator } from 'helpers/interfaces/Authenticator';
+import accountService from 'services/account';
+import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
 
 import horusec from './horusec';
 import keycloak from './keycloak';
@@ -33,6 +35,7 @@ interface AuthProviderPops {
 
 interface AuthCtx {
   loginInProgress: boolean;
+  fetchConfigInProgress: boolean;
   login(email?: string, password?: string): Promise<void>;
   logout(): Promise<void>;
 }
@@ -51,12 +54,14 @@ const getAuthenticator = () => {
 
 const AuthContext = React.createContext<AuthCtx>({
   loginInProgress: false,
+  fetchConfigInProgress: false,
   login: null,
   logout: null,
 });
 
 const AuthProvider = ({ children }: AuthProviderPops) => {
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [fetchConfigInProgress, setFetchConfigInProgress] = useState(false);
   const { dispatchMessage } = useResponseMessage();
 
   const clearLocalStorage = () => {
@@ -97,10 +102,28 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     });
   };
 
+  useEffect(() => {
+    setFetchConfigInProgress(true);
+
+    accountService
+      .getHorusecConfig()
+      .then((result) => {
+        setCurrenConfig(result?.data?.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setFetchConfigInProgress(false);
+      });
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         loginInProgress,
+        fetchConfigInProgress,
         login,
         logout,
       }}

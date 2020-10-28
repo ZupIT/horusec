@@ -33,7 +33,7 @@ interface CompanyCtx {
   isLoading: boolean;
   fetchAll(): void;
   filterAllCompanies(search: string): void;
-  createCompany(name: string): void;
+  createCompany(name: string, adminEmail?: string): void;
   updateCompany(companyId: string, name: string): void;
   removeCompany(companyId: string): void;
   handleCurrentCompany(companyId: string): void;
@@ -89,10 +89,10 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
       });
   };
 
-  const createCompany = (name: string) => {
+  const createCompany = (name: string, adminEmail?: string) => {
     setLoading(true);
     companyService
-      .create(name)
+      .create(name, adminEmail)
       .then(() => {
         showSuccessFlash(t('COMPANY_SCREEN.CREATE_SUCCESS'));
         setLoading(false);

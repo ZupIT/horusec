@@ -100,7 +100,9 @@
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
     "USER": "Usuário:",
-    "GROUP_NAME": "Nome do grupo"
+    "GROUP_NAME": "Nome do grupo",
+    "ADMIN_EMAIL": "E-mail do administrador",
+    "EMAIL": "E-mail"
   },
 
   "DASHBOARD_SCREEN": {

@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
-import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
-import accountService from 'services/account';
-import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import React from 'react';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { Splash } from 'components';
-import { isLogged } from 'helpers/localStorage/tokens';
 
 import HorusecAuth from './Horusec';
 import KeycloakAuth from './Keycloak';
 import LDAPAuth from './LDAP';
-import { useHistory } from 'react-router-dom';
+import useAuth from 'helpers/hooks/useAuth';
 
 const Auth = () => {
-  const { dispatchMessage } = useResponseMessage();
-  const history = useHistory();
-
-  const [authType, setAuthType] = useState(null);
-  const [isLoading, setLoading] = useState<boolean>(true);
+  const { fetchConfigInProgress } = useAuth();
+  const { authType } = getCurrentConfig();
 
   const getAuthenticator = (auth: string) => {
     const authenticators: ObjectLiteral = {
@@ -44,33 +38,6 @@ const Auth = () => {
     return authenticators[auth];
   };
 
-  useEffect(() => {
-    const fetchConfiguration = () => {
-      accountService
-        .getHorusecConfig()
-        .then((result) => {
-          setCurrenConfig(result?.data?.content);
-          setAuthType(result?.data?.content?.authType);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
-    setTimeout(() => {
-      if (isLogged()) {
-        history.replace('/home');
-      } else {
-        fetchConfiguration();
-      }
-    }, 1000);
-
-    // eslint-disable-next-line
-  }, []);
-
   const renderAuthenticator = () => {
     if (authType) {
       const Authenticator = getAuthenticator(authType);
@@ -80,7 +47,7 @@ const Auth = () => {
 
   return (
     <>
-      <Splash isVisible={isLoading} />
+      <Splash isVisible={fetchConfigInProgress} />
 
       {renderAuthenticator()}
     </>

@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Styled from './styled';
 import { Company } from 'helpers/interfaces/Company';
+import { isApplicationAdmin } from 'helpers/localStorage/currentUser';
 
 import Tokens from './Tokens';
 
@@ -58,13 +59,17 @@ function ListCompanies() {
       <Styled.Title>{t('COMPANY_SCREEN.SELECT_ORGANIZATION')}</Styled.Title>
 
       <Styled.OptionsWrapper>
-        <Styled.AddCompanyBtn onClick={() => history.push('/organization/add')}>
-          <Icon name="add" size="16px" />
+        {isApplicationAdmin() ? (
+          <Styled.AddCompanyBtn
+            onClick={() => history.push('/organization/add')}
+          >
+            <Icon name="add" size="16px" />
 
-          <Styled.TextBtn>
-            {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
-          </Styled.TextBtn>
-        </Styled.AddCompanyBtn>
+            <Styled.TextBtn>
+              {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
+            </Styled.TextBtn>
+          </Styled.AddCompanyBtn>
+        ) : null}
 
         <Styled.SearchWrapper>
           <Styled.SearchInput
