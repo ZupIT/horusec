@@ -16,5 +16,6 @@
 sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_API=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_API=\"$REACT_APP_HORUSEC_ENDPOINT_API\"/g" "/var/www/index.html"
 sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"$REACT_APP_HORUSEC_ENDPOINT_ANALYTIC\"/g" "/var/www/index.html"
 sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"$REACT_APP_HORUSEC_ENDPOINT_ACCOUNT\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"$REACT_APP_HORUSEC_ENDPOINT_AUTH\"/g" "/var/www/index.html"
 
 nginx -g "daemon off;"

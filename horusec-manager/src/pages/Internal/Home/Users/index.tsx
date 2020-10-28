@@ -146,7 +146,7 @@ const Users: React.FC = () => {
                 </Styled.Cell>
 
                 <Styled.Cell className="row">
-                  {user.email !== currentUser.email ? (
+                  {user.email !== currentUser?.email ? (
                     <>
                       <Button
                         rounded

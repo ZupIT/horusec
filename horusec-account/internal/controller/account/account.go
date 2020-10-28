@@ -273,7 +273,7 @@ func (a *Account) createTokenWithAccountPermissions(account *accountEntities.Acc
 
 func (a *Account) getURLToResetPassword(email, code string) string {
 	base := env.GetHorusecManagerURL()
-	return fmt.Sprintf("%s/recovery-password/check-code?email=%s&code=%s", base, email, code)
+	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s", base, email, code)
 }
 
 func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error {

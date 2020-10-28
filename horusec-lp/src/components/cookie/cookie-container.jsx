@@ -31,6 +31,9 @@ const Component = ({ className, onAccept }) => {
               text={t(
                 'This website uses cookies in order to offer you a better browsing experience and an effective platform usability. When you keep browsing here, we understand you accept the cookies and agree with our policy. For more information, check out our privacy policy.',
               )}
+              acceptText={t(
+                'Aceitar'
+              )}
               onAccept={onAccept}
             />
           </BackgroundImage>

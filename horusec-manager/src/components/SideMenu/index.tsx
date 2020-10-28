@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import HorusecLogo from 'assets/logo/horusec.svg';
+import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
