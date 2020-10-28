@@ -30,9 +30,9 @@ type Repository struct {
 	CompanyID       uuid.UUID `json:"companyID" swaggerignore:"true"`
 	Name            string    `json:"name"`
 	Description     string    `json:"description"`
-	AuthzMember     string    `json:"-"`
-	AuthzAdmin      string    `json:"-"`
-	AuthzSupervisor string    `json:"-"`
+	AuthzMember     string    `json:"authzMember"`
+	AuthzAdmin      string    `json:"authzAdmin"`
+	AuthzSupervisor string    `json:"authzSupervisor"`
 	CreatedAt       time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt       time.Time `json:"updatedAt" swaggerignore:"true"`
 }

@@ -70,9 +70,7 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 		return nil, err
 	}
 
-	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
-
-	return s.setLDAPAuthResponse(account, accessToken, expiresAt), nil
+	return s.setLDAPAuthResponse(account), nil
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
@@ -86,11 +84,12 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups, authzGroups), nil
+	return s.checkIsAuthorized(userGroups, authzGroups)
 }
 
-func (s *Service) setLDAPAuthResponse(
-	account *accountEntities.Account, accessToken string, expiresAt time.Time) *ldapAuthResponse {
+func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *ldapAuthResponse {
+	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
+
 	return &ldapAuthResponse{
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
@@ -134,17 +133,17 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 		return s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
 	}
 
-	return []string{}, nil
+	return []string{}, errors.ErrorUnauthorized
 }
 
-func (s *Service) checkIsAuthorized(userGroups, groups []string) bool {
+func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
 	for _, userGroup := range userGroups {
 		if s.contains(groups, userGroup) {
-			return true
+			return true, nil
 		}
 	}
 
-	return false
+	return false, errors.ErrorUnauthorized
 }
 
 func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {

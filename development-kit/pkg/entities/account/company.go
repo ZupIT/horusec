@@ -29,8 +29,8 @@ type Company struct {
 	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	AuthzMember string    `json:"-"`
-	AuthzAdmin  string    `json:"-"`
+	AuthzMember string    `json:"authzMember"`
+	AuthzAdmin  string    `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
