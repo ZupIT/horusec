@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `Horussec`,
+    title: `Horusec`,
     description: `Horusec is an open source framework that enhances the identification of vulnerabilities in your project with just one command.`,
     author: `@gatsbyjs`,
   },
