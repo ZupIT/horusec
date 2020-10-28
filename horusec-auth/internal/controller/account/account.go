@@ -24,7 +24,8 @@ import (
 )
 
 type IAccount interface {
-	CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error)
+	CreateAccountFromKeycloak(
+		keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error)
 }
 
 type Account struct {
@@ -41,7 +42,8 @@ func NewAccountController(databaseRead SQL.InterfaceRead, databaseWrite SQL.Inte
 		keycloakService:   keycloak.NewKeycloakService()}
 }
 
-func (a *Account) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error) {
+func (a *Account) CreateAccountFromKeycloak(
+	keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error) {
 	account, err := a.newAccountFromKeycloakToken(keyCloakToken.AccessToken)
 	if err != nil {
 		return nil, err

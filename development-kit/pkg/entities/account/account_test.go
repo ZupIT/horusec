@@ -142,7 +142,6 @@ func TestToCreateAccountFromKeycloakResponse(t *testing.T) {
 	})
 }
 
-
 func TestIsNotApplicationAdminAccount(t *testing.T) {
 	t.Run("Should return true when get if user is application admin", func(t *testing.T) {
 		account := &Account{
