@@ -61,7 +61,7 @@ func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handl
 
 func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		configAuth, err := h.getConfigAuthAndSetInContext(r)
+		r, configAuth, err := h.getConfigAuthAndSetInContext(r)
 		if err != nil {
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
@@ -77,13 +77,13 @@ func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handle
 	})
 }
 
-func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (authEntities.ConfigAuth, error) {
+func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (
+	*http.Request, authEntities.ConfigAuth, error) {
 	configAuth, err := h.getConfigAuth()
 	if err != nil {
-		return authEntities.ConfigAuth{}, errors.ErrorUnauthorized
+		return r, authEntities.ConfigAuth{}, errors.ErrorUnauthorized
 	}
-	h.setConfigAuthInContext(r, configAuth)
-	return configAuth, nil
+	return h.setConfigAuthInContextAndReturnRequest(r, configAuth), configAuth, nil
 }
 
 func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
@@ -244,9 +244,10 @@ func (h *HorusAuthzMiddleware) getConfigAuth() (authEntities.ConfigAuth, error) 
 	return h.parseResponseConfigAuth(res)
 }
 
-func (h *HorusAuthzMiddleware) setConfigAuthInContext(
-	r *http.Request, configAuth authEntities.ConfigAuth) context.Context {
-	return context.WithValue(r.Context(), authEnums.ConfigAuth, configAuth)
+func (h *HorusAuthzMiddleware) setConfigAuthInContextAndReturnRequest(
+	r *http.Request, configAuth authEntities.ConfigAuth) *http.Request {
+	ctx := context.WithValue(r.Context(), authEnums.ConfigAuth, configAuth)
+	return r.WithContext(ctx)
 }
 
 func (h *HorusAuthzMiddleware) parseResponseConfigAuth(

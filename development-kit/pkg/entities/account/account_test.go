@@ -129,6 +129,19 @@ func TestToLoginResponse(t *testing.T) {
 	})
 }
 
+func TestToCreateAccountFromKeycloakResponse(t *testing.T) {
+	t.Run("should success parse to create account from keycloak response", func(t *testing.T) {
+		account := &Account{
+			AccountID:          uuid.New(),
+			Username:           uuid.New().String(),
+			Email:              uuid.New().String(),
+			IsApplicationAdmin: true,
+		}
+
+		assert.NotEmpty(t, account.ToCreateAccountFromKeycloakResponse())
+	})
+}
+
 func TestIsNotApplicationAdminAccount(t *testing.T) {
 	t.Run("Should return true when get if user is application admin", func(t *testing.T) {
 		account := &Account{

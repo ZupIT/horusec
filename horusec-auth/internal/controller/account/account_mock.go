@@ -24,7 +24,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) error {
+func (m *Mock) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error) {
 	args := m.MethodCalled("CreateAccountFromKeycloak")
-	return mockUtils.ReturnNilOrError(args, 0)
+	return args.Get(0).(*accountEntities.CreateAccountFromKeycloakResponse), mockUtils.ReturnNilOrError(args, 1)
 }

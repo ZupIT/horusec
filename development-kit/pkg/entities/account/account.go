@@ -119,6 +119,15 @@ func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt ti
 	}
 }
 
+func (a *Account) ToCreateAccountFromKeycloakResponse() *CreateAccountFromKeycloakResponse {
+	return &CreateAccountFromKeycloakResponse{
+		AccountID:          a.AccountID,
+		Username:           a.Username,
+		Email:              a.Email,
+		IsApplicationAdmin: a.IsApplicationAdmin,
+	}
+}
+
 func (a *Account) IsNotApplicationAdminAccount() bool {
 	return !a.IsApplicationAdmin
 }
