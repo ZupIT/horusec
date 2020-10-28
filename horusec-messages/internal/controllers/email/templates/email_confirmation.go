@@ -249,7 +249,7 @@ const EmailConfirmationTpl = `<!doctype html>
   </style>
 </head>
 <body class="">
-  <span class="preheader">HORUSEC - Verificação do e-mail</span>
+  <span class="preheader">HORUSEC - Email verification</span>
   <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
       <td>&nbsp;</td>
@@ -264,8 +264,8 @@ const EmailConfirmationTpl = `<!doctype html>
                       <p class="align-center logo-wrapper">
                         <img width="150px" src="https://horus-assets.s3.amazonaws.com/images/horus_logo_200921.svg">
                       </p>
-                      <h1 class="align-left">Olá, {{.Username}}!</h1>
-                      <p>Para começar a usar o Horusec Sec, confirme seu e-mail.</p>
+                      <h1 class="align-left">Hello, {{.Username}}!</h1>
+                      <p>To start using Horusec, confirm your email.</p>
                       <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                         <tbody>
                           <tr>
@@ -273,7 +273,7 @@ const EmailConfirmationTpl = `<!doctype html>
                               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                 <tbody>
                                   <tr>
-                                    <td> <a href="{{.URL}}" target="_blank">Verificar e-mail</a>
+                                    <td> <a href="{{.URL}}" target="_blank">Check email</a>
                                     </td>
                                   </tr>
                                 </tbody>
@@ -283,7 +283,7 @@ const EmailConfirmationTpl = `<!doctype html>
                         </tbody>
                       </table>
                       <div class="footer">
-                        <p class="team">Time Horusec.</p>
+                        <p class="team">Horusec Team</p>
                         <span class="copyright">© 2020 Horusec Sec. All rights reserved.</span>
                         <span class="powered">Powered by Zup I. T. Innovation</span>
                       </div>
