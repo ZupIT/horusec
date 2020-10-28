@@ -80,7 +80,7 @@ var doc = `{
                                     "type": "object",
                                     "properties": {
                                         "content": {
-                                            "type": "string"
+                                            "$ref": "#/definitions/account.CreateAccountFromKeycloakResponse"
                                         }
                                     }
                                 }
@@ -469,6 +469,23 @@ var doc = `{
         }
     },
     "definitions": {
+        "account.CreateAccountFromKeycloakResponse": {
+            "type": "object",
+            "properties": {
+                "accountID": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isApplicationAdmin": {
+                    "type": "boolean"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "account.KeycloakToken": {
             "type": "object",
             "properties": {

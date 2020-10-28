@@ -17,6 +17,7 @@ package account
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -47,7 +48,7 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param KeycloakToken body account.KeycloakToken true "keycloak token info"
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
+// @Success 200 {object} http.Response{content=account.CreateAccountFromKeycloakResponse{}} "STATUS OK"
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -59,17 +60,19 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if err := h.controller.CreateAccountFromKeycloak(keyCloakToken); err != nil {
-		h.checkCreateAccountFromKeycloakErrors(w, err)
+	response, err := h.controller.CreateAccountFromKeycloak(keyCloakToken)
+	if err != nil {
+		h.checkCreateAccountFromKeycloakErrors(w, err, response)
 		return
 	}
 
-	httpUtil.StatusCreated(w, "account created")
+	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) checkCreateAccountFromKeycloakErrors(w http.ResponseWriter, err error) {
+func (h *Handler) checkCreateAccountFromKeycloakErrors(
+	w http.ResponseWriter, err error, response *accountEntities.CreateAccountFromKeycloakResponse) {
 	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
-		httpUtil.StatusOK(w, "")
+		httpUtil.StatusOK(w, response)
 		return
 	}
 
