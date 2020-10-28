@@ -16,11 +16,10 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"log"
+	"net/http"
 
 	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"

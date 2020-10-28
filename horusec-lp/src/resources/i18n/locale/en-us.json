@@ -17,7 +17,7 @@
 
     "Documentação": "Documentation",
 
-    "Texto1": "Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: Net Core 3.x, Java, Python, Ruby, Golang, Terraform and Javascript. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI / CD mats.",
+    "Texto1": "Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: NetCore 3.x, Java, Kotlin, Python, Ruby, Golang, Terraform and Javascript. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats.",
 
     "GERENCIE AS VULNERABILIDADES ENCONTRADAS DE FORMA ANÁLITICA": "MANAGE THE VULNERABILITIES FOUND ANALYTICAL",
     "Além de identificar e centralizar informações o horus disponibiliza uma ferramenta para gerenciamento de acesso e visualização das vulnerabilidades.": "In addition to identifying and centralizing information, Horusec provides a tool for managing access and viewing vulnerabilities.",

@@ -30,9 +30,9 @@ func TestIsInvalidRoles(t *testing.T) {
 }
 
 func TestValuesRoles(t *testing.T) {
-	t.Run("should 5 valid horus roles", func(t *testing.T) {
+	t.Run("should 6 valid horus roles", func(t *testing.T) {
 		testRole := RepositoryAdmin
-		assert.Len(t, testRole.Values(), 5)
+		assert.Len(t, testRole.Values(), 6)
 	})
 }
 
