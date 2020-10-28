@@ -20,7 +20,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Setup External Dependences
-        run: make compose-api
+        run: make compose-horusec-api
       - name: fmt
         run: |
           echo "==> Checking that code complies with gofmt requirements..."
