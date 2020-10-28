@@ -1,6 +1,8 @@
 # HORUSEC-AUTH
 Service responsible for performing login according to the type of authentication specified, as well as validating requests.
 
+You can see more details about this service in image <a href="../assets/horusec-auth.jpg">/assets/horusec-auth.jpg</a>
+
 ##Migrations
 On horusec we use [GORM](https://gorm.io/) to manage our database. 
 
