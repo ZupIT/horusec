@@ -16,6 +16,7 @@ package account
 
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
@@ -61,16 +62,16 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 
 	response, err := h.controller.CreateAccountFromKeycloak(keyCloakToken)
 	if err != nil {
-		h.checkCreateAccountFromKeycloakErrors(w, err)
+		h.checkCreateAccountFromKeycloakErrors(w, err, response)
 		return
 	}
 
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) checkCreateAccountFromKeycloakErrors(w http.ResponseWriter, err error) {
+func (h *Handler) checkCreateAccountFromKeycloakErrors(w http.ResponseWriter, err error, response *accountEntities.CreateAccountFromKeycloakResponse) {
 	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
-		httpUtil.StatusOK(w, "")
+		httpUtil.StatusOK(w, response)
 		return
 	}
 

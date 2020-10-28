@@ -48,7 +48,7 @@ func (a *Account) CreateAccountFromKeycloak(keyCloakToken *accountEntities.Keycl
 	}
 
 	if err := a.accountRepository.Create(account); err != nil {
-		return nil, a.useCases.CheckCreateAccountErrorType(err)
+		return account.ToCreateAccountFromKeycloakResponse(), a.useCases.CheckCreateAccountErrorType(err)
 	}
 
 	return account.ToCreateAccountFromKeycloakResponse(), nil
