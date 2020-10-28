@@ -19,25 +19,25 @@ import (
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
-	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	auth "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	authenums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
+	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
 )
 
 type Service struct {
-	client         ldapservice.ILDAPService
-	accountRepo    accountrepo.IAccount
-	companyRepo    companyrepo.ICompanyRepository
-	repositoryRepo repositoryrepo.IRepository
+	client         ldapService.ILDAPService
+	accountRepo    accountRepo.IAccount
+	companyRepo    companyRepo.ICompanyRepository
+	repositoryRepo repositoryRepo.IRepository
 	cacheRepo      cache.Interface
 }
 
@@ -56,10 +56,10 @@ type AuthzEntity interface {
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
 	return &Service{
-		client:         ldapservice.NewLDAPClient(),
-		accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-		companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-		repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+		client:         ldapService.NewLDAPClient(),
+		accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+		companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+		repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 		cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 	}
 }
@@ -95,7 +95,7 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 }
 
 func (s *Service) setLDAPAuthResponse(
-	account *accountentities.Account, accessToken string, expiresAt time.Time) *ldapAuthResponse {
+	account *accountEntities.Account, accessToken string, expiresAt time.Time) *ldapAuthResponse {
 	return &ldapAuthResponse{
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
@@ -104,11 +104,11 @@ func (s *Service) setLDAPAuthResponse(
 	}
 }
 
-func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountentities.Account, error) {
+func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountEntities.Account, error) {
 	account, err := s.accountRepo.GetByEmail(data["mail"])
 
 	if account == nil || err != nil {
-		account = &accountentities.Account{
+		account = &accountEntities.Account{
 			Email:    s.pickOne(data, "mail", "uid"),
 			Username: s.pickOne(data, "givenName", "uid"),
 		}
@@ -132,10 +132,10 @@ func (s *Service) pickOne(data map[string]string, first, second string) string {
 
 func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]string, error) {
 	switch authzData.Role {
-	case authenums.CompanyAdmin, authenums.CompanyMember:
+	case authEnums.CompanyAdmin, authEnums.CompanyMember:
 		return s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
 
-	case authenums.RepositoryAdmin, authenums.RepositoryMember, authenums.RepositorySupervisor:
+	case authEnums.RepositoryAdmin, authEnums.RepositoryMember, authEnums.RepositorySupervisor:
 		return s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
 	}
 
@@ -152,7 +152,7 @@ func (s *Service) checkIsAuthorized(userGroups, groups []string) bool {
 	return false
 }
 
-func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authenums.HorusecRoles) ([]string, error) {
+func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
 	company, err := s.companyRepo.GetByID(companyID)
 	if err != nil {
 		return nil, err
@@ -161,7 +161,7 @@ func (s *Service) getCompanyAuthzGroupsName(companyID uuid.UUID, role authenums.
 	return s.getEntityGroupsNameByRole(company, role), nil
 }
 
-func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role authenums.HorusecRoles) ([]string, error) {
+func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role authEnums.HorusecRoles) ([]string, error) {
 	repository, err := s.repositoryRepo.Get(repositoryID)
 	if err != nil {
 		return nil, err
@@ -170,17 +170,17 @@ func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role auth
 	return s.getEntityGroupsNameByRole(repository, role), nil
 }
 
-func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authenums.HorusecRoles) []string {
+func (s *Service) getEntityGroupsNameByRole(entity AuthzEntity, role authEnums.HorusecRoles) []string {
 	var groupsName string
 
 	switch role {
-	case authenums.RepositoryMember, authenums.CompanyMember:
+	case authEnums.RepositoryMember, authEnums.CompanyMember:
 		groupsName = entity.GetAuthzMember()
 
-	case authenums.CompanyAdmin, authenums.RepositoryAdmin:
+	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
 		groupsName = entity.GetAuthzAdmin()
 
-	case authenums.RepositorySupervisor:
+	case authEnums.RepositorySupervisor:
 		groupsName = entity.GetAuthzSupervisor()
 	}
 

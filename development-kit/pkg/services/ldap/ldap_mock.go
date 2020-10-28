@@ -32,3 +32,12 @@ func (m *Mock) GetGroupsOfUser(username string) ([]string, error) {
 	args := m.MethodCalled("GetGroupsOfUser")
 	return args.Get(0).([]string), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) Connect() error {
+	args := m.MethodCalled("Connect")
+	return mockUtils.ReturnNilOrError(args, 0)
+}
+
+func (m *Mock) Close() {
+	_ = m.MethodCalled("Close")
+}
