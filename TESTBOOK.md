@@ -1,21 +1,35 @@
 # Test book
 
-## Company and Repository
-- [ ] Find, create, update and remove company
-- [ ] Find, create, update and remove repositoy
-- [ ] Find, create, update and remove tokens
+## Horusec server
+- [ ] Create account, Login, Logout, Authorize
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Reset account password
+- [ ] Create, Read, Update and Delete company
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Create, Read, Update and Delete company with application admin enable
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Create, Read, and Delete company token
+- [ ] Invite, Read, Update and Remove users in company
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Invite, Read, Update and Remove users in repository
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Create, Read, and Delete repository token
+- [ ] Get Dashboard content
+  - [ ] Company view
+  - [ ] Repository view
+- [ ] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
 
-- [ ] Create and update account info
-- [ ] Invite account to company
-- [ ] Invite account to repository
-  - [ ] Admin (write-read)
-  - [ ] Member (read-only)
-
-- [ ] Remove account from repository
-- [ ] Remove account from company
-- [ ] Forgot password (with emails)
-
-## CLI-Analyzer
+## Horusec CLI
 - [ ] Test each language:
   - [ ] Git (GitLeaks)
   - [ ] Python (Bandit and Safety)
@@ -23,15 +37,46 @@
   - [ ] .NET (SecurityCodeScan)
   - [ ] Ruby (Brakeman)
   - [ ] JavaScript (NpmAudit and YarnAudit)
-  - [ ] Java (SpotBugs)
-  - [ ] Kotlin (SpotBugs)
+  - [ ] Java (Horusec-Java)
+  - [ ] Kotlin (Horusec-Kotlin)
+  - [ ] Leaks (Horusec-Leaks)
+  - [ ] Terraform (TfSec)
+- [ ] Setup log level
+- [ ] Output TEXT
+- [ ] Output JSON
+  - [ ] Changing filename
+- [ ] Output SONARQUBE
+  - [ ] Changing filename
+- [ ] Ignore vulnerability by severity
+- [ ] Ignore files or folder
+- [ ] Timeout in analysis
+- [ ] Timeout in request to send analysis  
+- [ ] Return error `exit(1)` if found vulnerability
+- [ ] Change directory to start analysis
+- [ ] Send request with insecure tls
+- [ ] Send request with certificate
+- [ ] Run analysis in a current directory and filter paths
+- [ ] Run analysis with git enable
+- [ ] Run analysis with commit authors enable
+- [ ] Run analysis with token of authorization
+  - [ ] Repository token
+  - [ ] Company token and repository name
+- [ ] Run analysis and setup in flag vulnerability to:
+  - [ ] False positive
+  - [ ] Risk accept
+- [ ] Run analysis using workdir
+  - [ ] go
+  - [ ] netCore
+  - [ ] ruby
+  - [ ] python
+  - [ ] java
+  - [ ] kotlin
+  - [ ] javaScript
+  - [ ] leaks
+  - [ ] hlc
 
-- [ ] Load test:
-  - [ ] Kubernetes alone
-  - [ ] Apache Kafka
-  - [ ] gVisor
-  - [ ] Kubernetes and Kafka
- 
- ## Internal tools
- - [ ] Migrations test
- 
+## Generics repositories to test
+- [ ] Kubernetes alone
+- [ ] Apache Kafka
+- [ ] gVisor
+- [ ] Kubernetes and Kafka
