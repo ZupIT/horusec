@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       service:
-        description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages'
+        description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages, horusec-auth, horusec-migration'
         required: true
       update_type:
         description: 'Update Type: alpha, rc, release, minor, major'
