@@ -37,6 +37,7 @@ import (
 type Handler struct {
 	controller accountController.IAccount
 	useCases   accountUseCases.IAccount
+	appConfig  app.IAppConfig
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -45,7 +46,8 @@ func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	return &Handler{
 		controller: accountController.NewAccountController(
 			broker, databaseRead, databaseWrite, cache, useCases, appConfig),
-		useCases: useCases,
+		useCases:  useCases,
+		appConfig: appConfig,
 	}
 }
 

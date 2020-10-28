@@ -15,6 +15,13 @@ definitions:
       token:
         type: string
     type: object
+  auth.ConfigAuth:
+    properties:
+      applicationAdminEnable:
+        type: boolean
+      authType:
+        type: string
+    type: object
   auth.Credentials:
     properties:
       otp:
@@ -39,6 +46,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
@@ -116,35 +124,6 @@ paths:
               type: object
         "400":
           description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Auth
-  /api/auth/auth-types:
-    get:
-      consumes:
-      - application/json
-      description: get actual type!
-      operationId: get type
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: STATUS OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -235,6 +214,35 @@ paths:
               type: object
         "500":
           description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Auth
+  /api/auth/config:
+    get:
+      consumes:
+      - application/json
+      description: get actual type!
+      operationId: get type
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: STATUS OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  $ref: '#/definitions/auth.ConfigAuth'
+              type: object
+        "400":
+          description: BAD REQUEST
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

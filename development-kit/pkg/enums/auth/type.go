@@ -20,6 +20,7 @@ const (
 	Keycloak AuthorizationType = "keycloak"
 	Ldap     AuthorizationType = "ldap"
 	Horusec  AuthorizationType = "horusec"
+	Unknown  AuthorizationType = "unknown"
 )
 
 func (a AuthorizationType) IsInvalid() bool {
@@ -42,4 +43,14 @@ func (a AuthorizationType) Values() []AuthorizationType {
 
 func (a AuthorizationType) ToString() string {
 	return string(a)
+}
+
+func GetAuthTypeByString(authType string) (a AuthorizationType) {
+	for _, v := range a.Values() {
+		if v.ToString() == authType {
+			return v
+		}
+	}
+
+	return Unknown
 }

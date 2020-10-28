@@ -19,14 +19,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-
-	"github.com/ZupIT/horusec/horusec-account/config/app"
 
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -54,11 +55,12 @@ func getTestAuthorizationToken() string {
 }
 
 func TestCreateCompany(t *testing.T) {
-	t.Run("should return status code 200 when create a company successfully", func(t *testing.T) {
+	t.Run("should return status code 201 when create a company successfully", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockTx := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{
 			Name: "test",
@@ -71,7 +73,50 @@ func TestCreateCompany(t *testing.T) {
 
 		mockWrite.On("StartTransaction").Return(mockTx)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: false,
+			AuthType:               authEnums.Horusec,
+		}))
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusCreated, w.Code)
+	})
+
+	t.Run("should return status code 200 when create a company successfully with application admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "admin-horusec@example.com",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &accountEntities.Account{
+			AccountID: uuid.New(),
+		}))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
@@ -80,9 +125,57 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+
+		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusCreated, w.Code)
+	})
+
+	t.Run("should return status code 403 when create a company and not setup config auth correctly in context", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "admin-horusec@example.com",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &accountEntities.Account{
+			AccountID: uuid.New(),
+		}))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, "wrong content"))
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 
 	t.Run("should return status code 401 when user is unauthorized", func(t *testing.T) {
@@ -90,6 +183,7 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockTx := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{
 			Name: "test",
@@ -102,7 +196,7 @@ func TestCreateCompany(t *testing.T) {
 
 		mockWrite.On("StartTransaction").Return(mockTx)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
@@ -121,6 +215,7 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockTx := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := struct{ Test string }{Test: "test"}
 
@@ -131,7 +226,7 @@ func TestCreateCompany(t *testing.T) {
 
 		mockWrite.On("StartTransaction").Return(mockTx)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
@@ -145,11 +240,138 @@ func TestCreateCompany(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
+	t.Run("should return status code 400 when create a company and email is invalid with application admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "invalid email",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &accountEntities.Account{
+			AccountID: uuid.New(),
+		}))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+	t.Run("should return status code 404 when create a company and email not found in system with application admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "not-found-email@example.com",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, errorsEnum.ErrNotFoundRecords, nil))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
+	t.Run("should return status code 500 when create a company and return error in Find with application admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
+		appConfig := &app.Config{}
+
+		company := &accountEntities.CompanyApplicationAdmin{
+			Name:       "test",
+			AdminEmail: "email@example.com",
+		}
+
+		resp := &response.Response{}
+		resp.SetData(company.ToCompany())
+		mockTx.On("Create").Return(resp)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
+
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, appConfig)
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: true,
+			AuthType:               authEnums.Horusec,
+		}))
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
 	t.Run("should return status code 500 when the body is'nt compatible with the entity", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockTx := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{
 			Name: "test",
@@ -162,7 +384,7 @@ func TestCreateCompany(t *testing.T) {
 
 		mockWrite.On("StartTransaction").Return(mockTx)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
@@ -171,7 +393,12 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		handler.Create(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, auth.ConfigAuth{
+			ApplicationAdminEnable: false,
+			AuthType:               authEnums.Horusec,
+		}))
+		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -182,6 +409,7 @@ func TestUpdateCompany(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{Name: "test"}
 		resp := &response.Response{}
@@ -189,7 +417,7 @@ func TestUpdateCompany(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPatch, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
@@ -203,6 +431,7 @@ func TestUpdateCompany(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{Name: "test"}
 		resp := &response.Response{}
@@ -210,7 +439,7 @@ func TestUpdateCompany(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPatch, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
@@ -224,8 +453,9 @@ func TestUpdateCompany(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodPatch, "api/companies/123", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -241,6 +471,7 @@ func TestGetCompany(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		company := &accountEntities.Company{Name: "test"}
 		resp := &response.Response{}
@@ -248,7 +479,7 @@ func TestGetCompany(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
 		w := httptest.NewRecorder()
 
@@ -261,13 +492,14 @@ func TestGetCompany(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		resp.SetError(errors.New("test"))
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
 		w := httptest.NewRecorder()
 
@@ -284,7 +516,7 @@ func TestList(t *testing.T) {
 		controllerMock.On("List").Return(&[]accountEntities.CompanyResponse{}, nil)
 
 		handler := Handler{
-			controller: controllerMock,
+			companyController: controllerMock,
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
@@ -302,7 +534,7 @@ func TestList(t *testing.T) {
 		controllerMock := &companiesController.Mock{}
 
 		handler := Handler{
-			controller: controllerMock,
+			companyController: controllerMock,
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
@@ -319,7 +551,7 @@ func TestList(t *testing.T) {
 		controllerMock.On("List").Return(&[]accountEntities.CompanyResponse{}, errors.New("test"))
 
 		handler := Handler{
-			controller: controllerMock,
+			companyController: controllerMock,
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", nil)
@@ -339,6 +571,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		accountCompany := &roles.AccountCompany{Role: "admin", AccountID: uuid.New(), CompanyID: uuid.New()}
 		companiesResp := &response.Response{}
@@ -346,7 +579,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockRead.On("Find").Return(companiesResp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(accountCompany)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
@@ -367,12 +600,13 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		accountCompany := &roles.AccountCompany{Role: "test", AccountID: uuid.New(), CompanyID: uuid.New()}
 		companiesResp := &response.Response{}
 		mockWrite.On("Update").Return(companiesResp.SetData(accountCompany))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(accountCompany)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
@@ -389,6 +623,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		accountCompany := &roles.AccountCompany{Role: "admin", AccountID: uuid.New(), CompanyID: uuid.New()}
 		companiesResp := &response.Response{}
@@ -396,7 +631,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockRead.On("Find").Return(companiesResp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 		body, _ := json.Marshal(accountCompany)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
@@ -418,8 +653,9 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		accountCompany := &roles.AccountCompany{Role: "admin", AccountID: uuid.New(), CompanyID: uuid.New()}
 		body, _ := json.Marshal(accountCompany)
@@ -435,8 +671,9 @@ func TestUpdateAccountCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		accountCompany := &roles.AccountCompany{Role: "admin", AccountID: uuid.New(), CompanyID: uuid.New()}
 		body, _ := json.Marshal(accountCompany)
@@ -474,6 +711,7 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		respCompany := &response.Response{}
 		respAccount := &response.Response{}
@@ -483,7 +721,7 @@ func TestInviteUser(t *testing.T) {
 		brokerMock.On("Publish").Return(nil)
 		mockWrite.On("Create").Return(respCompany)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		body, _ := json.Marshal(inviteUser)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader(body))
@@ -502,6 +740,7 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		respCompany := &response.Response{}
 		respAccount := &response.Response{}
@@ -511,7 +750,7 @@ func TestInviteUser(t *testing.T) {
 		brokerMock.On("Publish").Return(errors.New("test"))
 		mockWrite.On("Create").Return(respCompany)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		body, _ := json.Marshal(inviteUser)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader(body))
@@ -530,6 +769,7 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		respCompany := &response.Response{}
 		respAccount := &response.Response{}
@@ -541,7 +781,7 @@ func TestInviteUser(t *testing.T) {
 		mockWrite.On("Create").Return(
 			respWithError.SetError(errors.New(errorsEnum.ErrorAlreadyExistingCompanyID)))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		body, _ := json.Marshal(inviteUser)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader(body))
@@ -560,6 +800,7 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		respCompany := &response.Response{}
 		respAccount := &response.Response{}
@@ -570,7 +811,7 @@ func TestInviteUser(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Create").Return(respWithError.SetError(errorsEnum.ErrNotFoundRecords))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		body, _ := json.Marshal(inviteUser)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader(body))
@@ -589,8 +830,9 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		body, _ := json.Marshal(inviteUser)
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader(body))
@@ -605,8 +847,9 @@ func TestInviteUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodPost, "api/companies/", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -622,11 +865,12 @@ func TestDeleteCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -644,11 +888,12 @@ func TestDeleteCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp.SetError(errors.New("test")))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -666,8 +911,9 @@ func TestDeleteCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -683,13 +929,14 @@ func TestGetAccountsFromCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		accounts := &[]roles.AccountRole{{Email: "test@test.com", Username: "test", Role: "member"}}
 
 		accountsResp := &response.Response{}
 		mockRead.On("RawSQL").Return(accountsResp.SetData(accounts))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodGet, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -707,11 +954,12 @@ func TestGetAccountsFromCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		accountsResp := &response.Response{}
 		mockRead.On("RawSQL").Return(accountsResp.SetError(errors.New("test")))
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodGet, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -729,8 +977,9 @@ func TestGetAccountsFromCompany(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodGet, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -748,13 +997,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -773,13 +1023,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -798,13 +1049,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -823,13 +1075,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrNotFoundRecords))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -848,13 +1101,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrNotFoundRecords))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()
@@ -872,13 +1126,14 @@ func TestRemoveUser(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
+		cacheRepositoryMock := &cache.Mock{}
 
 		resp := &response.Response{}
 		mockWrite.On("Delete").Return(resp)
 		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrNotFoundRecords))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		handler := NewHandler(mockWrite, mockRead, cacheRepositoryMock, brokerMock, &app.Config{})
 
 		r, _ := http.NewRequest(http.MethodDelete, "api/companies/", nil)
 		w := httptest.NewRecorder()

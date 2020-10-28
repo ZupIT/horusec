@@ -51,3 +51,12 @@ func TestToString(t *testing.T) {
 		assert.Equal(t, "keycloak", Keycloak.ToString())
 	})
 }
+
+func TestGetAuthTypeByString(t *testing.T) {
+	t.Run("Should return type correctly when exists", func(t *testing.T) {
+		assert.Equal(t, Horusec, GetAuthTypeByString("horusec"))
+		assert.Equal(t, Ldap, GetAuthTypeByString("ldap"))
+		assert.Equal(t, Keycloak, GetAuthTypeByString("keycloak"))
+		assert.Equal(t, Unknown, GetAuthTypeByString("test"))
+	})
+}

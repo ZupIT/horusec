@@ -35,6 +35,7 @@ import (
 
 type IHorusAuthzMiddleware interface {
 	SetContextAccountID(next http.Handler) http.Handler
+	IsApplicationAdmin(next http.Handler) http.Handler
 	IsCompanyMember(next http.Handler) http.Handler
 	IsCompanyAdmin(next http.Handler) http.Handler
 	IsRepositoryMember(next http.Handler) http.Handler
@@ -56,6 +57,33 @@ func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handl
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h.setContextAndReturn(next, w, r)
 	})
+}
+
+func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		configAuth, err := h.getConfigAuthAndSetInContext(r)
+		if err != nil {
+			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+			return
+		}
+		if configAuth.ApplicationAdminEnable {
+			isValid, err := h.validateRequest(r, authEnums.ApplicationAdmin)
+			if err != nil || !isValid {
+				httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
+				return
+			}
+		}
+		h.setContextAndReturn(next, w, r)
+	})
+}
+
+func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (authEntities.ConfigAuth, error) {
+	configAuth, err := h.getConfigAuth()
+	if err != nil {
+		return authEntities.ConfigAuth{}, errors.ErrorUnauthorized
+	}
+	h.setConfigAuthInContext(r, configAuth)
+	return configAuth, nil
 }
 
 func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
@@ -204,4 +232,29 @@ func (h *HorusAuthzMiddleware) setAccountIDInContext(r *http.Request, token stri
 	}
 
 	return context.WithValue(r.Context(), authEnums.AccountID, accountID.String()), nil
+}
+
+func (h *HorusAuthzMiddleware) getConfigAuth() (authEntities.ConfigAuth, error) {
+	req, _ := http.NewRequest(http.MethodGet, h.getHorusecAuthURL("/config"), nil)
+
+	res, err := h.httpUtil.DoRequest(req, nil)
+	if err != nil {
+		return authEntities.ConfigAuth{}, err
+	}
+	return h.parseResponseConfigAuth(res)
+}
+
+func (h *HorusAuthzMiddleware) setConfigAuthInContext(
+	r *http.Request, configAuth authEntities.ConfigAuth) context.Context {
+	return context.WithValue(r.Context(), authEnums.ConfigAuth, configAuth)
+}
+
+func (h *HorusAuthzMiddleware) parseResponseConfigAuth(
+	response httpResponse.Interface) (entity authEntities.ConfigAuth, err error) {
+	responseContent := httpEntities.Response{}
+	body, _ := response.GetBody()
+	if errParse := json.Unmarshal(body, &responseContent); errParse != nil {
+		return authEntities.ConfigAuth{}, errParse
+	}
+	return authEntities.ParseInterfaceToConfigAuth(responseContent.Content)
 }

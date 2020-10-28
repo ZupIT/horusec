@@ -30,7 +30,7 @@ coverage-horusec-analytic:
 	deployments/scripts/coverage.sh 98 "./horusec-analytic"
 coverage-horusec-auth:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 99 "./horusec-auth"
+	deployments/scripts/coverage.sh 98 "./horusec-auth"
 
 # Check lint of project setup on file .golangci.yml
 lint:

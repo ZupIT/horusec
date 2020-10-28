@@ -48,6 +48,7 @@ type IAccount interface {
 	createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error)
 	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
 	DeleteAccount(accountID uuid.UUID) error
+	GetAccountIDByEmail(email string) (uuid.UUID, error)
 }
 
 type Account struct {
@@ -296,4 +297,12 @@ func (a *Account) DeleteAccount(accountID uuid.UUID) error {
 	}
 
 	return a.accountRepository.DeleteAccount(account.AccountID)
+}
+
+func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
+	account, err := a.accountRepository.GetByEmail(email)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return account.AccountID, nil
 }

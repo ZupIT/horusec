@@ -1013,7 +1013,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "create company!",
+                "description": "create company! If applicationAdmin is enable add field adminEmail in body",
                 "consumes": [
                     "application/json"
                 ],
@@ -1026,8 +1026,8 @@ var doc = `{
                 "operationId": "create-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "create company info",
+                        "name": "CreateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1297,8 +1297,8 @@ var doc = `{
                 "operationId": "update-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "update company info",
+                        "name": "UpdateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
