@@ -37,7 +37,6 @@ To change variables environment to run your analysis also you set new values.
 | Environment Name                              | Default Value                                                                              | Description                                                  |
 |-----------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------|
 | HORUSEC_SWAGGER_HOST                          | 0.0.0.0                                                                                    | This environment get host to run in swagger                  |
-| HORUSEC_API_URL                               | http://localhost:8003                                                                      | This environment get horusec url to mount a url              | 
 | HORUSEC_MANAGER_URL                           | http://localhost:8043                                                                      | This environment get horusec url to mount a url              | 
 | HORUSEC_BROKER_HOST                           | 127.0.0.1                                                                                  | This environment get host to connect on broker RABBIT        | 
 | HORUSEC_BROKER_PORT                           | 5672                                                                                       | This environment get port to connect on broker RABBIT        |
