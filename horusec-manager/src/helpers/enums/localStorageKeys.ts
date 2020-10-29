@@ -19,7 +19,7 @@ export enum localStorageKeys {
   THEME = '@HORUSEC:THEME',
   USER = '@HORUSEC:USER',
   COMPANY = '@HORUSEC:COMPANY',
-  AUTH_TYPE = '@HORUSEC:AUTH_TYPE',
+  CONFIG = '@HORUSEC:CONFIG',
   TOKEN_EXPIRES = '@HORUSEC:TOKEN_EXPIRES',
   ACCESS_TOKEN = 'access-token',
   REFRESH_TOKEN = 'refresh-token',
