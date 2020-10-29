@@ -43,19 +43,3 @@ services:
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
-  horusec-api:
-    build:
-      context: ../../
-      dockerfile: ./horusec-api/deployments/Dockerfile
-    depends_on:
-      - "rabbit"
-      - postgresql
-    restart: always
-    container_name: horusec-api
-    ports:
-      - "8000:8000"
-    environment:
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
-      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
