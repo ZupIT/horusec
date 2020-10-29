@@ -8,8 +8,7 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        },
-        "license": {}
+        }
     },
     "paths": {
         "/api/account/change-password": {
@@ -298,140 +297,155 @@
                             "$ref": "#/definitions/account.LoginData"
                         }
                     }
-                },
-                "definitions": {
-                    "account.Company": {
-                        "type": "object",
-                        "properties": {
-                            "description": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "account.CreateAccount": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            },
-                            "password": {
-                                "type": "string"
-                            },
-                            "username": {
-                                "type": "string"
-                            }
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "account.EmailData": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            }
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "account.InviteUser": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            },
-                            "role": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "account.KeycloakToken": {
-                        "type": "object",
-                        "properties": {
-                            "accessToken": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "account.LoginData": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            },
-                            "password": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "account.Repository": {
-                        "type": "object",
-                        "properties": {
-                            "description": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "account.ResetCodeData": {
-                        "type": "object",
-                        "properties": {
-                            "code": {
-                                "type": "string"
-                            },
-                            "email": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "account.ValidateUnique": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            },
-                            "username": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "http.Response": {
-                        "type": "object",
-                        "properties": {
-                            "code": {
-                                "type": "integer"
-                            },
-                            "content": {
-                                "type": "object"
-                            },
-                            "status": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "roles.AccountCompany": {
-                        "type": "object",
-                        "properties": {
-                            "role": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "roles.AccountRepository": {
-                        "type": "object",
-                        "properties": {
-                            "role": {
-                                "type": "string"
-                            }
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
-                },
-                "securityDefinitions": {
-                    "ApiKeyAuth": {
-                        "type": "apiKey",
-                        "name": "Authorization",
-                        "in": "header"
+                }
+            }
+        },
+        "/api/account/logout": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "logout!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "NO CONTENT",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 }
             }
@@ -2784,6 +2798,12 @@
         "account.Company": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -2839,6 +2859,15 @@
         "account.Repository": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "authzSupervisor": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
