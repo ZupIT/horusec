@@ -46,6 +46,7 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 test-e2e:
+	go get -t -v -u ./...
 	$(GO) clean -testcache && $(GO) test -v ./e2e/... -timeout=5m -parallel=1 -failfast
 
 # Run all steps required to pass on pipeline
