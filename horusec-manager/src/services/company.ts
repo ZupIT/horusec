@@ -25,8 +25,8 @@ const getOne = (companyId: string) => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
-const create = (name: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies`, { name });
+const create = (name: string, adminEmail?: string) => {
+  return http.post(`${SERVICE_ACCOUNT}/api/companies`, { name, adminEmail });
 };
 
 const update = (companyId: string, name: string) => {

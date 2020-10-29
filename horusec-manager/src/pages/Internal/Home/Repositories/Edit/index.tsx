@@ -25,7 +25,7 @@ import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 
 interface Props {
@@ -143,7 +143,7 @@ const EditRepository: React.FC<Props> = ({
           initialValue={description.value}
         />
 
-        {getCurrentAuthType() === authTypes.LDAP ? (
+        {getCurrentConfig().authType === authTypes.LDAP ? (
           <>
             <Styled.SubTitle>
               {t('REPOSITORIES_SCREEN.REFERENCE_GROUP')}
