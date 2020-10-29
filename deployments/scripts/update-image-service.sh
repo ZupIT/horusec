@@ -44,6 +44,9 @@ getDirectoryAndImageNameByToolName () {
         "horusec-account")
             IMAGE_NAME="horuszup/horusec-account"
             DIRECTORY="./horusec-account/deployments";;
+        "horusec-auth")
+            IMAGE_NAME="horuszup/horusec-auth"
+            DIRECTORY="./horusec-auth/deployments";;
         "horusec-analytic")
             IMAGE_NAME="horuszup/horusec-analytic"
             DIRECTORY="./horusec-analytic/deployments";;

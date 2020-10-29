@@ -12,19 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package auth
 
 import (
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
-	"github.com/stretchr/testify/mock"
+	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 )
 
-type Mock struct {
-	mock.Mock
+type ConfigAuth struct {
+	ApplicationAdminEnable bool                   `json:"applicationAdminEnable"`
+	AuthType               auth.AuthorizationType `json:"authType"`
 }
 
-func (m *Mock) CreateAccountFromKeycloak(keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error) {
-	args := m.MethodCalled("CreateAccountFromKeycloak")
-	return args.Get(0).(*accountEntities.CreateAccountFromKeycloakResponse), mockUtils.ReturnNilOrError(args, 1)
+func ParseInterfaceToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {
+	contentBytes, err := json.Marshal(content)
+	if err != nil {
+		return ConfigAuth{}, err
+	}
+	return configAuth, json.Unmarshal(contentBytes, &configAuth)
 }

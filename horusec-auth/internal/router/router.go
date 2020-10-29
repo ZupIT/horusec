@@ -17,6 +17,7 @@ package router
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/account"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/health"
@@ -49,10 +50,11 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *chi.Mux {
+func (r *Router) GetRouter(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *chi.Mux {
 	r.setMiddleware()
-	r.RouterAuth(postgresRead, postgresWrite)
-	r.RouterHealth(postgresRead)
+	r.RouterAuth(postgresRead, postgresWrite, appConfig)
+	r.RouterHealth(postgresRead, postgresWrite)
 	r.RouterAccount(postgresRead, postgresWrite)
 	return r.router
 }
@@ -97,8 +99,8 @@ func (r *Router) RouterMetrics() *Router {
 	return r
 }
 
-func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
-	handler := health.NewHandler(postgresRead)
+func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	handler := health.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
 		router.Options("/", handler.Options)
@@ -107,10 +109,11 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 	return r
 }
 
-func (r *Router) RouterAuth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	handler := auth.NewAuthHandler(postgresRead, postgresWrite)
+func (r *Router) RouterAuth(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
+	handler := auth.NewAuthHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
-		router.Get("/auth-types", handler.AuthTypes)
+		router.Get("/config", handler.Config)
 		router.Get("/account-id", handler.GetAccountIDByAuthType)
 		router.Post("/authenticate", handler.AuthByType)
 		router.Post("/authorize", handler.Authorize)

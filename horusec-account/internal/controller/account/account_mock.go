@@ -75,3 +75,11 @@ func (m *Mock) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique
 	args := m.MethodCalled("VerifyAlreadyInUse")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
+func (m *Mock) DeleteAccount(accountID uuid.UUID) error {
+	args := m.MethodCalled("DeleteAccount")
+	return mockUtils.ReturnNilOrError(args, 0)
+}
+func (m *Mock) GetAccountIDByEmail(email string) (uuid.UUID, error) {
+	args := m.MethodCalled("GetAccountIDByEmail")
+	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
+}

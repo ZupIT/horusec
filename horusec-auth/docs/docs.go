@@ -38,6 +38,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -79,7 +80,7 @@ var doc = `{
                                     "type": "object",
                                     "properties": {
                                         "content": {
-                                            "type": "string"
+                                            "$ref": "#/definitions/account.CreateAccountFromKeycloakResponse"
                                         }
                                     }
                                 }
@@ -177,59 +178,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/auth/auth-types": {
-            "get": {
-                "description": "get actual type!",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "operationId": "get type",
-                "responses": {
-                    "200": {
-                        "description": "STATUS OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
                         "schema": {
                             "allOf": [
                                 {
@@ -413,6 +361,59 @@ var doc = `{
                 }
             }
         },
+        "/api/auth/config": {
+            "get": {
+                "description": "get actual type!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "get type",
+                "responses": {
+                    "200": {
+                        "description": "STATUS OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/auth.ConfigAuth"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
@@ -468,6 +469,23 @@ var doc = `{
         }
     },
     "definitions": {
+        "account.CreateAccountFromKeycloakResponse": {
+            "type": "object",
+            "properties": {
+                "accountID": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isApplicationAdmin": {
+                    "type": "boolean"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "account.KeycloakToken": {
             "type": "object",
             "properties": {
@@ -489,6 +507,17 @@ var doc = `{
                     "type": "string"
                 },
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.ConfigAuth": {
+            "type": "object",
+            "properties": {
+                "applicationAdminEnable": {
+                    "type": "boolean"
+                },
+                "authType": {
                     "type": "string"
                 }
             }

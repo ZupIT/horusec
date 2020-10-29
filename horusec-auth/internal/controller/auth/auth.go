@@ -21,7 +21,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
 	keycloakService "github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
@@ -41,10 +41,13 @@ type Controller struct {
 	keycloakAuthService services.IAuthService
 	ldapAuthService     services.IAuthService
 	keycloak            keycloak.IService
+	appConfig           *app.Config
 }
 
-func NewAuthController(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) IController {
+func NewAuthController(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) IController {
 	return &Controller{
+		appConfig:           appConfig,
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
 		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
@@ -80,18 +83,15 @@ func (c *Controller) AuthorizeByType(authorizationData *authEntities.Authorizati
 
 func (c *Controller) GetAuthType() (authorizationType authEnums.AuthorizationType, err error) {
 	authType := c.getAuthorizationType()
-	for _, v := range authorizationType.Values() {
-		if v == authType {
-			return v, nil
-		}
+	if authType != authEnums.Unknown {
+		return authType, nil
 	}
 
 	return "", errors.ErrorInvalidAuthType
 }
 
 func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
-	authType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
-	return authEnums.AuthorizationType(authType)
+	return c.appConfig.GetAuthType()
 }
 
 func (c *Controller) GetAccountIDByAuthType(token string) (uuid.UUID, error) {

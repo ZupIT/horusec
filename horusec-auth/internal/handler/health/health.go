@@ -25,12 +25,14 @@ import (
 
 type Handler struct {
 	httpUtil.Interface
-	postgresRead relational.InterfaceRead
+	postgresRead  relational.InterfaceRead
+	postgresWrite relational.InterfaceWrite
 }
 
-func NewHandler(postgresRead relational.InterfaceRead) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
 	return &Handler{
-		postgresRead: postgresRead,
+		postgresRead:  postgresRead,
+		postgresWrite: postgresWrite,
 	}
 }
 
@@ -47,7 +49,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if !h.postgresRead.IsAvailable() {
+	if !h.postgresRead.IsAvailable() || !h.postgresWrite.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorDatabaseIsNotHealth)
 		return
 	}

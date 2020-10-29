@@ -27,15 +27,16 @@ import (
 
 // nolint
 type Account struct {
-	AccountID    uuid.UUID    `json:"accountID" gorm:"primary_key"`
-	Email        string       `json:"email"`
-	Password     string       `json:"password"`
-	Username     string       `json:"username"`
-	IsConfirmed  bool         `json:"isConfirmed"`
-	CreatedAt    time.Time    `json:"createdAt"`
-	UpdatedAt    time.Time    `json:"updatedAt"`
-	Companies    []Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
-	Repositories []Repository `gorm:"many2many:account_repository;association_jointable_foreignkey:repository_id;jointable_foreignkey:account_id"` // nolint
+	AccountID          uuid.UUID    `json:"accountID" gorm:"primary_key"`
+	Email              string       `json:"email"`
+	Password           string       `json:"password"`
+	Username           string       `json:"username"`
+	IsConfirmed        bool         `json:"isConfirmed"`
+	IsApplicationAdmin bool         `json:"isApplicationAdmin"`
+	CreatedAt          time.Time    `json:"createdAt"`
+	UpdatedAt          time.Time    `json:"updatedAt"`
+	Companies          []Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
+	Repositories       []Repository `gorm:"many2many:account_repository;association_jointable_foreignkey:repository_id;jointable_foreignkey:account_id"` // nolint
 }
 
 func (a *Account) SetPasswordHash() {
@@ -96,22 +97,37 @@ func (a *Account) ToBytes() []byte {
 
 func (a *Account) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"account_id":   a.AccountID,
-		"password":     a.Password,
-		"email":        a.Email,
-		"username":     a.Username,
-		"is_confirmed": a.IsConfirmed,
-		"created_at":   a.CreatedAt,
-		"updated_at":   a.UpdatedAt,
+		"account_id":           a.AccountID,
+		"password":             a.Password,
+		"email":                a.Email,
+		"username":             a.Username,
+		"is_confirmed":         a.IsConfirmed,
+		"is_application_admin": a.IsApplicationAdmin,
+		"created_at":           a.CreatedAt,
+		"updated_at":           a.UpdatedAt,
 	}
 }
 
 func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt time.Time) *LoginResponse {
 	return &LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresAt:    expiresAt,
-		Username:     a.Username,
-		Email:        a.Email,
+		AccessToken:        accessToken,
+		RefreshToken:       refreshToken,
+		ExpiresAt:          expiresAt,
+		Username:           a.Username,
+		IsApplicationAdmin: a.IsApplicationAdmin,
+		Email:              a.Email,
 	}
+}
+
+func (a *Account) ToCreateAccountFromKeycloakResponse() *CreateAccountFromKeycloakResponse {
+	return &CreateAccountFromKeycloakResponse{
+		AccountID:          a.AccountID,
+		Username:           a.Username,
+		Email:              a.Email,
+		IsApplicationAdmin: a.IsApplicationAdmin,
+	}
+}
+
+func (a *Account) IsNotApplicationAdminAccount() bool {
+	return !a.IsApplicationAdmin
 }

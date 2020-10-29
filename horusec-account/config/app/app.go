@@ -14,7 +14,9 @@
 
 package app
 
-import "github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+import (
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+)
 
 const (
 	DisableEmailServiceEnv = "HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE"

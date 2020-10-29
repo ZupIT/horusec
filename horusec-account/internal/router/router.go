@@ -66,7 +66,7 @@ func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.Interfa
 	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) {
 	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig)
 	r.RouterAccount(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
-	r.RouterCompany(databaseRead, databaseWrite, broker, appConfig)
+	r.RouterCompany(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
 }
 
 func (r *Router) EnableRealIP() *Router {
@@ -130,12 +130,12 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 	return r
 }
 
-func (r *Router) RouterCompany(databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite,
-	broker brokerLib.IBroker, appConfig app.IAppConfig) *Router {
-	handler := company.NewHandler(databaseWrite, databaseRead, broker, appConfig)
+func (r *Router) RouterCompany(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
+	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *Router {
+	handler := company.NewHandler(databaseWrite, databaseRead, cacheRepository, broker, appConfig)
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
-		router.With(authzMiddleware.SetContextAccountID).Post("/", handler.Create)
+		router.With(authzMiddleware.IsApplicationAdmin).Post("/", handler.Create)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
 		router.With(authzMiddleware.IsCompanyMember).Get("/{companyID}", handler.Get)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}/roles", handler.GetAccounts)

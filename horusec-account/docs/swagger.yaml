@@ -615,12 +615,12 @@ paths:
     post:
       consumes:
       - application/json
-      description: create company!
+      description: create company! If applicationAdmin is enable add field adminEmail in body
       operationId: create-company
       parameters:
-      - description: company info
+      - description: create company info
         in: body
-        name: Company
+        name: CreateCompany
         required: true
         schema:
           $ref: '#/definitions/account.Company'
@@ -764,9 +764,9 @@ paths:
       description: update company!
       operationId: update-company
       parameters:
-      - description: company info
+      - description: update company info
         in: body
-        name: Company
+        name: UpdateCompany
         required: true
         schema:
           $ref: '#/definitions/account.Company'

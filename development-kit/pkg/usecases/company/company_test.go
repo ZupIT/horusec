@@ -81,3 +81,31 @@ func TestNewCompanyFromReadCloser(t *testing.T) {
 		assert.Nil(t, company)
 	})
 }
+
+func TestNewCompanyApplicationAdminFromReadCloser(t *testing.T) {
+	t.Run("should success parse to company", func(t *testing.T) {
+		bytes, _ := json.Marshal(&accountEntities.CompanyApplicationAdmin{
+			CompanyID:  uuid.New(),
+			Name:       "test",
+			AdminEmail: "admin@example.com",
+		})
+
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+		useCases := NewCompanyUseCases()
+
+		company, err := useCases.NewCompanyApplicationAdminFromReadCloser(readCloser)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, company)
+	})
+
+	t.Run("should return error when invalid body", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+		useCases := NewCompanyUseCases()
+
+		company, err := useCases.NewCompanyApplicationAdminFromReadCloser(readCloser)
+
+		assert.Error(t, err)
+		assert.Nil(t, company)
+	})
+}

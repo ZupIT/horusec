@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
@@ -981,6 +982,121 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authorizationData := &authEntities.AuthorizationData{
 			Token:        generateToken(),
 			Role:         authEnums.RepositoryAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsApplicationAdmin(t *testing.T) {
+	t.Run("should success authenticate with application admin", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		httpMock := &httpClient.Mock{}
+
+		accountRepository := &accountEntities.Account{
+			IsApplicationAdmin: true,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        generateToken(),
+			Role:         authEnums.ApplicationAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+	t.Run("should error when authenticate with wrong token", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		httpMock := &httpClient.Mock{}
+
+		accountRepository := &accountEntities.Account{
+			IsApplicationAdmin: true,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        "WRONG TOKEN",
+			Role:         authEnums.ApplicationAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+	t.Run("should error when get user in database authenticate", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		httpMock := &httpClient.Mock{}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("not found content")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        generateToken(),
+			Role:         authEnums.ApplicationAdmin,
+			CompanyID:    uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(authorizationData)
+
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+	t.Run("should success but user is not application admin when get user in database", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		httpMock := &httpClient.Mock{}
+
+		accountRepository := &accountEntities.Account{
+			IsApplicationAdmin: false,
+		}
+
+		resp := response.Response{}
+		mockRead.On("Find").Return(resp.SetData(accountRepository))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		service := Service{
+			httpUtil:          httpMock,
+			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
+		}
+
+		authorizationData := &authEntities.AuthorizationData{
+			Token:        generateToken(),
+			Role:         authEnums.ApplicationAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}

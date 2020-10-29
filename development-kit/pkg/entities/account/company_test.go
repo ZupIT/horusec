@@ -65,3 +65,39 @@ func TestToCompanyResponse(t *testing.T) {
 		assert.NotEmpty(t, company.ToCompanyResponse(rolesEnum.Admin))
 	})
 }
+
+func TestGetAuthzMemberCompany(t *testing.T) {
+	t.Run("should success get authz member", func(t *testing.T) {
+		company := &Company{
+			AuthzMember: "test",
+		}
+
+		assert.NotEmpty(t, company.GetAuthzMember())
+	})
+}
+
+func TestGetAuthzSupervisorCompany(t *testing.T) {
+	t.Run("should success get authz supervisor", func(t *testing.T) {
+		company := &Company{}
+
+		assert.Empty(t, company.GetAuthzSupervisor())
+	})
+}
+
+func TestGetAuthzAdminCompany(t *testing.T) {
+	t.Run("should success get authz admin", func(t *testing.T) {
+		company := &Company{
+			AuthzAdmin: "test",
+		}
+
+		assert.NotEmpty(t, company.GetAuthzAdmin())
+	})
+}
+
+func TestToBytesCompany(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		company := &Company{Name: "test"}
+
+		assert.NotEmpty(t, company.ToBytes())
+	})
+}

@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
@@ -41,6 +42,7 @@ type Service struct {
 	repoAccountCompany    repositoryAccountCompany.IAccountCompany
 	repoAccountRepository repoAccountRepository.IAccountRepository
 	repositoryRepo        repositoryRepo.IRepository
+	accountRepository     repositoryAccount.IAccount
 }
 
 func NewHorusAuthService(postgresRead relational.InterfaceRead) services.IAuthService {
@@ -49,6 +51,7 @@ func NewHorusAuthService(postgresRead relational.InterfaceRead) services.IAuthSe
 		repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(postgresRead, nil),
 		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, nil),
 		repositoryRepo:        repositoryRepo.NewRepository(postgresRead, nil),
+		accountRepository:     repositoryAccount.NewAccountRepository(postgresRead, nil),
 	}
 }
 
@@ -104,6 +107,7 @@ func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntitie
 		authEnums.RepositoryMember:     s.isRepositoryMember,
 		authEnums.RepositorySupervisor: s.isRepositorySupervisor,
 		authEnums.RepositoryAdmin:      s.isRepositoryAdmin,
+		authEnums.ApplicationAdmin:     s.isApplicationAdmin,
 	}
 }
 
@@ -183,4 +187,18 @@ func (s *Service) isRepositoryAdmin(authorizationData *authEntities.Authorizatio
 func (s *Service) isNotCompanyAdmin(authorizationData *authEntities.AuthorizationData, accountID uuid.UUID) bool {
 	accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
 	return errCompany != nil || accountCompany.IsNotAdmin()
+}
+
+func (s *Service) isApplicationAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	if err != nil {
+		return false, errors.ErrorUnauthorized
+	}
+
+	if account, errRepository := s.accountRepository.GetByAccountID(
+		accountID); errRepository != nil || account.IsNotApplicationAdminAccount() {
+		return false, errors.ErrorUnauthorized
+	}
+
+	return true, nil
 }
