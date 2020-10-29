@@ -27,7 +27,10 @@ import { getAccessToken, getRefreshToken } from 'helpers/localStorage/tokens';
 
 const login = (email: string, password: string) => {
   // return http.post(`${SERVICE_ACCOUNT}/api/account/login`, { email, password });
-  return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, { email, password });
+  return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, {
+    email,
+    password,
+  });
 };
 
 const logout = () => http.post(`${SERVICE_ACCOUNT}/api/account/logout`);
