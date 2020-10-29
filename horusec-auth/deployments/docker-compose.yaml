@@ -19,7 +19,7 @@ services:
   horusec-account:
     build:
       context: ../../
-      dockerfile: ./horusec-account/deployments/Dockerfile
+      dockerfile: ./horusec-account/deployments/Dockerfile.dev
     depends_on:
       - postgresql
     restart: always
