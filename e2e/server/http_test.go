@@ -62,6 +62,7 @@ func TestServer(t *testing.T) {
 		}, repositoryToken)
 		RunDashboardByCompany(t, bearerToken, companyID)
 		RunDashboardByRepository(t, bearerToken, companyID, repositoryID)
+		RunCompanyTokenCRUD(t, bearerToken, companyID)
 		Logout(t, bearerToken)
 	})
 	fmt.Println("All tests was finished in server test")
@@ -139,13 +140,13 @@ func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	companyID := CreateCompany(t, bearerToken, &accountentities.Company{
 		Name:  "zup",
 	})
-	_ = ReadAllCompanies(t, bearerToken)
+	allCompanies := ReadAllCompanies(t, bearerToken)
+	assert.Contains(t, allCompanies, "zup")
 	UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
 		Name:  "zup-1",
 	})
 	allCompaniesUpdated := ReadAllCompanies(t, bearerToken)
-	allCompaniesBytes, _ := json.Marshal(allCompaniesUpdated)
-	assert.Contains(t, string(allCompaniesBytes), "zup-1")
+	assert.Contains(t, allCompaniesUpdated, "zup-1")
 	DeleteCompany(t, bearerToken, companyID)
 	return CreateCompany(t, bearerToken, &accountentities.Company{
 		Name:  "zup",
@@ -156,9 +157,36 @@ func RunRepositoryCRUD(t *testing.T, bearerToken, companyID string) string {
 	repositoryID := CreateRepository(t, bearerToken, companyID, &accountentities.Repository{
 		Name: "horusec",
 	})
-	return repositoryID
+	allRepositories := ReadAllRepositories(t, bearerToken, companyID)
+	assert.Contains(t, allRepositories, "horusec")
+	UpdateRepository(t, bearerToken, companyID, repositoryID, &accountentities.Repository{
+		Name:  "horusec-1",
+	})
+	allRepositoriesUpdated := ReadAllRepositories(t, bearerToken, companyID)
+	assert.Contains(t, allRepositoriesUpdated, "horusec-1")
+	DeleteRepository(t, bearerToken, companyID, repositoryID)
+	return CreateRepository(t, bearerToken, companyID, &accountentities.Repository{
+		Name: "horusec",
+	})
 }
 
 func RunRepositoryTokenCRUD(t *testing.T, bearerToken, companyID, repositoryID string) string {
+	_ = GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
+	allTokens := ReadAllRepositoryToken(t, bearerToken, companyID, repositoryID)
+	assert.Contains(t, allTokens, "access_token")
+	allTokensStruct := []api.Token{}
+	assert.NoError(t, json.Unmarshal([]byte(allTokens), &allTokensStruct))
+	assert.NotEmpty(t, allTokensStruct)
+	RevokeRepositoryToken(t, bearerToken, companyID, repositoryID, allTokensStruct[0].TokenID.String())
 	return GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
+}
+
+func RunCompanyTokenCRUD(t *testing.T, bearerToken string, companyID string) {
+	_ = GenerateCompanyToken(t, bearerToken, companyID, api.Token{Description: "access_token"})
+	allTokens := ReadAllCompanyToken(t, bearerToken, companyID)
+	assert.Contains(t, allTokens, "access_token")
+	allTokensStruct := []api.Token{}
+	assert.NoError(t, json.Unmarshal([]byte(allTokens), &allTokensStruct))
+	assert.NotEmpty(t, allTokensStruct)
+	RevokeCompanyToken(t, bearerToken, companyID, allTokensStruct[0].TokenID.String())
 }

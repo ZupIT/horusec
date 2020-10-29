@@ -22,8 +22,8 @@
   - [ ] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
-- [ ] Create, Read, and Delete company token
-- [ ] Create, Read, and Delete repositories
+- [X] Create, Read, and Delete company token
+- [X] Create, Read, and Delete repositories
 - [ ] Invite, Read, Update and Remove users in company
   - [ ] Horusec auth type
   - [ ] Ldap auth type
@@ -32,7 +32,7 @@
   - [ ] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
-- [ ] Create, Read, and Delete repository token
+- [X] Create, Read, and Delete repository token
 - [ ] Get Dashboard content
   - [ ] Company view
   - [ ] Repository view
