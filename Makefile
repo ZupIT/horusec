@@ -46,7 +46,11 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 test-e2e:
-	$(GO) clean -testcache && $(GO) test -v ./e2e/e2e_test.go -timeout=5m -parallel=1 -failfast
+	go get -v ./e2e/...
+	go get -v ./horusec-cli/...
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/server/... -timeout=5m -parallel=1 -failfast
 
 # Run all steps required to pass on pipeline
 pipeline: fmt lint test coverage build install-manager lint-manager build-manager
@@ -76,6 +80,25 @@ compose-down:
 # Up all containers on depends to the project run
 compose-up:
 	docker-compose -f deployments/$(COMPOSE_FILE_NAME) up -d --build --force-recreate
+
+# ========================================================================================= #
+
+compose-development-kit:
+	docker-compose -f development-kit/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-api:
+	docker-compose -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-messages:
+	docker-compose -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-account:
+	docker-compose -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-analytic:
+	docker-compose -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-auth:
+	docker-compose -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-e2e:
+	docker-compose -f e2e/deployments/docker-compose.yaml up -d --build --force-recreate
+
+# ========================================================================================= #
 
 migrate:
 	chmod +x ./deployments/scripts/migration-run.sh
