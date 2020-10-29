@@ -2,15 +2,15 @@
 
 ## Horusec server
 - [ ] Create account
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Logout
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Authorize
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Reset account password
@@ -23,6 +23,7 @@
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Create, Read, and Delete company token
+- [ ] Create, Read, and Delete repositories
 - [ ] Invite, Read, Update and Remove users in company
   - [ ] Horusec auth type
   - [ ] Ldap auth type

@@ -46,7 +46,7 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 test-e2e:
-	$(GO) clean -testcache && $(GO) test -v ./e2e/e2e_test.go -timeout=5m -parallel=1 -failfast
+	$(GO) clean -testcache && $(GO) test -v ./e2e/... -timeout=5m -parallel=1 -failfast
 
 # Run all steps required to pass on pipeline
 pipeline: fmt lint test coverage build install-manager lint-manager build-manager
@@ -91,6 +91,8 @@ compose-horusec-analytic:
 	docker-compose -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-auth:
 	docker-compose -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-e2e:
+	docker-compose -f e2e/deployments/docker-compose.yaml up -d --build --force-recreate
 
 # ========================================================================================= #
 

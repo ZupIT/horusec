@@ -20,6 +20,6 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Setup External Dependences
-      run: COMPOSE_FILE_NAME="docker-compose.dev.yaml" make compose
+      run: make compose-e2e
     - name: e2e
       run: make test-e2e
