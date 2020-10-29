@@ -79,6 +79,16 @@ services:
       HORUSEC_KEYCLOAK_CLIENT_ID: ${HORUSEC_KEYCLOAK_CLIENT_ID}
       HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET}
       HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM}
+      HORUS_LDAP_BASE: "dc=example,dc=org"
+      HORUS_LDAP_HOST: "localhost"
+      HORUS_LDAP_PORT: 389
+      HORUS_LDAP_USESSL: false
+      HORUS_LDAP_SKIP_TLS: true
+      HORUS_LDAP_INSECURE_SKIP_VERIFY: true
+      HORUS_LDAP_BINDDN: "cn=admin,dc=example,dc=org"
+      HORUS_LDAP_BINDPASSWORD: admin
+      HORUS_LDAP_USERFILTER: "(uid=%s)"
+      HORUS_LDAP_GROUPFILTER: "(memberUid=%s)"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
