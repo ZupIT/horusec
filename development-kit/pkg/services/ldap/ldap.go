@@ -39,10 +39,6 @@ type ILdapClient interface {
 	Bind(username, password string) error
 }
 
-func newLdapClient() ILdapClient {
-	return &ldap.Conn{}
-}
-
 type Service struct {
 	Attributes         []string
 	Base               string
@@ -73,7 +69,6 @@ func NewLDAPClient() ILDAPService {
 		UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
 		GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
 		Attributes:         []string{"uid", "mail", "givenName"},
-		Conn:               newLdapClient(),
 	}
 }
 
