@@ -186,9 +186,6 @@ github.com/jinzhu/gorm/dialects/sqlite
 github.com/jinzhu/inflection
 # github.com/josharian/intern v1.0.0
 github.com/josharian/intern
-# github.com/jtblin/go-ldap-client v0.0.0-20170223121919-b73f66626b33
-## explicit
-github.com/jtblin/go-ldap-client
 # github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a
 github.com/juju/ansiterm
 github.com/juju/ansiterm/tabwriter
