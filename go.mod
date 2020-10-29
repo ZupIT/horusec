@@ -10,7 +10,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/auth0/go-jwt-middleware v0.0.0-20200810150920-a32d7af194d1
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
-	github.com/bmatcuk/doublestar/v2 v2.0.1
+	github.com/bmatcuk/doublestar/v2 v2.0.3
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/davecgh/go-spew v1.1.1
 	github.com/denisenkom/go-mssqldb v0.0.0-20200910202707-1e08a3fab204 // indirect
@@ -21,8 +21,8 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
 	github.com/go-enry/go-enry/v2 v2.5.2
-	github.com/go-openapi/spec v0.19.10 // indirect
-	github.com/go-openapi/swag v0.19.10 // indirect
+	github.com/go-openapi/spec v0.19.11 // indirect
+	github.com/go-openapi/swag v0.19.11 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/google/uuid v1.1.2
@@ -59,13 +59,14 @@ require (
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
-	github.com/swaggo/swag v1.6.8
+	github.com/swaggo/swag v1.6.9
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
-	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0
-	golang.org/x/sys v0.0.0-20201018230417-eeed37f84f13 // indirect
-	golang.org/x/tools v0.0.0-20201017001424-6003fad69a88 // indirect
+	golang.org/x/net v0.0.0-20201029055024-942e2f445f3c
+	golang.org/x/sys v0.0.0-20201029080932-201ba4db2418 // indirect
+	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/tools v0.0.0-20201029182919-e7a17c4c1366 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/ini.v1 v1.62.0 // indirect

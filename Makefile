@@ -46,8 +46,11 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 test-e2e:
-	go get -t -v -u ./...
-	$(GO) clean -testcache && $(GO) test -v ./e2e/... -timeout=5m -parallel=1 -failfast
+	go get -v ./e2e/...
+	go get -v ./horusec-cli/...
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/server/... -timeout=5m -parallel=1 -failfast
 
 # Run all steps required to pass on pipeline
 pipeline: fmt lint test coverage build install-manager lint-manager build-manager
