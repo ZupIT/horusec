@@ -7,7 +7,7 @@
   "horusecCliPrintOutputType": "text",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-  "horusecCliFilesOrPathsToIgnore": "**/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, **/development-kit/pkg/enums/engine/advisories/**, **/horusec-lp/.cache/**, **/horusec-lp/public/**, **/deployments/docker-compose*",
+  "horusecCliFilesOrPathsToIgnore": "**/e2e/**, **/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, **/development-kit/pkg/enums/engine/advisories/**, **/horusec-lp/.cache/**, **/horusec-lp/public/**, **/deployments/docker-compose*",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliProjectPath": "./",
   "horusecCliFalsePositiveHashes": "e2eaa19612eed0124b1fec396f8d41381c618c677c2025fc07c1cd0ccbe92b3c, 2b156198552b17c44bab579d68b8cb4204789859ef69a37a7a11e65667cbc66f, 2ce87bddc40e085562618f441750eeefe3cffc79d0b05b2e07a98f644c55b2c5",

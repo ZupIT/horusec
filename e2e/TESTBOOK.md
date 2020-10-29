@@ -1,13 +1,21 @@
 # Test book
 
 ## Horusec server
-- [ ] Create account, Login, Logout, Authorize
+- [ ] Create account
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Logout
+  - [ ] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Authorize
   - [ ] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Reset account password
 - [ ] Create, Read, Update and Delete company
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Create, Read, Update and Delete company with application admin enable
@@ -30,17 +38,6 @@
 - [ ] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
 
 ## Horusec CLI
-- [ ] Test each language:
-  - [ ] Git (GitLeaks)
-  - [ ] Python (Bandit and Safety)
-  - [ ] Golang (GoSec)
-  - [ ] .NET (SecurityCodeScan)
-  - [ ] Ruby (Brakeman)
-  - [ ] JavaScript (NpmAudit and YarnAudit)
-  - [ ] Java (Horusec-Java)
-  - [ ] Kotlin (Horusec-Kotlin)
-  - [ ] Leaks (Horusec-Leaks)
-  - [ ] Terraform (TfSec)
 - [ ] Setup log level
 - [ ] Output TEXT
 - [ ] Output JSON
@@ -75,7 +72,18 @@
   - [ ] leaks
   - [ ] hlc
 
-## Generics repositories to test
+### Run analysis examples
+  - [X] GoLang
+  - [X] C#
+  - [X] Ruby
+  - [X] Python
+  - [X] Java
+  - [X] Kotlin
+  - [X] Javascript
+  - [X] Leaks
+  - [X] Terraform
+
+### Generics repositories to test
 - [ ] Kubernetes alone
 - [ ] Apache Kafka
 - [ ] gVisor
