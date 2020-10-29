@@ -15,17 +15,24 @@
  */
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+import { HorusecConfig } from 'helpers/interfaces/HorusecConfig';
 
-const getCurrentAuthType = (): string => {
-  return window.localStorage.getItem(localStorageKeys.AUTH_TYPE);
+const initialValues: HorusecConfig = {
+  authType: null,
+  applicationAdminEnable: false,
 };
 
-const setCurrenAuthType = (value: string) => {
-  window.localStorage.setItem(localStorageKeys.AUTH_TYPE, value);
+const getCurrentConfig = (): HorusecConfig => {
+  const config = window.localStorage.getItem(localStorageKeys.CONFIG);
+  return config ? JSON.parse(config) : initialValues;
 };
 
-const clearCurrentAuthType = () => {
-  window.localStorage.removeItem(localStorageKeys.AUTH_TYPE);
+const setCurrenConfig = (value: HorusecConfig) => {
+  window.localStorage.setItem(localStorageKeys.CONFIG, JSON.stringify(value));
 };
 
-export { getCurrentAuthType, setCurrenAuthType, clearCurrentAuthType };
+const clearCurrentConfig = () => {
+  window.localStorage.removeItem(localStorageKeys.CONFIG);
+};
+
+export { getCurrentConfig, setCurrenConfig, clearCurrentConfig };

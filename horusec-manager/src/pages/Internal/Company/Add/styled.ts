@@ -58,7 +58,7 @@ const Wrapper = styled.div`
 const Label = styled.label`
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.text.secundary};
-  width: 100px;
+  width: 150px;
 `;
 
 export default {

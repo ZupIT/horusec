@@ -23,7 +23,7 @@ import { isEmptyString } from 'helpers/validators';
 import { useHistory, useParams } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
 import { authTypes } from 'helpers/enums/authTypes';
-import { getCurrentAuthType } from 'helpers/localStorage/currentAuthType';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 interface RouterStateProps {
   companyName: string;
@@ -90,7 +90,7 @@ function EditCompany({
           initialValue={companyName.value}
         />
 
-        {getCurrentAuthType() === authTypes.LDAP ? (
+        {getCurrentConfig().authType === authTypes.LDAP ? (
           <>
             <Styled.SubTitle>
               {t('COMPANY_SCREEN.REFERENCE_GROUP')}
