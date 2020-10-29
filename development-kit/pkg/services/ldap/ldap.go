@@ -20,6 +20,7 @@ import (
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"gopkg.in/ldap.v2"
+	"time"
 )
 
 type ILDAPService interface {
@@ -27,6 +28,19 @@ type ILDAPService interface {
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
 	GetGroupsOfUser(username string) ([]string, error)
+}
+
+type ILdapClient interface {
+	Start()
+	Close()
+	SetTimeout(timeout time.Duration)
+	StartTLS(config *tls.Config) error
+	Search(searchRequest *ldap.SearchRequest) (*ldap.SearchResult, error)
+	Bind(username, password string) error
+}
+
+func newLdapClient() ILdapClient {
+	return &ldap.Conn{}
 }
 
 type Service struct {
@@ -38,7 +52,7 @@ type Service struct {
 	Host               string
 	ServerName         string
 	UserFilter         string
-	Conn               *ldap.Conn
+	Conn               ILdapClient
 	Port               int
 	InsecureSkipVerify bool
 	UseSSL             bool
@@ -59,6 +73,7 @@ func NewLDAPClient() ILDAPService {
 		UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
 		GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
 		Attributes:         []string{"uid", "mail", "givenName"},
+		Conn:               newLdapClient(),
 	}
 }
 
@@ -157,11 +172,7 @@ func (s *Service) searchAndCreateUser(username, password string) (bool, map[stri
 }
 
 func (s *Service) getDNBySearchResult(searchResult *ldap.SearchResult) string {
-	if searchResult.Entries != nil && len(searchResult.Entries) > 0 {
-		return searchResult.Entries[0].DN
-	}
-
-	return ""
+	return searchResult.Entries[0].DN
 }
 
 func (s *Service) bindByEnvVars() error {
@@ -194,7 +205,7 @@ func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequ
 }
 
 func (s *Service) validateSearchResult(searchResult *ldap.SearchResult) error {
-	if len(searchResult.Entries) < 1 {
+	if searchResult == nil || searchResult.Entries == nil || len(searchResult.Entries) < 1 {
 		return errorsEnums.ErrorUserDoesNotExist
 	}
 
