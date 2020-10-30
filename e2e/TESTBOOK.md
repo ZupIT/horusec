@@ -23,7 +23,7 @@
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [ ] Create, Read, Update and Delete company with application admin enable
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [X] Create, Read, and Delete company token

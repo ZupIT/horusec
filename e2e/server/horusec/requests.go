@@ -31,17 +31,6 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func ValidateAccount(t *testing.T, accountID string) {
-	validateAccountResp, err := http.Get("http://localhost:8003/api/account/validate/" + accountID)
-	if err != nil {
-		assert.Contains(t, err.Error(), "Get \"http://localhost:8043\": ")
-	} else {
-		assert.NoError(t, err, "validate account, error mount request")
-		assert.Equal(t, http.StatusOK, validateAccountResp.StatusCode, "validate account, error send request")
-		assert.NoError(t, validateAccountResp.Body.Close())
-	}
-}
-
 func Login(t *testing.T, credentials *accountentities.LoginData) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
