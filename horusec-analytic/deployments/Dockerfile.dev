@@ -3,6 +3,8 @@ FROM golang:latest
 COPY . /go/src/github.com/ZupIT/horusec
 WORKDIR /go/src/github.com/ZupIT/horusec
 
+RUN go get -t -v -u ./horusec-analytic/...
+
 EXPOSE 8000
 
 CMD ["go", "run", "horusec-analytic/cmd/app/main.go"]
