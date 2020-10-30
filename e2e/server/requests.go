@@ -356,7 +356,7 @@ func GetAnalysisByID(t *testing.T, analysisID, authorization string) string {
 }
 
 func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID string) []byte {
-	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartContent in route: " + route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"
@@ -428,7 +428,7 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 
 func GetAllVulnerabilitiesToManager(t *testing.T, bearerToken, companyID, repositoryID string, queryString string) string {
 	fmt.Println("Running test for GetAllVulnerabilitiesToManager")
-	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management?" + queryString, nil)
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management?"+queryString, nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -527,7 +527,7 @@ func RemoveUserInCompany(t *testing.T, bearerToken, companyID, accountID string)
 	assert.NoError(t, resp.Body.Close())
 }
 func GetChartContentWithoutTreatment(t *testing.T, route, bearerToken, companyID, repositoryID string) httpResponse.Interface {
-	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartContent in route: " + route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"

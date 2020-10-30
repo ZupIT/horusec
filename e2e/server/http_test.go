@@ -65,9 +65,9 @@ func TestServer(t *testing.T) {
 	t.Run("Should tests default auth-type (horusec) http requests", func(t *testing.T) {
 		// TESTBOOK: Create account - Horusec auth type
 		CreateAccount(t, &accountentities.Account{
-			Email:              "e2e@example.com",
-			Password:           "Ch@ng3m3",
-			Username:           "e2e_user",
+			Email:    "e2e@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user",
 		})
 		// TESTBOOK: Login - Horusec auth type
 		contentLogin := Login(t, &accountentities.LoginData{
@@ -109,19 +109,19 @@ func TestServer(t *testing.T) {
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	t.Run("Should create an company, check if it exists, update your name check if name was updated delete a company and return new company to manager in other steps", func(t *testing.T) {
 		companyID := CreateCompany(t, bearerToken, &accountentities.Company{
-			Name:  "zup",
+			Name: "zup",
 		})
 		allCompanies := ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompanies, "zup")
 		UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
-			Name:  "zup-1",
+			Name: "zup-1",
 		})
 		allCompaniesUpdated := ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompaniesUpdated, "zup-1")
 		DeleteCompany(t, bearerToken, companyID)
 	})
 	return CreateCompany(t, bearerToken, &accountentities.Company{
-		Name:  "zup",
+		Name: "zup",
 	})
 }
 
@@ -133,7 +133,7 @@ func RunRepositoryCRUD(t *testing.T, bearerToken, companyID string) string {
 		allRepositories := ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositories, "horusec")
 		UpdateRepository(t, bearerToken, companyID, repositoryID, &accountentities.Repository{
-			Name:  "horusec-1",
+			Name: "horusec-1",
 		})
 		allRepositoriesUpdated := ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositoriesUpdated, "horusec-1")
@@ -183,7 +183,7 @@ func RunAnalysisRoutes(t *testing.T, repositoryToken, companyToken string) {
 	})
 	t.Run("Should create an analysis using company token and check if exists your content in system", func(t *testing.T) {
 		analysisIDInsertedWithCompanyToken := InsertAnalysisWithCompanyToken(t, &api.AnalysisData{
-			Analysis: test.CreateAnalysisMock(),
+			Analysis:       test.CreateAnalysisMock(),
 			RepositoryName: "new-repository",
 		}, companyToken)
 		contentInsertedWithCompanyToken := GetAnalysisByID(t, analysisIDInsertedWithCompanyToken, repositoryToken)
@@ -298,9 +298,9 @@ func RunManagerVulnerabilities(t *testing.T, bearerToken, companyID, repositoryI
 func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 	t.Run("Should create new user and invite to existing company with permission of the member after update your permission to admin and check if is enable view dashboard by company and remove user from company", func(t *testing.T) {
 		account2 := &accountentities.Account{
-			Email:              "e2e_test2@example.com",
-			Password:           "Ch@ng3m3",
-			Username:           "e2e_user_test2",
+			Email:    "e2e_test2@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user_test2",
 		}
 		companyIDParsed, _ := uuid.Parse(companyID)
 
@@ -309,9 +309,9 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 
 		// Invite user to existing company
 		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
-			Role:         rolesEnum.Member,
-			Email:        account2.Email,
-			CompanyID:    companyIDParsed,
+			Role:      rolesEnum.Member,
+			Email:     account2.Email,
+			CompanyID: companyIDParsed,
 		})
 
 		// Check if exist two users in company
@@ -319,7 +319,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		accountRoles := []roles.AccountRole{}
 		assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
 		assert.NotEmpty(t, accountRoles)
-		assert.Equal(t,2, len(accountRoles))
+		assert.Equal(t, 2, len(accountRoles))
 		accountID := ""
 		for _, user := range accountRoles {
 			if user.Email == account2.Email {
@@ -366,9 +366,9 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repositoryID string) {
 	t.Run("Should create new user and invite to existing company and invite to existing repository, with permission of the member in repository after update your permission to admin of repository and check if is enable show all tokens in repository and remove user from repository", func(t *testing.T) {
 		account2 := &accountentities.Account{
-			Email:              "e2e_test3@example.com",
-			Password:           "Ch@ng3m3",
-			Username:           "e2e_user_test3",
+			Email:    "e2e_test3@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user_test3",
 		}
 		companyIDParsed, _ := uuid.Parse(companyID)
 
@@ -377,15 +377,15 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 
 		// Invite new user to existing company
 		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
-			Role:         rolesEnum.Member,
-			Email:        account2.Email,
-			CompanyID:    companyIDParsed,
+			Role:      rolesEnum.Member,
+			Email:     account2.Email,
+			CompanyID: companyIDParsed,
 		})
 		// Invite new user to existing repository
 		InviteUserToRepository(t, bearerTokenAccount1, companyID, repositoryID, &accountentities.InviteUser{
-			Role:         rolesEnum.Member,
-			Email:        account2.Email,
-			CompanyID:    companyIDParsed,
+			Role:      rolesEnum.Member,
+			Email:     account2.Email,
+			CompanyID: companyIDParsed,
 		})
 
 		// Check if exist two users in repository
@@ -393,7 +393,7 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		accountRoles := []roles.AccountRole{}
 		assert.NoError(t, json.Unmarshal([]byte(allUsersInRepository), &accountRoles))
 		assert.NotEmpty(t, accountRoles)
-		assert.Equal(t,2, len(accountRoles))
+		assert.Equal(t, 2, len(accountRoles))
 		accountID := ""
 		for _, user := range accountRoles {
 			if user.Email == account2.Email {
@@ -437,4 +437,3 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		Logout(t, bearerTokenAccount2)
 	})
 }
-
