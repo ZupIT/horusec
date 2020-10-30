@@ -11,6 +11,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
+	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -41,7 +42,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 	}
 }
 
-func Login(t *testing.T, credentials *accountentities.LoginData) (bearerToken string, refreshToken string) {
+func Login(t *testing.T, credentials *accountentities.LoginData) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
 		"http://localhost:8003/api/account/login",
@@ -54,9 +55,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) (bearerToken st
 	var loginResponse map[string]map[string]string
 	_ = json.NewDecoder(loginResp.Body).Decode(&loginResponse)
 	assert.NoError(t, loginResp.Body.Close())
-	bearerToken = "Bearer " + loginResponse["content"]["accessToken"]
-	refreshToken = loginResponse["content"]["refreshToken"]
-	return bearerToken, refreshToken
+	return loginResponse["content"]
 }
 
 func Logout(t *testing.T, bearerToken string) {
@@ -102,7 +101,7 @@ func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *
 	assert.NotEmpty(t, body["content"])
 }
 
-func ReadAllCompanies(t *testing.T, bearerToken string) string {
+func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) string {
 	fmt.Println("Running test for ReadAllCompanies")
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8003/api/companies", nil)
 	req.Header.Add("Authorization", bearerToken)
@@ -113,7 +112,9 @@ func ReadAllCompanies(t *testing.T, bearerToken string) string {
 	var body map[string]interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&body)
 	assert.NoError(t, resp.Body.Close())
-	assert.NotEmpty(t, body["content"])
+	if isCheckBodyEmpty {
+		assert.NotEmpty(t, body["content"])
+	}
 	content, _ := json.Marshal(body["content"])
 	return string(content)
 }
@@ -162,7 +163,7 @@ func UpdateRepository(t *testing.T, bearerToken, companyID, repositoryID string,
 	assert.NoError(t, resp.Body.Close())
 }
 
-func ReadAllRepositories(t *testing.T, bearerToken, companyID string) string {
+func ReadAllRepositories(t *testing.T, bearerToken, companyID string, isCheckBodyEmpty bool) string {
 	fmt.Println("Running test for ReadAllRepositories")
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8003/api/companies/"+companyID+"/repositories", nil)
 	req.Header.Add("Authorization", bearerToken)
@@ -173,7 +174,9 @@ func ReadAllRepositories(t *testing.T, bearerToken, companyID string) string {
 	var body map[string]interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&body)
 	assert.NoError(t, resp.Body.Close())
-	assert.NotEmpty(t, body["content"])
+	if isCheckBodyEmpty {
+		assert.NotEmpty(t, body["content"])
+	}
 	content, _ := json.Marshal(body["content"])
 	return string(content)
 }
@@ -226,7 +229,14 @@ func ReadAllRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID s
 	content, _ := json.Marshal(body["content"])
 	return string(content)
 }
-
+func ReadAllRepositoryTokenWithoutTreatment(t *testing.T, bearerToken, companyID, repositoryID string) httpResponse.Interface {
+	fmt.Println("Running test for ReadAllRepositoryToken")
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens", nil)
+	req.Header.Add("Authorization", bearerToken)
+	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
+	assert.NoError(t, err)
+	return res
+}
 func RevokeRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID, tokenID string) {
 	fmt.Println("Running test for RevokeRepositoryToken")
 	req, _ := http.NewRequest(http.MethodDelete, "http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens/"+tokenID, nil)
@@ -450,12 +460,11 @@ func UpdateVulnerabilitiesType(t *testing.T, bearerToken, companyID, repositoryI
 	content, _ := json.Marshal(body["content"])
 	return string(content)
 }
-
 func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodPost,
-		"http://localhost:8000/api/companies/"+companyID+"/roles",
+		"http://localhost:8003/api/companies/"+companyID+"/roles",
 		bytes.NewReader(user.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
@@ -470,7 +479,7 @@ func ReadAllUserInCompany(t *testing.T, bearerToken, companyID string) string {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://localhost:8000/api/companies/"+companyID+"/roles",
+		"http://localhost:8003/api/companies/"+companyID+"/roles",
 		nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
@@ -487,8 +496,8 @@ func ReadAllUserInCompany(t *testing.T, bearerToken, companyID string) string {
 func UpdateUserInCompany(t *testing.T, bearerToken, companyID, accountID string, account *roles.AccountCompany) string {
 	fmt.Println("Running test for UpdateUserInCompany")
 	req, _ := http.NewRequest(
-		http.MethodPut,
-		"http://localhost:8000/api/companies/"+companyID+"/roles/"+accountID,
+		http.MethodPatch,
+		"http://localhost:8003/api/companies/"+companyID+"/roles/"+accountID,
 		bytes.NewReader(account.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
@@ -506,13 +515,93 @@ func RemoveUserInCompany(t *testing.T, bearerToken, companyID, accountID string)
 	fmt.Println("Running test for RemoveUserInCompany")
 	req, _ := http.NewRequest(
 		http.MethodDelete,
-		"http://localhost:8000/api/companies/"+companyID+"/roles/"+accountID,
+		"http://localhost:8003/api/companies/"+companyID+"/roles/"+accountID,
 		nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "delete user in company error send request")
 	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func GetChartContentWithoutTreatment(t *testing.T, route, bearerToken, companyID, repositoryID string) httpResponse.Interface {
+	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
+	now := time.Now()
+	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"
+	finalDateStr := now.Format("2006-01-02") + "T23:59:59Z"
+	URL := fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/%s?initialDate=%s&finalDate=%s", companyID, route, initialDateStr, finalDateStr)
+	if repositoryID != "" {
+		URL = fmt.Sprintf("http://localhost:8005/api/dashboard/companies/%s/repositories/%s/%s?initialDate=%s&finalDate=%s", companyID, repositoryID, route, initialDateStr, finalDateStr)
+	}
+	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": bearerToken, "Content-type": "application/json"})
+	assert.NoError(t, err)
+	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
+	assert.NoError(t, err)
+	return res
+}
+
+func InviteUserToRepository(t *testing.T, bearerToken, companyID, repositoryID string, user *accountentities.InviteUser) {
+	fmt.Println("Running test for InviteUserToRepository")
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		"http://localhost:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles",
+		bytes.NewReader(user.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "invite user in repository error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "invite user in repository error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func ReadAllUserInRepository(t *testing.T, bearerToken, companyID, repositoryID string) string {
+	fmt.Println("Running test for InviteUserToCompany")
+	req, _ := http.NewRequest(
+		http.MethodGet,
+		"http://localhost:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles",
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read all user in repository error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read all user in repository error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+func UpdateUserInRepository(t *testing.T, bearerToken, companyID, repositoryID, accountID string, account *roles.AccountCompany) {
+	fmt.Println("Running test for UpdateUserInRepository")
+	req, _ := http.NewRequest(
+		http.MethodPatch,
+		"http://localhost:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles/"+accountID,
+		bytes.NewReader(account.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "update user in repository error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "update user in repository error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func RemoveUserInRepository(t *testing.T, bearerToken, companyID, repositoryID, accountID string) {
+	fmt.Println("Running test for RemoveUserInRepository")
+	req, _ := http.NewRequest(
+		http.MethodDelete,
+		"http://localhost:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles/"+accountID,
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "delete user in repository error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete user in repository error check response")
 	var body map[string]interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&body)
 	assert.NoError(t, resp.Body.Close())

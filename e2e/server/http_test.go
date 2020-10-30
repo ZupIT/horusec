@@ -3,12 +3,16 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"testing"
 
@@ -66,10 +70,11 @@ func TestServer(t *testing.T) {
 			Username:           "e2e_user",
 		})
 		// TESTBOOK: Login - Horusec auth type
-		bearerToken, _ := Login(t, &accountentities.LoginData{
+		contentLogin := Login(t, &accountentities.LoginData{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
+		bearerToken := contentLogin["accessToken"]
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company  - Horusec auth type
 		companyID := RunCompanyCRUD(t, bearerToken)
@@ -91,6 +96,10 @@ func TestServer(t *testing.T) {
 		RunDashboardByRepository(t, bearerToken, companyID, repositoryID)
 		// TESTBOOK: Get Dashboard content - Repository view
 		RunManagerVulnerabilities(t, bearerToken, companyID, repositoryID)
+		// TESTBOOK: Invite, Read, Update and Remove users in company - Horusec auth type
+		RunCRUDUserInCompany(t, bearerToken, companyID)
+		// TESTBOOK: Invite, Read, Update and Remove users in repository - Horusec auth type
+		RunCRUDUserInRepository(t, bearerToken, companyID, repositoryID)
 		// TESTBOOK: Logout - Horusec auth type
 		Logout(t, bearerToken)
 	})
@@ -102,12 +111,12 @@ func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 		companyID := CreateCompany(t, bearerToken, &accountentities.Company{
 			Name:  "zup",
 		})
-		allCompanies := ReadAllCompanies(t, bearerToken)
+		allCompanies := ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompanies, "zup")
 		UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
 			Name:  "zup-1",
 		})
-		allCompaniesUpdated := ReadAllCompanies(t, bearerToken)
+		allCompaniesUpdated := ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompaniesUpdated, "zup-1")
 		DeleteCompany(t, bearerToken, companyID)
 	})
@@ -121,12 +130,12 @@ func RunRepositoryCRUD(t *testing.T, bearerToken, companyID string) string {
 		repositoryID := CreateRepository(t, bearerToken, companyID, &accountentities.Repository{
 			Name: "horusec",
 		})
-		allRepositories := ReadAllRepositories(t, bearerToken, companyID)
+		allRepositories := ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositories, "horusec")
 		UpdateRepository(t, bearerToken, companyID, repositoryID, &accountentities.Repository{
 			Name:  "horusec-1",
 		})
-		allRepositoriesUpdated := ReadAllRepositories(t, bearerToken, companyID)
+		allRepositoriesUpdated := ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositoriesUpdated, "horusec-1")
 		DeleteRepository(t, bearerToken, companyID, repositoryID)
 	})
@@ -286,13 +295,146 @@ func RunManagerVulnerabilities(t *testing.T, bearerToken, companyID, repositoryI
 	})
 }
 
-func RunCRUDUserInCompany(t *testing.T, bearerToken, companyID string) {
+func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 	t.Run("Should create new user and invite to existing company with permission of the member after update your permission to admin and check if is enable view dashboard by company and remove user from company", func(t *testing.T) {
-		//CreateAccount(t, &accountentities.Account{
-		//	Email:              "e2e_test1@example.com",
-		//	Password:           "Ch@ng3m3",
-		//	Username:           "e2e_user_test1",
-		//})
+		account2 := &accountentities.Account{
+			Email:              "e2e_test2@example.com",
+			Password:           "Ch@ng3m3",
+			Username:           "e2e_user_test2",
+		}
+		companyIDParsed, _ := uuid.Parse(companyID)
+
+		// Add new user to invite
+		CreateAccount(t, account2)
+
+		// Invite user to existing company
+		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+			Role:         rolesEnum.Member,
+			Email:        account2.Email,
+			CompanyID:    companyIDParsed,
+		})
+
+		// Check if exist two users in company
+		allUsersInCompany := ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
+		accountRoles := []roles.AccountRole{}
+		assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
+		assert.NotEmpty(t, accountRoles)
+		assert.Equal(t,2, len(accountRoles))
+		accountID := ""
+		for _, user := range accountRoles {
+			if user.Email == account2.Email {
+				accountID = user.AccountID.String()
+			}
+		}
+		assert.NotEmpty(t, accountID)
+		// Login with new user
+		contentLoginAccount2 := Login(t, &accountentities.LoginData{
+			Email:    account2.Email,
+			Password: account2.Password,
+		})
+		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
+
+		// Check if company exists to new user
+		allCompanies := ReadAllCompanies(t, bearerTokenAccount2, true)
+		assert.Contains(t, allCompanies, "zup")
+
+		// Expected return unauthorized because user is not admin of company to see dashboard in company view
+		responseChart := GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		assert.Equal(t, http.StatusUnauthorized, responseChart.GetStatusCode())
+
+		// Update permission of new user to admin
+		UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
+			Role: rolesEnum.Admin,
+		})
+
+		// Expected return OK because user is authorized view dashboard in company view
+		responseChart = GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		assert.Equal(t, http.StatusOK, responseChart.GetStatusCode())
+
+		// Expected remove user from company
+		RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
+
+		// Not show company for user when get all companies
+		allCompanies = ReadAllCompanies(t, bearerTokenAccount2, false)
+		assert.NotContains(t, allCompanies, "zup")
+
+		// Logout session new user
+		Logout(t, bearerTokenAccount2)
+	})
+}
+
+func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repositoryID string) {
+	t.Run("Should create new user and invite to existing company and invite to existing repository, with permission of the member in repository after update your permission to admin of repository and check if is enable show all tokens in repository and remove user from repository", func(t *testing.T) {
+		account2 := &accountentities.Account{
+			Email:              "e2e_test3@example.com",
+			Password:           "Ch@ng3m3",
+			Username:           "e2e_user_test3",
+		}
+		companyIDParsed, _ := uuid.Parse(companyID)
+
+		// Add new user to invite
+		CreateAccount(t, account2)
+
+		// Invite new user to existing company
+		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+			Role:         rolesEnum.Member,
+			Email:        account2.Email,
+			CompanyID:    companyIDParsed,
+		})
+		// Invite new user to existing repository
+		InviteUserToRepository(t, bearerTokenAccount1, companyID, repositoryID, &accountentities.InviteUser{
+			Role:         rolesEnum.Member,
+			Email:        account2.Email,
+			CompanyID:    companyIDParsed,
+		})
+
+		// Check if exist two users in repository
+		allUsersInRepository := ReadAllUserInRepository(t, bearerTokenAccount1, companyID, repositoryID)
+		accountRoles := []roles.AccountRole{}
+		assert.NoError(t, json.Unmarshal([]byte(allUsersInRepository), &accountRoles))
+		assert.NotEmpty(t, accountRoles)
+		assert.Equal(t,2, len(accountRoles))
+		accountID := ""
+		for _, user := range accountRoles {
+			if user.Email == account2.Email {
+				accountID = user.AccountID.String()
+			}
+		}
+		assert.NotEmpty(t, accountID)
+
+		// Login with new user
+		contentLoginAccount2 := Login(t, &accountentities.LoginData{
+			Email:    account2.Email,
+			Password: account2.Password,
+		})
+		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
+
+		// Check if repository exists to new user
+		allRepositories := ReadAllRepositories(t, bearerTokenAccount2, companyID, true)
+		assert.Contains(t, allRepositories, "horusec")
+
+		// Expected return unauthorized because user is not admin of repository to see tokens of repository
+		responseRepositoryToken := ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
+		assert.Equal(t, http.StatusUnauthorized, responseRepositoryToken.GetStatusCode())
+
+		// Update permission of new user to admin in repository
+		UpdateUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID, &roles.AccountCompany{
+			Role: rolesEnum.Admin,
+		})
+
+		// Expected return OK because user is authorized to see tokens of repository
+		responseRepositoryToken = ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
+		assert.Equal(t, http.StatusOK, responseRepositoryToken.GetStatusCode())
+
+		// Expected remove user from company
+		RemoveUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID)
+
+		// Not show repository for user when get all repositories
+		allRepositories = ReadAllRepositories(t, bearerTokenAccount2, companyID, false)
+		assert.NotContains(t, allRepositories, "horusec")
+
+		// Logout session new user
+		Logout(t, bearerTokenAccount2)
 	})
 }
 

@@ -30,14 +30,13 @@
 - [X] Create, Read, Update, and Delete repositories
 - [X] Create, Read, and Delete repository token
 - [ ] Invite, Read, Update and Remove users in company
-  - [ ] Horusec auth type
-  - [ ] Ldap auth type
+  - [X] Horusec auth type
   - [ ] Keycloak auth 
 - [X] Create and Read analysis
   - [X] Repository Token
   - [X] Company Token + repository name
 - [ ] Invite, Read, Update and Remove users in repository
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [X] Get Dashboard content
