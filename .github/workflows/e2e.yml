@@ -7,8 +7,8 @@ on:
     branches: [ "**" ]
 
 jobs:
-  install-build-test-fmt-lint:
-    name: install-build-test-fmt-lint
+  e2e-cli:
+    name: e2e-cli
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
@@ -20,4 +20,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make test-e2e
+        run: make test-e2e-cli
+  e2e-server-horusec:
+    name: e2e-server-horusec
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-server-horusec

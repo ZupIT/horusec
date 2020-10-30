@@ -45,14 +45,19 @@ lint:
 test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
-test-e2e:
-	docker-compose -f e2e/deployments/docker-compose.server.horusec.yaml down -v
+test-e2e-cli:
 	go get -v ./e2e/...
 	go get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
+test-e2e-server-horusec:
+	docker-compose -f e2e/deployments/docker-compose.server.horusec.yaml down -v
 	docker-compose -f e2e/deployments/docker-compose.server.horusec.yaml up -d --build --force-recreate
+	go get -v ./e2e/...
+	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/horusec/... -timeout=5m -parallel=1 -failfast
+
+# ========================================================================================= #
 
 # Run all steps required to pass on pipeline
 pipeline: fmt lint test coverage build install-manager lint-manager build-manager
