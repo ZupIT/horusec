@@ -23,7 +23,7 @@ import {
 } from 'helpers/localStorage/tokens';
 
 const instance: AxiosInstance = axios.create({
-  timeout: 5000,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },

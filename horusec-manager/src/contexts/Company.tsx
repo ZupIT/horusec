@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { setCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTranslation } from 'react-i18next';
+import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
 interface CompanyProviderPops {
   children: JSX.Element;
@@ -33,7 +34,11 @@ interface CompanyCtx {
   isLoading: boolean;
   fetchAll(): void;
   filterAllCompanies(search: string): void;
-  createCompany(name: string, adminEmail?: string): void;
+  createCompany(
+    name: string,
+    adminEmail?: string,
+    ldapGroups?: LDAPGroups
+  ): void;
   updateCompany(companyId: string, name: string): void;
   removeCompany(companyId: string): void;
   handleCurrentCompany(companyId: string): void;
@@ -89,10 +94,14 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
       });
   };
 
-  const createCompany = (name: string, adminEmail?: string) => {
+  const createCompany = (
+    name: string,
+    adminEmail?: string,
+    ldapGroups?: LDAPGroups
+  ) => {
     setLoading(true);
     companyService
-      .create(name, adminEmail)
+      .create(name, adminEmail, ldapGroups)
       .then(() => {
         showSuccessFlash(t('COMPANY_SCREEN.CREATE_SUCCESS'));
         setLoading(false);

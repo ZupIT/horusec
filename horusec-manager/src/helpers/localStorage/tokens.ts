@@ -86,7 +86,7 @@ const isLogged = (): boolean => {
     return true;
   }
 
-  if (authType === authTypes.HORUSEC) {
+  if (authType === authTypes.HORUSEC || authType === authTypes.LDAP) {
     const expiresAt = window.localStorage.getItem(
       localStorageKeys.TOKEN_EXPIRES
     );

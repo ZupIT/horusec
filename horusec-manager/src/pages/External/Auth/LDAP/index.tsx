@@ -16,15 +16,17 @@
 
 import React, { useState, FormEvent } from 'react';
 import Styled from './styled';
+import ExternalLayout from 'layouts/External';
+import useAuth from 'helpers/hooks/useAuth';
 import { isEmptyString } from 'helpers/validators';
 import { useTranslation } from 'react-i18next';
 import { Field } from 'helpers/interfaces/Field';
-import ExternalLayout from 'layouts/External';
-import useAuth from 'helpers/hooks/useAuth';
+import { useHistory } from 'react-router-dom';
 
 function LDAPAuth() {
   const { t } = useTranslation();
   const { loginInProgress, login } = useAuth();
+  const history = useHistory();
 
   const [username, setUsername] = useState<Field>({
     value: '',
@@ -39,7 +41,9 @@ function LDAPAuth() {
     event.preventDefault();
 
     if (username.isValid && password.isValid) {
-      login({ username: username.value, password: password.value });
+      login({ username: username.value, password: password.value }).then(() => {
+        history.push('/organization');
+      });
     }
   };
 

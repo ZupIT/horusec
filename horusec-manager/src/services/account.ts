@@ -77,29 +77,37 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
   const accessToken = getAccessToken();
   const refreshToken = getRefreshToken();
 
-  return new Promise((resolve, reject) => {
-    axios
-      .post(`${SERVICE_ACCOUNT}/api/account/renew-token`, refreshToken, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-type': 'text/plain',
-        },
-      })
-      .then((result: AxiosResponse) => {
-        const user = result.data?.content as User;
+  const handleLogout = () => {
+    clearCurrentUser();
+    window.location.replace('/auth');
+  };
 
-        if (user) {
-          setCurrentUser(user);
-        }
+  if (refreshToken) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${SERVICE_ACCOUNT}/api/account/renew-token`, refreshToken, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-type': 'text/plain',
+          },
+        })
+        .then((result: AxiosResponse) => {
+          const user = result.data?.content as User;
 
-        resolve(user);
-      })
-      .catch((err: AxiosError) => {
-        reject(err);
-        clearCurrentUser();
-        window.location.replace('/auth');
-      });
-  });
+          if (user) {
+            setCurrentUser(user);
+          }
+
+          resolve(user);
+        })
+        .catch((err: AxiosError) => {
+          reject(err);
+          handleLogout();
+        });
+    });
+  } else {
+    handleLogout();
+  }
 };
 
 const getHorusecConfig = () => {
