@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -50,8 +51,8 @@ func TestServer(t *testing.T) {
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
 		})
-		bearerToken, _ := Login(t, &accountentities.LoginData{
-			Email:    "e2e@example.com",
+		bearerToken, _ := Login(t, &authEntities.Credentials{
+			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		companyID := RunCompanyCRUD(t, bearerToken)
