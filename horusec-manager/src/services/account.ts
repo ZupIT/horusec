@@ -24,10 +24,10 @@ import {
 import { AxiosResponse, AxiosError } from 'axios';
 import { User } from 'helpers/interfaces/User';
 import { getAccessToken, getRefreshToken } from 'helpers/localStorage/tokens';
+import { LoginParams } from 'helpers/interfaces/LoginParams';
 
-const login = (email: string, password: string) => {
-  // return http.post(`${SERVICE_ACCOUNT}/api/account/login`, { email, password });
-  return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, { email, password });
+const login = (params: LoginParams) => {
+  return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, params);
 };
 
 const logout = () => http.post(`${SERVICE_ACCOUNT}/api/account/logout`);

@@ -16,15 +16,20 @@
 
 import React, { useState, FormEvent } from 'react';
 import Styled from './styled';
-import { isValidEmail, isEmptyString } from 'helpers/validators';
+import { isEmptyString } from 'helpers/validators';
 import { useTranslation } from 'react-i18next';
 import { Field } from 'helpers/interfaces/Field';
 import ExternalLayout from 'layouts/External';
+import useAuth from 'helpers/hooks/useAuth';
 
 function LDAPAuth() {
   const { t } = useTranslation();
-  const [isLoading, setLoading] = useState(false);
-  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
+  const { loginInProgress, login } = useAuth();
+
+  const [username, setUsername] = useState<Field>({
+    value: '',
+    isValid: false,
+  });
   const [password, setPassword] = useState<Field>({
     value: '',
     isValid: false,
@@ -32,25 +37,22 @@ function LDAPAuth() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
 
-    if (email.isValid && password.isValid) {
-      console.log('submit ldap', email, password);
+    if (username.isValid && password.isValid) {
+      login({ username: username.value, password: password.value });
     }
-
-    setLoading(false);
   };
 
   return (
     <ExternalLayout>
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
-          label={t('LOGIN_SCREEN.EMAIL')}
-          name="email"
+          label={t('LOGIN_SCREEN.USERNAME')}
+          name="username"
           type="text"
-          onChangeValue={(field: Field) => setEmail(field)}
-          invalidMessage={t('LOGIN_SCREEN.INVALID_EMAIL')}
-          validation={isValidEmail}
+          onChangeValue={(field: Field) => setUsername(field)}
+          invalidMessage={t('LOGIN_SCREEN.INVALID_USERNAME')}
+          validation={isEmptyString}
         />
 
         <Styled.Field
@@ -63,8 +65,8 @@ function LDAPAuth() {
         />
 
         <Styled.Submit
-          isDisabled={!password.isValid || !email.isValid}
-          isLoading={isLoading}
+          isDisabled={!password.isValid || !username.isValid}
+          isLoading={loginInProgress}
           text={t('LOGIN_SCREEN.SUBMIT')}
           type="submit"
           rounded

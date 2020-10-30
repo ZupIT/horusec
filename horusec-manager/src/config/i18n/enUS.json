@@ -6,6 +6,8 @@
     "SUBMIT": "Sign in",
     "NO_ACCOUNT": "Don't have an account? Sign up",
     "INVALID_EMAIL": "Invalid e-mail",
+    "INVALID_USERNAME": "Invalid username",
+    "USERNAME": "Username",
     "INVALID_PASS": "Enter password",
     "KEYCLOAK": "Sign in keycloak"
   },
