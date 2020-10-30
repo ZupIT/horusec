@@ -60,6 +60,11 @@ test-e2e-application-admin-horusec:
 	go get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=5m -parallel=1 -failfast
+test-e2e-messages:
+	make compose-e2e-messages
+	go get -v ./e2e/...
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/server/messages/... -timeout=5m -parallel=1 -failfast
 
 # ========================================================================================= #
 
@@ -112,6 +117,9 @@ compose-e2e-server-horusec:
 compose-e2e-application-admin-horusec:
 	docker-compose -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
 	docker-compose -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate
+compose-e2e-messages:
+	docker-compose -f e2e/deployments/docker-compose.server.messages.yaml down -v
+	docker-compose -f e2e/deployments/docker-compose.server.messages.yaml up -d --build --force-recreate
 
 # ========================================================================================= #
 
