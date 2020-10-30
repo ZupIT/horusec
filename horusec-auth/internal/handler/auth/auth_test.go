@@ -174,6 +174,81 @@ func TestAuthByType(t *testing.T) {
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
+
+	t.Run("should return 500 when something went wrong in keycloak", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorAccountEmailNotConfirmed)
+
+		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Keycloak,
+			},
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horusec")
+
+		handler.AuthByType(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong in keycloak", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorAccountEmailNotConfirmed)
+
+		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Ldap,
+			},
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horusec")
+
+		handler.AuthByType(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorAccountEmailNotConfirmed)
+
+		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: "test",
+			},
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
+		w := httptest.NewRecorder()
+
+		r.Header.Add("X_AUTH_TYPE", "horusec")
+
+		handler.AuthByType(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
 }
 
 func TestAuthorize(t *testing.T) {
@@ -218,6 +293,28 @@ func TestAuthorize(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
+
+	t.Run("should return 400 when invalid data", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthorizeByType").Return(true, nil)
+
+		handler := Handler{
+			appConfig:      &app.Config{},
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		dataBytes, _ := json.Marshal(authEntities.AuthorizationData{})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(dataBytes))
+		w := httptest.NewRecorder()
+
+		handler.Authorize(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
 }
 
 func TestHandler_AuthTypes(t *testing.T) {

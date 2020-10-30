@@ -42,7 +42,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 func Login(t *testing.T, credentials *accountentities.LoginData) (bearerToken string, refreshToken string) {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://localhost:8003/api/account/login",
+		"http://localhost:8006/api/auth/authenticate",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)
