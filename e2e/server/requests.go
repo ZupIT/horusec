@@ -185,7 +185,7 @@ func InsertAnalysisWithRepositoryToken(t *testing.T, analysisData *api.AnalysisD
 }
 
 func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID string) []byte {
-	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartContent in route: " + route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"

@@ -58,7 +58,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, nil)
 
 		handler := Handler{
-			appConfig:      &app.Config{
+			appConfig: &app.Config{
 				AuthType: authEnums.Horusec,
 			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
@@ -83,7 +83,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
-			appConfig:      &app.Config{
+			appConfig: &app.Config{
 				AuthType: authEnums.Horusec,
 			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
@@ -106,7 +106,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock := &authController.MockAuthController{}
 
 		handler := Handler{
-			appConfig:      &app.Config{
+			appConfig: &app.Config{
 				AuthType: authEnums.Horusec,
 			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
@@ -131,7 +131,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorWrongEmailOrPassword)
 
 		handler := Handler{
-			appConfig:      &app.Config{
+			appConfig: &app.Config{
 				AuthType: authEnums.Horusec,
 			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
@@ -156,7 +156,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorAccountEmailNotConfirmed)
 
 		handler := Handler{
-			appConfig:      &app.Config{
+			appConfig: &app.Config{
 				AuthType: authEnums.Horusec,
 			},
 			authUseCases:   authUseCases.NewAuthUseCases(),
