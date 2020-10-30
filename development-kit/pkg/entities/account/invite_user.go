@@ -15,6 +15,7 @@
 package account
 
 import (
+	"encoding/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -59,4 +60,9 @@ func (i *InviteUser) SetInviteUserRepositoryAndCompanyID(companyID, repositoryID
 	i.CompanyID = companyID
 	i.RepositoryID = repositoryID
 	return i
+}
+
+func (i *InviteUser) ToBytes() []byte {
+	content, _ := json.Marshal(i)
+	return content
 }

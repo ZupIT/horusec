@@ -46,6 +46,7 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 test-e2e:
+	make compose-e2e
 	go get -v ./e2e/...
 	go get -v ./horusec-cli/...
 	$(GO) clean -testcache
@@ -96,6 +97,7 @@ compose-horusec-analytic:
 compose-horusec-auth:
 	docker-compose -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-e2e:
+	docker-compose -f e2e/deployments/docker-compose.yaml down -v
 	docker-compose -f e2e/deployments/docker-compose.yaml up -d --build --force-recreate
 
 # ========================================================================================= #

@@ -5,6 +5,10 @@
   - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
+- [ ] Login
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
 - [ ] Logout
   - [X] Horusec auth type
   - [ ] Ldap auth type
@@ -23,20 +27,23 @@
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
 - [X] Create, Read, and Delete company token
-- [X] Create, Read, and Delete repositories
+- [X] Create, Read, Update, and Delete repositories
+- [X] Create, Read, and Delete repository token
 - [ ] Invite, Read, Update and Remove users in company
   - [ ] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [ ] Keycloak auth 
+- [X] Create and Read analysis
+  - [X] Repository Token
+  - [X] Company Token + repository name
 - [ ] Invite, Read, Update and Remove users in repository
   - [ ] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
-- [X] Create, Read, and Delete repository token
-- [ ] Get Dashboard content
-  - [ ] Company view
-  - [ ] Repository view
-- [ ] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
+- [X] Get Dashboard content
+  - [X] Company view
+  - [X] Repository view
+- [X] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
 
 ## Horusec CLI
 - [ ] Setup log level

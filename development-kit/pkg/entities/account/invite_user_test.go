@@ -61,3 +61,13 @@ func TestSetInviteUserCompanyID(t *testing.T) {
 		assert.NotEmpty(t, inviteUser.CompanyID)
 	})
 }
+
+func TestInviteUserToBytes(t *testing.T) {
+	t.Run("Should return content in bytes not empty", func(t *testing.T) {
+		inviteUser := InviteUser{
+			Role:  account.Admin,
+			Email: "test@test.com",
+		}
+		assert.NotEmpty(t, inviteUser.ToBytes())
+	})
+}

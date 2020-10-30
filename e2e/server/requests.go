@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	"github.com/stretchr/testify/assert"
@@ -307,6 +309,42 @@ func InsertAnalysisWithRepositoryToken(t *testing.T, analysisData *api.AnalysisD
 	return body["content"]
 }
 
+func InsertAnalysisWithCompanyToken(t *testing.T, analysisData *api.AnalysisData, companyToken string) string {
+	fmt.Println("Running test for InsertAnalysisWithRepositoryToken")
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		"http://localhost:8000/api/analysis",
+		bytes.NewReader(analysisData.ToBytes()),
+	)
+	req.Header.Add("Authorization", companyToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "InsertAnalysisWithRepositoryToken error send response")
+	assert.Equal(t, http.StatusCreated, resp.StatusCode, "InsertAnalysisWithRepositoryToken error check response")
+
+	var body map[string]string
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	return body["content"]
+}
+
+func GetAnalysisByID(t *testing.T, analysisID, authorization string) string {
+	fmt.Println("Running test for GetAnalysisByID")
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/api/analysis/"+analysisID, nil)
+	req.Header.Add("Authorization", authorization)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read analysis by ID error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read analysis by ID error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+
 func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID string) []byte {
 	fmt.Println("Running test for GetChartContent in route: "+ route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
@@ -376,4 +414,106 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 	body, err := res.GetBody()
 	assert.NoError(t, err)
 	return body
+}
+
+func GetAllVulnerabilitiesToManager(t *testing.T, bearerToken, companyID, repositoryID string, queryString string) string {
+	fmt.Println("Running test for GetAllVulnerabilitiesToManager")
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management?" + queryString, nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read vulnerabilities error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read vulnerabilities error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+
+func UpdateVulnerabilitiesType(t *testing.T, bearerToken, companyID, repositoryID, vulnerabilityID string, vulnType dto.UpdateVulnType) string {
+	fmt.Println("Running test for UpdateVulnerabilitiesType")
+	req, _ := http.NewRequest(
+		http.MethodPut,
+		"http://localhost:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management/"+vulnerabilityID+"/type",
+		bytes.NewReader(vulnType.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "update vulnerabilities error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "update vulnerabilities error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+
+func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
+	fmt.Println("Running test for InviteUserToCompany")
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		"http://localhost:8000/api/companies/"+companyID+"/roles",
+		bytes.NewReader(user.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "invite user error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "invite user error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func ReadAllUserInCompany(t *testing.T, bearerToken, companyID string) string {
+	fmt.Println("Running test for InviteUserToCompany")
+	req, _ := http.NewRequest(
+		http.MethodGet,
+		"http://localhost:8000/api/companies/"+companyID+"/roles",
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read all user in company error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read all user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+func UpdateUserInCompany(t *testing.T, bearerToken, companyID, accountID string, account *roles.AccountCompany) string {
+	fmt.Println("Running test for UpdateUserInCompany")
+	req, _ := http.NewRequest(
+		http.MethodPut,
+		"http://localhost:8000/api/companies/"+companyID+"/roles/"+accountID,
+		bytes.NewReader(account.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "update user in company error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "update user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+func RemoveUserInCompany(t *testing.T, bearerToken, companyID, accountID string) {
+	fmt.Println("Running test for RemoveUserInCompany")
+	req, _ := http.NewRequest(
+		http.MethodDelete,
+		"http://localhost:8000/api/companies/"+companyID+"/roles/"+accountID,
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "delete user in company error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
 }
