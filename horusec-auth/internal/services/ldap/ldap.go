@@ -53,7 +53,7 @@ func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.
 func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, error) {
 	ok, data, err := s.client.Authenticate(credentials.Username, credentials.Password)
 	if err != nil || !ok {
-		return nil, errors.ErrorUnauthorized
+		return nil, s.verifyAuthenticateErrors(err)
 	}
 
 	account, err := s.getAccountAndCreateIfNotExist(data)
@@ -62,6 +62,14 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 	}
 
 	return s.setLDAPAuthResponse(account), nil
+}
+
+func (s *Service) verifyAuthenticateErrors(err error) error {
+	if err != nil && err == errors.ErrorUserDoesNotExist {
+		return err
+	}
+
+	return errors.ErrorUnauthorized
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {

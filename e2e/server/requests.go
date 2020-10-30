@@ -7,6 +7,7 @@ import (
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	"github.com/stretchr/testify/assert"
@@ -39,12 +40,13 @@ func ValidateAccount(t *testing.T, accountID string) {
 	}
 }
 
-func Login(t *testing.T, credentials *accountentities.LoginData) (bearerToken string, refreshToken string) {
+func Login(t *testing.T, credentials *authEntities.Credentials) (bearerToken string, refreshToken string) {
 	fmt.Println("Running test for Login")
+	credentialsBytes, _ := json.Marshal(credentials)
 	loginResp, err := http.Post(
-		"http://localhost:8003/api/account/login",
+		"http://localhost:8006/api/auth/authenticate",
 		"text/json",
-		bytes.NewReader(credentials.ToBytes()),
+		bytes.NewReader(credentialsBytes),
 	)
 	assert.NoError(t, err, "login, error mount request")
 	assert.Equal(t, http.StatusOK, loginResp.StatusCode, "login error send request")
@@ -185,7 +187,7 @@ func InsertAnalysisWithRepositoryToken(t *testing.T, analysisData *api.AnalysisD
 }
 
 func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID string) []byte {
-	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartContent in route: " + route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"

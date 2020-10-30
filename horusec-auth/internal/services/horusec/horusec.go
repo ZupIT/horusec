@@ -15,85 +15,84 @@
 package horusec
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	"github.com/google/uuid"
-	"net/http"
-
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
-	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
+	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
+	"github.com/google/uuid"
+	"time"
 )
 
 type Service struct {
-	httpUtil              httpClient.Interface
 	repoAccountCompany    repositoryAccountCompany.IAccountCompany
 	repoAccountRepository repoAccountRepository.IAccountRepository
 	repositoryRepo        repositoryRepo.IRepository
 	accountRepository     repositoryAccount.IAccount
+	accountUseCases       accountUseCases.IAccount
+	cacheRepository       cache.Interface
+	accountRepositoryRepo repoAccountRepository.IAccountRepository
 }
 
-func NewHorusAuthService(postgresRead relational.InterfaceRead) services.IAuthService {
+func NewHorusAuthService(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) services.IAuthService {
 	return &Service{
-		httpUtil:              httpClient.NewHTTPClient(10),
-		repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(postgresRead, nil),
-		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, nil),
-		repositoryRepo:        repositoryRepo.NewRepository(postgresRead, nil),
-		accountRepository:     repositoryAccount.NewAccountRepository(postgresRead, nil),
+		repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(postgresRead, postgresWrite),
+		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, postgresWrite),
+		repositoryRepo:        repositoryRepo.NewRepository(postgresRead, postgresWrite),
+		accountRepository:     repositoryAccount.NewAccountRepository(postgresRead, postgresWrite),
+		accountUseCases:       accountUseCases.NewAccountUseCases(),
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, postgresWrite),
+		cacheRepository:       cache.NewCacheRepository(postgresRead, postgresWrite),
 	}
 }
 
-func (s *Service) Authenticate(
-	credentials *authEntities.Credentials) (interface{}, error) {
-	requestResponse, err := s.sendLoginRequest(credentials)
-	if err != nil {
-		return nil, err
-	}
-
-	loginResponse, err := s.parseToLoginResponse(requestResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	return loginResponse, nil
-}
-
-func (s *Service) sendLoginRequest(credentials *authEntities.Credentials) (httpResponse.Interface, error) {
-	req, _ := http.NewRequest(http.MethodPost, s.getHorusecAccountURL(),
-		bytes.NewReader(s.newLoginRequestData(credentials)))
-	return s.httpUtil.DoRequest(req, nil)
-}
-
-func (s *Service) newLoginRequestData(credentials *authEntities.Credentials) []byte {
+func (s *Service) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
 	loginData := &accountEntities.LoginData{
 		Email:    credentials.Username,
 		Password: credentials.Password,
 	}
 
-	return loginData.ToBytes()
+	return s.login(loginData)
 }
 
-func (s *Service) getHorusecAccountURL() string {
-	return fmt.Sprintf("%s/api/account/login",
-		env.GetEnvOrDefault("HORUSEC_ACCOUNT_URL", "http://0.0.0.0:8003"))
+func (s *Service) login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {
+	account, err := s.accountRepository.GetByEmail(loginData.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.accountUseCases.ValidateLogin(account, loginData); err != nil {
+		return nil, err
+	}
+
+	return s.setLoginResponse(account)
 }
 
-func (s *Service) parseToLoginResponse(
-	requestResponse httpResponse.Interface) (loginResponse map[string]interface{}, err error) {
-	body, _ := requestResponse.GetBody()
-	return loginResponse, json.Unmarshal(body, &loginResponse)
+func (s *Service) setLoginResponse(account *accountEntities.Account) (*accountEntities.LoginResponse, error) {
+	accessToken, expiresAt, _ := s.createTokenWithAccountPermissions(account)
+	refreshToken := jwt.CreateRefreshToken()
+	err := s.cacheRepository.Set(
+		&entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}, time.Hour*2)
+	if err != nil {
+		return nil, err
+	}
+
+	return account.ToLoginResponse(accessToken, refreshToken, expiresAt), nil
+}
+
+func (s *Service) createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error) {
+	accountRepository, _ := s.accountRepositoryRepo.GetOfAccount(account.AccountID)
+	return jwt.CreateToken(account, s.accountUseCases.MapRepositoriesRoles(&accountRepository))
 }
 
 func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {

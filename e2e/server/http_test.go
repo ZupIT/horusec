@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -46,12 +47,12 @@ func TestServer(t *testing.T) {
 	}
 	t.Run("Should tests default auth-type (horusec) http requests", func(t *testing.T) {
 		CreateAccount(t, &accountentities.Account{
-			Email:              "e2e@example.com",
-			Password:           "Ch@ng3m3",
-			Username:           "e2e_user",
-		})
-		bearerToken, _ := Login(t, &accountentities.LoginData{
 			Email:    "e2e@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user",
+		})
+		bearerToken, _ := Login(t, &authEntities.Credentials{
+			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		companyID := RunCompanyCRUD(t, bearerToken)
@@ -137,18 +138,18 @@ func RunDashboardByRepository(t *testing.T, bearerToken, companyID, repositoryID
 
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	companyID := CreateCompany(t, bearerToken, &accountentities.Company{
-		Name:  "zup",
+		Name: "zup",
 	})
 	_ = ReadAllCompanies(t, bearerToken)
 	UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
-		Name:  "zup-1",
+		Name: "zup-1",
 	})
 	allCompaniesUpdated := ReadAllCompanies(t, bearerToken)
 	allCompaniesBytes, _ := json.Marshal(allCompaniesUpdated)
 	assert.Contains(t, string(allCompaniesBytes), "zup-1")
 	DeleteCompany(t, bearerToken, companyID)
 	return CreateCompany(t, bearerToken, &accountentities.Company{
-		Name:  "zup",
+		Name: "zup",
 	})
 }
 
