@@ -48,4 +48,4 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: test-e2e-application-admin-horusec
+        run: make test-e2e-application-admin-horusec
