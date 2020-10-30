@@ -16,9 +16,6 @@ package ldap
 
 import (
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
@@ -32,6 +29,7 @@ import (
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
+	"strings"
 )
 
 type Service struct {
@@ -40,13 +38,6 @@ type Service struct {
 	companyRepo    companyRepo.ICompanyRepository
 	repositoryRepo repositoryRepo.IRepository
 	cacheRepo      cache.Interface
-}
-
-type ldapAuthResponse struct {
-	AccessToken string
-	ExpiresAt   time.Time
-	Username    string
-	Email       string
 }
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
@@ -87,10 +78,10 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 	return s.checkIsAuthorized(userGroups, authzGroups)
 }
 
-func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *ldapAuthResponse {
+func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *auth.LdapAuthResponse {
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 
-	return &ldapAuthResponse{
+	return &auth.LdapAuthResponse{
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
 		Username:    account.Username,
