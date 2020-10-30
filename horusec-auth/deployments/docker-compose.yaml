@@ -33,7 +33,7 @@ services:
         max-size: 10m
   horusec-auth:
     build:
-      context: ../
+      context: ../../
       dockerfile: ./horusec-auth/deployments/Dockerfile.dev
     depends_on:
       - postgresql

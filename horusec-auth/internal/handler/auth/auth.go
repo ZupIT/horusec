@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -85,7 +86,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	response, err := h.authController.AuthByType(credentials)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkErrorsByAuthType(w, err)
 		return
 	}
 
@@ -99,6 +100,33 @@ func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) 
 	}
 
 	return credentials, nil
+}
+
+func (h *Handler) checkErrorsByAuthType(w netHTTP.ResponseWriter, err error) {
+	switch h.appConfig.GetAuthType() {
+	case authEnums.Horusec:
+		h.checkLoginErrorsHorusec(w, err)
+	case authEnums.Keycloak:
+		httpUtil.StatusInternalServerError(w, err)
+	case authEnums.Ldap:
+		httpUtil.StatusInternalServerError(w, err)
+	default:
+		httpUtil.StatusInternalServerError(w, err)
+	}
+}
+
+func (h *Handler) checkLoginErrorsHorusec(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrorWrongEmailOrPassword || err == errors.ErrNotFoundRecords {
+		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
+		return
+	}
+
+	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
+		httpUtil.StatusForbidden(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }
 
 // @Tags Auth
