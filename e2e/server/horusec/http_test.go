@@ -1,4 +1,4 @@
-package server
+package horusec
 
 import (
 	"encoding/json"
@@ -25,10 +25,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	migration, err := migrate.New(
-		"file://../../development-kit/pkg/databases/relational/migration",
-		env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable"),
-	)
+	folderOfMigration := "file://../../../development-kit/pkg/databases/relational/migration"
+	connectionStringDB := env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable")
+	migration, err := migrate.New(folderOfMigration, connectionStringDB)
 	if err != nil {
 		logger.LogPanic("Error in create first instance migration: ", err)
 	}
@@ -42,10 +41,7 @@ func TestMain(m *testing.M) {
 	if dbErr != nil {
 		logger.LogPanic("Error in database err to close connection: ", dbErr)
 	}
-	migration, err = migrate.New(
-		"file://../../development-kit/pkg/databases/relational/migration",
-		env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable"),
-	)
+	migration, err = migrate.New(folderOfMigration, connectionStringDB)
 	if err != nil {
 		logger.LogPanic("Error in create second instance migration: ", err)
 	}
@@ -63,20 +59,20 @@ func TestServer(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should tests default auth-type (horusec) http requests", func(t *testing.T) {
-		// TESTBOOK: Create account - Horusec auth type
+		// TESTBOOK: Create account
 		CreateAccount(t, &accountentities.Account{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
 		})
-		// TESTBOOK: Login - Horusec auth type
+		// TESTBOOK: Login
 		contentLogin := Login(t, &accountentities.LoginData{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		bearerToken := contentLogin["accessToken"]
 		// TESTBOOK: Authorize
-		// TESTBOOK: Create, Read, Update and Delete company  - Horusec auth type
+		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update, and Delete repositories
@@ -96,11 +92,11 @@ func TestServer(t *testing.T) {
 		RunDashboardByRepository(t, bearerToken, companyID, repositoryID)
 		// TESTBOOK: Get Dashboard content - Repository view
 		RunManagerVulnerabilities(t, bearerToken, companyID, repositoryID)
-		// TESTBOOK: Invite, Read, Update and Remove users in company - Horusec auth type
+		// TESTBOOK: Invite, Read, Update and Remove users in company
 		RunCRUDUserInCompany(t, bearerToken, companyID)
-		// TESTBOOK: Invite, Read, Update and Remove users in repository - Horusec auth type
+		// TESTBOOK: Invite, Read, Update and Remove users in repository
 		RunCRUDUserInRepository(t, bearerToken, companyID, repositoryID)
-		// TESTBOOK: Logout - Horusec auth type
+		// TESTBOOK: Logout
 		Logout(t, bearerToken)
 	})
 	fmt.Println("All tests was finished in server test")
