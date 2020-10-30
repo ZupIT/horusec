@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		logger.LogPanic("Error restart auth service: " + string(output), err)
 	}
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 	code := m.Run()
 	os.Exit(code)
 }
