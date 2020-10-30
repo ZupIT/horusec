@@ -75,6 +75,7 @@ func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Param Credentials body auth.Credentials true "auth info"
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Failure 403 {object} http.Response{content=string} "STATUS FORBIDDEN"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/auth/authenticate [post]
 func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
@@ -109,7 +110,7 @@ func (h *Handler) checkErrorsByAuthType(w netHTTP.ResponseWriter, err error) {
 	case authEnums.Keycloak:
 		httpUtil.StatusInternalServerError(w, err)
 	case authEnums.Ldap:
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkLoginErrorsLdap(w, err)
 	default:
 		httpUtil.StatusInternalServerError(w, err)
 	}
@@ -123,6 +124,15 @@ func (h *Handler) checkLoginErrorsHorusec(w netHTTP.ResponseWriter, err error) {
 
 	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
 		httpUtil.StatusForbidden(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+func (h *Handler) checkLoginErrorsLdap(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrorUserDoesNotExist {
+		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
 		return
 	}
 

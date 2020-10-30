@@ -57,7 +57,6 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
@@ -171,6 +170,15 @@ paths:
               type: object
         "400":
           description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "403":
+          description: STATUS FORBIDDEN
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'

@@ -70,8 +70,6 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horusec")
-
 		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -95,8 +93,6 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horusec")
-
 		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -117,8 +113,6 @@ func TestAuthByType(t *testing.T) {
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
-
-		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -143,8 +137,6 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horusec")
-
 		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
@@ -167,8 +159,6 @@ func TestAuthByType(t *testing.T) {
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
-
-		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -193,8 +183,6 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horusec")
-
 		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -217,8 +205,6 @@ func TestAuthByType(t *testing.T) {
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
-
-		r.Header.Add("X_AUTH_TYPE", "horusec")
 
 		handler.AuthByType(w, r)
 
@@ -243,11 +229,32 @@ func TestAuthByType(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		r.Header.Add("X_AUTH_TYPE", "horusec")
-
 		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 403 when wrong credentials ldap", func(t *testing.T) {
+		controllerMock := &authController.MockAuthController{}
+
+		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorUserDoesNotExist)
+
+		handler := Handler{
+			appConfig: &app.Config{
+				AuthType: authEnums.Ldap,
+			},
+			authUseCases:   authUseCases.NewAuthUseCases(),
+			authController: controllerMock,
+		}
+
+		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
+		w := httptest.NewRecorder()
+
+		handler.AuthByType(w, r)
+
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 }
 

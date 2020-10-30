@@ -24,6 +24,7 @@ import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
@@ -138,6 +139,28 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock := &ldapservice.Mock{}
 
 		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, nil)
+
+		ldapService := &Service{
+			client:         ldapClientServiceMock,
+			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+		}
+
+		credentials := auth.Credentials{}
+		result, err := ldapService.Authenticate(&credentials)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return return error when failed to authenticate", func(t *testing.T) {
+		databaseRead := &relational.MockRead{}
+		databaseWrite := &relational.MockWrite{}
+		ldapClientServiceMock := &ldapservice.Mock{}
+
+		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, errorsEnum.ErrorUserDoesNotExist)
 
 		ldapService := &Service{
 			client:         ldapClientServiceMock,
