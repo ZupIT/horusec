@@ -1,5 +1,13 @@
 # Test book
 
+# Table of Contents
+
+ * [Horusec server](#horusec-server)
+ * [Horusec messages](#horusec-messages)
+ * [Horusec application admin](#horusec-application-admin)
+ * [Horusec CLI](#horusec-cli)
+ 
+ 
 ## Horusec server
 - [ ] Create account
   - [X] Horusec auth type
@@ -17,12 +25,7 @@
   - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
-- [ ] Reset account password
 - [ ] Create, Read, Update and Delete company
-  - [X] Horusec auth type
-  - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Create, Read, Update and Delete company with application admin enable
   - [X] Horusec auth type
   - [ ] Ldap auth type
   - [ ] Keycloak auth type
@@ -43,6 +46,35 @@
   - [X] Company view
   - [X] Repository view
 - [X] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
+
+## Horusec messages
+- [X] Create account
+- [X] Validate account
+- [X] Login
+- [X] Logout
+- [ ] Reset account password
+
+## Horusec application admin
+- [ ] Create account
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Login
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Logout
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Authorize
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
+- [ ] Create, Read, Update and Delete company
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+  - [ ] Keycloak auth type
 
 ## Horusec CLI
 - [ ] Setup log level
@@ -78,17 +110,15 @@
   - [ ] javaScript
   - [ ] leaks
   - [ ] hlc
-
-### Run analysis examples
-  - [X] GoLang
-  - [X] C#
-  - [X] Ruby
-  - [X] Python
-  - [X] Java
-  - [X] Kotlin
-  - [X] Javascript
-  - [X] Leaks
-  - [X] Terraform
+- [X] Scan languages GoLang
+- [X] Scan languages C#
+- [X] Scan languages Ruby
+- [X] Scan languages Python
+- [X] Scan languages Java
+- [X] Scan languages Kotlin
+- [X] Scan languages Javascript
+- [X] Scan languages Leaks
+- [X] Scan languages Terraform
 
 ### Generics repositories to test
 - [ ] Kubernetes alone
