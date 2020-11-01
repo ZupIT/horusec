@@ -3,6 +3,7 @@ module github.com/ZupIT/horusec
 go 1.14
 
 require (
+	github.com/Masterminds/semver v1.5.0
 	github.com/ZupIT/horusec-engine v0.2.7
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
