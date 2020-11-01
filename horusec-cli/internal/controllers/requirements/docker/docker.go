@@ -15,25 +15,37 @@
 package docker
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os/exec"
-	"strconv"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 )
 
-const MinVersionDockerAccept = 19
-const MinSubVersionDockerAccept = 03
-
-var (
-	ErrMinVersion = fmt.Errorf("%v.%v", MinVersionDockerAccept, MinSubVersionDockerAccept)
-)
+const MinVersionDockerApiAccept = "1.40"
 
 type RequirementDocker struct{}
+
+type DockerVersionClient struct {
+	Version    string `json:"Version"`
+	ApiVersion string `json:"ApiVersion"`
+}
+
+type DockerVersionServer struct {
+	Version    string `json:"Version"`
+	ApiVersion string `json:"ApiVersion"`
+}
+
+type DockerVersion struct {
+	Client DockerVersionClient `json:"Client"`
+	Server DockerVersionServer `json:"Server"`
+}
 
 func NewRequirementDocker() *RequirementDocker {
 	return &RequirementDocker{}
@@ -47,40 +59,39 @@ func (r *RequirementDocker) ValidateDocker() error {
 }
 
 func (r *RequirementDocker) validateIfDockerIsInstalled() error {
-	response, err := r.execDockerVersion()
+	_, err := r.execDockerVersion()
 	if err != nil {
 		return err
-	}
-	if !r.checkIfContainsDockerVersion(response) {
-		return errorsEnums.ErrDockerNotInstalled
 	}
 	return r.checkIfDockerIsRunning()
 }
 
 func (r *RequirementDocker) validateIfDockerIsSupported() error {
-	response, err := r.execDockerVersion()
+	dockerVersion, err := r.execDockerVersion()
 	if err != nil {
 		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
 		return err
 	}
-	if r.checkIfContainsDockerVersion(response) {
-		err := r.validateIfDockerIsRunningInMinVersion(response)
-		if err == nil {
-			return nil
-		}
-		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
+
+	err = r.validateIfDockerIsRunningInMinVersion(dockerVersion)
+	if err == nil {
+		return nil
 	}
+	logger.LogInfo(messages.MsgInfoHowToInstallDocker)
+
 	return errorsEnums.ErrDockerNotInstalled
 }
 
-func (r *RequirementDocker) execDockerVersion() (string, error) {
-	responseBytes, err := exec.Command("docker", "-v").CombinedOutput()
+func (r *RequirementDocker) execDockerVersion() (DockerVersion, error) {
+	var dockerVersion DockerVersion
+	err := jsonUnmarshalDockerCmd(&dockerVersion, "version", "-f", "{{json .}}")
 	if err != nil {
 		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckRequirements+"output: ", errors.New(string(responseBytes)), logger.ErrorLevel)
-		return "", err
+			messages.MsgErrorWhenCheckRequirements+"Error parsing json result from the Docker client: ", err, logger.ErrorLevel)
+		return DockerVersion{}, err
 	}
-	return strings.ToLower(string(responseBytes)), nil
+
+	return dockerVersion, nil
 }
 
 func (r *RequirementDocker) checkIfDockerIsRunning() error {
@@ -92,41 +103,56 @@ func (r *RequirementDocker) checkIfDockerIsRunning() error {
 	return err
 }
 
-func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response string) error {
-	version, subversion, err := r.extractDockerVersionFromString(response)
+func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(dockerVersion DockerVersion) error {
+	versionConstraint, err := semver.NewConstraint(fmt.Sprintf(">= %s", MinVersionDockerApiAccept))
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion+"info: Unable to create semver constraint for Docker Version.", err, logger.ErrorLevel)
 		return err
 	}
-	if version < MinVersionDockerAccept {
-		return errorsEnums.ErrDockerLowerVersion
-	} else if version == MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
-		return errorsEnums.ErrDockerLowerVersion
+
+	currentDockerVersion, err := semver.NewVersion(dockerVersion.Server.ApiVersion)
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion+"info: Unable to parse Docker Version struct.", err, logger.ErrorLevel)
+		return err
 	}
+
+	if versionConstraint.Check(currentDockerVersion) {
+		return nil
+	} else {
+		err = fmt.Errorf("Current Docker API Version: %v (minimum required version: %v)", currentDockerVersion, MinVersionDockerApiAccept)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, err, logger.ErrorLevel)
+		return err
+	}
+}
+
+func jsonUnmarshalDockerCmd(i interface{}, arg ...string) error {
+	var stderr bytes.Buffer
+	var stdout bytes.Buffer
+
+	cmd := exec.Command("docker", arg...)
+
+	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
+
+	if err := cmd.Start(); err != nil {
+		err := fmt.Errorf("Error launching Docker client: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
+		}
+		return err
+	}
+
+	if err := cmd.Wait(); err != nil {
+		err := fmt.Errorf("Error waiting for the Docker client: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
+		}
+		return err
+	}
+
+	if err := json.Unmarshal([]byte(stdout.String()), &i); err != nil {
+		return fmt.Errorf("Error unmarshaling the result of Docker client: %v", err)
+	}
+
 	return nil
-}
-
-func (r *RequirementDocker) extractDockerVersionFromString(response string) (int, int, error) {
-	responseSpited := strings.Split(strings.ToLower(response), "docker version ")
-	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 8 {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
-	}
-	return r.getVersionAndSubVersion(responseSpited[1])
-}
-
-func (r *RequirementDocker) checkIfContainsDockerVersion(response string) bool {
-	return strings.Contains(strings.ToLower(response), "docker version ")
-}
-
-func (r *RequirementDocker) getVersionAndSubVersion(fullVersion string) (int, int, error) {
-	version, err := strconv.Atoi(fullVersion[0:2])
-	if err != nil {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
-	}
-	subversion, err := strconv.Atoi(fullVersion[3:5])
-	if err != nil {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
-	}
-	return version, subversion, nil
 }

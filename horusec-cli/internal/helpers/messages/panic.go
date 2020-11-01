@@ -16,7 +16,7 @@ package messages
 
 const (
 	// Fired when starting horusec does not have all the necessary settings to proceed
-	MsgPanicDockerRequirementsToRunHorusec = "{HORUSEC_CLI} Missing required DOCKER in min. version 19.03 to start"
+	MsgPanicDockerRequirementsToRunHorusec = "{HORUSEC_CLI} Missing required DOCKER in min. version 19.03 / Docker API version 1.40 to start"
 	// Fired when starting horusec does not have all the necessary settings to proceed
 	MsgPanicGitRequirementsToRunHorusec = "{HORUSEC_CLI} Missing required GIT in min. version 2.01 to start"
 	// Fired when horusec failed to acquire $HOME directory on user's machine

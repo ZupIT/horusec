@@ -31,7 +31,7 @@ var ErrDockerNotInstalled = errors.New("{HORUSEC_CLI} Error Docker not found. Pl
 // Occurs when o docker is lower version required
 
 var ErrDockerLowerVersion = errors.New(
-	"{HORUSEC_CLI} Error Docker version is lower of 19.03. Please check and try again")
+	"{HORUSEC_CLI} Error Docker API version is lower of 19.03 / Docker API Version 1.40. Please check and try again")
 
 // Occurs when CsProj not found in dotnet project
 
