@@ -2,6 +2,7 @@ GO ?= go
 GOFMT ?= gofmt
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 GOCILINT ?= ./bin/golangci-lint
+DOCKER_COMPOSE ?= docker-compose
 
 # Format all files founded in GO
 fmt:
@@ -65,6 +66,11 @@ test-e2e-messages:
 	go get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/messages/... -timeout=5m -parallel=1 -failfast
+test-e2e-server-keycloak:
+	make compose-e2e-server-keycloak
+	go get -v ./e2e/...
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast
 
 # ========================================================================================= #
 
@@ -91,35 +97,38 @@ compose: compose-down compose-up
 
 # Down all containers on depends to the project run
 compose-down:
-	docker-compose -f deployments/$(COMPOSE_FILE_NAME) down -v
+	$(DOCKER_COMPOSE) -f deployments/$(COMPOSE_FILE_NAME) down -v
 
 # Up all containers on depends to the project run
 compose-up:
-	docker-compose -f deployments/$(COMPOSE_FILE_NAME) up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f deployments/$(COMPOSE_FILE_NAME) up -d --build --force-recreate
 
 # ========================================================================================= #
 
 compose-development-kit:
-	docker-compose -f development-kit/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f development-kit/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-api:
-	docker-compose -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-messages:
-	docker-compose -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-account:
-	docker-compose -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-analytic:
-	docker-compose -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-auth:
-	docker-compose -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-e2e-server-horusec:
-	docker-compose -f e2e/deployments/docker-compose.server.horusec.yaml down -v
-	docker-compose -f e2e/deployments/docker-compose.server.horusec.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml up -d --build --force-recreate
 compose-e2e-application-admin-horusec:
-	docker-compose -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
-	docker-compose -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate
 compose-e2e-messages:
-	docker-compose -f e2e/deployments/docker-compose.server.messages.yaml down -v
-	docker-compose -f e2e/deployments/docker-compose.server.messages.yaml up -d --build --force-recreate
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.messages.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.messages.yaml up -d --build --force-recreate
+compose-e2e-server-keycloak:
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml up -d --build --force-recreate postgresql keycloak horusec-account horusec-analytic horusec-api
 
 # ========================================================================================= #
 
