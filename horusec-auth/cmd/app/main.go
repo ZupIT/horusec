@@ -15,14 +15,12 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	adminConfig "github.com/ZupIT/horusec/horusec-auth/config/admin"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/config/cors"
+	grpcConfig "github.com/ZupIT/horusec/horusec-auth/config/grpc"
 	"github.com/ZupIT/horusec/horusec-auth/config/swagger"
 	"github.com/ZupIT/horusec/horusec-auth/internal/router"
 	"log"
@@ -46,7 +44,7 @@ func main() {
 	postgresRead := adapter.NewRepositoryRead()
 	postgresWrite := adapter.NewRepositoryWrite()
 
-	createApplicationAdmin(appConfig, postgresRead, postgresWrite)
+	adminConfig.CreateApplicationAdmin(appConfig, postgresRead, postgresWrite)
 
 	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite, appConfig)
@@ -54,35 +52,6 @@ func main() {
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")
 
+	go grpcConfig.SetUpGRPCServer()
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
-}
-
-func createApplicationAdmin(config *app.Config, read relational.InterfaceRead, write relational.InterfaceWrite) {
-	if config.GetEnableApplicationAdmin() {
-		err := account.NewAccountRepository(read, write).Create(getDefaultAccountApplicationAdmin(config).SetAccountData())
-		if err != nil {
-			if err.Error() != "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
-				logger.LogPanic("Some error occurs when create application admin", err)
-			} else {
-				logger.LogInfo("Application admin already exists")
-			}
-		} else {
-			logger.LogInfo("Application admin created with success")
-		}
-	}
-}
-
-func getDefaultAccountApplicationAdmin(config *app.Config) *accountEntities.Account {
-	entity, err := config.GetApplicationAdminData()
-	if err != nil {
-		logger.LogPanic("Some error occurs when parse Application Admin Data to Account", err)
-	}
-	pass := entity.Password
-	return &accountEntities.Account{
-		Email:              entity.Email,
-		Password:           pass,
-		Username:           entity.Username,
-		IsConfirmed:        true,
-		IsApplicationAdmin: true,
-	}
 }

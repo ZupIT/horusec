@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package grpc;
+
+service AuthService {
+  rpc IsAuthorized (IsAuthorizedData) returns (IsAuthorizedResponse);
+  rpc GetAccountID (GetAccountIDData) returns (GetAccountIDResponse);
+}
+
+message IsAuthorizedData {
+  string token = 1;
+  string role = 2;
+  string companyID = 3;
+  string repositoryID = 4;
+}
+
+message IsAuthorizedResponse {
+  bool isAuthorized = 1;
+  string error = 2;
+}
+
+message GetAccountIDData {
+  string token = 1;
+}
+
+message GetAccountIDResponse {
+  string accountID = 1;
+  string error = 2;
+}
