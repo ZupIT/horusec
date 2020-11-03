@@ -16,6 +16,9 @@ package ldap
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
@@ -29,7 +32,7 @@ import (
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
-	"strings"
+	"github.com/kofalt/go-memoize"
 )
 
 type Service struct {
@@ -38,6 +41,7 @@ type Service struct {
 	companyRepo    companyRepo.ICompanyRepository
 	repositoryRepo repositoryRepo.IRepository
 	cacheRepo      cache.Interface
+	memo           *memoize.Memoizer
 }
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
@@ -47,6 +51,7 @@ func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.
 		companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
 		repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 		cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+		memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 	}
 }
 
@@ -73,7 +78,11 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 }
 
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
-	userGroups, err := s.getUserGroups(authzData.Token)
+	getUserGroups := func() (interface{}, error) {
+		return s.getUserGroups(authzData.Token)
+	}
+	userGroups, err, _ := s.memo.Memoize(authzData.Token+authzData.Role.ToString(), getUserGroups)
+
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
@@ -83,7 +92,7 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups, authzGroups)
+	return s.checkIsAuthorized(userGroups.([]string), authzGroups)
 }
 
 func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *auth.LdapAuthResponse {

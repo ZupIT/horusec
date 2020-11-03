@@ -109,7 +109,7 @@ services:
       HORUS_LDAP_GROUPFILTER: "(memberUid=%s)"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
-      HORUSEC_AUTH_TYPE: "horusec"
+      HORUSEC_AUTH_TYPE: "ldap"
   horusec-analytic:
     build:
       context: ../
