@@ -6,13 +6,13 @@ An easy to use CLI tool to manage your projects current version and its upgrades
 ## Getting Started
 
 ### Install
-If you already have golang installed you can install by running the command:
+**Run in root directory horusec**
 ```sh
-go get -u github.com/ZupIT/horusec/deployments/semver/cmd/semver
+make install-semver
 ```
 
 ### check install
-Check if the semver was instaled running the command:
+Check if the semver was installed running the command:
 ```sh
 semver 
 ```
