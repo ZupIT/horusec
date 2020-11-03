@@ -61,7 +61,7 @@ generateBinaries () {
     then
         echo "Current version not found of the horusec-cli please install and try again"
         echo "To install semver use:"
-        echo "$ go get -u github.com/wiliansilvazup/semver-cli/cmd/semver"
+        echo "$ make install-semver"
         echo "$ semver --help"
         exit 1
     fi

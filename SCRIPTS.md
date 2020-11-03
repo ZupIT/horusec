@@ -9,7 +9,7 @@ Exemple:
 ``` 
 
 This script aims to update the version of github.
-Using <a href="https://github.com/wiliansilvazup/semver-cli">SEMVER_CLI</a> we will update the version that is currently running on the project.
+Using <a href="https://github.com/ZupIT/horusec/deployments/semver">SEMVER_CLI</a> we will update the version that is currently running on the project.
 
 - Right after we performed some validations that are:
      - Check if semver is installed <a href="deployments/scripts/up-version.sh">deployments/scripts/install-semver.sh</a>
@@ -31,7 +31,7 @@ Exemple:
 * <a href="deployments/scripts/update-image-tool.sh">deployments/scripts/update-image-tool.sh</a> 
 
 The purpose of this script is to automate the update process in the dockerhub, of the analysis tools used in horusec-cli.
-Using <a href="https://github.com/wiliansilvazup/semver-cli">SEMVER_CLI</a> we will update the version that is running the selected tool.
+Using <a href="https://github.com/ZupIT/horusec/deployments/semver">SEMVER_CLI</a> we will update the version that is running the selected tool.
 
 - Right after we performed some validations that are:
      - Check if semver is installed <a href="deployments/up-version.sh">deployments/install-semver.sh</a>
@@ -53,7 +53,7 @@ Exemple:
 * <a href="deployments/scripts/update-image-service.sh">deployments/scripts/update-image-service.sh</a> 
 
 The purpose of this script is to automate the update process in the dockerhub, of services used in this project.
-Using <a href="https://github.com/wiliansilvazup/semver-cli">SEMVER_CLI</a> we will update the running version of the selected service.
+Using <a href="https://github.com/ZupIT/horusec/deployments/semver">SEMVER_CLI</a> we will update the running version of the selected service.
 
 - Right after we performed some validations that are:
      - Check if semver is installed <a href="deployments/up-version.sh">deployments/install-semver.sh</a>
@@ -128,7 +128,7 @@ Exemple:
 * <a href="horusec-cli/deployments/scripts/update-image.sh">horusec-cli/deployments/scripts/update-image.sh</a> 
 
 The purpose of this script is to automate the process of generating horusec-cli binaries to all necessary operation system.
-Using <a href="https://github.com/wiliansilvazup/semver-cli">SEMVER_CLI</a> we will update the running version of the selected service.
+Using <a href="https://github.com/ZupIT/horusec/deployments/semver">SEMVER_CLI</a> we will update the running version of the selected service.
 
 - Right after we performed some validations that are:
      - Check if semver is installed <a href="deployments/up-version.sh">deployments/install-semver.sh</a>
