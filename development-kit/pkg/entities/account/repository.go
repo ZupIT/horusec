@@ -38,13 +38,16 @@ type Repository struct {
 }
 
 type RepositoryResponse struct {
-	CompanyID    uuid.UUID        `json:"companyID"`
-	RepositoryID uuid.UUID        `json:"repositoryID"`
-	Name         string           `json:"name"`
-	Role         accountEnum.Role `json:"role"`
-	Description  string           `json:"description"`
-	CreatedAt    time.Time        `json:"createdAt"`
-	UpdatedAt    time.Time        `json:"updatedAt"`
+	CompanyID       uuid.UUID        `json:"companyID"`
+	RepositoryID    uuid.UUID        `json:"repositoryID"`
+	Name            string           `json:"name"`
+	Role            accountEnum.Role `json:"role"`
+	Description     string           `json:"description"`
+	AuthzMember     string           `json:"authzMember"`
+	AuthzAdmin      string           `json:"authzAdmin"`
+	AuthzSupervisor string           `json:"authzSupervisor"`
+	CreatedAt       time.Time        `json:"createdAt"`
+	UpdatedAt       time.Time        `json:"updatedAt"`
 }
 
 func (r *Repository) Validate() error {
@@ -86,13 +89,16 @@ func (r *Repository) ToAccountRepository(role accountEnum.Role, accountID uuid.U
 
 func (r *Repository) ToRepositoryResponse(role accountEnum.Role) *RepositoryResponse {
 	return &RepositoryResponse{
-		RepositoryID: r.RepositoryID,
-		CompanyID:    r.CompanyID,
-		Name:         r.Name,
-		Role:         role,
-		Description:  r.Description,
-		CreatedAt:    r.CreatedAt,
-		UpdatedAt:    r.UpdatedAt,
+		RepositoryID:    r.RepositoryID,
+		CompanyID:       r.CompanyID,
+		Name:            r.Name,
+		Role:            role,
+		AuthzAdmin:      r.AuthzAdmin,
+		AuthzMember:     r.AuthzMember,
+		AuthzSupervisor: r.AuthzSupervisor,
+		Description:     r.Description,
+		CreatedAt:       r.CreatedAt,
+		UpdatedAt:       r.UpdatedAt,
 	}
 }
 
