@@ -76,7 +76,7 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
   horusec-analytic:
     image: horuszup/horusec-analytic:latest
     depends_on:
@@ -88,7 +88,7 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
   horusec-api:
     image: horuszup/horusec-api:latest
     depends_on:
@@ -102,7 +102,7 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
   horusec-manager:
     image: horuszup/horusec-manager:latest
     restart: always
