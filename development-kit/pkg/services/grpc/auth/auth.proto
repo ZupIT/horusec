@@ -2,9 +2,11 @@ syntax = "proto3";
 
 package grpc;
 
+option go_package = "development-kit/pkg/services/grpc/auth";
+
 service AuthService {
-  rpc IsAuthorized (IsAuthorizedData) returns (IsAuthorizedResponse);
-  rpc GetAccountID (GetAccountIDData) returns (GetAccountIDResponse);
+  rpc IsAuthorized (IsAuthorizedData) returns (IsAuthorizedResponse) {}
+  rpc GetAccountID (GetAccountIDData) returns (GetAccountIDResponse) {}
 }
 
 message IsAuthorizedData {
