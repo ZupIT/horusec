@@ -123,6 +123,8 @@ function ListCompanies() {
                     onClick={() =>
                       history.push(`/organization/edit/${company.companyID}`, {
                         companyName: company.name,
+                        authzAdmin: company.authzAdmin,
+                        authzMember: company.authzMember,
                       })
                     }
                   >
