@@ -75,15 +75,17 @@ const EditRepository: React.FC<Props> = ({
     if (name.isValid) {
       setLoading(true);
 
-      // TODO: Remover este console.log
-      console.log(supervisorGroup, adminGroup, userGroup);
-
       repositoryService
         .update(
           repoToEdit.companyID,
           repoToEdit.repositoryID,
           name.value,
-          description.value
+          description.value,
+          {
+            authzAdmin: adminGroup.value,
+            authzMember: userGroup.value,
+            authzSupervisor: supervisorGroup.value
+          }
         )
         .then(() => {
           showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
