@@ -59,11 +59,12 @@ function EditCompany({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (companyName.isValid) {
-      updateCompany(companyId, companyName.value);
 
-      // TODO: Remover este console.log
-      console.log(adminGroup, userGroup);
+    if (companyName.isValid) {
+      updateCompany(companyId, companyName.value, {
+        authzAdmin: adminGroup.value,
+        authzMember: userGroup.value,
+      });
     }
   };
 

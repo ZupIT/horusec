@@ -39,7 +39,7 @@ interface CompanyCtx {
     adminEmail?: string,
     ldapGroups?: LDAPGroups
   ): void;
-  updateCompany(companyId: string, name: string): void;
+  updateCompany(companyId: string, name: string, ldapGroups?: LDAPGroups): void;
   removeCompany(companyId: string): void;
   handleCurrentCompany(companyId: string): void;
 }
@@ -113,10 +113,14 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
       });
   };
 
-  const updateCompany = (companyId: string, name: string) => {
+  const updateCompany = (
+    companyId: string,
+    name: string,
+    ldapGroups?: LDAPGroups
+  ) => {
     setLoading(true);
     companyService
-      .update(companyId, name)
+      .update(companyId, name, ldapGroups)
       .then(() => {
         showSuccessFlash(t('COMPANY_SCREEN.UPDATE_SUCCESS'));
         setLoading(false);
