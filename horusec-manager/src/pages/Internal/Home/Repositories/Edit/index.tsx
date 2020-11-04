@@ -104,6 +104,9 @@ const EditRepository: React.FC<Props> = ({
     if (repoToEdit) {
       setName({ value: repoToEdit?.name, isValid: true });
       setDescription({ value: repoToEdit?.description, isValid: true });
+      setAdminGroup({ isValid: true, value: repoToEdit?.authzAdmin });
+      setUserGroup({ isValid: true, value: repoToEdit?.authzMember });
+      setSupervisorGroup({ isValid: true, value: repoToEdit?.authzSupervisor });
     }
   }, [repoToEdit]);
 
@@ -160,6 +163,7 @@ const EditRepository: React.FC<Props> = ({
                 name="adminGroup"
                 type="text"
                 width="100%"
+                initialValue={adminGroup.value}
               />
             </Styled.Wrapper>
 
@@ -172,6 +176,7 @@ const EditRepository: React.FC<Props> = ({
                 name="supervisorGroup"
                 type="text"
                 width="100%"
+                initialValue={supervisorGroup.value}
               />
             </Styled.Wrapper>
 
@@ -184,6 +189,7 @@ const EditRepository: React.FC<Props> = ({
                 name="userGroup"
                 type="text"
                 width="100%"
+                initialValue={userGroup.value}
               />
             </Styled.Wrapper>
           </>
