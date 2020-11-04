@@ -73,11 +73,12 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     if (name.isValid) {
       setLoading(true);
 
-      // TODO: Remover este console.log
-      console.log(supervisorGroup, adminGroup, userGroup);
-
       repositoryService
-        .create(companyID, name.value, description.value)
+        .create(companyID, name.value, description.value, {
+          authzAdmin: adminGroup.value,
+          authzMember: userGroup.value,
+          authzSupervisor: supervisorGroup.value
+        })
         .then(() => {
           onConfirm();
           showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_CREATE_REPO'));
