@@ -20,7 +20,7 @@ import (
 
 func TestMain(m *testing.M) {
 	folderOfMigration := "file://../../../development-kit/pkg/databases/relational/migration"
-	var connectionStringDB = env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable")
+	var connectionStringDB = env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@0.0.0.0:5432/horusec_db?sslmode=disable")
 	migration, err := migrate.New(folderOfMigration, connectionStringDB)
 	if err != nil {
 		logger.LogPanic("Error in create first instance migration: ", err)
@@ -76,18 +76,19 @@ func CreateDefaultUserInKeycloakAndGetAccessToken(t *testing.T) string {
 		Type:      "password",
 		Value:     "Ch@ng3m3",
 	}
-	//responseLogin := LoginInKeycloak(t, "keycloak", "keycloak")
-	//bearerToken := "Bearer " + responseLogin["access_token"].(string)
-	//DeleteAllUsersInKeyCloak(t, bearerToken)
-	//CreateUserInKeyCloak(t, user, credential, bearerToken)
-	//StartAuthHorusecServices(t, bearerToken)
-	responseLogin := LoginInKeycloak(t, user.Username, credential.Value)
-	return "Bearer " + GetOAuthToken(t, "Bearer " + responseLogin["access_token"].(string))
-}
-
-func StartAuthHorusecServices(t *testing.T, bearerToken string) {
+	responseLogin := LoginInKeycloak(t, "keycloak", "keycloak")
+	bearerToken := "Bearer " + responseLogin["access_token"].(string)
+	UpdateRolesToAcceptOAuth(t, bearerToken)
+	DeleteAllUsersInKeyCloak(t, bearerToken)
+	CreateUserInKeyCloak(t, user, credential, bearerToken)
 	secret := GetClientSecretInAccountClient(t, bearerToken)
 	assert.NotEmpty(t, secret)
+	StartAuthHorusecServices(t, bearerToken, secret)
+	responseLogin = LoginInKeycloak(t, user.Username, credential.Value)
+	return responseLogin["access_token"].(string)
+}
+
+func StartAuthHorusecServices(t *testing.T, bearerToken, secret string) {
 	fmt.Println("Starting auth horusec service...")
 	output, err := exec.Command("whereis", "docker-compose").Output()
 	assert.NoError(t, err)
