@@ -241,6 +241,99 @@ func (x *GetAccountIDResponse) GetAccountID() string {
 	return ""
 }
 
+type GetAuthConfigData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetAuthConfigData) Reset() {
+	*x = GetAuthConfigData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAuthConfigData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuthConfigData) ProtoMessage() {}
+
+func (x *GetAuthConfigData) ProtoReflect() protoreflect.Message {
+	mi := &file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuthConfigData.ProtoReflect.Descriptor instead.
+func (*GetAuthConfigData) Descriptor() ([]byte, []int) {
+	return file_development_kit_pkg_services_grpc_auth_auth_proto_rawDescGZIP(), []int{4}
+}
+
+type GetAuthConfigResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ApplicationAdminEnable bool   `protobuf:"varint,1,opt,name=ApplicationAdminEnable,proto3" json:"ApplicationAdminEnable,omitempty"`
+	AuthType               string `protobuf:"bytes,2,opt,name=AuthType,proto3" json:"AuthType,omitempty"`
+}
+
+func (x *GetAuthConfigResponse) Reset() {
+	*x = GetAuthConfigResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAuthConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuthConfigResponse) ProtoMessage() {}
+
+func (x *GetAuthConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuthConfigResponse.ProtoReflect.Descriptor instead.
+func (*GetAuthConfigResponse) Descriptor() ([]byte, []int) {
+	return file_development_kit_pkg_services_grpc_auth_auth_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetAuthConfigResponse) GetApplicationAdminEnable() bool {
+	if x != nil {
+		return x.ApplicationAdminEnable
+	}
+	return false
+}
+
+func (x *GetAuthConfigResponse) GetAuthType() string {
+	if x != nil {
+		return x.AuthType
+	}
+	return ""
+}
+
 var File_development_kit_pkg_services_grpc_auth_auth_proto protoreflect.FileDescriptor
 
 var file_development_kit_pkg_services_grpc_auth_auth_proto_rawDesc = []byte{
@@ -265,20 +358,32 @@ var file_development_kit_pkg_services_grpc_auth_auth_proto_rawDesc = []byte{
 	0x34, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x63, 0x63, 0x6f, 0x75,
 	0x6e, 0x74, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x61, 0x63, 0x63, 0x6f,
-	0x75, 0x6e, 0x74, 0x49, 0x44, 0x32, 0x99, 0x01, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x44, 0x0a, 0x0c, 0x49, 0x73, 0x41, 0x75, 0x74, 0x68, 0x6f,
-	0x72, 0x69, 0x7a, 0x65, 0x64, 0x12, 0x16, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x73, 0x41,
-	0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x64, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x1a, 0x2e,
-	0x67, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x73, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65,
-	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0c, 0x47,
-	0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x16, 0x2e, 0x67, 0x72,
-	0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x44,
-	0x61, 0x74, 0x61, 0x1a, 0x1a, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63,
-	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x42, 0x28, 0x5a, 0x26, 0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x6d, 0x65, 0x6e, 0x74,
-	0x2d, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x73, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x75, 0x6e, 0x74, 0x49, 0x44, 0x22, 0x13, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x75, 0x74, 0x68,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x22, 0x6b, 0x0a, 0x15, 0x47, 0x65,
+	0x74, 0x41, 0x75, 0x74, 0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x36, 0x0a, 0x16, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x16, 0x41, 0x70, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x41,
+	0x75, 0x74, 0x68, 0x54, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x41,
+	0x75, 0x74, 0x68, 0x54, 0x79, 0x70, 0x65, 0x32, 0xe2, 0x01, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x44, 0x0a, 0x0c, 0x49, 0x73, 0x41, 0x75, 0x74,
+	0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x64, 0x12, 0x16, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x49,
+	0x73, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x64, 0x44, 0x61, 0x74, 0x61, 0x1a,
+	0x1a, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x73, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69,
+	0x7a, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a,
+	0x0c, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x12, 0x16, 0x2e,
+	0x67, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49,
+	0x44, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x1a, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74,
+	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x44, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x0d, 0x47, 0x65, 0x74, 0x41, 0x75, 0x74, 0x68, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x67, 0x12, 0x17, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x41,
+	0x75, 0x74, 0x68, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x1b, 0x2e,
+	0x67, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x75, 0x74, 0x68, 0x43, 0x6f, 0x6e, 0x66,
+	0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x28, 0x5a, 0x26,
+	0x64, 0x65, 0x76, 0x65, 0x6c, 0x6f, 0x70, 0x6d, 0x65, 0x6e, 0x74, 0x2d, 0x6b, 0x69, 0x74, 0x2f,
+	0x70, 0x6b, 0x67, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x67, 0x72, 0x70,
+	0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -293,20 +398,24 @@ func file_development_kit_pkg_services_grpc_auth_auth_proto_rawDescGZIP() []byte
 	return file_development_kit_pkg_services_grpc_auth_auth_proto_rawDescData
 }
 
-var file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_development_kit_pkg_services_grpc_auth_auth_proto_goTypes = []interface{}{
-	(*IsAuthorizedData)(nil),     // 0: grpc.IsAuthorizedData
-	(*IsAuthorizedResponse)(nil), // 1: grpc.IsAuthorizedResponse
-	(*GetAccountIDData)(nil),     // 2: grpc.GetAccountIDData
-	(*GetAccountIDResponse)(nil), // 3: grpc.GetAccountIDResponse
+	(*IsAuthorizedData)(nil),      // 0: grpc.IsAuthorizedData
+	(*IsAuthorizedResponse)(nil),  // 1: grpc.IsAuthorizedResponse
+	(*GetAccountIDData)(nil),      // 2: grpc.GetAccountIDData
+	(*GetAccountIDResponse)(nil),  // 3: grpc.GetAccountIDResponse
+	(*GetAuthConfigData)(nil),     // 4: grpc.GetAuthConfigData
+	(*GetAuthConfigResponse)(nil), // 5: grpc.GetAuthConfigResponse
 }
 var file_development_kit_pkg_services_grpc_auth_auth_proto_depIdxs = []int32{
 	0, // 0: grpc.AuthService.IsAuthorized:input_type -> grpc.IsAuthorizedData
 	2, // 1: grpc.AuthService.GetAccountID:input_type -> grpc.GetAccountIDData
-	1, // 2: grpc.AuthService.IsAuthorized:output_type -> grpc.IsAuthorizedResponse
-	3, // 3: grpc.AuthService.GetAccountID:output_type -> grpc.GetAccountIDResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: grpc.AuthService.GetAuthConfig:input_type -> grpc.GetAuthConfigData
+	1, // 3: grpc.AuthService.IsAuthorized:output_type -> grpc.IsAuthorizedResponse
+	3, // 4: grpc.AuthService.GetAccountID:output_type -> grpc.GetAccountIDResponse
+	5, // 5: grpc.AuthService.GetAuthConfig:output_type -> grpc.GetAuthConfigResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -366,6 +475,30 @@ func file_development_kit_pkg_services_grpc_auth_auth_proto_init() {
 				return nil
 			}
 		}
+		file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAuthConfigData); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_development_kit_pkg_services_grpc_auth_auth_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAuthConfigResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -373,7 +506,7 @@ func file_development_kit_pkg_services_grpc_auth_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_development_kit_pkg_services_grpc_auth_auth_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -401,6 +534,7 @@ const _ = grpc.SupportPackageIsVersion6
 type AuthServiceClient interface {
 	IsAuthorized(ctx context.Context, in *IsAuthorizedData, opts ...grpc.CallOption) (*IsAuthorizedResponse, error)
 	GetAccountID(ctx context.Context, in *GetAccountIDData, opts ...grpc.CallOption) (*GetAccountIDResponse, error)
+	GetAuthConfig(ctx context.Context, in *GetAuthConfigData, opts ...grpc.CallOption) (*GetAuthConfigResponse, error)
 }
 
 type authServiceClient struct {
@@ -429,10 +563,20 @@ func (c *authServiceClient) GetAccountID(ctx context.Context, in *GetAccountIDDa
 	return out, nil
 }
 
+func (c *authServiceClient) GetAuthConfig(ctx context.Context, in *GetAuthConfigData, opts ...grpc.CallOption) (*GetAuthConfigResponse, error) {
+	out := new(GetAuthConfigResponse)
+	err := c.cc.Invoke(ctx, "/grpc.AuthService/GetAuthConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 type AuthServiceServer interface {
 	IsAuthorized(context.Context, *IsAuthorizedData) (*IsAuthorizedResponse, error)
 	GetAccountID(context.Context, *GetAccountIDData) (*GetAccountIDResponse, error)
+	GetAuthConfig(context.Context, *GetAuthConfigData) (*GetAuthConfigResponse, error)
 }
 
 // UnimplementedAuthServiceServer can be embedded to have forward compatible implementations.
@@ -444,6 +588,9 @@ func (*UnimplementedAuthServiceServer) IsAuthorized(context.Context, *IsAuthoriz
 }
 func (*UnimplementedAuthServiceServer) GetAccountID(context.Context, *GetAccountIDData) (*GetAccountIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountID not implemented")
+}
+func (*UnimplementedAuthServiceServer) GetAuthConfig(context.Context, *GetAuthConfigData) (*GetAuthConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAuthConfig not implemented")
 }
 
 func RegisterAuthServiceServer(s *grpc.Server, srv AuthServiceServer) {
@@ -486,6 +633,24 @@ func _AuthService_GetAccountID_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetAuthConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuthConfigData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetAuthConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.AuthService/GetAuthConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetAuthConfig(ctx, req.(*GetAuthConfigData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _AuthService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "grpc.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
@@ -497,6 +662,10 @@ var _AuthService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountID",
 			Handler:    _AuthService_GetAccountID_Handler,
+		},
+		{
+			MethodName: "GetAuthConfig",
+			Handler:    _AuthService_GetAuthConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

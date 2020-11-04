@@ -52,6 +52,6 @@ func main() {
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")
 
-	go grpcConfig.SetUpGRPCServer()
+	go grpcConfig.SetUpGRPCServer(postgresRead, appConfig)
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
 }
