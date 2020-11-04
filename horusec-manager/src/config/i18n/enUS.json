@@ -287,6 +287,10 @@
     }
   },
 
+  "WEBHOOK_SCREEN": {
+    "TITLE": "Webhook"
+  },
+
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilities",
@@ -295,6 +299,7 @@
     "REPOSITORY": "Repository",
     "ORGANIZATION_USERS": "Organization users",
     "BACK_ORGANIZATION": "Back to organizations",
+    "WEBHOOK": "Webhook",
     "LOGOUT": "Logout"
   },
 

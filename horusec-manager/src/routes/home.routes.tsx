@@ -27,12 +27,13 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import HomeLayout from '../layouts/Home';
+import HomeLayout from 'layouts/Home';
 
-import Dashboard from '../pages/Internal/Home/Dashboard';
-import Repositories from '../pages/Internal/Home/Repositories';
-import Users from '../pages/Internal/Home/Users';
-import Vulnerabilities from '../pages/Internal/Home/Vulnerabilities';
+import Dashboard from 'pages/Internal/Home/Dashboard';
+import Repositories from 'pages/Internal/Home/Repositories';
+import Users from 'pages/Internal/Home/Users';
+import Vulnerabilities from 'pages/Internal/Home/Vulnerabilities';
+import Webhook from 'pages/Internal/Home/Webhook';
 
 function HomeRoutes() {
   const history = useHistory();
@@ -83,6 +84,8 @@ function HomeRoutes() {
           path={`${path}/organization-users`}
           component={() => <Users />}
         />
+
+        <Route path={`${path}/webhook`} component={() => <Webhook />} />
       </Switch>
     </HomeLayout>
   );
