@@ -138,10 +138,24 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 		return s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
 
 	case authEnums.RepositoryAdmin, authEnums.RepositoryMember, authEnums.RepositorySupervisor:
-		return s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
+		return s.handleGetAuthzGroupsNameForRepository(authzData)
 	}
 
 	return []string{}, errors.ErrorUnauthorized
+}
+
+func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *auth.AuthorizationData) ([]string, error) {
+	companyAuthzAdmin, err := s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
+	if err != nil {
+		return []string{}, err
+	}
+
+	repositoryAuthz, err := s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authEnums.CompanyAdmin)
+	if err != nil {
+		return []string{}, err
+	}
+
+	return append(repositoryAuthz, companyAuthzAdmin...), nil
 }
 
 func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
