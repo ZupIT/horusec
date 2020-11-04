@@ -18,7 +18,6 @@ message IsAuthorizedData {
 
 message IsAuthorizedResponse {
   bool isAuthorized = 1;
-  string error = 2;
 }
 
 message GetAccountIDData {
@@ -27,5 +26,4 @@ message GetAccountIDData {
 
 message GetAccountIDResponse {
   string accountID = 1;
-  string error = 2;
 }
