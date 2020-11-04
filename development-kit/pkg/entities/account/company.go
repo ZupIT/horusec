@@ -39,6 +39,8 @@ type CompanyResponse struct {
 	Name        string         `json:"name"`
 	Role        rolesEnum.Role `json:"role"`
 	Description string         `json:"description"`
+	AuthzMember string         `json:"authzMember"`
+	AuthzAdmin  string         `json:"authzAdmin"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 }
@@ -72,6 +74,8 @@ func (c *Company) ToCompanyResponse(role rolesEnum.Role) *CompanyResponse {
 		Name:        c.Name,
 		Role:        role,
 		Description: c.Description,
+		AuthzAdmin:  c.AuthzAdmin,
+		AuthzMember: c.AuthzMember,
 		CreatedAt:   c.CreatedAt,
 		UpdatedAt:   c.UpdatedAt,
 	}
