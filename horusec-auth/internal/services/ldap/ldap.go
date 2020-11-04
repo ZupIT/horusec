@@ -145,12 +145,12 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 }
 
 func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *auth.AuthorizationData) ([]string, error) {
-	companyAuthzAdmin, err := s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
+	companyAuthzAdmin, err := s.getCompanyAuthzGroupsName(authzData.CompanyID, authEnums.CompanyAdmin)
 	if err != nil {
 		return []string{}, err
 	}
 
-	repositoryAuthz, err := s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authEnums.CompanyAdmin)
+	repositoryAuthz, err := s.getRepositoryAuthzGroupsName(authzData.RepositoryID, authzData.Role)
 	if err != nil {
 		return []string{}, err
 	}
