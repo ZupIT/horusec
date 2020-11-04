@@ -41,7 +41,7 @@ const isApplicationAdmin = () => {
   const { applicationAdminEnable } = getCurrentConfig();
   const { isApplicationAdmin } = getCurrentUser();
 
-  return !applicationAdminEnable ? false : isApplicationAdmin;
+  return !applicationAdminEnable ? true : isApplicationAdmin;
 };
 
 export { getCurrentUser, setCurrentUser, clearCurrentUser, isApplicationAdmin };
