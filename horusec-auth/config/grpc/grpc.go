@@ -9,24 +9,42 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"net"
 )
 
 func SetUpGRPCServer(postgresRead relational.InterfaceRead, appConfig *app.Config) {
-	server := grpc.NewServer()
-	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, appConfig))
-
-	err := server.Serve(getNetListener())
-	if err != nil {
-		logger.LogPanic("failed to setup grpc server", err)
+	if env.GetEnvOrDefaultBool("HORUSEC_GRPC_USE_CERTS", false) {
+		setupWithCerts(postgresRead, appConfig)
 	}
 
-	logger.LogInfo("grpc server is running on port: 8007")
+	setupWithoutCerts(postgresRead, appConfig)
+}
+
+func setupWithoutCerts(postgresRead relational.InterfaceRead, appConfig *app.Config) {
+	server := grpc.NewServer()
+	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, appConfig))
+	if err := server.Serve(getNetListener()); err != nil {
+		logger.LogPanic("failed to setup grpc server", err)
+	}
+}
+
+func setupWithCerts(postgresRead relational.InterfaceRead, appConfig *app.Config) {
+	grpCredentials, err := credentials.NewServerTLSFromFile(env.GetEnvOrDefault("HORUSEC_GRPC_CERT_PATH", ""),
+		env.GetEnvOrDefault("HORUSEC_GRPC_KEY_PATH", ""))
+	if err != nil {
+		logger.LogPanic("failed to get grpc credentials", err)
+	}
+
+	server := grpc.NewServer(grpc.Creds(grpCredentials))
+	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, appConfig))
+	if err := server.Serve(getNetListener()); err != nil {
+		logger.LogPanic("failed to setup grpc server", err)
+	}
 }
 
 func getNetListener() net.Listener {
-	port := env.GetEnvOrDefaultInt("HORUSEC_PORT", 8007)
-
+	port := env.GetEnvOrDefaultInt("HORUSEC_GRPC_PORT", 8007)
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		logger.LogPanic("failed to get net listener", err)
