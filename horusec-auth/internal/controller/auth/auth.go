@@ -138,7 +138,7 @@ func (c *Controller) GetAccountID(_ context.Context,
 
 func (c *Controller) setGetAccountIDResponse(accountID uuid.UUID, err error) (*authGrpc.GetAccountIDResponse, error) {
 	if err != nil {
-		logger.LogError(errors.ErrorFailedToGetAccountIDFromToken, err)
+		logger.LogError(errors.ErrorFailedToGetAccountID, err)
 		return &authGrpc.GetAccountIDResponse{}, err
 	}
 

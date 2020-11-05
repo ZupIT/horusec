@@ -8,5 +8,5 @@ var ErrorTokenCanNotBeEmpty = errors.New("{AUTH} token can not be empty in autho
 const (
 	ErrorAuthTypeNotActive          = "{AUTH} this auth type it is no active, should be %s"
 	ErrorFailedToVerifyIsAuthorized = "{AUTH} failed to verify is authorized request"
-	ErrorFailedToGetAccountIDFromToken = "{AUTH} failed to get account id from token"
+	ErrorFailedToGetAccountID       = "{AUTH} failed to get account id from token"
 )
