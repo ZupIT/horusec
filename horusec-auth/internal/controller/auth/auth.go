@@ -23,6 +23,7 @@ import (
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
@@ -94,6 +95,7 @@ func (c *Controller) parseToAuthorizationData(data *authGrpc.IsAuthorizedData) *
 
 func (c *Controller) setIsAuthorizedResponse(isAuthorized bool, err error) (*authGrpc.IsAuthorizedResponse, error) {
 	if err != nil {
+		logger.LogError(errors.ErrorFailedToVerifyIsAuthorized, err)
 		return nil, err
 	}
 
@@ -106,6 +108,7 @@ func (c *Controller) GetAuthConfig(_ context.Context,
 	_ *authGrpc.GetAuthConfigData) (*authGrpc.GetAuthConfigResponse, error) {
 	authType := c.getAuthorizationType()
 	if authType == authEnums.Unknown {
+		logger.LogError("", errors.ErrorInvalidAuthType)
 		return &authGrpc.GetAuthConfigResponse{AuthType: authEnums.Unknown.ToString()}, errors.ErrorInvalidAuthType
 	}
 
@@ -135,6 +138,7 @@ func (c *Controller) GetAccountID(_ context.Context,
 
 func (c *Controller) setGetAccountIDResponse(accountID uuid.UUID, err error) (*authGrpc.GetAccountIDResponse, error) {
 	if err != nil {
+		logger.LogError(errors.ErrorFailedToGetAccountIDFromToken, err)
 		return &authGrpc.GetAccountIDResponse{}, err
 	}
 
