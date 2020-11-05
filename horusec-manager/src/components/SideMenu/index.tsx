@@ -84,7 +84,7 @@ const SideMenu: React.FC = () => {
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'link',
-      path: '/home/webhook',
+      path: '/home/webhooks',
       type: 'route',
       roles: ['admin', 'member'],
     },

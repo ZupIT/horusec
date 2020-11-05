@@ -33,7 +33,7 @@ import Dashboard from 'pages/Internal/Home/Dashboard';
 import Repositories from 'pages/Internal/Home/Repositories';
 import Users from 'pages/Internal/Home/Users';
 import Vulnerabilities from 'pages/Internal/Home/Vulnerabilities';
-import Webhook from 'pages/Internal/Home/Webhook';
+import Webhooks from 'pages/Internal/Home/Webhooks';
 
 function HomeRoutes() {
   const history = useHistory();
@@ -85,7 +85,7 @@ function HomeRoutes() {
           component={() => <Users />}
         />
 
-        <Route path={`${path}/webhook`} component={() => <Webhook />} />
+        <Route path={`${path}/webhooks`} component={() => <Webhooks />} />
       </Switch>
     </HomeLayout>
   );

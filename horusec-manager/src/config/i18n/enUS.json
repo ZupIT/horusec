@@ -288,7 +288,16 @@
   },
 
   "WEBHOOK_SCREEN": {
-    "TITLE": "Webhook"
+    "TITLE": "Webhooks",
+    "ADD": "Create webhook",
+    "TABLE": {
+      "EMPTY": "There are no registered webhooks",
+      "METHOD": "Method",
+      "URL": "URL",
+      "REPOSITORY": "Repository",
+      "DESCRIPTION": "Description",
+      "ACTION": "Action"
+    }
   },
 
   "SIDE_MENU": {
@@ -299,7 +308,7 @@
     "REPOSITORY": "Repository",
     "ORGANIZATION_USERS": "Organization users",
     "BACK_ORGANIZATION": "Back to organizations",
-    "WEBHOOK": "Webhook",
+    "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout"
   },
 

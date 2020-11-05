@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import Styled from './styled';
+interface WebhookHeader {
+  key: string;
+  value: string;
+}
 
-const Webhook: React.FC = () => {
-  const { t } = useTranslation();
-
-  return (
-    <Styled.Wrapper>
-      <Styled.Content>
-        <Styled.Title>{t('WEBHOOK_SCREEN.TITLE')}</Styled.Title>
-      </Styled.Content>
-    </Styled.Wrapper>
-  );
-};
-
-export default Webhook;
+export interface Webhook {
+  method: 'get' | 'post';
+  endpoint: string;
+  repository: string;
+  description: string;
+  headers?: WebhookHeader[];
+}
