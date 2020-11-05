@@ -1,3 +1,4 @@
+// Requests save in this file are exclusive of messages e2e
 package messages
 
 import (

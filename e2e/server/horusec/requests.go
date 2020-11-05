@@ -1,3 +1,4 @@
+// Requests save in this file are exclusive of horusec e2e
 package horusec
 
 import (

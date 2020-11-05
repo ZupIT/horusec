@@ -55,23 +55,18 @@
 - [ ] Create account
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 - [ ] Login
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 - [ ] Logout
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 - [ ] Authorize
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 - [ ] Create, Read, Update and Delete company
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 
 ## Horusec CLI
 - [ ] Setup log level

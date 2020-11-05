@@ -1,3 +1,4 @@
+// Requests save in this file are shared into all server e2e.
 package server
 
 import (
@@ -15,7 +16,6 @@ import (
 	"testing"
 	"time"
 )
-
 
 func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")

@@ -1,4 +1,5 @@
-package ldap
+// Requests save in this file are exclusive of keycloak e2e
+package keycloak
 
 import (
 	"bytes"

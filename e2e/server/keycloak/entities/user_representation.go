@@ -1,3 +1,4 @@
+// Entities created in this files are exclusive from keycloak e2e
 package entities
 
 import "encoding/json"
