@@ -51,23 +51,19 @@ test-e2e-cli:
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
-test-e2e-server-horusec:
-	make compose-e2e-server-horusec
+test-e2e-server-horusec: compose-e2e-server-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/horusec/... -timeout=5m -parallel=1 -failfast
-test-e2e-application-admin-horusec:
-	make compose-e2e-application-admin-horusec
+test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=5m -parallel=1 -failfast
-test-e2e-messages:
-	make compose-e2e-messages
+test-e2e-messages: compose-e2e-messages
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/messages/... -timeout=5m -parallel=1 -failfast
-test-e2e-server-keycloak:
-	make compose-e2e-server-keycloak
+test-e2e-server-keycloak: compose-e2e-server-keycloak
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	sleep 3 && $(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast

@@ -128,6 +128,7 @@ func GetClientSecretInAccountClient(t *testing.T, bearerToken string) string {
 }
 
 func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
+	fmt.Println("Running test for UpdateRolesToAcceptOAuth")
 	allClients := ListAllClientsInKeycloak(t, bearerToken)
 	var client map[string]interface{}
 	for _, actualClient := range allClients {
