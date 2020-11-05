@@ -84,7 +84,7 @@ const EditRepository: React.FC<Props> = ({
           {
             authzAdmin: adminGroup.value,
             authzMember: userGroup.value,
-            authzSupervisor: supervisorGroup.value
+            authzSupervisor: supervisorGroup.value,
           }
         )
         .then(() => {

@@ -77,7 +77,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
         .create(companyID, name.value, description.value, {
           authzAdmin: adminGroup.value,
           authzMember: userGroup.value,
-          authzSupervisor: supervisorGroup.value
+          authzSupervisor: supervisorGroup.value,
         })
         .then(() => {
           onConfirm();

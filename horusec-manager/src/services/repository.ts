@@ -27,13 +27,18 @@ const getAll = (companyId: string) => {
   );
 };
 
-const create = (companyId: string, name: string, description: string, ldapGroups?: LDAPGroups) => {
+const create = (
+  companyId: string,
+  name: string,
+  description: string,
+  ldapGroups?: LDAPGroups
+) => {
   return defaultHTTP.post(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
     {
       name,
       description,
-      ...ldapGroups
+      ...ldapGroups,
     }
   );
 };

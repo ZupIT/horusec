@@ -35,7 +35,10 @@ const create = (name: string, adminEmail?: string, ldapGroups?: LDAPGroups) => {
 };
 
 const update = (companyId: string, name: string, ldapGroups?: LDAPGroups) => {
-  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, { name, ...ldapGroups });
+  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
+    name,
+    ...ldapGroups,
+  });
 };
 
 const remove = (companyId: string) => {
