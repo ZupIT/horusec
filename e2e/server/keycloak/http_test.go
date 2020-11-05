@@ -20,7 +20,7 @@ import (
 
 func TestMain(m *testing.M) {
 	folderOfMigration := "file://../../../development-kit/pkg/databases/relational/migration"
-	var connectionStringDB = env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@0.0.0.0:5432/horusec_db?sslmode=disable")
+	var connectionStringDB = env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable")
 	migration, err := migrate.New(folderOfMigration, connectionStringDB)
 	if err != nil {
 		logger.LogPanic("Error in create first instance migration: ", err)

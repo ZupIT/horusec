@@ -12,23 +12,21 @@
 - [ ] Create account
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
 - [ ] Login
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
 - [ ] Logout
   - [X] Horusec auth type
-  - [ ] Ldap auth type
-  - [ ] Keycloak auth type
 - [ ] Authorize
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
 - [ ] Create, Read, Update and Delete company
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
 - [X] Create, Read, and Delete company token
 - [X] Create, Read, Update, and Delete repositories
 - [X] Create, Read, and Delete repository token

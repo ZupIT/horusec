@@ -13,7 +13,7 @@ import (
 
 func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")
-	req, _ := http.NewRequest(http.MethodPost, "http://localhost:8003/api/companies", bytes.NewReader(company.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
@@ -28,7 +28,7 @@ func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Co
 
 func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountentities.Company) {
 	fmt.Println("Running test for UpdateCompany")
-	req, _ := http.NewRequest(http.MethodPatch, "http://localhost:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -42,7 +42,7 @@ func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *
 
 func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) string {
 	fmt.Println("Running test for ReadAllCompanies")
-	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8003/api/companies", nil)
+	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8003/api/companies", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -60,7 +60,7 @@ func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) s
 
 func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	fmt.Println("Running test for DeleteCompany")
-	req, _ := http.NewRequest(http.MethodDelete, "http://localhost:8003/api/companies/"+companyID, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8003/api/companies/"+companyID, nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
