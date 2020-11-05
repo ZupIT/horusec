@@ -47,30 +47,30 @@ test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=20m -parallel=1 -failfast -short
 
 test-e2e-cli:
-	go get -v ./e2e/...
-	go get -v ./horusec-cli/...
+	$(GO) get -v ./e2e/...
+	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
 test-e2e-server-horusec:
 	make compose-e2e-server-horusec
-	go get -v ./e2e/...
+	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/horusec/... -timeout=5m -parallel=1 -failfast
 test-e2e-application-admin-horusec:
 	make compose-e2e-application-admin-horusec
-	go get -v ./e2e/...
+	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=5m -parallel=1 -failfast
 test-e2e-messages:
 	make compose-e2e-messages
-	go get -v ./e2e/...
+	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/server/messages/... -timeout=5m -parallel=1 -failfast
 test-e2e-server-keycloak:
 	make compose-e2e-server-keycloak
-	go get -v ./e2e/...
+	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast
+	sleep 3 && $(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast
 
 # ========================================================================================= #
 
@@ -146,7 +146,7 @@ install-cli:
 	curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
 
 build-install-cli:
-	go build -o horusec ./horusec-cli/cmd/horusec/main.go
+	$(GO) build -o horusec ./horusec-cli/cmd/horusec/main.go
 	chmod +x horusec
 	rm -rf $(GOPATH)/bin/horusec
 	mv horusec $(GOPATH)/bin
@@ -154,7 +154,7 @@ build-install-cli:
 	horusec version
 
 build-install-leaks-cli:
-	go build -o horusec ./horusec-leaks/cmd/app/main.go
+	$(GO) build -o horusec ./horusec-leaks/cmd/app/main.go
 	chmod +x horusec
 	rm -rf $(GOPATH)/bin/horusec-leaks
 	mv horusec $(GOPATH)/bin/horusec-leaks
@@ -162,7 +162,7 @@ build-install-leaks-cli:
 	horusec-leaks version
 
 build-install-kotlin-cli:
-	go build -o horusec ./horusec-kotlin/cmd/app/main.go
+	$(GO) build -o horusec ./horusec-kotlin/cmd/app/main.go
 	chmod +x horusec
 	rm -rf $(GOPATH)/bin/horusec-kotlin
 	mv horusec $(GOPATH)/bin/horusec-kotlin
@@ -170,7 +170,7 @@ build-install-kotlin-cli:
 	horusec-kotlin version
 
 build-install-java-cli:
-	go build -o horusec ./horusec-java/cmd/app/main.go
+	$(GO) build -o horusec ./horusec-java/cmd/app/main.go
 	chmod +x horusec
 	rm -rf $(GOPATH)/bin/horusec-java
 	mv horusec $(GOPATH)/bin/horusec-java
