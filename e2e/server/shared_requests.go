@@ -2,12 +2,18 @@ package server
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
+	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+	"time"
 )
 
 
@@ -69,4 +75,88 @@ func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	var body map[string]interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&body)
 	assert.NoError(t, resp.Body.Close())
+}
+
+
+func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
+	fmt.Println("Running test for InviteUserToCompany")
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles",
+		bytes.NewReader(user.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "invite user error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "invite user error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func ReadAllUserInCompany(t *testing.T, bearerToken, companyID string) string {
+	fmt.Println("Running test for InviteUserToCompany")
+	req, _ := http.NewRequest(
+		http.MethodGet,
+		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles",
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read all user in company error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read all user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+func UpdateUserInCompany(t *testing.T, bearerToken, companyID, accountID string, account *roles.AccountCompany) string {
+	fmt.Println("Running test for UpdateUserInCompany")
+	req, _ := http.NewRequest(
+		http.MethodPatch,
+		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles/"+accountID,
+		bytes.NewReader(account.ToBytes()))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "update user in company error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "update user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+func RemoveUserInCompany(t *testing.T, bearerToken, companyID, accountID string) {
+	fmt.Println("Running test for RemoveUserInCompany")
+	req, _ := http.NewRequest(
+		http.MethodDelete,
+		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles/"+accountID,
+		nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "delete user in company error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete user in company error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+func GetChartContentWithoutTreatment(t *testing.T, route, bearerToken, companyID, repositoryID string) httpResponse.Interface {
+	fmt.Println("Running test for GetChartContent in route: " + route)
+	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
+	now := time.Now()
+	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"
+	finalDateStr := now.Format("2006-01-02") + "T23:59:59Z"
+	URL := fmt.Sprintf("http://127.0.0.1:8005/api/dashboard/companies/%s/%s?initialDate=%s&finalDate=%s", companyID, route, initialDateStr, finalDateStr)
+	if repositoryID != "" {
+		URL = fmt.Sprintf("http://127.0.0.1:8005/api/dashboard/companies/%s/repositories/%s/%s?initialDate=%s&finalDate=%s", companyID, repositoryID, route, initialDateStr, finalDateStr)
+	}
+	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": bearerToken, "Content-type": "application/json"})
+	assert.NoError(t, err)
+	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
+	assert.NoError(t, err)
+	return res
 }

@@ -1,8 +1,11 @@
 package ldap
 
 import (
+	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/e2e/server"
@@ -10,7 +13,9 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -61,6 +66,7 @@ func TestServer(t *testing.T) {
 		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
+		RunCRUDUserInCompany(t, bearerToken, companyID)
 	})
 }
 
@@ -121,5 +127,74 @@ func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	})
 	return server.CreateCompany(t, bearerToken, &accountentities.Company{
 		Name: "zup",
+	})
+}
+
+func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
+	t.Run("Should create new user and invite to existing company with permission of the member after update your permission to admin and check if is enable view dashboard by company and remove user from company", func(t *testing.T) {
+		companyIDParsed, _ := uuid.Parse(companyID)
+
+		// Add new user to invite
+		user := &entities.UserRepresentation{
+			Username:      "e2e_user_2",
+			Email:         "e2e_2@example.com",
+			EmailVerified: true,
+			Enabled:       true,
+		}
+		credential := &entities.UserRepresentationCredentials{
+			Temporary: false,
+			Type:      "password",
+			Value:     "Ch@ng3m3",
+		}
+		responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
+		CreateUserInKeyCloak(t, user, credential, "Bearer " + responseLoginAdmin["access_token"].(string))
+		responseLoginNewUser := LoginInKeycloak(t, user.Username, credential.Value)
+		bearerTokenAccount2 := responseLoginNewUser["access_token"].(string)
+		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})
+
+		// Invite user to existing company
+		server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+			Role:      rolesEnum.Member,
+			Email:     user.Email,
+			CompanyID: companyIDParsed,
+		})
+
+		// Check if exist two users in company
+		allUsersInCompany := server.ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
+		accountRoles := []roles.AccountRole{}
+		assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
+		assert.NotEmpty(t, accountRoles)
+		assert.Equal(t, 2, len(accountRoles))
+		accountID := ""
+		for _, user := range accountRoles {
+			if user.Email == user.Email {
+				accountID = user.AccountID.String()
+			}
+		}
+		assert.NotEmpty(t, accountID)
+
+		// Check if company exists to new user
+		allCompanies := server.ReadAllCompanies(t, bearerTokenAccount2, true)
+		assert.Contains(t, allCompanies, "zup")
+
+		// Expected return unauthorized because user is not admin of company to see dashboard in company view
+		responseChart := server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		assert.Equal(t, http.StatusUnauthorized, responseChart.GetStatusCode())
+
+		// Update permission of new user to admin
+		server.UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
+			Role: rolesEnum.Admin,
+		})
+
+		// Expected return OK because user is authorized view dashboard in company view
+		responseChart = server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		assert.Equal(t, http.StatusOK, responseChart.GetStatusCode())
+
+		// Expected remove user from company
+		server.RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
+
+		// Not show company for user when get all companies
+		allCompanies = server.ReadAllCompanies(t, bearerTokenAccount2, false)
+		assert.NotContains(t, allCompanies, "zup")
 	})
 }

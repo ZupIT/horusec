@@ -10,6 +10,7 @@ import (
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/ZupIT/horusec/e2e/server"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -104,19 +105,19 @@ func TestServer(t *testing.T) {
 
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	t.Run("Should create an company, check if it exists, update your name check if name was updated delete a company and return new company to manager in other steps", func(t *testing.T) {
-		companyID := CreateCompany(t, bearerToken, &accountentities.Company{
+		companyID := server.CreateCompany(t, bearerToken, &accountentities.Company{
 			Name: "zup",
 		})
-		allCompanies := ReadAllCompanies(t, bearerToken, true)
+		allCompanies := server.ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompanies, "zup")
-		UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
+		server.UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
 			Name: "zup-1",
 		})
-		allCompaniesUpdated := ReadAllCompanies(t, bearerToken, true)
+		allCompaniesUpdated := server.ReadAllCompanies(t, bearerToken, true)
 		assert.Contains(t, allCompaniesUpdated, "zup-1")
-		DeleteCompany(t, bearerToken, companyID)
+		server.DeleteCompany(t, bearerToken, companyID)
 	})
-	return CreateCompany(t, bearerToken, &accountentities.Company{
+	return server.CreateCompany(t, bearerToken, &accountentities.Company{
 		Name: "zup",
 	})
 }
@@ -304,14 +305,14 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		CreateAccount(t, account2)
 
 		// Invite user to existing company
-		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+		server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
 			Role:      rolesEnum.Member,
 			Email:     account2.Email,
 			CompanyID: companyIDParsed,
 		})
 
 		// Check if exist two users in company
-		allUsersInCompany := ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
+		allUsersInCompany := server.ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
 		accountRoles := []roles.AccountRole{}
 		assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
 		assert.NotEmpty(t, accountRoles)
@@ -331,27 +332,27 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
 
 		// Check if company exists to new user
-		allCompanies := ReadAllCompanies(t, bearerTokenAccount2, true)
+		allCompanies := server.ReadAllCompanies(t, bearerTokenAccount2, true)
 		assert.Contains(t, allCompanies, "zup")
 
 		// Expected return unauthorized because user is not admin of company to see dashboard in company view
-		responseChart := GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		responseChart := server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
 		assert.Equal(t, http.StatusUnauthorized, responseChart.GetStatusCode())
 
 		// Update permission of new user to admin
-		UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
+		server.UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
 			Role: rolesEnum.Admin,
 		})
 
 		// Expected return OK because user is authorized view dashboard in company view
-		responseChart = GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+		responseChart = server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
 		assert.Equal(t, http.StatusOK, responseChart.GetStatusCode())
 
 		// Expected remove user from company
-		RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
+		server.RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
 
 		// Not show company for user when get all companies
-		allCompanies = ReadAllCompanies(t, bearerTokenAccount2, false)
+		allCompanies = server.ReadAllCompanies(t, bearerTokenAccount2, false)
 		assert.NotContains(t, allCompanies, "zup")
 
 		// Logout session new user
@@ -372,7 +373,7 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		CreateAccount(t, account2)
 
 		// Invite new user to existing company
-		InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+		server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
 			Role:      rolesEnum.Member,
 			Email:     account2.Email,
 			CompanyID: companyIDParsed,
