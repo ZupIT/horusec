@@ -63,7 +63,7 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
   horusec-auth:
     build:
       context: ../../
@@ -98,7 +98,7 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
   horusec-api:
     build:
       context: ../../
@@ -113,4 +113,4 @@ services:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "http://horusec-auth:8006"
+      HORUSEC_AUTH_URL: "horusec-auth:8007"
