@@ -91,12 +91,12 @@ func CreateDefaultUserInKeycloakAndGetAccessToken(t *testing.T) string {
 	CreateUserInKeyCloak(t, user, credential, bearerToken)
 	secret := GetClientSecretInAccountClient(t, bearerToken)
 	assert.NotEmpty(t, secret)
-	StartAuthHorusecServices(t, bearerToken, secret)
+	StartAuthHorusecServices(t, secret)
 	responseLogin = LoginInKeycloak(t, user.Username, credential.Value)
 	return responseLogin["access_token"].(string)
 }
 
-func StartAuthHorusecServices(t *testing.T, bearerToken, secret string) {
+func StartAuthHorusecServices(t *testing.T, secret string) {
 	fmt.Println("Starting auth horusec service...")
 	output, err := exec.Command("whereis", "docker-compose").Output()
 	assert.NoError(t, err)
@@ -168,9 +168,9 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		assert.NotEmpty(t, accountRoles)
 		assert.Equal(t, 2, len(accountRoles))
 		accountID := ""
-		for _, user := range accountRoles {
-			if user.Email == user.Email {
-				accountID = user.AccountID.String()
+		for _, currentUser := range accountRoles {
+			if currentUser.Email == user.Email {
+				accountID = currentUser.AccountID.String()
 			}
 		}
 		assert.NotEmpty(t, accountID)
