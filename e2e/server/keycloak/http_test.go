@@ -104,7 +104,7 @@ func SetupKeycloakAndGetFirstAccessToken(t *testing.T, user *entities.UserRepres
 }
 
 func StartAuthHorusecServices(t *testing.T, secret string) {
-	fmt.Println("Starting auth horusec service...")
+	fmt.Println("Starting Horusec-Auth container...")
 	output, err := exec.Command("whereis", "docker-compose").Output()
 	assert.NoError(t, err)
 	assert.NotEmpty(t, output)
@@ -116,7 +116,7 @@ func StartAuthHorusecServices(t *testing.T, secret string) {
 	output, err = cmd.CombinedOutput()
 	assert.NoError(t, err)
 	assert.NotEmpty(t, output)
-	fmt.Println("Waiting container up...")
+	fmt.Println("Waiting Horusec-Auth container up...")
 	time.Sleep(3 * time.Second)
 }
 
