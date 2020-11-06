@@ -144,8 +144,7 @@ func RemoveUserInCompany(t *testing.T, bearerToken, companyID, accountID string)
 	assert.NoError(t, resp.Body.Close())
 }
 func GetChartContentWithoutTreatment(t *testing.T, route, bearerToken, companyID, repositoryID string) httpResponse.Interface {
-	fmt.Println("Running test for GetChartContent in route: " + route)
-	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
+	fmt.Println("Running test for GetChartContentWithoutTreatment in route: " + route)
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"
 	finalDateStr := now.Format("2006-01-02") + "T23:59:59Z"

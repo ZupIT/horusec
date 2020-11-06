@@ -34,9 +34,10 @@ services:
     image: jboss/keycloak
     ports:
       - "8080:8080"
+    network_mode: "host"
     environment:
       DB_VENDOR: "postgres"
-      DB_ADDR: "postgresql_keycloak"
+      DB_ADDR: "127.0.0.1"
       DB_PORT: "5433"
       DB_USER: "root"
       DB_PASSWORD: "root"
