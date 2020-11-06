@@ -27,7 +27,7 @@ const mockOfWebhooks: Webhook[] = [
     endpoint: 'https://rankeer.app/hook/horusec',
     method: 'post',
     description: 'Hook para report das vulnerabilidades do meu serviço de api.',
-    repository: 'Rankeer',
+    repository: 'facebook/react-native',
   },
   {
     endpoint: 'https://api.charlescd.io/security/report',
@@ -71,13 +71,17 @@ const Webhooks: React.FC = () => {
 
           <Styled.Head>
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.METHOD')}</Styled.Column>
+
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.URL')}</Styled.Column>
+
             <Styled.Column>
               {t('WEBHOOK_SCREEN.TABLE.REPOSITORY')}
             </Styled.Column>
+
             <Styled.Column>
               {t('WEBHOOK_SCREEN.TABLE.DESCRIPTION')}
             </Styled.Column>
+
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.ACTION')}</Styled.Column>
           </Styled.Head>
 
@@ -90,7 +94,7 @@ const Webhooks: React.FC = () => {
 
             {webhooks.map((webhook, index) => (
               <Styled.Row key={index}>
-                <Styled.Cell>
+                <Styled.Cell className="flex-center">
                   <Styled.Tag
                     color={get(
                       colors.methods,
@@ -101,10 +105,36 @@ const Webhooks: React.FC = () => {
                     {webhook.method}
                   </Styled.Tag>
                 </Styled.Cell>
+
                 <Styled.Cell>{webhook.endpoint}</Styled.Cell>
+
                 <Styled.Cell>{webhook.repository}</Styled.Cell>
+
                 <Styled.Cell>{webhook.description}</Styled.Cell>
-                <Styled.Cell>actions</Styled.Cell>
+
+                <Styled.Cell className="row">
+                  <Button
+                    rounded
+                    outline
+                    opaque
+                    text={t('WEBHOOK_SCREEN.TABLE.DELETE')}
+                    width={90}
+                    height={30}
+                    icon="delete"
+                    onClick={() => console.log(webhook)}
+                  />
+
+                  <Button
+                    outline
+                    rounded
+                    opaque
+                    text={t('WEBHOOK_SCREEN.TABLE.EDIT')}
+                    width={90}
+                    height={30}
+                    icon="edit"
+                    onClick={() => console.log(webhook)}
+                  />
+                </Styled.Cell>
               </Styled.Row>
             ))}
           </Styled.Body>

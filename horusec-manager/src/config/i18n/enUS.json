@@ -296,7 +296,9 @@
       "URL": "URL",
       "REPOSITORY": "Repository",
       "DESCRIPTION": "Description",
-      "ACTION": "Action"
+      "ACTION": "Action",
+      "DELETE": "Delete",
+      "EDIT": "Edit"
     }
   },
 

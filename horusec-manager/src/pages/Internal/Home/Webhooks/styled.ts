@@ -60,16 +60,6 @@ const Head = styled.div`
   padding: 0px 20px;
 `;
 
-const Column = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-weight: normal;
-  width: 100%;
-  display: block;
-  margin-right: 20px;
-`;
-
 const Row = styled.div`
   background-color: ${({ theme }) => theme.colors.dataTable.row.background};
   margin-bottom: 4px;
@@ -92,6 +82,73 @@ const Cell = styled.span`
   margin-right: 20px;
   line-height: 30px;
   padding: 2px;
+
+  &.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  &.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+
+  &:nth-child(1) {
+    max-width: 95px;
+  }
+
+  &:nth-child(2) {
+    min-width: 250px;
+  }
+
+  &:nth-child(3) {
+    max-width: 120px;
+    margin-right: 15px;
+  }
+
+  &:nth-child(4) {
+    min-width: 300px;
+  }
+
+  &:nth-child(5) {
+    margin: 0;
+    min-width: 190px;
+  }
+`;
+
+const Column = styled.span`
+  text-align: left;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  color: ${({ theme }) => theme.colors.dataTable.column.text};
+  font-weight: normal;
+  width: 100%;
+  display: block;
+  margin-right: 15px;
+
+  &:nth-child(1) {
+    max-width: 95px;
+    margin-left: 10px;
+  }
+
+  &:nth-child(2) {
+    min-width: 250px;
+  }
+
+  &:nth-child(3) {
+    max-width: 120px;
+  }
+
+  &:nth-child(4) {
+    min-width: 300px;
+  }
+
+  &:nth-child(5) {
+    min-width: 190px;
+    margin-left: 10px;
+  }
 `;
 
 const Body = styled.div`
