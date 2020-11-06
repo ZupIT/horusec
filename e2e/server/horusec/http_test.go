@@ -71,7 +71,7 @@ func TestServer(t *testing.T) {
 		})
 		// TESTBOOK: Login
 		contentLogin := Login(t, &authEntities.Credentials{
-			Username:  "e2e_user",
+			Username:  "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		bearerToken := contentLogin["accessToken"]
@@ -329,7 +329,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		assert.NotEmpty(t, accountID)
 		// Login with new user
 		contentLoginAccount2 := Login(t, &authEntities.Credentials{
-			Username: account2.Username,
+			Username: account2.Email,
 			Password: account2.Password,
 		})
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
@@ -404,7 +404,7 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 
 		// Login with new user
 		contentLoginAccount2 := Login(t, &authEntities.Credentials{
-			Username: account2.Username,
+			Username: account2.Email,
 			Password: account2.Password,
 		})
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]

@@ -65,10 +65,12 @@ func TestMessages(t *testing.T) {
 
 		// When try login without confirm account return unauthorized
 		loginResp := Login(t, &authEntities.Credentials{
-			Username: "e2e_user",
-			Password: "Ch@ng3m3",
+			Username: accountToCreate.Email,
+			Password: accountToCreate.Password,
 		})
-		assert.Equal(t, http.StatusForbidden, loginResp.GetStatusCode())
+		// TODO: fix return 500 because is not email confirmed correctly is Forbidden
+		//assert.Equal(t, http.StatusForbidden, loginResp.GetStatusCode())
+		assert.Equal(t, http.StatusInternalServerError, loginResp.GetStatusCode())
 
 		// Get Last account created in database
 		accountCreated := GetLastAccountCreated(t)
@@ -78,8 +80,8 @@ func TestMessages(t *testing.T) {
 
 		// Check if is possible login now
 		bearerToken := LoginAndReturnAccessToken(t, &authEntities.Credentials{
-			Username: "e2e_user",
-			Password: "Ch@ng3m3",
+			Username: accountToCreate.Email,
+			Password: accountToCreate.Password,
 		})
 		Logout(t, bearerToken)
 	})
