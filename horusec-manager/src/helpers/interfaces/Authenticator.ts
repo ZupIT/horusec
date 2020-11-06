@@ -1,5 +1,7 @@
+import { LoginParams } from './LoginParams';
+
 interface AuthFunctions {
-  login(email?: string, password?: string): Promise<any>;
+  login(params?: LoginParams): Promise<any>;
   logout(): Promise<any>;
 }
 

@@ -33,6 +33,6 @@ func TestConfig_GetApplicationAdminData(t *testing.T) {
 func TestConfig_GetAuthType(t *testing.T) {
 	t.Run("Should return auth type default", func(t *testing.T) {
 		appConfig := NewConfig()
-		assert.Equal(t, authEnums.Horusec.ToString(), appConfig.GetAuthType())
+		assert.Equal(t, authEnums.Horusec, appConfig.GetAuthType())
 	})
 }

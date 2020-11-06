@@ -15,6 +15,7 @@
  */
 
 import http from 'config/axios/default';
+import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 
 const getAll = () => {
@@ -25,12 +26,19 @@ const getOne = (companyId: string) => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
-const create = (name: string, adminEmail?: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies`, { name, adminEmail });
+const create = (name: string, adminEmail?: string, ldapGroups?: LDAPGroups) => {
+  return http.post(`${SERVICE_ACCOUNT}/api/companies`, {
+    name,
+    adminEmail,
+    ...ldapGroups,
+  });
 };
 
-const update = (companyId: string, name: string) => {
-  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, { name });
+const update = (companyId: string, name: string, ldapGroups?: LDAPGroups) => {
+  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
+    name,
+    ...ldapGroups,
+  });
 };
 
 const remove = (companyId: string) => {

@@ -2,6 +2,8 @@ package grpc
 
 import (
 	"fmt"
+	"net"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
@@ -10,26 +12,28 @@ import (
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"net"
 )
 
-func SetUpGRPCServer(postgresRead relational.InterfaceRead, appConfig *app.Config) {
+func SetUpGRPCServer(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
 	if env.GetEnvOrDefaultBool("HORUSEC_GRPC_USE_CERTS", false) {
-		setupWithCerts(postgresRead, appConfig)
+		setupWithCerts(postgresRead, postgresWrite, appConfig)
 	}
 
-	setupWithoutCerts(postgresRead, appConfig)
+	setupWithoutCerts(postgresRead, postgresWrite, appConfig)
 }
 
-func setupWithoutCerts(postgresRead relational.InterfaceRead, appConfig *app.Config) {
+func setupWithoutCerts(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
 	server := grpc.NewServer()
-	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, appConfig))
+	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, postgresWrite, appConfig))
 	if err := server.Serve(getNetListener()); err != nil {
 		logger.LogPanic("failed to setup grpc server", err)
 	}
 }
 
-func setupWithCerts(postgresRead relational.InterfaceRead, appConfig *app.Config) {
+func setupWithCerts(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
 	grpCredentials, err := credentials.NewServerTLSFromFile(env.GetEnvOrDefault("HORUSEC_GRPC_CERT_PATH", ""),
 		env.GetEnvOrDefault("HORUSEC_GRPC_KEY_PATH", ""))
 	if err != nil {
@@ -37,7 +41,7 @@ func setupWithCerts(postgresRead relational.InterfaceRead, appConfig *app.Config
 	}
 
 	server := grpc.NewServer(grpc.Creds(grpCredentials))
-	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, appConfig))
+	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, postgresWrite, appConfig))
 	if err := server.Serve(getNetListener()); err != nil {
 		logger.LogPanic("failed to setup grpc server", err)
 	}

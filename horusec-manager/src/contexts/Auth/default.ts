@@ -1,12 +1,15 @@
 import accountService from 'services/account';
 import { setTokens } from 'helpers/localStorage/tokens';
 import { setCurrentUser } from 'helpers/localStorage/currentUser';
+import { LoginParams } from 'helpers/interfaces/LoginParams';
 
-const login = (email: string, password: string) => {
+const login = (params: LoginParams) => {
   return new Promise((resolve, reject) => {
     accountService
-      .login(email, password)
+      .login(params)
       .then((result) => {
+        console.log(result);
+
         const userData = result?.data?.content;
         const { accessToken, refreshToken, expiresAt } = userData;
 
