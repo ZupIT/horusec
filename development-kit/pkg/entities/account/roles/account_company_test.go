@@ -15,11 +15,10 @@
 package roles
 
 import (
-	"testing"
-
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestValidate(t *testing.T) {
@@ -81,5 +80,16 @@ func TestIsNotAdmin(t *testing.T) {
 	t.Run("should return false when is admin", func(t *testing.T) {
 		accountCompany := &AccountCompany{Role: "admin"}
 		assert.False(t, accountCompany.IsNotAdmin())
+	})
+}
+
+func TestAccountCompanyToBytes(t *testing.T) {
+	t.Run("Should return content in bytes not empty", func(t *testing.T) {
+		inviteUser := AccountCompany{
+			CompanyID: uuid.New(),
+			AccountID: uuid.New(),
+			Role:      rolesEnum.Member,
+		}
+		assert.NotEmpty(t, inviteUser.ToBytes())
 	})
 }
