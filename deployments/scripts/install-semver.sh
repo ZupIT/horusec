@@ -33,9 +33,10 @@ installSemver () {
     if [ $RESPONSE != "0" ]
     then
         echo "Installing semver..."
-        curl https://horus-assets.s3.amazonaws.com/semver -o ./semver
-        chmod +x ./semver
-        sudo mv ./semver /usr/local/bin/semver
+        go build -o semver ./deployments/semver/cmd/app/main.go
+        chmod +x semver
+        rm -rf "$GOPATH/bin/semver"
+        mv semver "$GOPATH/bin"
     fi
 }
 

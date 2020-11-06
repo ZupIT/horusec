@@ -27,7 +27,7 @@ func TestRulesEnum(t *testing.T) {
 	totalRules = append(totalRules, AllRulesLeaksRegular()...)
 	totalRules = append(totalRules, AllRulesLeaksAnd()...)
 	totalRules = append(totalRules, AllRulesLeaksOr()...)
-	lenExpectedTotalRules := 27
+	lenExpectedTotalRules := 28
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in leaks", func(t *testing.T) {
 		encountered := map[string]bool{}
 

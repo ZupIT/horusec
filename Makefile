@@ -71,7 +71,7 @@ test-e2e-server-keycloak: compose-e2e-server-keycloak
 # ========================================================================================= #
 
 # Run all steps required to pass on pipeline
-pipeline: fmt lint test coverage build install-manager lint-manager build-manager
+pipeline: fmt lint test coverage install-manager lint-manager build-manager
 
 # ========================================================================================= #
 
@@ -90,6 +90,9 @@ build-manager:
 COMPOSE_FILE_NAME ?= docker-compose.yaml
 
 compose: compose-down compose-up
+
+compose-dev:
+	COMPOSE_FILE_NAME="docker-compose.dev.yaml" make compose
 
 # Down all containers on depends to the project run
 compose-down:
@@ -140,6 +143,10 @@ install-dev: install-manager build-manager install-cli compose-dev migrate
 
 install-cli:
 	curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+
+install-semver:
+	chmod +x ./deployments/scripts/install-semver.sh
+	./deployments/scripts/install-semver.sh
 
 build-install-cli:
 	$(GO) build -o horusec ./horusec-cli/cmd/horusec/main.go
