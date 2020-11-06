@@ -39,4 +39,11 @@ func TestValidateUpdateVulnType(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, "type: must be a valid value.", err.Error())
 	})
+	t.Run("Should not return empty content and parse to bytes", func(t *testing.T) {
+		updateManagementData := &UpdateVulnType{
+			Type: "test",
+		}
+
+		assert.NotEmpty(t, updateManagementData.ToBytes())
+	})
 }
