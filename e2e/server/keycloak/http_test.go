@@ -81,9 +81,9 @@ func TestServer(t *testing.T) {
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
-		companyID := RunCompanyCRUD(t, user.Username, credential.Value)
+		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
-		RunCRUDUserInCompany(t, user.Username, credential.Value, companyID)
+		RunCRUDUserInCompany(t, bearerToken, companyID)
 	})
 }
 
@@ -115,8 +115,7 @@ func StartAuthHorusecServices(t *testing.T, secret string) {
 	time.Sleep(3 * time.Second)
 }
 
-func RunCompanyCRUD(t *testing.T, username, password string) string {
-	bearerToken := LoginInKeycloak(t, username, password)["access_token"].(string)
+func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	companyID := server.CreateCompany(t, bearerToken, &accountentities.Company{
 		Name: "zup",
 	})
@@ -133,8 +132,7 @@ func RunCompanyCRUD(t *testing.T, username, password string) string {
 	})
 }
 
-func RunCRUDUserInCompany(t *testing.T, username, password, companyID string) {
-	bearerTokenAccount1 := LoginInKeycloak(t, username, password)["access_token"].(string)
+func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 	companyIDParsed, _ := uuid.Parse(companyID)
 
 	// Add new user to invite
