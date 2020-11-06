@@ -13,7 +13,6 @@ import (
 	"testing"
 )
 
-
 func LoginInKeycloak(t *testing.T, username, password string) map[string]interface{} {
 	fmt.Println("Running test for LoginInKeycloak in Keycloak")
 	payload := strings.NewReader(fmt.Sprintf("client_id=admin-cli&username=%s&password=%s&grant_type=password", username, password))
@@ -94,14 +93,14 @@ func DeleteAllUsersInKeyCloak(t *testing.T, bearerToken string) {
 			idsToRemove = append(idsToRemove, user["id"].(string))
 		}
 	}
-	assert.Equal(t, len(allUsers) - 1, len(idsToRemove))
+	assert.Equal(t, len(allUsers)-1, len(idsToRemove))
 	for _, id := range idsToRemove {
 		req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+id, nil)
 		req.Header.Add("Authorization", bearerToken)
 		httpClient := http.Client{}
 		resp, err := httpClient.Do(req)
-		assert.NoError(t, err, "DeleteAllUsersInKeyCloak: remove user of id: " +id+ " error mount request")
-		assert.Equal(t, http.StatusNoContent, resp.StatusCode, "DeleteAllUsersInKeyCloak: remove user of id: " +id+ " error send request")
+		assert.NoError(t, err, "DeleteAllUsersInKeyCloak: remove user of id: "+id+" error mount request")
+		assert.Equal(t, http.StatusNoContent, resp.StatusCode, "DeleteAllUsersInKeyCloak: remove user of id: "+id+" error send request")
 	}
 }
 

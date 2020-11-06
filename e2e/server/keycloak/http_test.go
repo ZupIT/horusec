@@ -149,7 +149,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 			Value:     "Ch@ng3m3",
 		}
 		responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
-		CreateUserInKeyCloak(t, user, credential, "Bearer " + responseLoginAdmin["access_token"].(string))
+		CreateUserInKeyCloak(t, user, credential, "Bearer "+responseLoginAdmin["access_token"].(string))
 		responseLoginNewUser := LoginInKeycloak(t, user.Username, credential.Value)
 		bearerTokenAccount2 := responseLoginNewUser["access_token"].(string)
 		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})

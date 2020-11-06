@@ -77,7 +77,6 @@ func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	assert.NoError(t, resp.Body.Close())
 }
 
-
 func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(

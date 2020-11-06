@@ -19,7 +19,7 @@ import (
 
 func TestMain(m *testing.M) {
 	folderOfMigration := "file://../../../development-kit/pkg/databases/relational/migration"
-	connectionStringDB := env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable")
+	connectionStringDB := env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable")
 	migration, err := migrate.New(folderOfMigration, connectionStringDB)
 	if err != nil {
 		logger.LogPanic("Error in create first instance migration: ", err)
@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	}
 	output, err := exec.Command("docker", "restart", "horusec-auth").Output()
 	if err != nil {
-		logger.LogPanic("Error restart auth service: " + string(output), err)
+		logger.LogPanic("Error restart auth service: "+string(output), err)
 	}
 	time.Sleep(3 * time.Second)
 	code := m.Run()
@@ -66,8 +66,8 @@ func TestServer(t *testing.T) {
 
 		// create company and add to logged user
 		companyID := CreateCompanyApplicationAdmin(t, bearerToken, &accountentities.CompanyApplicationAdmin{
-			Name:        "zup",
-			AdminEmail:  "horusec-admin@example.com",
+			Name:       "zup",
+			AdminEmail: "horusec-admin@example.com",
 		})
 		// check if company show to logged user
 		allCompanies := ReadAllCompanies(t, bearerToken, true)
@@ -90,8 +90,8 @@ func TestServer(t *testing.T) {
 		})
 		// Create new company to new user in system
 		_ = CreateCompanyApplicationAdmin(t, bearerToken, &accountentities.CompanyApplicationAdmin{
-			Name:        "zup",
-			AdminEmail:  "e2e@example.com",
+			Name:       "zup",
+			AdminEmail: "e2e@example.com",
 		})
 		// Not can possible show company to first user
 		allCompanies = ReadAllCompanies(t, bearerToken, false)

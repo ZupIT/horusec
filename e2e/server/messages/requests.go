@@ -17,7 +17,7 @@ import (
 
 func CreateAccount(t *testing.T, account *accountentities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://localhost:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -31,7 +31,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.In
 	fmt.Println("Running test for Login")
 	req, _ := http.NewRequest(
 		http.MethodPost,
-		"http://localhost:8003/api/account/login",
+		"http://127.0.0.1:8003/api/account/login",
 		bytes.NewReader(credentials.ToBytes()))
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
@@ -40,7 +40,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.In
 func LoginAndReturnAccessToken(t *testing.T, credentials *accountentities.LoginData) string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://localhost:8003/api/account/login",
+		"http://127.0.0.1:8003/api/account/login",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)
@@ -56,11 +56,11 @@ func ValidateAccount(t *testing.T, accountID string) {
 	fmt.Println("Running test for ValidateAccount")
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://localhost:8003/api/account/validate/"+accountID,
+		"http://127.0.0.1:8003/api/account/validate/"+accountID,
 		nil)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	if err != nil {
-		if !strings.Contains(err.Error(), "Get \"http://localhost:8043\": ") {
+		if !strings.Contains(err.Error(), "Get \"http://127.0.0.1:8043\": ") {
 			assert.NoError(t, err)
 		}
 	} else {
@@ -70,7 +70,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://localhost:8003/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/account/logout", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -84,7 +84,7 @@ func Logout(t *testing.T, bearerToken string) {
 
 func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")
-	req, _ := http.NewRequest(http.MethodPost, "http://localhost:8003/api/companies", bytes.NewReader(company.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
@@ -101,7 +101,7 @@ func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *acco
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodPost,
-		"http://localhost:8003/api/companies/"+companyID+"/roles",
+		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles",
 		bytes.NewReader(user.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
