@@ -66,7 +66,6 @@ test-e2e-messages: compose-e2e-messages
 test-e2e-server-keycloak: compose-e2e-server-keycloak
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
-	sleep 10
 	$(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast
 
 # ========================================================================================= #

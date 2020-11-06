@@ -60,6 +60,7 @@ func TestServer(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should tests auth-type keycloak http requests", func(t *testing.T) {
+		time.Sleep(10 * time.Second)
 		bearerToken := CreateDefaultUserInKeycloakAndGetAccessToken(t)
 		assert.NotEmpty(t, bearerToken)
 
