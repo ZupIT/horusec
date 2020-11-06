@@ -52,7 +52,7 @@ func TestToAccountRepository(t *testing.T) {
 func TestSetUpdateData(t *testing.T) {
 	t.Run("should success set update data", func(t *testing.T) {
 		repository := &Repository{RepositoryID: uuid.New()}
-		repository.SetUpdateData("test", "test")
+		repository.SetUpdateData("test", "test", "", "", "")
 		assert.NotEmpty(t, repository)
 		assert.Equal(t, "test", repository.Name)
 		assert.Equal(t, "test", repository.Description)
