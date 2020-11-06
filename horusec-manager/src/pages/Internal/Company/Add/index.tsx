@@ -58,8 +58,6 @@ function AddCompany() {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    console.log(adminGroup, userGroup)
-
     if (companyName.isValid) {
       createCompany(companyName.value, emailAdmin.value, {
         authzAdmin: adminGroup.value,
