@@ -5,7 +5,6 @@ services:
     image: postgres:12
     ports:
       - "5432:5432"
-    network_mode: "host"
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root
@@ -23,7 +22,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    network_mode: "host"
   horusec-messages:
     build:
       context: ../../
@@ -36,7 +34,7 @@ services:
       - "8004:8004"
     network_mode: "host"
     environment:
-      HORUSEC_BROKER_HOST: rabbit
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
@@ -60,7 +58,7 @@ services:
     network_mode: "host"
     environment:
       HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "false"
-      HORUSEC_BROKER_HOST: rabbit
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
@@ -68,6 +66,7 @@ services:
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
       HORUSEC_AUTH_URL: "http://127.0.0.1:8006"
+      HORUSEC_MANAGER_URL: "http://127.0.0.1:8043"
   horusec-auth:
     build:
       context: ../../
