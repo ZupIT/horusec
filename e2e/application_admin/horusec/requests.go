@@ -26,7 +26,7 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 func Login(t *testing.T, credentials *accountentities.LoginData) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://127.0.0.1:8003/api/account/login",
+		"http://127.0.0.1:8006/api/auth/authenticate",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)

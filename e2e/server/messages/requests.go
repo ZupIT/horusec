@@ -31,7 +31,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.In
 	fmt.Println("Running test for Login")
 	req, _ := http.NewRequest(
 		http.MethodPost,
-		"http://127.0.0.1:8003/api/account/login",
+		"http://127.0.0.1:8006/api/auth/authenticate",
 		bytes.NewReader(credentials.ToBytes()))
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
@@ -40,7 +40,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.In
 func LoginAndReturnAccessToken(t *testing.T, credentials *accountentities.LoginData) string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://127.0.0.1:8003/api/account/login",
+		"http://127.0.0.1:8006/api/auth/authenticate",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)
