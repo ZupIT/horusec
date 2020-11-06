@@ -42,7 +42,9 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_PORT                                  | 8000                                                             | This environment get the port that the service will start    |
 | HORUSEC_SWAGGER_HOST                          | localhost                                                        | This environment get the host for swagger start              |
 | HORUSEC_JWT_SECRET_KEY                        | horusec-secret                                                   | This environment get JWT secret key                          | 
-| HORUSEC_AUTH_URL                              | http://localhost:8006                                            | This environment get horusec url to mount horusec auth url   |
+| HORUSEC_GRPC_AUTH_URL                         | localhost:8007                                                   | This environment get horusec url to mount horusec auth url   |
+| HORUSEC_GRPC_USE_CERTS                        | false                                                            | This environment get if use of certificates is active or not |
+| HORUSEC_GRPC_CERT_PATH                        |                                                                  | This environment get grpc certificate path                   | 
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-api folder**

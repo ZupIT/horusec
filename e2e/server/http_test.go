@@ -51,6 +51,11 @@ func TestServer(t *testing.T) {
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
 		})
+		bearerToken, _ := Login(t, &accountentities.LoginData{
+			Email:    "e2e@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user",
+		})
 		bearerToken, _ := Login(t, &authEntities.Credentials{
 			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",

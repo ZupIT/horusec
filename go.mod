@@ -3,6 +3,7 @@ module github.com/ZupIT/horusec
 go 1.14
 
 require (
+	github.com/Microsoft/go-winio v0.4.15 // indirect
 	github.com/Nerzal/gocloak/v7 v7.5.0
 	github.com/ZupIT/horusec-engine v0.2.7
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
@@ -13,7 +14,7 @@ require (
 	github.com/bmatcuk/doublestar/v2 v2.0.3
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/davecgh/go-spew v1.1.1
-	github.com/denisenkom/go-mssqldb v0.0.0-20201103052722-628e054fa9c3 // indirect
+	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/docker/docker v1.13.1
@@ -25,6 +26,7 @@ require (
 	github.com/go-openapi/swag v0.19.11 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/golang-migrate/migrate/v4 v4.13.0
+	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.2
 	github.com/graphql-go/graphql v0.7.9
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -66,9 +68,12 @@ require (
 	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102
-	golang.org/x/sys v0.0.0-20201101102859-da207088b7d1 // indirect
+	golang.org/x/sys v0.0.0-20201106081118-db71ae66460a // indirect
 	golang.org/x/text v0.3.4 // indirect
-	golang.org/x/tools v0.0.0-20201103165230-c64668f4c98a // indirect
+	golang.org/x/tools v0.0.0-20201105220310-78b158585360 // indirect
+	google.golang.org/genproto v0.0.0-20201105153401-9d023cd09d72 // indirect
+	google.golang.org/grpc v1.33.1
+	google.golang.org/protobuf v1.25.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

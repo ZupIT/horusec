@@ -24,6 +24,7 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
@@ -125,10 +126,15 @@ func TestAuthorizeByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthorizeByType(&authEntities.AuthorizationData{})
+		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
+			Token:        "test",
+			Role:         "test",
+			CompanyID:    "test",
+			RepositoryID: "test",
+		})
 
-		assert.True(t, result)
 		assert.NoError(t, err)
+		assert.True(t, result.GetIsAuthorized())
 	})
 
 	t.Run("should authenticate with keycloak and return no errors", func(t *testing.T) {
@@ -142,10 +148,15 @@ func TestAuthorizeByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthorizeByType(&authEntities.AuthorizationData{})
+		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
+			Token:        "test",
+			Role:         "test",
+			CompanyID:    "test",
+			RepositoryID: "test",
+		})
 
-		assert.True(t, result)
 		assert.NoError(t, err)
+		assert.True(t, result.GetIsAuthorized())
 	})
 
 	t.Run("should authenticate with ldap and return no errors", func(t *testing.T) {
@@ -160,10 +171,15 @@ func TestAuthorizeByType(t *testing.T) {
 			},
 		}
 
-		result, err := controller.AuthorizeByType(&authEntities.AuthorizationData{})
+		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
+			Token:        "test",
+			Role:         "test",
+			CompanyID:    "test",
+			RepositoryID: "test",
+		})
 
-		assert.True(t, result)
-		assert.NoError(t, err)
+		assert.Error(t, err)
+		assert.False(t, result.GetIsAuthorized())
 	})
 
 	t.Run("should return unauthorized error when invalid auth type", func(t *testing.T) {
@@ -179,11 +195,16 @@ func TestAuthorizeByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthorizeByType(&authEntities.AuthorizationData{})
+		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
+			Token:        "test",
+			Role:         "test",
+			CompanyID:    "test",
+			RepositoryID: "test",
+		})
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorUnauthorized, err)
-		assert.False(t, result)
+		assert.False(t, result.GetIsAuthorized())
 	})
 }
 
@@ -195,9 +216,21 @@ func TestController_GetAuthTypes(t *testing.T) {
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
-		authType, err := controller.GetAuthType()
+		authType, err := controller.GetAuthConfig(nil, nil)
 		assert.NoError(t, err)
-		assert.Equal(t, authEnums.Horusec, authType)
+		assert.Equal(t, authEnums.Horusec.ToString(), authType.GetAuthType())
+	})
+
+	t.Run("Should return error when invalid type", func(t *testing.T) {
+		mockService := &services.MockAuthService{}
+		controller := Controller{
+			appConfig:           &app.Config{AuthType: "test"},
+			horusAuthService:    mockService,
+			keycloakAuthService: mockService,
+		}
+		authType, err := controller.GetAuthConfig(nil, nil)
+		assert.Error(t, err)
+		assert.Equal(t, authEnums.Unknown.ToString(), authType.GetAuthType())
 	})
 }
 
@@ -219,10 +252,10 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		accountID, err := controller.GetAccountIDByAuthType(token)
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
 
 		assert.NoError(t, err)
-		assert.NotEqual(t, uuid.Nil, accountID)
+		assert.NotEmpty(t, response.GetAccountID())
 	})
 
 	t.Run("should return account id when keycloak", func(t *testing.T) {
@@ -246,10 +279,10 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloak:            keycloakMock,
 		}
 
-		accountID, err := controller.GetAccountIDByAuthType(token)
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
 
 		assert.NoError(t, err)
-		assert.NotEqual(t, uuid.Nil, accountID)
+		assert.NotEmpty(t, response.GetAccountID())
 	})
 
 	t.Run("should return account id when horusec", func(t *testing.T) {
@@ -269,13 +302,13 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		accountID, err := controller.GetAccountIDByAuthType(token)
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
 
 		assert.NoError(t, err)
-		assert.NotEqual(t, uuid.Nil, accountID)
+		assert.NotEmpty(t, response.GetAccountID())
 	})
 
-	t.Run("should return account id when horusec", func(t *testing.T) {
+	t.Run("should return error when invalid auth type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
@@ -284,9 +317,9 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		accountID, err := controller.GetAccountIDByAuthType("test")
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: "test"})
 
 		assert.Error(t, err)
-		assert.Equal(t, uuid.Nil, accountID)
+		assert.Empty(t, response.GetAccountID())
 	})
 }

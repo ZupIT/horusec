@@ -114,9 +114,7 @@ func (r *Router) RouterAuth(
 	handler := auth.NewAuthHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
 		router.Get("/config", handler.Config)
-		router.Get("/account-id", handler.GetAccountIDByAuthType)
 		router.Post("/authenticate", handler.AuthByType)
-		router.Post("/authorize", handler.Authorize)
 		router.Options("/", handler.Options)
 	})
 
