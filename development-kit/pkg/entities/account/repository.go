@@ -65,10 +65,14 @@ func (r *Repository) SetCreateData(companyID uuid.UUID) *Repository {
 	return r
 }
 
-func (r *Repository) SetUpdateData(name, description string) *Repository {
+func (r *Repository) SetUpdateData(
+	name, description, authzAdmin, authzMember, authzSupervisor string) *Repository {
 	r.UpdatedAt = time.Now()
 	r.Name = name
 	r.Description = description
+	r.AuthzAdmin = authzAdmin
+	r.AuthzMember = authzMember
+	r.AuthzSupervisor = authzSupervisor
 	return r
 }
 

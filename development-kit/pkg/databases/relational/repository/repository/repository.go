@@ -80,8 +80,10 @@ func (r *Repository) Update(repositoryID uuid.UUID, repository *accountEntities.
 		return nil, err
 	}
 
-	return repository, r.databaseWrite.Update(toUpdate.SetUpdateData(repository.Name,
-		repository.Description), map[string]interface{}{"repository_id": repositoryID}, repository.GetTable()).GetError()
+	return repository, r.databaseWrite.Update(toUpdate.SetUpdateData(
+		repository.Name, repository.Description, repository.AuthzAdmin,
+		repository.AuthzMember, repository.AuthzSupervisor,
+	), map[string]interface{}{"repository_id": repositoryID}, repository.GetTable()).GetError()
 }
 
 func (r *Repository) Get(repositoryID uuid.UUID) (*accountEntities.Repository, error) {
