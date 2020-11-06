@@ -16,6 +16,9 @@ package auth
 
 import (
 	"errors"
+	"os"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -28,16 +31,14 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create a new controller", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		appConfig := &app.Config{}
+		mockWrite := &relational.MockWrite{}
 
-		controller := NewAuthController(mockRead, appConfig)
+		controller := NewAuthController(mockRead, mockWrite, app.NewConfig())
 
 		assert.NotNil(t, controller)
 	})
@@ -50,7 +51,7 @@ func TestAuthByType(t *testing.T) {
 		mockService.On("Authenticate").Return("success", nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Horusec},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -67,7 +68,7 @@ func TestAuthByType(t *testing.T) {
 		mockService.On("Authenticate").Return("success", nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -78,22 +79,20 @@ func TestAuthByType(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	//TODO implements
 	t.Run("should authenticate with ldap and return no errors", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		mockService.On("Authenticate").Return("success", nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Ldap.ToString()},
-			horusAuthService:    mockService,
-			keycloakAuthService: mockService,
+			ldapAuthService: mockService,
+			appConfig:       &app.Config{AuthType: authEnums.Ldap},
 		}
 
 		result, err := controller.AuthByType(&authEntities.Credentials{})
 
-		assert.Nil(t, result)
-		assert.Error(t, err)
+		assert.NotNil(t, result)
+		assert.NoError(t, err)
 	})
 
 	t.Run("should return unauthorized error when invalid auth type", func(t *testing.T) {
@@ -122,7 +121,7 @@ func TestAuthorizeByType(t *testing.T) {
 		mockService.On("IsAuthorized").Return(true, nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Horusec},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -144,7 +143,7 @@ func TestAuthorizeByType(t *testing.T) {
 		mockService.On("IsAuthorized").Return(true, nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -160,16 +159,16 @@ func TestAuthorizeByType(t *testing.T) {
 		assert.True(t, result.GetIsAuthorized())
 	})
 
-	//TODO implements
 	t.Run("should authenticate with ldap and return no errors", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
-		mockService.On("IsAuthorized").Return("success", nil)
+		mockService.On("IsAuthorized").Return(true, nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Ldap.ToString()},
-			horusAuthService:    mockService,
-			keycloakAuthService: mockService,
+			ldapAuthService: mockService,
+			appConfig: &app.Config{
+				AuthType: authEnums.Ldap,
+			},
 		}
 
 		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
@@ -213,7 +212,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 	t.Run("Should return default authentication type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Horusec},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -248,7 +247,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Horusec},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -274,7 +273,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 			keycloak:            keycloakMock,
@@ -298,7 +297,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Ldap.ToString()},
+			appConfig:           &app.Config{AuthType: authEnums.Ldap},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}

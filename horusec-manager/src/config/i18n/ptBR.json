@@ -6,6 +6,8 @@
     "SUBMIT": "Entrar",
     "NO_ACCOUNT": "Não tem conta? Cadastre-se",
     "INVALID_EMAIL": "Email inválido",
+    "INVALID_USERNAME": "Nome de usuário inválido!",
+    "USERNAME": "Nome de usuário",
     "INVALID_PASS": "Informe a senha",
     "KEYCLOAK": "Entrar com keycloak"
   },
@@ -102,7 +104,8 @@
     "USER": "Usuário:",
     "GROUP_NAME": "Nome do grupo",
     "ADMIN_EMAIL": "E-mail do administrador",
-    "EMAIL": "E-mail"
+    "EMAIL": "E-mail",
+    "INVALID_EMAIL_ADMIN": "E-mail Inválido!"
   },
 
   "DASHBOARD_SCREEN": {

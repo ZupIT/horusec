@@ -90,47 +90,6 @@ func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
 }
 
 // @Tags Account
-// @Description login into account!
-// @ID login
-// @Accept  json
-// @Produce  json
-// @Param LoginData body account.LoginData true "login data info"
-// @Success 200 {object} http.Response{content=string} "OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/login [post]
-func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	loginData, err := h.useCases.NewLoginFromReadCloser(r.Body)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	response, err := h.controller.Login(loginData)
-	if err != nil {
-		h.checkLoginErrors(w, err)
-		return
-	}
-
-	httpUtil.StatusOK(w, response)
-}
-
-func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
-	if err == errors.ErrorWrongEmailOrPassword || err == errors.ErrNotFoundRecords {
-		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
-		return
-	}
-
-	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
-		httpUtil.StatusForbidden(w, err)
-		return
-	}
-
-	httpUtil.StatusInternalServerError(w, err)
-}
-
-// @Tags Account
 // @Description validate email!
 // @ID validate-email
 // @Accept  json

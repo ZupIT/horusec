@@ -15,29 +15,28 @@
 package horusec
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
-	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
+	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"net/http"
-	"strings"
 	"testing"
+	"time"
 )
 
 func generateToken() string {
@@ -54,8 +53,9 @@ func generateToken() string {
 func TestNewHorusAuthService(t *testing.T) {
 	t.Run("should success create new service", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
-		service := NewHorusAuthService(mockRead)
+		service := NewHorusAuthService(mockRead, mockWrite)
 
 		assert.NotNil(t, service)
 	})
@@ -64,25 +64,38 @@ func TestNewHorusAuthService(t *testing.T) {
 func TestAuthenticate(t *testing.T) {
 	t.Run("should success authenticate login", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		loginResponse := &accountEntities.LoginResponse{
-			AccessToken:  "test",
-			RefreshToken: "test",
-			Username:     "test",
-			Email:        "test@test.com",
+		account := &accountEntities.Account{
+			AccountID:   uuid.New(),
+			Email:       "test@test.com",
+			Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
+			Username:    "test",
+			IsConfirmed: true,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		}
 
-		loginBytes, _ := json.Marshal(loginResponse)
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		cacheRepositoryMock.On("Set").Return(nil)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Update").Return(resp)
+		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{}, nil)
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(loginBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		resp2 := &response.Response{}
+		mockRead.On("Find").Return(resp2.SetData(nil))
+		mockWrite.On("Update").Return(resp)
 
 		service := Service{
-			httpUtil:              httpMock,
-			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
-			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
-			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, mockWrite),
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountUseCases:       accountUseCases.NewAccountUseCases(),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
 		}
 
 		credentials := &authEntities.Credentials{
@@ -96,18 +109,37 @@ func TestAuthenticate(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 
-	t.Run("should return error while parsing response", func(t *testing.T) {
+	t.Run("should return error invalid username or password", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		resp := &http.Response{Body: nil}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		account := &accountEntities.Account{
+			AccountID:   uuid.New(),
+			Email:       "test@test.com",
+			Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwHfLKkCKuq/6vyHu2H.",
+			Username:    "test",
+			IsConfirmed: true,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Update").Return(resp)
+
+		resp2 := &response.Response{}
+		mockRead.On("Find").Return(resp2.SetData(nil))
 
 		service := Service{
-			httpUtil:              httpMock,
-			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
-			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
-			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, mockWrite),
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountUseCases:       accountUseCases.NewAccountUseCases(),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
 		}
 
 		credentials := &authEntities.Credentials{
@@ -118,20 +150,35 @@ func TestAuthenticate(t *testing.T) {
 		result, err := service.Authenticate(credentials)
 
 		assert.Error(t, err)
-		assert.Nil(t, result)
+		assert.Equal(t, errorsEnum.ErrorWrongEmailOrPassword, err)
+		assert.Empty(t, result)
 	})
 
-	t.Run("should return while making request", func(t *testing.T) {
+	t.Run("should return while finding registry in database", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
 
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(nil), errors.New("test"))
+		resp := &response.Response{}
+		respWithError := &response.Response{}
+		mockRead.On("Find").Once().Return(respWithError.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Update").Return(resp)
+
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Update").Return(resp)
+
+		resp2 := &response.Response{}
+		mockRead.On("Find").Return(resp2.SetData(nil))
 
 		service := Service{
-			httpUtil:              httpMock,
-			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
-			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
-			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, mockWrite),
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountUseCases:       accountUseCases.NewAccountUseCases(),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
 		}
 
 		credentials := &authEntities.Credentials{
@@ -143,14 +190,61 @@ func TestAuthenticate(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
+	})
+
+	t.Run("should return error while setting data in cache", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		account := &accountEntities.Account{
+			AccountID:   uuid.New(),
+			Email:       "test@test.com",
+			Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
+			Username:    "test",
+			IsConfirmed: true,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		cacheRepositoryMock.On("Set").Return(errors.New("test"))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Update").Return(resp)
+		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{}, nil)
+
+		resp2 := &response.Response{}
+		mockRead.On("Find").Return(resp2.SetData(nil))
+		mockWrite.On("Update").Return(resp)
+
+		service := Service{
+			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			repositoryRepo:        repositoryRepo.NewRepository(mockRead, mockWrite),
+			accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+			accountUseCases:       accountUseCases.NewAccountUseCases(),
+			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+			cacheRepository:       cacheRepositoryMock,
+		}
+
+		credentials := &authEntities.Credentials{
+			Username: "test@test.com",
+			Password: "test",
+		}
+
+		result, err := service.Authenticate(credentials)
+
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
+		assert.Empty(t, result)
 	})
 }
 
 func TestIsAuthorizedCompanyMember(t *testing.T) {
 	t.Run("should success authenticate with company member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Member,
@@ -161,7 +255,6 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -182,7 +275,6 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 	t.Run("should success authenticate with company admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Admin,
@@ -193,7 +285,6 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -214,14 +305,12 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -242,10 +331,8 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 
 	t.Run("should return error when invalid token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -270,7 +357,6 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 	t.Run("should success authenticate with company admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Admin,
@@ -281,7 +367,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -302,7 +387,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 	t.Run("should return error when member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Member,
@@ -313,7 +397,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -334,7 +417,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 	t.Run("should return error when supervisor", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Supervisor,
@@ -345,7 +427,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -366,10 +447,8 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 
 	t.Run("should return error when invalid jwt token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -394,7 +473,6 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 func TestIsAuthorizedRepositoryMember(t *testing.T) {
 	t.Run("should success authenticate with repository member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Member,
@@ -405,7 +483,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -426,7 +503,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 	t.Run("should success authenticate with repository supervisor", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Supervisor,
@@ -437,7 +513,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -458,7 +533,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 	t.Run("should success authenticate with repository admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Admin,
@@ -469,7 +543,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -490,14 +563,12 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -518,10 +589,8 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 	t.Run("should return error when invalid token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -544,7 +613,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 
 	t.Run("should success authenticate with company admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Admin,
@@ -557,7 +625,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -580,7 +647,6 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 	t.Run("should success authenticate with repository supervisor", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Supervisor,
@@ -591,7 +657,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -612,7 +677,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 	t.Run("should success authenticate with repository admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Admin,
@@ -623,7 +687,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -644,7 +707,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 	t.Run("should success authenticate with company admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Admin,
@@ -657,7 +719,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -678,7 +739,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 	t.Run("should return error when not in repository and company member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Member,
@@ -691,7 +751,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -712,14 +771,12 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -740,14 +797,12 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 
 	t.Run("should return error when invalid token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -772,7 +827,6 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 	t.Run("should success authenticate with repository admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Admin,
@@ -783,7 +837,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -804,7 +857,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should success authenticate with company admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Admin,
@@ -817,7 +869,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -838,7 +889,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return error when repository supervisor", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Supervisor,
@@ -849,7 +899,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -870,7 +919,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return error when repository member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &roles.AccountRepository{
 			Role: accountEnums.Member,
@@ -881,7 +929,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -902,14 +949,12 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return error when something went wrong while getting role", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -930,14 +975,12 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return error when invalid token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -960,7 +1003,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return error when not in repository and company member", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountCompany := &roles.AccountCompany{
 			Role: accountEnums.Member,
@@ -973,7 +1015,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:              httpMock,
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -996,7 +1037,6 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 func TestIsApplicationAdmin(t *testing.T) {
 	t.Run("should success authenticate with application admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &accountEntities.Account{
 			IsApplicationAdmin: true,
@@ -1007,7 +1047,6 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:          httpMock,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1025,7 +1064,6 @@ func TestIsApplicationAdmin(t *testing.T) {
 	})
 	t.Run("should error when authenticate with wrong token", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &accountEntities.Account{
 			IsApplicationAdmin: true,
@@ -1036,7 +1074,6 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:          httpMock,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1054,14 +1091,12 @@ func TestIsApplicationAdmin(t *testing.T) {
 	})
 	t.Run("should error when get user in database authenticate", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		resp := response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("not found content")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:          httpMock,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1079,7 +1114,6 @@ func TestIsApplicationAdmin(t *testing.T) {
 	})
 	t.Run("should success but user is not application admin when get user in database", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		httpMock := &httpClient.Mock{}
 
 		accountRepository := &accountEntities.Account{
 			IsApplicationAdmin: false,
@@ -1090,7 +1124,6 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
-			httpUtil:          httpMock,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 

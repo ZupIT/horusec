@@ -19,6 +19,8 @@ export interface Company {
   name: string;
   description: string;
   role: string;
+  authzAdmin?: string;
+  authzMember?: string;
   createdAt?: string;
   updatedAt?: string;
 }

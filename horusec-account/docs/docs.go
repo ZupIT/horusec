@@ -38,7 +38,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -2831,6 +2830,12 @@ var doc = `{
         "account.Company": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -2886,6 +2891,15 @@ var doc = `{
         "account.Repository": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "authzSupervisor": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

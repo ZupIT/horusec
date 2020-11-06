@@ -4,21 +4,22 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestNewAuthController(t *testing.T) {
 	t.Run("should success create new controller", func(t *testing.T) {
 		appConfig := &app.Config{}
-		handler := NewAuthHandler(nil, appConfig)
+		handler := NewAuthHandler(nil, nil, appConfig)
 		assert.NotEmpty(t, handler)
 	})
 }
@@ -26,7 +27,7 @@ func TestNewAuthController(t *testing.T) {
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
 		appConfig := &app.Config{}
-		handler := NewAuthHandler(nil, appConfig)
+		handler := NewAuthHandler(nil, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
 		w := httptest.NewRecorder()
 
@@ -107,8 +108,8 @@ func TestAuthByType(t *testing.T) {
 
 func TestHandler_AuthTypes(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
-		handler := NewAuthHandler(nil, &app.Config{
-			AuthType: authEnums.Horusec.ToString(),
+		handler := NewAuthHandler(nil, nil, &app.Config{
+			AuthType: authEnums.Horusec,
 		})
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)

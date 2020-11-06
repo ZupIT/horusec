@@ -16,6 +16,7 @@ package repository
 
 import (
 	"fmt"
+
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
@@ -79,8 +80,10 @@ func (r *Repository) Update(repositoryID uuid.UUID, repository *accountEntities.
 		return nil, err
 	}
 
-	return repository, r.databaseWrite.Update(toUpdate.SetUpdateData(repository.Name,
-		repository.Description), map[string]interface{}{"repository_id": repositoryID}, repository.GetTable()).GetError()
+	return repository, r.databaseWrite.Update(toUpdate.SetUpdateData(
+		repository.Name, repository.Description, repository.AuthzAdmin,
+		repository.AuthzMember, repository.AuthzSupervisor,
+	), map[string]interface{}{"repository_id": repositoryID}, repository.GetTable()).GetError()
 }
 
 func (r *Repository) Get(repositoryID uuid.UUID) (*accountEntities.Repository, error) {
@@ -119,7 +122,7 @@ func (r *Repository) listByRoles(accountID, companyID uuid.UUID) (*[]accountEnti
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, accountRepo.role,"+
-			" repo.created_at, repo.updated_at").
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_repository AS accountRepo ON accountRepo.repository_id = repo.repository_id"+
 			" AND accountRepo.account_id = ?", accountID).
@@ -135,7 +138,7 @@ func (r *Repository) listAllInCompany(accountID, companyID uuid.UUID) (*[]accoun
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
-			" repo.created_at, repo.updated_at").
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_company AS accountCompany ON accountCompany.company_id = repo.company_id "+
 			"AND accountCompany.account_id = ?", accountID).
