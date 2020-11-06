@@ -70,19 +70,8 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 	return s.setLDAPAuthResponse(account), nil
 }
 
-func (s *Service) verifyAuthenticateErrors(err error) error {
-	if err != nil && err == errors.ErrorUserDoesNotExist {
-		return err
-	}
-
-	return errors.ErrorUnauthorized
-}
-
 func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
-	getUserGroups := func() (interface{}, error) {
-		return s.getUserGroups(authzData.Token)
-	}
-	userGroups, err, _ := s.memo.Memoize(authzData.Token+authzData.Role.ToString(), getUserGroups)
+	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
 
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -93,17 +82,51 @@ func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) 
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups.([]string), authzGroups)
+	return s.checkIsAuthorized(userGroups, authzGroups)
+}
+
+func (s *Service) isApplicationAdmin(username string) bool {
+	applicationAdminGroups, _ := s.getApplicationAdminAuthzGroupsName()
+	userGroups, _ := s.getUserGroups(username)
+
+	isApplicationAdmin, err := s.checkIsAuthorized(applicationAdminGroups, userGroups)
+	if err != nil {
+		return false
+	}
+
+	return isApplicationAdmin
+}
+
+func (s *Service) getUserGroups(username string) ([]string, error) {
+	memoizedGetUserGroups := func() (interface{}, error) {
+		return s.client.GetGroupsOfUser(username)
+	}
+	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	return userGroups.([]string), nil
+}
+
+func (s *Service) verifyAuthenticateErrors(err error) error {
+	if err != nil && err == errors.ErrorUserDoesNotExist {
+		return err
+	}
+
+	return errors.ErrorUnauthorized
 }
 
 func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *auth.LdapAuthResponse {
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 
 	return &auth.LdapAuthResponse{
-		AccessToken: accessToken,
-		ExpiresAt:   expiresAt,
-		Username:    account.Username,
-		Email:       account.Email,
+		AccessToken:        accessToken,
+		ExpiresAt:          expiresAt,
+		Username:           account.Username,
+		Email:              account.Email,
+		IsApplicationAdmin: s.isApplicationAdmin(account.Username),
 	}
 }
 
@@ -230,13 +253,13 @@ func (s *Service) removeEmptyGroupsName(groupsName []string) []string {
 	return updatedGroups
 }
 
-func (s *Service) getUserGroups(tokenStr string) ([]string, error) {
+func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 	token, err := jwt.DecodeToken(tokenStr)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.GetGroupsOfUser(token.Username)
+	return s.getUserGroups(token.Username)
 }
 
 func (s *Service) contains(groups []string, userGroup string) bool {
