@@ -75,20 +75,15 @@ func TestServer(t *testing.T) {
 
 		SetupKeycloak(t, user, credential)
 
-		bearerTokenForCreateUser := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenForCreateUser})
-
-		bearerTokenOperationInHorusec := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
-
-		fmt.Println("Waiting register token in keycloak and register new user in horusec...")
-		time.Sleep(3 * time.Second)
+		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
-		companyID := RunCompanyCRUD(t, bearerTokenOperationInHorusec)
+		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
-		RunCRUDUserInCompany(t, bearerTokenOperationInHorusec, companyID)
+		RunCRUDUserInCompany(t, bearerToken, companyID)
 	})
 }
 
@@ -121,91 +116,93 @@ func StartAuthHorusecServices(t *testing.T, secret string) {
 }
 
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
-	t.Run("Should create an company, check if it exists, update your name check if name was updated delete a company and return new company to manager in other steps", func(t *testing.T) {
-		companyID := server.CreateCompany(t, bearerToken, &accountentities.Company{
-			Name: "zup",
-		})
-		allCompanies := server.ReadAllCompanies(t, bearerToken, true)
-		assert.Contains(t, allCompanies, "zup")
-		server.UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
-			Name: "zup-1",
-		})
-		allCompaniesUpdated := server.ReadAllCompanies(t, bearerToken, true)
-		assert.Contains(t, allCompaniesUpdated, "zup-1")
-		server.DeleteCompany(t, bearerToken, companyID)
+	companyID := server.CreateCompany(t, bearerToken, &accountentities.Company{
+		Name: "zup",
 	})
+	allCompanies := server.ReadAllCompanies(t, bearerToken, true)
+	assert.Contains(t, allCompanies, "zup")
+	server.UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
+		Name: "zup-1",
+	})
+	allCompaniesUpdated := server.ReadAllCompanies(t, bearerToken, true)
+	assert.Contains(t, allCompaniesUpdated, "zup-1")
+	server.DeleteCompany(t, bearerToken, companyID)
 	return server.CreateCompany(t, bearerToken, &accountentities.Company{
 		Name: "zup",
 	})
 }
 
 func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
-	t.Run("Should create new user and invite to existing company with permission of the member after update your permission to admin and check if is enable view dashboard by company and remove user from company", func(t *testing.T) {
-		companyIDParsed, _ := uuid.Parse(companyID)
+	companyIDParsed, _ := uuid.Parse(companyID)
 
-		// Add new user to invite
-		user := &entities.UserRepresentation{
-			Username:      "e2e_user_2",
-			Email:         "e2e_2@example.com",
-			EmailVerified: true,
-			Enabled:       true,
-		}
-		credential := &entities.UserRepresentationCredentials{
-			Temporary: false,
-			Type:      "password",
-			Value:     "Ch@ng3m3",
-		}
-		responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
-		CreateUserInKeyCloak(t, user, credential, "Bearer "+responseLoginAdmin["access_token"].(string))
-		responseLoginNewUser := LoginInKeycloak(t, user.Username, credential.Value)
-		bearerTokenAccount2 := responseLoginNewUser["access_token"].(string)
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})
-		fmt.Println("Waiting register token in keycloak and register new user in horusec...")
-		time.Sleep(3 * time.Second)
-		// Invite user to existing company
-		server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
-			Role:      rolesEnum.Member,
-			Email:     user.Email,
-			CompanyID: companyIDParsed,
-		})
+	// Add new user to invite
+	user := &entities.UserRepresentation{
+		Username:      "e2e_user_2",
+		Email:         "e2e_2@example.com",
+		EmailVerified: true,
+		Enabled:       true,
+	}
+	credential := &entities.UserRepresentationCredentials{
+		Temporary: false,
+		Type:      "password",
+		Value:     "Ch@ng3m3",
+	}
 
-		// Check if exist two users in company
-		allUsersInCompany := server.ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
-		accountRoles := []roles.AccountRole{}
-		assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
-		assert.NotEmpty(t, accountRoles)
-		assert.Equal(t, 2, len(accountRoles))
-		accountID := ""
-		for _, currentUser := range accountRoles {
-			if currentUser.Email == user.Email {
-				accountID = currentUser.AccountID.String()
-			}
-		}
-		assert.NotEmpty(t, accountID)
+	// Create second user in keycloak
+	responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
+	tokenKeycloakAdmin := "Bearer "+responseLoginAdmin["access_token"].(string)
+	CreateUserInKeyCloak(t, user, credential, tokenKeycloakAdmin)
 
-		// Check if company exists to new user
-		allCompanies := server.ReadAllCompanies(t, bearerTokenAccount2, true)
-		assert.Contains(t, allCompanies, "zup")
+	// Login in keycloak and Create user in Horusec
+	bearerTokenAccount2 := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+	CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})
 
-		// Expected return unauthorized because user is not admin of company to see dashboard in company view
-		responseChart := server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
-		assert.Equal(t, http.StatusUnauthorized, responseChart.GetStatusCode())
+	fmt.Println("Waiting register token in keycloak and register new user in horusec...")
+	time.Sleep(3 * time.Second)
 
-		// Update permission of new user to admin
-		server.UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
-			Role: rolesEnum.Admin,
-		})
-		time.Sleep(1 * time.Second)
-
-		// Expected return OK because user is authorized view dashboard in company view
-		responseChart = server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
-		assert.Equal(t, http.StatusOK, responseChart.GetStatusCode())
-
-		// Expected remove user from company
-		server.RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
-
-		// Not show company for user when get all companies
-		allCompanies = server.ReadAllCompanies(t, bearerTokenAccount2, false)
-		assert.NotContains(t, allCompanies, "zup")
+	// Invite user to existing company
+	server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+		Role:      rolesEnum.Member,
+		Email:     user.Email,
+		CompanyID: companyIDParsed,
 	})
+
+	// Check if exist two users in company
+	allUsersInCompany := server.ReadAllUserInCompany(t, bearerTokenAccount1, companyID)
+	accountRoles := []roles.AccountRole{}
+	assert.NoError(t, json.Unmarshal([]byte(allUsersInCompany), &accountRoles))
+	assert.NotEmpty(t, accountRoles)
+	assert.Equal(t, 2, len(accountRoles))
+	accountID := ""
+	for _, currentUser := range accountRoles {
+		if currentUser.Email == user.Email {
+			accountID = currentUser.AccountID.String()
+		}
+	}
+	assert.NotEmpty(t, accountID)
+
+	// Check if company exists to new user
+	allCompanies := server.ReadAllCompanies(t, bearerTokenAccount2, true)
+	assert.Contains(t, allCompanies, "zup")
+
+	// Expected return unauthorized because user is not admin of company to see dashboard in company view
+	responseChart := server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+	assert.Equal(t, http.StatusUnauthorized, responseChart.GetStatusCode())
+
+	// Update permission of new user to admin
+	server.UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
+		Role: rolesEnum.Admin,
+	})
+	time.Sleep(1 * time.Second)
+
+	// Expected return OK because user is authorized view dashboard in company view
+	responseChart = server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
+	assert.Equal(t, http.StatusOK, responseChart.GetStatusCode())
+
+	// Expected remove user from company
+	server.RemoveUserInCompany(t, bearerTokenAccount1, companyID, accountID)
+
+	// Not show company for user when get all companies
+	allCompanies = server.ReadAllCompanies(t, bearerTokenAccount2, false)
+	assert.NotContains(t, allCompanies, "zup")
 }
