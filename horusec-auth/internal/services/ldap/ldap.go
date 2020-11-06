@@ -30,6 +30,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
 	"github.com/kofalt/go-memoize"
@@ -139,6 +140,9 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 
 	case authEnums.RepositoryAdmin, authEnums.RepositoryMember, authEnums.RepositorySupervisor:
 		return s.handleGetAuthzGroupsNameForRepository(authzData)
+
+	case authEnums.ApplicationAdmin:
+		return s.getApplicationAdminAuthzGroupsName()
 	}
 
 	return []string{}, errors.ErrorUnauthorized
@@ -186,6 +190,15 @@ func (s *Service) getRepositoryAuthzGroupsName(repositoryID uuid.UUID, role auth
 
 	return s.getEntityGroupsNameByRole(repository.GetAuthzMember(),
 		repository.GetAuthzSupervisor(), repository.GetAuthzAdmin(), role), nil
+}
+
+func (s *Service) getApplicationAdminAuthzGroupsName() ([]string, error) {
+	applicationAdminGroup := env.GetEnvOrDefault("HORUSEC_LDAP_ADMIN_GROUP", "")
+	if applicationAdminGroup == "" {
+		return []string{}, errors.ErrorUnauthorized
+	}
+
+	return []string{applicationAdminGroup}, nil
 }
 
 func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin string, role authEnums.HorusecRoles) []string {
