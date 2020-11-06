@@ -79,6 +79,9 @@ func TestServer(t *testing.T) {
 
 		bearerToken = LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 
+		fmt.Println("Waiting register token in keycloak and register new user in horusec...")
+		time.Sleep(3 * time.Second)
+
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
@@ -157,7 +160,8 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		responseLoginNewUser := LoginInKeycloak(t, user.Username, credential.Value)
 		bearerTokenAccount2 := responseLoginNewUser["access_token"].(string)
 		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})
-
+		fmt.Println("Waiting register token in keycloak and register new user in horusec...")
+		time.Sleep(3 * time.Second)
 		// Invite user to existing company
 		server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
 			Role:      rolesEnum.Member,
@@ -191,6 +195,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		server.UpdateUserInCompany(t, bearerTokenAccount1, companyID, accountID, &roles.AccountCompany{
 			Role: rolesEnum.Admin,
 		})
+		time.Sleep(1 * time.Second)
 
 		// Expected return OK because user is authorized view dashboard in company view
 		responseChart = server.GetChartContentWithoutTreatment(t, "total-repositories", bearerTokenAccount2, companyID, "")
