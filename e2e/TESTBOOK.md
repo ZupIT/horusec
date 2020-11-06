@@ -1,42 +1,72 @@
 # Test book
 
+# Table of Contents
+
+ * [Horusec server](#horusec-server)
+ * [Horusec messages](#horusec-messages)
+ * [Horusec application admin](#horusec-application-admin)
+ * [Horusec CLI](#horusec-cli)
+ 
+ 
 ## Horusec server
 - [ ] Create account
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Logout
+  - [X] Keycloak auth type
+- [ ] Login
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
+- [ ] Logout
+  - [X] Horusec auth type
 - [ ] Authorize
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Reset account password
+  - [X] Keycloak auth type
 - [ ] Create, Read, Update and Delete company
   - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Create, Read, Update and Delete company with application admin enable
-  - [ ] Horusec auth type
-  - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Create, Read, and Delete company token
-- [ ] Create, Read, and Delete repositories
-- [ ] Invite, Read, Update and Remove users in company
-  - [ ] Horusec auth type
-  - [ ] Ldap auth type
-  - [ ] Keycloak auth type
+  - [X] Keycloak auth type
+- [X] Create, Read, and Delete company token
+- [X] Create, Read, Update, and Delete repositories
+- [X] Create, Read, and Delete repository token
+- [X] Invite, Read, Update and Remove users in company
+  - [X] Horusec auth type
+  - [X] Keycloak auth 
+- [X] Create and Read analysis
+  - [X] Repository Token
+  - [X] Company Token + repository name
 - [ ] Invite, Read, Update and Remove users in repository
-  - [ ] Horusec auth type
+  - [X] Horusec auth type
   - [ ] Ldap auth type
-  - [ ] Keycloak auth type
-- [ ] Create, Read, and Delete repository token
-- [ ] Get Dashboard content
-  - [ ] Company view
-  - [ ] Repository view
-- [ ] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
+- [X] Get Dashboard content
+  - [X] Company view
+  - [X] Repository view
+- [X] Manager vulnerabilities found and change type into: False Positive, Risk accept, Corrected, Vulnerability
+
+## Horusec messages
+- [X] Create account
+- [X] Validate account
+- [X] Login
+- [X] Logout
+- [ ] Reset account password
+
+## Horusec application admin
+- [ ] Create account
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+- [ ] Login
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+- [ ] Logout
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+- [ ] Authorize
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
+- [ ] Create, Read, Update and Delete company
+  - [X] Horusec auth type
+  - [ ] Ldap auth type
 
 ## Horusec CLI
 - [ ] Setup log level
@@ -72,17 +102,15 @@
   - [ ] javaScript
   - [ ] leaks
   - [ ] hlc
-
-### Run analysis examples
-  - [X] GoLang
-  - [X] C#
-  - [X] Ruby
-  - [X] Python
-  - [X] Java
-  - [X] Kotlin
-  - [X] Javascript
-  - [X] Leaks
-  - [X] Terraform
+- [X] Scan languages GoLang
+- [X] Scan languages C#
+- [X] Scan languages Ruby
+- [X] Scan languages Python
+- [X] Scan languages Java
+- [X] Scan languages Kotlin
+- [X] Scan languages Javascript
+- [X] Scan languages Leaks
+- [X] Scan languages Terraform
 
 ### Generics repositories to test
 - [ ] Kubernetes alone

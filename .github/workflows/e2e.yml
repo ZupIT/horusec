@@ -7,19 +7,73 @@ on:
     branches: [ "**" ]
 
 jobs:
-  install-build-test-fmt-lint:
-    name: install-build-test-fmt-lint
+  e2e-cli:
+    name: e2e-cli
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-    - name: Set up Go 1.14
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.14
-      id: go
-    - name: Check out code
-      uses: actions/checkout@v2
-    - name: Setup External Dependences
-      run: make compose-e2e
-    - name: e2e
-      run: make test-e2e
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-cli
+  e2e-server-horusec:
+    name: e2e-server-horusec
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-server-horusec
+  e2e-server-keycloak:
+    name: e2e-server-keycloak
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-server-keycloak
+  e2e-application-admin-horusec:
+    name: e2e-application-admin-horusec
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-application-admin-horusec
+  e2e-messages:
+    name: e2e-messages
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: e2e
+        run: make test-e2e-messages

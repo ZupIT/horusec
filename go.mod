@@ -12,8 +12,7 @@ require (
 	github.com/auth0/go-jwt-middleware v0.0.0-20201030150249-d783b5c46b39
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
 	github.com/bmatcuk/doublestar/v2 v2.0.3
-	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
-	github.com/davecgh/go-spew v1.1.1
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
@@ -29,7 +28,6 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.2
 	github.com/graphql-go/graphql v0.7.9
-	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/iancoleman/strcase v0.1.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/kofalt/go-memoize v0.0.0-20200917044458-9b55a8d73e1c
@@ -50,9 +48,8 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/prometheus/client_golang v1.8.0
-	github.com/prometheus/common v0.14.0 // indirect
-	github.com/prometheus/procfs v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/afero v1.4.1 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.1.1
@@ -64,8 +61,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
 	github.com/swaggo/swag v1.6.9
-	github.com/valyala/fasttemplate v1.2.1 // indirect
-	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102
 	golang.org/x/sys v0.0.0-20201106081118-db71ae66460a // indirect

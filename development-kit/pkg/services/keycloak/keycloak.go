@@ -83,7 +83,7 @@ func (s *Service) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
 		return nil, errorsEnum.ErrorUnauthorized
 	}
 
-	return s.client.GetUserInfo(s.ctx, accessToken, s.realm)
+	return s.client.GetUserInfo(s.ctx, s.removeBearer(accessToken), s.realm)
 }
 
 func (s *Service) removeBearer(accessToken string) string {
