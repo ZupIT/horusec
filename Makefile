@@ -40,13 +40,13 @@ lint:
 
 # Run all tests of project but stop the execution on the first test fail
 test:
-	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
+	$(GO) clean -testcache && $(GO) test -v ./... -timeout=5m -parallel=1 -failfast -short
 
 test-e2e:
 	$(GO) clean -testcache && $(GO) test -v ./e2e/e2e_test.go -timeout=5m -parallel=1 -failfast
 
 # Run all steps required to pass on pipeline
-pipeline: fmt lint test coverage build install-manager lint-manager build-manager
+pipeline: fmt lint test coverage install-manager lint-manager build-manager
 
 # ========================================================================================= #
 
@@ -65,6 +65,9 @@ build-manager:
 COMPOSE_FILE_NAME ?= docker-compose.yaml
 
 compose: compose-down compose-up
+
+compose-dev:
+	COMPOSE_FILE_NAME="docker-compose.dev.yaml" make compose
 
 # Down all containers on depends to the project run
 compose-down:
@@ -86,6 +89,10 @@ install-dev: install-manager build-manager install-cli compose-dev migrate
 
 install-cli:
 	curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+
+install-semver:
+	chmod +x ./deployments/scripts/install-semver.sh
+	./deployments/scripts/install-semver.sh
 
 build-install-cli:
 	go build -o horusec ./horusec-cli/cmd/horusec/main.go

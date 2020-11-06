@@ -40,6 +40,7 @@ require (
 	github.com/prometheus/common v0.14.0 // indirect
 	github.com/prometheus/procfs v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/afero v1.4.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
