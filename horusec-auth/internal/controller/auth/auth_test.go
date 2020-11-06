@@ -178,8 +178,8 @@ func TestAuthorizeByType(t *testing.T) {
 			RepositoryID: "test",
 		})
 
-		assert.Error(t, err)
-		assert.False(t, result.GetIsAuthorized())
+		assert.NoError(t, err)
+		assert.True(t, result.GetIsAuthorized())
 	})
 
 	t.Run("should return unauthorized error when invalid auth type", func(t *testing.T) {
@@ -224,7 +224,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 	t.Run("Should return error when invalid type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: "test"},
+			appConfig:           &app.Config{AuthType: "unknown"},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}

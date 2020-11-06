@@ -16,6 +16,9 @@ package ldap
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
@@ -30,8 +33,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/kofalt/go-memoize"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewService(t *testing.T) {
@@ -57,6 +60,7 @@ func TestAuthenticate(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(user))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 		databaseRead.On("Find").Return()
+		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
 		ldapService := &Service{
 			client:         ldapClientServiceMock,
@@ -64,6 +68,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -86,6 +91,7 @@ func TestAuthenticate(t *testing.T) {
 		databaseRead.On("Find").Return(respFind.SetError(errors.New("")))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 		databaseRead.On("Find").Return()
+		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 		databaseWrite.On("Create").Return(respCreate.SetData(user))
 
 		ldapService := &Service{
@@ -94,6 +100,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -116,6 +123,7 @@ func TestAuthenticate(t *testing.T) {
 		databaseRead.On("Find").Return(respFind.SetError(errors.New("")))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 		databaseRead.On("Find").Return()
+		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 		databaseWrite.On("Create").Return(respCreate.SetError(errors.New("test")))
 
 		ldapService := &Service{
@@ -124,6 +132,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -146,6 +155,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -168,6 +178,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -190,6 +201,7 @@ func TestAuthenticate(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.Credentials{}
@@ -229,6 +241,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -268,6 +281,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -307,6 +321,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -346,6 +361,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -385,6 +401,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -424,6 +441,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -463,6 +481,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -502,6 +521,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -541,6 +561,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -580,6 +601,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -614,6 +636,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -648,6 +671,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
@@ -676,6 +700,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		credentials := auth.AuthorizationData{
@@ -705,6 +730,7 @@ func TestIsAuthorized(t *testing.T) {
 			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
 			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
+			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
