@@ -30,6 +30,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"google.golang.org/grpc"
 )
 
 type Router struct {
@@ -44,10 +45,10 @@ func NewRouter(config *serverConfig.Server) *Router {
 	}
 }
 
-func (r *Router) GetRouter(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *chi.Mux {
+func (r *Router) GetRouter(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite,
+	cacheRepository cache.Interface, appConfig app.IAppConfig, grpcCon *grpc.ClientConn) *chi.Mux {
 	r.setMiddleware()
-	r.setAPIRoutes(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
+	r.setAPIRoutes(broker, databaseRead, databaseWrite, cacheRepository, appConfig, grpcCon)
 	return r.router
 }
 
@@ -62,11 +63,11 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) {
+func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite,
+	cacheRepository cache.Interface, appConfig app.IAppConfig, grpcCon *grpc.ClientConn) {
 	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig)
-	r.RouterAccount(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
-	r.RouterCompany(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
+	r.RouterAccount(broker, databaseRead, databaseWrite, cacheRepository, appConfig, grpcCon)
+	r.RouterCompany(broker, databaseRead, databaseWrite, cacheRepository, appConfig, grpcCon)
 }
 
 func (r *Router) EnableRealIP() *Router {
@@ -110,9 +111,10 @@ func (r *Router) RouterMetrics() *Router {
 }
 
 func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *Router {
+	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig,
+	grpcCon *grpc.ClientConn) *Router {
 	handler := account.NewHandler(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/login", handler.Login)
 		router.Post("/create-account", handler.CreateAccount)
@@ -131,9 +133,10 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 }
 
 func (r *Router) RouterCompany(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IAppConfig) *Router {
+	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface,
+	appConfig app.IAppConfig, grpcCon *grpc.ClientConn) *Router {
 	handler := company.NewHandler(databaseWrite, databaseRead, cacheRepository, broker, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
 		router.With(authzMiddleware.IsApplicationAdmin).Post("/", handler.Create)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
@@ -145,16 +148,16 @@ func (r *Router) RouterCompany(broker brokerLib.IBroker, databaseRead SQL.Interf
 		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}", handler.Delete)
 		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/roles/{accountID}", handler.RemoveUser)
 		router.Route("/{companyID}/repositories",
-			r.routerCompanyRepositories(databaseRead, databaseWrite, broker, appConfig))
+			r.routerCompanyRepositories(databaseRead, databaseWrite, broker, appConfig, grpcCon))
 	})
 	return r
 }
 
 func (r *Router) routerCompanyRepositories(databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, broker brokerLib.IBroker,
-	appConfig app.IAppConfig) func(router chi.Router) {
+	appConfig app.IAppConfig, grpcCon *grpc.ClientConn) func(router chi.Router) {
 	handler := repositories.NewRepositoryHandler(databaseWrite, databaseRead, broker, appConfig)
-	authzMiddleware := middlewares.NewHorusAuthzMiddleware()
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	return func(router chi.Router) {
 		router.Use(authzMiddleware.IsCompanyMember)
 		router.With(authzMiddleware.SetContextAccountID).Get("/", handler.List)
