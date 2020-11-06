@@ -43,6 +43,10 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_KEYCLOAK_CLIENT_SECRET      |                                                                   | This environment get keycloak client secret                  | 
 | HORUSEC_KEYCLOAK_REALM              |                                                                   | This environment get keycloak realm                          |
 | HORUSEC_KEYCLOAK_OTP                | false                                                             | This environment get keycloak opt                            | 
+| HORUSEC_GRPC_PORT                   | 8007                                                              | This environment get grpc port                               | 
+| HORUSEC_GRPC_USE_CERTS              | false                                                             | This environment get if use of certificates is active or not |
+| HORUSEC_GRPC_CERT_PATH              |                                                                   | This environment get grpc certificate path                   | 
+| HORUSEC_GRPC_KEY_PATH               |                                                                   | This environment get grpc certificate key path               | 
 | HORUSEC_ENABLE_APPLICATION_ADMIN    | false                                                             | This environment set if you need active application admin in system. When this environment is setup to `true` only application admin users can create company in horusec. | 
 | HORUSEC_APPLICATION_ADMIN_DATA      | {\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"} | When application admin is enable and auth-type is `horusec` we need create default user application admin with this content in horusec. Don't forget to **escape the json** at the value of the environment variable. | 
 

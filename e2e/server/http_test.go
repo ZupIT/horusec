@@ -46,9 +46,9 @@ func TestServer(t *testing.T) {
 	}
 	t.Run("Should tests default auth-type (horusec) http requests", func(t *testing.T) {
 		CreateAccount(t, &accountentities.Account{
-			Email:              "e2e@example.com",
-			Password:           "Ch@ng3m3",
-			Username:           "e2e_user",
+			Email:    "e2e@example.com",
+			Password: "Ch@ng3m3",
+			Username: "e2e_user",
 		})
 		bearerToken, _ := Login(t, &accountentities.LoginData{
 			Email:    "e2e@example.com",
@@ -137,18 +137,18 @@ func RunDashboardByRepository(t *testing.T, bearerToken, companyID, repositoryID
 
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 	companyID := CreateCompany(t, bearerToken, &accountentities.Company{
-		Name:  "zup",
+		Name: "zup",
 	})
 	_ = ReadAllCompanies(t, bearerToken)
 	UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
-		Name:  "zup-1",
+		Name: "zup-1",
 	})
 	allCompaniesUpdated := ReadAllCompanies(t, bearerToken)
 	allCompaniesBytes, _ := json.Marshal(allCompaniesUpdated)
 	assert.Contains(t, string(allCompaniesBytes), "zup-1")
 	DeleteCompany(t, bearerToken, companyID)
 	return CreateCompany(t, bearerToken, &accountentities.Company{
-		Name:  "zup",
+		Name: "zup",
 	})
 }
 

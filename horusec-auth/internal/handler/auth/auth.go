@@ -18,7 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
@@ -50,18 +50,11 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} http.Response{content=auth.ConfigAuth{}} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Router /api/auth/config [get]
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	authType, err := h.authController.GetAuthType()
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
 	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
-		AuthType:               authType,
+		AuthType:               authEnums.AuthorizationType(h.appConfig.GetAuthType()),
 	})
 }
 
@@ -98,64 +91,4 @@ func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) 
 	}
 
 	return credentials, nil
-}
-
-// @Tags Auth
-// @Description verify if request is valid!
-// @ID authenticate request
-// @Accept  json
-// @Produce  json
-// @Param AuthorizationData body auth.AuthorizationData true "authorization data"
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/auth/authorize [post]
-func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	authorizationData, err := h.getAuthorizationData(r)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	response, err := h.authController.AuthorizeByType(authorizationData)
-	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
-	}
-
-	httpUtil.StatusOK(w, response)
-}
-
-func (h *Handler) getAuthorizationData(r *netHTTP.Request) (*auth.AuthorizationData, error) {
-	authorizationData, err := h.authUseCases.NewAuthorizationDataFromReadCloser(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return authorizationData, nil
-}
-
-// @Tags Auth
-// @Description get account by token and auth type!
-// @ID get account id
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 400 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/auth/account-id [get]
-func (h *Handler) GetAccountIDByAuthType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		httpUtil.StatusBadRequest(w, errors.ErrorTokenCanNotBeEmpty)
-		return
-	}
-
-	accountID, err := h.authController.GetAccountIDByAuthType(token)
-	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
-	}
-
-	httpUtil.StatusOK(w, accountID)
 }
