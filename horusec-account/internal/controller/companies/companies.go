@@ -80,12 +80,10 @@ func (c *Controller) Create(accountID uuid.UUID, data *accountEntities.Company) 
 	}
 	if err = c.repoAccountCompany.CreateAccountCompany(
 		newCompany.CompanyID, accountID, accountEnums.Admin, tx); err != nil {
-		if errTx := tx.RollbackTransaction().GetError(); errTx != nil {
-			return nil, errTx
-		}
+		_ = tx.RollbackTransaction()
 		return nil, err
 	}
-	tx.CommitTransaction()
+	_ = tx.CommitTransaction()
 	return newCompany, nil
 }
 
