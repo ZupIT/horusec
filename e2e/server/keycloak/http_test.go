@@ -61,10 +61,24 @@ func TestServer(t *testing.T) {
 	}
 	t.Run("Should tests auth-type keycloak http requests", func(t *testing.T) {
 		time.Sleep(10 * time.Second)
-		bearerToken := CreateDefaultUserInKeycloakAndGetAccessToken(t)
+		user := &entities.UserRepresentation{
+			Username:      "e2e_user",
+			Email:         "e2e@example.com",
+			EmailVerified: true,
+			Enabled:       true,
+		}
+		credential := &entities.UserRepresentationCredentials{
+			Temporary: false,
+			Type:      "password",
+			Value:     "Ch@ng3m3",
+		}
+		bearerToken := SetupKeycloakAndGetFirstAccessToken(t, user, credential)
 		assert.NotEmpty(t, bearerToken)
 
 		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
+
+		bearerToken = LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
@@ -73,18 +87,7 @@ func TestServer(t *testing.T) {
 	})
 }
 
-func CreateDefaultUserInKeycloakAndGetAccessToken(t *testing.T) string {
-	user := &entities.UserRepresentation{
-		Username:      "e2e_user",
-		Email:         "e2e@example.com",
-		EmailVerified: true,
-		Enabled:       true,
-	}
-	credential := &entities.UserRepresentationCredentials{
-		Temporary: false,
-		Type:      "password",
-		Value:     "Ch@ng3m3",
-	}
+func SetupKeycloakAndGetFirstAccessToken(t *testing.T, user *entities.UserRepresentation, credential *entities.UserRepresentationCredentials) string {
 	responseLogin := LoginInKeycloak(t, "keycloak", "keycloak")
 	bearerToken := "Bearer " + responseLogin["access_token"].(string)
 	UpdateRolesToAcceptOAuth(t, bearerToken)

@@ -14,7 +14,7 @@ import (
 )
 
 func LoginInKeycloak(t *testing.T, username, password string) map[string]interface{} {
-	fmt.Println("Running test for LoginInKeycloak in Keycloak")
+	fmt.Println("Running test for LoginInKeycloak")
 	payload := strings.NewReader(fmt.Sprintf("client_id=admin-cli&username=%s&password=%s&grant_type=password", username, password))
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/realms/master/protocol/openid-connect/token", payload)
 	req.Header.Add("content-type", "application/x-www-form-urlencoded")
