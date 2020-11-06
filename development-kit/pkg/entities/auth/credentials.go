@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -29,4 +30,9 @@ func (c *Credentials) Validate() error {
 		validation.Field(&c.Username, validation.Required, validation.Length(1, 255), validation.Required),
 		validation.Field(&c.Password, validation.Length(1, 255), validation.Required),
 	)
+}
+
+func (c *Credentials) ToBytes() []byte {
+	content, _ := json.Marshal(c)
+	return content
 }

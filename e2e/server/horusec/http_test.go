@@ -8,6 +8,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -69,8 +70,8 @@ func TestServer(t *testing.T) {
 			Username: "e2e_user",
 		})
 		// TESTBOOK: Login
-		contentLogin := Login(t, &accountentities.LoginData{
-			Email:    "e2e@example.com",
+		contentLogin := Login(t, &authEntities.Credentials{
+			Username:  "e2e_user",
 			Password: "Ch@ng3m3",
 		})
 		bearerToken := contentLogin["accessToken"]
@@ -327,8 +328,8 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 		}
 		assert.NotEmpty(t, accountID)
 		// Login with new user
-		contentLoginAccount2 := Login(t, &accountentities.LoginData{
-			Email:    account2.Email,
+		contentLoginAccount2 := Login(t, &authEntities.Credentials{
+			Username: account2.Username,
 			Password: account2.Password,
 		})
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
@@ -402,8 +403,8 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		assert.NotEmpty(t, accountID)
 
 		// Login with new user
-		contentLoginAccount2 := Login(t, &accountentities.LoginData{
-			Email:    account2.Email,
+		contentLoginAccount2 := Login(t, &authEntities.Credentials{
+			Username: account2.Username,
 			Password: account2.Password,
 		})
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]

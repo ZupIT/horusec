@@ -10,6 +10,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -32,7 +33,7 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func Login(t *testing.T, credentials *accountentities.LoginData) map[string]string {
+func Login(t *testing.T, credentials *authEntities.Credentials) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
 		"http://127.0.0.1:8006/api/auth/authenticate",

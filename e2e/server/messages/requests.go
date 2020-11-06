@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +28,7 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.Interface {
+func Login(t *testing.T, credentials *authEntities.Credentials) httpResponse.Interface {
 	fmt.Println("Running test for Login")
 	req, _ := http.NewRequest(
 		http.MethodPost,
@@ -37,7 +38,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) httpResponse.In
 	assert.NoError(t, err)
 	return res
 }
-func LoginAndReturnAccessToken(t *testing.T, credentials *accountentities.LoginData) string {
+func LoginAndReturnAccessToken(t *testing.T, credentials *authEntities.Credentials) string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
 		"http://127.0.0.1:8006/api/auth/authenticate",
