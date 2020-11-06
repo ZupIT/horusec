@@ -72,25 +72,27 @@ func TestServer(t *testing.T) {
 			Type:      "password",
 			Value:     "Ch@ng3m3",
 		}
-		bearerToken := SetupKeycloakAndGetFirstAccessToken(t, user, credential)
-		assert.NotEmpty(t, bearerToken)
 
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
+		SetupKeycloak(t, user, credential)
 
-		bearerToken = LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+		bearerTokenForCreateUser := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+
+		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenForCreateUser})
+
+		bearerTokenOperationInHorusec := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 
 		fmt.Println("Waiting register token in keycloak and register new user in horusec...")
 		time.Sleep(3 * time.Second)
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
-		companyID := RunCompanyCRUD(t, bearerToken)
+		companyID := RunCompanyCRUD(t, bearerTokenOperationInHorusec)
 		assert.NotEmpty(t, companyID)
-		RunCRUDUserInCompany(t, bearerToken, companyID)
+		RunCRUDUserInCompany(t, bearerTokenOperationInHorusec, companyID)
 	})
 }
 
-func SetupKeycloakAndGetFirstAccessToken(t *testing.T, user *entities.UserRepresentation, credential *entities.UserRepresentationCredentials) string {
+func SetupKeycloak(t *testing.T, user *entities.UserRepresentation, credential *entities.UserRepresentationCredentials) {
 	responseLogin := LoginInKeycloak(t, "keycloak", "keycloak")
 	bearerToken := "Bearer " + responseLogin["access_token"].(string)
 	UpdateRolesToAcceptOAuth(t, bearerToken)
@@ -99,8 +101,6 @@ func SetupKeycloakAndGetFirstAccessToken(t *testing.T, user *entities.UserRepres
 	secret := GetClientSecretInAccountClient(t, bearerToken)
 	assert.NotEmpty(t, secret)
 	StartAuthHorusecServices(t, secret)
-	responseLogin = LoginInKeycloak(t, user.Username, credential.Value)
-	return responseLogin["access_token"].(string)
 }
 
 func StartAuthHorusecServices(t *testing.T, secret string) {
