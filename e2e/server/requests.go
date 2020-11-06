@@ -185,7 +185,7 @@ func InsertAnalysisWithRepositoryToken(t *testing.T, analysisData *api.AnalysisD
 }
 
 func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID string) []byte {
-	fmt.Println("Running test for GetChartContent in route: "+ route)
+	fmt.Println("Running test for GetChartContent in route: " + route)
 	fmt.Println("Running test for GetChartRESTContentAndReturnBody")
 	now := time.Now()
 	initialDateStr := now.Format("2006-01-02") + "T00:00:00Z"
@@ -198,7 +198,7 @@ func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID s
 	assert.NoError(t, err)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
-	assert.Equal(t, res.GetStatusCode(), http.StatusOK)
+	assert.Equal(t, http.StatusOK, res.GetStatusCode())
 	body, err := res.GetBody()
 	assert.NoError(t, err)
 	return body
@@ -249,7 +249,7 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 	assert.NoError(t, err)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
-	assert.Equal(t, res.GetStatusCode(), http.StatusOK)
+	assert.Equal(t, http.StatusOK, res.GetStatusCode())
 	body, err := res.GetBody()
 	assert.NoError(t, err)
 	return body
