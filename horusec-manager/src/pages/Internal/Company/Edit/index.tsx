@@ -40,7 +40,7 @@ function EditCompany({
   location: RouterLocationProps;
 }) {
   const { t } = useTranslation();
-  const { companyId } = useParams<{companyId: string}>();
+  const { companyId } = useParams<{ companyId: string }>();
   const history = useHistory();
   const [companyName, setCompanyName] = useState<Field>({
     isValid: false,
