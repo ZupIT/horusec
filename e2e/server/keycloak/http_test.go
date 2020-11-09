@@ -75,14 +75,20 @@ func TestServer(t *testing.T) {
 
 		SetupKeycloak(t, user, credential)
 
-		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)})
 
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
+		time.Sleep(3 * time.Second)
+
+		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
+
+
+		// TESTBOOK: Authorize
+		// TESTBOOK: Create, Read, Update and Delete users in company
 		RunCRUDUserInCompany(t, bearerToken, companyID)
 	})
 }
