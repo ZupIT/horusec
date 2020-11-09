@@ -5,14 +5,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
+	"github.com/stretchr/testify/assert"
 )
 
 func LoginInKeycloak(t *testing.T, username, password string) map[string]interface{} {
@@ -31,7 +32,7 @@ func LoginInKeycloak(t *testing.T, username, password string) map[string]interfa
 	return response
 }
 
-func LogoutUserInKeycloak(t *testing.T, bearerToken, username string)  {
+func LogoutUserInKeycloak(t *testing.T, bearerToken, username string) {
 	allUsers := ListAllUsersInKeycloak(t, bearerToken)
 	userID := ""
 	for _, user := range allUsers {

@@ -5,6 +5,13 @@ package keycloak
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
+	"os/exec"
+	"strings"
+	"testing"
+	"time"
+
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
@@ -17,12 +24,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"os"
-	"os/exec"
-	"strings"
-	"testing"
-	"time"
 )
 
 var SecretKeyCloak = ""
@@ -86,7 +87,6 @@ func TestServer(t *testing.T) {
 		// TESTBOOK: Create, Read, Update and Delete company
 		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
-
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete users in company
@@ -157,7 +157,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 
 	// Create second user in keycloak
 	responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
-	tokenKeycloakAdmin := "Bearer "+responseLoginAdmin["access_token"].(string)
+	tokenKeycloakAdmin := "Bearer " + responseLoginAdmin["access_token"].(string)
 	CreateUserInKeyCloak(t, user, credential, tokenKeycloakAdmin)
 
 	// Login in keycloak and Create user in Horusec
