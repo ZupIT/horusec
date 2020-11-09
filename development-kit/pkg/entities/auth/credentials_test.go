@@ -34,4 +34,12 @@ func TestValidateCredentials(t *testing.T) {
 
 		assert.Error(t, credentials.Validate())
 	})
+
+	t.Run("Should not empty when marshal", func(t *testing.T) {
+		credentials := &Credentials{
+			Username: "horus@test.com",
+			Password: "UltraSafePass",
+		}
+		assert.NotEmpty(t, credentials.ToBytes())
+	})
 }

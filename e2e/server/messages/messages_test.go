@@ -4,6 +4,7 @@ package messages
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -63,9 +64,9 @@ func TestMessages(t *testing.T) {
 		CreateAccount(t, accountToCreate)
 
 		// When try login without confirm account return unauthorized
-		loginResp := Login(t, &accountentities.LoginData{
-			Email:    "e2e@example.com",
-			Password: "Ch@ng3m3",
+		loginResp := Login(t, &authEntities.Credentials{
+			Username: accountToCreate.Email,
+			Password: accountToCreate.Password,
 		})
 		assert.Equal(t, http.StatusForbidden, loginResp.GetStatusCode())
 
@@ -76,9 +77,9 @@ func TestMessages(t *testing.T) {
 		ValidateAccount(t, accountCreated.AccountID.String())
 
 		// Check if is possible login now
-		bearerToken := LoginAndReturnAccessToken(t, &accountentities.LoginData{
-			Email:    "e2e@example.com",
-			Password: "Ch@ng3m3",
+		bearerToken := LoginAndReturnAccessToken(t, &authEntities.Credentials{
+			Username: accountToCreate.Email,
+			Password: accountToCreate.Password,
 		})
 		Logout(t, bearerToken)
 	})
