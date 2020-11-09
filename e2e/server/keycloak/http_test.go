@@ -87,7 +87,6 @@ func TestServer(t *testing.T) {
 		companyID := RunCompanyCRUD(t, bearerToken)
 		assert.NotEmpty(t, companyID)
 
-
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete users in company
 		RunCRUDUserInCompany(t, bearerToken, companyID)
@@ -157,7 +156,7 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 
 	// Create second user in keycloak
 	responseLoginAdmin := LoginInKeycloak(t, "keycloak", "keycloak")
-	tokenKeycloakAdmin := "Bearer "+responseLoginAdmin["access_token"].(string)
+	tokenKeycloakAdmin := "Bearer " + responseLoginAdmin["access_token"].(string)
 	CreateUserInKeyCloak(t, user, credential, tokenKeycloakAdmin)
 
 	// Login in keycloak and Create user in Horusec

@@ -31,7 +31,7 @@ func LoginInKeycloak(t *testing.T, username, password string) map[string]interfa
 	return response
 }
 
-func LogoutUserInKeycloak(t *testing.T, bearerToken, username string)  {
+func LogoutUserInKeycloak(t *testing.T, bearerToken, username string) {
 	allUsers := ListAllUsersInKeycloak(t, bearerToken)
 	userID := ""
 	for _, user := range allUsers {

@@ -71,7 +71,7 @@ func TestServer(t *testing.T) {
 		})
 		// TESTBOOK: Login
 		contentLogin := Login(t, &authEntities.Credentials{
-			Username:  "e2e@example.com",
+			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		bearerToken := contentLogin["accessToken"]
