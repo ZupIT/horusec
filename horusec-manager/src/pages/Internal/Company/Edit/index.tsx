@@ -22,9 +22,13 @@ import { Field } from 'helpers/interfaces/Field';
 import { isEmptyString } from 'helpers/validators';
 import { useHistory, useParams } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
+import { authTypes } from 'helpers/enums/authTypes';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 interface RouterStateProps {
   companyName: string;
+  authzAdmin?: string;
+  authzMember?: string;
 }
 interface RouterLocationProps {
   state: RouterStateProps;
@@ -36,9 +40,19 @@ function EditCompany({
   location: RouterLocationProps;
 }) {
   const { t } = useTranslation();
-  const { companyId } = useParams();
+  const { companyId } = useParams<{ companyId: string }>();
   const history = useHistory();
   const [companyName, setCompanyName] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
     value: '',
   });
@@ -47,13 +61,19 @@ function EditCompany({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+
     if (companyName.isValid) {
-      updateCompany(companyId, companyName.value);
+      updateCompany(companyId, companyName.value, {
+        authzAdmin: adminGroup.value,
+        authzMember: userGroup.value,
+      });
     }
   };
 
   useEffect(() => {
-    setCompanyName({ isValid: false, value: state.companyName });
+    setCompanyName({ isValid: true, value: state.companyName });
+    setAdminGroup({ isValid: true, value: state.authzAdmin });
+    setUserGroup({ isValid: true, value: state.authzMember });
   }, [state]);
 
   return (
@@ -74,6 +94,36 @@ function EditCompany({
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
           initialValue={companyName.value}
         />
+
+        {getCurrentConfig().authType === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('COMPANY_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
+
+              <Input
+                name="adminGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                initialValue={adminGroup.value}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
+
+              <Input
+                name="userGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                initialValue={userGroup.value}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
 
         <Styled.OptionsWrapper>
           <Styled.Btn

@@ -52,7 +52,7 @@ func TestToAccountRepository(t *testing.T) {
 func TestSetUpdateData(t *testing.T) {
 	t.Run("should success set update data", func(t *testing.T) {
 		repository := &Repository{RepositoryID: uuid.New()}
-		repository.SetUpdateData("test", "test")
+		repository.SetUpdateData("test", "test", "test", "test", "test")
 		assert.NotEmpty(t, repository)
 		assert.Equal(t, "test", repository.Name)
 		assert.Equal(t, "test", repository.Description)
@@ -69,11 +69,41 @@ func TestSetCreateData(t *testing.T) {
 
 func TestToRepositoryResponse(t *testing.T) {
 	t.Run("should success parse to repository response", func(t *testing.T) {
-		company := &Repository{
+		repository := &Repository{
 			Name:        "test",
 			Description: "test",
 		}
 
-		assert.NotEmpty(t, company.ToRepositoryResponse(rolesEnum.Admin))
+		assert.NotEmpty(t, repository.ToRepositoryResponse(rolesEnum.Admin))
+	})
+}
+
+func TestGetAuthzMemberRepository(t *testing.T) {
+	t.Run("should success get authz member", func(t *testing.T) {
+		repository := &Repository{
+			AuthzMember: "test",
+		}
+
+		assert.NotEmpty(t, repository.GetAuthzMember())
+	})
+}
+
+func TestGetAuthzSupervisorRepository(t *testing.T) {
+	t.Run("should success get authz supervisor", func(t *testing.T) {
+		repository := &Repository{
+			AuthzSupervisor: "test",
+		}
+
+		assert.NotEmpty(t, repository.GetAuthzSupervisor())
+	})
+}
+
+func TestGetAuthzAdminRepository(t *testing.T) {
+	t.Run("should success get authz admin", func(t *testing.T) {
+		repository := &Repository{
+			AuthzAdmin: "test",
+		}
+
+		assert.NotEmpty(t, repository.GetAuthzAdmin())
 	})
 }

@@ -1,26 +1,29 @@
 {
   "LOGIN_SCREEN": {
-    "EMAIL": "Email",
+    "EMAIL": "E-mail",
     "PASSWORD": "Password",
-    "FORGOT_PASS": "Forgot password?",
-    "SUBMIT": "Log in",
-    "NO_ACCOUNT": "Don't have an account? Register",
-    "INVALID_EMAIL": "Invalid email",
-    "INVALID_PASS": "Enter password"
+    "FORGOT_PASS": "Forgot your password?",
+    "SUBMIT": "Sign in",
+    "NO_ACCOUNT": "Don't have an account? Sign up",
+    "INVALID_EMAIL": "Invalid e-mail",
+    "INVALID_USERNAME": "Invalid username",
+    "USERNAME": "Username",
+    "INVALID_PASS": "Enter password",
+    "KEYCLOAK": "Sign in keycloak"
   },
 
   "RECOVERY_PASS_SCREEN": {
-    "INPUT_EMAIL": "For your security, enter the registered email to reset your password",
-    "EMAIL": "Email",
+    "INPUT_EMAIL": "For your security, enter the e-mail registered to reset your password",
+    "EMAIL": "E-mail",
     "CODE": "Code",
-    "INVALID_EMAIL": "Invalid email",
+    "INVALID_EMAIL": "Invalid e-mail",
     "INVALID_CODE": "Enter a code",
     "CHECK_CODE": "Check code",
-    "SUBMIT": "Send code to email",
+    "SUBMIT": "Submit code",
     "BACK": "Back to login",
-    "SUCCESS": "A password recovery code has been sent to your email.",
+    "SUCCESS": "A password recovery code has been sent to your e-mail.",
     "CONFIRM": "Ok, I got it.",
-    "TYPE_THE_CODE": "Enter the code entered in your registered email. The code is valid for 10 minutes and must be used 1x.",
+    "TYPE_THE_CODE": "Enter the code entered in your registered e-mail. The code is valid for 10 minutes and must be used 1x.",
     "CREATE_NEW_PASS": "Create your new password:",
     "PASSWORD_REQUIREMENTS": "For your security, the password must contain at least:",
     "MIN_CHARACTERS": "From 8 characters",
@@ -40,12 +43,12 @@
 
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Create your Horusec account",
-    "EMAIL": "Email",
+    "EMAIL": "E-mail",
     "NAME": "Name",
     "NEXT": "Next",
     "BACK": "Back to login",
     "INVALID_NAME": "Enter the name",
-    "INVALID_EMAIL": "Invalid email",
+    "INVALID_EMAIL": "Invalid e-mail",
     "CREATE_NEW_PASS": "Create your new password:",
     "PASSWORD_REQUIREMENTS": "For your security, the password must contain at least:",
     "MIN_CHARACTERS": "From 8 characters",
@@ -60,13 +63,13 @@
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
-    "SUCCESS_CREATE_ACCOUNT": "An email has been sent to verify your account."
+    "SUCCESS_CREATE_ACCOUNT": "An e-mail has been sent to verify your account."
   },
 
   "COMPANY_SCREEN": {
     "SELECT_ORGANIZATION": "Select an organization",
     "ADD_ORGANIZATION": "Add an organization",
-    "NO_ORGANIZATIONS": "No organization found",
+    "NO_ORGANIZATIONS": "No organization was found",
     "YES": "Sim",
     "CONFIRM_DELETE_ORGANIZATION": "Do you really want to delete the organization ",
     "EDIT": "Edit",
@@ -95,7 +98,14 @@
     "CONFIRM":"Ok, I got it.",
     "CREATE_NEW_TOKEN": "Add new token",
     "CREATE_TOKEN_BELOW": "Add a new token below:",
-    "INVALID_DESCRIPTION": "Invalid description"
+    "INVALID_DESCRIPTION": "Invalid description",
+    "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
+    "ADMIN": "Administrator:",
+    "USER": "User:",
+    "GROUP_NAME": "Group Name",
+    "ADMIN_EMAIL": "Administrator e-mail",
+    "EMAIL": "E-mail",
+    "INVALID_EMAIL_ADMIN": "Invalid email."
   },
 
   "DASHBOARD_SCREEN": {
@@ -106,7 +116,7 @@
     "TOTAL_REPOSITORIES": "Total repositories",
     "ALL_VULNERABILITIES": "All vulnerabilities",
     "REPOSITORY": "Repository",
-    "CHART_NO_DATA": "No results found",
+    "CHART_NO_DATA": "No results was found",
     "VULNERABILITIES_BY_LANG": "Language vulnerabilities",
     "VULNERABILITIES_BY_DEV": "Vulnerabilities by developer",
     "VULNERABILITIES_BY_REPO": "Vulnerabilities by repository",
@@ -145,9 +155,9 @@
     "EDIT_REPO_BELOW": "Edit the repository below:",
     "INVITE_TO_REPOSITORY": "Invite to the repository",
     "INVITE_USER_BELOW": "Invite a new user below:",
-    "SEARCH_USER_EMAIL_BELOW": "Search for user by email",
+    "SEARCH_USER_EMAIL_BELOW": "Search for user by e-mail",
     "USER": "User",
-    "EMAIL": "Email",
+    "EMAIL": "E-mail",
     "PERMISSION": "Permission",
     "NO_USERS_TO_INVITE": "There are no matching users to be invited.",
     "ADD_TOKEN": "Add Token",
@@ -166,7 +176,11 @@
     "SUCCESS_EDIT_REPO": "Repository successfully edited!",
     "SUCCESS_REMOVE_USER": "User removed from the repository successfully!",
     "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
-    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!"
+    "REMOVE_SUCCESS_REPO": "Repository successfully deleted!",
+    "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
+    "ADMIN": "Administrator:",
+    "SUPERVISOR": "Supervisor:",
+    "GROUP_NAME": "Group Name"
   },
 
   "GENERAL": {
@@ -208,20 +222,20 @@
 
   "USERS_SCREEN": {
     "TITLE": "Users",
-    "SEARCH": "Search by email",
+    "SEARCH": "Search by e-mail",
     "INVITE": "Invite User",
     "EDIT_USER": "Edit User",
     "EDIT_SUBTITLE": "Edit the user below:",
     "INVITE_SUBTITLE": "Invite a new user below:",
-    "EMAIL": "Email",
-    "INVALID_EMAIL": "Invalid email",
+    "EMAIL": "E-mail",
+    "INVALID_EMAIL": "Invalid e-mail",
     "CONFIRM_DELETE": "Do you really want to delete this user? This action cannot be undone.",
     "YES": "Yes",
     "SAVE": "Save",
     "TABLE": {
       "EMPTY": "There are no matching users for this organization",
       "USER": "User",
-      "EMAIL": "Email",
+      "EMAIL": "E-mail",
       "PERMISSION": "Permission",
       "ACTION": "Action",
       "DELETE": "Delete",
@@ -288,10 +302,10 @@
 
   "API_ERRORS": {
     "GENERIC_ERROR": "Something unexpected happened, try again.",
-    "ERROR_LOGIN": "Check your email and password and try again.",
-    "UNCONFIRMED_EMAIL": "The email has not yet been confirmed.",
+    "ERROR_LOGIN": "Check your e-mail and password and try again.",
+    "UNCONFIRMED_EMAIL": "The e-mail has not yet been confirmed.",
     "INVALID_RECOVERY_CODE": "Invalid recovery code.",
-    "EMAIL_IN_USE": "The informed email is already in use.",
+    "EMAIL_IN_USE": "The informed e-mail is already in use.",
     "NO_RECORDS": "There are no corresponding records for the reported data.",
     "ALREADY_IN_COMPANY": "This user is already part of this organization.",
     "PRIVILEGES": "You do not have sufficient permissions to perform this action.",

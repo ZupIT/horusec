@@ -16,9 +16,10 @@ package repositories
 
 import (
 	"errors"
+	"testing"
+
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	"testing"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
@@ -126,6 +127,39 @@ func TestCreate(t *testing.T) {
 		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
+	})
+
+	t.Run("should set the authz groups with the company authz groups value", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp)
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(resp)
+
+		respFindCompany := &response.Response{}
+		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: "admin", AuthzMember: "member"})
+		mockRead.On("Find").Once().Return(respFindCompany)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnums.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+
+		createdRepo, err := controller.Create(uuid.New(), &accountEntities.Repository{
+			AuthzAdmin:      "",
+			AuthzMember:     "",
+			AuthzSupervisor: "",
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
+		assert.Equal(t, createdRepo.AuthzMember, "member")
+		assert.Equal(t, createdRepo.AuthzSupervisor, "admin")
 	})
 }
 

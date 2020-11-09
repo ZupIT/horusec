@@ -34,7 +34,7 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: currentLanguage?.i18nValue || 'ptBR',
+  lng: currentLanguage?.i18nValue || 'enUS',
 
   keySeparator: '.',
 

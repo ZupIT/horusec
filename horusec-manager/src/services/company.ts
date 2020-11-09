@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import http from 'services/axios/default';
-import { SERVICE_ACCOUNT, SERVICE_API } from './endpoints';
+import http from 'config/axios/default';
+import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
+import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 
 const getAll = () => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies`);
@@ -25,12 +26,19 @@ const getOne = (companyId: string) => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
-const create = (name: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies`, { name });
+const create = (name: string, adminEmail?: string, ldapGroups?: LDAPGroups) => {
+  return http.post(`${SERVICE_ACCOUNT}/api/companies`, {
+    name,
+    adminEmail,
+    ...ldapGroups,
+  });
 };
 
-const update = (companyId: string, name: string) => {
-  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, { name });
+const update = (companyId: string, name: string, ldapGroups?: LDAPGroups) => {
+  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
+    name,
+    ...ldapGroups,
+  });
 };
 
 const remove = (companyId: string) => {

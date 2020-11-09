@@ -18,9 +18,9 @@ import React from 'react';
 import Styled from './styled';
 import { Footer, Logout, Language } from 'components';
 import { useTranslation } from 'react-i18next';
-import { tokenIsExpired } from 'helpers/localStorage/currentUser';
+import { getAccessToken } from 'helpers/localStorage/tokens';
 
-import HorusecLogo from 'assets/logo/horusec.svg';
+import HorusecLogo from 'assets/logos/horusec.svg';
 import NotFoundImg from 'assets/svg/not_found.svg';
 import { useHistory } from 'react-router-dom';
 
@@ -35,7 +35,7 @@ const NotFound: React.FC = () => {
           <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
 
           <Styled.SettingsWrapper>
-            {tokenIsExpired() ? null : <Logout />}
+            {getAccessToken() ? null : <Logout />}
 
             <Language />
           </Styled.SettingsWrapper>

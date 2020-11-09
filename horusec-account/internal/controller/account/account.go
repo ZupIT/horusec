@@ -38,7 +38,6 @@ import (
 
 type IAccount interface {
 	CreateAccount(account *accountEntities.Account) error
-	Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error)
 	ValidateEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
 	VerifyResetPasswordCode(data *accountEntities.ResetCodeData) (string, error)
@@ -47,6 +46,8 @@ type IAccount interface {
 	Logout(accountID uuid.UUID) error
 	createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error)
 	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
+	DeleteAccount(accountID uuid.UUID) error
+	GetAccountIDByEmail(email string) (uuid.UUID, error)
 }
 
 type Account struct {
@@ -85,19 +86,6 @@ func (a *Account) CreateAccount(account *accountEntities.Account) error {
 	}
 
 	return a.sendValidateAccountEmail(account)
-}
-
-func (a *Account) Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {
-	account, err := a.accountRepository.GetByEmail(loginData.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := a.useCases.ValidateLogin(account, loginData); err != nil {
-		return nil, err
-	}
-
-	return a.setLoginResponse(account)
 }
 
 func (a *Account) ValidateEmail(accountID uuid.UUID) error {
@@ -271,7 +259,7 @@ func (a *Account) createTokenWithAccountPermissions(account *accountEntities.Acc
 
 func (a *Account) getURLToResetPassword(email, code string) string {
 	base := env.GetHorusecManagerURL()
-	return fmt.Sprintf("%s/recovery-password/check-code?email=%s&code=%s", base, email, code)
+	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s", base, email, code)
 }
 
 func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error {
@@ -286,4 +274,21 @@ func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUni
 	}
 
 	return nil
+}
+
+func (a *Account) DeleteAccount(accountID uuid.UUID) error {
+	account, err := a.accountRepository.GetByAccountID(accountID)
+	if err != nil {
+		return err
+	}
+
+	return a.accountRepository.DeleteAccount(account.AccountID)
+}
+
+func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
+	account, err := a.accountRepository.GetByEmail(email)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return account.AccountID, nil
 }

@@ -17,9 +17,10 @@ package account
 import "time"
 
 type LoginResponse struct {
-	AccessToken  string    `json:"accessToken"`
-	RefreshToken string    `json:"refreshToken"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	ExpiresAt    time.Time `json:"expiresAt"`
+	AccessToken        string    `json:"accessToken"`
+	RefreshToken       string    `json:"refreshToken"`
+	Username           string    `json:"username"`
+	Email              string    `json:"email"`
+	ExpiresAt          time.Time `json:"expiresAt"`
+	IsApplicationAdmin bool      `json:"isApplicationAdmin"`
 }

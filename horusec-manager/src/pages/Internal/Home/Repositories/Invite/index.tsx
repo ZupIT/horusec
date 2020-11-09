@@ -225,7 +225,7 @@ const InviteToRepository: React.FC<Props> = ({
                     initialValue={accountsInRepository.includes(
                       account.accountID
                     )}
-                    disabled={account.email === currentUser.email}
+                    disabled={account.email === currentUser?.email}
                     onChangeValue={(value) => handleInviteUser(value, account)}
                   />
                 </Styled.Cell>
@@ -237,7 +237,7 @@ const InviteToRepository: React.FC<Props> = ({
                 <Styled.Cell>
                   <Select
                     disabled={
-                      account.email === currentUser.email ||
+                      account.email === currentUser?.email ||
                       !accountsInRepository.includes(account.accountID)
                     }
                     className="select-role"

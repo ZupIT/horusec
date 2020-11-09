@@ -37,6 +37,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	controllerMock := &Mock{}
+	controllerMock.On("CreateAccount").Return(nil)
+	controllerMock.On("CreateAccountFromKeycloak").Return(nil)
+	controllerMock.On("Login").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("ValidateEmail").Return(nil)
+	controllerMock.On("SendResetPasswordCode").Return(nil)
+	controllerMock.On("VerifyResetPasswordCode").Return("", nil)
+	controllerMock.On("ChangePassword").Return(nil)
+	controllerMock.On("RenewToken").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("Logout").Return(nil)
+	controllerMock.On("createTokenWithAccountPermissions").Return("", time.Now(), nil)
+	controllerMock.On("VerifyAlreadyInUse").Return(nil)
+	controllerMock.On("DeleteAccount").Return(nil)
+	controllerMock.On("GetAccountIDByEmail").Return(uuid.New(), nil)
+
+	_ = controllerMock.CreateAccount(&accountEntities.Account{})
+	_, _ = controllerMock.Login(&accountEntities.LoginData{})
+	_ = controllerMock.ValidateEmail(uuid.New())
+	_ = controllerMock.SendResetPasswordCode("")
+	_, _ = controllerMock.VerifyResetPasswordCode(&accountEntities.ResetCodeData{})
+	_ = controllerMock.ChangePassword(uuid.New(), "")
+	_, _ = controllerMock.RenewToken("", "")
+	_ = controllerMock.Logout(uuid.New())
+	_, _, _ = controllerMock.createTokenWithAccountPermissions(&accountEntities.Account{})
+	_ = controllerMock.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+	_ = controllerMock.DeleteAccount(uuid.New())
+	_, _ = controllerMock.GetAccountIDByEmail(uuid.New().String())
+}
 func TestNewAccountController(t *testing.T) {
 	t.Run("should create a new controller", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
@@ -149,109 +178,6 @@ func TestCreateAccount(t *testing.T) {
 
 		err := controller.CreateAccount(account)
 		assert.NoError(t, err)
-	})
-}
-
-func TestLogin(t *testing.T) {
-	t.Run("should return no error when everything it is ok", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-
-		account := &accountEntities.Account{
-			AccountID:   uuid.New(),
-			Email:       "test@test.com",
-			Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
-			Username:    "test",
-			IsConfirmed: true,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Once().Return(resp.SetData(account))
-		cacheRepositoryMock.On("Set").Return(nil)
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{}, nil)
-
-		resp2 := &response.Response{}
-		mockRead.On("Find").Return(resp2.SetData(nil))
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
-		assert.NotNil(t, controller)
-
-		loginResponse, err := controller.Login(&accountEntities.LoginData{Email: "test@test.com", Password: "test"})
-		assert.NoError(t, err)
-		assert.NotEmpty(t, loginResponse)
-	})
-
-	t.Run("should return error invalid username or password", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-
-		account := &accountEntities.Account{
-			AccountID:   uuid.New(),
-			Email:       "test@test.com",
-			Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
-			Username:    "test",
-			IsConfirmed: true,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Once().Return(resp.SetData(account))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		resp2 := &response.Response{}
-		mockRead.On("Find").Return(resp2.SetData(nil))
-
-		appConfig := app.SetupApp()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
-		assert.NotNil(t, controller)
-
-		loginResponse, err := controller.Login(&accountEntities.LoginData{Email: "test@test.com", Password: "test123"})
-		assert.Error(t, err)
-		assert.Equal(t, errorsEnum.ErrorWrongEmailOrPassword, err)
-		assert.Empty(t, loginResponse)
-	})
-
-	t.Run("should return while finding registry in database", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-
-		resp := &response.Response{}
-		respWithError := &response.Response{}
-		mockRead.On("Find").Once().Return(respWithError.SetError(errors.New("test")))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		resp2 := &response.Response{}
-		mockRead.On("Find").Return(resp2.SetData(nil))
-
-		appConfig := app.SetupApp()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
-		assert.NotNil(t, controller)
-
-		loginResponse, err := controller.Login(&accountEntities.LoginData{Email: "test@test.com", Password: "test123"})
-		assert.Error(t, err)
-		assert.Equal(t, errors.New("test"), err)
-		assert.Empty(t, loginResponse)
 	})
 }
 
@@ -833,5 +759,49 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
+	})
+}
+
+func TestDeleteAccount(t *testing.T) {
+	t.Run("should success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp)
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.DeleteAccount(uuid.New())
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when getting account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		useCases := accountUseCases.NewAccountUseCases()
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.SetupApp()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		assert.NotNil(t, controller)
+
+		err := controller.DeleteAccount(uuid.New())
+
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
 	})
 }

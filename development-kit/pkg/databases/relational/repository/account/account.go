@@ -26,6 +26,7 @@ type IAccount interface {
 	GetByEmail(email string) (*accountEntities.Account, error)
 	Update(account *accountEntities.Account) error
 	GetByUsername(username string) (*accountEntities.Account, error)
+	DeleteAccount(accountID uuid.UUID) error
 }
 
 type Account struct {
@@ -69,4 +70,8 @@ func (a *Account) GetByUsername(username string) (*accountEntities.Account, erro
 	filter := a.databaseRead.SetFilter(map[string]interface{}{"username": username})
 	result := a.databaseRead.Find(account, filter, account.GetTable())
 	return account, result.GetError()
+}
+
+func (a *Account) DeleteAccount(accountID uuid.UUID) error {
+	return a.databaseWrite.Delete(map[string]interface{}{"account_id": accountID}, "accounts").GetError()
 }

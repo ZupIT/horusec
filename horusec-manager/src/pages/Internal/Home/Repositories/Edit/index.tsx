@@ -25,6 +25,8 @@ import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 interface Props {
   isVisible: boolean;
@@ -54,6 +56,21 @@ const EditRepository: React.FC<Props> = ({
     isValid: true,
   });
 
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [supervisorGroup, setSupervisorGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
   const handleConfirmSave = () => {
     if (name.isValid) {
       setLoading(true);
@@ -63,7 +80,12 @@ const EditRepository: React.FC<Props> = ({
           repoToEdit.companyID,
           repoToEdit.repositoryID,
           name.value,
-          description.value
+          description.value,
+          {
+            authzAdmin: adminGroup.value,
+            authzMember: userGroup.value,
+            authzSupervisor: supervisorGroup.value,
+          }
         )
         .then(() => {
           showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
@@ -82,6 +104,9 @@ const EditRepository: React.FC<Props> = ({
     if (repoToEdit) {
       setName({ value: repoToEdit?.name, isValid: true });
       setDescription({ value: repoToEdit?.description, isValid: true });
+      setAdminGroup({ isValid: true, value: repoToEdit?.authzAdmin });
+      setUserGroup({ isValid: true, value: repoToEdit?.authzMember });
+      setSupervisorGroup({ isValid: true, value: repoToEdit?.authzSupervisor });
     }
   }, [repoToEdit]);
 
@@ -122,6 +147,53 @@ const EditRepository: React.FC<Props> = ({
           width="100%"
           initialValue={description.value}
         />
+
+        {getCurrentConfig().authType === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('REPOSITORIES_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+                name="adminGroup"
+                type="text"
+                width="100%"
+                initialValue={adminGroup.value}
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setSupervisorGroup(field)}
+                name="supervisorGroup"
+                type="text"
+                width="100%"
+                initialValue={supervisorGroup.value}
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.USER')}</Styled.Label>
+
+              <Styled.Field
+                label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+                name="userGroup"
+                type="text"
+                width="100%"
+                initialValue={userGroup.value}
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
       </Styled.Form>
     </Dialog>
   );

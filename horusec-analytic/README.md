@@ -26,13 +26,16 @@ make update-writer
 ## Environments
 To change variables environment to run your analysis also you set new values.
 
-| Environment Name                            | Default Value                                                  | Description                  |
-|---------------------------------------------|----------------------------------------------------------------|------------------------------|
-| HORUSEC_SWAGGER_HOST                          | localhost                                                      | This environment get host to run in swagger | 
+| Environment Name                              | Default Value                                                    | Description                                                  |
+|-----------------------------------------------|------------------------------------------------------------------|--------------------------------------------------------------|
+| HORUSEC_SWAGGER_HOST                          | localhost                                                        | This environment get host to run in swagger                  | 
 | HORUSEC_DATABASE_SQL_URI                      | postgresql://root:root@localhost:5432/horusec_db?sslmode=disable | This environment get uri to connect on database POSTGRES     |
-| HORUSEC_DATABASE_SQL_DIALECT                  | postgres                                                       | This environment get dialect to connect on database POSTGRES |
-| HORUSEC_DATABASE_SQL_LOG_MODE                 | false                                                          | This environment get bool to enable logs on POSTGRES         |
-| HORUSEC_PORT                                  | 8005                                                           | This environment get the port that the service will start |
+| HORUSEC_DATABASE_SQL_DIALECT                  | postgres                                                         | This environment get dialect to connect on database POSTGRES |
+| HORUSEC_DATABASE_SQL_LOG_MODE                 | false                                                            | This environment get bool to enable logs on POSTGRES         |
+| HORUSEC_PORT                                  | 8005                                                             | This environment get the port that the service will start    |
+| HORUSEC_GRPC_AUTH_URL                         | localhost:8007                                                   | This environment get horusec url to mount horusec auth url   |
+| HORUSEC_GRPC_USE_CERTS                        | false                                                            | This environment get if use of certificates is active or not |
+| HORUSEC_GRPC_CERT_PATH                        |                                                                  | This environment get grpc certificate path                   | 
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-analytic folder**

@@ -25,6 +25,7 @@ import (
 type ICompany interface {
 	NewAccountCompanyFromReadCLoser(body io.ReadCloser) (accountCompany *roles.AccountCompany, err error)
 	NewCompanyFromReadCloser(body io.ReadCloser) (company *accountEntities.Company, err error)
+	NewCompanyApplicationAdminFromReadCloser(body io.ReadCloser) (*accountEntities.CompanyApplicationAdmin, error)
 }
 
 type Company struct {
@@ -43,6 +44,17 @@ func (c *Company) NewAccountCompanyFromReadCLoser(body io.ReadCloser) (
 	}
 
 	return accountCompany, accountCompany.Validate()
+}
+
+func (c *Company) NewCompanyApplicationAdminFromReadCloser(body io.ReadCloser) (
+	company *accountEntities.CompanyApplicationAdmin, err error) {
+	err = json.NewDecoder(body).Decode(&company)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return company, company.Validate()
 }
 
 func (c *Company) NewCompanyFromReadCloser(body io.ReadCloser) (company *accountEntities.Company, err error) {

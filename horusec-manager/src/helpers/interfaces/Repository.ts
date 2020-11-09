@@ -20,6 +20,9 @@ export interface Repository {
   companyID: string;
   repositoryID?: string;
   role?: string;
+  authzAdmin?: string;
+  authzMember?: string;
+  authzSupervisor?: string;
   createdAt?: string;
   updatedAt?: string;
 }

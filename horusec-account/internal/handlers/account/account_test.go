@@ -19,12 +19,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
-
-	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
@@ -132,145 +131,6 @@ func TestCreateAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		handler.CreateAccount(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-}
-
-func TestLogin(t *testing.T) {
-	account := &accountEntities.Account{
-		AccountID:   uuid.New(),
-		Email:       "test@test.com",
-		Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
-		Username:    "test",
-		IsConfirmed: true,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
-
-	t.Run("should return 200 when successful login", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		cacheRepositoryMock.On("Set").Return(nil)
-		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
-		mockRead.On("Find").Once().Return(resp.SetData(account))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		resp2 := &response.Response{}
-		mockRead.On("Find").Return(resp2.SetData(nil))
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-
-	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-
-	t.Run("should return 401 when wrong password or username", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorWrongEmailOrPassword))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusForbidden, w.Code)
-	})
-
-	t.Run("should return 401 when email not confirmed", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorAccountEmailNotConfirmed))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusForbidden, w.Code)
-	})
-
-	t.Run("should return 400 when invalid login data", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("")))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -587,7 +447,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -616,7 +476,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -639,7 +499,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("Authorization", token)
 
-		handler.ChangePassword(w, r)
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -794,7 +654,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -817,7 +677,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("Authorization", "Bearer "+token)
 
-		handler.Logout(w, r)
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -942,5 +802,80 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		handler.VerifyAlreadyInUse(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestDeleteAccount(t *testing.T) {
+	t.Run("should return 204 when success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp)
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+		account := &accountEntities.Account{
+			AccountID: uuid.New(),
+			Username:  "test",
+			Email:     "test@test.com",
+		}
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		resp := &response.Response{}
+		mockRead.On("Find").Once().Return(resp.SetData(account))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockWrite.On("Delete").Return(resp.SetError(errors.New("test")))
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", token)
+
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 401 when invalid token", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		appConfig := app.SetupApp()
+		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
+		w := httptest.NewRecorder()
+		r.Header.Add("Authorization", "invalid token")
+
+		handler.DeleteAccount(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 }

@@ -16,7 +16,7 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { User } from 'helpers/interfaces/User';
-import moment from 'moment';
+import { getCurrentConfig } from './horusecConfig';
 
 const getCurrentUser = (): User | null => {
   const localData: User = JSON.parse(
@@ -27,7 +27,9 @@ const getCurrentUser = (): User | null => {
 };
 
 const setCurrentUser = (value: User) => {
-  const user = JSON.stringify(value);
+  const { username, email, isApplicationAdmin } = value;
+
+  const user = JSON.stringify({ username, email, isApplicationAdmin });
   window.localStorage.setItem(localStorageKeys.USER, user);
 };
 
@@ -35,15 +37,11 @@ const clearCurrentUser = () => {
   window.localStorage.removeItem(localStorageKeys.USER);
 };
 
-const tokenIsExpired = (): boolean => {
-  const user = getCurrentUser();
+const isApplicationAdmin = () => {
+  const { applicationAdminEnable } = getCurrentConfig();
+  const { isApplicationAdmin } = getCurrentUser();
 
-  if (!user || !user?.expiresAt) return true;
-
-  const now = moment();
-  const expires = moment(user?.expiresAt);
-
-  return expires.isSameOrBefore(now);
+  return !applicationAdminEnable ? true : isApplicationAdmin;
 };
 
-export { getCurrentUser, setCurrentUser, clearCurrentUser, tokenIsExpired };
+export { getCurrentUser, setCurrentUser, clearCurrentUser, isApplicationAdmin };

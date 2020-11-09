@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package grpc;
+
+option go_package = "development-kit/pkg/services/grpc/auth";
+
+service AuthService {
+  rpc IsAuthorized (IsAuthorizedData) returns (IsAuthorizedResponse) {}
+  rpc GetAccountID (GetAccountIDData) returns (GetAccountIDResponse) {}
+  rpc GetAuthConfig (GetAuthConfigData) returns (GetAuthConfigResponse) {}
+}
+
+message IsAuthorizedData {
+  string token = 1;
+  string role = 2;
+  string companyID = 3;
+  string repositoryID = 4;
+}
+
+message IsAuthorizedResponse {
+  bool isAuthorized = 1;
+}
+
+message GetAccountIDData {
+  string token = 1;
+}
+
+message GetAccountIDResponse {
+  string accountID = 1;
+}
+
+message GetAuthConfigData {}
+
+message GetAuthConfigResponse {
+  bool ApplicationAdminEnable = 1;
+  string AuthType = 2;
+}

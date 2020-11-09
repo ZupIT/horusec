@@ -27,7 +27,7 @@ const Logout: React.FC = () => {
   const { t } = useTranslation();
 
   const handleLogout = () => {
-    logout().then(() => history.replace('/login'));
+    logout().then(() => history.replace('/auth'));
   };
 
   return (

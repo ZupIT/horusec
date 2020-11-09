@@ -15,6 +15,7 @@
 package roles
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -60,4 +61,13 @@ func (a *AccountCompany) SetCompanyAndAccountID(companyID, accountID uuid.UUID) 
 	a.CompanyID = companyID
 	a.AccountID = accountID
 	return a
+}
+
+func (a *AccountCompany) IsNotAdmin() bool {
+	return a.Role != accountEnums.Admin
+}
+
+func (a *AccountCompany) ToBytes() []byte {
+	content, _ := json.Marshal(a)
+	return content
 }

@@ -18,6 +18,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Nerzal/gocloak/v7"
+	"github.com/google/uuid"
 	"io"
 	"math/rand"
 	"time"
@@ -43,6 +45,8 @@ type IAccount interface {
 	MapRepositoriesRoles(accountRepositories *[]roles.AccountRepository) map[string]string
 	NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error)
 	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error)
+	NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error)
+	NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
 }
 
 type Account struct {
@@ -88,6 +92,10 @@ func (a *Account) CheckCreateAccountErrorType(err error) error {
 	}
 
 	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_accounts_username\"" {
+		return errors.ErrorUsernameAlreadyInUse
+	}
+
+	if err.Error() == "pq: duplicate key value violates unique constraint \"accounts_pkey\"" {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
@@ -176,6 +184,9 @@ func (a *Account) NewRefreshTokenFromReadCloser(body io.ReadCloser) (token strin
 
 func (a *Account) NewValidateUniqueFromReadCloser(
 	body io.ReadCloser) (validateUnique *accountEntities.ValidateUnique, err error) {
+	if body == nil {
+		return &accountEntities.ValidateUnique{}, errors.ErrorErrorEmptyBody
+	}
 	err = json.NewDecoder(body).Decode(&validateUnique)
 	_ = body.Close()
 	if err != nil {
@@ -183,4 +194,28 @@ func (a *Account) NewValidateUniqueFromReadCloser(
 	}
 
 	return validateUnique, validateUnique.Validate()
+}
+
+func (a *Account) NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*accountEntities.KeycloakToken, error) {
+	if body == nil {
+		return &accountEntities.KeycloakToken{}, errors.ErrorErrorEmptyBody
+	}
+	keycloakToken := &accountEntities.KeycloakToken{}
+	err := json.NewDecoder(body).Decode(&keycloakToken)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+	return keycloakToken, keycloakToken.Validate()
+}
+
+func (a *Account) NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account {
+	accountID, _ := uuid.Parse(*userInfo.Sub)
+	return &accountEntities.Account{
+		AccountID:   accountID,
+		Email:       *userInfo.Email,
+		Username:    *userInfo.PreferredUsername,
+		CreatedAt:   time.Now(),
+		IsConfirmed: true,
+	}
 }

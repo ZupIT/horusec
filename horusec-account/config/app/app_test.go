@@ -35,7 +35,7 @@ func TestIsEmailConfirmationRequired(t *testing.T) {
 	})
 
 	t.Run("should return false when env is setting it as false", func(t *testing.T) {
-		os.Setenv(DisableEmailServiceEnv, "true")
+		_ = os.Setenv(DisableEmailServiceEnv, "true")
 		appConfig := SetupApp()
 		assert.True(t, appConfig.IsEmailServiceDisabled())
 	})

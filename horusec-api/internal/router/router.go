@@ -17,7 +17,6 @@ package router
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/analysis"
@@ -29,6 +28,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"google.golang.org/grpc"
 )
 
 type Router struct {
@@ -54,13 +54,14 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	grpcCon *grpc.ClientConn) *chi.Mux {
 	r.setMiddleware()
 	r.RouterHealth(postgresRead, postgresWrite)
 	r.RouterAnalysis(postgresRead, postgresWrite)
-	r.RouterTokensRepository(postgresRead, postgresWrite)
-	r.RouterTokensCompany(postgresRead, postgresWrite)
-	r.RouterManagement(postgresRead, postgresWrite)
+	r.RouterTokensRepository(postgresRead, postgresWrite, grpcCon)
+	r.RouterTokensCompany(postgresRead, postgresWrite, grpcCon)
+	r.RouterManagement(postgresRead, postgresWrite, grpcCon)
 	return r.router
 }
 
@@ -129,11 +130,10 @@ func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead,
 }
 
 func (r *Router) RouterTokensRepository(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, grpcCon *grpc.ClientConn) *Router {
 	handler := tokensRepository.NewHandler(postgresRead, postgresWrite)
-	authMiddleware := middlewares.NewJWTAuthMiddleware(postgresRead, postgresWrite)
+	authMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.TokensRepositoryHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(authMiddleware.IsRepositoryAdmin).Post("/", handler.Post)
 		router.With(authMiddleware.IsRepositoryAdmin).Get("/", handler.Get)
 		router.With(authMiddleware.IsRepositoryAdmin).Delete("/{tokenID}", handler.Delete)
@@ -144,11 +144,10 @@ func (r *Router) RouterTokensRepository(
 }
 
 func (r *Router) RouterTokensCompany(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, grpcCon *grpc.ClientConn) *Router {
 	handler := tokensCompany.NewHandler(postgresRead, postgresWrite)
-	companyMiddleware := middlewares.NewCompanyAuthzMiddleware(postgresRead, postgresWrite)
+	companyMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.TokensCompanyHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(companyMiddleware.IsCompanyAdmin).Post("/", handler.Post)
 		router.With(companyMiddleware.IsCompanyAdmin).Get("/", handler.Get)
 		router.With(companyMiddleware.IsCompanyAdmin).Delete("/{tokenID}", handler.Delete)
@@ -159,11 +158,10 @@ func (r *Router) RouterTokensCompany(
 }
 
 func (r *Router) RouterManagement(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	repositoryMiddleware := middlewares.NewRepositoryAuthzMiddleware(postgresRead, postgresWrite)
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, grpcCon *grpc.ClientConn) *Router {
+	repositoryMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	handler := management.NewHandler(postgresRead, postgresWrite)
 	r.router.Route(routes.ManagementHandler, func(router chi.Router) {
-		router.Use(jwt.AuthMiddleware)
 		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
 		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/type",
 			handler.UpdateVulnType)

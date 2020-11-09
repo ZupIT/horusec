@@ -22,13 +22,36 @@ import { Field } from 'helpers/interfaces/Field';
 import { isEmptyString } from 'helpers/validators';
 import { useHistory } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
+import {
+  isApplicationAdmin,
+  getCurrentUser,
+} from 'helpers/localStorage/currentUser';
 
 function AddCompany() {
   const { t } = useTranslation();
   const history = useHistory();
+  const currentUser = getCurrentUser();
+
   const [companyName, setCompanyName] = useState<Field>({
     isValid: false,
     value: '',
+  });
+
+  const [adminGroup, setAdminGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [userGroup, setUserGroup] = useState<Field>({
+    isValid: false,
+    value: '',
+  });
+
+  const [emailAdmin, setEmailAdmin] = useState<Field>({
+    isValid: false,
+    value: currentUser.email,
   });
 
   const { isLoading, createCompany } = useContext(CompanyContext);
@@ -36,7 +59,10 @@ function AddCompany() {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (companyName.isValid) {
-      createCompany(companyName.value);
+      createCompany(companyName.value, emailAdmin.value, {
+        authzAdmin: adminGroup.value,
+        authzMember: userGroup.value,
+      });
     }
   };
 
@@ -57,6 +83,47 @@ function AddCompany() {
           validation={isEmptyString}
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
         />
+
+        {isApplicationAdmin() ? (
+          <Styled.Wrapper>
+            <Styled.Label>{t('COMPANY_SCREEN.ADMIN_EMAIL')}</Styled.Label>
+
+            <Input
+              name="adminGroup"
+              initialValue={emailAdmin.value}
+              label={t('COMPANY_SCREEN.EMAIL')}
+              onChangeValue={(field: Field) => setEmailAdmin(field)}
+            />
+          </Styled.Wrapper>
+        ) : null}
+
+        {getCurrentConfig().authType === authTypes.LDAP ? (
+          <>
+            <Styled.SubTitle>
+              {t('COMPANY_SCREEN.REFERENCE_GROUP')}
+            </Styled.SubTitle>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.ADMIN')}</Styled.Label>
+
+              <Input
+                name="adminGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setAdminGroup(field)}
+              />
+            </Styled.Wrapper>
+
+            <Styled.Wrapper>
+              <Styled.Label>{t('COMPANY_SCREEN.USER')}</Styled.Label>
+
+              <Input
+                name="userGroup"
+                label={t('COMPANY_SCREEN.GROUP_NAME')}
+                onChangeValue={(field: Field) => setUserGroup(field)}
+              />
+            </Styled.Wrapper>
+          </>
+        ) : null}
 
         <Styled.OptionsWrapper>
           <Styled.Btn

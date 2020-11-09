@@ -62,3 +62,11 @@ func (a *AccountRepository) SetRepositoryAndAccountID(repositoryID, accountID uu
 	a.AccountID = accountID
 	return a
 }
+
+func (a *AccountRepository) IsNotSupervisorOrAdmin() bool {
+	return a.Role != accountEnums.Supervisor && a.Role != accountEnums.Admin
+}
+
+func (a *AccountRepository) IsNotAdmin() bool {
+	return a.Role != accountEnums.Admin
+}

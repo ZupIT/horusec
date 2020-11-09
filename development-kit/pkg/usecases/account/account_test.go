@@ -17,15 +17,15 @@ package account
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"strings"
-	"testing"
-
+	"github.com/Nerzal/gocloak/v7"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"strings"
+	"testing"
 )
 
 func TestNewAccountFromReadCloser(t *testing.T) {
@@ -154,6 +154,14 @@ func TestCheckCreateAccountErrorType(t *testing.T) {
 	t.Run("should return error username already in use", func(t *testing.T) {
 		useCases := NewAccountUseCases()
 		err := errors.New("pq: duplicate key value violates unique constraint \"uk_accounts_username\"")
+		result := useCases.CheckCreateAccountErrorType(err)
+		assert.Error(t, result)
+		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
+	})
+
+	t.Run("should return error username already in use", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		err := errors.New("pq: duplicate key value violates unique constraint \"accounts_pkey\"")
 		result := useCases.CheckCreateAccountErrorType(err)
 		assert.Error(t, result)
 		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
@@ -322,6 +330,58 @@ func TestNewValidateUniqueFromReadCloser(t *testing.T) {
 		readCloser := ioutil.NopCloser(strings.NewReader(""))
 		useCases := NewAccountUseCases()
 		_, err := useCases.NewValidateUniqueFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when nil body", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewValidateUniqueFromReadCloser(nil)
+		assert.Error(t, err)
+	})
+}
+
+func TestNewAccountFromKeyCloakUserInfo(t *testing.T) {
+	t.Run("should create a new account from keycloak user info", func(t *testing.T) {
+		accountId := uuid.New().String()
+		email := "test@test.com"
+		username := "test"
+
+		userInfo := &gocloak.UserInfo{
+			Sub:               &accountId,
+			PreferredUsername: &username,
+			Email:             &email,
+		}
+
+		useCases := NewAccountUseCases()
+
+		account := useCases.NewAccountFromKeyCloakUserInfo(userInfo)
+
+		assert.NotEmpty(t, account)
+	})
+}
+
+func TestNewKeycloakTokenFromReadCloser(t *testing.T) {
+	t.Run("should parse and return no error when valid token", func(t *testing.T) {
+		bytes, _ := json.Marshal(&accountEntities.KeycloakToken{AccessToken: "test"})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewKeycloakTokenFromReadCloser(readCloser)
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+
+		readCloser := ioutil.NopCloser(strings.NewReader("test"))
+
+		_, err := useCases.NewKeycloakTokenFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when parsing invalid data", func(t *testing.T) {
+		useCases := NewAccountUseCases()
+		_, err := useCases.NewKeycloakTokenFromReadCloser(nil)
 		assert.Error(t, err)
 	})
 }

@@ -15,15 +15,15 @@
 package account
 
 import (
+	"fmt"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
-	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -37,6 +37,7 @@ import (
 type Handler struct {
 	controller accountController.IAccount
 	useCases   accountUseCases.IAccount
+	appConfig  app.IAppConfig
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -45,11 +46,12 @@ func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	return &Handler{
 		controller: accountController.NewAccountController(
 			broker, databaseRead, databaseWrite, cache, useCases, appConfig),
-		useCases: useCases,
+		useCases:  useCases,
+		appConfig: appConfig,
 	}
 }
 
-func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -81,47 +83,6 @@ func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
 	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
 		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	httpUtil.StatusInternalServerError(w, err)
-}
-
-// @Tags Account
-// @Description login into account!
-// @ID login
-// @Accept  json
-// @Produce  json
-// @Param LoginData body account.LoginData true "login data info"
-// @Success 200 {object} http.Response{content=string} "OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/login [post]
-func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	loginData, err := h.useCases.NewLoginFromReadCloser(r.Body)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	response, err := h.controller.Login(loginData)
-	if err != nil {
-		h.checkLoginErrors(w, err)
-		return
-	}
-
-	httpUtil.StatusOK(w, response)
-}
-
-func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
-	if err == errors.ErrorWrongEmailOrPassword || err == errors.ErrNotFoundRecords {
-		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
-		return
-	}
-
-	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
-		httpUtil.StatusForbidden(w, err)
 		return
 	}
 
@@ -253,7 +214,7 @@ func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getChangePasswordData(w http.ResponseWriter, r *http.Request) (uuid.UUID, string) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return uuid.Nil, ""
@@ -322,7 +283,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Router /api/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	accountID, err := jwt.GetAccountIDByJWTToken(r.Header.Get("Authorization"))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -361,4 +322,29 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusOK(w, "")
+}
+
+// @Tags Account
+// @Description Delete account and all permissions!
+// @ID delete-account
+// @Accept  json
+// @Produce  json
+// @Success 204 {object} http.Response{content=string} "NO CONTENT"
+// @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/account/delete [delete]
+// @Security ApiKeyAuth
+func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
+		return
+	}
+
+	if err = h.controller.DeleteAccount(accountID); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
 }

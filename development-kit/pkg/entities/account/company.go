@@ -24,11 +24,12 @@ import (
 	"github.com/google/uuid"
 )
 
-// nolint
 type Company struct {
 	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
+	AuthzMember string    `json:"authzMember"`
+	AuthzAdmin  string    `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
@@ -38,6 +39,8 @@ type CompanyResponse struct {
 	Name        string         `json:"name"`
 	Role        rolesEnum.Role `json:"role"`
 	Description string         `json:"description"`
+	AuthzMember string         `json:"authzMember"`
+	AuthzAdmin  string         `json:"authzAdmin"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 }
@@ -71,9 +74,23 @@ func (c *Company) ToCompanyResponse(role rolesEnum.Role) *CompanyResponse {
 		Name:        c.Name,
 		Role:        role,
 		Description: c.Description,
+		AuthzAdmin:  c.AuthzAdmin,
+		AuthzMember: c.AuthzMember,
 		CreatedAt:   c.CreatedAt,
 		UpdatedAt:   c.UpdatedAt,
 	}
+}
+
+func (c *Company) GetAuthzMember() string {
+	return c.AuthzMember
+}
+
+func (c *Company) GetAuthzAdmin() string {
+	return c.AuthzAdmin
+}
+
+func (c *Company) GetAuthzSupervisor() string {
+	return ""
 }
 
 func (c *Company) ToBytes() []byte {

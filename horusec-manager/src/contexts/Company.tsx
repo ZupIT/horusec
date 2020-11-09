@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { setCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTranslation } from 'react-i18next';
+import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
 interface CompanyProviderPops {
   children: JSX.Element;
@@ -30,13 +31,17 @@ interface CompanyProviderPops {
 interface CompanyCtx {
   allCompanies: Company[];
   filteredCompanies: Company[];
-  fetchAll: Function;
   isLoading: boolean;
-  filterAllCompanies: Function;
-  createCompany: Function;
-  updateCompany: Function;
-  removeCompany: Function;
-  handleCurrentCompany: Function;
+  fetchAll(): void;
+  filterAllCompanies(search: string): void;
+  createCompany(
+    name: string,
+    adminEmail?: string,
+    ldapGroups?: LDAPGroups
+  ): void;
+  updateCompany(companyId: string, name: string, ldapGroups?: LDAPGroups): void;
+  removeCompany(companyId: string): void;
+  handleCurrentCompany(companyId: string): void;
 }
 
 const CompanyContext = React.createContext<CompanyCtx>({
@@ -89,10 +94,14 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
       });
   };
 
-  const createCompany = (name: string) => {
+  const createCompany = (
+    name: string,
+    adminEmail?: string,
+    ldapGroups?: LDAPGroups
+  ) => {
     setLoading(true);
     companyService
-      .create(name)
+      .create(name, adminEmail, ldapGroups)
       .then(() => {
         showSuccessFlash(t('COMPANY_SCREEN.CREATE_SUCCESS'));
         setLoading(false);
@@ -104,10 +113,14 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
       });
   };
 
-  const updateCompany = (companyId: string, name: string) => {
+  const updateCompany = (
+    companyId: string,
+    name: string,
+    ldapGroups?: LDAPGroups
+  ) => {
     setLoading(true);
     companyService
-      .update(companyId, name)
+      .update(companyId, name, ldapGroups)
       .then(() => {
         showSuccessFlash(t('COMPANY_SCREEN.UPDATE_SUCCESS'));
         setLoading(false);

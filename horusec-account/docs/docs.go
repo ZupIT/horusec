@@ -230,6 +230,82 @@ var doc = `{
                 }
             }
         },
+        "/api/account/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete account and all permissions!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "operationId": "delete-account",
+                "responses": {
+                    "204": {
+                        "description": "NO CONTENT",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/account/login": {
             "post": {
                 "description": "login into account!",
@@ -936,7 +1012,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "create company!",
+                "description": "create company! If applicationAdmin is enable add field adminEmail in body",
                 "consumes": [
                     "application/json"
                 ],
@@ -949,8 +1025,8 @@ var doc = `{
                 "operationId": "create-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "create company info",
+                        "name": "CreateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1220,8 +1296,8 @@ var doc = `{
                 "operationId": "update-company",
                 "parameters": [
                     {
-                        "description": "company info",
-                        "name": "Company",
+                        "description": "update company info",
+                        "name": "UpdateCompany",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2754,6 +2830,12 @@ var doc = `{
         "account.Company": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -2809,6 +2891,15 @@ var doc = `{
         "account.Repository": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "authzSupervisor": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

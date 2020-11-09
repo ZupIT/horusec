@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Styled from './styled';
 import { Company } from 'helpers/interfaces/Company';
+import { isApplicationAdmin } from 'helpers/localStorage/currentUser';
 
 import Tokens from './Tokens';
 
@@ -58,13 +59,17 @@ function ListCompanies() {
       <Styled.Title>{t('COMPANY_SCREEN.SELECT_ORGANIZATION')}</Styled.Title>
 
       <Styled.OptionsWrapper>
-        <Styled.AddCompanyBtn onClick={() => history.push('/organization/add')}>
-          <Icon name="add" size="16px" />
+        {isApplicationAdmin() ? (
+          <Styled.AddCompanyBtn
+            onClick={() => history.push('/organization/add')}
+          >
+            <Icon name="add" size="16px" />
 
-          <Styled.TextBtn>
-            {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
-          </Styled.TextBtn>
-        </Styled.AddCompanyBtn>
+            <Styled.TextBtn>
+              {t('COMPANY_SCREEN.ADD_ORGANIZATION')}
+            </Styled.TextBtn>
+          </Styled.AddCompanyBtn>
+        ) : null}
 
         <Styled.SearchWrapper>
           <Styled.SearchInput
@@ -91,54 +96,56 @@ function ListCompanies() {
                 {t('COMPANY_SCREEN.NO_ORGANIZATIONS')}
               </Styled.ItemText>
             </Styled.NoItem>
-          ) : null}
-
-          {filteredCompanies.map((company) => (
-            <Styled.Item
-              key={company.companyID}
-              selected={selectedCompany?.companyID === company.companyID}
-            >
-              <Styled.ItemText
-                onClick={() => handleCurrentCompany(company.companyID)}
+          ) : (
+            filteredCompanies.map((company) => (
+              <Styled.Item
+                key={company.companyID}
+                selected={selectedCompany?.companyID === company.companyID}
               >
-                {company.name}
-              </Styled.ItemText>
-
-              {company?.role === 'admin' ? (
-                <Styled.SettingsIcon
-                  onClick={() => setSelectedCompany(company)}
-                  name="settings"
-                />
-              ) : null}
-
-              <Styled.Settings
-                ref={ref}
-                isVisible={selectedCompany?.companyID === company.companyID}
-              >
-                <Styled.SettingsItem
-                  onClick={() =>
-                    history.push(`/organization/edit/${company.companyID}`, {
-                      companyName: company.name,
-                    })
-                  }
+                <Styled.ItemText
+                  onClick={() => handleCurrentCompany(company.companyID)}
                 >
-                  {t('COMPANY_SCREEN.EDIT')}
-                </Styled.SettingsItem>
+                  {company.name}
+                </Styled.ItemText>
 
-                <Styled.SettingsItem
-                  onClick={() => setCompanyToDelete(company)}
-                >
-                  {t('COMPANY_SCREEN.REMOVE')}
-                </Styled.SettingsItem>
+                {company?.role === 'admin' ? (
+                  <Styled.SettingsIcon
+                    onClick={() => setSelectedCompany(company)}
+                    name="settings"
+                  />
+                ) : null}
 
-                <Styled.SettingsItem
-                  onClick={() => setCompanyToManagerTokens(company)}
+                <Styled.Settings
+                  ref={ref}
+                  isVisible={selectedCompany?.companyID === company.companyID}
                 >
-                  {t('COMPANY_SCREEN.TOKENS')}
-                </Styled.SettingsItem>
-              </Styled.Settings>
-            </Styled.Item>
-          ))}
+                  <Styled.SettingsItem
+                    onClick={() =>
+                      history.push(`/organization/edit/${company.companyID}`, {
+                        companyName: company.name,
+                        authzAdmin: company.authzAdmin,
+                        authzMember: company.authzMember,
+                      })
+                    }
+                  >
+                    {t('COMPANY_SCREEN.EDIT')}
+                  </Styled.SettingsItem>
+
+                  <Styled.SettingsItem
+                    onClick={() => setCompanyToDelete(company)}
+                  >
+                    {t('COMPANY_SCREEN.REMOVE')}
+                  </Styled.SettingsItem>
+
+                  <Styled.SettingsItem
+                    onClick={() => setCompanyToManagerTokens(company)}
+                  >
+                    {t('COMPANY_SCREEN.TOKENS')}
+                  </Styled.SettingsItem>
+                </Styled.Settings>
+              </Styled.Item>
+            ))
+          )}
         </Styled.List>
       </Styled.ListWrapper>
 

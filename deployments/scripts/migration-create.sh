@@ -23,10 +23,14 @@ createMigration() {
         echo "Migration file name param not found."
     fi
 
-    migrate create -ext sql -dir $MIGRATION_PATH $MIGRATION_FILE_NAME
+    docker run --name migrate \
+        migrate/migrate \
+        -path=/migrations/ \
+        create -ext sql -dir /migrations $MIGRATION_FILE_NAME
+    docker cp migrate:/migrations $MIGRATION_PATH
+    docker rm migrate
+    mv $MIGRATION_PATH/migrations/* $MIGRATION_PATH/
+    rm -rf "$MIGRATION_PATH/migrations"
 }
-
-chmod +x ./deployments/scripts/migration-install.sh
-./deployments/scripts/migration-install.sh
 
 createMigration
