@@ -5,6 +5,13 @@ package keycloak
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
+	"os/exec"
+	"strings"
+	"testing"
+	"time"
+
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
@@ -17,12 +24,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"os"
-	"os/exec"
-	"strings"
-	"testing"
-	"time"
 )
 
 var SecretKeyCloak = ""

@@ -5,6 +5,10 @@ package horusec
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
@@ -16,9 +20,6 @@ import (
 	"github.com/ZupIT/horusec/e2e/server"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"os"
-	"testing"
 
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
