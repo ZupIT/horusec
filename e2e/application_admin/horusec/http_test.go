@@ -58,7 +58,7 @@ func TestServer(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should tests default auth-type (horusec) http requests in application admin enable", func(t *testing.T) {
-		time.Sleep(5 * time.Second)
+		time.Sleep(10 * time.Second)
 		// Login with default application admin
 		contentLogin := Login(t, &authEntities.Credentials{
 			Username: "horusec-admin@example.com",
