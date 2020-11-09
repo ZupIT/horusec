@@ -20,7 +20,7 @@ ADD . /go/src/github.com/ZupIT/horusec
 WORKDIR /go/src/github.com/ZupIT/horusec
 COPY . .
 
-RUN go get -t -v -u ./...
+RUN go get -t -v -d ./...
 
 RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec-leaks ./horusec-leaks/cmd/app/main.go
 
