@@ -28,14 +28,15 @@ checkIfInstallationIsValid () {
 }
 
 installSemver () {
+    INSTALL_PATH="/usr/local/bin"
     semver &> /dev/null
     RESPONSE=$?
     if [ $RESPONSE != "0" ]
     then
         echo "Installing semver..."
-        curl https://horus-assets.s3.amazonaws.com/semver -o ./semver
+        go build -o semver ./deployments/semver/cmd/app/main.go
         chmod +x ./semver
-        sudo mv ./semver /usr/local/bin/semver
+        sudo mv ./semver "$INSTALL_PATH"
     fi
 }
 

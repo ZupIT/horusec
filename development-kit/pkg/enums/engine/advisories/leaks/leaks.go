@@ -49,6 +49,7 @@ func AllRulesLeaksRegular() []text.TextRule {
 		regular.NewLeaksRegularHardCodedCredentialGeneric(),
 		regular.NewLeaksRegularHardCodedPassword(),
 		regular.NewLeaksRegularPasswordExposedInHardcodedURL(),
+		regular.NewLeaksRegularWPConfig(),
 	}
 }
 

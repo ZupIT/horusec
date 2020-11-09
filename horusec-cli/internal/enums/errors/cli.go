@@ -28,11 +28,6 @@ var ErrGitLowerVersion = errors.New("{HORUSEC_CLI} Error Git version is lower of
 
 var ErrDockerNotInstalled = errors.New("{HORUSEC_CLI} Error Docker not found. Please check and try again")
 
-// Occurs when o docker is lower version required
-
-var ErrDockerLowerVersion = errors.New(
-	"{HORUSEC_CLI} Error Docker version is lower of 19.03. Please check and try again")
-
 // Occurs when CsProj not found in dotnet project
 
 var ErrCsProjNotFound = errors.New("{HORUSEC_CLI} Error project csproj not found. Please use workdir flag or try again")

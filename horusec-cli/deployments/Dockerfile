@@ -19,7 +19,7 @@ RUN apk update && apk add --no-cache git
 ADD . /horusec
 WORKDIR /horusec
 
-RUN go get -t -v -u ./...
+RUN go get -t -v -d ./...
 
 RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horusec/main.go
 

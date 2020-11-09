@@ -23,7 +23,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/leaks/regular"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +31,7 @@ func TestNewAnalysis(t *testing.T) {
 }
 
 func TestAnalysis_StartAnalysis(t *testing.T) {
-	t.Run("Should return success when read all example analysis and return 4 vulnerabilities", func(t *testing.T) {
+	t.Run("Should return success when read all example analysis and return 14 vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.SetOutputFilePath("./leaks-tmp1.output.json")
 		configs.SetProjectPath("../../examples")
@@ -41,9 +40,8 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		fileBytes, err := ioutil.ReadFile("./leaks-tmp1.output.json")
 		data := []engine.Finding{}
 		_ = json.Unmarshal(fileBytes, &data)
-		spew.Dump(data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 4)
+		assert.Equal(t, len(data), 14)
 	})
 	t.Run("Should return success when read analysis and return two vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
@@ -81,6 +79,9 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.Error(t, err)
 	})
+}
+
+func TestAnalysis_StartRegularAnalysis(t *testing.T) {
 	t.Run("Should return a vulnerability from PasswordExposedInHardcodeURL", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.SetOutputFilePath("./leaks-tmp4.output.json")
@@ -91,7 +92,6 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		data := []engine.Finding{}
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-
 		vulnCounter := 0
 		for _, vuln := range data {
 			if vuln.ID == regular.NewLeaksRegularPasswordExposedInHardcodedURL().ID {
@@ -99,5 +99,24 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 			}
 		}
 		assert.Equal(t, vulnCounter, 1)
+	})
+
+	t.Run("Should return a vulnerability from WPConfig", func(t *testing.T) {
+		configs := config.NewConfig()
+		configs.SetOutputFilePath("./leaks-tmp5.output.json")
+		configs.SetProjectPath("../../examples/leaks-php")
+		err := NewAnalysis(configs).StartAnalysis()
+		assert.NoError(t, err)
+		fileBytes, err := ioutil.ReadFile("./leaks-tmp5.output.json")
+		data := []engine.Finding{}
+		_ = json.Unmarshal(fileBytes, &data)
+		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
+		vulnCounter := 0
+		for _, vuln := range data {
+			if vuln.ID == regular.NewLeaksRegularWPConfig().ID {
+				vulnCounter++
+			}
+		}
+		assert.Equal(t, vulnCounter, 10)
 	})
 }

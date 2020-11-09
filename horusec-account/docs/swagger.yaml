@@ -1,6 +1,10 @@
 definitions:
   account.Company:
     properties:
+      authzAdmin:
+        type: string
+      authzMember:
+        type: string
       description:
         type: string
       name:
@@ -36,6 +40,12 @@ definitions:
     type: object
   account.Repository:
     properties:
+      authzAdmin:
+        type: string
+      authzMember:
+        type: string
+      authzSupervisor:
+        type: string
       description:
         type: string
       name:
@@ -80,7 +90,6 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:

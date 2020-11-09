@@ -38,7 +38,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -242,6 +241,24 @@ var doc = `{
                     },
                     "400": {
                         "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "STATUS FORBIDDEN",
                         "schema": {
                             "allOf": [
                                 {

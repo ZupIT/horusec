@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec/horusec-api/config/grpc"
 	"log"
 	"net/http"
 
@@ -42,7 +43,7 @@ func main() {
 	postgresWrite := adapter.NewRepositoryWrite()
 
 	server := serverUtil.NewServerConfig("8000", cors.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite)
+	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite, grpc.SetupGrpcConnection())
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8000")

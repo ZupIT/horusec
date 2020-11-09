@@ -88,7 +88,10 @@ func (r *Repository) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.Co
 
 	query := r.databaseRead.
 		GetConnection().
-		Select("comp.company_id, comp.name, comp.description, accountComp.role, comp.created_at, comp.updated_at").
+		Select(
+			"comp.company_id, comp.name, comp.description, accountComp.role,"+
+				" comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
+		).
 		Table("companies AS comp").
 		Joins("JOIN account_company AS accountComp ON accountComp.company_id = comp.company_id"+
 			" AND accountComp.account_id = ?", accountID).

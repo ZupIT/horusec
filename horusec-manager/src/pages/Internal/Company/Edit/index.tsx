@@ -27,6 +27,8 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 interface RouterStateProps {
   companyName: string;
+  authzAdmin?: string;
+  authzMember?: string;
 }
 interface RouterLocationProps {
   state: RouterStateProps;
@@ -38,7 +40,7 @@ function EditCompany({
   location: RouterLocationProps;
 }) {
   const { t } = useTranslation();
-  const { companyId } = useParams();
+  const { companyId } = useParams<{ companyId: string }>();
   const history = useHistory();
   const [companyName, setCompanyName] = useState<Field>({
     isValid: false,
@@ -59,16 +61,19 @@ function EditCompany({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (companyName.isValid) {
-      updateCompany(companyId, companyName.value);
 
-      // TODO: Remover este console.log
-      console.log(adminGroup, userGroup);
+    if (companyName.isValid) {
+      updateCompany(companyId, companyName.value, {
+        authzAdmin: adminGroup.value,
+        authzMember: userGroup.value,
+      });
     }
   };
 
   useEffect(() => {
-    setCompanyName({ isValid: false, value: state.companyName });
+    setCompanyName({ isValid: true, value: state.companyName });
+    setAdminGroup({ isValid: true, value: state.authzAdmin });
+    setUserGroup({ isValid: true, value: state.authzMember });
   }, [state]);
 
   return (
@@ -102,6 +107,7 @@ function EditCompany({
               <Input
                 name="adminGroup"
                 label={t('COMPANY_SCREEN.GROUP_NAME')}
+                initialValue={adminGroup.value}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
               />
             </Styled.Wrapper>
@@ -112,6 +118,7 @@ function EditCompany({
               <Input
                 name="userGroup"
                 label={t('COMPANY_SCREEN.GROUP_NAME')}
+                initialValue={userGroup.value}
                 onChangeValue={(field: Field) => setUserGroup(field)}
               />
             </Styled.Wrapper>

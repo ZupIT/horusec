@@ -25,9 +25,9 @@ import { Authenticator } from 'helpers/interfaces/Authenticator';
 import accountService from 'services/account';
 import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
 
-import horusec from './horusec';
-import keycloak from './keycloak';
-import ldap from './ldap';
+import defaultAuth from './default';
+import keycloakAuth from './keycloak';
+import { LoginParams } from 'helpers/interfaces/LoginParams';
 
 interface AuthProviderPops {
   children: JSX.Element;
@@ -36,7 +36,7 @@ interface AuthProviderPops {
 interface AuthCtx {
   loginInProgress: boolean;
   fetchConfigInProgress: boolean;
-  login(email?: string, password?: string): Promise<void>;
+  login(params?: LoginParams): Promise<void>;
   logout(): Promise<void>;
 }
 
@@ -44,9 +44,9 @@ const getAuthenticator = () => {
   const { authType } = getCurrentConfig();
 
   const authenticators: Authenticator = {
-    horusec,
-    ldap,
-    keycloak,
+    horusec: defaultAuth,
+    ldap: defaultAuth,
+    keycloak: keycloakAuth,
   };
 
   return authenticators[authType];
@@ -70,12 +70,12 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     clearTokens();
   };
 
-  const login = (email?: string, password?: string): Promise<void> => {
+  const login = (params?: LoginParams): Promise<void> => {
     return new Promise((resolve) => {
       setLoginInProgress(true);
 
       getAuthenticator()
-        .login(email, password)
+        .login(params)
         .then(() => {
           resolve();
         })

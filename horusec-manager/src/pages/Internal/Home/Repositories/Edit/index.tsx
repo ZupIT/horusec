@@ -75,15 +75,17 @@ const EditRepository: React.FC<Props> = ({
     if (name.isValid) {
       setLoading(true);
 
-      // TODO: Remover este console.log
-      console.log(supervisorGroup, adminGroup, userGroup);
-
       repositoryService
         .update(
           repoToEdit.companyID,
           repoToEdit.repositoryID,
           name.value,
-          description.value
+          description.value,
+          {
+            authzAdmin: adminGroup.value,
+            authzMember: userGroup.value,
+            authzSupervisor: supervisorGroup.value,
+          }
         )
         .then(() => {
           showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
@@ -102,6 +104,9 @@ const EditRepository: React.FC<Props> = ({
     if (repoToEdit) {
       setName({ value: repoToEdit?.name, isValid: true });
       setDescription({ value: repoToEdit?.description, isValid: true });
+      setAdminGroup({ isValid: true, value: repoToEdit?.authzAdmin });
+      setUserGroup({ isValid: true, value: repoToEdit?.authzMember });
+      setSupervisorGroup({ isValid: true, value: repoToEdit?.authzSupervisor });
     }
   }, [repoToEdit]);
 
@@ -158,6 +163,7 @@ const EditRepository: React.FC<Props> = ({
                 name="adminGroup"
                 type="text"
                 width="100%"
+                initialValue={adminGroup.value}
               />
             </Styled.Wrapper>
 
@@ -170,6 +176,7 @@ const EditRepository: React.FC<Props> = ({
                 name="supervisorGroup"
                 type="text"
                 width="100%"
+                initialValue={supervisorGroup.value}
               />
             </Styled.Wrapper>
 
@@ -182,6 +189,7 @@ const EditRepository: React.FC<Props> = ({
                 name="userGroup"
                 type="text"
                 width="100%"
+                initialValue={userGroup.value}
               />
             </Styled.Wrapper>
           </>

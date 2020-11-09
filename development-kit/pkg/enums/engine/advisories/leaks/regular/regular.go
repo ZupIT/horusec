@@ -461,3 +461,19 @@ func NewLeaksRegularPasswordExposedInHardcodedURL() text.TextRule {
 		},
 	}
 }
+
+func NewLeaksRegularWPConfig() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "5332204a-0d3d-4fe3-a73b-29525101afa0",
+			Name:        "Wordpress configuration file disclosure",
+			Description: "Wordpress configuration file exposed, this can lead to the leak of admin passowrds, database credentials and a lot of sensitive data about the system. Check CWE-200 (https://cwe.mitre.org/data/definitions/200.html) for more details.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`define(.{0,20})?(DB_CHARSET|NONCE_SALT|LOGGED_IN_SALT|AUTH_SALT|NONCE_KEY|DB_HOST|DB_PASSWORD|AUTH_KEY|SECURE_AUTH_KEY|LOGGED_IN_KEY|DB_NAME|DB_USER)(.{0,20})?[''|"].{10,120}[''|"]`),
+		},
+	}
+}

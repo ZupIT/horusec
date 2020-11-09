@@ -15,15 +15,17 @@
 package auth
 
 import (
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	netHTTP "net/http"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
-	netHTTP "net/http"
 )
 
 type Handler struct {
@@ -32,11 +34,12 @@ type Handler struct {
 	appConfig      *app.Config
 }
 
-func NewAuthHandler(postgresRead relational.InterfaceRead, appConfig *app.Config) *Handler {
+func NewAuthHandler(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Handler {
 	return &Handler{
 		appConfig:      appConfig,
 		authUseCases:   authUseCases.NewAuthUseCases(),
-		authController: authController.NewAuthController(postgresRead, appConfig),
+		authController: authController.NewAuthController(postgresRead, postgresWrite, appConfig),
 	}
 }
 
@@ -50,18 +53,11 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} http.Response{content=auth.ConfigAuth{}} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Router /api/auth/config [get]
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	authType, err := h.authController.GetAuthType()
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
 	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
-		AuthType:               authType,
+		AuthType:               h.appConfig.GetAuthType(),
 	})
 }
 
@@ -84,7 +80,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	response, err := h.authController.AuthByType(credentials)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkLoginErrors(w, err)
 		return
 	}
 
@@ -100,62 +96,29 @@ func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) 
 	return credentials, nil
 }
 
-// @Tags Auth
-// @Description verify if request is valid!
-// @ID authenticate request
-// @Accept  json
-// @Produce  json
-// @Param AuthorizationData body auth.AuthorizationData true "authorization data"
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/auth/authorize [post]
-func (h *Handler) Authorize(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	authorizationData, err := h.getAuthorizationData(r)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	response, err := h.authController.AuthorizeByType(authorizationData)
-	if err != nil {
+func (h *Handler) checkLoginErrors(w netHTTP.ResponseWriter, err error) {
+	switch h.appConfig.GetAuthType() {
+	case authEnums.Horusec:
+		h.checkLoginErrorsHorusec(w, err)
+	case authEnums.Ldap:
 		httpUtil.StatusInternalServerError(w, err)
-		return
+	case authEnums.Keycloak:
+		httpUtil.StatusInternalServerError(w, err)
+	default:
+		httpUtil.StatusInternalServerError(w, err)
 	}
-
-	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getAuthorizationData(r *netHTTP.Request) (*auth.AuthorizationData, error) {
-	authorizationData, err := h.authUseCases.NewAuthorizationDataFromReadCloser(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return authorizationData, nil
-}
-
-// @Tags Auth
-// @Description get account by token and auth type!
-// @ID get account id
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} http.Response{content=string} "STATUS OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 400 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/auth/account-id [get]
-func (h *Handler) GetAccountIDByAuthType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		httpUtil.StatusBadRequest(w, errors.ErrorTokenCanNotBeEmpty)
+func (h *Handler) checkLoginErrorsHorusec(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrorWrongEmailOrPassword || err == errors.ErrNotFoundRecords {
+		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
 		return
 	}
 
-	accountID, err := h.authController.GetAccountIDByAuthType(token)
-	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
+		httpUtil.StatusForbidden(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, accountID)
+	httpUtil.StatusInternalServerError(w, err)
 }

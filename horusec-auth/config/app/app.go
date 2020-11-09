@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package app
 
 import (
@@ -16,12 +30,12 @@ const (
 type Config struct {
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
-	AuthType               string
+	AuthType               authEnums.AuthorizationType
 }
 
 func NewConfig() *Config {
 	return &Config{
-		AuthType:               env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString()),
+		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
@@ -36,6 +50,6 @@ func (a *Config) GetApplicationAdminData() (entity *accountEntities.CreateAccoun
 	return entity, json.Unmarshal([]byte(a.ApplicationAdminData), &entity)
 }
 
-func (a *Config) GetAuthType() string {
+func (a *Config) GetAuthType() authEnums.AuthorizationType {
 	return a.AuthType
 }

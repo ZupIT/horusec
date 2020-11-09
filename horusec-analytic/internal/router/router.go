@@ -25,6 +25,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"google.golang.org/grpc"
 )
 
 type Router struct {
@@ -50,10 +51,10 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, grpcCon *grpc.ClientConn) *chi.Mux {
 	r.setMiddleware()
-	r.RouterCompanyAnalytic(postgresRead)
-	r.RouterRepositoryAnalytic(postgresRead)
+	r.RouterCompanyAnalytic(postgresRead, grpcCon)
+	r.RouterRepositoryAnalytic(postgresRead, grpcCon)
 	r.RouterHealth(postgresRead)
 	return r.router
 }
@@ -108,9 +109,9 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
 	return r
 }
 
-func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *Router {
+func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead, grpcCon *grpc.ClientConn) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewHorusAuthzMiddleware()
+	authz := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.CompanyHandler, func(router chi.Router) {
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/details", handler.GetVulnDetails)
 		router.With(authz.IsCompanyAdmin).Get("/{companyID}/total-developers", handler.GetCompanyTotalDevelopers)
@@ -127,9 +128,9 @@ func (r *Router) RouterCompanyAnalytic(postgresRead relational.InterfaceRead) *R
 	return r
 }
 
-func (r *Router) RouterRepositoryAnalytic(postgresRead relational.InterfaceRead) *Router {
+func (r *Router) RouterRepositoryAnalytic(postgresRead relational.InterfaceRead, grpcCon *grpc.ClientConn) *Router {
 	handler := dashboard.NewDashboardHandler(postgresRead)
-	authz := middlewares.NewHorusAuthzMiddleware()
+	authz := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.RepositoryHandler, func(router chi.Router) {
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/details", handler.GetVulnDetails)
 		router.With(authz.IsRepositoryMember).Get("/{repositoryID}/total-developers", handler.GetRepositoryTotalDevelopers)

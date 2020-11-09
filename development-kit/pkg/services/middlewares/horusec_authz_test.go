@@ -15,24 +15,21 @@
 package middlewares
 
 import (
-	"encoding/json"
 	"errors"
-	httpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
-	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
 func TestNewHorusAuthzMiddleware(t *testing.T) {
 	t.Run("should create a new middleware service", func(t *testing.T) {
-		middleware := NewHorusAuthzMiddleware()
+		middleware := NewHorusAuthzMiddleware(nil)
 		assert.NotNil(t, middleware)
 	})
 }
@@ -40,17 +37,14 @@ func TestNewHorusAuthzMiddleware(t *testing.T) {
 func TestIsMember(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
-
-		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
@@ -66,13 +60,13 @@ func TestIsMember(t *testing.T) {
 
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
@@ -90,17 +84,14 @@ func TestIsMember(t *testing.T) {
 func TestIsCompanyAdmin(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
-
-		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
@@ -116,13 +107,13 @@ func TestIsCompanyAdmin(t *testing.T) {
 
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
@@ -140,17 +131,14 @@ func TestIsCompanyAdmin(t *testing.T) {
 func TestIsRepositoryMember(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
-
-		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
@@ -166,13 +154,13 @@ func TestIsRepositoryMember(t *testing.T) {
 
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
@@ -190,17 +178,14 @@ func TestIsRepositoryMember(t *testing.T) {
 func TestIsRepositorySupervisor(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
-
-		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
@@ -216,34 +201,13 @@ func TestIsRepositorySupervisor(t *testing.T) {
 
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
-
-		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
-		}
-
-		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
-
-		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
-
-		w := httptest.NewRecorder()
-		handler.ServeHTTP(w, req)
-
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-	})
-
-	t.Run("should return 401 when failed to unmarshall", func(t *testing.T) {
-		httpMock := &httpClient.Mock{}
-
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(""))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
@@ -261,19 +225,15 @@ func TestIsRepositorySupervisor(t *testing.T) {
 func TestIsRepositoryAdmin(t *testing.T) {
 	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: true})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
-
-		respBytes, _ = json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp = &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Once().Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
-
 		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
@@ -287,13 +247,13 @@ func TestIsRepositoryAdmin(t *testing.T) {
 
 	t.Run("should return 401 when invalid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: false})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
@@ -311,13 +271,13 @@ func TestIsRepositoryAdmin(t *testing.T) {
 func TestSetContextAccountID(t *testing.T) {
 	t.Run("should return 200 when success set context", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
@@ -333,13 +293,13 @@ func TestSetContextAccountID(t *testing.T) {
 
 	t.Run("should return 401 when failed to set context", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		respBytes, _ := json.Marshal(httpEntities.Response{Content: uuid.New()})
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(string(respBytes)))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), errors.New("test"))
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
 		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
@@ -352,18 +312,71 @@ func TestSetContextAccountID(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
+}
 
-	t.Run("should return 401 when failed to parse body", func(t *testing.T) {
+func TestIsApplicationAdmin(t *testing.T) {
+	t.Run("should return 200 when valid request", func(t *testing.T) {
 		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
 
-		resp := &http.Response{Body: ioutil.NopCloser(strings.NewReader(""))}
-		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(resp), nil)
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{AuthType: authEnums.Horusec.ToString(), ApplicationAdminEnable: true}, nil)
 
 		middleware := HorusAuthzMiddleware{
-			httpUtil: httpMock,
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
 		}
 
-		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
+		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 401 when invalid request", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
+
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{AuthType: authEnums.Horusec.ToString(), ApplicationAdminEnable: true}, nil)
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
+		}
+
+		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
+
+		req, _ := http.NewRequest("GET", "http://test", nil)
+		req.Header.Add("Authorization", "123")
+
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("should return 401 when failed to get auth type", func(t *testing.T) {
+		httpMock := &httpClient.Mock{}
+		grpcMock := &authGrpc.Mock{}
+
+		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{}, errors.New("test"))
+
+		middleware := HorusAuthzMiddleware{
+			httpUtil:   httpMock,
+			grpcClient: grpcMock,
+		}
+
+		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 		req.Header.Add("Authorization", "123")
