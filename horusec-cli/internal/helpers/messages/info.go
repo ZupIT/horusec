@@ -36,4 +36,7 @@ const (
 		"SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN"
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFinishedWithoutVulns = "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"
+	// Occurs when o docker is lower version than recommend
+	MsgDockerLowerVersion = "{HORUSEC_CLI} We recommend version 19.03 or higher of the docker." +
+		" Versions prior to this may have problems during execution"
 )
