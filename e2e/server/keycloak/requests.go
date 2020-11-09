@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 )
@@ -257,15 +259,14 @@ func CreateUserFromKeycloakInHorusec(t *testing.T, token *account.KeycloakToken)
 	assert.NotEmpty(t, bodyResponse)
 }
 
-func CheckIfTokenIsValid(t *testing.T, token string) {
-	//fmt.Println("Running test for CheckIfTokenIsValid")
-	//req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
-	//httpClient := http.Client{}
-	//createCompanyResp, err := httpClient.Do(req)
-	//assert.NoError(t, err, "CreateUserFromKeycloakInHorusec error send request")
-	//assert.Equal(t, http.StatusOK, createCompanyResp.StatusCode, "CreateUserFromKeycloakInHorusec error check response")
-	//var bodyResponse map[string]interface{}
-	//_ = json.NewDecoder(createCompanyResp.Body).Decode(&bodyResponse)
-	//assert.NoError(t, createCompanyResp.Body.Close())
-	//assert.NotEmpty(t, bodyResponse)
+func CheckIfTokenIsValid(t *testing.T, token, secret string) {
+	fmt.Println("Running test for CheckIfTokenIsValid")
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_BASE_PATH", "http://127.0.0.1:8080"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_CLIENT_ID", "account"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_CLIENT_SECRET", secret))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_REALM", "master"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_OTP", "false"))
+	userID, err := keycloak.NewKeycloakService().GetAccountIDByJWTToken(token)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, userID)
 }

@@ -25,6 +25,8 @@ import (
 	"time"
 )
 
+var SecretKeyCloak = ""
+
 func TestMain(m *testing.M) {
 	folderOfMigration := "file://../../../development-kit/pkg/databases/relational/migration"
 	var connectionStringDB = env.GetEnvOrDefault("HORUSEC_DATABASE_SQL_URI", "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable")
@@ -75,11 +77,10 @@ func TestServer(t *testing.T) {
 
 		SetupKeycloak(t, user, credential)
 
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)})
-
-		time.Sleep(3 * time.Second)
-
 		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
+		CheckIfTokenIsValid(t, bearerToken, SecretKeyCloak)
+
+		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
@@ -99,9 +100,9 @@ func SetupKeycloak(t *testing.T, user *entities.UserRepresentation, credential *
 	UpdateRolesToAcceptOAuth(t, bearerToken)
 	DeleteAllUsersInKeyCloak(t, bearerToken)
 	CreateUserInKeyCloak(t, user, credential, bearerToken)
-	secret := GetClientSecretInAccountClient(t, bearerToken)
-	assert.NotEmpty(t, secret)
-	StartAuthHorusecServices(t, secret)
+	SecretKeyCloak = GetClientSecretInAccountClient(t, bearerToken)
+	assert.NotEmpty(t, SecretKeyCloak)
+	StartAuthHorusecServices(t, SecretKeyCloak)
 }
 
 func StartAuthHorusecServices(t *testing.T, secret string) {
