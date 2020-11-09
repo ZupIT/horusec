@@ -79,7 +79,7 @@ func TestServer(t *testing.T) {
 
 		time.Sleep(3 * time.Second)
 
-		bearerToken := LoginInKeycloakByHorus(t, user.Username, credential.Value)
+		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
