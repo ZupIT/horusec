@@ -19,6 +19,7 @@ import defaultHTTP from 'config/axios/default';
 import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
+import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
 const getAll = (companyId: string) => {
   return defaultHTTP.get(
@@ -26,12 +27,18 @@ const getAll = (companyId: string) => {
   );
 };
 
-const create = (companyId: string, name: string, description: string) => {
+const create = (
+  companyId: string,
+  name: string,
+  description: string,
+  ldapGroups?: LDAPGroups
+) => {
   return defaultHTTP.post(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
     {
       name,
       description,
+      ...ldapGroups,
     }
   );
 };
@@ -40,11 +47,12 @@ const update = (
   companyId: string,
   repositoryId: string,
   name: string,
-  description: string
+  description: string,
+  ldapGroups?: LDAPGroups
 ) => {
   return defaultHTTP.patch(
     `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`,
-    { name, description }
+    { name, description, ...ldapGroups }
   );
 };
 

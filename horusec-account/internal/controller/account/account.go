@@ -38,7 +38,6 @@ import (
 
 type IAccount interface {
 	CreateAccount(account *accountEntities.Account) error
-	Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error)
 	ValidateEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
 	VerifyResetPasswordCode(data *accountEntities.ResetCodeData) (string, error)
@@ -87,19 +86,6 @@ func (a *Account) CreateAccount(account *accountEntities.Account) error {
 	}
 
 	return a.sendValidateAccountEmail(account)
-}
-
-func (a *Account) Login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {
-	account, err := a.accountRepository.GetByEmail(loginData.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := a.useCases.ValidateLogin(account, loginData); err != nil {
-		return nil, err
-	}
-
-	return a.setLoginResponse(account)
 }
 
 func (a *Account) ValidateEmail(accountID uuid.UUID) error {

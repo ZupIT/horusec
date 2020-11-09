@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	horusecService "github.com/ZupIT/horusec/horusec-auth/internal/services/horusec"
 	keycloakService "github.com/ZupIT/horusec/horusec-auth/internal/services/keycloak"
+	"github.com/ZupIT/horusec/horusec-auth/internal/services/ldap"
 	"github.com/google/uuid"
 )
 
@@ -41,14 +42,17 @@ type IController interface {
 type Controller struct {
 	horusAuthService    services.IAuthService
 	keycloakAuthService services.IAuthService
+	ldapAuthService     services.IAuthService
 	keycloak            keycloak.IService
 	appConfig           *app.Config
 }
 
-func NewAuthController(postgresRead relational.InterfaceRead, appConfig *app.Config) IController {
+func NewAuthController(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) IController {
 	return &Controller{
 		appConfig:           appConfig,
-		horusAuthService:    horusecService.NewHorusAuthService(postgresRead),
+		horusAuthService:    horusecService.NewHorusAuthService(postgresRead, postgresWrite),
+		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
 		keycloak:            keycloak.NewKeycloakService(),
 	}
@@ -61,7 +65,7 @@ func (c *Controller) AuthByType(credentials *authEntities.Credentials) (interfac
 	case authEnums.Keycloak:
 		return c.keycloakAuthService.Authenticate(credentials)
 	case authEnums.Ldap:
-		return nil, errors.ErrorUnauthorized
+		return c.ldapAuthService.Authenticate(credentials)
 	}
 
 	return nil, errors.ErrorUnauthorized
@@ -75,7 +79,7 @@ func (c *Controller) IsAuthorized(_ context.Context,
 	case authEnums.Keycloak:
 		return c.setIsAuthorizedResponse(c.keycloakAuthService.IsAuthorized(c.parseToAuthorizationData(data)))
 	case authEnums.Ldap:
-		return c.setIsAuthorizedResponse(false, errors.ErrorUnauthorized)
+		return c.setIsAuthorizedResponse(c.ldapAuthService.IsAuthorized(c.parseToAuthorizationData(data)))
 	}
 
 	return c.setIsAuthorizedResponse(false, errors.ErrorUnauthorized)
@@ -119,7 +123,7 @@ func (c *Controller) GetAuthConfig(_ context.Context,
 }
 
 func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
-	return authEnums.GetAuthTypeByString(c.appConfig.GetAuthType())
+	return c.appConfig.GetAuthType()
 }
 
 func (c *Controller) GetAccountID(_ context.Context,

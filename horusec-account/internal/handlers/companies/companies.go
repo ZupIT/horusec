@@ -16,12 +16,13 @@ package companies
 
 import (
 	"fmt"
+	"net/http"
+
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
 	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
-	"net/http"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 

@@ -116,7 +116,6 @@ func (r *Router) RouterAccount(broker brokerLib.IBroker, databaseRead SQL.Interf
 	handler := account.NewHandler(broker, databaseRead, databaseWrite, cacheRepository, appConfig)
 	authzMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
-		router.Post("/login", handler.Login)
 		router.Post("/create-account", handler.CreateAccount)
 		router.Get("/validate/{accountID}", handler.ValidateEmail)
 		router.Post("/send-code", handler.SendResetPasswordCode)

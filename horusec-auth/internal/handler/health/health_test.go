@@ -26,8 +26,9 @@ import (
 func TestNewHandler(t *testing.T) {
 	t.Run("should create a new handler", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead)
+		handler := NewHandler(mockRead, mockWrite)
 		assert.NotNil(t, handler)
 	})
 }
@@ -35,8 +36,9 @@ func TestNewHandler(t *testing.T) {
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead)
+		handler := NewHandler(mockRead, mockWrite)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -49,10 +51,12 @@ func TestOptions(t *testing.T) {
 func TestGet(t *testing.T) {
 	t.Run("should return 200 everything its ok", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
 		mockRead.On("IsAvailable").Return(true)
+		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mockRead)
+		handler := NewHandler(mockRead, mockWrite)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -63,10 +67,12 @@ func TestGet(t *testing.T) {
 
 	t.Run("should return 500 when something is wrong with postgres", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
 
 		mockRead.On("IsAvailable").Return(false)
+		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mockRead)
+		handler := NewHandler(mockRead, mockWrite)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

@@ -15,6 +15,9 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	adminConfig "github.com/ZupIT/horusec/horusec-auth/config/admin"
@@ -23,8 +26,6 @@ import (
 	grpcConfig "github.com/ZupIT/horusec/horusec-auth/config/grpc"
 	"github.com/ZupIT/horusec/horusec-auth/config/swagger"
 	"github.com/ZupIT/horusec/horusec-auth/internal/router"
-	"log"
-	"net/http"
 )
 
 // @title Horusec-Auth
@@ -52,6 +53,6 @@ func main() {
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")
 
-	go grpcConfig.SetUpGRPCServer(postgresRead, appConfig)
+	go grpcConfig.SetUpGRPCServer(postgresRead, postgresWrite, appConfig)
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
 }

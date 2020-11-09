@@ -19,13 +19,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
-
-	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
@@ -133,145 +131,6 @@ func TestCreateAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		handler.CreateAccount(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
-}
-
-func TestLogin(t *testing.T) {
-	account := &accountEntities.Account{
-		AccountID:   uuid.New(),
-		Email:       "test@test.com",
-		Password:    "$2a$10$rkdf/ZuW4Gn1KTDNTRyhdelrwL8GW7mPARwRfLKkCKuq/6vyHu2H.",
-		Username:    "test",
-		IsConfirmed: true,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
-
-	t.Run("should return 200 when successful login", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		cacheRepositoryMock.On("Set").Return(nil)
-		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
-		mockRead.On("Find").Once().Return(resp.SetData(account))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		resp2 := &response.Response{}
-		mockRead.On("Find").Return(resp2.SetData(nil))
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-
-	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-
-	t.Run("should return 401 when wrong password or username", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorWrongEmailOrPassword))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusForbidden, w.Code)
-	})
-
-	t.Run("should return 401 when email not confirmed", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		loginData := &accountEntities.LoginData{
-			Email:    "test@test.com",
-			Password: "test",
-		}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorAccountEmailNotConfirmed))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockWrite.On("Update").Return(resp)
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(loginData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
-
-		assert.Equal(t, http.StatusForbidden, w.Code)
-	})
-
-	t.Run("should return 400 when invalid login data", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		appConfig := app.SetupApp()
-		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("")))
-		w := httptest.NewRecorder()
-
-		handler.Login(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

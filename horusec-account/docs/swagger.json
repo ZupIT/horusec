@@ -8,8 +8,7 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        },
-        "license": {}
+        }
     },
     "paths": {
         "/api/account/change-password": {
@@ -2796,6 +2795,23 @@
         }
     },
     "definitions": {
+        "account.Company": {
+            "type": "object",
+            "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "account.CreateAccount": {
             "type": "object",
             "properties": {
@@ -2843,6 +2859,15 @@
         "account.Repository": {
             "type": "object",
             "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "authzSupervisor": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

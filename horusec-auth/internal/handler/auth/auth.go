@@ -15,15 +15,17 @@
 package auth
 
 import (
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	netHTTP "net/http"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
-	netHTTP "net/http"
 )
 
 type Handler struct {
@@ -32,11 +34,12 @@ type Handler struct {
 	appConfig      *app.Config
 }
 
-func NewAuthHandler(postgresRead relational.InterfaceRead, appConfig *app.Config) *Handler {
+func NewAuthHandler(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Handler {
 	return &Handler{
 		appConfig:      appConfig,
 		authUseCases:   authUseCases.NewAuthUseCases(),
-		authController: authController.NewAuthController(postgresRead, appConfig),
+		authController: authController.NewAuthController(postgresRead, postgresWrite, appConfig),
 	}
 }
 
@@ -54,7 +57,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
-		AuthType:               authEnums.AuthorizationType(h.appConfig.GetAuthType()),
+		AuthType:               h.appConfig.GetAuthType(),
 	})
 }
 
@@ -77,7 +80,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	response, err := h.authController.AuthByType(credentials)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkLoginErrors(w, err)
 		return
 	}
 
@@ -91,4 +94,31 @@ func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) 
 	}
 
 	return credentials, nil
+}
+
+func (h *Handler) checkLoginErrors(w netHTTP.ResponseWriter, err error) {
+	switch h.appConfig.GetAuthType() {
+	case authEnums.Horusec:
+		h.checkLoginErrorsHorusec(w, err)
+	case authEnums.Ldap:
+		httpUtil.StatusInternalServerError(w, err)
+	case authEnums.Keycloak:
+		httpUtil.StatusInternalServerError(w, err)
+	default:
+		httpUtil.StatusInternalServerError(w, err)
+	}
+}
+
+func (h *Handler) checkLoginErrorsHorusec(w netHTTP.ResponseWriter, err error) {
+	if err == errors.ErrorWrongEmailOrPassword || err == errors.ErrNotFoundRecords {
+		httpUtil.StatusForbidden(w, errors.ErrorWrongEmailOrPassword)
+		return
+	}
+
+	if err == errors.ErrorAccountEmailNotConfirmed || err == errors.ErrorUserAlreadyLogged {
+		httpUtil.StatusForbidden(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }

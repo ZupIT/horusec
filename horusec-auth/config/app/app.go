@@ -16,12 +16,12 @@ const (
 type Config struct {
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
-	AuthType               string
+	AuthType               authEnums.AuthorizationType
 }
 
 func NewConfig() *Config {
 	return &Config{
-		AuthType:               env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString()),
+		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
@@ -36,6 +36,6 @@ func (a *Config) GetApplicationAdminData() (entity *accountEntities.CreateAccoun
 	return entity, json.Unmarshal([]byte(a.ApplicationAdminData), &entity)
 }
 
-func (a *Config) GetAuthType() string {
+func (a *Config) GetAuthType() authEnums.AuthorizationType {
 	return a.AuthType
 }

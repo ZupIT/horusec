@@ -1,10 +1,11 @@
 package account
 
 import (
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
-	"time"
 )
 
 type CompanyApplicationAdmin struct {
@@ -12,6 +13,8 @@ type CompanyApplicationAdmin struct {
 	Name        string    `json:"name"`
 	AdminEmail  string    `json:"adminEmail"`
 	Description string    `json:"description"`
+	AuthzMember string    `json:"authzMember"`
+	AuthzAdmin  string    `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
@@ -28,6 +31,8 @@ func (c *CompanyApplicationAdmin) ToCompany() *Company {
 		CompanyID:   c.CompanyID,
 		Name:        c.Name,
 		Description: c.Description,
+		AuthzAdmin:  c.AuthzAdmin,
+		AuthzMember: c.AuthzMember,
 		CreatedAt:   c.CreatedAt,
 		UpdatedAt:   c.UpdatedAt,
 	}
