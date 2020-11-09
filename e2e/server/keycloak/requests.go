@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -29,6 +30,31 @@ func LoginInKeycloak(t *testing.T, username, password string) map[string]interfa
 	assert.NoError(t, res.Body.Close())
 	assert.NotEmpty(t, response)
 	return response
+}
+
+func LoginInKeycloakByHorus(t *testing.T, username, password string) string {
+	fmt.Println("Running test for LoginInKeycloak")
+	credentials := &authEntities.Credentials{
+		Username: username,
+		Password: password,
+	}
+
+	payload := strings.NewReader(string(credentials.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/auth/authenticate", payload)
+	req.Header.Add("content-type", "application/x-www-form-urlencoded")
+	req.Header.Add("cache-control", "no-cache")
+
+	res, _ := http.DefaultClient.Do(req)
+	assert.Equal(t, http.StatusOK, res.StatusCode, "LoginInKeycloak error send request")
+	var response map[string]interface{}
+	_ = json.NewDecoder(res.Body).Decode(&response)
+	assert.NoError(t, res.Body.Close())
+	assert.NotEmpty(t, response)
+	var content map[string]interface{}
+	contentBytes, _ := json.Marshal(response["content"])
+	_ = json.Unmarshal(contentBytes, &content)
+	assert.NotEmpty(t, response)
+	return content["access_token"].(string)
 }
 
 func LogoutUserInKeycloak(t *testing.T, bearerToken, username string)  {
