@@ -165,6 +165,10 @@ func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
 	client["standardFlowEnabled"] = true
 	client["surrogateAuthRequired"] = true
 	client["attributes"].(map[string]interface{})["access.token.lifespan"] = 5940
+	client["attributes"].(map[string]interface{})["client.offline.session.idle.timeout"] = 5940
+	client["attributes"].(map[string]interface{})["client.offline.session.max.lifespan"] = 5940
+	client["attributes"].(map[string]interface{})["client.session.idle.timeout"] = 5940
+	client["attributes"].(map[string]interface{})["client.session.max.lifespan"] = 5940
 	clientID := client["id"].(string)
 	clientBytes, _ := json.Marshal(client)
 	req, _ := http.NewRequest(http.MethodPut, "http://127.0.0.1:8080/auth/admin/realms/master/clients/"+clientID, bytes.NewReader(clientBytes))
@@ -251,4 +255,17 @@ func CreateUserFromKeycloakInHorusec(t *testing.T, token *account.KeycloakToken)
 	_ = json.NewDecoder(createCompanyResp.Body).Decode(&bodyResponse)
 	assert.NoError(t, createCompanyResp.Body.Close())
 	assert.NotEmpty(t, bodyResponse)
+}
+
+func CheckIfTokenIsValid(t *testing.T, token string) {
+	//fmt.Println("Running test for CheckIfTokenIsValid")
+	//req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
+	//httpClient := http.Client{}
+	//createCompanyResp, err := httpClient.Do(req)
+	//assert.NoError(t, err, "CreateUserFromKeycloakInHorusec error send request")
+	//assert.Equal(t, http.StatusOK, createCompanyResp.StatusCode, "CreateUserFromKeycloakInHorusec error check response")
+	//var bodyResponse map[string]interface{}
+	//_ = json.NewDecoder(createCompanyResp.Body).Decode(&bodyResponse)
+	//assert.NoError(t, createCompanyResp.Body.Close())
+	//assert.NotEmpty(t, bodyResponse)
 }
