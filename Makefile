@@ -127,7 +127,7 @@ compose-e2e-messages:
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.messages.yaml up -d --build --force-recreate
 compose-e2e-server-keycloak:
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml up -d --build --force-recreate postgresql postgresql_keycloak keycloak horusec-account horusec-analytic
+	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml up -d --build postgresql postgresql_keycloak keycloak horusec-account horusec-analytic
 
 # ========================================================================================= #
 
