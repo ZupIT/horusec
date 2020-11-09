@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package router
+package broker
 
 import (
+	"os"
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
-	"github.com/go-chi/cors"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewRouter(t *testing.T) {
-	t.Run("should success create a new router", func(t *testing.T) {
-		router := NewRouter(server.NewServerConfig("8000", &cors.Options{}))
-		assert.NotNil(t, router)
+func TestSetUp(t *testing.T) {
+	t.Run("Should return panics when setup broker", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "other_username")
+		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "other_password")
+		assert.Panics(t, func() {
+			SetUp()
+		})
 	})
-}
-
-func TestGetRouter(t *testing.T) {
-	t.Run("should success set router configs", func(t *testing.T) {
-		router := NewRouter(server.NewServerConfig("8000", &cors.Options{}))
-		assert.NotNil(t, router)
-
-		mux := router.GetRouter(nil, nil, nil, nil, nil)
-		assert.NotNil(t, mux)
+	t.Run("Should not return panics when setup broker", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "guest")
+		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "guest")
+		assert.NotPanics(t, func() {
+			SetUp()
+		})
 	})
 }

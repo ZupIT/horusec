@@ -11,12 +11,14 @@ const (
 	EnvEnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 	EnvApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvAuthType                  = "HORUSEC_AUTH_TYPE"
+	DisableEmailServiceEnv       = "HORUSEC_AUTH_DISABLE_EMAIL_SERVICE"
 )
 
 type Config struct {
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
 	AuthType               authEnums.AuthorizationType
+	DisableEmailService    bool
 }
 
 func NewConfig() *Config {
@@ -25,6 +27,7 @@ func NewConfig() *Config {
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
+		DisableEmailService: env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
 	}
 }
 
@@ -38,4 +41,8 @@ func (a *Config) GetApplicationAdminData() (entity *accountEntities.CreateAccoun
 
 func (a *Config) GetAuthType() authEnums.AuthorizationType {
 	return a.AuthType
+}
+
+func (a *Config) IsEmailServiceDisabled() bool {
+	return a.DisableEmailService
 }

@@ -43,6 +43,7 @@ type IController interface {
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
 	RemoveUser(removeUser *accountEntities.RemoveUser) error
+	GetAccountIDByEmail(email string) (uuid.UUID, error)
 }
 
 type Controller struct {
@@ -54,6 +55,7 @@ type Controller struct {
 	repoAccountRepository repoAccountRepository.IAccountRepository
 	broker                brokerLib.IBroker
 	appConfig             app.IAppConfig
+	accountRepository     repositoryAccount.IAccount
 	companyUseCases       companyUseCases.ICompany
 }
 
@@ -69,6 +71,7 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 		broker:                broker,
 		appConfig:             appConfig,
 		companyUseCases:       companyUseCases.NewCompanyUseCases(),
+		accountRepository:     repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
 	}
 }
 
@@ -170,4 +173,12 @@ func (c *Controller) RemoveUser(removeUser *accountEntities.RemoveUser) error {
 	}
 
 	return c.repoAccountCompany.DeleteAccountCompany(account.AccountID, removeUser.CompanyID)
+}
+
+func (c *Controller) GetAccountIDByEmail(email string) (uuid.UUID, error) {
+	account, err := c.accountRepository.GetByEmail(email)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return account.AccountID, nil
 }

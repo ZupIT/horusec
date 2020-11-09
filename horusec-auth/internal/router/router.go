@@ -16,6 +16,8 @@ package router
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/internal/handler/account"
@@ -50,12 +52,12 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig *app.Config) *chi.Mux {
 	r.setMiddleware()
 	r.RouterAuth(postgresRead, postgresWrite, appConfig)
 	r.RouterHealth(postgresRead, postgresWrite)
-	r.RouterAccount(postgresRead, postgresWrite)
+	r.RouterAccount(postgresRead, postgresWrite, broker, cache, appConfig)
 	return r.router
 }
 
@@ -121,10 +123,22 @@ func (r *Router) RouterAuth(
 	return r
 }
 
-func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	handler := account.NewHandler(postgresRead, postgresWrite)
+// nolint
+func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig *app.Config) *Router {
+	handler := account.NewHandler(broker, postgresRead, postgresWrite, cache, appConfig)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)
+		router.Options("/", handler.Options)
+		router.Post("/create-account", handler.CreateAccount)
+		router.Get("/validate/{accountID}", handler.ValidateEmail)
+		router.Post("/send-code", handler.SendResetPasswordCode)
+		router.Post("/validate-code", handler.ValidateResetPasswordCode)
+		//router.With(authzMiddleware.SetContextAccountID).Post("/change-password", handler.ChangePassword)
+		router.Post("/renew-token", handler.RenewToken)
+		//router.With(authzMiddleware.SetContextAccountID).Post("/logout", handler.Logout)
+		//router.With(authzMiddleware.SetContextAccountID).Delete("/delete", handler.DeleteAccount)
+		router.Post("/verify-already-used", handler.VerifyAlreadyInUse)
 		router.Options("/", handler.Options)
 	})
 

@@ -16,42 +16,33 @@ package companies
 
 import (
 	"fmt"
-	"net/http"
-
-	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
-	accountController "github.com/ZupIT/horusec/horusec-account/internal/controller/account"
-
-	"github.com/ZupIT/horusec/horusec-account/config/app"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	companyUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+	"net/http"
 )
 
 type Handler struct {
 	companyController  companiesController.IController
 	repositoryUseCases repositories.IRepository
 	companyUseCases    companyUseCases.ICompany
-	accountController  accountController.IAccount
 }
 
-func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead, cache cacheRepository.Interface,
-	broker brokerLib.IBroker, appConfig app.IAppConfig) *Handler {
+func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead, broker brokerLib.IBroker,
+	appConfig app.IAppConfig) *Handler {
 	return &Handler{
-		companyController: companiesController.NewController(databaseWrite, databaseRead, broker, appConfig),
-		accountController: accountController.NewAccountController(
-			broker, databaseRead, databaseWrite, cache, accountUseCases.NewAccountUseCases(), appConfig),
+		companyController:  companiesController.NewController(databaseWrite, databaseRead, broker, appConfig),
 		repositoryUseCases: repositories.NewRepositoryUseCases(),
 		companyUseCases:    companyUseCases.NewCompanyUseCases(),
 	}
@@ -129,7 +120,7 @@ func (h *Handler) getCreateDataApplicationAdmin(
 }
 
 func (h *Handler) getAccountIDByEmail(w http.ResponseWriter, email string) (uuid.UUID, error) {
-	accountID, err := h.accountController.GetAccountIDByEmail(email)
+	accountID, err := h.companyController.GetAccountIDByEmail(email)
 	if err != nil {
 		if err == errorsEnum.ErrNotFoundRecords {
 			httpUtil.StatusNotFound(w, err)

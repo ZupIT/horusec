@@ -16,7 +16,6 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 	"log"
@@ -52,11 +51,10 @@ func main() {
 
 	databaseRead := databaseSQL.NewRepositoryRead()
 	databaseWrite := databaseSQL.NewRepositoryWrite()
-	cacheRepository := cache.NewCacheRepository(databaseRead, databaseWrite)
 
 	server := serverUtil.NewServerConfig("8003", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(broker, databaseRead, databaseWrite,
-		cacheRepository, appConfig, grpcConfig.SetupGrpcConnection())
+		appConfig, grpcConfig.SetupGrpcConnection())
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8003")
