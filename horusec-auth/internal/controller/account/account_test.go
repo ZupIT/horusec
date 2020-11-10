@@ -1007,3 +1007,47 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		assert.Equal(t, uuid.Nil, accountID)
 	})
 }
+
+func TestGetAccountIDByEmail(t *testing.T) {
+	t.Run("should success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		resp := &response.Response{}
+		resp.SetData(&authEntities.Account{AccountID: uuid.New()})
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.NewConfig()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		assert.NotNil(t, controller)
+
+		accountID, err := controller.GetAccountIDByEmail("test@test.com")
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, accountID)
+	})
+
+	t.Run("should success delete account", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		resp := &response.Response{}
+		resp.SetError(errors.New("test"))
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		appConfig := app.NewConfig()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		assert.NotNil(t, controller)
+
+		accountID, err := controller.GetAccountIDByEmail("test@test.com")
+
+		assert.Error(t, err)
+		assert.Equal(t, uuid.Nil, accountID)
+	})
+}

@@ -326,6 +326,7 @@ func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
+
 	return account.AccountID, nil
 }
 

@@ -82,7 +82,7 @@ func TestMessages(t *testing.T) {
 			Username: accountToCreate.Email,
 			Password: accountToCreate.Password,
 		})
-		assert.Equal(t, http.StatusForbidden, loginResp.GetStatusCode())
+		assert.Equal(t, http.StatusOK, loginResp.GetStatusCode())
 
 		// Get Last account created in database
 		accountCreated := GetLastAccountCreated(t)
