@@ -24,10 +24,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
@@ -929,5 +931,79 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 
 		_, err := controller.CreateAccountFromKeycloak(account)
 		assert.Error(t, err)
+	})
+}
+
+func TestGetAccountIDByAuthType(t *testing.T) {
+	t.Run("should return account id when horusec", func(t *testing.T) {
+		account := &authEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		controller := Account{
+			appConfig: &app.Config{AuthType: authEnums.Horusec},
+		}
+
+		accountID, err := controller.GetAccountID(token)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, accountID)
+	})
+
+	t.Run("should return account id when keycloak", func(t *testing.T) {
+		account := &authEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		keycloakMock := &keycloakService.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
+		controller := Account{
+			appConfig: &app.Config{AuthType: authEnums.Keycloak},
+			keycloak:  keycloakMock,
+		}
+
+		accountID, err := controller.GetAccountID(token)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, accountID)
+	})
+
+	t.Run("should return account id when horusec", func(t *testing.T) {
+		account := &authEntities.Account{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+		}
+
+		token, _, _ := jwt.CreateToken(account, nil)
+
+		controller := Account{
+			appConfig: &app.Config{AuthType: authEnums.Ldap},
+		}
+
+		accountID, err := controller.GetAccountID(token)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, accountID)
+	})
+
+	t.Run("should return error when invalid auth type", func(t *testing.T) {
+		controller := Account{
+			appConfig: &app.Config{AuthType: "test"},
+		}
+
+		accountID, err := controller.GetAccountID("test")
+
+		assert.Error(t, err)
+		assert.Equal(t, uuid.Nil, accountID)
 	})
 }

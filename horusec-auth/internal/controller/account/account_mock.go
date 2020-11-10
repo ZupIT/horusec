@@ -91,3 +91,8 @@ func (m *Mock) GetAccountIDByEmail(_ string) (uuid.UUID, error) {
 	args := m.MethodCalled("GetAccountIDByEmail")
 	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetAccountID(token string) (uuid.UUID, error) {
+	args := m.MethodCalled("GetAccountID")
+	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
+}

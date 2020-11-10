@@ -24,6 +24,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
@@ -51,6 +52,7 @@ type IAccount interface {
 	VerifyAlreadyInUse(validateUnique *dto.ValidateUnique) error
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
+	GetAccountID(token string) (uuid.UUID, error)
 }
 
 type Account struct {
@@ -63,6 +65,7 @@ type Account struct {
 	cacheRepository       cache.Interface
 	appConfig             *app.Config
 	authUseCases          authUseCases.IUseCases
+	keycloak              keycloak.IService
 }
 
 func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -77,6 +80,7 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 		cacheRepository:       cacheRepository,
 		appConfig:             appConfig,
 		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(),
 	}
 }
 
@@ -323,4 +327,17 @@ func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 	return account.AccountID, nil
+}
+
+func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
+	switch a.appConfig.GetAuthType() {
+	case authEnums.Horusec:
+		return jwt.GetAccountIDByJWTToken(token)
+	case authEnums.Keycloak:
+		return a.keycloak.GetAccountIDByJWTToken(token)
+	case authEnums.Ldap:
+		return jwt.GetAccountIDByJWTToken(token)
+	}
+
+	return uuid.Nil, errors.ErrorUnauthorized
 }

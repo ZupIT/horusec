@@ -15,12 +15,10 @@
 package account
 
 import (
-	"fmt"
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
@@ -247,7 +245,7 @@ func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getChangePasswordData(w http.ResponseWriter, r *http.Request) (uuid.UUID, string) {
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return uuid.Nil, ""
@@ -316,7 +314,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Router /api/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -368,7 +366,7 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 // @Router /api/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
