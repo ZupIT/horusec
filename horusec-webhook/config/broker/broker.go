@@ -31,8 +31,8 @@ func SetUp() brokerLib.IBroker {
 	return broker
 }
 
+// nolint
 func setUpConsumers(broker brokerLib.IBroker) {
-	//consumer := email.NewConsumer()
-	//
-	//go broker.Consume(queues.HorusecEmail.ToString(), "", "", consumer.SendEmail)
+	// consumer := email.NewConsumer()
+	// go broker.Consume(queues.HorusecEmail.ToString(), "", "", consumer.SendEmail)
 }

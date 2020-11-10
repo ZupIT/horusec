@@ -15,31 +15,31 @@
 package health
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/horusec-webhook/internal/pkg/mailer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHandler(t *testing.T) {
 	t.Run("should succesful create a new handler", func(t *testing.T) {
-		mailerMock := &mailer.Mock{}
 		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
 
-		handler := NewHandler(mailerMock, brokerMock)
+		handler := NewHandler(brokerMock, mockRead)
 		assert.NotEmpty(t, handler)
 	})
 }
 
 func TestOptions(t *testing.T) {
 	t.Run("should return 204 when options", func(t *testing.T) {
-		mailerMock := &mailer.Mock{}
 		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
 
-		handler := NewHandler(mailerMock, brokerMock)
+		handler := NewHandler(brokerMock, mockRead)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -51,13 +51,13 @@ func TestOptions(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	t.Run("should return 200 everything its ok", func(t *testing.T) {
-		mailerMock := &mailer.Mock{}
+		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
 
-		mailerMock.On("IsAvailable").Return(true)
+		mockRead.On("IsAvailable").Return(true)
 		brokerMock.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mailerMock, brokerMock)
+		handler := NewHandler(brokerMock, mockRead)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -66,14 +66,14 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("should return 500 when mailer is not healthy", func(t *testing.T) {
-		mailerMock := &mailer.Mock{}
+	t.Run("should return 500 when database is not healthy", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
 
-		mailerMock.On("IsAvailable").Return(false)
+		mockRead.On("IsAvailable").Return(false)
 		brokerMock.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mailerMock, brokerMock)
+		handler := NewHandler(brokerMock, mockRead)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -82,13 +82,13 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
-		mailerMock := &mailer.Mock{}
+		mockRead := &relational.MockRead{}
 		brokerMock := &broker.Mock{}
 
-		mailerMock.On("IsAvailable").Return(true)
+		mockRead.On("IsAvailable").Return(true)
 		brokerMock.On("IsAvailable").Return(false)
 
-		handler := NewHandler(mailerMock, brokerMock)
+		handler := NewHandler(brokerMock, mockRead)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

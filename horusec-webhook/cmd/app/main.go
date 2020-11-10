@@ -36,14 +36,13 @@ import (
 // @contact.email horusec@zup.com.br
 func main() {
 	postgresRead := adapter.NewRepositoryRead()
-	postgresWrite := adapter.NewRepositoryWrite()
 	broker := brokerConfig.SetUp()
 
-	server := serverUtil.NewServerConfig("8007", corsConfig.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter(broker, postgresRead, postgresWrite)
+	server := serverUtil.NewServerConfig("8008", corsConfig.NewCorsConfig()).Timeout(10)
+	chiRouter := router.NewRouter(server).GetRouter(broker, postgresRead)
 
 	log.Println("service running on port", server.GetPort())
-	swagger.SetupSwagger(chiRouter, "8007")
+	swagger.SetupSwagger(chiRouter, "8008")
 
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
 }

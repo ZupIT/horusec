@@ -32,6 +32,9 @@ coverage-horusec-analytic:
 coverage-horusec-auth:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-auth"
+coverage-horusec-webhook:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-webhook"
 
 # Check lint of project setup on file .golangci.yml
 lint:
@@ -110,6 +113,8 @@ compose-horusec-api:
 	$(DOCKER_COMPOSE) -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-messages:
 	$(DOCKER_COMPOSE) -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-webhook:
+	$(DOCKER_COMPOSE) -f horusec-webhook/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-account:
 	$(DOCKER_COMPOSE) -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-analytic:

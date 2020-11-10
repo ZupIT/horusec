@@ -18,7 +18,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ZupIT/horusec/horusec-webhook/internal/pkg/mailer"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,18 +25,16 @@ func TestSetUp(t *testing.T) {
 	t.Run("Should return panics when setup broker", func(t *testing.T) {
 		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "other_username")
 		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "other_password")
-		mailerMock := &mailer.Mock{}
 		assert.Panics(t, func() {
-			SetUp(mailerMock)
+			SetUp()
 		})
 	})
 
 	t.Run("Should not return panics when setup broker", func(t *testing.T) {
 		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "guest")
 		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "guest")
-		mailerMock := &mailer.Mock{}
 		assert.NotPanics(t, func() {
-			SetUp(mailerMock)
+			SetUp()
 		})
 	})
 }

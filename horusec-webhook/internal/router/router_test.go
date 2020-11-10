@@ -15,11 +15,11 @@
 package router
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
-	"github.com/ZupIT/horusec/horusec-webhook/internal/pkg/mailer"
 	"github.com/go-chi/cors"
 	"github.com/stretchr/testify/assert"
 )
@@ -36,7 +36,7 @@ func TestGetRouter(t *testing.T) {
 		router := NewRouter(server.NewServerConfig("8001", &cors.Options{}))
 		assert.NotNil(t, router)
 
-		mux := router.GetRouter(&mailer.Mock{}, &broker.Mock{})
+		mux := router.GetRouter(&broker.Mock{}, &relational.MockRead{})
 		assert.NotNil(t, mux)
 	})
 }

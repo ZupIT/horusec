@@ -16,23 +16,23 @@ package health
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	netHTTP "net/http"
 
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+
+	netHTTP "net/http"
 )
 
 type Handler struct {
 	httpUtil.Interface
-	broker brokerLib.IBroker
+	broker       brokerLib.IBroker
 	postgresRead relational.InterfaceRead
-	postgresWrite relational.InterfaceWrite
 }
 
-func NewHandler(broker brokerLib.IBroker, postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
-	return &Handler{broker: broker, postgresRead: postgresRead, postgresWrite: postgresWrite}
+func NewHandler(broker brokerLib.IBroker, postgresRead relational.InterfaceRead) httpUtil.Interface {
+	return &Handler{broker: broker, postgresRead: postgresRead}
 }
 
 func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
@@ -52,7 +52,7 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorBrokerIsNotHealth)
 		return
 	}
-	if !h.postgresWrite.IsAvailable() || !h.postgresRead.IsAvailable() {
+	if !h.postgresRead.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorDatabaseIsNotHealth)
 		return
 	}
