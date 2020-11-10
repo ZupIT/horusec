@@ -12,24 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine AS builder
+FROM migrate/migrate:v4.13.0
 
-RUN apk update && apk add --no-cache git
+ADD development-kit/pkg/databases/relational/migration /horusec-migrations
+ADD horusec-migration/deployments/scripts/migrate.sh /usr/local/bin
 
-ADD . /horusec
-WORKDIR /horusec
+RUN chmod +x /usr/local/bin/migrate.sh
 
-RUN go get -t -v -d ./...
-
-RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horusec/main.go
-
-FROM docker:19-dind
-
-COPY --from=builder /bin/horusec /usr/local/bin
-RUN chmod +x /usr/local/bin/horusec
-
-COPY --from=builder /horusec/horusec-cli/deployments/horusec-cli.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/horusec-cli.sh
-
-ENTRYPOINT [ "horusec-cli.sh" ]
-CMD [ "sh" ]
+ENTRYPOINT [ "migrate.sh" ] 

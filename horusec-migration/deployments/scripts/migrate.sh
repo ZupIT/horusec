@@ -1,3 +1,4 @@
+#!/bin/sh
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine AS builder
-
-RUN apk update && apk add --no-cache git
-
-ADD . /horusec
-WORKDIR /horusec
-
-RUN go get -t -v -d ./...
-
-RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horusec/main.go
-
-FROM docker:19-dind
-
-COPY --from=builder /bin/horusec /usr/local/bin
-RUN chmod +x /usr/local/bin/horusec
-
-COPY --from=builder /horusec/horusec-cli/deployments/horusec-cli.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/horusec-cli.sh
-
-ENTRYPOINT [ "horusec-cli.sh" ]
-CMD [ "sh" ]
+migrate -path "/horusec-migrations" -database "$HORUSEC_DATABASE_SQL_URI" up "$@" 
