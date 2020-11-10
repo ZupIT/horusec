@@ -12,15 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-import "time"
+import (
+	"encoding/json"
 
-type LoginResponse struct {
-	AccessToken        string    `json:"accessToken"`
-	RefreshToken       string    `json:"refreshToken"`
-	Username           string    `json:"username"`
-	Email              string    `json:"email"`
-	ExpiresAt          time.Time `json:"expiresAt"`
-	IsApplicationAdmin bool      `json:"isApplicationAdmin"`
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+)
+
+type KeycloakToken struct {
+	AccessToken string `json:"accessToken"`
+}
+
+func (l *KeycloakToken) Validate() error {
+	return validation.ValidateStruct(l,
+		validation.Field(&l.AccessToken, validation.Required),
+	)
+}
+
+func (l *KeycloakToken) ToBytes() []byte {
+	bytes, _ := json.Marshal(l)
+	return bytes
 }

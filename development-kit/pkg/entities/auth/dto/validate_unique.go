@@ -12,25 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-type ClaimsJWT struct {
-	Email            string            `json:"email"`
-	Username         string            `json:"username"`
-	RepositoriesRole map[string]string `json:"permissions"`
-	jwt.StandardClaims
+type ValidateUnique struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
 }
 
-func (c *ClaimsJWT) Valid() error {
-	return validation.ValidateStruct(c,
-		validation.Field(&c.Username, validation.Required, validation.Length(1, 255)),
-		validation.Field(&c.Email, validation.Required, validation.Length(1, 255), is.Email),
-		validation.Field(&c.Subject, validation.Required, is.UUID),
+func (v *ValidateUnique) Validate() error {
+	return validation.ValidateStruct(v,
+		validation.Field(&v.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&v.Username, validation.Length(1, 255), validation.Required),
 	)
 }

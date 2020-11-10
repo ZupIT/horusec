@@ -19,6 +19,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 	"net/http/httptest"
@@ -30,7 +33,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -43,7 +45,7 @@ import (
 )
 
 func setAuthorizationHeader(r *http.Request) {
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test",
 		Password:  "test",
@@ -470,7 +472,7 @@ func TestUpdateAccountRepository(t *testing.T) {
 		resp := &response.Response{}
 		respWithError := &response.Response{}
 		mockWrite.On("Update").Return(resp)
-		mockRead.On("Find").Once().Return(resp.SetData(&accountEntities.Account{}))
+		mockRead.On("Find").Once().Return(resp.SetData(&authEntities.Account{}))
 		mockRead.On("Find").Return(respWithError.SetError(errorsEnum.ErrNotFoundRecords))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
@@ -590,7 +592,7 @@ func TestUpdateAccountRepository(t *testing.T) {
 }
 
 func TestInviteUser(t *testing.T) {
-	inviteUser := &accountEntities.InviteUser{
+	inviteUser := &dto.InviteUser{
 		Role:  "admin",
 		Email: "test@test.com",
 	}
@@ -603,7 +605,7 @@ func TestInviteUser(t *testing.T) {
 		Name:         "test",
 	}
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Username:  "test",
@@ -717,7 +719,7 @@ func TestInviteUser(t *testing.T) {
 }
 
 func TestList(t *testing.T) {
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Username:  "test",
@@ -947,7 +949,7 @@ func TestGetAccountsFromRepository(t *testing.T) {
 }
 
 func TestRemoveUser(t *testing.T) {
-	account := accountEntities.Account{}
+	account := authEntities.Account{}
 
 	t.Run("should return 204 when successfully delete", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}

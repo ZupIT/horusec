@@ -12,21 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
+	"encoding/json"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-type ResetCodeData struct {
-	Email string `json:"email"`
-	Code  string `json:"code"`
+type LoginData struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-func (r *ResetCodeData) Validate() error {
-	return validation.ValidateStruct(r,
-		validation.Field(&r.Email, validation.Required, validation.Length(1, 255), is.Email),
-		validation.Field(&r.Code, validation.Required, validation.Length(6, 6)),
+func (l *LoginData) IsInvalid(email, passwordHash string) bool {
+	if l.Email == email && crypto.CheckPasswordHash(l.Password, passwordHash) {
+		return false
+	}
+
+	return true
+}
+
+func (l *LoginData) Validate() error {
+	return validation.ValidateStruct(l,
+		validation.Field(&l.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&l.Password, validation.Length(1, 255), validation.Required),
 	)
+}
+
+func (l *LoginData) ToBytes() []byte {
+	bytes, _ := json.Marshal(l)
+	return bytes
 }

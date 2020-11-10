@@ -21,13 +21,14 @@ import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
+	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
@@ -59,7 +60,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 
 		handler := &Handler{
 			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
+			useCases:   authUseCases.NewAuthUseCases(),
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "test", nil)
@@ -75,7 +76,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 
 		handler := &Handler{
 			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
+			useCases:   authUseCases.NewAuthUseCases(),
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("invalid body")))
@@ -87,12 +88,12 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 	})
 
 	t.Run("Should return 200 because user already registred", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
+		keycloak := &dto.KeycloakToken{
 			AccessToken: "Some token",
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{
 			AccountID:          uuid.New(),
 			Username:           uuid.New().String(),
 			Email:              uuid.New().String(),
@@ -101,7 +102,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 
 		handler := &Handler{
 			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
+			useCases:   authUseCases.NewAuthUseCases(),
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
@@ -113,16 +114,16 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 	})
 
 	t.Run("Should return 500 unexpected error", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
+		keycloak := &dto.KeycloakToken{
 			AccessToken: "Some token",
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{}, errors.New("unexpected error"))
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{}, errors.New("unexpected error"))
 
 		handler := &Handler{
 			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
+			useCases:   authUseCases.NewAuthUseCases(),
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
@@ -134,12 +135,12 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 	})
 
 	t.Run("Should return 200 because new user login in system", func(t *testing.T) {
-		keycloak := &accountEntities.KeycloakToken{
+		keycloak := &dto.KeycloakToken{
 			AccessToken: "Some token",
 		}
 
 		controllerMock := &accountController.Mock{}
-		controllerMock.On("CreateAccountFromKeycloak").Return(&accountEntities.CreateAccountFromKeycloakResponse{
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{
 			AccountID:          uuid.New(),
 			Username:           uuid.New().String(),
 			Email:              uuid.New().String(),
@@ -148,7 +149,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 
 		handler := &Handler{
 			controller: controllerMock,
-			useCases:   accountUseCases.NewAccountUseCases(),
+			useCases:   authUseCases.NewAuthUseCases(),
 		}
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
@@ -167,7 +168,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
@@ -187,7 +188,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errors.New("test"))
 
@@ -207,7 +208,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errorsEnum.ErrorEmailAlreadyInUse)
 
@@ -226,7 +227,7 @@ func TestCreateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
@@ -246,7 +247,7 @@ func TestValidateEmail(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			IsConfirmed: false,
 		}
 
@@ -317,7 +318,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -325,7 +326,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		cacheRepositoryMock.On("Set").Return(nil)
 		brokerMock.On("Publish").Return(nil)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -343,7 +344,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -351,7 +352,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		cacheRepositoryMock.On("Set").Return(nil)
 		brokerMock.On("Publish").Return(errors.New("test"))
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -375,7 +376,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Set").Return(nil)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -394,7 +395,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		data := &accountEntities.EmailData{Email: "test"}
+		data := &dto.EmailData{Email: "test"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -414,7 +415,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -429,7 +430,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		mockRead.On("Find").Return(resp2.SetData(nil))
 		mockWrite.On("Update").Return(resp)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -453,7 +454,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("123456")}, nil)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -475,7 +476,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -483,7 +484,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("2131231")}, nil)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -506,7 +507,7 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		data := &accountEntities.ResetCodeData{Email: "test", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
 		appConfig := app.NewConfig()
@@ -526,7 +527,7 @@ func TestResetPassword(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -560,7 +561,7 @@ func TestResetPassword(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -589,7 +590,7 @@ func TestResetPassword(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -630,7 +631,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -663,7 +664,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -714,7 +715,7 @@ func TestRenewToken(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", nil)
 		w := httptest.NewRecorder()
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -729,7 +730,7 @@ func TestRenewToken(t *testing.T) {
 }
 
 func TestLogout(t *testing.T) {
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		IsConfirmed: false,
 		AccountID:   uuid.New(),
 		Email:       "test@test.com",
@@ -809,7 +810,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -818,7 +819,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
-		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
 		validateUniqueBytes, _ := json.Marshal(validateUnique)
 
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
@@ -835,7 +836,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Username: "test"}
+		account := &authEntities.Account{Username: "test"}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -844,7 +845,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
-		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
 		validateUniqueBytes, _ := json.Marshal(validateUnique)
 
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
@@ -861,7 +862,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Email: "test@test.com"}
+		account := &authEntities.Account{Email: "test@test.com"}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -870,7 +871,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
-		validateUnique := &accountEntities.ValidateUnique{Email: "test@test.com", Username: "test"}
+		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
 		validateUniqueBytes, _ := json.Marshal(validateUnique)
 
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
@@ -887,7 +888,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &accountEntities.Account{Email: "test@test.com"}
+		account := &authEntities.Account{Email: "test@test.com"}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -896,7 +897,7 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
-		validateUnique := &accountEntities.ValidateUnique{Email: "test", Username: "test"}
+		validateUnique := &dto.ValidateUnique{Email: "test", Username: "test"}
 		validateUniqueBytes, _ := json.Marshal(validateUnique)
 
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(validateUniqueBytes))
@@ -914,7 +915,7 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
@@ -942,7 +943,7 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",

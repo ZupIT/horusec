@@ -12,28 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestKeycloakTokenToBytes(t *testing.T) {
-	t.Run("should success parse to bytes", func(t *testing.T) {
-		keyCloakToken := &KeycloakToken{}
-		assert.NotEmpty(t, keyCloakToken.ToBytes())
-	})
-}
+func TestValidateCredentials(t *testing.T) {
+	t.Run("should return no error when valid data", func(t *testing.T) {
+		credentials := &Credentials{
+			Username: "horus@test.com",
+			Password: "UltraSafePass",
+		}
 
-func TestKeycloakTokenValidate(t *testing.T) {
-	t.Run("should return no error when not empty", func(t *testing.T) {
-		keyCloakToken := &KeycloakToken{AccessToken: "test"}
-		assert.NoError(t, keyCloakToken.Validate())
+		assert.NoError(t, credentials.Validate())
 	})
 
-	t.Run("should return error when empty access token", func(t *testing.T) {
-		keyCloakToken := &KeycloakToken{}
-		assert.Error(t, keyCloakToken.Validate())
+	t.Run("should return error when invalid data", func(t *testing.T) {
+		credentials := &Credentials{}
+
+		assert.Error(t, credentials.Validate())
+	})
+
+	t.Run("Should not empty when marshal", func(t *testing.T) {
+		credentials := &Credentials{
+			Username: "horus@test.com",
+			Password: "UltraSafePass",
+		}
+		assert.NotEmpty(t, credentials.ToBytes())
 	})
 }

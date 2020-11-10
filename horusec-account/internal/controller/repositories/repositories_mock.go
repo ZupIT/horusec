@@ -16,7 +16,8 @@ package repositories
 
 import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -56,7 +57,7 @@ func (m *Mock) UpdateAccountRepository(companyID uuid.UUID, accountRepository *r
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) InviteUser(inviteUser *accountEntities.InviteUser) error {
+func (m *Mock) InviteUser(inviteUser *dto.InviteUser) error {
 	args := m.MethodCalled("InviteUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
@@ -71,7 +72,7 @@ func (m *Mock) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.Acco
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) RemoveUser(removeUser *accountEntities.RemoveUser) error {
+func (m *Mock) RemoveUser(removeUser *dto.RemoveUser) error {
 	args := m.MethodCalled("RemoveUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }

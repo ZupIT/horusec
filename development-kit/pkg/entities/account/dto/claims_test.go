@@ -12,27 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package dto
 
 import (
-	"encoding/json"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Otp      string `json:"otp"`
-}
+func TestValid(t *testing.T) {
+	t.Run("should return no error when valid claim", func(t *testing.T) {
+		claim := ClaimsJWT{
+			Email:    "test@test.com",
+			Username: "test",
+			StandardClaims: jwt.StandardClaims{
+				Subject: uuid.New().String(),
+			},
+		}
 
-func (c *Credentials) Validate() error {
-	return validation.ValidateStruct(c,
-		validation.Field(&c.Username, validation.Required, validation.Length(1, 255), validation.Required),
-		validation.Field(&c.Password, validation.Length(1, 255), validation.Required),
-	)
-}
+		assert.NoError(t, claim.Valid())
+	})
 
-func (c *Credentials) ToBytes() []byte {
-	content, _ := json.Marshal(c)
-	return content
+	t.Run("should return error missing email", func(t *testing.T) {
+		claim := ClaimsJWT{}
+		assert.Error(t, claim.Valid())
+	})
 }

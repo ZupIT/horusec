@@ -12,30 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestValidateValidateUnique(t *testing.T) {
-	t.Run("should return no error when valid data", func(t *testing.T) {
-		validateUnique := &ValidateUnique{
-			Email:    "test@test.com",
-			Username: "test",
-		}
-		err := validateUnique.Validate()
-		assert.NoError(t, err)
-	})
+func TestSetAccountAndRepositoryID(t *testing.T) {
+	t.Run("should success set repository and account id", func(t *testing.T) {
+		removeUser := RemoveUser{}
 
-	t.Run("should return no error when invalid data", func(t *testing.T) {
-		validateUnique := &ValidateUnique{
-			Email: "test",
-		}
-		err := validateUnique.Validate()
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "email: must be a valid email address")
-		assert.Contains(t, err.Error(), "username: cannot be blank")
+		removeUser.SetAccountAndRepositoryID(uuid.New(), uuid.New())
+		assert.NotEmpty(t, removeUser.RepositoryID)
+		assert.NotEmpty(t, removeUser.AccountID)
+	})
+}
+
+func TestSetAccountAndCompanyID(t *testing.T) {
+	t.Run("should success set company and account id", func(t *testing.T) {
+		removeUser := RemoveUser{}
+
+		removeUser.SetAccountAndCompanyID(uuid.New(), uuid.New())
+		assert.NotEmpty(t, removeUser.CompanyID)
+		assert.NotEmpty(t, removeUser.AccountID)
 	})
 }

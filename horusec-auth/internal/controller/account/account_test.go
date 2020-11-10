@@ -20,14 +20,15 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
+	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/google/uuid"
@@ -42,28 +43,28 @@ func TestMock(t *testing.T) {
 	controllerMock := &Mock{}
 	controllerMock.On("CreateAccount").Return(nil)
 	controllerMock.On("CreateAccountFromKeycloak").Return(nil)
-	controllerMock.On("Login").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("Login").Return(&dto.LoginResponse{}, nil)
 	controllerMock.On("ValidateEmail").Return(nil)
 	controllerMock.On("SendResetPasswordCode").Return(nil)
 	controllerMock.On("VerifyResetPasswordCode").Return("", nil)
 	controllerMock.On("ChangePassword").Return(nil)
-	controllerMock.On("RenewToken").Return(&accountEntities.LoginResponse{}, nil)
+	controllerMock.On("RenewToken").Return(&dto.LoginResponse{}, nil)
 	controllerMock.On("Logout").Return(nil)
 	controllerMock.On("createTokenWithAccountPermissions").Return("", time.Now(), nil)
 	controllerMock.On("VerifyAlreadyInUse").Return(nil)
 	controllerMock.On("DeleteAccount").Return(nil)
 	controllerMock.On("GetAccountIDByEmail").Return(uuid.New(), nil)
 
-	_ = controllerMock.CreateAccount(&accountEntities.Account{})
-	_, _ = controllerMock.Login(&accountEntities.LoginData{})
+	_ = controllerMock.CreateAccount(&authEntities.Account{})
+	_, _ = controllerMock.Login(&dto.LoginData{})
 	_ = controllerMock.ValidateEmail(uuid.New())
 	_ = controllerMock.SendResetPasswordCode("")
-	_, _ = controllerMock.VerifyResetPasswordCode(&accountEntities.ResetCodeData{})
+	_, _ = controllerMock.VerifyResetPasswordCode(&dto.ResetCodeData{})
 	_ = controllerMock.ChangePassword(uuid.New(), "")
 	_, _ = controllerMock.RenewToken("", "")
 	_ = controllerMock.Logout(uuid.New())
-	_, _, _ = controllerMock.createTokenWithAccountPermissions(&accountEntities.Account{})
-	_ = controllerMock.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+	_, _, _ = controllerMock.createTokenWithAccountPermissions(&authEntities.Account{})
+	_ = controllerMock.VerifyAlreadyInUse(&dto.ValidateUnique{})
 	_ = controllerMock.DeleteAccount(uuid.New())
 	_, _ = controllerMock.GetAccountIDByEmail(uuid.New().String())
 }
@@ -73,10 +74,9 @@ func TestNewAccountController(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 	})
 }
@@ -87,16 +87,15 @@ func TestCreateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:    "test@test.com",
 			Password: "test",
 			Username: "test",
@@ -111,16 +110,15 @@ func TestCreateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:    "test@test.com",
 			Password: "test",
 			Username: "test",
@@ -135,17 +133,16 @@ func TestCreateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(
 			resp.SetError(errors.New("pq: duplicate key value violates unique constraint \"accounts_email_key\"")))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:    "test@test.com",
 			Password: "test",
 			Username: "test",
@@ -161,17 +158,16 @@ func TestCreateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		mockWrite.On("Create").Return(&response.Response{})
 
 		_ = os.Setenv("HORUSEC_AUTH_DISABLE_EMAIL_SERVICE", "true")
 		appConfig := app.NewConfig()
 
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:    "test@test.com",
 			Password: "test",
 			Username: "test",
@@ -188,9 +184,8 @@ func TestValidateEmail(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			IsConfirmed: false,
 		}
 
@@ -200,7 +195,7 @@ func TestValidateEmail(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.ValidateEmail(uuid.New())
@@ -212,14 +207,13 @@ func TestValidateEmail(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.ValidateEmail(uuid.New())
@@ -234,8 +228,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -244,7 +238,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		brokerMock.On("Publish").Return(nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -256,8 +250,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -265,7 +259,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 		cacheRepositoryMock.On("Set").Return(errors.New("test"))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -278,14 +272,13 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -300,8 +293,8 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 		resp := &response.Response{}
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("123456")}, nil)
@@ -313,10 +306,10 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		token, err := controller.VerifyResetPasswordCode(data)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, token)
@@ -327,7 +320,7 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("123456")}, nil)
@@ -336,10 +329,10 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		_, err := controller.VerifyResetPasswordCode(data)
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
@@ -350,15 +343,14 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, errors.New("test"))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		_, err := controller.VerifyResetPasswordCode(data)
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
@@ -369,15 +361,14 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("654321")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		data := &accountEntities.ResetCodeData{Email: "test@test.com", Code: "123456"}
+		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		_, err := controller.VerifyResetPasswordCode(data)
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorInvalidResetPasswordCode, err)
@@ -390,8 +381,8 @@ func TestResetPassword(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 		resp := &response.Response{}
 
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -400,7 +391,7 @@ func TestResetPassword(t *testing.T) {
 		cacheRepositoryMock.On("Del").Return(nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "123456")
@@ -412,14 +403,14 @@ func TestResetPassword(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "123456")
@@ -428,7 +419,7 @@ func TestResetPassword(t *testing.T) {
 }
 
 func TestRenewToken(t *testing.T) {
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.UUID{},
 		Email:     "test@test.com",
 		Username:  "test",
@@ -441,8 +432,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 		resp := &response.Response{}
 
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -455,7 +446,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -468,8 +459,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 		resp := &response.Response{}
 
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -482,7 +473,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -496,7 +487,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
@@ -504,7 +495,7 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -518,7 +509,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
@@ -529,7 +520,7 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("testError", token)
@@ -543,7 +534,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
@@ -554,7 +545,7 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ1c2VybmFtZSI6In" +
@@ -572,7 +563,7 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
@@ -583,7 +574,7 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -597,10 +588,10 @@ func TestRenewToken(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
+
 		resp := &response.Response{}
 
-		accountMock := &accountEntities.Account{
+		accountMock := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -611,7 +602,7 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -627,8 +618,8 @@ func TestLogout(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
-		account := &accountEntities.Account{}
+
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -637,7 +628,7 @@ func TestLogout(t *testing.T) {
 		cacheRepositoryMock.On("Del").Return(nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.Logout(uuid.New())
@@ -649,7 +640,6 @@ func TestLogout(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
@@ -657,7 +647,7 @@ func TestLogout(t *testing.T) {
 		cacheRepositoryMock.On("Del").Return(nil)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.Logout(uuid.New())
@@ -671,17 +661,16 @@ func TestCreateTokenWithAccountPermissions(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(&[]roles.AccountRepository{}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 		token, _, err := controller.createTokenWithAccountPermissions(account)
 
 		assert.NoError(t, err)
@@ -696,9 +685,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
-		account := &accountEntities.Account{}
+		account := &authEntities.Account{}
 
 		resp := &response.Response{}
 		resp.SetData(account)
@@ -706,10 +694,10 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
 
 		assert.NoError(t, err)
 	})
@@ -719,9 +707,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
-		account := &accountEntities.Account{Username: "test"}
+		account := &authEntities.Account{Username: "test"}
 
 		resp := &response.Response{}
 		resp.SetData(account)
@@ -729,10 +716,10 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorUsernameAlreadyInUse, err)
@@ -743,9 +730,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
-		account := &accountEntities.Account{Email: "test"}
+		account := &authEntities.Account{Email: "test"}
 
 		resp := &response.Response{}
 		resp.SetData(account)
@@ -753,10 +739,10 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
-		err := controller.VerifyAlreadyInUse(&accountEntities.ValidateUnique{})
+		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorEmailAlreadyInUse, err)
@@ -769,7 +755,6 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp)
@@ -777,7 +762,7 @@ func TestDeleteAccount(t *testing.T) {
 		mockWrite.On("Delete").Return(resp)
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.DeleteAccount(uuid.New())
@@ -790,14 +775,13 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
-		useCases := accountUseCases.NewAccountUseCases()
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, useCases, appConfig)
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
 		err := controller.DeleteAccount(uuid.New())
@@ -813,8 +797,6 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		sub := uuid.New().String()
 		name := uuid.New().String()
 
-		useCases := accountUseCases.NewAccountUseCases()
-
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		keycloakMock := &keycloak.Mock{}
@@ -827,12 +809,12 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		}, nil)
 
 		controller := &Account{
-			useCases:          useCases,
+			authUseCases:      authUseCases.NewAuthUseCases(),
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, mockWrite),
 			keycloakService:   keycloakMock,
 		}
 
-		account := &accountEntities.KeycloakToken{
+		account := &dto.KeycloakToken{
 			AccessToken: "some token",
 		}
 
@@ -844,8 +826,6 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 	t.Run("should return error when email not exists in token", func(t *testing.T) {
 		name := uuid.New().String()
 
-		useCases := accountUseCases.NewAccountUseCases()
-
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		keycloakMock := &keycloak.Mock{}
@@ -856,12 +836,11 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		}, nil)
 
 		controller := &Account{
-			useCases:          useCases,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, mockWrite),
 			keycloakService:   keycloakMock,
 		}
 
-		account := &accountEntities.KeycloakToken{
+		account := &dto.KeycloakToken{
 			AccessToken: "some token",
 		}
 
@@ -870,7 +849,6 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 	})
 
 	t.Run("Should return error when get user info", func(t *testing.T) {
-		useCases := accountUseCases.NewAccountUseCases()
 
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -880,12 +858,11 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		keycloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("some return error"))
 
 		controller := &Account{
-			useCases:          useCases,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, mockWrite),
 			keycloakService:   keycloakMock,
 		}
 
-		account := &accountEntities.KeycloakToken{
+		account := &dto.KeycloakToken{
 			AccessToken: "some token",
 		}
 
@@ -897,8 +874,6 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		email := "test@email.com"
 		sub := uuid.New().String()
 		name := uuid.New().String()
-
-		useCases := accountUseCases.NewAccountUseCases()
 
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -912,12 +887,12 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		}, nil)
 
 		controller := &Account{
-			useCases:          useCases,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, mockWrite),
 			keycloakService:   keycloakMock,
+			authUseCases:      authUseCases.NewAuthUseCases(),
 		}
 
-		account := &accountEntities.KeycloakToken{
+		account := &dto.KeycloakToken{
 			AccessToken: "some token",
 		}
 
@@ -929,8 +904,6 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		email := "test@email.com"
 		sub := uuid.New().String()
 		name := uuid.New().String()
-
-		useCases := accountUseCases.NewAccountUseCases()
 
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -945,12 +918,12 @@ func TestAccount_CreateAccountFromKeycloak(t *testing.T) {
 		}, nil)
 
 		controller := &Account{
-			useCases:          useCases,
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, mockWrite),
 			keycloakService:   keycloakMock,
+			authUseCases:      authUseCases.NewAuthUseCases(),
 		}
 
-		account := &accountEntities.KeycloakToken{
+		account := &dto.KeycloakToken{
 			AccessToken: "some token",
 		}
 

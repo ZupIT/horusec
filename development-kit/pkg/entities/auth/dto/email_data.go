@@ -12,24 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-import "github.com/google/uuid"
-
-type RemoveUser struct {
-	AccountID    uuid.UUID `json:"accountID"`
-	CompanyID    uuid.UUID `json:"companyID"`
-	RepositoryID uuid.UUID `json:"repositoryID"`
-}
-
-func (r *RemoveUser) SetAccountAndRepositoryID(accountID, repositoryID uuid.UUID) *RemoveUser {
-	r.AccountID = accountID
-	r.RepositoryID = repositoryID
-	return r
-}
-
-func (r *RemoveUser) SetAccountAndCompanyID(accountID, companyID uuid.UUID) *RemoveUser {
-	r.CompanyID = companyID
-	r.AccountID = accountID
-	return r
+type EmailData struct {
+	Email string `json:"email"`
 }

@@ -16,7 +16,8 @@ package companies
 
 import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -51,7 +52,7 @@ func (m *Mock) UpdateAccountCompany(_ *roles.AccountCompany) error {
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) InviteUser(_ *accountEntities.InviteUser) error {
+func (m *Mock) InviteUser(_ *dto.InviteUser) error {
 	args := m.MethodCalled("InviteUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
@@ -66,7 +67,7 @@ func (m *Mock) GetAllAccountsInCompany(_ uuid.UUID) (*[]roles.AccountRole, error
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) RemoveUser(_ *accountEntities.RemoveUser) error {
+func (m *Mock) RemoveUser(_ *dto.RemoveUser) error {
 	args := m.MethodCalled("RemoveUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }

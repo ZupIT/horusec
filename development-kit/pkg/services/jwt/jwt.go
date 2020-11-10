@@ -16,6 +16,8 @@ package jwt
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"net/http"
 	"strings"
 	"time"
@@ -24,17 +26,16 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/google/uuid"
 
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	jwtmiddleware "github.com/auth0/go-jwt-middleware"
+	jwtMiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 )
 
 const DefaultSecretJWT = "horusec-secret"
 
-func CreateToken(account *accountEntities.Account, permissions map[string]string) (string, time.Time, error) {
+func CreateToken(account *authEntities.Account, permissions map[string]string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(time.Hour * time.Duration(1))
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &accountEntities.ClaimsJWT{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &dto.ClaimsJWT{
 		Email:            account.Email,
 		Username:         account.Username,
 		RepositoriesRole: permissions,
@@ -50,23 +51,23 @@ func CreateToken(account *accountEntities.Account, permissions map[string]string
 	return tokenSigned, expiresAt, err
 }
 
-func DecodeToken(tokenString string) (*accountEntities.ClaimsJWT, error) {
+func DecodeToken(tokenString string) (*dto.ClaimsJWT, error) {
 	token, err := parseStringToToken(strings.ReplaceAll(tokenString, "Bearer ", ""))
 	if err != nil {
 		return nil, err
 	}
 
-	return token.Claims.(*accountEntities.ClaimsJWT), nil
+	return token.Claims.(*dto.ClaimsJWT), nil
 }
 
 func parseStringToToken(tokenString string) (*jwt.Token, error) {
-	return jwt.ParseWithClaims(tokenString, &accountEntities.ClaimsJWT{}, func(token *jwt.Token) (interface{}, error) {
+	return jwt.ParseWithClaims(tokenString, &dto.ClaimsJWT{}, func(token *jwt.Token) (interface{}, error) {
 		return getHorusecJWTKey(), nil
 	})
 }
 
 func AuthMiddleware(next http.Handler) http.Handler {
-	middleware := jwtmiddleware.New(jwtmiddleware.Options{
+	middleware := jwtMiddleware.New(jwtMiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return getHorusecJWTKey(), nil
 		},

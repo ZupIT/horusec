@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package auth
 
 import (
 	"encoding/json"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -27,16 +28,16 @@ import (
 
 // nolint
 type Account struct {
-	AccountID          uuid.UUID    `json:"accountID" gorm:"primary_key"`
-	Email              string       `json:"email"`
-	Password           string       `json:"password"`
-	Username           string       `json:"username"`
-	IsConfirmed        bool         `json:"isConfirmed"`
-	IsApplicationAdmin bool         `json:"isApplicationAdmin"`
-	CreatedAt          time.Time    `json:"createdAt"`
-	UpdatedAt          time.Time    `json:"updatedAt"`
-	Companies          []Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
-	Repositories       []Repository `gorm:"many2many:account_repository;association_jointable_foreignkey:repository_id;jointable_foreignkey:account_id"` // nolint
+	AccountID          uuid.UUID                    `json:"accountID" gorm:"primary_key"`
+	Email              string                       `json:"email"`
+	Password           string                       `json:"password"`
+	Username           string                       `json:"username"`
+	IsConfirmed        bool                         `json:"isConfirmed"`
+	IsApplicationAdmin bool                         `json:"isApplicationAdmin"`
+	CreatedAt          time.Time                    `json:"createdAt"`
+	UpdatedAt          time.Time                    `json:"updatedAt"`
+	Companies          []accountEntities.Company    `gorm:"many2many:account_company;association_jointable_foreignkey:company_id;jointable_foreignkey:account_id"`       // nolint
+	Repositories       []accountEntities.Repository `gorm:"many2many:account_repository;association_jointable_foreignkey:repository_id;jointable_foreignkey:account_id"` // nolint
 }
 
 func (a *Account) SetPasswordHash() {
@@ -105,26 +106,6 @@ func (a *Account) ToMap() map[string]interface{} {
 		"is_application_admin": a.IsApplicationAdmin,
 		"created_at":           a.CreatedAt,
 		"updated_at":           a.UpdatedAt,
-	}
-}
-
-func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt time.Time) *LoginResponse {
-	return &LoginResponse{
-		AccessToken:        accessToken,
-		RefreshToken:       refreshToken,
-		ExpiresAt:          expiresAt,
-		Username:           a.Username,
-		IsApplicationAdmin: a.IsApplicationAdmin,
-		Email:              a.Email,
-	}
-}
-
-func (a *Account) ToCreateAccountFromKeycloakResponse() *CreateAccountFromKeycloakResponse {
-	return &CreateAccountFromKeycloakResponse{
-		AccountID:          a.AccountID,
-		Username:           a.Username,
-		Email:              a.Email,
-		IsApplicationAdmin: a.IsApplicationAdmin,
 	}
 }
 

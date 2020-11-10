@@ -12,8 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-type EmailData struct {
+import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
+)
+
+type ResetCodeData struct {
 	Email string `json:"email"`
+	Code  string `json:"code"`
+}
+
+func (r *ResetCodeData) Validate() error {
+	return validation.ValidateStruct(r,
+		validation.Field(&r.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&r.Code, validation.Required, validation.Length(6, 6)),
+	)
 }

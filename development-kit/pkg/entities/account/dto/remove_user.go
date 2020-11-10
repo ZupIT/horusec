@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-)
+import "github.com/google/uuid"
 
-func TestToAccount(t *testing.T) {
-	createAccount := &CreateAccount{}
+type RemoveUser struct {
+	AccountID    uuid.UUID `json:"accountID"`
+	CompanyID    uuid.UUID `json:"companyID"`
+	RepositoryID uuid.UUID `json:"repositoryID"`
+}
 
-	t.Run("should success parse create account to account", func(t *testing.T) {
-		assert.IsType(t, &Account{}, createAccount.ToAccount())
-	})
+func (r *RemoveUser) SetAccountAndRepositoryID(accountID, repositoryID uuid.UUID) *RemoveUser {
+	r.AccountID = accountID
+	r.RepositoryID = repositoryID
+	return r
+}
+
+func (r *RemoveUser) SetAccountAndCompanyID(accountID, companyID uuid.UUID) *RemoveUser {
+	r.CompanyID = companyID
+	r.AccountID = accountID
+	return r
 }

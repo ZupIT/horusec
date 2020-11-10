@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package auth
 
 import (
 	"github.com/google/uuid"
@@ -110,35 +110,6 @@ func TestToMap(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, account.ToMap())
-	})
-}
-
-func TestToLoginResponse(t *testing.T) {
-	t.Run("should success parse to login response", func(t *testing.T) {
-		account := &Account{
-			AccountID:   uuid.New(),
-			Email:       "test",
-			Password:    "test",
-			Username:    "test",
-			IsConfirmed: false,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		}
-
-		assert.NotEmpty(t, account.ToLoginResponse("test", "test", time.Now()))
-	})
-}
-
-func TestToCreateAccountFromKeycloakResponse(t *testing.T) {
-	t.Run("should success parse to create account from keycloak response", func(t *testing.T) {
-		account := &Account{
-			AccountID:          uuid.New(),
-			Username:           uuid.New().String(),
-			Email:              uuid.New().String(),
-			IsApplicationAdmin: true,
-		}
-
-		assert.NotEmpty(t, account.ToCreateAccountFromKeycloakResponse())
 	})
 }
 

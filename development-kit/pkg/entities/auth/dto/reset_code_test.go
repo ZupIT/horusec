@@ -12,30 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestValid(t *testing.T) {
-	t.Run("should return no error when valid claim", func(t *testing.T) {
-		claim := ClaimsJWT{
-			Email:    "test@test.com",
-			Username: "test",
-			StandardClaims: jwt.StandardClaims{
-				Subject: uuid.New().String(),
-			},
-		}
-
-		assert.NoError(t, claim.Valid())
+func TestValidateResetCodeData(t *testing.T) {
+	t.Run("should return no error when valid data", func(t *testing.T) {
+		resetCodeData := &ResetCodeData{Email: "test@test.com", Code: "j3S5Ga"}
+		assert.NoError(t, resetCodeData.Validate())
 	})
 
-	t.Run("should return error missing email", func(t *testing.T) {
-		claim := ClaimsJWT{}
-		assert.Error(t, claim.Valid())
+	t.Run("should return error when invalid data", func(t *testing.T) {
+		resetCodeData := &ResetCodeData{Email: "test", Code: "1231"}
+		assert.Error(t, resetCodeData.Validate())
 	})
 }

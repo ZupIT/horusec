@@ -19,11 +19,11 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
+	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -36,15 +36,14 @@ import (
 
 type Handler struct {
 	controller accountController.IAccount
-	useCases   accountUseCases.IAccount
+	useCases   authUseCases.IUseCases
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, cache cacheRepository.Interface, appConfig *app.Config) *Handler {
-	useCases := accountUseCases.NewAccountUseCases()
 	return &Handler{
-		controller: accountController.NewAccountController(broker, databaseRead, databaseWrite, cache, useCases, appConfig),
-		useCases:   useCases,
+		controller: accountController.NewAccountController(broker, databaseRead, databaseWrite, cache, appConfig),
+		useCases:   authUseCases.NewAuthUseCases(),
 	}
 }
 
@@ -80,7 +79,7 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *Handler) checkCreateAccountFromKeycloakErrors(
-	w http.ResponseWriter, err error, response *accountEntities.CreateAccountFromKeycloakResponse) {
+	w http.ResponseWriter, err error, response *dto.CreateAccountFromKeycloakResponse) {
 	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
 		httpUtil.StatusOK(w, response)
 		return

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package dto
 
 import (
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/google/uuid"
@@ -25,7 +25,7 @@ import (
 
 func TestAuthorizationDataValidate(t *testing.T) {
 	t.Run("should return no error when valid data", func(t *testing.T) {
-		token, _, _ := jwt.CreateToken(&accountEntities.Account{
+		token, _, _ := jwt.CreateToken(&authEntities.Account{
 			AccountID:   uuid.New(),
 			Email:       "test@test.com",
 			Password:    "safePassword!123",

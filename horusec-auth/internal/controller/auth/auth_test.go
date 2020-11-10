@@ -16,11 +16,11 @@ package auth
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -56,7 +56,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -73,7 +73,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -89,7 +89,7 @@ func TestAuthByType(t *testing.T) {
 			appConfig:       &app.Config{AuthType: authEnums.Ldap},
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -106,7 +106,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorUnauthorized, err)
@@ -236,7 +236,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 
 func TestGetAccountIDByAuthType(t *testing.T) {
 	t.Run("should return account id when horusec", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -259,7 +259,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return account id when keycloak", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -286,7 +286,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return account id when horusec", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",

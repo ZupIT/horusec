@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-type CreateAccount struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Username string `json:"username"`
-}
+import "time"
 
-func (c *CreateAccount) ToAccount() *Account {
-	return &Account{
-		Email:    c.Email,
-		Password: c.Password,
-		Username: c.Username,
-	}
+type LoginResponse struct {
+	AccessToken        string    `json:"accessToken"`
+	RefreshToken       string    `json:"refreshToken"`
+	Username           string    `json:"username"`
+	Email              string    `json:"email"`
+	ExpiresAt          time.Time `json:"expiresAt"`
+	IsApplicationAdmin bool      `json:"isApplicationAdmin"`
 }

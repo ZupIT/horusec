@@ -6,6 +6,7 @@ import (
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/golang-migrate/migrate/v4"
@@ -60,7 +61,7 @@ func TestServer(t *testing.T) {
 	t.Run("Should tests default auth-type (horusec) http requests in application admin enable", func(t *testing.T) {
 		time.Sleep(10 * time.Second)
 		// Login with default application admin
-		contentLogin := Login(t, &authEntities.Credentials{
+		contentLogin := Login(t, &authDto.Credentials{
 			Username: "horusec-admin@example.com",
 			Password: "Devpass0*",
 		})
@@ -85,7 +86,7 @@ func TestServer(t *testing.T) {
 		DeleteCompany(t, bearerToken, companyID)
 
 		// Create new user
-		CreateAccount(t, &accountentities.Account{
+		CreateAccount(t, &authEntities.Account{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
@@ -100,7 +101,7 @@ func TestServer(t *testing.T) {
 		assert.NotContains(t, allCompanies, "zup")
 
 		// Login with new user
-		contentLoginNewUser := Login(t, &authEntities.Credentials{
+		contentLoginNewUser := Login(t, &authDto.Credentials{
 			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})

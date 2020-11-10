@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
+	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-type ValidateUnique struct {
-	Email    string `json:"email"`
+type Credentials struct {
 	Username string `json:"username"`
+	Password string `json:"password"`
+	Otp      string `json:"otp"`
 }
 
-func (v *ValidateUnique) Validate() error {
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Email, validation.Required, validation.Length(1, 255), is.Email),
-		validation.Field(&v.Username, validation.Length(1, 255), validation.Required),
+func (c *Credentials) Validate() error {
+	return validation.ValidateStruct(c,
+		validation.Field(&c.Username, validation.Required, validation.Length(1, 255), validation.Required),
+		validation.Field(&c.Password, validation.Length(1, 255), validation.Required),
 	)
+}
+
+func (c *Credentials) ToBytes() []byte {
+	content, _ := json.Marshal(c)
+	return content
 }

@@ -16,13 +16,14 @@ package repository
 
 import (
 	"errors"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -131,7 +132,7 @@ func TestList(t *testing.T) {
 	databaseWrite := adapter.NewRepositoryWrite()
 	databaseRead := adapter.NewRepositoryRead()
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		Email:     "test@test.com",
 		Username:  "test",
 		CreatedAt: time.Now(),

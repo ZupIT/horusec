@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
 import (
-	"encoding/json"
-
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type KeycloakToken struct {
-	AccessToken string `json:"accessToken"`
-}
+func TestToAccount(t *testing.T) {
+	createAccount := &CreateAccount{}
 
-func (l *KeycloakToken) Validate() error {
-	return validation.ValidateStruct(l,
-		validation.Field(&l.AccessToken, validation.Required),
-	)
-}
-
-func (l *KeycloakToken) ToBytes() []byte {
-	bytes, _ := json.Marshal(l)
-	return bytes
+	t.Run("should success parse create account to account", func(t *testing.T) {
+		assert.IsType(t, &authEntities.Account{}, createAccount.ToAccount())
+	})
 }

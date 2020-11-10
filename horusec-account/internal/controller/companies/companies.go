@@ -21,8 +21,9 @@ import (
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
@@ -39,10 +40,10 @@ type IController interface {
 	Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error)
 	List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	UpdateAccountCompany(role *roles.AccountCompany) error
-	InviteUser(inviteUser *accountEntities.InviteUser) error
+	InviteUser(inviteUser *dto.InviteUser) error
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
-	RemoveUser(removeUser *accountEntities.RemoveUser) error
+	RemoveUser(removeUser *dto.RemoveUser) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
 }
 
@@ -121,7 +122,7 @@ func (c *Controller) UpdateAccountCompany(role *roles.AccountCompany) error {
 	return c.repoAccountCompany.UpdateAccountCompany(role)
 }
 
-func (c *Controller) InviteUser(inviteUser *accountEntities.InviteUser) error {
+func (c *Controller) InviteUser(inviteUser *dto.InviteUser) error {
 	account, err := c.repoAccount.GetByEmail(inviteUser.Email)
 	if err != nil {
 		return err
@@ -161,7 +162,7 @@ func (c *Controller) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 	return c.repoCompany.GetAllAccountsInCompany(companyID)
 }
 
-func (c *Controller) RemoveUser(removeUser *accountEntities.RemoveUser) error {
+func (c *Controller) RemoveUser(removeUser *dto.RemoveUser) error {
 	account, err := c.repoAccount.GetByAccountID(removeUser.AccountID)
 	if err != nil {
 		return err

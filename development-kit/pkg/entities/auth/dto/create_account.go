@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package account
+package dto
 
-import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-)
+import authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 
-func TestValidateResetCodeData(t *testing.T) {
-	t.Run("should return no error when valid data", func(t *testing.T) {
-		resetCodeData := &ResetCodeData{Email: "test@test.com", Code: "j3S5Ga"}
-		assert.NoError(t, resetCodeData.Validate())
-	})
+type CreateAccount struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
 
-	t.Run("should return error when invalid data", func(t *testing.T) {
-		resetCodeData := &ResetCodeData{Email: "test", Code: "1231"}
-		assert.Error(t, resetCodeData.Validate())
-	})
+func (c *CreateAccount) ToAccount() *authEntities.Account {
+	return &authEntities.Account{
+		Email:    c.Email,
+		Password: c.Password,
+		Username: c.Username,
+	}
 }

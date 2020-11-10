@@ -20,7 +20,8 @@ import (
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -29,7 +30,7 @@ import (
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
+	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/google/uuid"
@@ -38,22 +39,21 @@ import (
 
 type IAccount interface {
 	CreateAccountFromKeycloak(
-		keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error)
-	CreateAccount(account *accountEntities.Account) error
+		keyCloakToken *dto.KeycloakToken) (*dto.CreateAccountFromKeycloakResponse, error)
+	CreateAccount(account *authEntities.Account) error
 	ValidateEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
-	VerifyResetPasswordCode(data *accountEntities.ResetCodeData) (string, error)
+	VerifyResetPasswordCode(data *dto.ResetCodeData) (string, error)
 	ChangePassword(accountID uuid.UUID, password string) error
-	RenewToken(refreshToken, accessToken string) (*accountEntities.LoginResponse, error)
+	RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error)
 	Logout(accountID uuid.UUID) error
-	createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error)
-	VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error
+	createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error)
+	VerifyAlreadyInUse(validateUnique *dto.ValidateUnique) error
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
 }
 
 type Account struct {
-	useCases              accountUseCases.IAccount
 	accountRepository     repositoryAccount.IAccount
 	keycloakService       keycloak.IService
 	broker                brokerLib.IBroker
@@ -62,13 +62,12 @@ type Account struct {
 	accountRepositoryRepo repoAccountRepository.IAccountRepository
 	cacheRepository       cache.Interface
 	appConfig             *app.Config
+	authUseCases          authUseCases.IUseCases
 }
 
 func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, useCases accountUseCases.IAccount,
-	appConfig *app.Config) IAccount {
+	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig *app.Config) IAccount {
 	return &Account{
-		useCases:              useCases,
 		accountRepository:     repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
 		keycloakService:       keycloak.NewKeycloakService(),
 		broker:                broker,
@@ -77,24 +76,25 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(databaseRead, databaseWrite),
 		cacheRepository:       cacheRepository,
 		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
 	}
 }
 
 func (a *Account) CreateAccountFromKeycloak(
-	keyCloakToken *accountEntities.KeycloakToken) (*accountEntities.CreateAccountFromKeycloakResponse, error) {
+	keyCloakToken *dto.KeycloakToken) (*dto.CreateAccountFromKeycloakResponse, error) {
 	account, err := a.newAccountFromKeycloakToken(keyCloakToken.AccessToken)
 	if err != nil {
 		return nil, err
 	}
 
 	if err := a.accountRepository.Create(account); err != nil {
-		return account.ToCreateAccountFromKeycloakResponse(), a.useCases.CheckCreateAccountErrorType(err)
+		return a.authUseCases.ToCreateAccountFromKeycloakResponse(account), a.authUseCases.CheckCreateAccountErrorType(err)
 	}
 
-	return account.ToCreateAccountFromKeycloakResponse(), nil
+	return a.authUseCases.ToCreateAccountFromKeycloakResponse(account), nil
 }
 
-func (a *Account) newAccountFromKeycloakToken(accessToken string) (*accountEntities.Account, error) {
+func (a *Account) newAccountFromKeycloakToken(accessToken string) (*authEntities.Account, error) {
 	userInfo, err := a.keycloakService.GetUserInfo(accessToken)
 	if err != nil {
 		return nil, err
@@ -105,16 +105,16 @@ func (a *Account) newAccountFromKeycloakToken(accessToken string) (*accountEntit
 	if userInfo.PreferredUsername == nil {
 		userInfo.PreferredUsername = userInfo.Name
 	}
-	return a.useCases.NewAccountFromKeyCloakUserInfo(userInfo), nil
+	return a.authUseCases.NewAccountFromKeyCloakUserInfo(userInfo), nil
 }
 
-func (a *Account) CreateAccount(account *accountEntities.Account) error {
+func (a *Account) CreateAccount(account *authEntities.Account) error {
 	if a.appConfig.IsEmailServiceDisabled() {
 		account = account.SetIsConfirmed()
 	}
 
 	if err := a.accountRepository.Create(account.SetAccountData()); err != nil {
-		return a.useCases.CheckCreateAccountErrorType(err)
+		return a.authUseCases.CheckCreateAccountErrorType(err)
 	}
 
 	return a.sendValidateAccountEmail(account)
@@ -129,7 +129,7 @@ func (a *Account) ValidateEmail(accountID uuid.UUID) error {
 	return a.accountRepository.Update(account.SetIsConfirmed())
 }
 
-func (a *Account) sendValidateAccountEmail(account *accountEntities.Account) error {
+func (a *Account) sendValidateAccountEmail(account *authEntities.Account) error {
 	if a.appConfig.IsEmailServiceDisabled() {
 		return nil
 	}
@@ -156,7 +156,7 @@ func (a *Account) SendResetPasswordCode(email string) error {
 		return err
 	}
 
-	code := a.useCases.GenerateResetPasswordCode()
+	code := a.authUseCases.GenerateResetPasswordCode()
 	err = a.cacheRepository.Set(&entityCache.Cache{Key: email, Value: []byte(code)}, time.Minute*30)
 	if err != nil {
 		return err
@@ -180,7 +180,7 @@ func (a *Account) sendResetPasswordEmail(email, username, code string) error {
 	return a.broker.Publish(queues.HorusecEmail.ToString(), "", "", emailMessage.ToBytes())
 }
 
-func (a *Account) VerifyResetPasswordCode(data *accountEntities.ResetCodeData) (string, error) {
+func (a *Account) VerifyResetPasswordCode(data *dto.ResetCodeData) (string, error) {
 	if err := a.checkResetPasswordCode(data); err != nil {
 		return "", err
 	}
@@ -196,7 +196,7 @@ func (a *Account) VerifyResetPasswordCode(data *accountEntities.ResetCodeData) (
 	return token, err
 }
 
-func (a *Account) checkResetPasswordCode(data *accountEntities.ResetCodeData) error {
+func (a *Account) checkResetPasswordCode(data *dto.ResetCodeData) error {
 	validCode, err := a.cacheRepository.Get(data.Email)
 	if err != nil {
 		return err
@@ -221,7 +221,7 @@ func (a *Account) ChangePassword(accountID uuid.UUID, password string) error {
 	return a.accountRepository.Update(account)
 }
 
-func (a *Account) RenewToken(refreshToken, accessToken string) (*accountEntities.LoginResponse, error) {
+func (a *Account) RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error) {
 	accountID, _ := jwt.GetAccountIDByJWTToken(accessToken)
 	account, err := a.accountRepository.GetByAccountID(accountID)
 	if err != nil {
@@ -263,7 +263,7 @@ func (a *Account) decodeAndValidateTokens(accountID, accessToken string) error {
 	return nil
 }
 
-func (a *Account) setLoginResponse(account *accountEntities.Account) (*accountEntities.LoginResponse, error) {
+func (a *Account) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
 	accessToken, expiresAt, _ := a.createTokenWithAccountPermissions(account)
 	refreshToken := jwt.CreateRefreshToken()
 	err := a.cacheRepository.Set(
@@ -272,7 +272,7 @@ func (a *Account) setLoginResponse(account *accountEntities.Account) (*accountEn
 		return nil, err
 	}
 
-	return account.ToLoginResponse(accessToken, refreshToken, expiresAt), nil
+	return a.authUseCases.ToLoginResponse(account, accessToken, refreshToken, expiresAt), nil
 }
 
 func (a *Account) Logout(accountID uuid.UUID) error {
@@ -284,9 +284,9 @@ func (a *Account) Logout(accountID uuid.UUID) error {
 	return a.cacheRepository.Del(account.AccountID.String())
 }
 
-func (a *Account) createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error) {
+func (a *Account) createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error) {
 	accountRepository, _ := a.accountRepositoryRepo.GetOfAccount(account.AccountID)
-	return jwt.CreateToken(account, a.useCases.MapRepositoriesRoles(&accountRepository))
+	return jwt.CreateToken(account, a.authUseCases.MapRepositoriesRoles(&accountRepository))
 }
 
 func (a *Account) getURLToResetPassword(email, code string) string {
@@ -294,7 +294,7 @@ func (a *Account) getURLToResetPassword(email, code string) string {
 	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s", base, email, code)
 }
 
-func (a *Account) VerifyAlreadyInUse(validateUnique *accountEntities.ValidateUnique) error {
+func (a *Account) VerifyAlreadyInUse(validateUnique *dto.ValidateUnique) error {
 	validateEmail, _ := a.accountRepository.GetByEmail(validateUnique.Email)
 	if validateEmail != nil && validateEmail.Email != "" {
 		return errors.ErrorEmailAlreadyInUse

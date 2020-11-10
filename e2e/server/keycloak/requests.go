@@ -5,12 +5,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
 	"github.com/stretchr/testify/assert"
@@ -247,7 +247,7 @@ func GetAllRolesFromClientID(t *testing.T, bearerToken, clientID string) []map[s
 	return response
 }
 
-func CreateUserFromKeycloakInHorusec(t *testing.T, token *account.KeycloakToken) {
+func CreateUserFromKeycloakInHorusec(t *testing.T, token *authDto.KeycloakToken) {
 	fmt.Println("Running test for CreateUserFromKeycloakInHorusec")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
 	httpClient := http.Client{}

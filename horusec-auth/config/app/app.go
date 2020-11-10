@@ -2,7 +2,7 @@ package app
 
 import (
 	"encoding/json"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 )
@@ -35,7 +35,7 @@ func (a *Config) GetEnableApplicationAdmin() bool {
 	return a.EnableApplicationAdmin
 }
 
-func (a *Config) GetApplicationAdminData() (entity *accountEntities.CreateAccount, err error) {
+func (a *Config) GetApplicationAdminData() (entity *dto.CreateAccount, err error) {
 	return entity, json.Unmarshal([]byte(a.ApplicationAdminData), &entity)
 }
 
