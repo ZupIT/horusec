@@ -34,7 +34,7 @@ import (
 
 func CreateAccount(t *testing.T, account *authEntities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://127.0.0.1:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8006/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -73,7 +73,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 	fmt.Println("Running test for ValidateAccount")
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://127.0.0.1:8003/api/account/validate/"+accountID,
+		"http://127.0.0.1:8006/api/account/validate/"+accountID,
 		nil)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	if err != nil {
@@ -87,7 +87,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
