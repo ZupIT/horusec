@@ -15,24 +15,26 @@
 package broker
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-webhook/internal/events/webhook"
 )
 
-func SetUp() brokerLib.IBroker {
+func SetUp(databaseRead relational.InterfaceRead) brokerLib.IBroker {
 	broker, err := brokerLib.NewBroker(config.NewBrokerConfig())
 	if err != nil {
 		logger.LogPanic(errors.FailedConnectBroker, err)
 	}
 
-	setUpConsumers(broker)
+	setUpConsumers(broker, databaseRead)
 	return broker
 }
 
-// nolint
-func setUpConsumers(broker brokerLib.IBroker) {
-	// consumer := email.NewConsumer()
-	// go broker.Consume(queues.HorusecEmail.ToString(), "", "", consumer.SendEmail)
+func setUpConsumers(broker brokerLib.IBroker, databaseRead relational.InterfaceRead) {
+	consumer := webhook.NewConsumer(databaseRead)
+	go broker.Consume(queues.HorusecWebhookDispatch.ToString(), "", "", consumer.DispatchRequest)
 }

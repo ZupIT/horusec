@@ -36,7 +36,7 @@ import (
 // @contact.email horusec@zup.com.br
 func main() {
 	postgresRead := adapter.NewRepositoryRead()
-	broker := brokerConfig.SetUp()
+	broker := brokerConfig.SetUp(postgresRead)
 
 	server := serverUtil.NewServerConfig("8008", corsConfig.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(broker, postgresRead)

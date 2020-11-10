@@ -15,6 +15,7 @@
 package broker
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"os"
 	"testing"
 
@@ -26,7 +27,7 @@ func TestSetUp(t *testing.T) {
 		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "other_username")
 		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "other_password")
 		assert.Panics(t, func() {
-			SetUp()
+			SetUp(&relational.MockRead{})
 		})
 	})
 
@@ -34,7 +35,7 @@ func TestSetUp(t *testing.T) {
 		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "guest")
 		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "guest")
 		assert.NotPanics(t, func() {
-			SetUp()
+			SetUp(&relational.MockRead{})
 		})
 	})
 }

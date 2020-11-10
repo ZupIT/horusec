@@ -38,18 +38,23 @@ func NewHTTPClient(timeout int) Interface {
 	}
 }
 
-// nolint
 func (c *Client) DoRequest(req *http.Request, tlsConfig *tls.Config) (res httpResponse.Interface, err error) {
-	client := &http.Client{
+	response, err := c.getClient(tlsConfig).Do(req)
+	if err != nil {
+		logger.LogError(errors.ErrDoHTTPClient.Error(), err)
+		return res, err
+	}
+	defer func() {
+		logger.LogError("Error in close body", response.Body.Close())
+	}()
+	return httpResponse.NewHTTPResponse(response), nil
+}
+
+func (c *Client) getClient(tlsConfig *tls.Config) *http.Client {
+	return &http.Client{
 		Timeout: time.Duration(c.timeout) * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: tlsConfig,
 		},
 	}
-	response, err := client.Do(req)
-	if err != nil {
-		logger.LogError(errors.ErrDoHTTPClient.Error(), err)
-		return res, err
-	}
-	return httpResponse.NewHTTPResponse(response), nil
 }
