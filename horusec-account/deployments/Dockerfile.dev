@@ -3,8 +3,10 @@ FROM golang:latest
 COPY . /go/src/github.com/ZupIT/horusec
 WORKDIR /go/src/github.com/ZupIT/horusec
 
-RUN go get -t -v -u ./horusec-account/...
+# RUN go get -t -v -u ./horusec-account/...
 
 EXPOSE 8003
 
-CMD ["go", "run", "horusec-account/cmd/app/main.go"]
+RUN go get github.com/githubnemo/CompileDaemon
+
+ENTRYPOINT CompileDaemon -log-prefix=false -build="go build -o /tmp/account ./horusec-account/cmd/app/main.go" -command="/tmp/account"

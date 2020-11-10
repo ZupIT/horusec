@@ -100,6 +100,8 @@ services:
     network_mode: "host"
     ports:
       - "8003:8003"
+    volumes:
+      - .:/go/src/github.com/ZupIT/horusec
     environment:
       HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "true"
       HORUSEC_BROKER_HOST: "127.0.0.1"

@@ -67,5 +67,5 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		return
 	}
 
-	httpUtil.StatusOK(w, "service is healthy")
+	httpUtil.StatusBadRequest(w, "service is healthy")
 }
