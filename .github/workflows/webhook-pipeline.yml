@@ -1,4 +1,4 @@
-name: HorusecAnalyticPipeline
+name: HorusecWebhookPipeline
 
 on:
   push:
