@@ -45,14 +45,12 @@ services:
   rabbit:
     container_name: rabbit
     image: rabbitmq:3-management
-    network_mode: "host"
     ports:
       - "5672:5672"
       - "15672:15672"
   postgresql:
     container_name: postgresql
     image: postgres:12
-    network_mode: "host"
     ports:
       - "5432:5432"
     environment:
