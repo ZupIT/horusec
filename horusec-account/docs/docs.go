@@ -2641,6 +2641,9 @@ var doc = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "headers": {
                     "type": "array",
                     "items": {
@@ -2664,6 +2667,9 @@ var doc = `{
         "webhook.Webhook": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "headers": {
                     "type": "array",
                     "items": {

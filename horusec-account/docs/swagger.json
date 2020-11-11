@@ -2609,6 +2609,9 @@
                 "createdAt": {
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "headers": {
                     "type": "array",
                     "items": {
@@ -2632,6 +2635,9 @@
         "webhook.Webhook": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "headers": {
                     "type": "array",
                     "items": {
