@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-interface WebhookHeader {
+import { Repository } from './Repository';
+
+export interface WebhookHeader {
   key: string;
   value: string;
 }
 
 export interface Webhook {
+  webhookID?: string;
   method: 'get' | 'post';
-  endpoint: string;
-  repository: string;
-  description: string;
+  companyID: string;
+  repository: Repository;
+  url: string;
+  description?: string;
   headers?: WebhookHeader[];
+  creatAt?: string;
+  updateAt?: string;
 }

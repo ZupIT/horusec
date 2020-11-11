@@ -42,6 +42,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const [isLoading, setLoading] = useState(false);
   const [httpMethod, setHttpMethod] = useState(webhookHttpMethods[0].value);
   const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [selectedRepository, setSelectedRepository] = useState<Repository>();
   const [url, setUrl] = useState<Field>({ value: '', isValid: false });
   const [description, setDescription] = useState<Field>({
     value: '',
@@ -49,7 +50,6 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   });
 
   const handleConfirmSave = () => {
-    console.log('save');
     onConfirm();
   };
 
@@ -94,7 +94,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           width="100%"
           options={repositories}
           title={t('WEBHOOK_SCREEN.REPOSITORY')}
-          onChangeValue={(value) => console.log(value)}
+          onChangeValue={(value) => setSelectedRepository(value)}
         />
 
         <Styled.Label>{t('WEBHOOK_SCREEN.URL_LABEL')}</Styled.Label>
@@ -108,6 +108,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             options={webhookHttpMethods}
             onChangeValue={(item) => setHttpMethod(item.value)}
             rounded
+            disabled
             color={get(colors.methods, httpMethod.toLocaleLowerCase())}
           />
 

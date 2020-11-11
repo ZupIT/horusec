@@ -44,6 +44,11 @@ const UrlWrapper = styled.div`
 
 const URLSelect = styled(Select)<SelectProps>`
   background-color: ${({ color }) => color} !important;
+  opacity: 1 !important;
+
+  div {
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
 `;
 
 export default {

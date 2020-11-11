@@ -26,22 +26,37 @@ import AddWebhook from './Add';
 
 const mockOfWebhooks: Webhook[] = [
   {
-    endpoint: 'https://rankeer.app/hook/horusec',
+    url: 'https://rankeer.app/hook/horusec',
     method: 'post',
     description: 'Hook para report das vulnerabilidades do meu serviço de api.',
-    repository: 'facebook/react-native',
+    repository: {
+      name: 'Beagle',
+      companyID: '123',
+      description: 'Teste',
+    },
+    companyID: '123',
   },
   {
-    endpoint: 'https://api.charlescd.io/security/report',
+    url: 'https://api.charlescd.io/security/report',
     method: 'post',
     description: 'Endpoint para receber detalhes das analises',
-    repository: 'Charles CD.',
+    repository: {
+      name: 'Charles CD',
+      companyID: '123',
+      description: 'Teste',
+    },
+    companyID: '123',
   },
   {
-    endpoint: 'https://app.myservice.com/webhook-horusec',
+    url: 'https://app.myservice.com/webhook-horusec',
     method: 'get',
     description: 'URL para callback das analises do horusec.',
-    repository: 'Ritch',
+    repository: {
+      name: 'Ritch',
+      companyID: '123',
+      description: 'Teste',
+    },
+    companyID: '123',
   },
 ];
 
@@ -110,9 +125,9 @@ const Webhooks: React.FC = () => {
                   </Styled.Tag>
                 </Styled.Cell>
 
-                <Styled.Cell>{webhook.endpoint}</Styled.Cell>
+                <Styled.Cell>{webhook.url}</Styled.Cell>
 
-                <Styled.Cell>{webhook.repository}</Styled.Cell>
+                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
 
                 <Styled.Cell>{webhook.description}</Styled.Cell>
 
