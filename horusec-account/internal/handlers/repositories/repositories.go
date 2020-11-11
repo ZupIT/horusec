@@ -26,6 +26,7 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
@@ -33,7 +34,6 @@ import (
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http"
 )
 
 type Handler struct {

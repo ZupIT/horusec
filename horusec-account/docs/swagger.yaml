@@ -49,25 +49,14 @@ definitions:
       role:
         type: string
     type: object
-  webhook.Webhook:
-    properties:
-      headers:
-        items:
-          $ref: '#/definitions/webhook.WebhookHeaders'
-        type: array
-      method:
-        type: string
-      url:
-        type: string
-    type: object
-  webhook.WebhookHeaders:
+  webhook.Headers:
     properties:
       key:
         type: string
       value:
         type: string
     type: object
-  webhook.WebhookResponse:
+  webhook.ResponseWebhook:
     properties:
       companyID:
         type: string
@@ -75,7 +64,7 @@ definitions:
         type: string
       headers:
         items:
-          $ref: '#/definitions/webhook.WebhookHeaders'
+          $ref: '#/definitions/webhook.Headers'
         type: array
       method:
         type: string
@@ -84,6 +73,17 @@ definitions:
       updatedAt:
         type: string
       webhookID:
+        type: string
+    type: object
+  webhook.Webhook:
+    properties:
+      headers:
+        items:
+          $ref: '#/definitions/webhook.Headers'
+        type: array
+      method:
+        type: string
+      url:
         type: string
     type: object
 info:
@@ -1167,11 +1167,11 @@ paths:
                 content:
                   items:
                     allOf:
-                    - $ref: '#/definitions/webhook.WebhookResponse'
+                    - $ref: '#/definitions/webhook.ResponseWebhook'
                     - properties:
                         headers:
                           items:
-                            $ref: '#/definitions/webhook.WebhookHeaders'
+                            $ref: '#/definitions/webhook.Headers'
                           type: array
                       type: object
                   type: array
@@ -1236,11 +1236,11 @@ paths:
                 content:
                   items:
                     allOf:
-                    - $ref: '#/definitions/webhook.WebhookResponse'
+                    - $ref: '#/definitions/webhook.ResponseWebhook'
                     - properties:
                         headers:
                           items:
-                            $ref: '#/definitions/webhook.WebhookHeaders'
+                            $ref: '#/definitions/webhook.Headers'
                           type: array
                       type: object
                   type: array
@@ -1282,7 +1282,7 @@ paths:
       description: create webhook!
       operationId: create-webhook
       parameters:
-      - description: webhook info, only method allowed is POST
+      - description: webhook info, method allowed is POST
         in: body
         name: Webhook
         required: true
@@ -1292,7 +1292,7 @@ paths:
           - properties:
               headers:
                 items:
-                  $ref: '#/definitions/webhook.WebhookHeaders'
+                  $ref: '#/definitions/webhook.Headers'
                 type: array
             type: object
       - description: companyID of the webhook
@@ -1402,7 +1402,7 @@ paths:
       description: get webhook by repositoryID!
       operationId: update-webhook
       parameters:
-      - description: webhook info, only method allowed is POST
+      - description: webhook info, method allowed is POST
         in: body
         name: Webhook
         required: true
@@ -1412,7 +1412,7 @@ paths:
           - properties:
               headers:
                 items:
-                  $ref: '#/definitions/webhook.WebhookHeaders'
+                  $ref: '#/definitions/webhook.Headers'
                 type: array
             type: object
       - description: companyID of the webhook

@@ -39,7 +39,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			WebhookID:    uuid.New(),
 			URL:          "http://example.com",
 			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
@@ -61,7 +61,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			WebhookID:    uuid.New(),
 			URL:          "http://example.com",
 			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
@@ -86,7 +86,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			WebhookID:    uuid.New(),
 			URL:          "http://example.com",
 			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
@@ -113,7 +113,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			WebhookID:    uuid.New(),
 			URL:          "http://example.com",
 			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
@@ -137,10 +137,15 @@ func TestMock_DispatchRequest(t *testing.T) {
 	t.Run("Should dispatch request without error", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 		webhookData := &entitiesWebhook.Webhook{
-			WebhookID:    uuid.New(),
-			URL:          "http://example.com",
-			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			WebhookID: uuid.New(),
+			URL:       "http://example.com",
+			Method:    http.MethodPost,
+			Headers: []entitiesWebhook.Headers{
+				{
+					Key:   "Authorization",
+					Value: "Bearer Token",
+				},
+			},
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}

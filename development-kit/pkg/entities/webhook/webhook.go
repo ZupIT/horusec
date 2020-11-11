@@ -12,22 +12,27 @@ import (
 )
 
 type Webhook struct {
-	WebhookID    uuid.UUID         `json:"webhookID" gorm:"primary_key" swaggerignore:"true"`
-	URL          string            `json:"url"`
-	Method       string            `json:"method"`
-	Headers      map[string]string `json:"headers"`
-	RepositoryID uuid.UUID         `json:"repositoryID" swaggerignore:"true"`
-	CompanyID    uuid.UUID         `json:"companyID" swaggerignore:"true"`
+	WebhookID    uuid.UUID `json:"webhookID" gorm:"primary_key" swaggerignore:"true"`
+	URL          string    `json:"url"`
+	Method       string    `json:"method"`
+	Headers      []Headers `json:"headers"`
+	RepositoryID uuid.UUID `json:"repositoryID" swaggerignore:"true"`
+	CompanyID    uuid.UUID `json:"companyID" swaggerignore:"true"`
 }
 
-type WebhookResponse struct {
-	WebhookID   uuid.UUID      `json:"webhookID"`
-	Method       string            `json:"method"`
-	Headers      map[string]string `json:"headers"`
-	RepositoryID uuid.UUID         `json:"repositoryID"`
-	CompanyID    uuid.UUID         `json:"companyID"`
-	CreatedAt   time.Time      `json:"createdAt"`
-	UpdatedAt   time.Time      `json:"updatedAt"`
+type ResponseWebhook struct {
+	WebhookID    uuid.UUID `json:"webhookID"`
+	Method       string    `json:"method"`
+	Headers      []Headers `json:"headers"`
+	RepositoryID uuid.UUID `json:"repositoryID"`
+	CompanyID    uuid.UUID `json:"companyID"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+}
+
+type Headers struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 func (w *Webhook) GetTable() string {
@@ -71,7 +76,15 @@ func (w *Webhook) SetCompanyIDAndRepositoryID(companyIDString, repositoryIDStrin
 	return w, nil
 }
 
-func (w *Webhook) SetWebhookID(ID uuid.UUID) *Webhook {
-	w.WebhookID = ID
+func (w *Webhook) SetWebhookID(id uuid.UUID) *Webhook {
+	w.WebhookID = id
 	return w
+}
+
+func (w *Webhook) GetHeaders() map[string]string {
+	headers := map[string]string{}
+	for _, item := range w.Headers {
+		headers[item.Key] = item.Value
+	}
+	return headers
 }

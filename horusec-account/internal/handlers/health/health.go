@@ -18,11 +18,11 @@ import (
 	netHTTP "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 )
 
 type Handler struct {

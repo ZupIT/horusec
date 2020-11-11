@@ -20,6 +20,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -32,7 +33,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	netHttp "net/http"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 )
 
 type Handler struct {

@@ -39,7 +39,7 @@ func (c *Controller) DispatchRequest(analysis *horusec.Analysis) error {
 }
 
 func (c *Controller) sendHTTPRequest(webhookFound *entitiesWebhook.Webhook, analysis *horusec.Analysis) error {
-	req, err := c.httpRequest.Request(webhookFound.GetMethod(), webhookFound.URL, analysis, webhookFound.Headers)
+	req, err := c.httpRequest.Request(webhookFound.GetMethod(), webhookFound.URL, analysis, webhookFound.GetHeaders())
 	if err != nil {
 		return err
 	}

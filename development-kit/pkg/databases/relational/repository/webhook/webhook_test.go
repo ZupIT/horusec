@@ -33,7 +33,7 @@ func TestMock_GetByRepositoryID(t *testing.T) {
 			WebhookID:    uuid.New(),
 			URL:          "http://example.com",
 			Method:       http.MethodPost,
-			Headers:      map[string]string{},
+			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: uuid.New(),
 		}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
