@@ -33,7 +33,7 @@ const (
 	MsgInfoMonitorTimeoutIn = "Hold on! Horusec still analysis your code. Timeout in: "
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFoundVulns = "[HORUSEC] %d VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, " +
-		"SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN"
+		"TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN"
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFinishedWithoutVulns = "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"
 	// Occurs when o docker is lower version than recommend
