@@ -13,6 +13,7 @@ import (
 
 type Webhook struct {
 	WebhookID    uuid.UUID `json:"webhookID" gorm:"primary_key" swaggerignore:"true"`
+	Description  string    `json:"description"`
 	URL          string    `json:"url"`
 	Method       string    `json:"method"`
 	Headers      []Headers `json:"headers"`
@@ -22,6 +23,7 @@ type Webhook struct {
 
 type ResponseWebhook struct {
 	WebhookID    uuid.UUID `json:"webhookID"`
+	Description  string    `json:"description"`
 	Method       string    `json:"method"`
 	Headers      []Headers `json:"headers"`
 	RepositoryID uuid.UUID `json:"repositoryID"`
