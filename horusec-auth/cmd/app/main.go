@@ -15,6 +15,9 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	brokerConfig "github.com/ZupIT/horusec/horusec-auth/config/broker"
 	"log"
 	"net/http"
 
@@ -39,16 +42,23 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
+// nolint
 func main() {
+	var broker brokerLib.IBroker
+
 	appConfig := app.NewConfig()
+	if !appConfig.IsEmailServiceDisabled() {
+		broker = brokerConfig.SetUp()
+	}
 
 	postgresRead := adapter.NewRepositoryRead()
 	postgresWrite := adapter.NewRepositoryWrite()
+	cacheRepository := cache.NewCacheRepository(postgresRead, postgresWrite)
 
 	adminConfig.CreateApplicationAdmin(appConfig, postgresRead, postgresWrite)
 
 	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite, appConfig)
+	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite, broker, cacheRepository, appConfig)
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8006")

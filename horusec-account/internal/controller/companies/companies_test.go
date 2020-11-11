@@ -17,6 +17,9 @@ package companies
 import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"testing"
 	"time"
 
@@ -24,7 +27,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
@@ -49,10 +51,10 @@ func TestMock(t *testing.T) {
 		_, _ = mock.Get(uuid.New(), uuid.New())
 		_, _ = mock.List(uuid.New())
 		_ = mock.UpdateAccountCompany(&roles.AccountCompany{})
-		_ = mock.InviteUser(&accountEntities.InviteUser{})
+		_ = mock.InviteUser(&dto.InviteUser{})
 		_ = mock.Delete(uuid.New())
 		_, _ = mock.GetAllAccountsInCompany(uuid.New())
-		_ = mock.RemoveUser(&accountEntities.RemoveUser{})
+		_ = mock.RemoveUser(&dto.RemoveUser{})
 	})
 }
 
@@ -271,7 +273,7 @@ func TestList(t *testing.T) {
 }
 
 func TestInviteUser(t *testing.T) {
-	inviteUser := &accountEntities.InviteUser{
+	inviteUser := &dto.InviteUser{
 		Role:  "admin",
 		Email: "test@test.com",
 	}
@@ -281,7 +283,7 @@ func TestInviteUser(t *testing.T) {
 		Name:      "test",
 	}
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Username:  "test",
@@ -396,7 +398,7 @@ func TestDeleteCompany(t *testing.T) {
 }
 
 func TestRemoveUser(t *testing.T) {
-	account := accountEntities.Account{}
+	account := authEntities.Account{}
 
 	t.Run("should successfully remove user from company and repositories", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
@@ -410,7 +412,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.NoError(t, err)
 	})
 
@@ -428,7 +430,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -446,7 +448,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -462,7 +464,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})

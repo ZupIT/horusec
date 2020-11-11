@@ -16,6 +16,8 @@ package keycloak
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"testing"
 
 	"github.com/Nerzal/gocloak/v7"
@@ -23,8 +25,6 @@ import (
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
@@ -55,7 +55,7 @@ func TestService_Authenticate(t *testing.T) {
 
 		service := &Service{keycloak: mock}
 
-		content, err := service.Authenticate(&authEntities.Credentials{
+		content, err := service.Authenticate(&dto.Credentials{
 			Username: "admin",
 			Password: "admin",
 		})
@@ -88,7 +88,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
@@ -123,7 +123,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
@@ -154,7 +154,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
@@ -181,7 +181,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
@@ -218,7 +218,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
@@ -253,7 +253,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
@@ -288,7 +288,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
@@ -315,7 +315,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
@@ -352,7 +352,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -387,7 +387,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -422,7 +422,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -453,7 +453,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -480,7 +480,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -517,7 +517,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
@@ -554,7 +554,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
@@ -589,7 +589,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token: "test",
 
 			Role:         authEnums.RepositorySupervisor,
@@ -627,7 +627,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
@@ -664,7 +664,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
@@ -695,7 +695,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
@@ -726,7 +726,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
@@ -763,7 +763,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -800,7 +800,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -835,7 +835,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -870,7 +870,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -901,7 +901,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -932,7 +932,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -969,7 +969,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
@@ -1005,7 +1005,7 @@ func TestIsAuthorized(t *testing.T) {
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
 		}
 
-		authorizationData := &authEntities.AuthorizationData{
+		authorizationData := &dto.AuthorizationData{
 			Token:        "test",
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),

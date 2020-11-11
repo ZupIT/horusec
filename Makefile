@@ -31,7 +31,7 @@ coverage-horusec-analytic:
 	deployments/scripts/coverage.sh 98 "./horusec-analytic"
 coverage-horusec-auth:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 98 "./horusec-auth"
+	deployments/scripts/coverage.sh 97 "./horusec-auth"
 
 # Check lint of project setup on file .golangci.yml
 lint:
@@ -87,7 +87,7 @@ build-manager:
 # ========================================================================================= #
 
 # Down and Up all containers on depends to the project run
-COMPOSE_FILE_NAME ?= docker-compose.dev.yaml
+COMPOSE_FILE_NAME ?= docker-compose.yaml
 
 compose: compose-down compose-up
 

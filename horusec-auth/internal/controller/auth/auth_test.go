@@ -16,11 +16,11 @@ package auth
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -56,7 +56,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -73,7 +73,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -89,7 +89,7 @@ func TestAuthByType(t *testing.T) {
 			appConfig:       &app.Config{AuthType: authEnums.Ldap},
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.NotNil(t, result)
 		assert.NoError(t, err)
@@ -106,7 +106,7 @@ func TestAuthByType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		result, err := controller.AuthByType(&authEntities.Credentials{})
+		result, err := controller.AuthByType(&dto.Credentials{})
 
 		assert.Error(t, err)
 		assert.Equal(t, errorsEnum.ErrorUnauthorized, err)
@@ -178,8 +178,8 @@ func TestAuthorizeByType(t *testing.T) {
 			RepositoryID: "test",
 		})
 
-		assert.Error(t, err)
-		assert.False(t, result.GetIsAuthorized())
+		assert.NoError(t, err)
+		assert.True(t, result.GetIsAuthorized())
 	})
 
 	t.Run("should return unauthorized error when invalid auth type", func(t *testing.T) {
@@ -224,7 +224,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 	t.Run("Should return error when invalid type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: "test"},
+			appConfig:           &app.Config{AuthType: "unknown"},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -236,7 +236,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 
 func TestGetAccountIDByAuthType(t *testing.T) {
 	t.Run("should return account id when horusec", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -259,7 +259,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return account id when keycloak", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -286,7 +286,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 	})
 
 	t.Run("should return account id when horusec", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",

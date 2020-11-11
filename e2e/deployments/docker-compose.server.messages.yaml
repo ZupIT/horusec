@@ -86,3 +86,5 @@ services:
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
+      HORUSEC_AUTH_DISABLE_EMAIL_SERVICE: "true"
+      HORUSEC_MANAGER_URL: "http://127.0.0.1:8043"

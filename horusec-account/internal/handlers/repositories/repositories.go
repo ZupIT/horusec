@@ -16,6 +16,8 @@ package repositories
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"net/http"
 
@@ -24,7 +26,6 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
@@ -331,7 +332,7 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getInviteUserRequestData(r *http.Request) (*accountEntities.InviteUser, error) {
+func (h *Handler) getInviteUserRequestData(r *http.Request) (*dto.InviteUser, error) {
 	inviteUser, err := h.useCases.NewInviteUserFromReadCloser(r.Body)
 	if err != nil {
 		return nil, err
@@ -407,8 +408,8 @@ func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getRemoveUserRequestData(r *http.Request) (*accountEntities.RemoveUser, error) {
-	removeUser := &accountEntities.RemoveUser{}
+func (h *Handler) getRemoveUserRequestData(r *http.Request) (*dto.RemoveUser, error) {
+	removeUser := &dto.RemoveUser{}
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		return nil, errorsEnum.ErrorInvalidRepositoryID

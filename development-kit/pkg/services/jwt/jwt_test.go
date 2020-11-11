@@ -16,12 +16,12 @@ package jwt
 
 import (
 	"fmt"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +29,7 @@ import (
 
 func TestCreateToken(t *testing.T) {
 	t.Run("should success create a sign token with no errors", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
 			AccountID: uuid.New(),
@@ -42,7 +42,7 @@ func TestCreateToken(t *testing.T) {
 
 func TestDecodeToken(t *testing.T) {
 	t.Run("should success decode token", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
 			AccountID: uuid.New(),
@@ -57,7 +57,7 @@ func TestDecodeToken(t *testing.T) {
 	})
 
 	t.Run("should return error invalid signature", func(t *testing.T) {
-		account := &accountEntities.Account{
+		account := &authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
 			AccountID: uuid.New(),
@@ -79,7 +79,7 @@ func TestAuthMiddleware(t *testing.T) {
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 
-		token, _, _ := CreateToken(&accountEntities.Account{
+		token, _, _ := CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -106,7 +106,7 @@ func TestAuthMiddleware(t *testing.T) {
 
 func TestGetAccountIDByJWTToken(t *testing.T) {
 	t.Run("should success return a account ID with no error", func(t *testing.T) {
-		token, _, _ := CreateToken(&accountEntities.Account{
+		token, _, _ := CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -118,7 +118,7 @@ func TestGetAccountIDByJWTToken(t *testing.T) {
 	})
 
 	t.Run("should success return a account ID with bearer", func(t *testing.T) {
-		token, _, _ := CreateToken(&accountEntities.Account{
+		token, _, _ := CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -142,7 +142,7 @@ func TestGetAccountIDByJWTToken(t *testing.T) {
 
 func TestGetPermissionsByJWTTOken(t *testing.T) {
 	t.Run("should get permissions map", func(t *testing.T) {
-		token, _, _ := CreateToken(&accountEntities.Account{
+		token, _, _ := CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",

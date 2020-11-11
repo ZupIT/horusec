@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Requests save in this file are shared into all server e2e.
 package server
 
@@ -6,8 +20,9 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -17,7 +32,7 @@ import (
 	"time"
 )
 
-func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
+func CreateCompany(t *testing.T, bearerToken string, company *accountEntities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
@@ -32,7 +47,7 @@ func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Co
 	return createdCompany["content"]["companyID"]
 }
 
-func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountentities.Company) {
+func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountEntities.Company) {
 	fmt.Println("Running test for UpdateCompany")
 	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
@@ -77,7 +92,7 @@ func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	assert.NoError(t, resp.Body.Close())
 }
 
-func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
+func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *dto.InviteUser) {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodPost,

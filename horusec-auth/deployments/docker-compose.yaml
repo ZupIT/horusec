@@ -1,5 +1,11 @@
 version: '3'
 services:
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   ldap-service:
     container_name: ldap-service
     image: osixia/openldap:1.1.8
@@ -62,3 +68,4 @@ services:
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
+      HORUSEC_AUTH_DISABLE_EMAIL_SERVICE: "true"

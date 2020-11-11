@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Test e2e refers workflow: .github/workflows/e2e.yml
 // In step: e2e-application-admin-horusec
 package horusec
@@ -5,6 +19,8 @@ package horusec
 import (
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/golang-migrate/migrate/v4"
@@ -57,10 +73,10 @@ func TestServer(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should tests default auth-type (horusec) http requests in application admin enable", func(t *testing.T) {
-		time.Sleep(5 * time.Second)
+		time.Sleep(10 * time.Second)
 		// Login with default application admin
-		contentLogin := Login(t, &accountentities.LoginData{
-			Email:    "horusec-admin@example.com",
+		contentLogin := Login(t, &authDto.Credentials{
+			Username: "horusec-admin@example.com",
 			Password: "Devpass0*",
 		})
 		bearerToken := contentLogin["accessToken"]
@@ -84,7 +100,7 @@ func TestServer(t *testing.T) {
 		DeleteCompany(t, bearerToken, companyID)
 
 		// Create new user
-		CreateAccount(t, &accountentities.Account{
+		CreateAccount(t, &authEntities.Account{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
@@ -99,8 +115,8 @@ func TestServer(t *testing.T) {
 		assert.NotContains(t, allCompanies, "zup")
 
 		// Login with new user
-		contentLoginNewUser := Login(t, &accountentities.LoginData{
-			Email:    "e2e@example.com",
+		contentLoginNewUser := Login(t, &authDto.Credentials{
+			Username: "e2e@example.com",
 			Password: "Ch@ng3m3",
 		})
 		bearerTokenNewUser := contentLoginNewUser["accessToken"]

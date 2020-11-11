@@ -16,7 +16,7 @@ package accountcompany
 
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/google/uuid"
 )

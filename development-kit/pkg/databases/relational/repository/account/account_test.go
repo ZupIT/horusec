@@ -15,10 +15,10 @@
 package account
 
 import (
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -35,7 +35,7 @@ func TestCreate(t *testing.T) {
 
 		repository := NewAccountRepository(mockRead, mockWrite)
 
-		assert.NoError(t, repository.Create(&accountEntities.Account{}))
+		assert.NoError(t, repository.Create(&authEntities.Account{}))
 	})
 }
 
@@ -46,7 +46,7 @@ func TestGetByAccountID(t *testing.T) {
 
 		resp := &response.Response{}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockRead.On("Find").Return(resp.SetData(&accountEntities.Account{}))
+		mockRead.On("Find").Return(resp.SetData(&authEntities.Account{}))
 
 		repository := NewAccountRepository(mockRead, mockWrite)
 		account, err := repository.GetByAccountID(uuid.New())
@@ -63,7 +63,7 @@ func TestGetByEmail(t *testing.T) {
 
 		resp := &response.Response{}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockRead.On("Find").Return(resp.SetData(&accountEntities.Account{}))
+		mockRead.On("Find").Return(resp.SetData(&authEntities.Account{}))
 
 		repository := NewAccountRepository(mockRead, mockWrite)
 		account, err := repository.GetByEmail("test@test.com")
@@ -83,7 +83,7 @@ func TestUpdate(t *testing.T) {
 
 		repository := NewAccountRepository(mockRead, mockWrite)
 
-		assert.NoError(t, repository.Update(&accountEntities.Account{}))
+		assert.NoError(t, repository.Update(&authEntities.Account{}))
 	})
 }
 
@@ -94,7 +94,7 @@ func TestGetByUsername(t *testing.T) {
 
 		resp := &response.Response{}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockRead.On("Find").Return(resp.SetData(&accountEntities.Account{}))
+		mockRead.On("Find").Return(resp.SetData(&authEntities.Account{}))
 
 		repository := NewAccountRepository(mockRead, mockWrite)
 		account, err := repository.GetByUsername("test")

@@ -98,12 +98,13 @@ func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response strin
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
 		return err
 	}
-	if version < MinVersionDockerAccept {
-		return errorsEnums.ErrDockerLowerVersion
-	} else if version == MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
-		return errorsEnums.ErrDockerLowerVersion
+
+	if version < MinVersionDockerAccept || version == MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
+		fmt.Print("\n")
+		logger.LogInfo(messages.MsgDockerLowerVersion)
+		fmt.Print("\n")
 	}
+
 	return nil
 }
 

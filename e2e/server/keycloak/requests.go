@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Requests save in this file are exclusive of keycloak e2e
 package keycloak
 
@@ -5,12 +19,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
-	"github.com/stretchr/testify/assert"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
+	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
+	"github.com/stretchr/testify/assert"
 )
 
 func LoginInKeycloak(t *testing.T, username, password string) map[string]interface{} {
@@ -27,6 +44,26 @@ func LoginInKeycloak(t *testing.T, username, password string) map[string]interfa
 	assert.NoError(t, res.Body.Close())
 	assert.NotEmpty(t, response)
 	return response
+}
+
+func LogoutUserInKeycloak(t *testing.T, bearerToken, username string) {
+	allUsers := ListAllUsersInKeycloak(t, bearerToken)
+	userID := ""
+	for _, user := range allUsers {
+		if user["username"] == username {
+			userID = user["id"].(string)
+		}
+	}
+	assert.NotEmpty(t, userID)
+	fmt.Println("Running test for LogoutUsersInKeycloak: " + username)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+userID+"/logout", nil)
+	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("Content-Type", "application/json")
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "LogoutUsersInKeycloak, create user error mount request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "LogoutUsersInKeycloak create user error send request")
+	assert.NoError(t, resp.Body.Close())
 }
 
 func CreateUserInKeyCloak(t *testing.T, userRepresentation *entities.UserRepresentation, credentials *entities.UserRepresentationCredentials, bearerToken string) {
@@ -144,6 +181,11 @@ func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
 	client["serviceAccountsEnabled"] = true
 	client["standardFlowEnabled"] = true
 	client["surrogateAuthRequired"] = true
+	client["attributes"].(map[string]interface{})["access.token.lifespan"] = 5940
+	client["attributes"].(map[string]interface{})["client.offline.session.idle.timeout"] = 5940
+	client["attributes"].(map[string]interface{})["client.offline.session.max.lifespan"] = 5940
+	client["attributes"].(map[string]interface{})["client.session.idle.timeout"] = 5940
+	client["attributes"].(map[string]interface{})["client.session.max.lifespan"] = 5940
 	clientID := client["id"].(string)
 	clientBytes, _ := json.Marshal(client)
 	req, _ := http.NewRequest(http.MethodPut, "http://127.0.0.1:8080/auth/admin/realms/master/clients/"+clientID, bytes.NewReader(clientBytes))
@@ -219,7 +261,7 @@ func GetAllRolesFromClientID(t *testing.T, bearerToken, clientID string) []map[s
 	return response
 }
 
-func CreateUserFromKeycloakInHorusec(t *testing.T, token *account.KeycloakToken) {
+func CreateUserFromKeycloakInHorusec(t *testing.T, token *authDto.KeycloakToken) {
 	fmt.Println("Running test for CreateUserFromKeycloakInHorusec")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
 	httpClient := http.Client{}
@@ -230,4 +272,16 @@ func CreateUserFromKeycloakInHorusec(t *testing.T, token *account.KeycloakToken)
 	_ = json.NewDecoder(createCompanyResp.Body).Decode(&bodyResponse)
 	assert.NoError(t, createCompanyResp.Body.Close())
 	assert.NotEmpty(t, bodyResponse)
+}
+
+func CheckIfTokenIsValid(t *testing.T, token, secret string) {
+	fmt.Println("Running test for CheckIfTokenIsValid")
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_BASE_PATH", "http://127.0.0.1:8080"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_CLIENT_ID", "account"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_CLIENT_SECRET", secret))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_REALM", "master"))
+	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_OTP", "false"))
+	userID, err := keycloak.NewKeycloakService().GetAccountIDByJWTToken(token)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, userID)
 }

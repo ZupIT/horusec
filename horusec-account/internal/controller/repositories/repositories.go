@@ -19,10 +19,12 @@ import (
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	relationalRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
@@ -40,10 +42,10 @@ type IController interface {
 	List(accountID uuid.UUID, companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error)
 	CreateAccountRepository(accountRepository *roles.AccountRepository) error
 	UpdateAccountRepository(companyID uuid.UUID, accountRepository *roles.AccountRepository) error
-	InviteUser(inviteUser *accountEntities.InviteUser) error
+	InviteUser(inviteUser *dto.InviteUser) error
 	Delete(repositoryID uuid.UUID) error
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
-	RemoveUser(removeUser *accountEntities.RemoveUser) error
+	RemoveUser(removeUser *dto.RemoveUser) error
 }
 
 type Controller struct {
@@ -53,6 +55,7 @@ type Controller struct {
 	accountRepositoryRepo    repoAccountRepository.IAccountRepository
 	accountRepository        repositoryAccount.IAccount
 	accountCompanyRepository repositoryAccountCompany.IAccountCompany
+	company                  company.ICompanyRepository
 	broker                   brokerLib.IBroker
 	appConfig                app.IAppConfig
 	repositoriesUseCases     repositoriesUseCases.IRepository
@@ -67,6 +70,7 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 		accountRepositoryRepo:    repoAccountRepository.NewAccountRepositoryRepository(databaseRead, databaseWrite),
 		accountRepository:        repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
 		accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(databaseRead, databaseWrite),
+		company:                  company.NewCompanyRepository(databaseRead, databaseWrite),
 		broker:                   broker,
 		appConfig:                appConfig,
 		repositoriesUseCases:     repositoriesUseCases.NewRepositoryUseCases(),
@@ -76,6 +80,8 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository) (
 	*accountEntities.Repository, error) {
 	transaction := c.databaseWrite.StartTransaction()
+	repositoryEntity = c.setAuthzGroups(repositoryEntity)
+
 	if err := c.repository.Create(repositoryEntity, transaction); err != nil {
 		return nil, err
 	}
@@ -129,7 +135,7 @@ func (c *Controller) CreateAccountRepository(accountRepository *roles.AccountRep
 	return c.accountRepositoryRepo.Create(accountRepository, nil)
 }
 
-func (c *Controller) InviteUser(inviteUser *accountEntities.InviteUser) error {
+func (c *Controller) InviteUser(inviteUser *dto.InviteUser) error {
 	account, err := c.accountRepository.GetByEmail(inviteUser.Email)
 	if err != nil {
 		return err
@@ -178,11 +184,32 @@ func (c *Controller) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 	return c.repository.GetAllAccountsInRepository(repositoryID)
 }
 
-func (c *Controller) RemoveUser(removeUser *accountEntities.RemoveUser) error {
+func (c *Controller) RemoveUser(removeUser *dto.RemoveUser) error {
 	account, err := c.accountRepository.GetByAccountID(removeUser.AccountID)
 	if err != nil {
 		return err
 	}
 
 	return c.accountRepositoryRepo.DeleteAccountRepository(account.AccountID, removeUser.RepositoryID)
+}
+
+func (c *Controller) setAuthzGroups(repository *accountEntities.Repository) *accountEntities.Repository {
+	if repository.AuthzAdmin == "" || repository.AuthzMember == "" || repository.AuthzSupervisor == "" {
+		companyOfRepository, err := c.company.GetByID(repository.CompanyID)
+		if err == nil {
+			repository.AuthzAdmin = c.replaceIfEmpty(repository.AuthzAdmin, companyOfRepository.AuthzAdmin)
+			repository.AuthzMember = c.replaceIfEmpty(repository.AuthzMember, companyOfRepository.AuthzMember)
+			repository.AuthzSupervisor = c.replaceIfEmpty(repository.AuthzSupervisor, companyOfRepository.AuthzAdmin)
+		}
+	}
+
+	return repository
+}
+
+func (c *Controller) replaceIfEmpty(val, toReplace string) string {
+	if val != "" {
+		return val
+	}
+
+	return toReplace
 }

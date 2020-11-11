@@ -16,9 +16,13 @@ package repositories
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+	"testing"
+
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	"testing"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
@@ -27,7 +31,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
@@ -54,10 +57,10 @@ func TestMock(t *testing.T) {
 		_, _ = mock.List(uuid.New(), uuid.New())
 		_ = mock.CreateAccountRepository(&roles.AccountRepository{})
 		_ = mock.UpdateAccountRepository(uuid.New(), &roles.AccountRepository{})
-		_ = mock.InviteUser(&accountEntities.InviteUser{})
+		_ = mock.InviteUser(&dto.InviteUser{})
 		_ = mock.Delete(uuid.New())
 		_, _ = mock.GetAllAccountsInRepository(uuid.New())
-		_ = mock.RemoveUser(&accountEntities.RemoveUser{})
+		_ = mock.RemoveUser(&dto.RemoveUser{})
 	})
 }
 func TestCreate(t *testing.T) {
@@ -126,6 +129,39 @@ func TestCreate(t *testing.T) {
 		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
+	})
+
+	t.Run("should set the authz groups with the company authz groups value", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Create").Return(resp)
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(resp)
+
+		respFindCompany := &response.Response{}
+		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: "admin", AuthzMember: "member"})
+		mockRead.On("Find").Once().Return(respFindCompany)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		respFind := &response.Response{}
+		respFind.SetError(errorsEnums.ErrNotFoundRecords)
+		mockRead.On("Find").Return(respFind)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+
+		createdRepo, err := controller.Create(uuid.New(), &accountEntities.Repository{
+			AuthzAdmin:      "",
+			AuthzMember:     "",
+			AuthzSupervisor: "",
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
+		assert.Equal(t, createdRepo.AuthzMember, "member")
+		assert.Equal(t, createdRepo.AuthzSupervisor, "admin")
 	})
 }
 
@@ -342,7 +378,7 @@ func TestList(t *testing.T) {
 }
 
 func TestInviteUser(t *testing.T) {
-	inviteUser := &accountEntities.InviteUser{
+	inviteUser := &dto.InviteUser{
 		Role:  "admin",
 		Email: "test@test.com",
 	}
@@ -353,7 +389,7 @@ func TestInviteUser(t *testing.T) {
 		Name:         "test",
 	}
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Username:  "test",
@@ -468,7 +504,7 @@ func TestDeleteRepository(t *testing.T) {
 }
 
 func TestRemoveUser(t *testing.T) {
-	account := accountEntities.Account{}
+	account := authEntities.Account{}
 
 	t.Run("should successfully remove user from repository", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
@@ -482,7 +518,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.NoError(t, err)
 	})
 
@@ -497,7 +533,7 @@ func TestRemoveUser(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		err := controller.RemoveUser(&accountEntities.RemoveUser{})
+		err := controller.RemoveUser(&dto.RemoveUser{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})

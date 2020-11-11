@@ -16,12 +16,12 @@ package company
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io/ioutil"
 	"strings"
 	"testing"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

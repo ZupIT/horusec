@@ -1,3 +1,17 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Requests save in this file are exclusive of horusec e2e
 package horusec
 
@@ -6,14 +20,16 @@ import (
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 )
 
-func CreateAccount(t *testing.T, account *accountentities.Account) {
+func CreateAccount(t *testing.T, account *authEntities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://127.0.0.1:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8006/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -23,10 +39,10 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func Login(t *testing.T, credentials *accountentities.LoginData) map[string]string {
+func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://127.0.0.1:8003/api/account/login",
+		"http://127.0.0.1:8006/api/auth/authenticate",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)
@@ -41,7 +57,7 @@ func Login(t *testing.T, credentials *accountentities.LoginData) map[string]stri
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
