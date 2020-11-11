@@ -129,7 +129,6 @@ func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWr
 	handler := account.NewHandler(broker, postgresRead, postgresWrite, cache, appConfig)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)
-		router.Options("/", handler.Options)
 		router.Post("/create-account", handler.CreateAccount)
 		router.Get("/validate/{accountID}", handler.ValidateEmail)
 		router.Post("/send-code", handler.SendResetPasswordCode)
