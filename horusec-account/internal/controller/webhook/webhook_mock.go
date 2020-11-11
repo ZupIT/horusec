@@ -11,13 +11,9 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) ListAll(companyID uuid.UUID) (*[]webhook.Webhook, error) {
+func (m *Mock) ListAll(companyID uuid.UUID) (*[]webhook.ResponseWebhook, error) {
 	args := m.MethodCalled("ListAll")
-	return args.Get(0).(*[]webhook.Webhook), utilsMock.ReturnNilOrError(args, 1)
-}
-func (m *Mock) ListAllByRepositoryID(repositoryID uuid.UUID) (*[]webhook.Webhook, error) {
-	args := m.MethodCalled("ListAllByRepositoryID")
-	return args.Get(0).(*[]webhook.Webhook), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(*[]webhook.ResponseWebhook), utilsMock.ReturnNilOrError(args, 1)
 }
 func (m *Mock) Create(wh *webhook.Webhook) (uuid.UUID, error) {
 	args := m.MethodCalled("Create")

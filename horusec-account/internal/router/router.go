@@ -137,7 +137,6 @@ func (r *Router) RouterWebhook(databaseRead SQL.InterfaceRead,
 		router.Options("/", handler.Options)
 		router.With(authzMiddleware.IsCompanyAdmin).Post("/{companyID}/{repositoryID}", handler.Create)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}", handler.ListAll)
-		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}/{repositoryID}", handler.ListAllByRepositoryID)
 		router.With(authzMiddleware.IsCompanyAdmin).Put("/{companyID}/{repositoryID}/{webhookID}", handler.Update)
 		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/{repositoryID}/{webhookID}", handler.Remove)
 	})

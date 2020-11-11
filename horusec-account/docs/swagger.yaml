@@ -23,6 +23,29 @@ definitions:
       name:
         type: string
     type: object
+  account.RepositoryResponse:
+    properties:
+      authzAdmin:
+        type: string
+      authzMember:
+        type: string
+      authzSupervisor:
+        type: string
+      companyID:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      repositoryID:
+        type: string
+      role:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   dto.InviteUser:
     properties:
       email:
@@ -70,9 +93,14 @@ definitions:
         type: array
       method:
         type: string
+      repository:
+        $ref: '#/definitions/account.RepositoryResponse'
+        type: object
       repositoryID:
         type: string
       updatedAt:
+        type: string
+      url:
         type: string
       webhookID:
         type: string
@@ -1177,6 +1205,8 @@ paths:
                           items:
                             $ref: '#/definitions/webhook.Headers'
                           type: array
+                        repository:
+                          $ref: '#/definitions/account.RepositoryResponse'
                       type: object
                   type: array
               type: object
@@ -1212,74 +1242,6 @@ paths:
       tags:
       - Webhooks
   /api/webhook/{companyID}/{repositoryID}:
-    get:
-      consumes:
-      - application/json
-      description: get webhook by repositoryID!
-      operationId: get-webhook-by-repository-id
-      parameters:
-      - description: companyID of the webhook
-        in: path
-        name: companyID
-        required: true
-        type: string
-      - description: repositoryID of the webhook
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  items:
-                    allOf:
-                    - $ref: '#/definitions/webhook.ResponseWebhook'
-                    - properties:
-                        headers:
-                          items:
-                            $ref: '#/definitions/webhook.Headers'
-                          type: array
-                      type: object
-                  type: array
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "404":
-          description: NOT FOUND
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Webhooks
     post:
       consumes:
       - application/json

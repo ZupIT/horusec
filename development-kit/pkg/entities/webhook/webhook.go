@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -25,8 +26,10 @@ type ResponseWebhook struct {
 	WebhookID    uuid.UUID `json:"webhookID"`
 	Description  string    `json:"description"`
 	Method       string    `json:"method"`
+	URL          string    `json:"url"`
 	Headers      []Headers `json:"headers"`
 	RepositoryID uuid.UUID `json:"repositoryID"`
+	Repository   account.RepositoryResponse `json:"repository"`
 	CompanyID    uuid.UUID `json:"companyID"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
@@ -66,11 +69,11 @@ func (w *Webhook) ToBytes() []byte {
 
 func (w *Webhook) SetCompanyIDAndRepositoryID(companyIDString, repositoryIDString string) (*Webhook, error) {
 	companyID, err := uuid.Parse(companyIDString)
-	if err != nil {
+	if err != nil || companyID == uuid.Nil {
 		return nil, errorsEnum.ErrorInvalidCompanyID
 	}
 	repositoryID, err := uuid.Parse(repositoryIDString)
-	if err != nil {
+	if err != nil || repositoryID == uuid.Nil {
 		return nil, errorsEnum.ErrorInvalidRepositoryID
 	}
 	w.CompanyID = companyID

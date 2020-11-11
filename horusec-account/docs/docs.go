@@ -2009,6 +2009,9 @@ var doc = `{
                                                                 "items": {
                                                                     "$ref": "#/definitions/webhook.Headers"
                                                                 }
+                                                            },
+                                                            "repository": {
+                                                                "$ref": "#/definitions/account.RepositoryResponse"
                                                             }
                                                         }
                                                     }
@@ -2078,132 +2081,6 @@ var doc = `{
             }
         },
         "/api/webhook/{companyID}/{repositoryID}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "get webhook by repositoryID!",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Webhooks"
-                ],
-                "operationId": "get-webhook-by-repository-id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "companyID of the webhook",
-                        "name": "companyID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the webhook",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "allOf": [
-                                                    {
-                                                        "$ref": "#/definitions/webhook.ResponseWebhook"
-                                                    },
-                                                    {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "headers": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "$ref": "#/definitions/webhook.Headers"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "404": {
-                        "description": "NOT FOUND",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -2580,6 +2457,41 @@ var doc = `{
                 }
             }
         },
+        "account.RepositoryResponse": {
+            "type": "object",
+            "properties": {
+                "authzAdmin": {
+                    "type": "string"
+                },
+                "authzMember": {
+                    "type": "string"
+                },
+                "authzSupervisor": {
+                    "type": "string"
+                },
+                "companyID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "repositoryID": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.InviteUser": {
             "type": "object",
             "properties": {
@@ -2653,10 +2565,17 @@ var doc = `{
                 "method": {
                     "type": "string"
                 },
+                "repository": {
+                    "type": "object",
+                    "$ref": "#/definitions/account.RepositoryResponse"
+                },
                 "repositoryID": {
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 },
                 "webhookID": {

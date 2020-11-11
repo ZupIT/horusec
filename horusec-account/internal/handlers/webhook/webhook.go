@@ -5,6 +5,7 @@ import (
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	webhookUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/webhook"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -77,7 +78,7 @@ func (h *Handler) executeCreateController(webhookEntity *webhook.Webhook, w netH
 // @Accept  json
 // @Produce  json
 // @Param companyID path string true "companyID of the webhook"
-// @Success 200 {object} http.Response{content=[]webhook.ResponseWebhook{headers=[]webhook.Headers}} "OK"
+// @Success 200 {object} http.Response{content=[]webhook.ResponseWebhook{headers=[]webhook.Headers,repository=account.RepositoryResponse}} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -91,42 +92,7 @@ func (h *Handler) ListAll(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	}
 	response, err := h.webhookController.ListAll(companyID)
 	if err != nil {
-		if err == errorsEnum.ErrNotFoundRecords {
-			httpUtil.StatusNotFound(w, err)
-		} else {
-			httpUtil.StatusInternalServerError(w, err)
-		}
-		return
-	}
-	httpUtil.StatusOK(w, response)
-}
-
-// @Tags Webhooks
-// @Description get webhook by repositoryID!
-// @ID get-webhook-by-repository-id
-// @Accept  json
-// @Produce  json
-// @Param companyID path string true "companyID of the webhook"
-// @Param repositoryID path string true "repositoryID of the webhook"
-// @Success 200 {object} http.Response{content=[]webhook.ResponseWebhook{headers=[]webhook.Headers}} "OK"
-// @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
-// @Failure 404 {object} http.Response{content=string} "NOT FOUND"
-// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/webhook/{companyID}/{repositoryID} [get]
-// @Security ApiKeyAuth
-func (h *Handler) ListAllByRepositoryID(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-	response, err := h.webhookController.ListAllByRepositoryID(repositoryID)
-	if err != nil {
-		if err == errorsEnum.ErrNotFoundRecords {
-			httpUtil.StatusNotFound(w, err)
-		} else {
-			httpUtil.StatusInternalServerError(w, err)
-		}
+		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 	httpUtil.StatusOK(w, response)
@@ -158,7 +124,7 @@ func (h *Handler) Update(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 func (h *Handler) getWebhookEntityToUpdate(r *netHTTP.Request) (*webhook.Webhook, error) {
 	webhookID, err := uuid.Parse(chi.URLParam(r, "webhookID"))
-	if err != nil {
+	if err != nil || webhookID == uuid.Nil {
 		return nil, err
 	}
 	webhookEntity, err := h.webhookUseCases.NewWebhookFromReadCloser(r.Body)
@@ -200,7 +166,7 @@ func (h *Handler) executeUpdateController(webhookEntity *webhook.Webhook, w netH
 // @Security ApiKeyAuth
 func (h *Handler) Remove(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	webhookID, err := uuid.Parse(chi.URLParam(r, "webhookID"))
-	if err != nil {
+	if err != nil || webhookID == uuid.Nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}

@@ -8,8 +8,7 @@ import (
 )
 
 type IController interface {
-	ListAll(companyID uuid.UUID) (*[]webhook.Webhook, error)
-	ListAllByRepositoryID(repositoryID uuid.UUID) (*[]webhook.Webhook, error)
+	ListAll(companyID uuid.UUID) (*[]webhook.ResponseWebhook, error)
 	Create(wh *webhook.Webhook) (uuid.UUID, error)
 	Update(wh *webhook.Webhook) error
 	Remove(webhookID uuid.UUID) error
@@ -25,11 +24,7 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 	}
 }
 
-func (c *Controller) ListAll(companyID uuid.UUID) (*[]webhook.Webhook, error) {
-	panic("implement me")
-}
-
-func (c *Controller) ListAllByRepositoryID(repositoryID uuid.UUID) (*[]webhook.Webhook, error) {
+func (c *Controller) ListAll(companyID uuid.UUID) (*[]webhook.ResponseWebhook, error) {
 	panic("implement me")
 }
 
