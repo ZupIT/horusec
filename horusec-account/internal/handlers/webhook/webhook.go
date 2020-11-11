@@ -34,7 +34,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @ID create-webhook
 // @Accept  json
 // @Produce  json
-// @Param Webhook body webhook.Webhook true "webhook info, only method allowed is POST"
+// @Param Webhook body webhook.Webhook{headers=[]webhook.WebhookHeaders} true "webhook info, only method allowed is POST"
 // @Param companyID path string true "companyID of the webhook"
 // @Param repositoryID path string true "repositoryID of the webhook"
 // @Success 201 {object} http.Response{content=string} "CREATED"
@@ -67,7 +67,7 @@ func (h *Handler) Create(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Accept  json
 // @Produce  json
 // @Param companyID path string true "companyID of the webhook"
-// @Success 200 {object} http.Response{content=[]webhook.WebhookResponse} "OK"
+// @Success 200 {object} http.Response{content=[]webhook.WebhookResponse{headers=[]webhook.WebhookHeaders}} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -98,7 +98,7 @@ func (h *Handler) ListAll(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Produce  json
 // @Param companyID path string true "companyID of the webhook"
 // @Param repositoryID path string true "repositoryID of the webhook"
-// @Success 200 {object} http.Response{content=[]webhook.WebhookResponse} "OK"
+// @Success 200 {object} http.Response{content=[]webhook.WebhookResponse{headers=[]webhook.WebhookHeaders}} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -127,7 +127,7 @@ func (h *Handler) ListAllByRepositoryID(w netHTTP.ResponseWriter, r *netHTTP.Req
 // @ID update-webhook
 // @Accept  json
 // @Produce  json
-// @Param Webhook body webhook.Webhook true "webhook info, only method allowed is POST"
+// @Param Webhook body webhook.Webhook{headers=[]webhook.WebhookHeaders} true "webhook info, only method allowed is POST"
 // @Param companyID path string true "companyID of the webhook"
 // @Param repositoryID path string true "repositoryID of the webhook"
 // @Param webhookID path string true "webhookID of the webhook"
@@ -135,7 +135,7 @@ func (h *Handler) ListAllByRepositoryID(w netHTTP.ResponseWriter, r *netHTTP.Req
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/webhook/{companyID}/{webhookID} [put]
+// @Router /api/webhook/{companyID}/{repositoryID}/{webhookID} [put]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	webhookID, err := uuid.Parse(chi.URLParam(r, "webhookID"))
@@ -176,7 +176,7 @@ func (h *Handler) Update(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/webhook/{companyID}/{webhookID} [delete]
+// @Router /api/webhook/{companyID}/{repositoryID}/{webhookID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Remove(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	webhookID, err := uuid.Parse(chi.URLParam(r, "webhookID"))

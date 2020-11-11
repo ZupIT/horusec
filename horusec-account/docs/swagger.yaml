@@ -52,12 +52,19 @@ definitions:
   webhook.Webhook:
     properties:
       headers:
-        additionalProperties:
-          type: string
-        type: object
+        items:
+          $ref: '#/definitions/webhook.WebhookHeaders'
+        type: array
       method:
         type: string
       url:
+        type: string
+    type: object
+  webhook.WebhookHeaders:
+    properties:
+      key:
+        type: string
+      value:
         type: string
     type: object
   webhook.WebhookResponse:
@@ -67,9 +74,9 @@ definitions:
       createdAt:
         type: string
       headers:
-        additionalProperties:
-          type: string
-        type: object
+        items:
+          $ref: '#/definitions/webhook.WebhookHeaders'
+        type: array
       method:
         type: string
       repositoryID:
@@ -1159,7 +1166,14 @@ paths:
             - properties:
                 content:
                   items:
-                    $ref: '#/definitions/webhook.WebhookResponse'
+                    allOf:
+                    - $ref: '#/definitions/webhook.WebhookResponse'
+                    - properties:
+                        headers:
+                          items:
+                            $ref: '#/definitions/webhook.WebhookHeaders'
+                          type: array
+                      type: object
                   type: array
               type: object
         "400":
@@ -1221,7 +1235,14 @@ paths:
             - properties:
                 content:
                   items:
-                    $ref: '#/definitions/webhook.WebhookResponse'
+                    allOf:
+                    - $ref: '#/definitions/webhook.WebhookResponse'
+                    - properties:
+                        headers:
+                          items:
+                            $ref: '#/definitions/webhook.WebhookHeaders'
+                          type: array
+                      type: object
                   type: array
               type: object
         "400":
@@ -1266,7 +1287,14 @@ paths:
         name: Webhook
         required: true
         schema:
-          $ref: '#/definitions/webhook.Webhook'
+          allOf:
+          - $ref: '#/definitions/webhook.Webhook'
+          - properties:
+              headers:
+                items:
+                  $ref: '#/definitions/webhook.WebhookHeaders'
+                type: array
+            type: object
       - description: companyID of the webhook
         in: path
         name: companyID
@@ -1311,7 +1339,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Webhooks
-  /api/webhook/{companyID}/{webhookID}:
+  /api/webhook/{companyID}/{repositoryID}/{webhookID}:
     delete:
       consumes:
       - application/json
@@ -1379,7 +1407,14 @@ paths:
         name: Webhook
         required: true
         schema:
-          $ref: '#/definitions/webhook.Webhook'
+          allOf:
+          - $ref: '#/definitions/webhook.Webhook'
+          - properties:
+              headers:
+                items:
+                  $ref: '#/definitions/webhook.WebhookHeaders'
+                type: array
+            type: object
       - description: companyID of the webhook
         in: path
         name: companyID

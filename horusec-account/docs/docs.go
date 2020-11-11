@@ -1997,7 +1997,22 @@ var doc = `{
                                         "content": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/webhook.WebhookResponse"
+                                                "allOf": [
+                                                    {
+                                                        "$ref": "#/definitions/webhook.WebhookResponse"
+                                                    },
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "headers": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/definitions/webhook.WebhookHeaders"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         }
                                     }
@@ -2110,7 +2125,22 @@ var doc = `{
                                         "content": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/webhook.WebhookResponse"
+                                                "allOf": [
+                                                    {
+                                                        "$ref": "#/definitions/webhook.WebhookResponse"
+                                                    },
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "headers": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/definitions/webhook.WebhookHeaders"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         }
                                     }
@@ -2198,7 +2228,22 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/webhook.Webhook"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/webhook.Webhook"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "headers": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/webhook.WebhookHeaders"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     {
@@ -2274,7 +2319,7 @@ var doc = `{
                 }
             }
         },
-        "/api/webhook/{companyID}/{webhookID}": {
+        "/api/webhook/{companyID}/{repositoryID}/{webhookID}": {
             "put": {
                 "security": [
                     {
@@ -2299,7 +2344,22 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/webhook.Webhook"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/webhook.Webhook"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "headers": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/webhook.WebhookHeaders"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     {
@@ -2565,15 +2625,26 @@ var doc = `{
             "type": "object",
             "properties": {
                 "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/webhook.WebhookHeaders"
                     }
                 },
                 "method": {
                     "type": "string"
                 },
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "webhook.WebhookHeaders": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
                     "type": "string"
                 }
             }
@@ -2588,9 +2659,9 @@ var doc = `{
                     "type": "string"
                 },
                 "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/webhook.WebhookHeaders"
                     }
                 },
                 "method": {
