@@ -16,7 +16,7 @@ package accountrepository
 
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/google/uuid"
 )
 

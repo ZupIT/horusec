@@ -16,7 +16,8 @@ package companies
 
 import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -26,47 +27,52 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(accountID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error) {
+func (m *Mock) Get(_, _ uuid.UUID) (*accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("Get")
 	return args.Get(0).(*accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+func (m *Mock) List(_ uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) UpdateAccountCompany(role *roles.AccountCompany) error {
+func (m *Mock) UpdateAccountCompany(_ *roles.AccountCompany) error {
 	args := m.MethodCalled("UpdateAccountCompany")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) InviteUser(inviteUser *accountEntities.InviteUser) error {
+func (m *Mock) InviteUser(_ *dto.InviteUser) error {
 	args := m.MethodCalled("InviteUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) Delete(companyID uuid.UUID) error {
+func (m *Mock) Delete(_ uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error) {
+func (m *Mock) GetAllAccountsInCompany(_ uuid.UUID) (*[]roles.AccountRole, error) {
 	args := m.MethodCalled("GetAllAccountsInCompany")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) RemoveUser(removeUser *accountEntities.RemoveUser) error {
+func (m *Mock) RemoveUser(_ *dto.RemoveUser) error {
 	args := m.MethodCalled("RemoveUser")
 	return mockUtils.ReturnNilOrError(args, 0)
+}
+
+func (m *Mock) GetAccountIDByEmail(_ string) (uuid.UUID, error) {
+	args := m.MethodCalled("GetAccountIDByEmail")
+	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }

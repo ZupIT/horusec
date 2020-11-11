@@ -21,10 +21,12 @@ import (
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	accountDto "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -35,9 +37,9 @@ import (
 	"time"
 )
 
-func CreateAccount(t *testing.T, account *accountentities.Account) {
+func CreateAccount(t *testing.T, account *authEntities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://127.0.0.1:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8006/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -47,7 +49,7 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func Login(t *testing.T, credentials *authEntities.Credentials) map[string]string {
+func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
 		"http://127.0.0.1:8006/api/auth/authenticate",
@@ -65,7 +67,7 @@ func Login(t *testing.T, credentials *authEntities.Credentials) map[string]strin
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -405,7 +407,7 @@ func UpdateVulnerabilitiesType(t *testing.T, bearerToken, companyID, repositoryI
 	content, _ := json.Marshal(body["content"])
 	return string(content)
 }
-func InviteUserToRepository(t *testing.T, bearerToken, companyID, repositoryID string, user *accountentities.InviteUser) {
+func InviteUserToRepository(t *testing.T, bearerToken, companyID, repositoryID string, user *accountDto.InviteUser) {
 	fmt.Println("Running test for InviteUserToRepository")
 	req, _ := http.NewRequest(
 		http.MethodPost,

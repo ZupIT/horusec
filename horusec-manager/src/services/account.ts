@@ -16,7 +16,7 @@
 
 import http from 'config/axios/default';
 import axios from 'axios';
-import { SERVICE_ACCOUNT, SERVICE_AUTH } from '../config/endpoints';
+import { SERVICE_AUTH } from '../config/endpoints';
 import {
   setCurrentUser,
   clearCurrentUser,
@@ -30,10 +30,10 @@ const login = (params: LoginParams) => {
   return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, params);
 };
 
-const logout = () => http.post(`${SERVICE_ACCOUNT}/api/account/logout`);
+const logout = () => http.post(`${SERVICE_AUTH}/api/account/logout`);
 
 const createAccount = (username: string, password: string, email: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/account/create-account`, {
+  return http.post(`${SERVICE_AUTH}/api/account/create-account`, {
     username,
     email,
     password,
@@ -47,18 +47,18 @@ const createAccountFromKeycloak = (accessToken: string) => {
 };
 
 const sendCode = (email: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/account/send-code`, { email });
+  return http.post(`${SERVICE_AUTH}/api/account/send-code`, { email });
 };
 
 const validateCode = (email: string, code: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/account/validate-code`, {
+  return http.post(`${SERVICE_AUTH}/api/account/validate-code`, {
     email,
     code,
   });
 };
 
 const changePassword = (token: string, password: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/account/change-password`, password, {
+  return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
       Authorization: `Bearer ${token}`,
@@ -67,7 +67,7 @@ const changePassword = (token: string, password: string) => {
 };
 
 const verifyUniqueUsernameEmail = (email: string, username: string) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/account/verify-already-used`, {
+  return http.post(`${SERVICE_AUTH}/api/account/verify-already-used`, {
     email,
     username,
   });
@@ -85,7 +85,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
   if (refreshToken) {
     return new Promise((resolve, reject) => {
       axios
-        .post(`${SERVICE_ACCOUNT}/api/account/renew-token`, refreshToken, {
+        .post(`${SERVICE_AUTH}/api/account/renew-token`, refreshToken, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-type': 'text/plain',

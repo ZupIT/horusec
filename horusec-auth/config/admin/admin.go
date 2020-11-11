@@ -17,7 +17,7 @@ package admin
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 )
@@ -37,13 +37,13 @@ func CreateApplicationAdmin(config *app.Config, read relational.InterfaceRead, w
 	}
 }
 
-func getDefaultAccountApplicationAdmin(config *app.Config) *accountEntities.Account {
+func getDefaultAccountApplicationAdmin(config *app.Config) *authEntities.Account {
 	entity, err := config.GetApplicationAdminData()
 	if err != nil {
 		logger.LogPanic("Some error occurs when parse Application Admin Data to Account", err)
 	}
 	pass := entity.Password
-	return &accountEntities.Account{
+	return &authEntities.Account{
 		Email:              entity.Email,
 		Password:           pass,
 		Username:           entity.Username,

@@ -16,10 +16,10 @@ package accountcompany
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"

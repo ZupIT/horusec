@@ -16,10 +16,10 @@ package company
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 )
 
 type ICompany interface {
