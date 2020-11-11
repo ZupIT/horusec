@@ -275,9 +275,26 @@ func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
 
 func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 	if pr.analysis.HasErrors() {
-		logger.LogErrorWithLevel(messages.MsgErrorFoundErrorsInAnalysis, errors.New(pr.analysis.Errors), logger.ErrorLevel)
+		pr.logSeparator(true)
+		logger.LogWarnWithLevel(messages.MsgErrorFoundErrorsInAnalysis, logger.WarnLevel)
+		fmt.Print("\n")
+
+		for _, errorMessage := range strings.SplitAfter(pr.analysis.Errors, ";") {
+			pr.printErrors(errorMessage)
+		}
+
 		fmt.Print("\n")
 	}
+}
+
+func (pr *PrintResults) printErrors(errorMessage string) {
+	if strings.Contains(errorMessage, messages.MsgErrorPacketJSONNotFound) ||
+		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) {
+		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""), logger.WarnLevel)
+		return
+	}
+
+	logger.LogStringAsError(strings.ReplaceAll(errorMessage, ";", ""))
 }
 
 func (pr *PrintResults) printResponseAnalysis() {
