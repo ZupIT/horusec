@@ -7,4 +7,4 @@ COPY . .
 RUN go get -d ./...
 RUN go get github.com/cosmtrek/air
 
-CMD ["air"]
+CMD ["air", "-c", "horusec-account/deployments/air/config.toml"]
