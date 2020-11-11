@@ -1,9 +1,10 @@
-FROM golang:latest
+FROM golang:1.14
 
-WORKDIR /go/src/github.com/ZupIT/horusec
+WORKDIR /usr/app
 
 COPY . .
 
-RUN go get github.com/githubnemo/CompileDaemon
+RUN go get -d ./...
+RUN go get github.com/cosmtrek/air
 
-ENTRYPOINT CompileDaemon -log-prefix=false -build="go build -o /tmp/account ./horusec-account/cmd/app/main.go" -command="/tmp/account"
+CMD ["air"]

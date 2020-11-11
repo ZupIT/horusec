@@ -94,7 +94,7 @@ services:
       dockerfile: ./horusec-account/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-account
     network_mode: "host"
