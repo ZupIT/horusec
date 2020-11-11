@@ -58,5 +58,11 @@ func (c *Controller) Remove(webhookID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	return c.webhookRepository.Remove(webhookID)
+	if err := c.webhookRepository.Remove(webhookID); err != nil {
+		if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryIDInWebhook {
+			return errorsEnum.ErrorAlreadyExistsWebhookToRepository
+		}
+		return err
+	}
+	return nil
 }

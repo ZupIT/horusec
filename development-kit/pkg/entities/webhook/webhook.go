@@ -2,7 +2,6 @@ package webhook
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -17,29 +16,11 @@ type Webhook struct {
 	Description  string    `json:"description"`
 	URL          string    `json:"url"`
 	Method       string    `json:"method"`
-	Headers      []Headers `json:"headers"`
+	Headers      HeaderType `json:"headers" sql:"type:"jsonb"`
 	RepositoryID uuid.UUID `json:"repositoryID" swaggerignore:"true"`
 	CompanyID    uuid.UUID `json:"companyID" swaggerignore:"true"`
 	CreatedAt    time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt    time.Time `json:"updatedAt" swaggerignore:"true"`
-}
-
-type ResponseWebhook struct {
-	WebhookID    uuid.UUID                  `json:"webhookID"`
-	Description  string                     `json:"description"`
-	Method       string                     `json:"method"`
-	URL          string                     `json:"url"`
-	Headers      []Headers                  `json:"headers"`
-	RepositoryID uuid.UUID                  `json:"repositoryID"`
-	Repository   account.RepositoryResponse `json:"repository"`
-	CompanyID    uuid.UUID                  `json:"companyID"`
-	CreatedAt    time.Time                  `json:"createdAt"`
-	UpdatedAt    time.Time                  `json:"updatedAt"`
-}
-
-type Headers struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
 }
 
 func (w *Webhook) GetTable() string {
@@ -92,6 +73,17 @@ func (w *Webhook) GetHeaders() map[string]string {
 	headers := map[string]string{}
 	for _, item := range w.Headers {
 		headers[item.Key] = item.Value
+	}
+	return headers
+}
+
+func (w *Webhook) GetListHeaders() []map[string]string {
+	headers := []map[string]string{}
+	for _, item := range w.Headers {
+		headers = append(headers, map[string]string{
+			"key": item.Key,
+			"value": item.Value,
+		})
 	}
 	return headers
 }
