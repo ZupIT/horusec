@@ -92,7 +92,7 @@ COMPOSE_FILE_NAME ?= docker-compose.yaml
 compose: compose-down compose-up
 
 compose-dev:
-	COMPOSE_FILE_NAME="docker-compose.dev.yaml" make compose
+	$(DOCKER_COMPOSE) -f deployments/docker-compose.dev.yaml up -d --build
 
 # Down all containers on depends to the project run
 compose-down:
