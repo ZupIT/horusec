@@ -22,6 +22,8 @@ import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
 
+import AddWebhook from './Add';
+
 const mockOfWebhooks: Webhook[] = [
   {
     endpoint: 'https://rankeer.app/hook/horusec',
@@ -49,6 +51,7 @@ const Webhooks: React.FC = () => {
 
   const [webhooks, setWebhooks] = useState<Webhook[]>(mockOfWebhooks);
   const [isLoading, setLoading] = useState(false);
+  const [addWebhookVisible, setAddWebhookVisible] = useState(false);
 
   return (
     <Styled.Wrapper>
@@ -61,6 +64,7 @@ const Webhooks: React.FC = () => {
             rounded
             width={150}
             icon="plus"
+            onClick={() => setAddWebhookVisible(true)}
           />
         </Styled.TitleWrapper>
 
@@ -140,6 +144,12 @@ const Webhooks: React.FC = () => {
           </Styled.Body>
         </Styled.Table>
       </Styled.Content>
+
+      <AddWebhook
+        isVisible={addWebhookVisible}
+        onCancel={() => setAddWebhookVisible(false)}
+        onConfirm={() => setAddWebhookVisible(false)}
+      />
     </Styled.Wrapper>
   );
 };

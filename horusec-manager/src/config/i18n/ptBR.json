@@ -292,6 +292,14 @@
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
     "ADD": "Criar webhook",
+    "SAVE": "Salvar",
+    "DESCRIPTION_LABEL": "Informe a descrição para o webhook:",
+    "DESCRIPTION": "Descrição",
+    "RESPOSITORY_LABEL": "Selecione o repositório que ira acionar o webhook:",
+    "REPOSITORY": "Repositório",
+    "URL_LABEL": "Insira o endpoint (url) para ser acionado pelo Horusec:",
+    "URL": "Endpoint (URL)",
+    "INVALID_URL": "URL inválida",
     "TABLE": {
       "EMPTY": "Não há webhooks cadastrados",
       "METHOD": "Método",
