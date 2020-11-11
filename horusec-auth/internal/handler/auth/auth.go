@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	netHTTP "net/http"
@@ -87,7 +88,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getCredentials(r *netHTTP.Request) (*auth.Credentials, error) {
+func (h *Handler) getCredentials(r *netHTTP.Request) (*dto.Credentials, error) {
 	credentials, err := h.authUseCases.NewCredentialsFromReadCloser(r.Body)
 	if err != nil {
 		return credentials, err

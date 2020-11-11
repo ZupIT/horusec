@@ -16,16 +16,17 @@ package repositories
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 )
 
 type IRepository interface {
 	NewRepositoryFromReadCloser(body io.ReadCloser) (repository *accountEntities.Repository, err error)
 	NewAccountRepositoryFromReadCloser(body io.ReadCloser) (accountRepository *roles.AccountRepository, err error)
-	NewInviteUserFromReadCloser(body io.ReadCloser) (inviteUser *accountEntities.InviteUser, err error)
+	NewInviteUserFromReadCloser(body io.ReadCloser) (inviteUser *dto.InviteUser, err error)
 }
 
 type Repository struct {
@@ -58,7 +59,7 @@ func (r *Repository) NewAccountRepositoryFromReadCloser(body io.ReadCloser) (
 }
 
 func (r *Repository) NewInviteUserFromReadCloser(body io.ReadCloser) (
-	inviteUser *accountEntities.InviteUser, err error) {
+	inviteUser *dto.InviteUser, err error) {
 	err = json.NewDecoder(body).Decode(&inviteUser)
 	_ = body.Close()
 	if err != nil {

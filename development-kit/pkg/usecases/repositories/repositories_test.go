@@ -16,12 +16,13 @@ package repositories
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io/ioutil"
 	"strings"
 	"testing"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -78,7 +79,7 @@ func TestNewAccountRepositoryFromReadCloser(t *testing.T) {
 
 func TestNewInviteUserFromReadCloser(t *testing.T) {
 	t.Run("should success parse read closer to invite user", func(t *testing.T) {
-		bytes, _ := json.Marshal(&accountEntities.InviteUser{
+		bytes, _ := json.Marshal(&dto.InviteUser{
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 			Role:         rolesEnum.Admin,

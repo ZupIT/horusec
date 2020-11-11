@@ -17,7 +17,7 @@ package auth
 import (
 	"context"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
@@ -33,7 +33,7 @@ import (
 )
 
 type IController interface {
-	AuthByType(credentials *authEntities.Credentials) (interface{}, error)
+	AuthByType(credentials *dto.Credentials) (interface{}, error)
 	IsAuthorized(_ context.Context, data *authGrpc.IsAuthorizedData) (*authGrpc.IsAuthorizedResponse, error)
 	GetAuthConfig(_ context.Context, data *authGrpc.GetAuthConfigData) (*authGrpc.GetAuthConfigResponse, error)
 	GetAccountID(_ context.Context, data *authGrpc.GetAccountIDData) (*authGrpc.GetAccountIDResponse, error)
@@ -58,7 +58,7 @@ func NewAuthController(
 	}
 }
 
-func (c *Controller) AuthByType(credentials *authEntities.Credentials) (interface{}, error) {
+func (c *Controller) AuthByType(credentials *dto.Credentials) (interface{}, error) {
 	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
 		return c.horusAuthService.Authenticate(credentials)
@@ -85,11 +85,11 @@ func (c *Controller) IsAuthorized(_ context.Context,
 	return c.setIsAuthorizedResponse(false, errors.ErrorUnauthorized)
 }
 
-func (c *Controller) parseToAuthorizationData(data *authGrpc.IsAuthorizedData) *authEntities.AuthorizationData {
+func (c *Controller) parseToAuthorizationData(data *authGrpc.IsAuthorizedData) *dto.AuthorizationData {
 	companyID, _ := uuid.Parse(data.CompanyID)
 	repositoryID, _ := uuid.Parse(data.RepositoryID)
 
-	return &authEntities.AuthorizationData{
+	return &dto.AuthorizationData{
 		Token:        data.Token,
 		Role:         authEnums.HorusecRoles(data.Role),
 		CompanyID:    companyID,

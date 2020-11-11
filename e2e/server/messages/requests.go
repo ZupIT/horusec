@@ -21,7 +21,9 @@ import (
 	"encoding/json"
 	"fmt"
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	accountDto "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
@@ -30,9 +32,9 @@ import (
 	"testing"
 )
 
-func CreateAccount(t *testing.T, account *accountentities.Account) {
+func CreateAccount(t *testing.T, account *authEntities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://127.0.0.1:8003/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8006/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -42,7 +44,7 @@ func CreateAccount(t *testing.T, account *accountentities.Account) {
 	assert.NotEmpty(t, createAccountResponse["content"])
 }
 
-func Login(t *testing.T, credentials *authEntities.Credentials) httpResponse.Interface {
+func Login(t *testing.T, credentials *authDto.Credentials) httpResponse.Interface {
 	fmt.Println("Running test for Login")
 	req, _ := http.NewRequest(
 		http.MethodPost,
@@ -52,7 +54,7 @@ func Login(t *testing.T, credentials *authEntities.Credentials) httpResponse.Int
 	assert.NoError(t, err)
 	return res
 }
-func LoginAndReturnAccessToken(t *testing.T, credentials *authEntities.Credentials) string {
+func LoginAndReturnAccessToken(t *testing.T, credentials *authDto.Credentials) string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
 		"http://127.0.0.1:8006/api/auth/authenticate",
@@ -71,7 +73,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 	fmt.Println("Running test for ValidateAccount")
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://127.0.0.1:8003/api/account/validate/"+accountID,
+		"http://127.0.0.1:8006/api/account/validate/"+accountID,
 		nil)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	if err != nil {
@@ -85,7 +87,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
 	req.Header.Add("Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -112,7 +114,7 @@ func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Co
 	return createdCompany["content"]["companyID"]
 }
 
-func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
+func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountDto.InviteUser) {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodPost,

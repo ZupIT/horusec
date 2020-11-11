@@ -19,6 +19,9 @@ package keycloak
 import (
 	"encoding/json"
 	"fmt"
+	accountDto "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"net/http"
 	"os"
 	"os/exec"
@@ -26,8 +29,7 @@ import (
 	"testing"
 	"time"
 
-	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -95,7 +97,7 @@ func TestServer(t *testing.T) {
 		bearerToken := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
 		CheckIfTokenIsValid(t, bearerToken, SecretKeyCloak)
 
-		CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerToken})
+		CreateUserFromKeycloakInHorusec(t, &authDto.KeycloakToken{AccessToken: bearerToken})
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
@@ -137,18 +139,18 @@ func StartAuthHorusecServices(t *testing.T, secret string) {
 }
 
 func RunCompanyCRUD(t *testing.T, bearerToken string) string {
-	companyID := server.CreateCompany(t, bearerToken, &accountentities.Company{
+	companyID := server.CreateCompany(t, bearerToken, &accountEntities.Company{
 		Name: "zup",
 	})
 	allCompanies := server.ReadAllCompanies(t, bearerToken, true)
 	assert.Contains(t, allCompanies, "zup")
-	server.UpdateCompany(t, bearerToken, companyID, &accountentities.Company{
+	server.UpdateCompany(t, bearerToken, companyID, &accountEntities.Company{
 		Name: "zup-1",
 	})
 	allCompaniesUpdated := server.ReadAllCompanies(t, bearerToken, true)
 	assert.Contains(t, allCompaniesUpdated, "zup-1")
 	server.DeleteCompany(t, bearerToken, companyID)
-	return server.CreateCompany(t, bearerToken, &accountentities.Company{
+	return server.CreateCompany(t, bearerToken, &accountEntities.Company{
 		Name: "zup",
 	})
 }
@@ -176,13 +178,13 @@ func RunCRUDUserInCompany(t *testing.T, bearerTokenAccount1, companyID string) {
 
 	// Login in keycloak and Create user in Horusec
 	bearerTokenAccount2 := LoginInKeycloak(t, user.Username, credential.Value)["access_token"].(string)
-	CreateUserFromKeycloakInHorusec(t, &accountentities.KeycloakToken{AccessToken: bearerTokenAccount2})
+	CreateUserFromKeycloakInHorusec(t, &authDto.KeycloakToken{AccessToken: bearerTokenAccount2})
 
 	fmt.Println("Waiting register token in keycloak and register new user in horusec...")
 	time.Sleep(3 * time.Second)
 
 	// Invite user to existing company
-	server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountentities.InviteUser{
+	server.InviteUserToCompany(t, bearerTokenAccount1, companyID, &accountDto.InviteUser{
 		Role:      rolesEnum.Member,
 		Email:     user.Email,
 		CompanyID: companyIDParsed,

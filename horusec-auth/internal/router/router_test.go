@@ -15,7 +15,6 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
@@ -35,7 +34,7 @@ func TestGetRouter(t *testing.T) {
 		router := NewRouter(server.NewServerConfig("8000", &cors.Options{}))
 		assert.NotNil(t, router)
 
-		mux := router.GetRouter(nil, nil, &app.Config{})
+		mux := router.GetRouter(nil, nil, nil, nil, nil)
 		assert.NotNil(t, mux)
 	})
 }
