@@ -15,11 +15,11 @@ func TestWebhook_GetMethod(t *testing.T) {
 		w = Webhook{
 			Method: "put",
 		}
-		assert.Equal(t, http.MethodPut, w.GetMethod())
+		assert.Equal(t, "", w.GetMethod())
 		w = Webhook{
 			Method: "patch",
 		}
-		assert.Equal(t, http.MethodPatch, w.GetMethod())
+		assert.Equal(t, "", w.GetMethod())
 		w = Webhook{
 			Method: "get",
 		}

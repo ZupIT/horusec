@@ -1136,63 +1136,6 @@ paths:
               type: object
       tags:
       - Health
-  /api/webhook:
-    post:
-      consumes:
-      - application/json
-      description: create webhook!
-      operationId: create-webhook
-      parameters:
-      - description: webhook info
-        in: body
-        name: Webhook
-        required: true
-        schema:
-          $ref: '#/definitions/webhook.Webhook'
-      - description: companyID of the webhook
-        in: path
-        name: companyID
-        required: true
-        type: string
-      - description: repositoryID of the webhook
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: CREATED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Webhooks
   /api/webhook/{companyID}:
     get:
       consumes:
@@ -1312,6 +1255,62 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Webhooks
+    post:
+      consumes:
+      - application/json
+      description: create webhook!
+      operationId: create-webhook
+      parameters:
+      - description: webhook info, only method allowed is POST
+        in: body
+        name: Webhook
+        required: true
+        schema:
+          $ref: '#/definitions/webhook.Webhook'
+      - description: companyID of the webhook
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhooks
   /api/webhook/{companyID}/{webhookID}:
     delete:
       consumes:
@@ -1322,6 +1321,11 @@ paths:
       - description: companyID of the webhook
         in: path
         name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
         required: true
         type: string
       - description: webhookID of the webhook
@@ -1370,7 +1374,7 @@ paths:
       description: get webhook by repositoryID!
       operationId: update-webhook
       parameters:
-      - description: webhook info
+      - description: webhook info, only method allowed is POST
         in: body
         name: Webhook
         required: true
@@ -1379,6 +1383,11 @@ paths:
       - description: companyID of the webhook
         in: path
         name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
         required: true
         type: string
       - description: webhookID of the webhook

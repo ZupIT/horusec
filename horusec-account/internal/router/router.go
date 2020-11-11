@@ -66,6 +66,7 @@ func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.Interfa
 	appConfig app.IAppConfig, grpcCon *grpc.ClientConn) {
 	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig)
 	r.RouterCompany(broker, databaseRead, databaseWrite, appConfig, grpcCon)
+	r.RouterWebhook(databaseRead, databaseWrite, grpcCon)
 }
 
 func (r *Router) EnableRealIP() *Router {
@@ -137,8 +138,8 @@ func (r *Router) RouterWebhook(databaseRead SQL.InterfaceRead,
 		router.With(authzMiddleware.IsCompanyAdmin).Post("/{companyID}/{repositoryID}", handler.Create)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}", handler.ListAll)
 		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}/{repositoryID}", handler.ListAllByRepositoryID)
-		router.With(authzMiddleware.IsCompanyAdmin).Put("/{companyID}/{webhookID}", handler.Update)
-		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/{webhookID}", handler.Remove)
+		router.With(authzMiddleware.IsCompanyAdmin).Put("/{companyID}/{repositoryID}/{webhookID}", handler.Update)
+		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/{repositoryID}/{webhookID}", handler.Remove)
 	})
 	return r
 }
