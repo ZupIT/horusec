@@ -30,7 +30,7 @@ const Form = styled.form`
 
 const Field = styled(Input)`
   margin-top: 25px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 `;
 
 const RoleWrapper = styled.div`

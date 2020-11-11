@@ -24,6 +24,7 @@ const Form = styled.form`
 
 const Field = styled(Input)`
   margin-top: 25px;
+  margin-bottom: 15px;
 `;
 
 const ForgotPass = styled.a`
@@ -32,6 +33,7 @@ const ForgotPass = styled.a`
   align-self: flex-start;
   cursor: pointer;
   transition: 0.2s;
+  margin-top: 20px;
 
   :hover {
     transform: scale(1.1);

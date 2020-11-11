@@ -15,7 +15,7 @@
  */
 
 import React, { useState } from 'react';
-import { Dialog } from 'components';
+import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -137,7 +137,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
                 name="adminGroup"
@@ -149,7 +149,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setSupervisorGroup(field)}
                 name="supervisorGroup"
@@ -161,7 +161,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.USER')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setUserGroup(field)}
                 name="userGroup"
