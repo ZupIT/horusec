@@ -78,7 +78,7 @@ const (
 	// Fired when to be parse string of the WorkDir Entity and return error
 	MsgErrorParseStringToWorkDir = "{HORUSEC_CLI} Error when try parse workdir string to entity. Returning default values"
 	// Fired when finish analysis and send to print results and exists errors in analysis
-	MsgErrorFoundErrorsInAnalysis   = "{HORUSEC_CLI} Error when try run analysis we founded also errors."
+	MsgErrorFoundErrorsInAnalysis   = "{HORUSEC_CLI} During execution we found some problems:"
 	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt " +
 		"not found in python project to start analysis"
 	MsgErrorPacketJSONNotFound = "{HORUSEC_CLI} Error It looks like your project " +
