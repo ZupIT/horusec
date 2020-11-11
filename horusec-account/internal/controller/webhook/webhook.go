@@ -4,7 +4,9 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	webhookRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/webhook"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
+	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
+	"time"
 )
 
 type IController interface {
@@ -25,17 +27,36 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 }
 
 func (c *Controller) ListAll(companyID uuid.UUID) (*[]webhook.ResponseWebhook, error) {
-	panic("implement me")
+	return c.webhookRepository.GetAllByCompanyID(companyID)
 }
 
 func (c *Controller) Create(wh *webhook.Webhook) (uuid.UUID, error) {
-	panic("implement me")
+	wh.CreatedAt = time.Now()
+	wh.UpdatedAt = time.Now()
+	wh.WebhookID = uuid.New()
+	err := c.webhookRepository.Create(wh)
+	if err != nil {
+		if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryIDInWebhook {
+			return uuid.Nil, errorsEnum.ErrorAlreadyExistsWebhookToRepository
+		}
+		return uuid.Nil, err
+	}
+	return wh.WebhookID, nil
 }
 
 func (c *Controller) Update(wh *webhook.Webhook) error {
-	panic("implement me")
+	wh.UpdatedAt = time.Now()
+	_, err := c.webhookRepository.GetByWebhookID(wh.WebhookID)
+	if err != nil {
+		return err
+	}
+	return c.webhookRepository.Update(wh)
 }
 
 func (c *Controller) Remove(webhookID uuid.UUID) error {
-	panic("implement me")
+	_, err := c.webhookRepository.GetByWebhookID(webhookID)
+	if err != nil {
+		return err
+	}
+	return c.webhookRepository.Remove(webhookID)
 }

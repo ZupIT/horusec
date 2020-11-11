@@ -2,10 +2,10 @@ package webhook
 
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http"    // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook" // [swagger-import]
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	webhookUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/webhook"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -78,6 +78,7 @@ func (h *Handler) executeCreateController(webhookEntity *webhook.Webhook, w netH
 // @Accept  json
 // @Produce  json
 // @Param companyID path string true "companyID of the webhook"
+//nolint:lll swagger-line
 // @Success 200 {object} http.Response{content=[]webhook.ResponseWebhook{headers=[]webhook.Headers,repository=account.RepositoryResponse}} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"

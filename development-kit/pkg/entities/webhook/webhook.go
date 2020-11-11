@@ -20,19 +20,21 @@ type Webhook struct {
 	Headers      []Headers `json:"headers"`
 	RepositoryID uuid.UUID `json:"repositoryID" swaggerignore:"true"`
 	CompanyID    uuid.UUID `json:"companyID" swaggerignore:"true"`
+	CreatedAt    time.Time `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt    time.Time `json:"updatedAt" swaggerignore:"true"`
 }
 
 type ResponseWebhook struct {
-	WebhookID    uuid.UUID `json:"webhookID"`
-	Description  string    `json:"description"`
-	Method       string    `json:"method"`
-	URL          string    `json:"url"`
-	Headers      []Headers `json:"headers"`
-	RepositoryID uuid.UUID `json:"repositoryID"`
+	WebhookID    uuid.UUID                  `json:"webhookID"`
+	Description  string                     `json:"description"`
+	Method       string                     `json:"method"`
+	URL          string                     `json:"url"`
+	Headers      []Headers                  `json:"headers"`
+	RepositoryID uuid.UUID                  `json:"repositoryID"`
 	Repository   account.RepositoryResponse `json:"repository"`
-	CompanyID    uuid.UUID `json:"companyID"`
-	CreatedAt    time.Time `json:"createdAt"`
-	UpdatedAt    time.Time `json:"updatedAt"`
+	CompanyID    uuid.UUID                  `json:"companyID"`
+	CreatedAt    time.Time                  `json:"createdAt"`
+	UpdatedAt    time.Time                  `json:"updatedAt"`
 }
 
 type Headers struct {
