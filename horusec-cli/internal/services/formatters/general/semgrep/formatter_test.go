@@ -12,27 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tools
-
-type Tool string
-
-const (
-	GoSec            Tool = "GoSec"
-	SecurityCodeScan Tool = "SecurityCodeScan"
-	Brakeman         Tool = "Brakeman"
-	Safety           Tool = "Safety"
-	Bandit           Tool = "Bandit"
-	NpmAudit         Tool = "NpmAudit"
-	YarnAudit        Tool = "YarnAudit"
-	SpotBugs         Tool = "SpotBugs"
-	HorusecKotlin    Tool = "HorusecKotlin"
-	HorusecJava      Tool = "HorusecJava"
-	HorusecLeaks     Tool = "HorusecLeaks"
-	GitLeaks         Tool = "GitLeaks"
-	TfSec            Tool = "TfSec"
-	Semgrep          Tool = "Semgrep"
-)
-
-func (t Tool) ToString() string {
-	return string(t)
-}
+package semgrep

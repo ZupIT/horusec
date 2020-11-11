@@ -30,7 +30,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	doublestar "github.com/bmatcuk/doublestar/v2"
+	"github.com/bmatcuk/doublestar/v2"
 	"github.com/google/uuid"
 )
 
@@ -51,7 +51,7 @@ func NewLanguageDetect(configs *config.Config, analysisID uuid.UUID) Interface {
 }
 
 func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language, error) {
-	langs := []string{languages.Leaks.ToString()}
+	langs := []string{languages.Leaks.ToString(), languages.General.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err, logger.ErrorLevel)

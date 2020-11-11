@@ -28,6 +28,7 @@ const (
 	Javascript Language = "JavaScript"
 	Leaks      Language = "Leaks"
 	HCL        Language = "HCL"
+	General    Language = "General"
 	Unknown    Language = "Unknown"
 )
 
@@ -51,6 +52,7 @@ func SupportedLanguages() []Language {
 		Javascript,
 		Leaks,
 		HCL,
+		General,
 		Unknown,
 	}
 }
@@ -65,6 +67,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Java.ToString():       Java,
 		Kotlin.ToString():     Kotlin,
 		Javascript.ToString(): Javascript,
+		General.ToString():    General,
 		HCL.ToString():        HCL,
 	}
 }
