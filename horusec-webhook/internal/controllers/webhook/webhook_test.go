@@ -35,7 +35,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 		mockRead.On("Find").Return(response.NewResponse(0, EnumErrors.ErrNotFoundRecords, nil))
 		c := NewWebhookController(mockRead)
 		err := c.DispatchRequest(test.CreateAnalysisMock())
-		assert.Error(t, err)
+		assert.NoError(t, err)
 	})
 	t.Run("Should return error because exists error in mount request", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()

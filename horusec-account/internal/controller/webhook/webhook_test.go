@@ -23,8 +23,8 @@ func TestController_Create(t *testing.T) {
 			webhookRepository: repository,
 		}
 		webhookID, err := c.Create(&webhook.Webhook{
-			URL:          "http://example.com",
-			Method:       "POST",
+			URL:    "http://example.com",
+			Method: "POST",
 		})
 		assert.NoError(t, err)
 		assert.NotEqual(t, uuid.Nil, webhookID)
@@ -36,8 +36,8 @@ func TestController_Create(t *testing.T) {
 			webhookRepository: repository,
 		}
 		webhookID, err := c.Create(&webhook.Webhook{
-			URL:          "http://example.com",
-			Method:       "POST",
+			URL:    "http://example.com",
+			Method: "POST",
 		})
 		assert.Equal(t, errorsEnum.ErrorAlreadyExistsWebhookToRepository, err)
 		assert.Equal(t, uuid.Nil, webhookID)
@@ -50,8 +50,8 @@ func TestController_Create(t *testing.T) {
 			webhookRepository: repository,
 		}
 		webhookID, err := c.Create(&webhook.Webhook{
-			URL:          "http://example.com",
-			Method:       "POST",
+			URL:    "http://example.com",
+			Method: "POST",
 		})
 		assert.Equal(t, errorUnexpected, err)
 		assert.Equal(t, uuid.Nil, webhookID)

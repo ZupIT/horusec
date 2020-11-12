@@ -141,7 +141,7 @@ func (c *Controller) InviteUser(inviteUser *dto.InviteUser) error {
 }
 
 func (c *Controller) sendInviteUserEmail(email, username, companyName string) error {
-	if c.appConfig.IsEmailServiceDisabled() {
+	if c.appConfig.IsDisabledBroker() {
 		return nil
 	}
 

@@ -131,8 +131,8 @@ func TestWebhook_GetAllByCompanyID(t *testing.T) {
 				Method:       http.MethodPost,
 				Headers:      []entitiesWebhook.Headers{},
 				RepositoryID: uuid.New(),
-				Repository:   account.Repository{
-					Name:            "repository",
+				Repository: account.Repository{
+					Name: "repository",
 				},
 			},
 		}

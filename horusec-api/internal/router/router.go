@@ -17,8 +17,10 @@ package router
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	serverConfig "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/health"
 	"github.com/ZupIT/horusec/horusec-api/internal/handlers/management"
@@ -54,11 +56,10 @@ func (r *Router) setMiddleware() {
 	r.RouterMetrics()
 }
 
-func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
-	grpcCon *grpc.ClientConn) *chi.Mux {
+func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, broker brokerLib.IBroker, config app.IAppConfig, grpcCon *grpc.ClientConn) *chi.Mux {
 	r.setMiddleware()
 	r.RouterHealth(postgresRead, postgresWrite)
-	r.RouterAnalysis(postgresRead, postgresWrite)
+	r.RouterAnalysis(postgresRead, postgresWrite, broker, config)
 	r.RouterTokensRepository(postgresRead, postgresWrite, grpcCon)
 	r.RouterTokensCompany(postgresRead, postgresWrite, grpcCon)
 	r.RouterManagement(postgresRead, postgresWrite, grpcCon)
@@ -115,9 +116,8 @@ func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, postgresWri
 	return r
 }
 
-func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead,
-	postgresWrite relational.InterfaceWrite) *Router {
-	handler := analysis.NewHandler(postgresRead, postgresWrite)
+func (r *Router) RouterAnalysis(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, broker brokerLib.IBroker, config app.IAppConfig) *Router {
+	handler := analysis.NewHandler(postgresRead, postgresWrite, broker, config)
 	tokenMiddleware := middlewares.NewTokenAuthz(postgresRead)
 	r.router.Route(routes.AnalysisHandler, func(router chi.Router) {
 		router.Use(tokenMiddleware.IsAuthorized)

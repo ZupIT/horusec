@@ -1,0 +1,10 @@
+FROM golang:1.14
+
+WORKDIR /usr/app
+
+COPY . .
+
+RUN go get -d ./...
+RUN go get github.com/cosmtrek/air
+
+CMD ["air", "-c", "horusec-webhook/deployments/air/config.toml"]

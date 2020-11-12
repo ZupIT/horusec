@@ -104,9 +104,9 @@ func TestToBytesCompany(t *testing.T) {
 
 func TestCompanyApplicationAdmin_ToCompany(t *testing.T) {
 	c := CompanyApplicationAdmin{
-		CompanyID:   uuid.New(),
-		Name:        "test",
-		AdminEmail:  "test@example.com",
+		CompanyID:  uuid.New(),
+		Name:       "test",
+		AdminEmail: "test@example.com",
 	}
 	assert.NotEmpty(t, c.ToCompany())
 }

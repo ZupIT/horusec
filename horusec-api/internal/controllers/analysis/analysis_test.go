@@ -22,8 +22,10 @@ import (
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	analysisUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"testing"
 	"time"
 
@@ -44,7 +46,7 @@ func TestNewAnalysisController(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
 		assert.NotNil(t, controller)
 	})
@@ -59,6 +61,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 	conn.LogMode(true)
 
 	t.Run("should send a new analysis without errors", func(t *testing.T) {
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -74,8 +81,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("CommitTransaction").Return(&response.Response{})
 		mockWrite.On("Create").Return(&response.Response{})
 		mockWrite.On("GetConnection").Return(conn)
-
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 		analysis := test.CreateAnalysisMock()
 		analysis.CompanyID = uuid.Nil
 		analysis.RepositoryID = uuid.Nil
@@ -87,7 +93,77 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEqual(t, uuid.Nil, id)
 	})
+	t.Run("should send a new analysis without errors with broker disabled", func(t *testing.T) {
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: true,
+		}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		company := &account.Company{Name: "test"}
+		repository := &account.Repository{Name: "test"}
+
+		respComp := &response.Response{}
+		respRepo := &response.Response{}
+		mockRead.On("Find").Once().Return(respComp.SetData(company))
+		mockRead.On("Find").Return(respRepo.SetData(repository))
+		mockRead.On("SetFilter").Return(conn)
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(&response.Response{})
+		mockWrite.On("Create").Return(&response.Response{})
+		mockWrite.On("GetConnection").Return(conn)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
+		analysis := test.CreateAnalysisMock()
+		analysis.CompanyID = uuid.Nil
+		analysis.RepositoryID = uuid.Nil
+		analysisData := &apiEntities.AnalysisData{
+			Analysis:       analysis,
+			RepositoryName: "test",
+		}
+		id, err := controller.SaveAnalysis(analysisData)
+		assert.NoError(t, err)
+		assert.NotEqual(t, uuid.Nil, id)
+	})
+	t.Run("should send a new analysis but return error when publish in broker", func(t *testing.T) {
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(errors.New("unexpected error"))
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		company := &account.Company{Name: "test"}
+		repository := &account.Repository{Name: "test"}
+
+		respComp := &response.Response{}
+		respRepo := &response.Response{}
+		mockRead.On("Find").Once().Return(respComp.SetData(company))
+		mockRead.On("Find").Return(respRepo.SetData(repository))
+		mockRead.On("SetFilter").Return(conn)
+		mockWrite.On("StartTransaction").Return(mockWrite)
+		mockWrite.On("CommitTransaction").Return(&response.Response{})
+		mockWrite.On("Create").Return(&response.Response{})
+		mockWrite.On("GetConnection").Return(conn)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
+		analysis := test.CreateAnalysisMock()
+		analysis.CompanyID = uuid.Nil
+		analysis.RepositoryID = uuid.Nil
+		analysisData := &apiEntities.AnalysisData{
+			Analysis:       analysis,
+			RepositoryName: "test",
+		}
+		_, err := controller.SaveAnalysis(analysisData)
+		assert.Error(t, err)
+	})
 	t.Run("should send a new analysis without errors expected remove vulnerabilities hash duplicated", func(t *testing.T) {
+
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -105,6 +181,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("GetConnection").Return(conn)
 
 		controller := &Controller{
+			broker: mockBroker,
+			config: config,
 			postgresWrite:    mockWrite,
 			useCasesAnalysis: analysisUseCases.NewAnalysisUseCases(),
 			repoRepository:   repositoryRepo.NewRepository(mockRead, mockWrite),
@@ -126,6 +204,12 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.NotEqual(t, uuid.Nil, id)
 	})
 	t.Run("should send a new analysis without errors and create repository", func(t *testing.T) {
+
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -140,7 +224,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("CommitTransaction").Return(&response.Response{})
 		mockWrite.On("Create").Return(&response.Response{})
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
@@ -156,6 +240,12 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.NotEmpty(t, id)
 	})
 	t.Run("should return error while getting repository", func(t *testing.T) {
+
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -165,7 +255,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockRead.On("Find").Return(respWithError.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(conn)
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
@@ -180,6 +270,12 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("should return error while getting company", func(t *testing.T) {
+
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -187,7 +283,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(conn)
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
@@ -202,6 +298,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("should return error when send analysis and database create exist error", func(t *testing.T) {
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		resp := &response.Response{}
@@ -211,7 +312,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("RollbackTransaction").Return(&response.Response{})
 		mockWrite.On("Create").Return(resp.SetError(errors.New("some error")))
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
@@ -226,6 +327,12 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 
 	t.Run("should success remove duplicated", func(t *testing.T) {
+
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -244,7 +351,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("GetConnection").Return(&gorm.DB{})
 		mockWrite.On("RollbackTransaction").Return(&response.Response{})
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, mockBroker, config)
 
 		analysis := &apiEntities.AnalysisData{
 			Analysis: &horusec.Analysis{
@@ -289,7 +396,7 @@ func TestController_GetAnalysis(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetData(repo))
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
 		r, err := controller.GetAnalysis(repo.ID)
 
@@ -308,7 +415,7 @@ func TestController_GetAnalysis(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetError(errors.New("error")))
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
 		_, err = controller.GetAnalysis(uuid.New())
 		assert.Error(t, err)
@@ -324,7 +431,7 @@ func TestController_GetAnalysis(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetData(repo).SetError(errorsEnum.ErrNotFoundRecords))
 
-		controller := NewAnalysisController(mockRead, mockWrite)
+		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
 		_, err = controller.GetAnalysis(repo.ID)
 

@@ -80,8 +80,8 @@ func TestWebhook_Validate(t *testing.T) {
 func TestWebhook_SetCompanyIDAndRepositoryID(t *testing.T) {
 	t.Run("Should return error when repositoryID is invalid to set in webhook", func(t *testing.T) {
 		w := &Webhook{
-			URL:          "http://example.com",
-			Method:       "GET",
+			URL:    "http://example.com",
+			Method: "GET",
 		}
 		newWebhook, err := w.SetCompanyIDAndRepositoryID(uuid.New().String(), "invalid")
 		assert.Equal(t, errorsEnum.ErrorInvalidRepositoryID, err)
@@ -89,8 +89,8 @@ func TestWebhook_SetCompanyIDAndRepositoryID(t *testing.T) {
 	})
 	t.Run("Should return error when companyID is invalid to set in webhook", func(t *testing.T) {
 		w := &Webhook{
-			URL:          "http://example.com",
-			Method:       "GET",
+			URL:    "http://example.com",
+			Method: "GET",
 		}
 		newWebhook, err := w.SetCompanyIDAndRepositoryID("invalid", uuid.New().String())
 		assert.Equal(t, errorsEnum.ErrorInvalidCompanyID, err)
@@ -98,8 +98,8 @@ func TestWebhook_SetCompanyIDAndRepositoryID(t *testing.T) {
 	})
 	t.Run("Should return error when companyID is invalid to set in webhook", func(t *testing.T) {
 		w := &Webhook{
-			URL:          "http://example.com",
-			Method:       "GET",
+			URL:    "http://example.com",
+			Method: "GET",
 		}
 		newWebhook, err := w.SetCompanyIDAndRepositoryID(uuid.New().String(), uuid.New().String())
 		assert.NoError(t, err)
@@ -109,8 +109,8 @@ func TestWebhook_SetCompanyIDAndRepositoryID(t *testing.T) {
 
 func TestWebhook_SetWebhookID(t *testing.T) {
 	w := &Webhook{
-		URL:          "http://example.com",
-		Method:       "GET",
+		URL:    "http://example.com",
+		Method: "GET",
 	}
 	assert.Equal(t, uuid.Nil, w.WebhookID)
 	w = w.SetWebhookID(uuid.New())
@@ -119,8 +119,8 @@ func TestWebhook_SetWebhookID(t *testing.T) {
 
 func TestWebhook_ToBytes(t *testing.T) {
 	w := &Webhook{
-		URL:          "http://example.com",
-		Method:       "GET",
+		URL:    "http://example.com",
+		Method: "GET",
 	}
 	assert.NotEmpty(t, w.ToBytes())
 }

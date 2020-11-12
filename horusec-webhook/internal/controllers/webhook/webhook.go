@@ -5,6 +5,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/webhook"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	entitiesWebhook "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
+	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
@@ -33,6 +34,9 @@ func NewWebhookController(databaseRead relational.InterfaceRead) Interface {
 func (c *Controller) DispatchRequest(analysis *horusec.Analysis) error {
 	webhookFound, err := c.webhookRepository.GetByRepositoryID(analysis.RepositoryID)
 	if err != nil {
+		if err == EnumErrors.ErrNotFoundRecords {
+			return nil
+		}
 		return err
 	}
 	return c.sendHTTPRequest(webhookFound, analysis)

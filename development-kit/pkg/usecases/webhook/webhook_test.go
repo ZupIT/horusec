@@ -11,8 +11,8 @@ import (
 func TestWebhook_NewWebhookFromReadCloser(t *testing.T) {
 	t.Run("should parse read closer to webhook with success", func(t *testing.T) {
 		w := &webhook.Webhook{
-			URL:          "http://example.com",
-			Method:       "POST",
+			URL:    "http://example.com",
+			Method: "POST",
 		}
 		readCloser := ioutil.NopCloser(strings.NewReader(string(w.ToBytes())))
 

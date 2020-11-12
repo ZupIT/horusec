@@ -12,30 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package broker
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/broker/config"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
-const (
-	DisabledBrokerEnv = "HORUSEC_DISABLED_BROKER"
-)
-
-type Config struct {
-	DisabledBroker bool
-}
-
-type IAppConfig interface {
-	IsDisabledBroker() bool
-}
-
-func SetupApp() IAppConfig {
-	return &Config{
-		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
+func SetUp() brokerLib.IBroker {
+	broker, err := brokerLib.NewBroker(config.NewBrokerConfig())
+	if err != nil {
+		logger.LogPanic("{BROKER_ERROR} failed to connect", err)
 	}
-}
 
-func (a *Config) IsDisabledBroker() bool {
-	return a.DisabledBroker
+	return broker
 }

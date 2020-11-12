@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package broker
 
 import (
 	"os"
@@ -21,22 +21,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetupApp(t *testing.T) {
-	t.Run("should successfully create an application configuration struct", func(t *testing.T) {
-		appConfig := SetupApp()
-		assert.NotNil(t, appConfig)
+func TestSetUp(t *testing.T) {
+	t.Run("Should return panics when setup broker", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "other_username")
+		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "other_password")
+		assert.Panics(t, func() {
+			SetUp()
+		})
 	})
-}
-
-func TestIsEmailConfirmationRequired(t *testing.T) {
-	t.Run("should return false as default value", func(t *testing.T) {
-		appConfig := SetupApp()
-		assert.False(t, appConfig.IsDisabledBroker())
-	})
-
-	t.Run("should return false when env is setting it as false", func(t *testing.T) {
-		_ = os.Setenv(DisabledBrokerEnv, "true")
-		appConfig := SetupApp()
-		assert.True(t, appConfig.IsDisabledBroker())
+	t.Run("Should not return panics when setup broker", func(t *testing.T) {
+		_ = os.Setenv("HORUSEC_BROKER_USERNAME", "guest")
+		_ = os.Setenv("HORUSEC_BROKER_PASSWORD", "guest")
+		assert.NotPanics(t, func() {
+			SetUp()
+		})
 	})
 }
