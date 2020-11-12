@@ -12,15 +12,15 @@ import (
 )
 
 type Webhook struct {
-	WebhookID    uuid.UUID `json:"webhookID" gorm:"primary_key" swaggerignore:"true"`
-	Description  string    `json:"description"`
-	URL          string    `json:"url"`
-	Method       string    `json:"method"`
-	Headers      HeaderType `json:"headers" sql:"type:"jsonb"`
-	RepositoryID uuid.UUID `json:"repositoryID" swaggerignore:"true"`
-	CompanyID    uuid.UUID `json:"companyID" swaggerignore:"true"`
-	CreatedAt    time.Time `json:"createdAt" swaggerignore:"true"`
-	UpdatedAt    time.Time `json:"updatedAt" swaggerignore:"true"`
+	WebhookID    uuid.UUID  `json:"webhookID" gorm:"primary_key" swaggerignore:"true"`
+	Description  string     `json:"description"`
+	URL          string     `json:"url"`
+	Method       string     `json:"method"`
+	Headers      HeaderType `json:"headers"`
+	RepositoryID uuid.UUID  `json:"repositoryID" swaggerignore:"true"`
+	CompanyID    uuid.UUID  `json:"companyID" swaggerignore:"true"`
+	CreatedAt    time.Time  `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt    time.Time  `json:"updatedAt" swaggerignore:"true"`
 }
 
 func (w *Webhook) GetTable() string {
@@ -73,17 +73,6 @@ func (w *Webhook) GetHeaders() map[string]string {
 	headers := map[string]string{}
 	for _, item := range w.Headers {
 		headers[item.Key] = item.Value
-	}
-	return headers
-}
-
-func (w *Webhook) GetListHeaders() []map[string]string {
-	headers := []map[string]string{}
-	for _, item := range w.Headers {
-		headers = append(headers, map[string]string{
-			"key": item.Key,
-			"value": item.Value,
-		})
 	}
 	return headers
 }

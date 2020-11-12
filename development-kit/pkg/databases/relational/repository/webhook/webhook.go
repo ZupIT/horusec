@@ -46,7 +46,6 @@ func (w *Webhook) GetAllByCompanyID(companyID uuid.UUID) (*[]webhook.ResponseWeb
 	entity := &webhook.Webhook{}
 	entityList := &[]webhook.ResponseWebhook{}
 	filter := w.databaseRead.SetFilter(map[string]interface{}{"company_id": companyID}).Preload("Repository")
-	w.databaseRead.SetLogMode(true)
 	response := w.databaseRead.Find(&entityList, filter, entity.GetTable())
 	return entityList, response.GetError()
 }
@@ -66,7 +65,6 @@ func (w *Webhook) Update(wh *webhook.Webhook) error {
 	condition := map[string]interface{}{
 		"webhook_id": wh.WebhookID,
 	}
-	w.databaseWrite.SetLogMode(true)
 	r := w.databaseWrite.Update(wh, condition, wh.GetTable())
 	return r.GetError()
 }
@@ -76,7 +74,6 @@ func (w *Webhook) Remove(webhookID uuid.UUID) error {
 	condition := map[string]interface{}{
 		"webhook_id": webhookID,
 	}
-	w.databaseWrite.SetLogMode(true)
 	r := w.databaseWrite.Delete(condition, entity.GetTable())
 	return r.GetError()
 }

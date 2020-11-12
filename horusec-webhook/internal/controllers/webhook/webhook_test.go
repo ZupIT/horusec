@@ -16,6 +16,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 )
 
 func TestNewWebhookController(t *testing.T) {
@@ -25,9 +27,11 @@ func TestNewWebhookController(t *testing.T) {
 }
 
 func TestMock_DispatchRequest(t *testing.T) {
+	conn, err := gorm.Open("sqlite3", ":memory:")
+	assert.NoError(t, err)
 	t.Run("Should return error because not found webhook in database", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, EnumErrors.ErrNotFoundRecords, nil))
 		c := NewWebhookController(mockRead)
 		err := c.DispatchRequest(test.CreateAnalysisMock())
@@ -43,7 +47,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockRequest := &request.Mock{}
 		mockRequest.On("Request").Return(&http.Request{}, errors.New("Error in mount request"))
@@ -65,7 +69,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockRequest := &request.Mock{}
 		mockRequest.On("Request").Return(&http.Request{}, nil)
@@ -90,7 +94,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockRequest := &request.Mock{}
 		mockRequest.On("Request").Return(&http.Request{}, nil)
@@ -117,7 +121,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockRequest := &request.Mock{}
 		mockRequest.On("Request").Return(&http.Request{}, nil)
@@ -149,7 +153,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			RepositoryID: analysis.RepositoryID,
 		}
 		mockRead := &relational.MockRead{}
-		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockRequest := &request.Mock{}
 		mockRequest.On("Request").Return(&http.Request{}, nil)

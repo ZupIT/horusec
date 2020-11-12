@@ -9,9 +9,10 @@ import (
 type HeaderType []Headers
 
 type Headers struct {
-	Key    string `json:"key"`
+	Key   string `json:"key"`
 	Value string `json:"value"`
 }
+
 func (h HeaderType) Value() (driver.Value, error) {
 	return json.Marshal(h)
 }
