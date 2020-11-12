@@ -151,6 +151,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecJava,
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
+		tools.Semgrep,
 	}
 }
 func (au *UseCases) sliceLanguages() []interface{} {
@@ -164,6 +165,12 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Javascript,
 		languages.Leaks,
 		languages.HCL,
+		languages.PHP,
+		languages.TypeScript,
+		languages.C,
+		languages.HTML,
+		languages.Generic,
+		languages.Unknown,
 	}
 }
 func (au *UseCases) sliceSeverities() []interface{} {
