@@ -25,7 +25,7 @@ services:
   horusec-messages:
     build:
       context: ../../
-      dockerfile: ./horusec-messages/deployments/Dockerfile.dev
+      dockerfile: ./horusec-messages/deployments/Dockerfile
     depends_on:
       - "rabbit"
     restart: always
@@ -47,7 +47,7 @@ services:
   horusec-account:
     build:
       context: ../../
-      dockerfile: ./horusec-account/deployments/Dockerfile.dev
+      dockerfile: ./horusec-account/deployments/Dockerfile
     depends_on:
       - "rabbit"
       - postgresql
@@ -70,7 +70,7 @@ services:
   horusec-auth:
     build:
       context: ../../
-      dockerfile: ./horusec-auth/deployments/Dockerfile.dev
+      dockerfile: ./horusec-auth/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always

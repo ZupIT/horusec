@@ -20,7 +20,7 @@ services:
   horusec-account:
     build:
       context: ../../
-      dockerfile: ./horusec-account/deployments/Dockerfile.dev
+      dockerfile: ./horusec-account/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
@@ -37,7 +37,7 @@ services:
   horusec-auth:
     build:
       context: ../../
-      dockerfile: ./horusec-auth/deployments/Dockerfile.dev
+      dockerfile: ./horusec-auth/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
@@ -56,7 +56,7 @@ services:
   horusec-analytic:
     build:
       context: ../../
-      dockerfile: ./horusec-analytic/deployments/Dockerfile.dev
+      dockerfile: ./horusec-analytic/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
@@ -71,7 +71,7 @@ services:
   horusec-api:
     build:
       context: ../../
-      dockerfile: ./horusec-api/deployments/Dockerfile.dev
+      dockerfile: ./horusec-api/deployments/Dockerfile
     depends_on:
       - postgresql
     restart: always
