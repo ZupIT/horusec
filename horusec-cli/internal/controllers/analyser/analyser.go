@@ -42,7 +42,7 @@ import (
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/scs"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/general/semgrep"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
@@ -182,7 +182,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Python:     a.detectVulnerabilityPython,
 		languages.Ruby:       a.detectVulnerabilityRuby,
 		languages.HCL:        a.detectVulnerabilityHCL,
-		languages.General:    a.detectVulnerabilityGeneral,
+		languages.Generic:    a.detectVulnerabilityGeneric,
 	}
 }
 
@@ -239,7 +239,7 @@ func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityGeneral(projectSubPath string) {
+func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }

@@ -19,12 +19,14 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/general/semgrep"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"strconv"
+	"strings"
 )
 
 type Formatter struct {
@@ -52,9 +54,9 @@ func (f *Formatter) startSecurityCodeScanAnalysis(projectSubPath string) error {
 		return err
 	}
 
-	f.parseOutput(output)
+	err = f.parseOutput(output)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep)
-	return nil
+	return err
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
@@ -62,32 +64,35 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Image:    ImageName,
 		Tag:      ImageTag,
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Semgrep),
-		Language: languages.General,
+		Language: languages.Generic,
 	}
 }
 
-func (f *Formatter) parseOutput(output string) {
+func (f *Formatter) parseOutput(output string) error {
 	var analysis *semgrep.Analysis
 
 	err := json.Unmarshal([]byte(output), &analysis)
 	if err != nil {
-		print(err)
+		return err
 	}
 
 	for _, result := range analysis.Results {
-		f.setVulnerabilityData(result)
+		f.setAnalysisResults(f.setVulnerabilityData(result))
 	}
+
+	return nil
 }
 
 func (f *Formatter) setVulnerabilityData(result semgrep.Result) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilityData()
-	data.Severity = ""
-	data.Confidence = ""
 	data.Details = result.Extra.Message
+	data.Severity = severity.High
+	data.Confidence = ""
 	data.Line = strconv.Itoa(result.Start.Line)
 	data.Column = strconv.Itoa(result.Start.Col)
 	data.File = result.Path
 	data.Code = f.GetCodeWithMaxCharacters(result.Extra.Code, 0)
+	data.Language = f.getLanguageByFile(result.Path)
 
 	data = vulnhash.Bind(data)
 
@@ -109,6 +114,48 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horus
 func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.Semgrep
-	vulnerabilitySeverity.Language = languages.General
 	return vulnerabilitySeverity
+}
+
+func (f *Formatter) getLanguageByFile(file string) languages.Language {
+	if strings.Contains(file, ".go") {
+		return languages.Go
+	}
+
+	if strings.Contains(file, ".java") {
+		return languages.Java
+	}
+
+	if strings.Contains(file, ".js") {
+		return languages.Javascript
+	}
+
+	if strings.Contains(file, ".tsx") || strings.Contains(file, ".ts") {
+		return languages.TypeScript
+	}
+
+	if strings.Contains(file, ".py") {
+		return languages.Python
+	}
+
+	if strings.Contains(file, ".rb") {
+		return languages.Ruby
+	}
+
+	if strings.Contains(file, ".php") {
+		return languages.PHP
+	}
+
+	if strings.Contains(file, ".c") {
+		return languages.C
+	}
+
+	return languages.Unknown
+}
+
+func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
+	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
 }

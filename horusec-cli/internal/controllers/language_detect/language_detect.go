@@ -51,7 +51,7 @@ func NewLanguageDetect(configs *config.Config, analysisID uuid.UUID) Interface {
 }
 
 func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language, error) {
-	langs := []string{languages.Leaks.ToString(), languages.General.ToString()}
+	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err, logger.ErrorLevel)
