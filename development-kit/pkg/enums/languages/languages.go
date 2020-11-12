@@ -31,6 +31,7 @@ const (
 	HCL        Language = "HCL"
 	C          Language = "C"
 	PHP        Language = "PHP"
+	HTML       Language = "HTML"
 	Generic    Language = "Generic"
 	Unknown    Language = "Unknown"
 )
@@ -70,8 +71,8 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Java.ToString():       Java,
 		Kotlin.ToString():     Kotlin,
 		Javascript.ToString(): Javascript,
-		Generic.ToString():    Generic,
 		HCL.ToString():        HCL,
+		Generic.ToString():    Generic,
 	}
 }
 

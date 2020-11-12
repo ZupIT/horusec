@@ -86,8 +86,7 @@ func (f *Formatter) parseOutput(output string) error {
 func (f *Formatter) setVulnerabilityData(result semgrep.Result) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilityData()
 	data.Details = result.Extra.Message
-	data.Severity = severity.High
-	data.Confidence = ""
+	data.Severity = f.getSeverity(result.Extra.Severity)
 	data.Line = strconv.Itoa(result.Start.Line)
 	data.Column = strconv.Itoa(result.Start.Col)
 	data.File = result.Path
@@ -150,6 +149,10 @@ func (f *Formatter) getLanguageByFile(file string) languages.Language {
 		return languages.C
 	}
 
+	if strings.Contains(file, ".html") {
+		return languages.HTML
+	}
+
 	return languages.Unknown
 }
 
@@ -158,4 +161,15 @@ func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
 		horusec.AnalysisVulnerabilities{
 			Vulnerability: *vulnerability,
 		})
+}
+
+func (f *Formatter) getSeverity(resultSeverity string) severity.Severity {
+	switch resultSeverity {
+	case "ERROR":
+		return severity.High
+	case "WARNING":
+		return severity.Medium
+	}
+
+	return severity.Low
 }
