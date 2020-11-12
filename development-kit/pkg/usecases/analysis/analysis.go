@@ -136,6 +136,7 @@ func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntitie
 	)
 }
 
+// nolint
 func (au *UseCases) sliceTools() []interface{} {
 	return []interface{}{
 		tools.GoSec,
@@ -154,6 +155,8 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.Semgrep,
 	}
 }
+
+// nolint
 func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
