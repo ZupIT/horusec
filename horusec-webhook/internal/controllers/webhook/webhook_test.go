@@ -37,6 +37,14 @@ func TestMock_DispatchRequest(t *testing.T) {
 		err := c.DispatchRequest(test.CreateAnalysisMock())
 		assert.NoError(t, err)
 	})
+	t.Run("Should return error because unexpected error in webhook in database", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockRead.On("SetFilter").Return(conn)
+		mockRead.On("Find").Return(response.NewResponse(0, errors.New("unexpected"), nil))
+		c := NewWebhookController(mockRead)
+		err := c.DispatchRequest(test.CreateAnalysisMock())
+		assert.Error(t, err)
+	})
 	t.Run("Should return error because exists error in mount request", func(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 		webhookData := &entitiesWebhook.Webhook{
