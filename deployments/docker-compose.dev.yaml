@@ -77,6 +77,8 @@ services:
     network_mode: "host"
     ports:
       - "8004:8004"
+    volumes:
+      - ../:/usr/app
     environment:
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
@@ -94,12 +96,14 @@ services:
       dockerfile: ./horusec-account/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-account
     network_mode: "host"
     ports:
       - "8003:8003"
+    volumes:
+      - ../:/usr/app
     environment:
       HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "true"
       HORUSEC_BROKER_HOST: "127.0.0.1"
@@ -122,6 +126,8 @@ services:
     ports:
       - "8006:8006"
       - "8007:8007"
+    volumes:
+      - ../:/usr/app
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
@@ -155,6 +161,8 @@ services:
     network_mode: "host"
     ports:
       - "8005:8005"
+    volumes:
+      - ../:/usr/app
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
@@ -171,6 +179,8 @@ services:
     network_mode: "host"
     ports:
       - "8000:8000"
+    volumes:
+      - ../:/usr/app
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
@@ -184,6 +194,8 @@ services:
     container_name: horusec-manager
     ports:
       - "8043:8080"
+    volumes:
+      - ../:/usr/app
     environment:
       REACT_APP_HORUSEC_ENDPOINT_API: ${REACT_APP_HORUSEC_ENDPOINT_API}
       REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: ${REACT_APP_HORUSEC_ENDPOINT_ANALYTIC}
