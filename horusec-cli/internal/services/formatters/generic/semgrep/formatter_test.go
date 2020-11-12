@@ -13,3 +13,124 @@
 // limitations under the License.
 
 package semgrep
+
+import (
+	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+func TestParseOutput(t *testing.T) {
+	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
+			" \"path\":\"bad/vulpy.py\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
+			"\"extra\":{ \"message\":\"Using strings as booleans in Python has unexpected results.\\n`\\\"one\\\" and " +
+			"\\\"two\\\"` will return \\\"two\\\".\\n`\\\"one\\\" or \\\"two\\\"` will return \\\"one\\\".\\n In Python" +
+			", strings are truthy, evaluating to True.\\n\", \"metavars\":{ }, \"metadata\":{ }, \"severity\":\"ERROR\"" +
+			", \"lines\":\"if csp:\\n    print('CSP:', csp)\" } } ] }"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 1)
+	})
+
+	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
+			" \"path\":\"bad/vulpy.py\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
+			"\"extra\":{ \"message\":\"Using strings as booleans in Python has unexpected results.\\n`\\\"one\\\" and " +
+			"\\\"two\\\"` will return \\\"two\\\".\\n`\\\"one\\\" or \\\"two\\\"` will return \\\"one\\\".\\n In Python" +
+			", strings are truthy, evaluating to True.\\n\", \"metavars\":{ }, \"metadata\":{ }, \"severity\":\"WARNING\"" +
+			", \"lines\":\"if csp:\\n    print('CSP:', csp)\" } } ] }"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 1)
+	})
+
+	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
+			" \"path\":\"bad\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
+			"\"extra\":{ \"message\":\"Using strings as booleans in Python has unexpected results.\\n`\\\"one\\\" and " +
+			"\\\"two\\\"` will return \\\"two\\\".\\n`\\\"one\\\" or \\\"two\\\"` will return \\\"one\\\".\\n In Python" +
+			", strings are truthy, evaluating to True.\\n\", \"metavars\":{ }, \"metadata\":{ }, \"severity\":\"test\"" +
+			", \"lines\":\"if csp:\\n    print('CSP:', csp)\" } } ] }"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 1)
+	})
+
+	t.Run("Should return error when invalid output", func(t *testing.T) {
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		output := "!!"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+	})
+
+	t.Run("Should return error when executing container", func(t *testing.T) {
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		analysis := &horusec.Analysis{}
+		config := &cliConfig.Config{
+			WorkDir: &workdir.WorkDir{},
+		}
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+	})
+}

@@ -25,8 +25,8 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"path/filepath"
 	"strconv"
-	"strings"
 )
 
 type Formatter struct {
@@ -55,6 +55,9 @@ func (f *Formatter) startSecurityCodeScanAnalysis(projectSubPath string) error {
 	}
 
 	err = f.parseOutput(output)
+	if err != nil {
+		f.SetAnalysisError(err)
+	}
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep)
 	return err
 }
@@ -117,45 +120,49 @@ func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-// nolint
 func (f *Formatter) getLanguageByFile(file string) languages.Language {
-	if strings.Contains(file, ".go") {
-		return languages.Go
+	languagesMap := f.getLanguagesMap()
+	return languagesMap[f.getExtension(file)]
+}
+
+func (f *Formatter) getExtension(file string) string {
+	ext := filepath.Ext(file)
+	for _, item := range f.getExtensionList() {
+		if item == ext {
+			return ext
+		}
 	}
 
-	if strings.Contains(file, ".java") {
-		return languages.Java
-	}
+	return ""
+}
 
-	if strings.Contains(file, ".js") {
-		return languages.Javascript
+func (f *Formatter) getLanguagesMap() map[string]languages.Language {
+	return map[string]languages.Language{
+		".go":   languages.Go,
+		".java": languages.Java,
+		".js":   languages.Javascript,
+		".tsx":  languages.TypeScript,
+		".ts":   languages.TypeScript,
+		".py":   languages.Python,
+		".rb":   languages.Ruby,
+		".c":    languages.C,
+		".html": languages.HTML,
+		"":      languages.Unknown,
 	}
+}
 
-	if strings.Contains(file, ".tsx") || strings.Contains(file, ".ts") {
-		return languages.TypeScript
+func (f *Formatter) getExtensionList() []string {
+	return []string{
+		".go",
+		".java",
+		".js",
+		".tsx",
+		".ts",
+		".py",
+		".rb",
+		".c",
+		".html",
 	}
-
-	if strings.Contains(file, ".py") {
-		return languages.Python
-	}
-
-	if strings.Contains(file, ".rb") {
-		return languages.Ruby
-	}
-
-	if strings.Contains(file, ".php") {
-		return languages.PHP
-	}
-
-	if strings.Contains(file, ".c") {
-		return languages.C
-	}
-
-	if strings.Contains(file, ".html") {
-		return languages.HTML
-	}
-
-	return languages.Unknown
 }
 
 func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
