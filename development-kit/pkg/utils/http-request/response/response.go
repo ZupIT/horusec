@@ -34,6 +34,7 @@ type Interface interface {
 	GetStatusCode() int
 	GetStatusCodeString() string
 	GetContentType() string
+	CloseBody()
 }
 
 func NewHTTPResponse(response *http.Response) Interface {
@@ -78,6 +79,11 @@ func (h *HTTPResponse) GetStatusCodeString() string {
 
 func (h *HTTPResponse) GetContentType() string {
 	return h.response.Header.Get("Content-type")
+}
+
+func (h *HTTPResponse) CloseBody() {
+	err := h.response.Body.Close()
+	logger.LogError("Error on close body", err)
 }
 
 func (h *HTTPResponse) mapResponseStatus() map[string]interface{} {

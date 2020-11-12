@@ -38,15 +38,13 @@ func NewHTTPClient(timeout int) Interface {
 	}
 }
 
+// nolint
 func (c *Client) DoRequest(req *http.Request, tlsConfig *tls.Config) (res httpResponse.Interface, err error) {
 	response, err := c.getClient(tlsConfig).Do(req)
 	if err != nil {
 		logger.LogError(errors.ErrDoHTTPClient.Error(), err)
 		return res, err
 	}
-	defer func() {
-		logger.LogError("Error in close body", response.Body.Close())
-	}()
 	return httpResponse.NewHTTPResponse(response), nil
 }
 

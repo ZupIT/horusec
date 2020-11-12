@@ -433,7 +433,9 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		// Expected return unauthorized because user is not admin of repository to see tokens of repository
 		responseRepositoryToken := ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
 		assert.Equal(t, http.StatusUnauthorized, responseRepositoryToken.GetStatusCode())
-
+		defer func() {
+			responseRepositoryToken.CloseBody()
+		}()
 		// Update permission of new user to admin in repository
 		UpdateUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID, &roles.AccountCompany{
 			Role: rolesEnum.Admin,
@@ -442,7 +444,9 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		// Expected return OK because user is authorized to see tokens of repository
 		responseRepositoryToken = ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
 		assert.Equal(t, http.StatusOK, responseRepositoryToken.GetStatusCode())
-
+		defer func() {
+			responseRepositoryToken.CloseBody()
+		}()
 		// Expected remove user from company
 		RemoveUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID)
 

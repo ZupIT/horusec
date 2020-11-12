@@ -51,6 +51,9 @@ func TestClient_DoRequest(t *testing.T) {
 		response, err := NewHTTPClient(10).DoRequest(req, &tls.Config{})
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response)
+		defer func() {
+			response.CloseBody()
+		}()
 	})
 	t.Run("Should return error when request is wrong", func(t *testing.T) {
 		req := &http.Request{}

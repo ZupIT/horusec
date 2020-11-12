@@ -51,5 +51,6 @@ func (c *Controller) sendHTTPRequest(webhookFound *entitiesWebhook.Webhook, anal
 	if err != nil {
 		return err
 	}
+	defer res.CloseBody()
 	return res.ErrorByStatusCode()
 }
