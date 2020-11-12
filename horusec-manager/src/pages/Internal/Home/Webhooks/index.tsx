@@ -14,59 +14,79 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { Button, Icon } from 'components';
+import { Button, Icon, Dialog } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
+import webhookService from 'services/webhook';
 
 import AddWebhook from './Add';
+import EditWebhook from './Edit';
 
-const mockOfWebhooks: Webhook[] = [
-  {
-    url: 'https://rankeer.app/hook/horusec',
-    method: 'post',
-    description: 'Hook para report das vulnerabilidades do meu serviço de api.',
-    repository: {
-      name: 'Beagle',
-      companyID: '123',
-      description: 'Teste',
-    },
-    companyID: '123',
-  },
-  {
-    url: 'https://api.charlescd.io/security/report',
-    method: 'post',
-    description: 'Endpoint para receber detalhes das analises',
-    repository: {
-      name: 'Charles CD',
-      companyID: '123',
-      description: 'Teste',
-    },
-    companyID: '123',
-  },
-  {
-    url: 'https://app.myservice.com/webhook-horusec',
-    method: 'get',
-    description: 'URL para callback das analises do horusec.',
-    repository: {
-      name: 'Ritch',
-      companyID: '123',
-      description: 'Teste',
-    },
-    companyID: '123',
-  },
-];
+import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 const Webhooks: React.FC = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { companyID } = getCurrentCompany();
+  const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
-  const [webhooks, setWebhooks] = useState<Webhook[]>(mockOfWebhooks);
+  const [webhooks, setWebhooks] = useState<Webhook[]>([]);
+  const [webhookToDelete, setWebhookToDelete] = useState<Webhook>();
+  const [webhookToEdit, setWebhookToEdit] = useState<Webhook>();
+
   const [isLoading, setLoading] = useState(false);
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [addWebhookVisible, setAddWebhookVisible] = useState(false);
+
+  const fetchData = () => {
+    setLoading(true);
+
+    webhookService
+      .getAll(companyID)
+      .then((result) => {
+        setWebhooks(result?.data?.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleConfirmDelete = () => {
+    setDeleteIsLoading(true);
+
+    webhookService
+      .remove(
+        webhookToDelete.companyID,
+        webhookToDelete.repositoryID,
+        webhookToDelete.webhookID
+      )
+      .then(() => {
+        showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_DELETE'));
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setDeleteIsLoading(false);
+        fetchData();
+        setWebhookToDelete(null);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <Styled.Wrapper>
@@ -89,13 +109,13 @@ const Webhooks: React.FC = () => {
           </Styled.LoadingWrapper>
 
           <Styled.Head>
-            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.METHOD')}</Styled.Column>
-
-            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.URL')}</Styled.Column>
-
             <Styled.Column>
               {t('WEBHOOK_SCREEN.TABLE.REPOSITORY')}
             </Styled.Column>
+
+            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.METHOD')}</Styled.Column>
+
+            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.URL')}</Styled.Column>
 
             <Styled.Column>
               {t('WEBHOOK_SCREEN.TABLE.DESCRIPTION')}
@@ -113,11 +133,13 @@ const Webhooks: React.FC = () => {
 
             {webhooks.map((webhook, index) => (
               <Styled.Row key={index}>
+                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
+
                 <Styled.Cell className="flex-center">
                   <Styled.Tag
                     color={get(
                       colors.methods,
-                      webhook.method,
+                      webhook?.method?.toLowerCase(),
                       colors.methods.unknown
                     )}
                   >
@@ -126,8 +148,6 @@ const Webhooks: React.FC = () => {
                 </Styled.Cell>
 
                 <Styled.Cell>{webhook.url}</Styled.Cell>
-
-                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
 
                 <Styled.Cell>{webhook.description}</Styled.Cell>
 
@@ -140,7 +160,7 @@ const Webhooks: React.FC = () => {
                     width={90}
                     height={30}
                     icon="delete"
-                    onClick={() => console.log(webhook)}
+                    onClick={() => setWebhookToDelete(webhook)}
                   />
 
                   <Button
@@ -151,7 +171,7 @@ const Webhooks: React.FC = () => {
                     width={90}
                     height={30}
                     icon="edit"
-                    onClick={() => console.log(webhook)}
+                    onClick={() => setWebhookToEdit(webhook)}
                   />
                 </Styled.Cell>
               </Styled.Row>
@@ -163,7 +183,31 @@ const Webhooks: React.FC = () => {
       <AddWebhook
         isVisible={addWebhookVisible}
         onCancel={() => setAddWebhookVisible(false)}
-        onConfirm={() => setAddWebhookVisible(false)}
+        onConfirm={() => {
+          setAddWebhookVisible(false);
+          fetchData();
+        }}
+      />
+
+      <EditWebhook
+        isVisible={!!webhookToEdit}
+        onCancel={() => setWebhookToEdit(null)}
+        webhookToEdit={webhookToEdit}
+        onConfirm={() => {
+          setWebhookToEdit(null);
+          fetchData();
+        }}
+      />
+
+      <Dialog
+        message={t('WEBHOOK_SCREEN.CONFIRM_DELETE')}
+        confirmText={t('WEBHOOK_SCREEN.YES')}
+        loadingConfirm={deleteIsLoading}
+        defaultButton
+        hasCancel
+        isVisible={!!webhookToDelete}
+        onCancel={() => setWebhookToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </Styled.Wrapper>
   );

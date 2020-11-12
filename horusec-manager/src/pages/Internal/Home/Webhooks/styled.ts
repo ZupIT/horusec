@@ -97,15 +97,16 @@ const Cell = styled.span`
   }
 
   &:nth-child(1) {
-    max-width: 95px;
+    max-width: 150px;
+    margin: 0;
   }
 
   &:nth-child(2) {
-    min-width: 250px;
+    max-width: 100px;
   }
 
   &:nth-child(3) {
-    max-width: 120px;
+    max-width: 250px;
     margin-right: 15px;
   }
 
@@ -129,16 +130,17 @@ const Column = styled.span`
   margin-right: 15px;
 
   &:nth-child(1) {
-    max-width: 95px;
-    margin-left: 10px;
+    max-width: 150px;
+    margin: 0;
   }
 
   &:nth-child(2) {
-    min-width: 250px;
+    max-width: 100px;
+    margin-left: 5px;
   }
 
   &:nth-child(3) {
-    max-width: 120px;
+    max-width: 250px;
   }
 
   &:nth-child(4) {

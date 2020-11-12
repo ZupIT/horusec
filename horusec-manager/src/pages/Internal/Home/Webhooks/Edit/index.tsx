@@ -27,7 +27,7 @@ import { get } from 'lodash';
 import { isValidURL } from 'helpers/validators';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import webhookService from 'services/webhook';
-import { WebhookHeader } from 'helpers/interfaces/Webhook';
+import { Webhook, WebhookHeader } from 'helpers/interfaces/Webhook';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { cloneDeep } from 'lodash';
 
@@ -35,11 +35,17 @@ interface Props {
   isVisible: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  webhookToEdit: Webhook;
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
 
-const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
+const AddWebhook: React.FC<Props> = ({
+  isVisible,
+  onCancel,
+  onConfirm,
+  webhookToEdit,
+}) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { companyID } = getCurrentCompany();
@@ -48,43 +54,38 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
-  const [httpMethod, setHttpMethod] = useState(webhookHttpMethods[0].value);
+  const [httpMethod, setHttpMethod] = useState(webhookToEdit?.method);
   const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [selectedRepository, setSelectedRepository] = useState<Repository>();
-  const [url, setUrl] = useState<Field>({ value: '', isValid: false });
+  const [selectedRepository, setSelectedRepository] = useState<Repository>(
+    webhookToEdit?.repository
+  );
+  const [url, setUrl] = useState<Field>({
+    value: webhookToEdit?.url,
+    isValid: false,
+  });
   const [headers, setHeaders] = useState<WebhookHeader[]>([
     { key: '', value: '' },
   ]);
   const [description, setDescription] = useState<Field>({
-    value: '',
+    value: webhookToEdit?.description,
     isValid: false,
   });
-
-  const resetFields = () => {
-    setHeaders([{ key: '', value: '' }]);
-    setSelectedRepository(null);
-  };
-
-  const handleCancel = () => {
-    resetFields();
-    onCancel();
-  };
 
   const handleConfirmSave = () => {
     setLoading(true);
 
     webhookService
-      .create(
+      .update(
         companyID,
         selectedRepository.repositoryID,
+        webhookToEdit.webhookID,
         url.value,
         httpMethod,
         headers,
         description.value
       )
       .then(() => {
-        showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_CREATE'));
-        resetFields();
+        showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_UPDATE'));
         onConfirm();
       })
       .catch((err) => {
@@ -105,6 +106,18 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     fetchRepositories();
   }, [companyID]);
 
+  useEffect(() => {
+    if (webhookToEdit) {
+      const { url, headers, description, method, repository } = webhookToEdit;
+
+      setDescription({ isValid: true, value: description });
+      setUrl({ isValid: true, value: url });
+      setSelectedRepository(repository);
+      setHttpMethod(method);
+      setHeaders(headers);
+    }
+  }, [webhookToEdit]);
+
   const handleSetHeader = (index: number, key: string, value: string) => {
     const headersCopy = cloneDeep(headers);
     const header = { key, value };
@@ -116,7 +129,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     <Dialog
       isVisible={isVisible}
       message={t('WEBHOOK_SCREEN.ADD')}
-      onCancel={handleCancel}
+      onCancel={onCancel}
       onConfirm={handleConfirmSave}
       confirmText={t('WEBHOOK_SCREEN.SAVE')}
       disableConfirm={!url.isValid || !selectedRepository}
@@ -131,6 +144,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
         <Styled.Field
           label={t('WEBHOOK_SCREEN.DESCRIPTION')}
           onChangeValue={(field: Field) => setDescription(field)}
+          initialValue={description.value}
           name="description"
           type="text"
           width="100%"
@@ -142,6 +156,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           keyLabel="name"
           width="100%"
           options={repositories}
+          initialValue={webhookToEdit?.repository}
           title={t('WEBHOOK_SCREEN.REPOSITORY')}
           onChangeValue={(value) => setSelectedRepository(value)}
         />
@@ -158,7 +173,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             onChangeValue={(item) => setHttpMethod(item.value)}
             rounded
             disabled
-            color={get(colors.methods, httpMethod.toLocaleLowerCase())}
+            color={get(colors.methods, httpMethod?.toLocaleLowerCase())}
           />
 
           <Styled.Field
@@ -169,12 +184,13 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             width="400px"
             validation={isValidURL}
             invalidMessage={t('WEBHOOK_SCREEN.INVALID_URL')}
+            initialValue={url.value}
           />
         </Styled.Wrapper>
 
         <Styled.Label>{t('WEBHOOK_SCREEN.HEADERS_LABEL')}</Styled.Label>
 
-        {headers.map((header, index) => (
+        {webhookToEdit?.headers?.map((header, index) => (
           <Styled.Wrapper key={index}>
             <Styled.Field
               label={t('WEBHOOK_SCREEN.KEY')}
@@ -183,18 +199,21 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
                 handleSetHeader(index, value, headers[index].value)
               }
               width="200px"
+              initialValue={headers[index]?.key}
             />
 
             <Styled.Field
               label={t('WEBHOOK_SCREEN.VALUE')}
               name="value"
+              type="text"
               onChangeValue={({ value }) =>
                 handleSetHeader(index, headers[index].key, value)
               }
               width="200px"
+              initialValue={headers[index]?.value}
             />
 
-            {index + 1 === headers.length && headers.length !== 3 ? (
+            {index + 1 === headers?.length && headers?.length !== 3 ? (
               <Icon
                 name="plus"
                 size="20px"

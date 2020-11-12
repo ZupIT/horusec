@@ -27,7 +27,8 @@ const create = (
   repositoryID: string,
   url: string,
   method: string,
-  headers: WebhookHeader
+  headers: WebhookHeader[],
+  description: string
 ) => {
   return http.post(
     `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}`,
@@ -35,6 +36,7 @@ const create = (
       url,
       method,
       headers,
+      description,
     }
   );
 };
@@ -45,13 +47,15 @@ const update = (
   webhookID: string,
   url: string,
   method: string,
-  headers: WebhookHeader
+  headers: WebhookHeader[],
+  description: string
 ) => {
   return http.put(
     `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}/${webhookID}`, {
       url,
       method,
       headers,
+      description,
     }
   );
 };

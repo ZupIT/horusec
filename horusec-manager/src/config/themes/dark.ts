@@ -151,8 +151,8 @@ export default {
 
     methods: {
       get: '#4d9880',
-      post: '#e69f2a',
-      unknown: '#2a2038',
+      post: '#2a2038',
+      unknown: '#3A3A3C',
     },
   },
 };

@@ -25,6 +25,7 @@ export interface Webhook {
   webhookID?: string;
   method: 'get' | 'post';
   companyID: string;
+  repositoryID: string;
   repository: Repository;
   url: string;
   description?: string;
