@@ -15,8 +15,8 @@
 package semgrep
 
 const (
-	ImageName = "horusec/semgrep"
-	ImageTag  = "latest"
+	ImageName = "horuszup/horusec-semgrep"
+	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 	    {{WORK_DIR}}
