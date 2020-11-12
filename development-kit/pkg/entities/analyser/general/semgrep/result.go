@@ -21,5 +21,3 @@ type Result struct {
 	End     Position `json:"end"`
 	Extra   Extra    `json:"extra"`
 }
-
-

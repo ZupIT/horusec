@@ -77,13 +77,14 @@ func (f *Formatter) parseOutput(output string) error {
 	}
 
 	for _, result := range analysis.Results {
-		f.setAnalysisResults(f.setVulnerabilityData(result))
+		item := result
+		f.setAnalysisResults(f.setVulnerabilityData(&item))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(result semgrep.Result) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(result *semgrep.Result) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilityData()
 	data.Details = result.Extra.Message
 	data.Severity = f.getSeverity(result.Extra.Severity)
@@ -116,6 +117,7 @@ func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
+// nolint
 func (f *Formatter) getLanguageByFile(file string) languages.Language {
 	if strings.Contains(file, ".go") {
 		return languages.Go
