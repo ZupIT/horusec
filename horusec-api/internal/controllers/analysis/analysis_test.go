@@ -159,11 +159,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("should send a new analysis without errors expected remove vulnerabilities hash duplicated", func(t *testing.T) {
 
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -181,8 +181,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		mockWrite.On("GetConnection").Return(conn)
 
 		controller := &Controller{
-			broker: mockBroker,
-			config: config,
+			broker:           mockBroker,
+			config:           config,
 			postgresWrite:    mockWrite,
 			useCasesAnalysis: analysisUseCases.NewAnalysisUseCases(),
 			repoRepository:   repositoryRepo.NewRepository(mockRead, mockWrite),
@@ -205,11 +205,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("should send a new analysis without errors and create repository", func(t *testing.T) {
 
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -241,11 +241,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("should return error while getting repository", func(t *testing.T) {
 
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -271,11 +271,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("should return error while getting company", func(t *testing.T) {
 
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
@@ -298,11 +298,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("should return error when send analysis and database create exist error", func(t *testing.T) {
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		resp := &response.Response{}
@@ -328,11 +328,11 @@ func TestController_SaveAnalysis(t *testing.T) {
 
 	t.Run("should success remove duplicated", func(t *testing.T) {
 
-	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
-	mockBroker.On("Publish").Return(nil)
+		mockBroker := &broker.Mock{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		mockBroker.On("Publish").Return(nil)
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
