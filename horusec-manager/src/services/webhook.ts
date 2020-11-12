@@ -51,7 +51,8 @@ const update = (
   description: string
 ) => {
   return http.put(
-    `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}/${webhookID}`, {
+    `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}/${webhookID}`,
+    {
       url,
       method,
       headers,
