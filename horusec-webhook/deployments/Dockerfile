@@ -20,7 +20,7 @@ ADD . /horusec
 
 WORKDIR /horusec
 
-RUN go get -t -v -u ./...
+RUN go get -t -v -d ./...
 
 RUN GOOS=linux go build -a -o horusec-webhook-main ./horusec-webhook/cmd/app/main.go
 
