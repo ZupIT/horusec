@@ -24,15 +24,13 @@ import { useHistory } from 'react-router-dom';
 import { CompanyContext } from 'contexts/Company';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import {
-  isApplicationAdmin,
-  getCurrentUser,
-} from 'helpers/localStorage/currentUser';
+import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 function AddCompany() {
   const { t } = useTranslation();
   const history = useHistory();
   const currentUser = getCurrentUser();
+  const { applicationAdminEnable } = getCurrentConfig();
 
   const [companyName, setCompanyName] = useState<Field>({
     isValid: false,
@@ -84,7 +82,7 @@ function AddCompany() {
           invalidMessage={t('COMPANY_SCREEN.INVALID_ORGANIZATION_NAME')}
         />
 
-        {isApplicationAdmin() ? (
+        {applicationAdminEnable ? (
           <Styled.Wrapper>
             <Styled.Label>{t('COMPANY_SCREEN.ADMIN_EMAIL')}</Styled.Label>
 

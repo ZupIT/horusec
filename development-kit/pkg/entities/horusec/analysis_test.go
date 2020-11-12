@@ -88,9 +88,9 @@ func TestSetAnalysisError(t *testing.T) {
 		analysis.SetAnalysisError(errors.New("test"))
 		assert.Equal(t, "test", analysis.Errors)
 		analysis.SetAnalysisError(errors.New("test"))
-		assert.Equal(t, "test, test", analysis.Errors)
+		assert.Equal(t, "test; test", analysis.Errors)
 		analysis.SetAnalysisError(errors.New("test"))
-		assert.Equal(t, "test, test, test", analysis.Errors)
+		assert.Equal(t, "test; test; test", analysis.Errors)
 	})
 }
 

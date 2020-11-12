@@ -132,9 +132,19 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 		if err != nil {
 			return err
 		}
-		if !strings.EqualFold(response, "y") {
-			return errors.New("{HORUSEC_CLI} Operation was canceled by user")
-		}
+		return s.validateReplyOfAsk(response)
+	}
+	return nil
+}
+
+func (s *Start) validateReplyOfAsk(response string) error {
+	if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "n") {
+		logger.LogErrorWithLevel("Your response was: '"+response+"' Please type Y or N",
+			errors.New("reply invalid"), logger.ErrorLevel)
+		return s.askIfRunInDirectorySelected(true)
+	}
+	if strings.EqualFold(response, "n") {
+		return errors.New("{HORUSEC_CLI} Operation was canceled by user")
 	}
 	return nil
 }

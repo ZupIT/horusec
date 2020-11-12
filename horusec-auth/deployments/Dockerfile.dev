@@ -1,10 +1,10 @@
-FROM golang:latest
+FROM golang:1.14
 
-COPY . /go/src/github.com/ZupIT/horusec
-WORKDIR /go/src/github.com/ZupIT/horusec
+WORKDIR /usr/app
 
-RUN go get -t -v -u ./horusec-auth/...
+COPY . .
 
-EXPOSE 8006
+RUN go get -d ./...
+RUN go get github.com/cosmtrek/air
 
-CMD ["go", "run", "horusec-auth/cmd/app/main.go"]
+CMD ["air", "-c", "horusec-auth/deployments/air/config.toml"]
