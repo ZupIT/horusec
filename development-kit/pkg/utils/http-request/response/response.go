@@ -82,8 +82,10 @@ func (h *HTTPResponse) GetContentType() string {
 }
 
 func (h *HTTPResponse) CloseBody() {
-	err := h.response.Body.Close()
-	logger.LogError("Error on close body", err)
+	if h.response.Body != nil {
+		err := h.response.Body.Close()
+		logger.LogError("Error on close body", err)
+	}
 }
 
 func (h *HTTPResponse) mapResponseStatus() map[string]interface{} {
