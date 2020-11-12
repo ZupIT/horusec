@@ -175,6 +175,7 @@ The configuration file receive an object with the content follow:
 	        "kotlin":     [],
 	        "javaScript": [],
 	        "leaks":      [],
+            "generic":    [],
                 "hlc":        []    
       }
 }
@@ -300,6 +301,7 @@ The interface of languages accepts is:
     javaScript []string
     leaks      []string
     hlc        []string
+    generic    []string
 }
 ```
 
