@@ -50,7 +50,13 @@ func (c *Controller) Update(wh *webhook.Webhook) error {
 	if err != nil {
 		return err
 	}
-	return c.webhookRepository.Update(wh)
+	if err := c.webhookRepository.Update(wh); err != nil {
+		if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryIDInWebhook {
+			return errorsEnum.ErrorAlreadyExistsWebhookToRepository
+		}
+		return err
+	}
+	return nil
 }
 
 func (c *Controller) Remove(webhookID uuid.UUID) error {
@@ -58,11 +64,5 @@ func (c *Controller) Remove(webhookID uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	if err := c.webhookRepository.Remove(webhookID); err != nil {
-		if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryIDInWebhook {
-			return errorsEnum.ErrorAlreadyExistsWebhookToRepository
-		}
-		return err
-	}
-	return nil
+	return c.webhookRepository.Remove(webhookID)
 }
