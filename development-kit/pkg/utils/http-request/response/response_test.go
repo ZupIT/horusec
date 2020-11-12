@@ -131,9 +131,7 @@ func TestHTTPResponse_GetBody(t *testing.T) {
 		body, err := r.GetBody()
 		assert.NoError(t, err)
 		assert.Equal(t, bodyResponse, string(body))
-		defer func() {
-			r.CloseBody()
-		}()
+		defer r.CloseBody()
 	})
 	t.Run("Should return body nil", func(t *testing.T) {
 		res := &http.Response{}

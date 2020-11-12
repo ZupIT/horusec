@@ -207,9 +207,7 @@ func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID s
 	assert.NoError(t, err)
 	assert.Equal(t, res.GetStatusCode(), http.StatusOK)
 	body, err := res.GetBody()
-	defer func() {
-		res.CloseBody()
-	}()
+	defer res.CloseBody()
 	assert.NoError(t, err)
 	return body
 }
@@ -262,9 +260,7 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 	assert.Equal(t, res.GetStatusCode(), http.StatusOK)
 	body, err := res.GetBody()
 	assert.NoError(t, err)
-	defer func() {
-		res.CloseBody()
-	}()
+	defer res.CloseBody()
 	return body
 }
 
