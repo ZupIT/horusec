@@ -1,8 +1,10 @@
-FROM golang:latest
+FROM golang:1.14
 
-COPY . /go/src/github.com/ZupIT/horusec
-WORKDIR /go/src/github.com/ZupIT/horusec
+WORKDIR /usr/app
 
-RUN go get -t -v -u ./horusec-messages/...
+COPY . .
 
-CMD ["go", "run", "horusec-messages/cmd/app/main.go"]
+RUN go get -d ./...
+RUN go get github.com/cosmtrek/air
+
+CMD ["air", "-c", "horusec-messages/deployments/air/config.toml"]
