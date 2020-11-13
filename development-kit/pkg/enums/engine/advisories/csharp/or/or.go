@@ -38,3 +38,20 @@ func NewCsharpOrLDAPInjection() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpOrInsecureDeserialization() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "a5a1dcad-76e7-4d9d-afe4-0dba1bcca105",
+			Name:        "Insecure Deserialization",
+			Description: "Arbitrary code execution, full application compromise or denial of service. An attacker may pass specially crafted serialized .NET object of specific class that will execute malicious code during the construction of the object. For more information access: (https://security-code-scan.github.io/#SCS0028).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sBinaryFormatter\(\)\.Deserialize\(.*\)`),
+			regexp.MustCompile(`new\sJavaScriptSerializer\(..*\)`),
+		},
+	}
+}
