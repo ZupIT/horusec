@@ -41,6 +41,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.HorusecKotlin) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecKotlin.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startHorusecKotlinAnalysis(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.HorusecKotlin, projectSubPath)

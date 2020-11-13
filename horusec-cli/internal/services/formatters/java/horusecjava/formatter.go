@@ -41,6 +41,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.HorusecJava) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecJava.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startHorusecJavaAnalysis(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.HorusecJava, projectSubPath)

@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -40,6 +41,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.Semgrep) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Semgrep.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startSecurityCodeScanAnalysis(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.SecurityCodeScan, projectSubPath)

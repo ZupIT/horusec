@@ -47,6 +47,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.Safety) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Safety.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startSafetyAnalysis(projectSubPath)
 	f.LogAnalysisError(err, tools.Safety, projectSubPath)
 	f.SetLanguageIsFinished()

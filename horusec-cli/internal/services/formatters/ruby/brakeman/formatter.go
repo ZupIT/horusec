@@ -41,6 +41,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.Brakeman) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Brakeman.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startBrakemanAnalysis(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.Brakeman, projectSubPath)

@@ -77,3 +77,7 @@ func (m *Mock) GetCodeWithMaxCharacters(code string, column int) string {
 	args := m.MethodCalled("GetCodeWithMaxCharacters")
 	return args.Get(0).(string)
 }
+func (m *Mock) ToolIsToIgnore(tool tools.Tool) bool {
+	args := m.MethodCalled("ToolIsToIgnore")
+	return args.Get(0).(bool)
+}

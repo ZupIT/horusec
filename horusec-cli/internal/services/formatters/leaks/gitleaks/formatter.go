@@ -41,6 +41,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.GitLeaks) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.GitLeaks.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startGitLeaksAnalysis(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.GitLeaks, projectSubPath)
