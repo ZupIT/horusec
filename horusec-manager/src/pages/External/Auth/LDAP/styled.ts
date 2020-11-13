@@ -23,7 +23,7 @@ const Form = styled.form`
 `;
 
 const Field = styled(Input)`
-  margin-top: 25px;
+  margin: 25px 0;
 `;
 
 const Submit = styled(Button)`

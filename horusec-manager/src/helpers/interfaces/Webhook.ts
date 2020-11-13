@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-import isValidEmail from './isValidEmail';
-import isEmptyString from './isEmptyString';
-import hasLowerCase from './hasLowerCase';
-import hasNumber from './hasNumber';
-import hasSpecialCharacter from './hasSpecialCharacter';
-import hasUpperCase from './hasUpperCase';
-import isValidURL from './isValidURL';
+import { Repository } from './Repository';
 
-export {
-  isValidEmail,
-  isEmptyString,
-  hasLowerCase,
-  hasNumber,
-  hasSpecialCharacter,
-  hasUpperCase,
-  isValidURL,
-};
+export interface WebhookHeader {
+  key: string;
+  value: string;
+}
+
+export interface Webhook {
+  webhookID?: string;
+  method: 'get' | 'post';
+  companyID: string;
+  repositoryID: string;
+  repository: Repository;
+  url: string;
+  description?: string;
+  headers?: WebhookHeader[];
+  creatAt?: string;
+  updateAt?: string;
+}

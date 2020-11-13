@@ -15,44 +15,48 @@
  */
 
 import styled from 'styled-components';
-import { Input, Button } from 'components';
+import { Input, Select } from 'components';
+
+interface SelectProps {
+  color: string;
+}
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
 `;
 
-const SubTitle = styled.h2`
-  color: ${({ theme }) => theme.colors.text.primary};
-  font-weight: normal;
-  align-self: flex-start;
-  font-size: ${({ theme }) => theme.metrics.fontSize.large};
+const Field = styled(Input)`
+  display: block;
+  margin-right: 20px;
+`;
+
+const Label = styled.label`
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  color: ${({ theme }) => theme.colors.text.secundary};
+  margin: 22px 0;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
   margin-bottom: 25px;
 `;
 
-const Field = styled(Input)`
-  margin-bottom: 45px;
-`;
+const URLSelect = styled(Select)<SelectProps>`
+  background-color: ${({ color }) => color} !important;
+  opacity: 1 !important;
+  margin-right: 20px;
 
-const Submit = styled(Button)`
-  display: block;
-`;
-
-const BackToLogin = styled(Button)`
-  margin-top: 15px;
-`;
-
-const Subject = styled.span`
-  color: ${({ theme }) => theme.colors.text.secundary};
-  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
-  margin-top: 35px;
+  div {
+    color: ${({ theme }) => theme.colors.text.primary};
+  }
 `;
 
 export default {
   Form,
-  SubTitle,
   Field,
-  Submit,
-  BackToLogin,
-  Subject,
+  Label,
+  Wrapper,
+  URLSelect,
 };

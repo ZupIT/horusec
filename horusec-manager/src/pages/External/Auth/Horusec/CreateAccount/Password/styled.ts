@@ -64,7 +64,7 @@ const Form = styled.form`
 `;
 
 const Field = styled(Input)`
-  margin-bottom: 25px;
+  margin-bottom: 45px;
 `;
 
 const Submit = styled(Button)`

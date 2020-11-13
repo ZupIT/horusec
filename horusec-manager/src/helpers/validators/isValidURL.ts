@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-import isValidEmail from './isValidEmail';
-import isEmptyString from './isEmptyString';
-import hasLowerCase from './hasLowerCase';
-import hasNumber from './hasNumber';
-import hasSpecialCharacter from './hasSpecialCharacter';
-import hasUpperCase from './hasUpperCase';
-import isValidURL from './isValidURL';
-
-export {
-  isValidEmail,
-  isEmptyString,
-  hasLowerCase,
-  hasNumber,
-  hasSpecialCharacter,
-  hasUpperCase,
-  isValidURL,
-};
+export default function isValidURL(value: string): boolean {
+  const re = new RegExp(
+    '^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?'
+  );
+  return re.test(value);
+}
