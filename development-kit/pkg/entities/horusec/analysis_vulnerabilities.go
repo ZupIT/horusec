@@ -20,9 +20,9 @@ import (
 )
 
 type AnalysisVulnerabilities struct {
-	VulnerabilityID uuid.UUID     `gorm:"Column:vulnerability_id"`
-	AnalysisID      uuid.UUID     `gorm:"Column:analysis_id"`
-	CreatedAt       time.Time     `gorm:"Column:created_at"`
+	VulnerabilityID uuid.UUID     `json:"vulnerabilityID" gorm:"Column:vulnerability_id"`
+	AnalysisID      uuid.UUID     `json:"analysisID" gorm:"Column:analysis_id"`
+	CreatedAt       time.Time     `json:"createdAt" gorm:"Column:created_at"`
 	Vulnerability   Vulnerability `json:"vulnerabilities" gorm:"foreignkey:VulnerabilityID;association_foreignkey:VulnerabilityID"` //nolint:lll gorm usage
 }
 

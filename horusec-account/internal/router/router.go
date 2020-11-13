@@ -24,6 +24,7 @@ import (
 	company "github.com/ZupIT/horusec/horusec-account/internal/handlers/companies"
 	"github.com/ZupIT/horusec/horusec-account/internal/handlers/health"
 	"github.com/ZupIT/horusec/horusec-account/internal/handlers/repositories"
+	"github.com/ZupIT/horusec/horusec-account/internal/handlers/webhook"
 	"github.com/ZupIT/horusec/horusec-account/internal/router/routes"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -65,6 +66,7 @@ func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.Interfa
 	appConfig app.IAppConfig, grpcCon *grpc.ClientConn) {
 	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig)
 	r.RouterCompany(broker, databaseRead, databaseWrite, appConfig, grpcCon)
+	r.RouterWebhook(databaseRead, databaseWrite, grpcCon)
 }
 
 func (r *Router) EnableRealIP() *Router {
@@ -123,6 +125,20 @@ func (r *Router) RouterCompany(broker brokerLib.IBroker, databaseRead SQL.Interf
 		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/roles/{accountID}", handler.RemoveUser)
 		router.Route("/{companyID}/repositories",
 			r.routerCompanyRepositories(databaseRead, databaseWrite, broker, appConfig, grpcCon))
+	})
+	return r
+}
+
+func (r *Router) RouterWebhook(databaseRead SQL.InterfaceRead,
+	databaseWrite SQL.InterfaceWrite, grpcCon *grpc.ClientConn) *Router {
+	handler := webhook.NewHandler(databaseWrite, databaseRead)
+	authzMiddleware := middlewares.NewHorusAuthzMiddleware(grpcCon)
+	r.router.Route(routes.WebhookHandler, func(router chi.Router) {
+		router.Options("/", handler.Options)
+		router.With(authzMiddleware.IsCompanyAdmin).Post("/{companyID}/{repositoryID}", handler.Create)
+		router.With(authzMiddleware.IsCompanyAdmin).Get("/{companyID}", handler.ListAll)
+		router.With(authzMiddleware.IsCompanyAdmin).Put("/{companyID}/{repositoryID}/{webhookID}", handler.Update)
+		router.With(authzMiddleware.IsCompanyAdmin).Delete("/{companyID}/{repositoryID}/{webhookID}", handler.Remove)
 	})
 	return r
 }

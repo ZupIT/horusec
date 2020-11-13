@@ -15,9 +15,9 @@
 package account
 
 import (
-	"testing"
-
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	"github.com/google/uuid"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -100,4 +100,13 @@ func TestToBytesCompany(t *testing.T) {
 
 		assert.NotEmpty(t, company.ToBytes())
 	})
+}
+
+func TestCompanyApplicationAdmin_ToCompany(t *testing.T) {
+	c := CompanyApplicationAdmin{
+		CompanyID:  uuid.New(),
+		Name:       "test",
+		AdminEmail: "test@example.com",
+	}
+	assert.NotEmpty(t, c.ToCompany())
 }

@@ -16,7 +16,9 @@ package analysis
 
 import (
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -35,10 +37,10 @@ type Handler struct {
 	useCases           usecasesAnalysis.Interface
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
 	return &Handler{
 		useCases:           usecasesAnalysis.NewAnalysisUseCases(),
-		analysisController: analysis.NewAnalysisController(postgresRead, postgresWrite),
+		analysisController: analysis.NewAnalysisController(postgresRead, postgresWrite, broker, config),
 	}
 }
 

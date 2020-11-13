@@ -49,3 +49,7 @@ func (m *Mock) GetContentType() string {
 	args := m.MethodCalled("GetContentType")
 	return args.Get(0).(string)
 }
+
+func (m *Mock) CloseBody() {
+	_ = m.MethodCalled("CloseBody")
+}

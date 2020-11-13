@@ -144,34 +144,34 @@ func RunCompanyCRUD(t *testing.T, bearerToken string) string {
 
 func RunRepositoryCRUD(t *testing.T, bearerToken, companyID string) string {
 	t.Run("Should create an repository, check if it exists, update your name check if name was updated delete a repository and return new repository to manager in other steps", func(t *testing.T) {
-		repositoryID := CreateRepository(t, bearerToken, companyID, &accountEntities.Repository{
+		repositoryID := server.CreateRepository(t, bearerToken, companyID, &accountEntities.Repository{
 			Name: "horusec",
 		})
-		allRepositories := ReadAllRepositories(t, bearerToken, companyID, true)
+		allRepositories := server.ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositories, "horusec")
-		UpdateRepository(t, bearerToken, companyID, repositoryID, &accountEntities.Repository{
+		server.UpdateRepository(t, bearerToken, companyID, repositoryID, &accountEntities.Repository{
 			Name: "horusec-1",
 		})
-		allRepositoriesUpdated := ReadAllRepositories(t, bearerToken, companyID, true)
+		allRepositoriesUpdated := server.ReadAllRepositories(t, bearerToken, companyID, true)
 		assert.Contains(t, allRepositoriesUpdated, "horusec-1")
-		DeleteRepository(t, bearerToken, companyID, repositoryID)
+		server.DeleteRepository(t, bearerToken, companyID, repositoryID)
 	})
-	return CreateRepository(t, bearerToken, companyID, &accountEntities.Repository{
+	return server.CreateRepository(t, bearerToken, companyID, &accountEntities.Repository{
 		Name: "horusec",
 	})
 }
 
 func RunRepositoryTokenCRUD(t *testing.T, bearerToken, companyID, repositoryID string) string {
 	t.Run("Should create an repository token, check if return your content correctly and delete a repository token and return new repository token to manager in other steps", func(t *testing.T) {
-		_ = GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
-		allTokens := ReadAllRepositoryToken(t, bearerToken, companyID, repositoryID)
+		_ = server.GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
+		allTokens := server.ReadAllRepositoryToken(t, bearerToken, companyID, repositoryID)
 		assert.Contains(t, allTokens, "access_token")
 		var allTokensStruct []api.Token
 		assert.NoError(t, json.Unmarshal([]byte(allTokens), &allTokensStruct))
 		assert.NotEmpty(t, allTokensStruct)
-		RevokeRepositoryToken(t, bearerToken, companyID, repositoryID, allTokensStruct[0].TokenID.String())
+		server.RevokeRepositoryToken(t, bearerToken, companyID, repositoryID, allTokensStruct[0].TokenID.String())
 	})
-	return GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
+	return server.GenerateRepositoryToken(t, bearerToken, companyID, repositoryID, api.Token{Description: "access_token"})
 }
 
 func RunCompanyTokenCRUD(t *testing.T, bearerToken string, companyID string) string {
@@ -427,13 +427,13 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		bearerTokenAccount2 := contentLoginAccount2["accessToken"]
 
 		// Check if repository exists to new user
-		allRepositories := ReadAllRepositories(t, bearerTokenAccount2, companyID, true)
+		allRepositories := server.ReadAllRepositories(t, bearerTokenAccount2, companyID, true)
 		assert.Contains(t, allRepositories, "horusec")
 
 		// Expected return unauthorized because user is not admin of repository to see tokens of repository
 		responseRepositoryToken := ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
 		assert.Equal(t, http.StatusUnauthorized, responseRepositoryToken.GetStatusCode())
-
+		defer responseRepositoryToken.CloseBody()
 		// Update permission of new user to admin in repository
 		UpdateUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID, &roles.AccountCompany{
 			Role: rolesEnum.Admin,
@@ -442,12 +442,12 @@ func RunCRUDUserInRepository(t *testing.T, bearerTokenAccount1, companyID, repos
 		// Expected return OK because user is authorized to see tokens of repository
 		responseRepositoryToken = ReadAllRepositoryTokenWithoutTreatment(t, bearerTokenAccount2, companyID, repositoryID)
 		assert.Equal(t, http.StatusOK, responseRepositoryToken.GetStatusCode())
-
+		defer responseRepositoryToken.CloseBody()
 		// Expected remove user from company
 		RemoveUserInRepository(t, bearerTokenAccount1, companyID, repositoryID, accountID)
 
 		// Not show repository for user when get all repositories
-		allRepositories = ReadAllRepositories(t, bearerTokenAccount2, companyID, false)
+		allRepositories = server.ReadAllRepositories(t, bearerTokenAccount2, companyID, false)
 		assert.NotContains(t, allRepositories, "horusec")
 
 		// Logout session new user

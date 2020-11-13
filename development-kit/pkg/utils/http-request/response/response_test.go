@@ -122,18 +122,21 @@ func TestHTTPResponse_ErrorByStatusCode(t *testing.T) {
 }
 
 func TestHTTPResponse_GetBody(t *testing.T) {
-	t.Run("Should return body expected", func(t *testing.T) {
+	t.Run("Should return body expected and close body", func(t *testing.T) {
 		bodyResponse := "hello world"
 		res := &http.Response{
 			Body: ioutil.NopCloser(strings.NewReader(bodyResponse)),
 		}
-		body, err := NewHTTPResponse(res).GetBody()
+		r := NewHTTPResponse(res)
+		body, err := r.GetBody()
 		assert.NoError(t, err)
 		assert.Equal(t, bodyResponse, string(body))
+		defer r.CloseBody()
 	})
 	t.Run("Should return body nil", func(t *testing.T) {
 		res := &http.Response{}
-		body, err := NewHTTPResponse(res).GetBody()
+		r := NewHTTPResponse(res)
+		body, err := r.GetBody()
 		assert.NoError(t, err)
 		assert.Empty(t, body)
 	})
