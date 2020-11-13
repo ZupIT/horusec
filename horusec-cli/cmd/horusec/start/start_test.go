@@ -443,7 +443,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location:")
 		assert.Contains(t, output, "Hold on! Horusec still analysis your code. Timeout in: 600s")
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
-		assert.Contains(t, output, "[HORUSEC] 6 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, SEE MORE DETAILS IN DEBUG LEVEL AND TRY AGAIN")
+		assert.Contains(t, output, "[HORUSEC] 6 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstZip))
 	})

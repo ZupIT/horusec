@@ -12,27 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tools
-
-type Tool string
+package semgrep
 
 const (
-	GoSec            Tool = "GoSec"
-	SecurityCodeScan Tool = "SecurityCodeScan"
-	Brakeman         Tool = "Brakeman"
-	Safety           Tool = "Safety"
-	Bandit           Tool = "Bandit"
-	NpmAudit         Tool = "NpmAudit"
-	YarnAudit        Tool = "YarnAudit"
-	SpotBugs         Tool = "SpotBugs"
-	HorusecKotlin    Tool = "HorusecKotlin"
-	HorusecJava      Tool = "HorusecJava"
-	HorusecLeaks     Tool = "HorusecLeaks"
-	GitLeaks         Tool = "GitLeaks"
-	TfSec            Tool = "TfSec"
-	Semgrep          Tool = "Semgrep"
+	ImageName = "horuszup/horusec-semgrep"
+	ImageTag  = "v1.0.0"
+	// nolint
+	ImageCmd = `
+	    {{WORK_DIR}}
+		semgrep --config=p/r2c-ci -q --json .
+		chmod -R 777 .
+  `
 )
-
-func (t Tool) ToString() string {
-	return string(t)
-}

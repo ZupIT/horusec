@@ -159,6 +159,7 @@ func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntitie
 	)
 }
 
+// nolint
 func (au *UseCases) sliceTools() []interface{} {
 	return []interface{}{
 		tools.GoSec,
@@ -174,8 +175,11 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecJava,
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
+		tools.Semgrep,
 	}
 }
+
+// nolint
 func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
@@ -187,6 +191,12 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Javascript,
 		languages.Leaks,
 		languages.HCL,
+		languages.PHP,
+		languages.TypeScript,
+		languages.C,
+		languages.HTML,
+		languages.Generic,
+		languages.Unknown,
 	}
 }
 func (au *UseCases) sliceSeverities() []interface{} {
