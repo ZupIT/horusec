@@ -147,6 +147,9 @@ const (
 	// Used to skip vulnerability of type risk accept
 	// By default is empty
 	EnvRiskAcceptHashes = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
+	// Used to ignore tools for run
+	// By default is empty
+	EnvToolsToIgnore = "HORUSEC_CLI_TOOLS_TO_IGNORE"
 )
 
 type Config struct {
@@ -172,6 +175,7 @@ type Config struct {
 	RepositoryName                  string
 	FalsePositiveHashes             string
 	RiskAcceptHashes                string
+	ToolsToIgnore                   string
 }
 
 //nolint
@@ -199,6 +203,7 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetRepositoryName(viper.GetString(c.toLowerCamel(EnvRepositoryName)))
 	c.SetFalsePositiveHashes(viper.GetString(c.toLowerCamel(EnvFalsePositiveHashes)))
 	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
+	c.SetToolsToIgnore(viper.GetString(c.toLowerCamel(EnvToolsToIgnore)))
 }
 
 //nolint
@@ -224,6 +229,7 @@ func (c *Config) SetConfigsFromEnvironments() {
 	c.SetRepositoryName(env.GetEnvOrDefault(EnvRepositoryName, c.RepositoryName))
 	c.SetFalsePositiveHashes(env.GetEnvOrDefault(EnvFalsePositiveHashes, c.FalsePositiveHashes))
 	c.SetRiskAcceptHashes(env.GetEnvOrDefault(EnvRiskAcceptHashes, c.RiskAcceptHashes))
+	c.SetToolsToIgnore(env.GetEnvOrDefault(EnvToolsToIgnore, c.ToolsToIgnore))
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -428,4 +434,12 @@ func (c *Config) GetFalsePositiveHashesList() (list []string) {
 
 func (c *Config) SetFalsePositiveHashes(falsePositive string) {
 	c.FalsePositiveHashes = falsePositive
+}
+
+func (c *Config) GetToolsToIgnore() string {
+	return c.ToolsToIgnore
+}
+
+func (c *Config) SetToolsToIgnore(toolsToIgnore string) {
+	c.ToolsToIgnore = toolsToIgnore
 }
