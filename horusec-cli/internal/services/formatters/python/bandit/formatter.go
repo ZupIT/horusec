@@ -42,7 +42,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Bandit) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Bandit.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Bandit.ToString(), logger.DebugLevel)
 		return
 	}
 	err := f.startBanditAnalysis(projectSubPath)

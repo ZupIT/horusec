@@ -42,7 +42,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.HorusecLeaks) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecLeaks.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecLeaks.ToString(), logger.DebugLevel)
 		return
 	}
 	err := f.startHorusecLeaksAnalysis(projectSubPath)

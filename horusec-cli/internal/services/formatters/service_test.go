@@ -214,7 +214,6 @@ func TestToolIsToIgnore(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
 
-
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
 	t.Run("should return true when language is match uppercase", func(t *testing.T) {
@@ -223,7 +222,6 @@ func TestToolIsToIgnore(t *testing.T) {
 		configs := &config.Config{ToolsToIgnore: "GOSEC"}
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
-
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -234,7 +232,6 @@ func TestToolIsToIgnore(t *testing.T) {
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
 
-
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
 	t.Run("should return false when language is not match", func(t *testing.T) {
@@ -243,7 +240,6 @@ func TestToolIsToIgnore(t *testing.T) {
 		configs := &config.Config{ToolsToIgnore: "SECURITYCODESCAN"}
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
-
 
 		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})

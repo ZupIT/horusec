@@ -42,7 +42,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Semgrep) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Semgrep.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Semgrep.ToString(), logger.DebugLevel)
 		return
 	}
 	err := f.startSecurityCodeScanAnalysis(projectSubPath)

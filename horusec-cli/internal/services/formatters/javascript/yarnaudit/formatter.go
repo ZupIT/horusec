@@ -48,7 +48,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.YarnAudit) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.YarnAudit.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.YarnAudit.ToString(), logger.DebugLevel)
 		return
 	}
 	err := f.startYarnAuditAnalysis(projectSubPath)
