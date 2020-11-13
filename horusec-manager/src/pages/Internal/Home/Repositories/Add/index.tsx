@@ -37,7 +37,7 @@ interface Props {
 const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { companyID, authzAdmin, authzMember } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -50,17 +50,17 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const [adminGroup, setAdminGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [supervisorGroup, setSupervisorGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzMember,
   });
 
   const resetFields = () => {
