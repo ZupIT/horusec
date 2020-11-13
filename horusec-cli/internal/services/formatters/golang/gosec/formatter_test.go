@@ -115,4 +115,15 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 			golangAnalyser.StartAnalysis("")
 		})
 	})
+	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		config := &cliConfig.Config{
+			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
+		}
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+	})
 }

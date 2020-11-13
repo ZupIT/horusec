@@ -44,6 +44,7 @@ type IService interface {
 	SetMonitor(monitor *horusec.Monitor)
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
+	ToolIsToIgnore(tool tools.Tool) bool
 }
 
 type Service struct {
@@ -151,4 +152,17 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 		return newCode
 	}
 	return code
+}
+
+func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
+	allTools := strings.Split(s.config.GetToolsToIgnore(), ",")
+
+	for _, toolToIgnore := range allTools {
+		if strings.EqualFold(strings.TrimSpace(toolToIgnore), tool.ToString()) {
+			s.SetLanguageIsFinished()
+			return true
+		}
+	}
+
+	return false
 }
