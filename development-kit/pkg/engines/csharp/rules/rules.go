@@ -16,6 +16,7 @@ package rules
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/csharp"
 )
 
 type Interface interface {
@@ -29,5 +30,14 @@ func NewRules() Interface {
 }
 
 func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	return nil
+	for index := range csharp.AllRulesCsharpAnd() {
+		rules = append(rules, csharp.AllRulesCsharpAnd()[index])
+	}
+	for index := range csharp.AllRulesCsharpOr() {
+		rules = append(rules, csharp.AllRulesCsharpOr()[index])
+	}
+	for index := range csharp.AllRulesCsharpRegular() {
+		rules = append(rules, csharp.AllRulesCsharpRegular()[index])
+	}
+	return rules
 }
