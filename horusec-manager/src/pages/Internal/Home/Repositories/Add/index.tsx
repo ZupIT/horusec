@@ -140,6 +140,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Styled.Field
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
+                initialValue={adminGroup.value}
                 name="adminGroup"
                 type="text"
                 width="100%"
@@ -152,6 +153,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Styled.Field
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setSupervisorGroup(field)}
+                initialValue={supervisorGroup.value}
                 name="supervisorGroup"
                 type="text"
                 width="100%"
@@ -164,6 +166,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Styled.Field
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setUserGroup(field)}
+                initialValue={userGroup.value}
                 name="userGroup"
                 type="text"
                 width="100%"
