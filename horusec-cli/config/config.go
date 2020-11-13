@@ -113,6 +113,7 @@ const (
 	//   kotlin string
 	//   javaScript string
 	//   git string
+	//   generic string
 	// }
 	// Validation: It is mandatory to be valid interface of workdir to proceed
 	EnvWorkDirPath = "HORUSEC_CLI_WORK_DIR"

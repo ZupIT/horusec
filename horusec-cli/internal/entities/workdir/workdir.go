@@ -32,6 +32,7 @@ type WorkDir struct {
 	JavaScript []string `json:"javaScript"`
 	Leaks      []string `json:"leaks"`
 	HCL        []string `json:"hcl"`
+	Generic    []string `json:"generic"`
 }
 
 func (w *WorkDir) String() string {
@@ -67,6 +68,7 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 		languages.Javascript: w.JavaScript,
 		languages.Leaks:      w.Leaks,
 		languages.HCL:        w.HCL,
+		languages.Generic:    w.Generic,
 	}
 }
 

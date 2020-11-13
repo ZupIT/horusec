@@ -26,8 +26,13 @@ const (
 	Java       Language = "Java"
 	Kotlin     Language = "Kotlin"
 	Javascript Language = "JavaScript"
+	TypeScript Language = "TypeScript"
 	Leaks      Language = "Leaks"
 	HCL        Language = "HCL"
+	C          Language = "C"
+	PHP        Language = "PHP"
+	HTML       Language = "HTML"
+	Generic    Language = "Generic"
 	Unknown    Language = "Unknown"
 )
 
@@ -51,6 +56,7 @@ func SupportedLanguages() []Language {
 		Javascript,
 		Leaks,
 		HCL,
+		Generic,
 		Unknown,
 	}
 }
@@ -66,6 +72,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Kotlin.ToString():     Kotlin,
 		Javascript.ToString(): Javascript,
 		HCL.ToString():        HCL,
+		Generic.ToString():    Generic,
 	}
 }
 
