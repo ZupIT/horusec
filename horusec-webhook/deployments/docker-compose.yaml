@@ -1,0 +1,24 @@
+version: '3'
+services:
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  postgresql:
+    container_name: postgresql
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: horusec_db
+    volumes:
+      - /var/lib/postgres/db/data:/var/lib/postgresql/data
+    tty: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m

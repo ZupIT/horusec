@@ -16,6 +16,6 @@ package routes
 
 const (
 	HealthHandler  = "/api/health"
-	AccountHandler = "/api/account"
+	WebhookHandler = "/api/webhook"
 	CompanyHandler = "/api/companies"
 )

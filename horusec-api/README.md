@@ -45,6 +45,11 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_GRPC_AUTH_URL                         | localhost:8007                                                   | This environment get horusec url to mount horusec auth url   |
 | HORUSEC_GRPC_USE_CERTS                        | false                                                            | This environment get if use of certificates is active or not |
 | HORUSEC_GRPC_CERT_PATH                        |                                                                  | This environment get grpc certificate path                   | 
+| HORUSEC_DISABLED_BROKER                       | false                                                            | Disable broker dispatch in this service used to webhook dispatch | 
+| HORUSEC_BROKER_HOST                           | 127.0.0.1                                                        | This environment get host to connect on broker RABBIT        | 
+| HORUSEC_BROKER_PORT                           | 5672                                                             | This environment get port to connect on broker RABBIT        |
+| HORUSEC_BROKER_USERNAME                       | guest                                                            | This environment get username to connect on broker RABBIT    |
+| HORUSEC_BROKER_PASSWORD                       | guest                                                            | This environment get password to connect on broker RABBIT    |
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-api folder**

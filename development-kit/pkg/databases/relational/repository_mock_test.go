@@ -108,3 +108,13 @@ func TestMockRead_RawSQL(t *testing.T) {
 	m.On("RawSQL").Return(response.NewResponse(0, nil, nil))
 	assert.NoError(t, m.RawSQL("", nil).GetError())
 }
+func TestMockRead_First(t *testing.T) {
+	m := &MockRead{}
+	m.On("First").Return(response.NewResponse(0, nil, nil))
+	assert.NoError(t, m.First("", nil).GetError())
+}
+func TestMockRead_Related(t *testing.T) {
+	m := &MockRead{}
+	m.On("Related").Return(response.NewResponse(0, nil, nil))
+	assert.NoError(t, m.Related(nil, "", nil).GetError())
+}

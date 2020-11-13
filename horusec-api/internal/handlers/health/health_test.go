@@ -15,6 +15,8 @@
 package health
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -28,7 +30,7 @@ func TestNewHandler(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite)
+		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil)
 		assert.NotNil(t, handler)
 	})
 }
@@ -38,7 +40,7 @@ func TestOptions(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite)
+		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -52,17 +54,57 @@ func TestGet(t *testing.T) {
 	t.Run("should return 200 everything its ok", func(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
-
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		brokerMock := &broker.Mock{}
+		brokerMock.On("IsAvailable").Return(true)
 		postgresMockRead.On("IsAvailable").Return(true)
 		postgresMockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite)
+		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
 		handler.Get(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+	t.Run("should return 200 everything its ok and config disable", func(t *testing.T) {
+		postgresMockRead := &relational.MockRead{}
+		postgresMockWrite := &relational.MockWrite{}
+		config := &app.Config{
+			DisabledBroker: true,
+		}
+		postgresMockRead.On("IsAvailable").Return(true)
+		postgresMockWrite.On("IsAvailable").Return(true)
+
+		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, config)
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
+		postgresMockRead := &relational.MockRead{}
+		postgresMockWrite := &relational.MockWrite{}
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		brokerMock := &broker.Mock{}
+		brokerMock.On("IsAvailable").Return(false)
+		postgresMockRead.On("IsAvailable").Return(true)
+		postgresMockWrite.On("IsAvailable").Return(true)
+
+		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
 	t.Run("should return 500 when database write is not healthy", func(t *testing.T) {
@@ -72,7 +114,13 @@ func TestGet(t *testing.T) {
 		postgresMockWrite.On("IsAvailable").Return(true)
 		postgresMockRead.On("IsAvailable").Return(false)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite)
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		brokerMock := &broker.Mock{}
+		brokerMock.On("IsAvailable").Return(true)
+
+		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -88,7 +136,13 @@ func TestGet(t *testing.T) {
 		postgresMockWrite.On("IsAvailable").Return(false)
 		postgresMockRead.On("IsAvailable").Return(true)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite)
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+		brokerMock := &broker.Mock{}
+		brokerMock.On("IsAvailable").Return(true)
+
+		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

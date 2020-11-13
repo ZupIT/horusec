@@ -33,6 +33,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	m := &Mock{}
+	m.On("Create").Return(&accountEntities.Company{}, nil)
+	m.On("Update").Return(&accountEntities.Company{}, nil)
+	m.On("GetByID").Return(&accountEntities.Company{}, nil)
+	m.On("GetAllOfAccount").Return(&[]accountEntities.CompanyResponse{}, nil)
+	m.On("Delete").Return(nil)
+	m.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
+	_, err := m.Create(&accountEntities.Company{}, nil)
+	assert.NoError(t, err)
+	_, err = m.Update(uuid.New(), &accountEntities.Company{})
+	assert.NoError(t, err)
+	_, err = m.GetByID(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllOfAccount(uuid.New())
+	assert.NoError(t, err)
+	err = m.Delete(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllAccountsInCompany(uuid.New())
+	assert.NoError(t, err)
+}
+
 func TestCreateCompany(t *testing.T) {
 	t.Run("should use current connection to create a company", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}

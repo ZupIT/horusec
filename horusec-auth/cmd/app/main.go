@@ -47,7 +47,7 @@ func main() {
 	var broker brokerLib.IBroker
 
 	appConfig := app.NewConfig()
-	if !appConfig.IsEmailServiceDisabled() {
+	if !appConfig.IsDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 

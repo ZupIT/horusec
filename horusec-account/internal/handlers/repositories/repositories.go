@@ -19,13 +19,14 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	"net/http"
+	netHttp "net/http"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
@@ -60,7 +61,7 @@ func NewRepositoryHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.Int
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories [post]
 // @Security ApiKeyAuth
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, repository, err := h.getCreateRequestData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -77,7 +78,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusCreated(w, response)
 }
 
-func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
+func (h *Handler) checkCreateRepositoryErrors(w netHttp.ResponseWriter, err error) {
 	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse {
 		httpUtil.StatusBadRequest(w, err)
 		return
@@ -86,7 +87,7 @@ func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) 
 	httpUtil.StatusInternalServerError(w, err)
 }
 
-func (h *Handler) getCreateRequestData(r *http.Request) (uuid.UUID, *accountEntities.Repository, error) {
+func (h *Handler) getCreateRequestData(r *netHttp.Request) (uuid.UUID, *accountEntities.Repository, error) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
 	if err != nil {
 		return uuid.Nil, nil, errorsEnum.ErrorInvalidCompanyID
@@ -110,7 +111,7 @@ func (h *Handler) getCreateRequestData(r *http.Request) (uuid.UUID, *accountEnti
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID} [patch]
 // @Security ApiKeyAuth
-func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, repository, err := h.getUpdateRequestData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -126,7 +127,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getUpdateRequestData(r *http.Request) (uuid.UUID, *accountEntities.Repository, error) {
+func (h *Handler) getUpdateRequestData(r *netHttp.Request) (uuid.UUID, *accountEntities.Repository, error) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		return uuid.Nil, nil, errorsEnum.ErrorInvalidRepositoryID
@@ -149,7 +150,7 @@ func (h *Handler) getUpdateRequestData(r *http.Request) (uuid.UUID, *accountEnti
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID} [get]
 // @Security ApiKeyAuth
-func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		httpUtil.StatusBadRequest(w, errorsEnum.ErrorInvalidRepositoryID)
@@ -166,7 +167,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, repository)
 }
 
-func (h *Handler) checkDefaultErrors(err error, w http.ResponseWriter) {
+func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 	if err == errorsEnum.ErrNotFoundRecords {
 		httpUtil.StatusNotFound(w, err)
 		return
@@ -192,7 +193,7 @@ func (h *Handler) checkDefaultErrors(err error, w http.ResponseWriter) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories [get]
 // @Security ApiKeyAuth
-func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, accountID, err := h.getCompanyIDAndAccountIDToList(r)
 	if err != nil {
 		if err == errorsEnum.ErrorInvalidCompanyID {
@@ -210,7 +211,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, repositoryList)
 }
 
-func (h *Handler) getCompanyIDAndAccountIDToList(r *http.Request) (uuid.UUID, uuid.UUID, error) {
+func (h *Handler) getCompanyIDAndAccountIDToList(r *netHttp.Request) (uuid.UUID, uuid.UUID, error) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
 	if err != nil || companyID == uuid.Nil {
 		return uuid.Nil, uuid.Nil, errorsEnum.ErrorInvalidCompanyID
@@ -231,7 +232,7 @@ func (h *Handler) getCompanyIDAndAccountIDToList(r *http.Request) (uuid.UUID, uu
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID} [delete]
 // @Security ApiKeyAuth
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Delete(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		httpUtil.StatusBadRequest(w, errorsEnum.ErrorInvalidCompanyID)
@@ -261,7 +262,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [patch]
 // @Security ApiKeyAuth
-func (h *Handler) UpdateAccountRepository(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateAccountRepository(w netHttp.ResponseWriter, r *netHttp.Request) {
 	accountRepository, err := h.getAccountRepositoryRequestData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -277,7 +278,7 @@ func (h *Handler) UpdateAccountRepository(w http.ResponseWriter, r *http.Request
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getAccountRepositoryRequestData(r *http.Request) (*roles.AccountRepository, error) {
+func (h *Handler) getAccountRepositoryRequestData(r *netHttp.Request) (*roles.AccountRepository, error) {
 	accountRepository, err := h.useCases.NewAccountRepositoryFromReadCloser(r.Body)
 	if err != nil {
 		return nil, err
@@ -287,7 +288,7 @@ func (h *Handler) getAccountRepositoryRequestData(r *http.Request) (*roles.Accou
 }
 
 func (h *Handler) getAccountRepositoryRequestID(
-	r *http.Request, accountRepository *roles.AccountRepository) (*roles.AccountRepository, error) {
+	r *netHttp.Request, accountRepository *roles.AccountRepository) (*roles.AccountRepository, error) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		return nil, err
@@ -306,7 +307,7 @@ func (h *Handler) getAccountRepositoryRequestID(
 // @ID invite-user-repository
 // @Accept  json
 // @Produce  json
-// @Param InviteUser body account.InviteUser true "invite user info"
+// @Param InviteUser body dto.InviteUser true "invite user info"
 // @Param companyID path string true "companyID of the repository"
 // @Param repositoryID path string true "repositoryID of the repository"
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
@@ -316,7 +317,7 @@ func (h *Handler) getAccountRepositoryRequestID(
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID}/roles [post]
 // @Security ApiKeyAuth
-func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) InviteUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	inviteUser, err := h.getInviteUserRequestData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -332,7 +333,7 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getInviteUserRequestData(r *http.Request) (*dto.InviteUser, error) {
+func (h *Handler) getInviteUserRequestData(r *netHttp.Request) (*dto.InviteUser, error) {
 	inviteUser, err := h.useCases.NewInviteUserFromReadCloser(r.Body)
 	if err != nil {
 		return nil, err
@@ -362,7 +363,7 @@ func (h *Handler) getInviteUserRequestData(r *http.Request) (*dto.InviteUser, er
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID}/roles [get]
 // @Security ApiKeyAuth
-func (h *Handler) GetAccounts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetAccounts(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {
 		httpUtil.StatusBadRequest(w, errorsEnum.ErrorInvalidRepositoryID)
@@ -392,7 +393,7 @@ func (h *Handler) GetAccounts(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [delete]
 // @Security ApiKeyAuth
-func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) RemoveUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	removeUser, err := h.getRemoveUserRequestData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
@@ -408,7 +409,7 @@ func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-func (h *Handler) getRemoveUserRequestData(r *http.Request) (*dto.RemoveUser, error) {
+func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser, error) {
 	removeUser := &dto.RemoveUser{}
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
 	if err != nil {

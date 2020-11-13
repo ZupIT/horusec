@@ -38,6 +38,7 @@ import (
 type Interface interface {
 	NewAnalysisRunning() *horusecEntities.Analysis
 	DecodeAnalysisDataFromIoRead(body io.ReadCloser) (analysisData *apiEntities.AnalysisData, err error)
+	DecodeAnalysisFromBytes(body []byte) (analysis *horusecEntities.Analysis, err error)
 	ParseInterfaceToListAnalysis(data interface{}) (analysis []*horusecEntities.Analysis, err error)
 	ParseInterfaceToAnalysis(data interface{}) (analysis *horusecEntities.Analysis, err error)
 	ParsePacketToAnalysis(packet brokerPacket.IPacket) (analysis *horusecEntities.Analysis, err error)
@@ -95,6 +96,28 @@ func (au *UseCases) DecodeAnalysisDataFromIoRead(body io.ReadCloser) (
 		return nil, err
 	}
 	return analysisData, au.validateAnalysis(analysisData.Analysis)
+}
+
+func (au *UseCases) DecodeAnalysisFromBytes(body []byte) (analysis *horusecEntities.Analysis, err error) {
+	if err := json.Unmarshal(body, &analysis); err != nil {
+		return nil, err
+	}
+
+	return analysis, au.validateAnalysisWithRepositoryAndCompany(analysis)
+}
+
+func (au *UseCases) validateAnalysisWithRepositoryAndCompany(analysis *horusecEntities.Analysis) error {
+	return validation.ValidateStruct(analysis,
+		validation.Field(&analysis.ID, validation.Required, is.UUID),
+		validation.Field(&analysis.RepositoryID, validation.Required, is.UUID),
+		validation.Field(&analysis.CompanyID, validation.Required, is.UUID),
+		validation.Field(&analysis.Status,
+			validation.Required, validation.In(horusec.Running, horusec.Success, horusec.Error)),
+		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
+		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
+		validation.Field(&analysis.AnalysisVulnerabilities,
+			validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
+	)
 }
 
 func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {

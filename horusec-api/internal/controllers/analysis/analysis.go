@@ -23,8 +23,11 @@ import (
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	analysisUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"github.com/google/uuid"
 	"time"
 )
@@ -40,10 +43,15 @@ type Controller struct {
 	repoCompany      repositoryCompany.ICompanyRepository
 	repoRepository   repository.IRepository
 	repoAnalysis     repositoryAnalysis.IAnalysisRepository
+	config           app.IAppConfig
+	broker           brokerLib.IBroker
 }
 
-func NewAnalysisController(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) IController {
+func NewAnalysisController(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	broker brokerLib.IBroker, config app.IAppConfig) IController {
 	return &Controller{
+		broker:           broker,
+		config:           config,
 		postgresWrite:    postgresWrite,
 		useCasesAnalysis: analysisUseCases.NewAnalysisUseCases(),
 		repoRepository:   repository.NewRepository(postgresRead, postgresWrite),
@@ -108,7 +116,10 @@ func (c *Controller) createAnalyzeAndVulnerabilities(analysis *horusecEntities.A
 		)
 		return uuid.Nil, err
 	}
-	return analysis.GetID(), conn.CommitTransaction().GetError()
+	if err := conn.CommitTransaction().GetError(); err != nil {
+		return uuid.Nil, err
+	}
+	return analysis.GetID(), c.publishToWebhook(analysis)
 }
 
 func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*horusecEntities.Analysis, error) {
@@ -136,4 +147,11 @@ func (c *Controller) existsHashDuplicated(
 		}
 	}
 	return false
+}
+
+func (c *Controller) publishToWebhook(analysis *horusecEntities.Analysis) error {
+	if !c.config.IsDisabledBroker() {
+		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysis.ToBytes())
+	}
+	return nil
 }
