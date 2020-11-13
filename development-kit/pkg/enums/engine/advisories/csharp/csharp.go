@@ -24,6 +24,8 @@ import (
 func AllRulesCsharpRegular() []text.TextRule {
 	return []text.TextRule{
 		regular.NewCsharpRegularCrossSiteScripting(),
+		regular.NewCsharpRegularOutputCacheConflict(),
+		regular.NewCsharpRegularOpenRedirect(),
 	}
 }
 
@@ -40,5 +42,6 @@ func AllRulesCsharpOr() []text.TextRule {
 	return []text.TextRule{
 		or.NewCsharpOrLDAPInjection(),
 		or.NewCsharpOrSQLInjectionLinq(),
+		or.NewCsharpOrInsecureDeserialization(),
 	}
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:lll multiple regex is not possible broken lines
 package regular
 
 import (
@@ -34,6 +35,38 @@ func NewCsharpRegularCrossSiteScripting() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\])(([^H]|H[^t]|Ht[^t]|Htt[^p]|Http[^U]|HttpU[^t]|HttpUt[^i]|HttpUti[^l]|HttpUtil[^i]|HttpUtili[^t]|HttpUtilit[^y]|HttpUtility[^.]|HttpUtility\.H[^t]|HttpUtility\.Ht[^m]|HttpUtility\.Htm[^l]|HttpUtility\.Html[^E]|HttpUtility\.HtmlE[^n]|HttpUtility\.HtmlEn[^c]|HttpUtility\.HtmlEnc[^o]|HttpUtility\.HtmlEnco[^d]|HttpUtility\.HtmlEncod[^e])*)(})`),
+		},
+	}
+}
+
+func NewCsharpRegularOutputCacheConflict() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "5fc0eefc-31b3-4d07-8d97-37834aff963e",
+			Name:        "OutputCache Conflict",
+			Description: "Having the annotation [OutputCache] will disable the annotation [Authorize] for the requests following the first one. For more information access: (https://security-code-scan.github.io/#SCS0019).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[Authorize\])(.*|\n)*(\[OutputCache\])`),
+		},
+	}
+}
+
+func NewCsharpRegularOpenRedirect() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			Name:        "Open Redirect",
+			Description: "Your site may be used in phishing attacks. An attacker may craft a trustworthy looking link to your site redirecting a victim to a similar looking malicious site: 'http://yourdomain.com?redirect=https://urdomain.com/login'. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`String.IsNullOrEmpty.*\n?.*{?\n?.*return\sRedirect\(.*\);`),
 		},
 	}
 }
