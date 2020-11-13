@@ -38,3 +38,20 @@ func NewCsharpOrLDAPInjection() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpOrSQLInjectionLinq() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "32fbdff3-2092-4d42-90a2-784842bebfd0",
+			Name:        "SQL Injection LINQ",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database.. For more information access: (https://security-code-scan.github.io/#SCS0002).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`ExecuteQuery\(.*SELECT .* FROM .* WHERE .* \+ .* \+ .*\)`),
+			regexp.MustCompile(`var .* = "SELECT .* FROM .* WHERE .* \+ .* \+ .*"`),
+		},
+	}
+}
