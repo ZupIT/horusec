@@ -133,23 +133,6 @@ func NewCsharpAndWeakRandomNumberGenerator() text.TextRule {
 	}
 }
 
-func NewCsharpAndWeakHashingFunction() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "263e1cb3-31ee-443e-80e0-31f81bbfb340",
-			Name:        "Weak hashing function",
-			Description: "MD5 or SHA1 have known collision weaknesses and are no longer considered strong hashing algorithms. For more information access: (https://security-code-scan.github.io/#SCS0006).",
-			Severity:    severity.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`new SHA1CryptoServiceProvider\(\)`),
-			regexp.MustCompile(`ComputeHash\(\)`),
-		},
-	}
-}
-
 func NewCsharpAndWeakCipherOrCBCOrECBMode() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{

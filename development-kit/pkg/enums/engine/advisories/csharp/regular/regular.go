@@ -297,3 +297,136 @@ func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularNoUseHtmlRaw() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "e9527806-0f8e-4e9b-903c-549e1840b24a",
+			Name:        "No use Html.Raw",
+			Description: "The application uses the potentially dangerous Html.Raw construct in conjunction with a user-supplied variable. The recommendation is to avoid using HTML assembly, but if it is extremely necessary to allow Html, we suggest the following: support only a fixed subset of Html, after the user submits content, analyze the Html and filter it in a whitelist of allowed tags and attributes. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Html\.Raw\(`),
+		},
+	}
+}
+
+func NewCsharpRegularNoLogSensitiveInformation() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "2da09ea2-b2bb-4ee6-8ec7-f3b390fdec7f",
+			Name:        "No log sensitive information",
+			Description: "The application is configured to display standard .NET errors. This can provide the attacker with useful information and should not be used in a production application. https://docs.microsoft.com/en-us/aspnet/web-forms/overview/older-versions-getting-started/deploying-web-site-projects/displaying-a-custom-error-page-cs. For more information checkout the CWE-12 (https://cwe.mitre.org/data/definitions/12.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<\s*customErrors\s+mode\s*=\s*\"Off\"\s*/?>`),
+		},
+	}
+}
+
+func NewCsharpRegularNoReturnStringConcatInController() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b9b63a1c-33b3-43e5-82ce-aed6a58fb2fd",
+			Name:        "No return string concat in controller",
+			Description: "A potential Cross-Site Scripting (XSS) was found. The endpoint returns a variable from the client entry that has not been coded. Always encode untrusted input before output, regardless of validation or cleaning performed. https://docs.microsoft.com/en-us/aspnet/core/security/cross-site-scripting?view=aspnetcore-3.1. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?:public\sclass\s.*Controller|.*\s+:\s+Controller)(?:\n*.*)*return\s+.*\".*\+`),
+		},
+	}
+}
+
+func NewCsharpRegularSQLInjectionOdbcCommand() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "192e60ba-5454-4399-bbe3-8c4e75845a16",
+			Name:        "SQL Injection OdbcCommand",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`.*\s*new\sOdbcCommand\(.*\".*\+(?:.*\n*)*.ExecuteReader\(`),
+		},
+	}
+}
+
+func NewCsharpRegularWeakHashingFunctionMd5OrSha1() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "263e1cb3-31ee-443e-80e0-31f81bbfb340",
+			Name:        "Weak hashing function md5 or sha1",
+			Description: "MD5 or SHA1 have known collision weaknesses and are no longer considered strong hashing algorithms. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sSHA1CryptoServiceProvider\(`),
+			regexp.MustCompile(`new\sMD5CryptoServiceProvider\(`),
+		},
+	}
+}
+
+func NewCsharpRegularWeakHashingFunctionDESCrypto() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6ba6bebf-3626-4645-b2c7-f8e169e8db3d",
+			Name:        "Weak hashing function DES Crypto",
+			Description: "DES Crypto have known collision weaknesses and are no longer considered strong hashing algorithms. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sTripleDESCryptoServiceProvider\(`),
+			regexp.MustCompile(`new\sDESCryptoServiceProvider\(`),
+			regexp.MustCompile(`TripleDES\.Create\(`),
+			regexp.MustCompile(`DES\.Create\(`),
+		},
+	}
+}
+
+func NewCsharpRegularNoUseCipherMode() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1faf6a8f-94fe-4eed-a60c-4a4317b4bd25",
+			Name:        "No Use Cipher mode",
+			Description: "This mode is not recommended because it opens the door to various security exploits. If the plain text to be encrypted contains substantial repetitions, it is possible that the cipher text will be broken one block at a time. You can also use block analysis to determine the encryption key. In addition, an active opponent can replace and exchange individual blocks without detection, which allows the blocks to be saved and inserted into the stream at other points without detection. ECB and OFB mode will produce the same result for identical blocks. The use of AES in CBC mode with an HMAC is recommended, ensuring integrity and confidentiality. https://docs.microsoft.com/en-us/visualstudio/code-quality/ca5358?view=vs-2019. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`CipherMode\.ECB`),
+			regexp.MustCompile(`CipherMode\.OFB`),
+		},
+	}
+}
+
+func NewCsharpRegularCrossSiteRequestForgery() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f7485b63-9cad-4159-8b05-0869b7d78195",
+			Name:        "Cross-Site Request Forgery (CSRF)",
+			Description: "Anti-forgery token is missing. An attacker could send a link to the victim. By visiting the malicious link, a web page would trigger a POST request (because it is a blind attack - the attacker doesn’t see a response from triggered request and has no use from GET request and GET requests should not change a state on the server by definition) to the website. The victim would not be able to acknowledge that an action is made in the background, but his cookie would be automatically submitted if he is authenticated to the website. For more information access: (https://security-code-scan.github.io/#SCS0016).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?:public\s+class\s+.*Controller|.*\s+:\s+Controller)(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(})`),
+		},
+	}
+}
