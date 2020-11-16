@@ -494,3 +494,19 @@ func NewCsharpRegularMissingAuthorizeAttribute() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularUnvalidatedWebFormsRedirect() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "fa1a798e-b43f-43d1-8e13-2d53039e79ce",
+			Name:        "Unvalidated Web Forms Redirect",
+			Description: "Passing unvalidated redirect locations to the Response.Redirect method can allow attackers to send users to malicious web sites. This can allow attackers to perform phishing attacks and distribute malware to victims. For more information checkout the CWE-601 (https://cwe.mitre.org/data/definitions/601.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Response\.Redirect\(Request\.QueryString\[".*"\]\)`),
+		},
+	}
+}

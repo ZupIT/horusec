@@ -52,6 +52,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularCorsAllowOriginWildCard(),
 		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
 		regular.NewCsharpRegularMissingAuthorizeAttribute(),
+		regular.NewCsharpRegularUnvalidatedWebFormsRedirect(),
 	}
 }
 
@@ -65,6 +66,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndWeakRandomNumberGenerator(),
 		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 		and.NewCsharpAndJwtSignatureValidationDisabled(),
+		and.NewCsharpAndCertificateValidationDisabled(),
+		and.NewCsharpAndActionRequestValidationDisabled(),
 	}
 }
 
