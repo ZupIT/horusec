@@ -20,6 +20,7 @@ import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -392,24 +393,33 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 // @Router /api/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	data, err := h.getAccountUpdateData(w, r)
 	if err != nil {
-		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
 	}
 
-	data, err := h.useCases.NewAccountFromReadCloser(r.Body)
-	if err != nil {
-		httpUtil.StatusBadRequest(w, errors.ErrorInvalidUpdateAccountData)
-		return
-	}
-
-	data.AccountID = accountID
-
-	err = h.controller.UpdateAccount(accountID, data)
+	err = h.controller.UpdateAccount(data.AccountID, data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 	}
 
 	httpUtil.StatusOK(w, "account updated")
+}
+
+func (h *Handler) getAccountUpdateData(w http.ResponseWriter, r *http.Request) (*auth.Account, error) {
+	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
+		return nil, errors.ErrorDoNotHavePermissionToThisAction
+	}
+
+	data, err := h.useCases.NewAccountFromReadCloser(r.Body)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, errors.ErrorInvalidUpdateAccountData)
+		return nil, errors.ErrorInvalidUpdateAccountData
+	}
+
+	data.AccountID = accountID
+
+	return data, nil
 }
