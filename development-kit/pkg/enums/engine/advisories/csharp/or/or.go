@@ -132,13 +132,14 @@ func NewCsharpOrCookieWithoutSSLFlag() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "c3c93cc6-f010-42fa-9e13-34dbaf33b852",
 			Name:        "Cookie Without SSL Flag",
-			Description: "It is recommended to specify the Secure flag to new cookie. The Secure flag is a directive to the browser to make sure that the cookie is not sent by unencrypted channel. For more information access: (https://security-code-scan.github.io/#SCS0008).",
+			Description: "It is recommended to specify the Secure flag to new cookie. The Secure flag is a directive to the browser to make sure that the cookie is not sent by unencrypted channel. For more information access: (https://security-code-scan.github.io/#SCS0008) and (https://cwe.mitre.org/data/definitions/614.html).",
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`requireSSL\s*=\s*['|"]false['|"]`),
+			regexp.MustCompile(`(\<forms)(([^r]|r[^e]|re[^q]|req[^u]|requ[^i]|requi[^r]|requir[^e]|require[^S]|requireS[^S]|requireSS[^L])*)(\/\>)`),
 			regexp.MustCompile(`(new\sHttpCookie\(.*\))(.*|\n)*(\.Secure\s*=\s*false)`),
 			regexp.MustCompile(`(new\sHttpCookie)(([^S]|S[^e]|Se[^c]|Sec[^u]|Secu[^r]|Secur[^e])*)(})`),
 		},
