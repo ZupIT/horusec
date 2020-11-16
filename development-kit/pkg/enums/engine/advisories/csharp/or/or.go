@@ -162,3 +162,20 @@ func NewCsharpOrCookieWithoutHttpOnlyFlag() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpOrNoInputVariable() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "d5f46985-1527-47b0-a5c1-71c9ab121cf7",
+			Name:        "No input variable",
+			Description: "The application appears to allow XSS through an unencrypted / unauthorized input variable. https://owasp.org/www-community/attacks/xss/. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\s*var\s+\w+\s*=\s*"\s*\<\%\s*=\s*\w+\%\>";`),
+			regexp.MustCompile(`\.innerHTML\s*=\s*.+`),
+		},
+	}
+}

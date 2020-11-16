@@ -39,6 +39,14 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularSQLInjectionNpgsql(),
 		regular.NewCsharpRegularCertificateValidationDisabled(),
 		regular.NewCsharpRegularWeakCipherAlgorithm(),
+		regular.NewCsharpRegularNoUseHtmlRaw(),
+		regular.NewCsharpRegularNoLogSensitiveInformation(),
+		regular.NewCsharpRegularNoReturnStringConcatInController(),
+		regular.NewCsharpRegularSQLInjectionOdbcCommand(),
+		regular.NewCsharpRegularWeakHashingFunctionMd5OrSha1(),
+		regular.NewCsharpRegularWeakHashingFunctionDESCrypto(),
+		regular.NewCsharpRegularNoUseCipherMode(),
+		regular.NewCsharpRegularCrossSiteRequestForgery(),
 	}
 }
 
@@ -50,7 +58,6 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
 		and.NewCsharpAndWeakRandomNumberGenerator(),
-		and.NewCsharpAndWeakHashingFunction(),
 	}
 }
 
@@ -64,5 +71,6 @@ func AllRulesCsharpOr() []text.TextRule {
 		or.NewCsharpOrSQLInjectionEnterpriseLibraryData(),
 		or.NewCsharpOrCQLInjectionCassandra(),
 		or.NewCsharpOrPasswordComplexity(),
+		or.NewCsharpOrNoInputVariable(),
 	}
 }
