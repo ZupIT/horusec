@@ -282,6 +282,22 @@ func NewCsharpRegularWeakCipherAlgorithm() text.TextRule {
 	}
 }
 
+func NewCsharpRegularDebugBuildEnabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "30104af9-0d00-4536-b8b0-18a96eacbe23",
+			Name:        "Debug Build Enabled",
+			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. For more information access: (CWE-11: ASP.NET Misconfiguration: Creating Debug Binary).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<compilation debug="true" .*/>`),
+		},
+	}
+}
+
 func NewCsharpRegularNoUseHtmlRaw() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
