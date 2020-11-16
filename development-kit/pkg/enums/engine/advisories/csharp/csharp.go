@@ -51,6 +51,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularVulnerablePackageReference(),
 		regular.NewCsharpRegularCorsAllowOriginWildCard(),
 		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
+		regular.NewCsharpRegularMissingAuthorizeAttribute(),
 	}
 }
 

@@ -478,3 +478,19 @@ func NewCsharpRegularMissingAntiForgeryTokenAttribute() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularMissingAuthorizeAttribute() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "d8ca435b-d57c-48ec-b228-9c6a6f7bbd9a",
+			Name:        "Missing Authorize Attribute",
+			Description: "Missing Authorization occurs when an application does not properly verify an authenticated user’s access to functionality, data, or resources. In many cases, applications do not check policy, claim, or role-based access control rules during a request. This can allow attackers to invoke privileged functionality, such as changing their role or directly browsing to an administrative interface in the application. For more information checkout the CWE-306 (https://cwe.mitre.org/data/definitions/306.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^A]|A[^u]|Au[^t]|Aut[^h]|Auth[^o]|Autho[^r]|Author[^i]|Authori[^z]|Authoriz[^e]|Authorize[^(]|Authorize\([^P]|Authorize\(P[^o]|Authorize\(Po[^l]|Authorize\(Pol[^i]|Authorize\(Poli[^c]|Authorize\(Polic[^y])*)(ActionResult)`),
+		},
+	}
+}
