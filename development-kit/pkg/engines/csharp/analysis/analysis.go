@@ -41,7 +41,7 @@ func NewAnalysis(configs *config.Config) Interface {
 }
 
 func (a *Analysis) StartAnalysis() error {
-	textUnit, err := text.LoadDirIntoSingleUnit(a.configs.GetProjectPath(), []string{".cs", ".vb"})
+	textUnit, err := text.LoadDirIntoSingleUnit(a.configs.GetProjectPath(), []string{".cs", ".vb", ".cshtml"})
 	if err != nil {
 		return err
 	}

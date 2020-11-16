@@ -59,7 +59,7 @@ func NewCsharpRegularOutputCacheConflict() text.TextRule {
 func NewCsharpRegularOpenRedirect() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			ID:          "eb1e2fb1-38f0-419f-b6f8-d9dd78d9cb6d",
 			Name:        "Open Redirect",
 			Description: "Your site may be used in phishing attacks. An attacker may craft a trustworthy looking link to your site redirecting a victim to a similar looking malicious site: 'http://yourdomain.com?redirect=https://urdomain.com/login'. For more information access: (https://security-code-scan.github.io/#SCS0027).",
 			Severity:    severity.Low.ToString(),
@@ -68,6 +68,22 @@ func NewCsharpRegularOpenRedirect() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`String.IsNullOrEmpty.*\n?.*{?\n?.*return\sRedirect\(.*\);`),
+		},
+	}
+}
+
+func NewCsharpRegularRequestValidationDisabledAttribute() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "bd2e5131-5afa-4063-a303-7d5cb2696265",
+			Name:        "Request Validation Disabled (Attribute)",
+			Description: "Request validation is disabled. Request validation allows the filtering of some XSS patterns submitted to the application. For more information access: (https://security-code-scan.github.io/#SCS0017).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\[ValidateInput\(false\)\]`),
 		},
 	}
 }
@@ -106,6 +122,22 @@ func NewCsharpRegularSQLInjectionOLEDB() text.TextRule {
 	}
 }
 
+func NewCsharpRegularRequestValidationDisabledConfigurationFile() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "055817b7-8a0c-4024-b170-e96ad4fe32a0",
+			Name:        "Request Validation Disabled (Configuration File)",
+			Description: "The validateRequest which provides additional protection against XSS is disabled in configuration file. For more information access: (https://security-code-scan.github.io/#SCS0017).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`validateRequest\s*=\s*['|"]false['|"]`),
+		},
+	}
+}
+
 func NewCsharpRegularSQLInjectionMsSQLDataProvider() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -118,6 +150,22 @@ func NewCsharpRegularSQLInjectionMsSQLDataProvider() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(new SqlCommand\(.*\))(([^P]|P[^a]|Pa[^r]|Par[^a]|Para[^m]|Param[^e]|Parame[^t]|Paramet[^e]|Paramete[^r]|Parameter[^s]|Parameters[^.]|Parameters\.[^A]|Parameters\.A[^d]|Parameters\.Ad[^d]|Parameters\.Add[^W]|Parameters\.AddW[^i]|Parameters\.AddWi[^t]|Parameters\.AddWit[^h]|Parameters\.AddWith[^V]|Parameters\.AddWithV[^a]|Parameters\.AddWithVa[^l]|Parameters\.AddWithVal[^u]|Parameters\.AddWithValu[^e])*)(Open\(\)|ExecuteReader\(\))`),
+		},
+	}
+}
+
+func NewCsharpRegularRequestValidationIsEnabledOnlyForPages() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "54a8ac1a-83df-4d7d-97de-e0901080b451",
+			Name:        "Request validation is enabled only for pages",
+			Description: "The requestValidationMode which provides additional protection against XSS is enabled only for pages, not for all HTTP requests in configuration file. For more information access: (https://security-code-scan.github.io/#SCS0030).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`requestValidationMode\s*=\s*['|"][0-3][^\d].*['|"]`),
 		},
 	}
 }
@@ -138,6 +186,22 @@ func NewCsharpRegularSQLInjectionEntityFramework() text.TextRule {
 	}
 }
 
+func NewCsharpRegularViewStateNotEncrypted() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "25926a6c-b546-482d-81ee-8d82cd6919d5",
+			Name:        "View State Not Encrypted",
+			Description: "The viewStateEncryptionMode is not set to Always in configuration file. Web Forms controls use hidden base64 encoded fields to store state information. If sensitive information is stored there it may be leaked to the client side. For more information access: (https://security-code-scan.github.io/#SCS0023).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`viewStateEncryptionMode\s*=\s*['|"](Auto|Never)['|"]`),
+		},
+	}
+}
+
 func NewCsharpRegularSQLInjectionNhibernate() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -150,6 +214,22 @@ func NewCsharpRegularSQLInjectionNhibernate() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(CreateSQLQuery)(([^S]|S[^e]|Se[^t]|Set[^P]|SetP[^a]|SetPa[^r]|SetPar[^a]|SetPara[^m]|SetParam[^e]|SetParame[^t]|SetParamet[^e]|SetParamete[^r])*)(\);)`),
+		},
+	}
+}
+
+func NewCsharpRegularViewStateMacDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "cbd6b77e-b4d5-4507-8835-3262faf669e4",
+			Name:        "View State MAC Disabled",
+			Description: "The enableViewStateMac is disabled in configuration file. (This feature cannot be disabled starting .NET 4.5.1). The view state could be altered by an attacker. For more information access: (https://security-code-scan.github.io/#SCS0024).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`enableViewStateMac\s*=\s*['|"]false['|"]`),
 		},
 	}
 }

@@ -111,7 +111,7 @@ func NewCsharpOrCQLInjectionCassandra() text.TextRule {
 func NewCsharpOrPasswordComplexity() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			ID:          "9027bece-7a6f-4e6e-b7e5-5dbbe0870562",
 			Name:        "Password Complexity",
 			Description: "PasswordValidator should have at least two requirements for better security, the RequiredLength property must be set with a minimum value of 8. For more information access: (https://security-code-scan.github.io/#SCS0027).",
 			Severity:    severity.Low.ToString(),
@@ -123,6 +123,42 @@ func NewCsharpOrPasswordComplexity() text.TextRule {
 			regexp.MustCompile(`new\sPasswordValidator(\n?\s*{)(\n*.*=.*,?)(\s|\n)*[^a-z]}`),
 			regexp.MustCompile(`new\sPasswordValidator(\n?\s*{)((\n|.*)*RequiredLength=[0-7][^\d])`),
 			regexp.MustCompile(`(new\sPasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^d]|Required[^L]|RequiredL[^e]|RequiredLe[^n]|RequiredLen[^g]|RequiredLeng[^t]|RequiredLengt[^h])*)(})`),
+		},
+	}
+}
+
+func NewCsharpOrCookieWithoutSSLFlag() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "c3c93cc6-f010-42fa-9e13-34dbaf33b852",
+			Name:        "Cookie Without SSL Flag",
+			Description: "It is recommended to specify the Secure flag to new cookie. The Secure flag is a directive to the browser to make sure that the cookie is not sent by unencrypted channel. For more information access: (https://security-code-scan.github.io/#SCS0008).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`requireSSL\s*=\s*['|"]false['|"]`),
+			regexp.MustCompile(`(new\sHttpCookie\(.*\))(.*|\n)*(\.Secure\s*=\s*false)`),
+			regexp.MustCompile(`(new\sHttpCookie)(([^S]|S[^e]|Se[^c]|Sec[^u]|Secu[^r]|Secur[^e])*)(})`),
+		},
+	}
+}
+
+func NewCsharpOrCookieWithoutHttpOnlyFlag() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "837c504d-38b4-4ea6-987b-d91e92ac86a2",
+			Name:        "Cookie Without HttpOnly Flag",
+			Description: "It is recommended to specify the HttpOnly flag to new cookie. For more information access: (https://security-code-scan.github.io/#SCS0009).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`httpOnlyCookies\s*=\s*['|"]false['|"]`),
+			regexp.MustCompile(`(new\sHttpCookie\(.*\))(.*|\n)*(\.HttpOnly\s*=\s*false)`),
+			regexp.MustCompile(`(new\sHttpCookie)(([^H]|H[^t]|Ht[^t]|Htt[^p]|Http[^O]|HttpO[^n]|HttpOn[^l]|HttpOnl[^y])*)(})`),
 		},
 	}
 }
