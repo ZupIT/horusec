@@ -48,6 +48,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularNoUseCipherMode(),
 		regular.NewCsharpRegularCrossSiteRequestForgery(),
 		regular.NewCsharpRegularDebugBuildEnabled(),
+		regular.NewCsharpRegularVulnerablePackageReference(),
 	}
 }
 

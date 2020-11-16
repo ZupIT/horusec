@@ -430,3 +430,20 @@ func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularVulnerablePackageReference() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6d516e9e-8528-4a0a-801a-cd5f2fef1e0c",
+			Name:        "Vulnerable Package Reference",
+			Description: "Dependencies on open source frameworks and packages introduce additional vulnerabilities into the runtime environment. Vulnerabilities in open source libraries are continuously discovered and documented in publicly available vulnerability databases. Attackers can recognize a package being used by an application, and leverage known vulnerabilities in the library to attack the application. For more information checkout the CWE-937 (https://cwe.mitre.org/data/definitions/937.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<package id="bootstrap" version="3\.0\.0" targetFramework="net462"/>`),
+		},
+	}
+}
+
