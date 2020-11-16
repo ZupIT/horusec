@@ -127,7 +127,7 @@ func NewCsharpRegularRequestValidationDisabledConfigurationFile() text.TextRule 
 		Metadata: engine.Metadata{
 			ID:          "055817b7-8a0c-4024-b170-e96ad4fe32a0",
 			Name:        "Request Validation Disabled (Configuration File)",
-			Description: "The validateRequest which provides additional protection against XSS is disabled in configuration file. For more information access: (https://security-code-scan.github.io/#SCS0017).",
+			Description: "The validateRequest which provides additional protection against XSS is disabled in configuration file. For more information access: (https://security-code-scan.github.io/#SCS0017) or (https://cwe.mitre.org/data/definitions/20.html).",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
@@ -191,7 +191,7 @@ func NewCsharpRegularViewStateNotEncrypted() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "25926a6c-b546-482d-81ee-8d82cd6919d5",
 			Name:        "View State Not Encrypted",
-			Description: "The viewStateEncryptionMode is not set to Always in configuration file. Web Forms controls use hidden base64 encoded fields to store state information. If sensitive information is stored there it may be leaked to the client side. For more information access: (https://security-code-scan.github.io/#SCS0023).",
+			Description: "The viewStateEncryptionMode is not set to Always in configuration file. Web Forms controls use hidden base64 encoded fields to store state information. If sensitive information is stored there it may be leaked to the client side. For more information access: (https://security-code-scan.github.io/#SCS0023) or (https://cwe.mitre.org/data/definitions/200.html).",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
@@ -223,7 +223,7 @@ func NewCsharpRegularViewStateMacDisabled() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "cbd6b77e-b4d5-4507-8835-3262faf669e4",
 			Name:        "View State MAC Disabled",
-			Description: "The enableViewStateMac is disabled in configuration file. (This feature cannot be disabled starting .NET 4.5.1). The view state could be altered by an attacker. For more information access: (https://security-code-scan.github.io/#SCS0024).",
+			Description: "The enableViewStateMac is disabled in configuration file. (This feature cannot be disabled starting .NET 4.5.1). The view state could be altered by an attacker. For more information access: (https://security-code-scan.github.io/#SCS0024) or (https://cwe.mitre.org/data/definitions/807.html).",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},

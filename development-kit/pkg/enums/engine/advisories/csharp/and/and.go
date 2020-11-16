@@ -223,3 +223,88 @@ func NewCsharpAndFormsAuthenticationWeakTimeout() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndHeaderCheckingDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "64d27b88-8729-4867-af26-d22989b9a430",
+			Name:        "Header Checking Disabled",
+			Description: "Disabling the HTTP Runtime header checking protection opens the application up to HTTP Header Injection (aka Response Splitting) attacks. Enable the header checking protection by setting the httpRuntime element’s enableHeaderChecking attribute to true, which is the default value. For more information checkout the CWE-113 (https://cwe.mitre.org/data/definitions/113.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<httpRuntime`),
+			regexp.MustCompile(`enableHeaderChecking\s*=\s*["|']false`),
+		},
+	}
+}
+
+func NewCsharpAndVersionHeaderEnabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "9a27a481-7bed-4577-8c77-f799998e6527",
+			Name:        "Version Header Enabled",
+			Description: "The Version HTTP response header sends the ASP.NET framework version to the client’s browser. This information can help an attacker identify vulnerabilities in the server’s framework version and should be disabled in production. Disable the version response header by setting the httpRuntime element’s enableVersionHeader attribute to false. For more information checkout the CWE-200 (https://cwe.mitre.org/data/definitions/200.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<httpRuntime`),
+			regexp.MustCompile(`enableVersionHeader\s*=\s*["|']true`),
+		},
+	}
+}
+
+func NewCsharpAndEventValidationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "466cbe65-504f-4983-8fc1-0e0a8b05c27c",
+			Name:        "Event Validation Disabled",
+			Description: "Event validation prevents unauthorized post backs in web form applications. Disabling this feature can allow attackers to forge requests from controls not visible or enabled on a given web form. Enable event validation by setting the page element’s eventValidation attribute to true. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<pages`),
+			regexp.MustCompile(`enableEventValidation\s*=\s*["|']false`),
+		},
+	}
+}
+
+func NewCsharpAndWeakSessionTimeout() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "7a2f543f-3e61-4538-9d44-d1bfec183fcd",
+			Name:        "Weak Session Timeout",
+			Description: "If session data is used by the application for authentication, excessive timeout values provide attackers with a large window of opportunity to hijack user’s session tokens. Configure the session timeout value to meet your organization’s timeout policy. For more information checkout the CWE-613 (https://cwe.mitre.org/data/definitions/613.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<sessionState`),
+			regexp.MustCompile(`timeout\s*=\s*["|'](1[6-9]|[2-9][0-9]*)`),
+		},
+	}
+}
+
+func NewCsharpAndStateServerMode() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "e93d9c0f-a0cb-4246-8318-38246e2b930a",
+			Name:        "Weak Session Timeout",
+			Description: "The session StateServer mode transports session data insecurely to a remote server. The remote server also does not require system authentication to access the session data for an application. This risk depends entirely on the sensitivity of the data stored in the user’s session. If the session data is considered sensitive, consider adding an external control (e.g. IPSEC) that provides mutual authentication and transport security. For more information checkout the CWE-319 (https://cwe.mitre.org/data/definitions/319.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<sessionState`),
+			regexp.MustCompile(`mode\s*=\s*["|']StateServer`),
+		},
+	}
+}

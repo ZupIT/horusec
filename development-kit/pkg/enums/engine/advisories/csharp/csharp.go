@@ -64,6 +64,11 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndFormsAuthenticationCrossAppRedirects(),
 		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 		and.NewCsharpAndFormsAuthenticationWeakTimeout(),
+		and.NewCsharpAndHeaderCheckingDisabled(),
+		and.NewCsharpAndVersionHeaderEnabled(),
+		and.NewCsharpAndEventValidationDisabled(),
+		and.NewCsharpAndWeakSessionTimeout(),
+		and.NewCsharpAndStateServerMode(),
 	}
 }
 
