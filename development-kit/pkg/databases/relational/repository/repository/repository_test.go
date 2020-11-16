@@ -35,6 +35,34 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMock(t *testing.T) {
+	m := &Mock{}
+	m.On("Create").Return(nil)
+	m.On("Update").Return(&accountEntities.Repository{}, nil)
+	m.On("Get").Return(&accountEntities.Repository{}, nil)
+	m.On("List").Return(&[]accountEntities.RepositoryResponse{}, nil)
+	m.On("Delete").Return(nil)
+	m.On("GetAllAccountsInRepository").Return(&[]roles.AccountRole{}, nil)
+	m.On("GetByName").Return(&accountEntities.Repository{}, nil)
+	m.On("GetAccountCompanyRole").Return(&roles.AccountCompany{}, nil)
+	err := m.Create(&accountEntities.Repository{}, nil)
+	assert.NoError(t, err)
+	_, err = m.Update(uuid.New(), &accountEntities.Repository{})
+	assert.NoError(t, err)
+	_, err = m.Get(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.List(uuid.New(), uuid.New())
+	assert.NoError(t, err)
+	err = m.Delete(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllAccountsInRepository(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetByName(uuid.New(), "")
+	assert.NoError(t, err)
+	_, err = m.GetAccountCompanyRole(uuid.New(), uuid.New())
+	assert.NoError(t, err)
+}
+
 func TestCreateRepository(t *testing.T) {
 	t.Run("should create repository without errors", func(t *testing.T) {
 		mockRead := &relational.MockRead{}

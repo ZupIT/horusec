@@ -83,6 +83,9 @@ func ValidateAccount(t *testing.T, accountID string) {
 	} else {
 		assert.Equal(t, http.StatusSeeOther, res.GetStatusCode())
 	}
+	if res != nil {
+		defer res.CloseBody()
+	}
 }
 
 func Logout(t *testing.T, bearerToken string) {

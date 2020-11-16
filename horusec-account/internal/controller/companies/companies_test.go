@@ -374,7 +374,7 @@ func TestInviteUser(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Create").Return(respCompany)
 
-		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{DisableEmailService: true})
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{DisabledBroker: true})
 
 		err := controller.InviteUser(inviteUser)
 		assert.NoError(t, err)

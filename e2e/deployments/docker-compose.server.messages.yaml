@@ -57,7 +57,7 @@ services:
       - "8003:8003"
     network_mode: "host"
     environment:
-      HORUSEC_ACCOUNT_DISABLE_EMAIL_SERVICE: "false"
+      HORUSEC_DISABLED_BROKER: "false"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"

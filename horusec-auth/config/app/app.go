@@ -57,6 +57,6 @@ func (a *Config) GetAuthType() authEnums.AuthorizationType {
 	return a.AuthType
 }
 
-func (a *Config) IsEmailServiceDisabled() bool {
+func (a *Config) IsDisabledBroker() bool {
 	return a.DisableEmailService
 }

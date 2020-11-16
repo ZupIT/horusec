@@ -30,13 +30,13 @@ const Form = styled.form`
 `;
 
 const Field = styled(Input)`
-  margin-top: 20px;
+  margin: 20px 0 20px 0;
 `;
 
 const Wrapper = styled.div`
   display: flex;
   align-items: flex-end;
-  margin-top: 10px;
+  margin-top: 30px;
   width: 100%;
 `;
 

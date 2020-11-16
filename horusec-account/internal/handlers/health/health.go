@@ -55,7 +55,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	if !h.appConfig.IsEmailServiceDisabled() {
+	if !h.appConfig.IsDisabledBroker() {
 		if !h.broker.IsAvailable() {
 			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
 			return

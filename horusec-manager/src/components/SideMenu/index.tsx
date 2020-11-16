@@ -81,6 +81,13 @@ const SideMenu: React.FC = () => {
       type: 'route',
       roles: ['admin'],
     },
+    {
+      name: t('SIDE_MENU.WEBHOOK'),
+      icon: 'link',
+      path: '/home/webhooks',
+      type: 'route',
+      roles: ['admin'],
+    },
   ];
 
   useEffect(() => {

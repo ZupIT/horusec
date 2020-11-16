@@ -148,5 +148,11 @@ export default {
         secundary: '#F7941E',
       },
     },
+
+    methods: {
+      get: '#4d9880',
+      post: '#2a2038',
+      unknown: '#3A3A3C',
+    },
   },
 };

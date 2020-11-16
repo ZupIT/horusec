@@ -17,6 +17,7 @@ package hcl
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
@@ -41,6 +42,10 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.TfSec) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.TfSec.ToString(), logger.DebugLevel)
+		return
+	}
 	err := f.startTfSec(projectSubPath)
 	f.SetLanguageIsFinished()
 	f.LogAnalysisError(err, tools.TfSec, projectSubPath)

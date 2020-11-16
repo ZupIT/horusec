@@ -69,3 +69,21 @@ func NewCsharpRegularOpenRedirect() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularPasswordComplexity() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			Name:        "Password Complexity",
+			Description: "PasswordValidator should have at least two requirements for better security, the RequiredLength property must be set with a minimum value of 8. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new PasswordValidator\(\)`), // empty not allowed
+			regexp.MustCompile(`new PasswordValidator\(\)`), // minimum of 2 properties
+			regexp.MustCompile(`new PasswordValidator\(\)`), // RequiredLength greater than 8
+		},
+	}
+}
