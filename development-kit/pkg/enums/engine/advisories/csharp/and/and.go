@@ -395,3 +395,37 @@ func NewCsharpAndLdapAuthenticationDisabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndCertificateValidationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4b6fb420-5e89-494f-86d5-4501cedb4921",
+			Name:        "Certificate Validation Disabled",
+			Description: "Disabling certificate validation is common in testing and development environments. Quite often, this is accidentally deployed to production, leaving the application vulnerable to man-in-the-middle attacks on insecure networks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new WebRequestHandler\(\)`),
+			regexp.MustCompile(`ServerCertificateValidationCallback \+= \(.*\) => true;`),
+		},
+	}
+}
+
+func NewCsharpAndActionRequestValidationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "d70bc47b-19f3-4ae3-b262-b5131993a341",
+			Name:        "Action Request Validation Disabled",
+			Description: "Request validation performs blacklist input validation for XSS payloads found in form and URL request parameters. Request validation has known bypass issues and does not prevent all XSS attacks, but it does provide a strong countermeasure for most payloads targeting a HTML context. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])`),
+			regexp.MustCompile(`\[ValidateInput\(false\)\]`),
+		},
+	}
+}

@@ -52,6 +52,8 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularCorsAllowOriginWildCard(),
 		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
 		regular.NewCsharpRegularMissingAuthorizeAttribute(),
+		regular.NewCsharpRegularUnvalidatedWebFormsRedirect(),
+		regular.NewCsharpRegularIdentityPasswordLockoutDisabled(),
 	}
 }
 
@@ -78,6 +80,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndHttpCookieAccessibleViaScript(),
 		and.NewCsharpAndDirectoryListingEnabled(),
 		and.NewCsharpAndLdapAuthenticationDisabled(),
+		and.NewCsharpAndCertificateValidationDisabled(),
+		and.NewCsharpAndActionRequestValidationDisabled(),
 	}
 }
 
