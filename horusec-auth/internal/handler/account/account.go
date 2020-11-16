@@ -392,5 +392,24 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 // @Router /api/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
+		return
+	}
+
+	data, err := h.useCases.NewAccountFromReadCloser(r.Body)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, errors.ErrorInvalidUpdateAccountData)
+		return
+	}
+
+	data.AccountID = accountID
+
+	err = h.controller.UpdateAccount(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+	}
+
 	httpUtil.StatusOK(w, "account updated")
 }
