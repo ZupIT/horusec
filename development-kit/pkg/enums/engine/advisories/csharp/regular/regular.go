@@ -414,3 +414,19 @@ func NewCsharpRegularCrossSiteRequestForgery() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularDebugBuildEnabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "e4c52f0d-abdb-4958-9e85-e7d34caf7e99",
+			Name:        "Debug Build Enabled",
+			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. Disable debug builds by setting the debug attribute to false. For more information checkout the CWE-11 (https://cwe.mitre.org/data/definitions/11.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<compilation(\s|.)*debug\s*=\s*['|"]true['|"]`),
+		},
+	}
+}

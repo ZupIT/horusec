@@ -47,6 +47,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularWeakHashingFunctionDESCrypto(),
 		regular.NewCsharpRegularNoUseCipherMode(),
 		regular.NewCsharpRegularCrossSiteRequestForgery(),
+		regular.NewCsharpRegularDebugBuildEnabled(),
 	}
 }
 
@@ -58,7 +59,6 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
 		and.NewCsharpAndWeakRandomNumberGenerator(),
-		and.NewCsharpAndWeakHashingFunction(),
 		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 	}
 }
