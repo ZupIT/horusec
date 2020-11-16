@@ -74,6 +74,40 @@ func NewCsharpOrInsecureDeserialization() text.TextRule {
 	}
 }
 
+func NewCsharpOrSQLInjectionEnterpriseLibraryData() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "0ea39e22-de31-4888-9348-58f4170755fd",
+			Name:        "SQL Injection Enterprise Library Data",
+			Description: "Arbitrary code execution, full application compromise or denial of service. An attacker may pass specially crafted serialized .NET object of specific class that will execute malicious code during the construction of the object. For more information access: (https://security-code-scan.github.io/#SCS0036).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(GetSqlStringCommand\(.*\))(([^A]|A[^d]|Ad[^d]|Add[^I]|AddI[^n]|AddIn[^P]|AddInP[^a]|AddInPa[^r]|AddInPar[^a]|AddInPara[^m]|AddInParam[^e]|AddInParame[^t]|AddInParamet[^e]|AddInParamete[^r])*)(ExecuteDataSet\(.*\))`),
+			regexp.MustCompile(`ExecuteDataSet\(CommandType.*, "(SELECT|select).*(FROM|from).*(WHERE|where).*"\)`),
+		},
+	}
+}
+
+func NewCsharpOrCQLInjectionCassandra() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "56dbcac5-f61b-4ad0-bcf3-214bca83b172",
+			Name:        "CQL Injection Cassandra",
+			Description: "Arbitrary code execution, full application compromise or denial of service. An attacker may pass specially crafted serialized .NET object of specific class that will execute malicious code during the construction of the object. For more information access: (https://security-code-scan.github.io/#SCS0038).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(Prepare\("(SELECT|select).*(FROM|from).*(WHERE|where).*\))(([^B]|B[^i]|Bi[^n]|Bin[^d])*)(Execute\(.*\))`),
+			regexp.MustCompile(`Execute\("(SELECT|select).*(FROM|from).*(WHERE|where).*"\)`),
+		},
+	}
+}
+
 func NewCsharpOrPasswordComplexity() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -128,6 +162,3 @@ func NewCsharpOrCookieWithoutHttpOnlyFlag() text.TextRule {
 		},
 	}
 }
-
-
-

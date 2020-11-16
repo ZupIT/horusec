@@ -16,11 +16,12 @@
 package regular
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewCsharpRegularCrossSiteScripting() text.TextRule {
@@ -87,6 +88,40 @@ func NewCsharpRegularRequestValidationDisabledAttribute() text.TextRule {
 	}
 }
 
+func NewCsharpRegularPasswordComplexity() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			Name:        "Password Complexity",
+			Description: "PasswordValidator should have at least two requirements for better security, the RequiredLength property must be set with a minimum value of 8. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new PasswordValidator\(\)`), // empty not allowed
+			regexp.MustCompile(`new PasswordValidator\(\)`), // minimum of 2 properties
+			regexp.MustCompile(`new PasswordValidator\(\)`), // RequiredLength greater than 8
+		},
+	}
+}
+
+func NewCsharpRegularSQLInjectionOLEDB() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "2586df5f-1302-48b7-b5ab-780bccf16963",
+			Name:        "SQL Injection OLE DB",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0020).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new OleDbConnection\(.*\))(([^P]|P[^a]|Pa[^r]|Par[^a]|Para[^m]|Param[^e]|Parame[^t]|Paramet[^e]|Paramete[^r]|Parameter[^s]|Parameters[^.]|Parameters\.[^A]|Parameters\.A[^d]|Parameters\.Ad[^d])*)(\.ExecuteReader\(.*\))`),
+		},
+	}
+}
+
 func NewCsharpRegularRequestValidationDisabledConfigurationFile() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -99,6 +134,22 @@ func NewCsharpRegularRequestValidationDisabledConfigurationFile() text.TextRule 
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`validateRequest\s*=\s*['|"]false['|"]`),
+		},
+	}
+}
+
+func NewCsharpRegularSQLInjectionMsSQLDataProvider() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "c418d2d0-1a99-4f44-8e22-8af3c56a3f60",
+			Name:        "SQL Injection MsSQL Data Provider",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0026).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new SqlCommand\(.*\))(([^P]|P[^a]|Pa[^r]|Par[^a]|Para[^m]|Param[^e]|Parame[^t]|Paramet[^e]|Paramete[^r]|Parameter[^s]|Parameters[^.]|Parameters\.[^A]|Parameters\.A[^d]|Parameters\.Ad[^d]|Parameters\.Add[^W]|Parameters\.AddW[^i]|Parameters\.AddWi[^t]|Parameters\.AddWit[^h]|Parameters\.AddWith[^V]|Parameters\.AddWithV[^a]|Parameters\.AddWithVa[^l]|Parameters\.AddWithVal[^u]|Parameters\.AddWithValu[^e])*)(Open\(\)|ExecuteReader\(\))`),
 		},
 	}
 }
@@ -119,6 +170,22 @@ func NewCsharpRegularRequestValidationIsEnabledOnlyForPages() text.TextRule {
 	}
 }
 
+func NewCsharpRegularSQLInjectionEntityFramework() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "ae6164f0-e336-4fd1-9337-1214afe24972",
+			Name:        "SQL Injection Entity Framework",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0035).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(Database\.ExecuteSqlCommand)(([^S]|S[^q]|Sq[^l]|Sql[^P]|SqlP[^a]|SqlPa[^r]|SqlPar[^a]|SqlPara[^m]|SqlParam[^e]|SqlParame[^t]|SqlParamet[^e]|SqlParamete[^r])*)(\);)`),
+		},
+	}
+}
+
 func NewCsharpRegularViewStateNotEncrypted() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -135,6 +202,22 @@ func NewCsharpRegularViewStateNotEncrypted() text.TextRule {
 	}
 }
 
+func NewCsharpRegularSQLInjectionNhibernate() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "5c53c81e-5125-45a1-8b2c-bfa2b50a9cc5",
+			Name:        "SQL Injection Nhibernate",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0037).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(CreateSQLQuery)(([^S]|S[^e]|Se[^t]|Set[^P]|SetP[^a]|SetPa[^r]|SetPar[^a]|SetPara[^m]|SetParam[^e]|SetParame[^t]|SetParamet[^e]|SetParamete[^r])*)(\);)`),
+		},
+	}
+}
+
 func NewCsharpRegularViewStateMacDisabled() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -147,6 +230,22 @@ func NewCsharpRegularViewStateMacDisabled() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`enableViewStateMac\s*=\s*['|"]false['|"]`),
+		},
+	}
+}
+
+func NewCsharpRegularSQLInjectionNpgsql() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4a5d6ab4-ee09-4b39-b6b5-1f485c15e041",
+			Name:        "SQL Injection Npgsql",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0039).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(NpgsqlCommand\(.*\))(([^P]|P[^a]|Pa[^r]|Par[^a]|Para[^m]|Param[^e]|Parame[^t]|Paramet[^e]|Paramete[^r]|Parameter[^s]|Parameters[^.]|Parameters\.[^A]|Parameters\.A[^d]|Parameters\.Ad[^d]|Parameters\.Add[^W]|Parameters\.AddW[^i]|Parameters\.AddWi[^t]|Parameters\.AddWit[^h]|Parameters\.AddWith[^V]|Parameters\.AddWithV[^a]|Parameters\.AddWithVa[^l]|Parameters\.AddWithVal[^u]|Parameters\.AddWithValu[^e])*)(ExecuteNonQuery\(.*\)|ExecuteReader\(.*\))`),
 		},
 	}
 }

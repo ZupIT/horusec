@@ -31,6 +31,12 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularRequestValidationIsEnabledOnlyForPages(),
 		regular.NewCsharpRegularViewStateNotEncrypted(),
 		regular.NewCsharpRegularViewStateMacDisabled(),
+		regular.NewCsharpRegularPasswordComplexity(),
+		regular.NewCsharpRegularSQLInjectionOLEDB(),
+		regular.NewCsharpRegularSQLInjectionMsSQLDataProvider(),
+		regular.NewCsharpRegularSQLInjectionEntityFramework(),
+		regular.NewCsharpRegularSQLInjectionNhibernate(),
+		regular.NewCsharpRegularSQLInjectionNpgsql(),
 	}
 }
 
@@ -40,6 +46,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndXPathInjection(),
 		and.NewCsharpAndExternalEntityInjection(),
 		and.NewCsharpAndPathTraversal(),
+		and.NewCsharpAndSQLInjectionWebControls(),
 	}
 }
 
@@ -51,5 +58,8 @@ func AllRulesCsharpOr() []text.TextRule {
 		or.NewCsharpOrPasswordComplexity(),
 		or.NewCsharpOrCookieWithoutSSLFlag(),
 		or.NewCsharpOrCookieWithoutHttpOnlyFlag(),
+		or.NewCsharpOrSQLInjectionEnterpriseLibraryData(),
+		or.NewCsharpOrCQLInjectionCassandra(),
+		or.NewCsharpOrPasswordComplexity(),
 	}
 }
