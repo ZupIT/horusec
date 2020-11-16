@@ -398,7 +398,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.controller.UpdateAccount(data.AccountID, data)
+	err = h.controller.UpdateAccount(data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 	}

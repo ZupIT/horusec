@@ -54,7 +54,7 @@ type IAccount interface {
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
 	GetAccountID(token string) (uuid.UUID, error)
-	UpdateAccount(accountID uuid.UUID, account *authEntities.Account) error
+	UpdateAccount(account *authEntities.Account) error
 }
 
 type Account struct {
@@ -345,15 +345,6 @@ func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
 	return uuid.Nil, errors.ErrorUnauthorized
 }
 
-func (a *Account) UpdateAccount(accountID uuid.UUID, account *authEntities.Account) error {
-	toUpdate := authEntities.Account{AccountID: accountID}
-	if account.Email != "" {
-		toUpdate.Email = account.Email
-	}
-
-	if account.Username != "" {
-		toUpdate.Username = account.Username
-	}
-
-	return a.accountRepository.Update(&toUpdate)
+func (a *Account) UpdateAccount(account *authEntities.Account) error {
+	return a.accountRepository.Update(account)
 }

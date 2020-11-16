@@ -98,7 +98,7 @@ func (m *Mock) GetAccountID(token string) (uuid.UUID, error) {
 	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) UpdateAccount(accountID uuid.UUID, account *authEntities.Account) error {
-	args := m.MethodCalled("UpdateAccount", accountID, account)
+func (m *Mock) UpdateAccount(account *authEntities.Account) error {
+	args := m.MethodCalled("UpdateAccount", account)
 	return mockUtils.ReturnNilOrError(args, 0)
 }
