@@ -97,3 +97,20 @@ func NewCsharpAndPathTraversal() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndSQLInjectionWebControls() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b6f82b7c-f321-4651-8ad3-87fbf5e0412b",
+			Name:        "SQL Injection WebControls",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0014).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`"Select .* From .* where .*" & .*`),
+			regexp.MustCompile(`System\.Web\.UI\.WebControls\.SqlDataSource | System\.Web\.UI\.WebControls\.SqlDataSourceView | Microsoft\.Whos\.Framework\.Data\.SqlUtility`),
+		},
+	}
+}
