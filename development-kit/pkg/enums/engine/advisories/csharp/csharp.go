@@ -55,7 +55,6 @@ func AllRulesCsharpOr() []text.TextRule {
 		or.NewCsharpOrLDAPInjection(),
 		or.NewCsharpOrSQLInjectionLinq(),
 		or.NewCsharpOrInsecureDeserialization(),
-		or.NewCsharpOrPasswordComplexity(),
 		or.NewCsharpOrCookieWithoutSSLFlag(),
 		or.NewCsharpOrCookieWithoutHttpOnlyFlag(),
 		or.NewCsharpOrSQLInjectionEnterpriseLibraryData(),
