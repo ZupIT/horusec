@@ -32,6 +32,8 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularSQLInjectionEntityFramework(),
 		regular.NewCsharpRegularSQLInjectionNhibernate(),
 		regular.NewCsharpRegularSQLInjectionNpgsql(),
+		regular.NewCsharpRegularCertificateValidationDisabled(),
+		regular.NewCsharpRegularWeakCipherAlgorithm(),
 	}
 }
 
@@ -42,6 +44,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndExternalEntityInjection(),
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
+		and.NewCsharpAndWeakRandomNumberGenerator(),
+		and.NewCsharpAndWeakHashingFunction(),
 	}
 }
 

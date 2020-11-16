@@ -169,3 +169,35 @@ func NewCsharpRegularSQLInjectionNpgsql() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularCertificateValidationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "c83a6f75-898e-4621-be87-b9ef0ce85ce7",
+			Name:        "Certificate Validation Disabled",
+			Description: "Disabling certificate validation is often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information access: (https://security-code-scan.github.io/#SCS0004).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`ServicePointManager\.ServerCertificateValidationCallback \+= (.*) => true;`),
+		},
+	}
+}
+
+func NewCsharpRegularWeakCipherAlgorithm() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "654e89b5-714c-4006-bd08-345c60e5ce00",
+			Name:        "Weak cipher algorithm",
+			Description: "Broken or deprecated ciphers have typically known weakness. A attacker might be able to brute force the secret key use for the encryption. The confidentiality and integrity of the information encrypted is at risk. For more information access: (https://security-code-scan.github.io/#SCS0010).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(DES.Create\(\))(([^A]|A[^e]|Ae[^s]|Aes[^M]|AesM[^a]|AesMa[^n]|AesMan[^a]|AesMana[^g]|AesManag[^e]|AesManage[^d])*)(Write\(.*\))`),
+		},
+	}
+}

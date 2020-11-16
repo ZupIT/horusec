@@ -114,3 +114,38 @@ func NewCsharpAndSQLInjectionWebControls() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndWeakRandomNumberGenerator() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4b546b8d-0d0c-4b37-ad5f-f8f788019a3e",
+			Name:        "Weak Random Number Generator",
+			Description: "The use of a predictable random value can lead to vulnerabilities when used in certain security critical contexts. For more information access: (https://security-code-scan.github.io/#SCS0005).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new Random\(\)`),
+			regexp.MustCompile(`new byte\[.*\]`),
+			regexp.MustCompile(`GetBytes\(\)`),
+		},
+	}
+}
+
+func NewCsharpAndWeakHashingFunction() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "263e1cb3-31ee-443e-80e0-31f81bbfb340",
+			Name:        "Weak hashing function",
+			Description: "MD5 or SHA1 have known collision weaknesses and are no longer considered strong hashing algorithms. For more information access: (https://security-code-scan.github.io/#SCS0006).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new SHA1CryptoServiceProvider\(\)`),
+			regexp.MustCompile(`ComputeHash\(\)`),
+		},
+	}
+}
