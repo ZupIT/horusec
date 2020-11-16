@@ -43,5 +43,6 @@ func AllRulesCsharpOr() []text.TextRule {
 		or.NewCsharpOrLDAPInjection(),
 		or.NewCsharpOrSQLInjectionLinq(),
 		or.NewCsharpOrInsecureDeserialization(),
+		or.NewCsharpRegularPasswordComplexity(),
 	}
 }

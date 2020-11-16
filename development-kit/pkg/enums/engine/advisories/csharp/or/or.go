@@ -73,3 +73,22 @@ func NewCsharpOrInsecureDeserialization() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularPasswordComplexity() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "7fefbb75-2c16-4651-ab8f-3bff4d4e1b78",
+			Name:        "Password Complexity",
+			Description: "PasswordValidator should have at least two requirements for better security, the RequiredLength property must be set with a minimum value of 8. For more information access: (https://security-code-scan.github.io/#SCS0027).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sPasswordValidator\(\)`),
+			regexp.MustCompile(`new\sPasswordValidator(\n?\s*{)(\n*.*=.*,?)(\s|\n)*[^a-z]}`),
+			regexp.MustCompile(`new\sPasswordValidator(\n?\s*{)((\n|.*)*RequiredLength=[0-7][^\d])`),
+			regexp.MustCompile(`(new\sPasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^d]|Required[^L]|RequiredL[^e]|RequiredLe[^n]|RequiredLen[^g]|RequiredLeng[^t]|RequiredLengt[^h])*)(})`),
+		},
+	}
+}
