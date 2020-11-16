@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, Select, Icon } from 'components';
+import { Dialog, Select } from 'components';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import Styled from './styled';
@@ -125,6 +125,12 @@ const AddWebhook: React.FC<Props> = ({
     setHeaders(headersCopy);
   };
 
+  const handleRemoveHeader = () => {
+    const headersCopy = cloneDeep(headers);
+    headersCopy.pop();
+    setHeaders(headersCopy);
+  };
+
   return (
     <Dialog
       isVisible={isVisible}
@@ -190,7 +196,7 @@ const AddWebhook: React.FC<Props> = ({
 
         <Styled.Label>{t('WEBHOOK_SCREEN.HEADERS_LABEL')}</Styled.Label>
 
-        {webhookToEdit?.headers?.map((header, index) => (
+        {headers?.map((header, index) => (
           <Styled.Wrapper key={index}>
             <Styled.Field
               label={t('WEBHOOK_SCREEN.KEY')}
@@ -213,8 +219,16 @@ const AddWebhook: React.FC<Props> = ({
               initialValue={headers[index]?.value}
             />
 
-            {index + 1 === headers?.length && headers?.length !== 3 ? (
-              <Icon
+            {index + 1 === headers.length && headers.length !== 1 ? (
+              <Styled.OptionIcon
+                name="delete"
+                size="20px"
+                onClick={handleRemoveHeader}
+              />
+            ) : null}
+
+            {index + 1 === headers?.length && headers?.length !== 5 ? (
+              <Styled.OptionIcon
                 name="plus"
                 size="20px"
                 onClick={() => setHeaders([...headers, { key: '', value: '' }])}

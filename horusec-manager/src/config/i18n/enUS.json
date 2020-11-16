@@ -293,6 +293,7 @@
     "TITLE": "Webhooks",
     "ADD": "Create webhook",
     "SAVE": "Save",
+    "SEARCH": "Search by URL",
     "DESCRIPTION_LABEL": "Enter the description for the webhook:",
     "DESCRIPTION": "Description",
     "RESPOSITORY_LABEL": "Select the repository that will trigger the webhook:",
@@ -310,7 +311,7 @@
     "KEY": "Key",
     "VALUE": "Value",
     "TABLE": {
-      "EMPTY": "There are no registered webhooks",
+      "EMPTY": "No registered webhooks were found",
       "METHOD": "Method",
       "URL": "URL",
       "REPOSITORY": "Repository",

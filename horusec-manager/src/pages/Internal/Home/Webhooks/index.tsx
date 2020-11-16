@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { Button, Icon, Dialog } from 'components';
+import { Button, Icon, Dialog, SearchBar } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
@@ -38,6 +38,7 @@ const Webhooks: React.FC = () => {
   const { showSuccessFlash } = useFlashMessage();
 
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
+  const [filteredWebhooks, setFilteredWebhooks] = useState<Webhook[]>([]);
   const [webhookToDelete, setWebhookToDelete] = useState<Webhook>();
   const [webhookToEdit, setWebhookToEdit] = useState<Webhook>();
 
@@ -52,6 +53,7 @@ const Webhooks: React.FC = () => {
       .getAll(companyID)
       .then((result) => {
         setWebhooks(result?.data?.content);
+        setFilteredWebhooks(result?.data?.content);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -83,6 +85,18 @@ const Webhooks: React.FC = () => {
       });
   };
 
+  const onSearchWebhook = (search: string) => {
+    if (search) {
+      const filtered = webhooks.filter((webhook) =>
+        webhook?.url.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      );
+
+      setFilteredWebhooks(filtered);
+    } else {
+      setFilteredWebhooks(webhooks);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line
@@ -90,17 +104,24 @@ const Webhooks: React.FC = () => {
 
   return (
     <Styled.Wrapper>
+      <Styled.Options>
+        <SearchBar
+          placeholder={t('WEBHOOK_SCREEN.SEARCH')}
+          onSearch={(value) => onSearchWebhook(value)}
+        />
+
+        <Button
+          text={t('WEBHOOK_SCREEN.ADD')}
+          rounded
+          width={150}
+          icon="plus"
+          onClick={() => setAddWebhookVisible(true)}
+        />
+      </Styled.Options>
+
       <Styled.Content>
         <Styled.TitleWrapper>
           <Styled.Title>{t('WEBHOOK_SCREEN.TITLE')}</Styled.Title>
-
-          <Button
-            text={t('WEBHOOK_SCREEN.ADD')}
-            rounded
-            width={150}
-            icon="plus"
-            onClick={() => setAddWebhookVisible(true)}
-          />
         </Styled.TitleWrapper>
 
         <Styled.Table>
@@ -109,10 +130,6 @@ const Webhooks: React.FC = () => {
           </Styled.LoadingWrapper>
 
           <Styled.Head>
-            <Styled.Column>
-              {t('WEBHOOK_SCREEN.TABLE.REPOSITORY')}
-            </Styled.Column>
-
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.METHOD')}</Styled.Column>
 
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.URL')}</Styled.Column>
@@ -121,20 +138,22 @@ const Webhooks: React.FC = () => {
               {t('WEBHOOK_SCREEN.TABLE.DESCRIPTION')}
             </Styled.Column>
 
+            <Styled.Column>
+              {t('WEBHOOK_SCREEN.TABLE.REPOSITORY')}
+            </Styled.Column>
+
             <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.ACTION')}</Styled.Column>
           </Styled.Head>
 
           <Styled.Body>
-            {!webhooks || webhooks.length <= 0 ? (
+            {!filteredWebhooks || filteredWebhooks.length <= 0 ? (
               <Styled.EmptyText>
                 {t('WEBHOOK_SCREEN.TABLE.EMPTY')}
               </Styled.EmptyText>
             ) : null}
 
-            {webhooks.map((webhook, index) => (
+            {filteredWebhooks.map((webhook, index) => (
               <Styled.Row key={index}>
-                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
-
                 <Styled.Cell className="flex-center">
                   <Styled.Tag
                     color={get(
@@ -150,6 +169,8 @@ const Webhooks: React.FC = () => {
                 <Styled.Cell>{webhook.url}</Styled.Cell>
 
                 <Styled.Cell>{webhook.description}</Styled.Cell>
+
+                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
 
                 <Styled.Cell className="row">
                   <Button
