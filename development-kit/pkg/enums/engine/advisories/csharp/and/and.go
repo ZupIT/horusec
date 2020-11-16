@@ -152,3 +152,21 @@ func NewCsharpAndWeakCipherOrCBCOrECBMode() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndFormsAuthenticationCookielessMode() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "81f4b46e-164c-478f-ad3a-df263d73c00c",
+			Name:        "Forms Authentication Cookieless Mode",
+			Description: "Authentication cookies should not be sent in the URL. Doing so allows attackers to gain unauthorized access to authentication tokens (web server logs, referrer headers, and browser history) and more easily perform session fixation / hijacking attacks. For more information checkout the CWE-598 (https://cwe.mitre.org/data/definitions/598.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
+			regexp.MustCompile(`(\<forms)((([^c]|c[^o]|co[^o]|coo[^k]|cook[^i]|cooki[^e]|cookie[^l]|cookiel[^e]|cookiele[^s]|cookieles[^s])*)|([^U]|U[^s]|Us[^e]|Use[^C]|UseC[^o]|UseCo[^o]|UseCoo[^k]|UseCook[^i]|UseCooki[^e]|UseCookie[^s])*)(\/\>)`),
+		},
+	}
+}
+
