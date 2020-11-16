@@ -15,6 +15,8 @@
 package account
 
 import (
+	"net/http"
+
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
@@ -29,7 +31,6 @@ import (
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"net/http"
 )
 
 type Handler struct {
@@ -378,4 +379,18 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusNoContent(w)
+}
+
+// @Tags Account
+// @Description Update account username and/or email
+// @ID update-account
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} http.Response{content=string} "OK"
+// @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/account/delete [delete]
+// @Security ApiKeyAuth
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	httpUtil.StatusOK(w, "account updated")
 }
