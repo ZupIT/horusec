@@ -447,3 +447,18 @@ func NewCsharpRegularVulnerablePackageReference() text.TextRule {
 	}
 }
 
+func NewCsharpRegularCorsAllowOriginWildCard() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6fa83684-e29d-44a8-ac20-bdd955d45363",
+			Name:        "Cors Allow Origin Wild Card",
+			Description: "Cross-Origin Resource Sharing (CORS) allows a service to disable the browser’s Same-origin policy, which prevents scripts on an attacker-controlled domain from accessing resources and data hosted on a different domain. The CORS Access-Control-Allow-Origin HTTP header specifies the domain with permission to invoke a cross-origin service and view the response data. Configuring the Access-Control-Allow-Origin header with a wildcard (*) can allow code running on an attacker-controlled domain to view responses containing sensitive data. For more information checkout the CWE-942 (https://cwe.mitre.org/data/definitions/942.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`app\.UseCors\(builder => builder\.AllowAnyOrigin\(\)\);`),
+		},
+	}
+}

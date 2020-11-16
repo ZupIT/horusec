@@ -49,6 +49,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularCrossSiteRequestForgery(),
 		regular.NewCsharpRegularDebugBuildEnabled(),
 		regular.NewCsharpRegularVulnerablePackageReference(),
+		regular.NewCsharpRegularCorsAllowOriginWildCard(),
 	}
 }
 
