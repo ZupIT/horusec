@@ -1020,18 +1020,22 @@ func TestUpdateAccount(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
-	t.Run("should return status code 400 when payload is not a valid data", func(t *testing.T) {
+	t.Run("should return status code 500 when update fails", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
-		mockWrite.On("Update").Return(&response.Response{})
+		response := &response.Response{}
+		mockWrite.On("Update").Return(response.SetError(errors.New("test")))
+		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		token, _, _ := jwt.CreateToken(account, nil)
 
 		appConfig := app.NewConfig()
 		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
-		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader([]byte{}))
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
+		r.Header.Add("Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 }
