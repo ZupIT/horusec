@@ -26,7 +26,7 @@ func TestRulesEnum(t *testing.T) {
 	totalRules = append(totalRules, AllRulesCsharpOr()...)
 	totalRules = append(totalRules, AllRulesCsharpAnd()...)
 	totalRules = append(totalRules, AllRulesCsharpRegular()...)
-	lenExpectedTotalRules := 27
+	lenExpectedTotalRules := 31
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in csharp", func(t *testing.T) {
 		encountered := map[string]bool{}
 
