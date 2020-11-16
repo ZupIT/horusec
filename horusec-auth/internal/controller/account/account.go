@@ -54,7 +54,7 @@ type IAccount interface {
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
 	GetAccountID(token string) (uuid.UUID, error)
-	UpdateAccount(account *authEntities.Account) error
+	UpdateAccount(accountID uuid.UUID, account *authEntities.Account) error
 }
 
 type Account struct {
