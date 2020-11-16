@@ -1003,4 +1003,35 @@ func TestUpdateAccount(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
+
+	t.Run("should return status code 401 when request does not have a token", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+
+		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
+		w := httptest.NewRecorder()
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("should return status code 400 when payload is not a valid data", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader([]byte{}))
+		w := httptest.NewRecorder()
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
 }

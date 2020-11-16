@@ -80,6 +80,14 @@ func (a *Account) Validate() error {
 	)
 }
 
+func (a *Account) UpdationValidate() error {
+	return validation.ValidateStruct(a,
+		validation.Field(
+			&a.Email, validation.When(a.Username == "", validation.Required), validation.Length(1, 255), is.Email),
+		validation.Field(&a.Username, validation.Length(1, 255), validation.When(a.Email == "", validation.Required)),
+	)
+}
+
 func (a *Account) GetTable() string {
 	return "accounts"
 }

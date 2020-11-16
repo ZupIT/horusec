@@ -214,7 +214,7 @@ func (u *UseCases) NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEnti
 	}
 
 	account := updateAccount.ToAccount()
-	return account, nil
+	return account, account.UpdationValidate()
 }
 
 func (u *UseCases) NewEmailDataFromReadCloser(body io.ReadCloser) (data *dto.EmailData, err error) {
