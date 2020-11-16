@@ -510,3 +510,19 @@ func NewCsharpRegularUnvalidatedWebFormsRedirect() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularIdentityPasswordLockoutDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "ab6aa12f-362c-4be2-8a5b-0e37b4b0d7a1",
+			Name:        "Identity Password Lockout Disabled",
+			Description: "Password lockout mechanisms help prevent continuous brute force attacks again user accounts by disabling an account for a period of time after a number of invalid attempts. The ASP.NET Identity SignInManager protects against brute force attacks if the lockout parameter is set to true. For more information checkout the CWE-307 (https://cwe.mitre.org/data/definitions/307.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`CheckPasswordSignInAsync\(.*, .*, false\)`),
+		},
+	}
+}

@@ -53,6 +53,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
 		regular.NewCsharpRegularMissingAuthorizeAttribute(),
 		regular.NewCsharpRegularUnvalidatedWebFormsRedirect(),
+		regular.NewCsharpRegularIdentityPasswordLockoutDisabled(),
 	}
 }
 
