@@ -16,19 +16,32 @@ package csharp
 
 import (
 	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/csharp/and"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/csharp/or"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/csharp/regular"
 )
 
 func AllRulesCsharpRegular() []text.TextRule {
 	return []text.TextRule{
+		regular.NewCsharpRegularCrossSiteScripting(),
+		regular.NewCsharpRegularOutputCacheConflict(),
+		regular.NewCsharpRegularOpenRedirect(),
 	}
 }
 
 func AllRulesCsharpAnd() []text.TextRule {
 	return []text.TextRule{
+		and.NewCsharpAndCommandInjection(),
+		and.NewCsharpAndXPathInjection(),
+		and.NewCsharpAndExternalEntityInjection(),
+		and.NewCsharpAndPathTraversal(),
 	}
 }
 
 func AllRulesCsharpOr() []text.TextRule {
 	return []text.TextRule{
+		or.NewCsharpOrLDAPInjection(),
+		or.NewCsharpOrSQLInjectionLinq(),
+		or.NewCsharpOrInsecureDeserialization(),
 	}
 }

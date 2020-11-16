@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:lll multiple regex is not possible broken lines
 package or
 
 import (
@@ -31,10 +32,27 @@ func NewCsharpOrLDAPInjection() text.TextRule {
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(new DirectorySearcher\(\))(([^E]|E[^n]|En[^c]|Enc[^o]|Enco[^d]|Encod[^e]|Encode[^r]|Encoder[^.]|Encoder\.[^L]|Encoder\.L[^d]|Encoder\.Ld[^a]|Encoder\.Lda[^p]|Encoder\.Ldap[^F]|Encoder\.LdapF[^i]|Encoder\.LdapFi[^l]|Encoder\.LdapFil[^t]|Encoder\.LdapFilt[^e]|Encoder\.LdapFilte[^r]|Encoder\.LdapFilter[^E]|Encoder\.LdapFilterE[^n]|Encoder\.LdapFilterEn[^c]|Encoder\.LdapFilterEnc[^o]|Encoder\.LdapFilterEnco[^d]|Encoder\.LdapFilterEncod[^e])*)(\)";)`),
 			regexp.MustCompile(`(new DirectoryEntry\(\))(([^E]|E[^n]|En[^c]|Enc[^o]|Enco[^d]|Encod[^e]|Encode[^r]|Encoder[^.]|Encoder\.[^L]|Encoder\.L[^d]|Encoder\.Ld[^a]|Encoder\.Lda[^p]|Encoder\.Ldap[^D]|Encoder\.LdapD[^i]|Encoder\.LdapDi[^s]|Encoder\.LdapDis[^t]|Encoder\.LdapDist[^i]|Encoder\.LdapDisti[^n]|Encoder\.LdapDistin[^g]|Encoder\.LdapDisting[^u]|Encoder\.LdapDistingu[^i]|Encoder\.LdapDistingui[^s]|Encoder\.LdapDistinguis[^h]|Encoder\.LdapDistinguish[^e]|Encoder\.LdapDistinguishe[^d]|Encoder\.LdapDistinguished[^N]|Encoder\.LdapDistinguishedN[^a]|Encoder\.LdapDistinguishedNa[^m]|Encoder\.LdapDistinguishedNam[^e]|Encoder\.LdapDistinguishedName[^E]|Encoder\.LdapDistinguishedNameE[^n]|Encoder\.LdapDistinguishedNameEn[^c]|Encoder\.LdapDistinguishedNameEnc[^o]|Encoder\.LdapDistinguishedNameEnco[^d]|Encoder\.LdapDistinguishedNameEncod[^e])*)(,.*";)`),
+		},
+	}
+}
+
+func NewCsharpOrSQLInjectionLinq() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "32fbdff3-2092-4d42-90a2-784842bebfd0",
+			Name:        "SQL Injection LINQ",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database.. For more information access: (https://security-code-scan.github.io/#SCS0002).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`ExecuteQuery\(.*SELECT .* FROM .* WHERE .* \+ .* \+ .*\)`),
+			regexp.MustCompile(`var .* = "SELECT .* FROM .* WHERE .* \+ .* \+ .*"`),
 		},
 	}
 }
@@ -48,7 +66,7 @@ func NewCsharpOrInsecureDeserialization() text.TextRule {
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new\sBinaryFormatter\(\)\.Deserialize\(.*\)`),
 			regexp.MustCompile(`new\sJavaScriptSerializer\(..*\)`),

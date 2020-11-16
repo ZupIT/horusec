@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:lll multiple regex is not possible broken lines
 package regular
 
 import (
@@ -47,7 +48,7 @@ func NewCsharpRegularOutputCacheConflict() text.TextRule {
 			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(\[Authorize\])(.*|\n)*(\[OutputCache\])`),
 		},
@@ -63,7 +64,7 @@ func NewCsharpRegularOpenRedirect() text.TextRule {
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`String.IsNullOrEmpty.*\n?.*{?\n?.*return\sRedirect\(.*\);`),
 		},
