@@ -287,7 +287,7 @@ func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "30104af9-0d00-4536-b8b0-18a96eacbe23",
 			Name:        "Debug Build Enabled",
-			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. For more information access: (CWE-11: ASP.NET Misconfiguration: Creating Debug Binary).",
+			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. For more information checkout the CWE-11 (https://cwe.mitre.org/data/definitions/11.html).",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
@@ -427,6 +427,22 @@ func NewCsharpRegularCrossSiteRequestForgery() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?:public\s+class\s+.*Controller|.*\s+:\s+Controller)(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(})`),
+		},
+	}
+}
+
+func NewCsharpRegularCustomErrorsDisable() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "26b66939-1dc2-4842-b43a-26718f1cd37c",
+			Name:        "Custom Errors Disable",
+			Description: "Displaying stack traces in the browser can leak information to attackers and help them gain information for launching additional attacks. For more information checkout the CWE-12 (https://cwe.mitre.org/data/definitions/12.html).",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<customErrors mode="Off" .*/>`),
 		},
 	}
 }
