@@ -51,6 +51,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndSQLInjectionWebControls(),
 		and.NewCsharpAndWeakRandomNumberGenerator(),
 		and.NewCsharpAndWeakHashingFunction(),
+		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 	}
 }
 

@@ -273,7 +273,7 @@ func NewCsharpRegularWeakCipherAlgorithm() text.TextRule {
 			Name:        "Weak cipher algorithm",
 			Description: "Broken or deprecated ciphers have typically known weakness. A attacker might be able to brute force the secret key use for the encryption. The confidentiality and integrity of the information encrypted is at risk. For more information access: (https://security-code-scan.github.io/#SCS0010).",
 			Severity:    severity.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
