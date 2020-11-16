@@ -413,7 +413,7 @@ func (h *Handler) getAccountUpdateData(w http.ResponseWriter, r *http.Request) (
 		return nil, errors.ErrorDoNotHavePermissionToThisAction
 	}
 
-	data, err := h.useCases.NewAccountFromReadCloser(r.Body)
+	data, err := h.useCases.NewAccountUpdateFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, errors.ErrorInvalidUpdateAccountData)
 		return nil, errors.ErrorInvalidUpdateAccountData

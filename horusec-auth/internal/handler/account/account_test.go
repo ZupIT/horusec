@@ -19,6 +19,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -36,9 +40,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestOptions(t *testing.T) {
@@ -981,5 +982,25 @@ func TestDeleteAccount(t *testing.T) {
 		handler.DeleteAccount(w, r)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestUpdateAccount(t *testing.T) {
+	t.Run("should return status code 200 when updated with success", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+
+		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		token, _, _ := jwt.CreateToken(account, nil)
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
+		r.Header.Add("Authorization", token)
+		w := httptest.NewRecorder()
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }

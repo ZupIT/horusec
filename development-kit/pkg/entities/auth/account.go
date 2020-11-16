@@ -16,8 +16,9 @@ package auth
 
 import (
 	"encoding/json"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"time"
+
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
