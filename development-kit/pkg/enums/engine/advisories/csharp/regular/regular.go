@@ -282,22 +282,6 @@ func NewCsharpRegularWeakCipherAlgorithm() text.TextRule {
 	}
 }
 
-func NewCsharpRegularDebugBuildEnabled() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "30104af9-0d00-4536-b8b0-18a96eacbe23",
-			Name:        "Debug Build Enabled",
-			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. For more information checkout the CWE-11 (https://cwe.mitre.org/data/definitions/11.html).",
-			Severity:    severity.High.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.Regular,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`<compilation debug="true" .*/>`),
-		},
-	}
-}
-
 func NewCsharpRegularNoUseHtmlRaw() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -431,18 +415,18 @@ func NewCsharpRegularCrossSiteRequestForgery() text.TextRule {
 	}
 }
 
-func NewCsharpRegularCustomErrorsDisable() text.TextRule {
+func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "26b66939-1dc2-4842-b43a-26718f1cd37c",
-			Name:        "Custom Errors Disable",
-			Description: "Displaying stack traces in the browser can leak information to attackers and help them gain information for launching additional attacks. For more information checkout the CWE-12 (https://cwe.mitre.org/data/definitions/12.html).",
-			Severity:    severity.High.ToString(),
+			ID:          "e4c52f0d-abdb-4958-9e85-e7d34caf7e99",
+			Name:        "Debug Build Enabled",
+			Description: "Binaries compiled in debug mode can leak detailed stack traces and debugging messages to attackers. Disable debug builds by setting the debug attribute to false. For more information checkout the CWE-11 (https://cwe.mitre.org/data/definitions/11.html) advisory.",
+			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`<customErrors mode="Off" .*/>`),
+			regexp.MustCompile(`\<compilation(\s|.)*debug\s*=\s*['|"]true['|"]`),
 		},
 	}
 }

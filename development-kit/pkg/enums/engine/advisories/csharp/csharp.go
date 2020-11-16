@@ -39,7 +39,6 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularSQLInjectionNpgsql(),
 		regular.NewCsharpRegularCertificateValidationDisabled(),
 		regular.NewCsharpRegularWeakCipherAlgorithm(),
-		regular.NewCsharpRegularDebugBuildEnabled(),
 		regular.NewCsharpRegularNoUseHtmlRaw(),
 		regular.NewCsharpRegularNoLogSensitiveInformation(),
 		regular.NewCsharpRegularNoReturnStringConcatInController(),
@@ -48,7 +47,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularWeakHashingFunctionDESCrypto(),
 		regular.NewCsharpRegularNoUseCipherMode(),
 		regular.NewCsharpRegularCrossSiteRequestForgery(),
-		regular.NewCsharpRegularCustomErrorsDisable(),
+		regular.NewCsharpRegularDebugBuildEnabled(),
 	}
 }
 
