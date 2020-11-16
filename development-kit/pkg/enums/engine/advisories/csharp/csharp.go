@@ -59,8 +59,11 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
 		and.NewCsharpAndWeakRandomNumberGenerator(),
-		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 		and.NewCsharpAndFormsAuthenticationCookielessMode(),
+		and.NewCsharpAndFormsAuthenticationWeakCookieProtection(),
+		and.NewCsharpAndFormsAuthenticationCrossAppRedirects(),
+		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
+		and.NewCsharpAndFormsAuthenticationWeakTimeout(),
 	}
 }
 

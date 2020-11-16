@@ -170,3 +170,56 @@ func NewCsharpAndFormsAuthenticationCookielessMode() text.TextRule {
 	}
 }
 
+func NewCsharpAndFormsAuthenticationCrossAppRedirects() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "05cd1279-54a7-4770-9527-3ecd6c83b167",
+			Name:        "Forms Authentication Cross App Redirects",
+			Description: "Enabling cross-application redirects can allow unvalidated redirect attacks via the returnUrl parameter during the login process. Disable cross-application redirects to by setting the enableCrossAppRedirects attribute to false. For more information checkout the CWE-601 (https://cwe.mitre.org/data/definitions/601.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
+			regexp.MustCompile(`\<forms`),
+			regexp.MustCompile(`enableCrossAppRedirects\s*=\s*["|']true`),
+		},
+	}
+}
+
+func NewCsharpAndFormsAuthenticationWeakCookieProtection() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "97df49ee-1043-4158-ba33-efed0ac3a28d",
+			Name:        "Forms Authentication Weak Cookie Protection",
+			Description: "Forms Authentication cookies must use strong encryption and message authentication code (MAC) validation to protect the cookie value from inspection and tampering. Configure the forms element’s protection attribute to All to enable cookie data validation and encryption. For more information checkout the CWE-565 (https://cwe.mitre.org/data/definitions/565.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
+			regexp.MustCompile(`\<forms`),
+			regexp.MustCompile(`protection\s*=\s*["|'](None|Encryption|Validation)`),
+		},
+	}
+}
+
+func NewCsharpAndFormsAuthenticationWeakTimeout() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "fc00e79f-03ae-43eb-967f-46d8b6efa2ea",
+			Name:        "Forms Authentication Weak Timeout",
+			Description: "Excessive authentication timeout values provide attackers with a large window of opportunity to hijack user’s authentication tokens. For more information checkout the CWE-613 (https://cwe.mitre.org/data/definitions/613.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
+			regexp.MustCompile(`\<forms`),
+			regexp.MustCompile(`timeout\s*=\s*["|'](1[6-9]|[2-9][0-9]*)`),
+		},
+	}
+}
