@@ -58,6 +58,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
 		and.NewCsharpAndWeakRandomNumberGenerator(),
+		and.NewCsharpAndWeakHashingFunction(),
+		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
 	}
 }
 

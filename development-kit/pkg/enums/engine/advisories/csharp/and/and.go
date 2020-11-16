@@ -121,14 +121,51 @@ func NewCsharpAndWeakRandomNumberGenerator() text.TextRule {
 			ID:          "4b546b8d-0d0c-4b37-ad5f-f8f788019a3e",
 			Name:        "Weak Random Number Generator",
 			Description: "The use of a predictable random value can lead to vulnerabilities when used in certain security critical contexts. For more information access: (https://security-code-scan.github.io/#SCS0005).",
-			Severity:    severity.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new Random\(\)`),
 			regexp.MustCompile(`new byte\[.*\]`),
 			regexp.MustCompile(`GetBytes\(\)`),
+		},
+	}
+}
+
+func NewCsharpAndWeakHashingFunction() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "263e1cb3-31ee-443e-80e0-31f81bbfb340",
+			Name:        "Weak hashing function",
+			Description: "MD5 or SHA1 have known collision weaknesses and are no longer considered strong hashing algorithms. For more information access: (https://security-code-scan.github.io/#SCS0006).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new SHA1CryptoServiceProvider\(\)`),
+			regexp.MustCompile(`ComputeHash\(\)`),
+		},
+	}
+}
+
+func NewCsharpAndWeakCipherOrCBCOrECBMode() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f9436bdd-8a80-4168-98fa-17af9f8c51b8",
+			Name:        "Weak Cipher Mode",
+			Description: "The cipher provides no way to detect that the data has been tampered with. If the cipher text can be controlled by an attacker, it could be altered without detection. The use of AES in CBC mode with a HMAC is recommended guaranteeing integrity and confidentiality. For more information access: (https://security-code-scan.github.io/#SCS0013).",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(using)(([^O]|O[^r]|Or[^g]|Org[^.]|Org\.[^B]|Org\.B[^o]|Org\.Bo[^u]|Org\.Bou[^n]|Org\.Boun[^c]|Org\.Bounc[^y]|Org\.Bouncy[^C]|Org\.BouncyC[^a]|Org\.BouncyCa[^s]|Org\.BouncyCas[^t]|Org\.BouncyCast[^l]|Org\.BouncyCastl[^e])*)(\);)`),
+			regexp.MustCompile(`CreateEncryptor\(.*\)`),
+			regexp.MustCompile(`new CryptoStream\(.*\)`),
+			regexp.MustCompile(`Write\(.*\)`),
+			regexp.MustCompile(`new BinaryWriter\(.*\)`),
 		},
 	}
 }
