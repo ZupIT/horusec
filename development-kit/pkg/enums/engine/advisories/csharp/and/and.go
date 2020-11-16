@@ -314,7 +314,7 @@ func NewCsharpAndJwtSignatureValidationDisabled() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "07b30a32-b3af-4e70-b043-25853cfdda09",
 			Name:        "Jwt Signature Validation Disabled",
-			Description: "Web service APIs relying on JSON Web Tokens (JWT) for authentication and authorization must sign each JWT with a private key or secret. Each web service endpoint must require JWT signature validation prior to decoding and using the token to access protected resources. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) advisory.",
+			Description: "Web service APIs relying on JSON Web Tokens (JWT) for authentication and authorization must sign each JWT with a private key or secret. Each web service endpoint must require JWT signature validation prior to decoding and using the token to access protected resources. The values RequireExpirationTime, RequireSignedTokens, ValidateLifetime can't was false. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) and CWE-613 (https://cwe.mitre.org/data/definitions/613.html) advisory.",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
@@ -323,7 +323,75 @@ func NewCsharpAndJwtSignatureValidationDisabled() text.TextRule {
 			regexp.MustCompile(`AddAuthentication\(.*\)`),
 			regexp.MustCompile(`AddJwtBearer`),
 			regexp.MustCompile(`new TokenValidationParameters`),
-			regexp.MustCompile(`RequireSignedTokens = false`),
+			regexp.MustCompile(`(RequireExpirationTime\s*=\s*false|RequireSignedTokens\s*=\s*false|ValidateLifetime\s*=\s*false)`),
+		},
+	}
+}
+
+func NewCsharpAndInsecureHttpCookieTransport() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "ebb18250-9b55-4ceb-8cd3-25feb7d7dccd",
+			Name:        "Insecure Http Cookie Transport",
+			Description: "Cookies containing authentication tokens, session tokens, and other state management credentials must be protected in transit across a network. Set the cookie options’ Secure property to true to prevent the browser from transmitting cookies over HTTP. For more information checkout the CWE-614 (https://cwe.mitre.org/data/definitions/614.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sCookieOptions\(\)`),
+			regexp.MustCompile(`Secure\s*=\s*false`),
+		},
+	}
+}
+
+func NewCsharpAndHttpCookieAccessibleViaScript() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "8eb27f89-d56a-4ef6-939f-92a3eedc074c",
+			Name:        "Http Cookie Accessible Via Script",
+			Description: "Cookies containing authentication tokens, session tokens, and other state management credentials should be protected from malicious JavaScript running in the browser. Setting the httpOnly attribute to false can allow attackers to inject malicious scripts into the site and extract authentication cookie values to a remote server. Configure the cookie options’ httpOnly property to true, which prevents cookie access from scripts running in the browser. For more information checkout the CWE-1004 (https://cwe.mitre.org/data/definitions/1004.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sCookieOptions\(\)`),
+			regexp.MustCompile(`HttpOnly\s*=\s*false`),
+		},
+	}
+}
+
+func NewCsharpAndDirectoryListingEnabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1b7219b8-230b-4f4d-a4b3-00126b0278dc",
+			Name:        "Directory Listing Enabled",
+			Description: "Directory listing provides a complete index of the resources located in a web directory. Enabling directory listing can expose sensitive resources such as application binaries, configuration files, and static content that should not be exposed. Unless directory listing is required to meet the application’s functional requirements, disable the listing by setting the directoryBrowse element’s enabled attribute to false. For more information checkout the CWE-548 (https://cwe.mitre.org/data/definitions/548.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<directoryBrowse`),
+			regexp.MustCompile(`enabled\s*=\s*['|"]true`),
+		},
+	}
+}
+
+func NewCsharpAndLdapAuthenticationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f325388e-b6a9-4c48-b304-adf274af95c7",
+			Name:        "Ldap Authentication Disabled",
+			Description: "Disabling LDAP Authentication configures insecure connections to the backend LDAP provider. Using the DirectoryEntry AuthenticationType property’s Anonymous or None option allows an anonymous or basic authentication connection to the LDAP provider. Set the the DirectoryEntry AuthenticationType property to Secure, which requests Kerberos authentication under the security context of the calling thread or as a provider username and password. For more information checkout the CWE-287 (https://cwe.mitre.org/data/definitions/287.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sDirectoryEntry\(.*\)`),
+			regexp.MustCompile(`AuthenticationTypes.Anonymous`),
 		},
 	}
 }

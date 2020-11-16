@@ -74,6 +74,10 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndWeakSessionTimeout(),
 		and.NewCsharpAndStateServerMode(),
 		and.NewCsharpAndJwtSignatureValidationDisabled(),
+		and.NewCsharpAndInsecureHttpCookieTransport(),
+		and.NewCsharpAndHttpCookieAccessibleViaScript(),
+		and.NewCsharpAndDirectoryListingEnabled(),
+		and.NewCsharpAndLdapAuthenticationDisabled(),
 	}
 }
 
