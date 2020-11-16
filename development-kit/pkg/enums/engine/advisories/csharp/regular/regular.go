@@ -462,3 +462,19 @@ func NewCsharpRegularCorsAllowOriginWildCard() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularMissingAntiForgeryTokenAttribute() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "21debfa9-f639-4af2-bc33-b1399fc24a89",
+			Name:        "Missing Anti Forgery Token Attribute",
+			Description: "Cross Site Request Forgery attacks occur when a victim authenticates to a target web site and then visits a malicious web page. The malicious web page then sends a fake HTTP request (GET, POST, etc.) back to the target website. The victim’s valid authentication cookie from the target web site is automatically included in the malicious request, sent to the target web site, and processed as a valid transaction under the victim’s identity. For more information checkout the CWE-352 (https://cwe.mitre.org/data/definitions/352.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(ActionResult)`),
+		},
+	}
+}

@@ -50,6 +50,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularDebugBuildEnabled(),
 		regular.NewCsharpRegularVulnerablePackageReference(),
 		regular.NewCsharpRegularCorsAllowOriginWildCard(),
+		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
 	}
 }
 
