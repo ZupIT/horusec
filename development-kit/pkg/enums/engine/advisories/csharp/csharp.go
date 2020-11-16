@@ -48,6 +48,10 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularNoUseCipherMode(),
 		regular.NewCsharpRegularCrossSiteRequestForgery(),
 		regular.NewCsharpRegularDebugBuildEnabled(),
+		regular.NewCsharpRegularVulnerablePackageReference(),
+		regular.NewCsharpRegularCorsAllowOriginWildCard(),
+		regular.NewCsharpRegularMissingAntiForgeryTokenAttribute(),
+		regular.NewCsharpRegularMissingAuthorizeAttribute(),
 	}
 }
 
@@ -69,6 +73,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndEventValidationDisabled(),
 		and.NewCsharpAndWeakSessionTimeout(),
 		and.NewCsharpAndStateServerMode(),
+		and.NewCsharpAndJwtSignatureValidationDisabled(),
 	}
 }
 

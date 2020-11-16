@@ -308,3 +308,22 @@ func NewCsharpAndStateServerMode() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndJwtSignatureValidationDisabled() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "07b30a32-b3af-4e70-b043-25853cfdda09",
+			Name:        "Jwt Signature Validation Disabled",
+			Description: "Web service APIs relying on JSON Web Tokens (JWT) for authentication and authorization must sign each JWT with a private key or secret. Each web service endpoint must require JWT signature validation prior to decoding and using the token to access protected resources. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`AddAuthentication\(.*\)`),
+			regexp.MustCompile(`AddJwtBearer`),
+			regexp.MustCompile(`new TokenValidationParameters`),
+			regexp.MustCompile(`RequireSignedTokens = false`),
+		},
+	}
+}

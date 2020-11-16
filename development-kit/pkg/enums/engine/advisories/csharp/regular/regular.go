@@ -430,3 +430,67 @@ func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularVulnerablePackageReference() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6d516e9e-8528-4a0a-801a-cd5f2fef1e0c",
+			Name:        "Vulnerable Package Reference",
+			Description: "Dependencies on open source frameworks and packages introduce additional vulnerabilities into the runtime environment. Vulnerabilities in open source libraries are continuously discovered and documented in publicly available vulnerability databases. Attackers can recognize a package being used by an application, and leverage known vulnerabilities in the library to attack the application. For more information checkout the CWE-937 (https://cwe.mitre.org/data/definitions/937.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<package id="bootstrap" version="3\.0\.0" targetFramework="net462"/>`),
+		},
+	}
+}
+
+func NewCsharpRegularCorsAllowOriginWildCard() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6fa83684-e29d-44a8-ac20-bdd955d45363",
+			Name:        "Cors Allow Origin Wild Card",
+			Description: "Cross-Origin Resource Sharing (CORS) allows a service to disable the browser’s Same-origin policy, which prevents scripts on an attacker-controlled domain from accessing resources and data hosted on a different domain. The CORS Access-Control-Allow-Origin HTTP header specifies the domain with permission to invoke a cross-origin service and view the response data. Configuring the Access-Control-Allow-Origin header with a wildcard (*) can allow code running on an attacker-controlled domain to view responses containing sensitive data. For more information checkout the CWE-942 (https://cwe.mitre.org/data/definitions/942.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`app\.UseCors\(builder => builder\.AllowAnyOrigin\(\)\);`),
+		},
+	}
+}
+
+func NewCsharpRegularMissingAntiForgeryTokenAttribute() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "21debfa9-f639-4af2-bc33-b1399fc24a89",
+			Name:        "Missing Anti Forgery Token Attribute",
+			Description: "Cross Site Request Forgery attacks occur when a victim authenticates to a target web site and then visits a malicious web page. The malicious web page then sends a fake HTTP request (GET, POST, etc.) back to the target website. The victim’s valid authentication cookie from the target web site is automatically included in the malicious request, sent to the target web site, and processed as a valid transaction under the victim’s identity. For more information checkout the CWE-352 (https://cwe.mitre.org/data/definitions/352.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(ActionResult)`),
+		},
+	}
+}
+
+func NewCsharpRegularMissingAuthorizeAttribute() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "d8ca435b-d57c-48ec-b228-9c6a6f7bbd9a",
+			Name:        "Missing Authorize Attribute",
+			Description: "Missing Authorization occurs when an application does not properly verify an authenticated user’s access to functionality, data, or resources. In many cases, applications do not check policy, claim, or role-based access control rules during a request. This can allow attackers to invoke privileged functionality, such as changing their role or directly browsing to an administrative interface in the application. For more information checkout the CWE-306 (https://cwe.mitre.org/data/definitions/306.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^A]|A[^u]|Au[^t]|Aut[^h]|Auth[^o]|Autho[^r]|Author[^i]|Authori[^z]|Authoriz[^e]|Authorize[^(]|Authorize\([^P]|Authorize\(P[^o]|Authorize\(Po[^l]|Authorize\(Pol[^i]|Authorize\(Poli[^c]|Authorize\(Polic[^y])*)(ActionResult)`),
+		},
+	}
+}
