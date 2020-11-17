@@ -387,7 +387,7 @@ func NewCsharpRegularNoUseCipherMode() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "1faf6a8f-94fe-4eed-a60c-4a4317b4bd25",
 			Name:        "No Use Cipher mode",
-			Description: "This mode is not recommended because it opens the door to various security exploits. If the plain text to be encrypted contains substantial repetitions, it is possible that the cipher text will be broken one block at a time. You can also use block analysis to determine the encryption key. In addition, an active opponent can replace and exchange individual blocks without detection, which allows the blocks to be saved and inserted into the stream at other points without detection. ECB and OFB mode will produce the same result for identical blocks. The use of AES in CBC mode with an HMAC is recommended, ensuring integrity and confidentiality. https://docs.microsoft.com/en-us/visualstudio/code-quality/ca5358?view=vs-2019. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Description: "This mode is not recommended because it opens the door to various security exploits. If the plain text to be encrypted contains substantial repetitions, it is possible that the cipher text will be broken one block at a time. You can also use block analysis to determine the encryption key. In addition, an active opponent can replace and exchange individual blocks without detection, which allows the blocks to be saved and inserted into the stream at other points without detection. ECB and OFB mode will produce the same result for identical blocks. The use of AES in CBC mode with an HMAC is recommended, ensuring integrity and confidentiality. https://docs.microsoft.com/en-us/visualstudio/code-quality/ca5358?view=vs-2019. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -395,6 +395,8 @@ func NewCsharpRegularNoUseCipherMode() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CipherMode\.ECB`),
 			regexp.MustCompile(`CipherMode\.OFB`),
+			regexp.MustCompile(`CipherMode\.CTS`),
+			regexp.MustCompile(`CipherMode\.CFB`),
 		},
 	}
 }
@@ -603,6 +605,54 @@ func NewCsharpRegularUnencodedLabelText() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(lblDetails\.Text)(([^H]|H[^t]|Ht[^m]|Htm[^l]|Html[^E]|HtmlE[^n]|HtmlEn[^c]|HtmlEnc[^o]|HtmlEnco[^d]|HtmlEncod[^e])*)(;)`),
+		},
+	}
+}
+
+func NewCsharpRegularWeakRandomNumberGenerator() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4b546b8d-0d0c-4b37-ad5f-f8f788019a3e",
+			Name:        "Weak Random Number Generator",
+			Description: "The use of a predictable random value can lead to vulnerabilities when used in certain security critical contexts. For more information access: (https://security-code-scan.github.io/#SCS0005) or (https://cwe.mitre.org/data/definitions/338.html).",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new Random\(\)`),
+		},
+	}
+}
+
+func NewCsharpRegularWeakRsaKeyLength() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "126b300d-d512-4ca4-a32a-3aad096edb35",
+			Name:        "Weak Rsa Key Length",
+			Description: "Due to advances in cryptanalysis attacks and cloud computing capabilities, the National Institute of Standards and Technology (NIST) deprecated 1024-bit RSA keys on January 1, 2011. The Certificate Authority Browser Forum, along with the latest version of all browsers, currently mandates a minimum key size of 2048-bits for all RSA keys. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sRSACryptoServiceProvider\(\b(0|[1-9][0-9]?)\b|\b(0|[1-9][0-9][0-9]?)\b|\b(0|[1][0-9][0-9][0-9]|[2][0][0-4][0-7]?)\b\)`),
+		},
+	}
+}
+
+func NewCsharpRegularXmlReaderExternalEntityExpansion() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "3a3f1a75-e2ab-4fc6-a366-517c5771ecae",
+			Name:        "Xml Reader External Entity Expansion",
+			Description: "XML External Entity (XXE) vulnerabilities occur when applications process untrusted XML data without disabling external entities and DTD processing. Processing untrusted XML data with a vulnerable parser can allow attackers to extract data from the server, perform denial of service attacks, and in some cases gain remote code execution. The XmlReaderSettings and XmlTextReader classes are vulnerable to XXE attacks when setting the DtdProcessing property to DtdProcessing.Parse or the ProhibitDtd property to false.\n\n \n\nTo prevent XmlReader XXE attacks, avoid using the deprecated ProhibitDtd property. Set the DtdProcessing property to DtdProcessing.Prohibit. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new\sXmlReaderSettings)(([^P]|P[^r]|Pr[^o]|Pro[^h]|Proh[^i]|Prohi[^b]|Prohib[^i]|Prohibi[^t])*)(})`),
 		},
 	}
 }

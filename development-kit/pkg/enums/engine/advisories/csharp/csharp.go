@@ -59,6 +59,9 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularRawWriteLiteralMethod(),
 		regular.NewCsharpRegularUnencodedWebFormsProperty(),
 		regular.NewCsharpRegularUnencodedLabelText(),
+		regular.NewCsharpRegularWeakRandomNumberGenerator(),
+		regular.NewCsharpRegularWeakRsaKeyLength(),
+		regular.NewCsharpRegularXmlReaderExternalEntityExpansion(),
 	}
 }
 
@@ -69,7 +72,6 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndExternalEntityInjection(),
 		and.NewCsharpAndPathTraversal(),
 		and.NewCsharpAndSQLInjectionWebControls(),
-		and.NewCsharpAndWeakRandomNumberGenerator(),
 		and.NewCsharpAndFormsAuthenticationCookielessMode(),
 		and.NewCsharpAndFormsAuthenticationWeakCookieProtection(),
 		and.NewCsharpAndFormsAuthenticationCrossAppRedirects(),
@@ -87,6 +89,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndLdapAuthenticationDisabled(),
 		and.NewCsharpAndCertificateValidationDisabled(),
 		and.NewCsharpAndActionRequestValidationDisabled(),
+		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
 	}
 }
 

@@ -115,24 +115,6 @@ func NewCsharpAndSQLInjectionWebControls() text.TextRule {
 	}
 }
 
-func NewCsharpAndWeakRandomNumberGenerator() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "4b546b8d-0d0c-4b37-ad5f-f8f788019a3e",
-			Name:        "Weak Random Number Generator",
-			Description: "The use of a predictable random value can lead to vulnerabilities when used in certain security critical contexts. For more information access: (https://security-code-scan.github.io/#SCS0005).",
-			Severity:    severity.Low.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`new Random\(\)`),
-			regexp.MustCompile(`new byte\[.*\]`),
-			regexp.MustCompile(`GetBytes\(\)`),
-		},
-	}
-}
-
 func NewCsharpAndWeakCipherOrCBCOrECBMode() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -426,6 +408,23 @@ func NewCsharpAndActionRequestValidationDisabled() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])`),
 			regexp.MustCompile(`\[ValidateInput\(false\)\]`),
+		},
+	}
+}
+
+func NewCsharpAndXmlDocumentExternalEntityExpansion() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "ee650d6d-683a-4b8d-bdb3-c85a74385bf6",
+			Name:        "Xml Document External Entity Expansion",
+			Description: "XML External Entity (XXE) vulnerabilities occur when applications process untrusted XML data without disabling external entities and DTD processing. Processing untrusted XML data with a vulnerable parser can allow attackers to extract data from the server, perform denial of service attacks, and in some cases gain remote code execution. The XmlDocument class is vulnerable to XXE attacks when setting the XmlResolver property to resolve external entities. To prevent XmlDocument XXE attacks, set the XmlResolver property to null. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sXmlDocument`),
+			regexp.MustCompile(`(XmlResolver)(([^n]|n[^u]|nu[^l]|nul[^l])*)(;)`),
 		},
 	}
 }
