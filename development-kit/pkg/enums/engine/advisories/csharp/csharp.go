@@ -25,7 +25,6 @@ import (
 func AllRulesCsharpRegular() []text.TextRule {
 	return []text.TextRule{
 		regular.NewCsharpRegularNoLogSensitiveInformationInConsole(),
-		regular.NewCsharpRegularCrossSiteScripting(),
 		regular.NewCsharpRegularOutputCacheConflict(),
 		regular.NewCsharpRegularOpenRedirect(),
 		regular.NewCsharpRegularRequestValidationDisabledAttribute(),
