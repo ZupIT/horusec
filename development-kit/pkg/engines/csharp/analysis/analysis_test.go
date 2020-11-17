@@ -17,11 +17,11 @@ package analysis
 import (
 	"encoding/json"
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 )
 
 func TestNewAnalysis(t *testing.T) {
