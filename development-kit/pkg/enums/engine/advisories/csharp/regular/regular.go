@@ -157,7 +157,7 @@ func NewCsharpRegularSQLInjectionEntityFramework() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "ae6164f0-e336-4fd1-9337-1214afe24972",
 			Name:        "SQL Injection Entity Framework",
-			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0035).",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database, please use SqlParameter to create query with parameters. For more information access: (https://security-code-scan.github.io/#SCS0035) or (https://cwe.mitre.org/data/definitions/89.html) .",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -635,6 +635,22 @@ func NewCsharpRegularXmlReaderExternalEntityExpansion() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(new\sXmlReaderSettings)(([^P]|P[^r]|Pr[^o]|Pro[^h]|Proh[^i]|Prohi[^b]|Prohib[^i]|Prohibi[^t])*)(})`),
+		},
+	}
+}
+
+func NewCsharpRegularLdapInjectionDirectoryEntry() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f5f1ace5-84f0-43ed-b9c1-60ced0286b73",
+			Name:        "Ldap Injection Directory Entry",
+			Description: "LDAP Injection vulnerabilities occur when untrusted data is concatenated into a LDAP Path or Filter expression without properly escaping control characters. This can allow attackers to change the meaning of an LDAP query and gain access to resources for which they are not authorized. Fixing the LDAP Injection Directory Entry vulnerability requires untrusted data to be encoded using the appropriate Web Protection Library (aka AntiXSS) LDAP encoding method: Encoder.LdapDistinguishedNameEncode(). For more information checkout the CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new\sDirectoryEntry\(.*LDAP.*\{)(([^E]|E[^n]|En[^c]|Enc[^o]|Enco[^d]|Encod[^e]|Encode[^r])*)(;)`),
 		},
 	}
 }

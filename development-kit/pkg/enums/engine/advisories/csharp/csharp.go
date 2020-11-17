@@ -61,6 +61,7 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularWeakRandomNumberGenerator(),
 		regular.NewCsharpRegularWeakRsaKeyLength(),
 		regular.NewCsharpRegularXmlReaderExternalEntityExpansion(),
+		regular.NewCsharpRegularLdapInjectionDirectoryEntry(),
 	}
 }
 
@@ -90,6 +91,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndActionRequestValidationDisabled(),
 		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
 		and.NewCsharpAndLdapInjectionFilterAssignment(),
+		and.NewCsharpAndSqlInjectionDynamicNHibernateQuery(),
 	}
 }
 

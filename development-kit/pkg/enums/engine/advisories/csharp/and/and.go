@@ -446,3 +446,20 @@ func NewCsharpAndLdapInjectionFilterAssignment() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndSqlInjectionDynamicNHibernateQuery() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "de3f01a7-d4cc-4797-861a-224f822418e7",
+			Name:        "Sql Injection: Dynamic NHibernate Query",
+			Description: "Concatenating untrusted data into a dynamic SQL string and calling vulnerable NHibernate Framework methods can allow SQL Injection. To ensure calls to vulnerable NHibernate Framework methods are parameterized, pass positional or named parameters in the statement. The following NHibernate methods allow for raw SQL queries to be executed: CreateQuery CreateSqlQuery To ensure calls to vulnerable NHibernate methods are parameterized, use named parameters in the raw SQL query. Then, set the named parameter values when executing the query. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)["|'](SELECT|INSERT|UPDATE|DELETE).*\+`),
+			regexp.MustCompile(`(CreateQuery\(.*\);)(([^S]|S[^e]|Se[^t]|Set[^S]|SetS[^t]|SetSt[^r]|SetStr[^i]|SetStri[^n]|SetStrin[^g])*)(;)`),
+		},
+	}
+}
