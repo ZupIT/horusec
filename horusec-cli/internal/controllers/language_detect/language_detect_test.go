@@ -224,7 +224,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should run language detect and return DOTNET and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "netcore3-1"
+		analysisName := "csharp"
 
 		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
