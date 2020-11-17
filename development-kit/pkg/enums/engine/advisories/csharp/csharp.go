@@ -90,6 +90,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndActionRequestValidationDisabled(),
 		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
 		and.NewCsharpAndLdapInjectionFilterAssignment(),
+		and.NewCsharpAndLdapInjectionDirectorySearcher(),
+		and.NewCsharpAndLdapInjectionPathAssignment(),
 	}
 }
 
