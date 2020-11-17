@@ -329,6 +329,7 @@
     "REPOSITORY": "Repositório",
     "ORGANIZATION_USERS": "Usuários da organização",
     "BACK_ORGANIZATION": "Voltar para organizações",
+    "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair"
   },

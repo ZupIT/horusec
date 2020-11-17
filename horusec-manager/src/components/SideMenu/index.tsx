@@ -135,6 +135,12 @@ const SideMenu: React.FC = () => {
     history.replace('/organization');
   };
 
+  const goToSettings = () => {
+    history.replace('/home/settings');
+    setSelectedRoute(null);
+    setSelectedSubRoute(null);
+  };
+
   const fetchSubRoutes = () =>
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
@@ -166,15 +172,23 @@ const SideMenu: React.FC = () => {
         </Styled.WrapperLogoRoutes>
 
         <Styled.OptionsWrapper>
-          <Helper />
+          <Styled.Option
+            dataFor="side-options"
+            dataTip={t('SIDE_MENU.CONFIG')}
+            name="config"
+            size="15"
+            onClick={goToSettings}
+          />
 
-          <Styled.Back
+          <Styled.Option
             dataFor="side-options"
             dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
             name="grid"
             size="15"
             onClick={backToOrganization}
           />
+
+          <Helper />
 
           <Logout />
 
