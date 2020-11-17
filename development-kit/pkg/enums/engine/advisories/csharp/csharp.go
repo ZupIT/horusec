@@ -31,7 +31,6 @@ func AllRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularRequestValidationIsEnabledOnlyForPages(),
 		regular.NewCsharpRegularViewStateNotEncrypted(),
 		regular.NewCsharpRegularViewStateMacDisabled(),
-		regular.NewCsharpRegularPasswordComplexity(),
 		regular.NewCsharpRegularSQLInjectionOLEDB(),
 		regular.NewCsharpRegularSQLInjectionMsSQLDataProvider(),
 		regular.NewCsharpRegularSQLInjectionEntityFramework(),
@@ -96,5 +95,6 @@ func AllRulesCsharpOr() []text.TextRule {
 		or.NewCsharpOrCQLInjectionCassandra(),
 		or.NewCsharpOrPasswordComplexity(),
 		or.NewCsharpOrNoInputVariable(),
+		or.NewCsharpOrIdentityWeakPasswordComplexity(),
 	}
 }
