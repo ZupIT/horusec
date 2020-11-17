@@ -126,5 +126,4 @@ func AllRulesCsharpRegular() []text.TextRule {
 ...
 ```
 
-If you wish, the same processes can be done for the [JVM type builders' package](/development-kit/pkg/enums/engine/advisories/jvm) too.
 Finally check if all tests have passed and if possible add a unit test within [csharp_test.go](/development-kit/pkg/enums/engine/advisories/csharp/csharp_test.go) exemplifying the scenario that this new rule would apply.
