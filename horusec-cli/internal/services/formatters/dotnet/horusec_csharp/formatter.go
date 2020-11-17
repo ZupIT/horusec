@@ -69,7 +69,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		Image:    ImageName,
 		Tag:      ImageTag,
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecCsharp),
-		Language: languages.DotNet,
+		Language: languages.CSharp,
 	}
 }
 
@@ -126,7 +126,7 @@ func (f *Formatter) setupVulnerabilitiesSeverities(
 		Code:         f.GetCodeWithMaxCharacters(reportOutput[index].CodeSample, reportOutput[index].SourceLocation.Column),
 		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
 		SecurityTool: tools.HorusecCsharp,
-		Language:     languages.DotNet,
+		Language:     languages.CSharp,
 		Severity:     severity.ParseStringToSeverity(reportOutput[index].Severity),
 	}
 }

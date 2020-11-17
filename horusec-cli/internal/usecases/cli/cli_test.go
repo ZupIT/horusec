@@ -117,7 +117,7 @@ func TestValidateConfigs(t *testing.T) {
 		config := &cliConfig.Config{
 			WorkDir: &workdir.WorkDir{
 				Go:         []string{"./"},
-				NetCore:    []string{""},
+				CSharp:     []string{""},
 				Ruby:       []string{},
 				Python:     []string{},
 				Java:       []string{},
@@ -136,7 +136,7 @@ func TestValidateConfigs(t *testing.T) {
 		config := &cliConfig.Config{
 			WorkDir: &workdir.WorkDir{
 				Go:         []string{"NOT EXISTS PATH"},
-				NetCore:    []string{},
+				CSharp:     []string{},
 				Ruby:       []string{},
 				Python:     []string{},
 				Java:       []string{},

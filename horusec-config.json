@@ -14,7 +14,7 @@
   "horusecCliRiskAcceptHashes": "ba56b6e4ac8f790026b82a488c5624d7e2d6f6dd60584a9375c3c8948b608dbf, 2ce87bddc40e085562618f441750eeefe3cffc79d0b05b2e07a98f644c55b2c5, e2eaa19612eed0124b1fec396f8d41381c618c677c2025fc07c1cd0ccbe92b3c, 2b156198552b17c44bab579d68b8cb4204789859ef69a37a7a11e65667cbc66f, 0ffc51a6b0187bec02837cb1e8dddfa05519e83d861af3fbd553bc4d0fbe852d, 4294bf00b848d82c4e012f45e0747996eb75109e089a626af930580a7a179ea4, fa41e0534388707279458969d1dcdb58ff932357660e8855d2bb4170fdbcb391, 5114704fb26983f549c5f179a0a90d8e95c8db28f9e68d32d864b2a6743cb499",
   "horusecCliWorkDir": {
     "go":         [],
-    "netCore":    [],
+    "csharp":     [],
     "ruby":       [],
     "python":     [],
     "java" :      [],

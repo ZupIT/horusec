@@ -184,7 +184,7 @@ func (au *UseCases) sliceTools() []interface{} {
 func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
-		languages.DotNet,
+		languages.CSharp,
 		languages.Ruby,
 		languages.Python,
 		languages.Java,

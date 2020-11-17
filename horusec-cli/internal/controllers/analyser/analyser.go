@@ -174,7 +174,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
-		languages.DotNet:     a.detectVulnerabilityDotNet,
+		languages.CSharp:     a.detectVulnerabilityDotNet,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
 		languages.Java:       a.detectVulnerabilityJava,

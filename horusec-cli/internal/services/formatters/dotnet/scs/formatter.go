@@ -129,7 +129,7 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horus
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.SecurityCodeScan
-	vulnerabilitySeverity.Language = languages.DotNet
+	vulnerabilitySeverity.Language = languages.CSharp
 
 	return vulnerabilitySeverity
 }
@@ -152,7 +152,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Tag:   ImageTag,
 		CMD: f.AddWorkDirInCmd(ImageCmd,
 			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
-		Language: languages.DotNet,
+		Language: languages.CSharp,
 	}
 }
 

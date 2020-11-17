@@ -233,7 +233,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
 
 		assert.Contains(t, langs, languages.Leaks)
-		assert.Contains(t, langs, languages.DotNet)
+		assert.Contains(t, langs, languages.CSharp)
 		assert.Contains(t, langs, languages.Generic)
 		assert.Len(t, langs, 3)
 	})
