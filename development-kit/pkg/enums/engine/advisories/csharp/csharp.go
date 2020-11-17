@@ -92,6 +92,8 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
 		and.NewCsharpAndLdapInjectionFilterAssignment(),
 		and.NewCsharpAndSqlInjectionDynamicNHibernateQuery(),
+		and.NewCsharpAndLdapInjectionDirectorySearcher(),
+		and.NewCsharpAndLdapInjectionPathAssignment(),
 	}
 }
 
