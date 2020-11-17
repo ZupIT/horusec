@@ -399,22 +399,6 @@ func NewCsharpRegularNoUseCipherMode() text.TextRule {
 	}
 }
 
-func NewCsharpRegularCrossSiteRequestForgery() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "f7485b63-9cad-4159-8b05-0869b7d78195",
-			Name:        "Cross-Site Request Forgery (CSRF)",
-			Description: "Anti-forgery token is missing. An attacker could send a link to the victim. By visiting the malicious link, a web page would trigger a POST request (because it is a blind attack - the attacker doesn’t see a response from triggered request and has no use from GET request and GET requests should not change a state on the server by definition) to the website. The victim would not be able to acknowledge that an action is made in the background, but his cookie would be automatically submitted if he is authenticated to the website. For more information access: (https://security-code-scan.github.io/#SCS0016).",
-			Severity:    severity.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.Regular,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?:public\s+class\s+.*Controller|.*\s+:\s+Controller)(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(})`),
-		},
-	}
-}
-
 func NewCsharpRegularDebugBuildEnabled() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -469,28 +453,12 @@ func NewCsharpRegularMissingAntiForgeryTokenAttribute() text.TextRule {
 			ID:          "21debfa9-f639-4af2-bc33-b1399fc24a89",
 			Name:        "Missing Anti Forgery Token Attribute",
 			Description: "Cross Site Request Forgery attacks occur when a victim authenticates to a target web site and then visits a malicious web page. The malicious web page then sends a fake HTTP request (GET, POST, etc.) back to the target website. The victim’s valid authentication cookie from the target web site is automatically included in the malicious request, sent to the target web site, and processed as a valid transaction under the victim’s identity. For more information checkout the CWE-352 (https://cwe.mitre.org/data/definitions/352.html) advisory.",
-			Severity:    severity.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(ActionResult)`),
-		},
-	}
-}
-
-func NewCsharpRegularMissingAuthorizeAttribute() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "d8ca435b-d57c-48ec-b228-9c6a6f7bbd9a",
-			Name:        "Missing Authorize Attribute",
-			Description: "Missing Authorization occurs when an application does not properly verify an authenticated user’s access to functionality, data, or resources. In many cases, applications do not check policy, claim, or role-based access control rules during a request. This can allow attackers to invoke privileged functionality, such as changing their role or directly browsing to an administrative interface in the application. For more information checkout the CWE-306 (https://cwe.mitre.org/data/definitions/306.html) advisory.",
-			Severity:    severity.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.Regular,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\[HttpGet\(.*\)\]|\[HttpPost\(.*\)\]|\[HttpPut\(.*\)\]|\[HttpDelete\(.*\)\]|\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^A]|A[^u]|Au[^t]|Aut[^h]|Auth[^o]|Autho[^r]|Author[^i]|Authori[^z]|Authoriz[^e]|Authorize[^(]|Authorize\([^P]|Authorize\(P[^o]|Authorize\(Po[^l]|Authorize\(Pol[^i]|Authorize\(Poli[^c]|Authorize\(Polic[^y])*)(ActionResult)`),
+			regexp.MustCompile(`(\[HttpGet\]|\[HttpPost\]|\[HttpPut\]|\[HttpDelete\])(([^V]|V[^a]|Va[^l]|Val[^i]|Vali[^d]|Valid[^a]|Valida[^t]|Validat[^e]|Validate[^A]|ValidateA[^n]|ValidateAn[^t]|ValidateAnt[^i]|ValidateAnti[^F]|ValidateAntiF[^o]|ValidateAntiFo[^r]|ValidateAntiFor[^g]|ValidateAntiForg[^e]|ValidateAntiForge[^r]|ValidateAntiForger[^y]|ValidateAntiForgery[^T]|ValidateAntiForgeryT[^o]|ValidateAntiForgeryTo[^k]|ValidateAntiForgeryTok[^e]|ValidateAntiForgeryToke[^n])*)(ActionResult)`),
 		},
 	}
 }
