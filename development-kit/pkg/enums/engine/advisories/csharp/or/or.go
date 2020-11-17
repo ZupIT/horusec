@@ -180,3 +180,25 @@ func NewCsharpOrNoInputVariable() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpOrIdentityWeakPasswordComplexity() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "928962a4-0e8c-494d-9e96-771ca9b4863f",
+			Name:        "Identity Weak Password Complexity",
+			Description: "Weak passwords can allow attackers to easily guess user passwords using wordlist or brute force attacks. Enforcing a strict password complexity policy mitigates these attacks by significantly increasing the time to guess a user’s valid password. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new PasswordValidator\(\)`),
+			regexp.MustCompile(`RequiredLength = \b([0-7])\b`),
+			regexp.MustCompile(`(new PasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^d]|Required[^L]|RequiredL[^e]|RequiredLe[^n]|RequiredLen[^g]|RequiredLeng[^t]|RequiredLengt[^h])*)(};)`),
+			regexp.MustCompile(`(new PasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^D]|RequireD[^i]|RequireDi[^g]|RequireDig[^i]|RequireDigi[^t]|RequireDigit[^ ]|RequireDigit [^=]|RequireDigit =[^ ]|RequireDigit = [^t]|RequireDigit = t[^r]|RequireDigit = tr[^u]|RequireDigit = tru[^e])*)(};)`),
+			regexp.MustCompile(`(new PasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^L]|RequireL[^o]|RequireLo[^w]|RequireLow[^e]|RequireLowe[^r]|RequireLower[^c]|RequireLowerc[^a]|RequireLowerca[^s]|RequireLowercas[^e]|RequireLowercase[^ ]|RequireLowercase [^=]|RequireLowercase =[^ ]|RequireLowercase = [^t]|RequireLowercase = t[^r]|RequireLowercase = tr[^u]|RequireLowercase = tru[^e])*)(};)`),
+			regexp.MustCompile(`(new PasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^N]|RequireN[^o]|RequireNo[^n]|RequireNon[^L]|RequireNonL[^e]|RequireNonLe[^t]|RequireNonLet[^t]|RequireNonLett[^e]|RequireNonLette[^r]|RequireNonLetter[^O]|RequireNonLetterO[^r]|RequireNonLetterOr[^D]|RequireNonLetterOrD[^i]|RequireNonLetterOrDi[^g]|RequireNonLetterOrDig[^i]|RequireNonLetterOrDigi[^t]|RequireNonLetterOrDigit[^ ]|RequireNonLetterOrDigit [^=]|RequireNonLetterOrDigit =[^ ]|RequireNonLetterOrDigit = [^t]|RequireNonLetterOrDigit = t[^r]|RequireNonLetterOrDigit = tr[^u]|RequireNonLetterOrDigit = tru[^e])*)(};)`),
+			regexp.MustCompile(`(new PasswordValidator)(([^R]|R[^e]|Re[^q]|Req[^u]|Requ[^i]|Requi[^r]|Requir[^e]|Require[^U]|RequireU[^p]|RequireUp[^p]|RequireUpp[^e]|RequireUppe[^r]|RequireUpper[^c]|RequireUpper[^c]|RequireUpperc[^a]|RequireUpperca[^s]|RequireUppercas[^e]|RequireUppercase[^ ]|RequireUppercase [^=]|RequireUppercase =[^ ]|RequireUppercase = [^t]|RequireUppercase = t[^r]|RequireUppercase = tr[^u]|RequireUppercase = tru[^e])*)(};)`),
+		},
+	}
+}
