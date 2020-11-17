@@ -526,3 +526,83 @@ func NewCsharpRegularIdentityPasswordLockoutDisabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpRegularRawInlineExpression() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "e6169641-f92d-492b-a6a8-cbe22e951abf",
+			Name:        "Raw Inline Expression",
+			Description: "Data is written to the browser using a raw write: <%= var %>. This can result in Cross-Site Scripting (XSS) vulnerabilities if the data source is considered untrusted or dynamic (request parameters, database, web service, etc.). Instead of using a raw write, use the inline HTML encoded shortcut (<%: var %>) to automatically HTML encode data before writing it to the browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<\%=.*\%\>`),
+		},
+	}
+}
+
+func NewCsharpRegularRawBindingExpression() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f148484d-23d3-41cf-9a51-f7bee058575d",
+			Name:        "Raw Binding Expression",
+			Description: "Data is written to the browser using a raw binding expression: <%# Item.Variable %>. This can result in Cross-Site Scripting (XSS) vulnerabilities if the data source is considered untrusted or dynamic (request parameters, database, web service, etc.). Instead of using a raw binding expression, use the HTML encoded binding shortcut (<%#: Item.Variable %>) to automatically HTML encode data before writing it to the browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\<\%#[^:].*\%\>`),
+		},
+	}
+}
+
+func NewCsharpRegularRawWriteLiteralMethod() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "94179e8d-daf8-4632-9d8c-dcc687e440b6",
+			Name:        "Raw Write Literal Method",
+			Description: "Data is written to the browser using the raw WriteLiteral method. This can result in Cross-Site Scripting (XSS) vulnerabilities if the data source is considered untrusted or dynamic (request parameters, database, web service, etc.). Instead of using the raw WriteLiteral method, use a Razor helper that performs automatic HTML encoding before writing it to the browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`WriteLiteral\(`),
+		},
+	}
+}
+
+func NewCsharpRegularUnencodedWebFormsProperty() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b511f0cb-64da-40b8-ba18-dc7b78fed9d4",
+			Name:        "Unencoded Web Forms Property",
+			Description: "Data is written to the browser using a WebForms property that does not perform output encoding. This can result in Cross-Site Scripting (XSS) vulnerabilities if the data source is considered untrusted or dynamic (request parameters, database, web service, etc.). WebForms controls are often found in HTML contexts, but can also appear in other contexts such as JavaScript, HTML Attribute, or URL. Fixing the vulnerability requires the appropriate Web Protection Library (aka AntiXSS) context-specific method to encode the data before setting the WebForms property. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(litDetails\.Text)(([^H]|H[^t]|Ht[^m]|Htm[^l]|Html[^E]|HtmlE[^n]|HtmlEn[^c]|HtmlEnc[^o]|HtmlEnco[^d]|HtmlEncod[^e])*)(;)`),
+		},
+	}
+}
+
+func NewCsharpRegularUnencodedLabelText() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4aa38f87-2ae0-4565-8b1b-c66128a5c206",
+			Name:        "Unencoded Label Text",
+			Description: "Data is written to the browser using the raw Label.Text method. This can result in Cross-Site Scripting (XSS) vulnerabilities if the data source is considered untrusted or dynamic (request parameters, database, web service, etc.). Label controls are often found in HTML contexts, but can also appear in other contexts such as JavaScript, HTML Attribute, or URL. Fixing the vulnerability requires the appropriate Web Protection Library (aka AntiXSS) context-specific method to encode the data before setting the Label.Text property. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(lblDetails\.Text)(([^H]|H[^t]|Ht[^m]|Htm[^l]|Html[^E]|HtmlE[^n]|HtmlEn[^c]|HtmlEnc[^o]|HtmlEnco[^d]|HtmlEncod[^e])*)(;)`),
+		},
+	}
+}
