@@ -39,7 +39,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		data := []engine.Finding{}
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 7)
+		assert.Equal(t, 6, len(data))
 	})
 	t.Run("Should return error when create file", func(t *testing.T) {
 		configs := config.NewConfig()
