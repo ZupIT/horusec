@@ -24,6 +24,22 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 )
 
+func NewCsharpRegularNoLogSensitiveInformationInConsole() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "71755d83-d536-4839-8997-6b611b319678",
+			Name:        "No Log Sensitive Information in console",
+			Description: "The App logs information. Sensitive information should never be logged. For more information checkout the CWE-532 (https://cwe.mitre.org/data/definitions/532.html) advisory.",
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`((Log|log).*\.(V|D|I|W|E|F|S))|(Console.Write)`),
+		},
+	}
+}
+
 func NewCsharpRegularCrossSiteScripting() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -284,7 +300,7 @@ func NewCsharpRegularNoLogSensitiveInformation() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "2da09ea2-b2bb-4ee6-8ec7-f3b390fdec7f",
-			Name:        "No log sensitive information",
+			Name:        "No log sensitive information debug mode",
 			Description: "The application is configured to display standard .NET errors. This can provide the attacker with useful information and should not be used in a production application. https://docs.microsoft.com/en-us/aspnet/web-forms/overview/older-versions-getting-started/deploying-web-site-projects/displaying-a-custom-error-page-cs. For more information checkout the CWE-12 (https://cwe.mitre.org/data/definitions/12.html) advisory.",
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
