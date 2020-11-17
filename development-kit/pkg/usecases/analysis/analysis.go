@@ -176,6 +176,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
 		tools.Semgrep,
+		tools.HorusecCsharp,
 	}
 }
 
