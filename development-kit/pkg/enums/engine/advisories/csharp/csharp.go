@@ -81,6 +81,7 @@ func AllRulesCsharpAnd() []text.TextRule {
 		and.NewCsharpAndLdapAuthenticationDisabled(),
 		and.NewCsharpAndCertificateValidationDisabled(),
 		and.NewCsharpAndActionRequestValidationDisabled(),
+		and.NewCsharpAndLdapInjectionFilterAssignment(),
 	}
 }
 

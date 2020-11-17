@@ -429,3 +429,21 @@ func NewCsharpAndActionRequestValidationDisabled() text.TextRule {
 		},
 	}
 }
+
+func NewCsharpAndLdapInjectionFilterAssignment() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "44fdf2ad-d554-4660-a235-f1b134751d08",
+			Name:        "Ldap Injection Filter Assignment",
+			Description: "LDAP Injection vulnerabilities occur when untrusted data is concatenated into a LDAP Path or Filter expression without properly escaping control characters. This can allow attackers to change the meaning of an LDAP query and gain access to resources for which they are not authorized. For more information checkout the CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new DirectoryEntry\(.*\)`),
+			regexp.MustCompile(`new DirectorySearcher\(.*\)`),
+			regexp.MustCompile(`(\.Filter)(([^E]|E[^n]|En[^c]|Enc[^o]|Enco[^d]|Encod[^e]|Encode[^r]|Encoder[^.]|Encoder\.[^L]|Encoder\.L[^d]|Encoder\.Ld[^a]|Encoder\.Lda[^p]|Encoder\.Ldap[^F]|Encoder\.LdapF[^i]|Encoder\.LdapFi[^l]|Encoder\.LdapFil[^t]|Encoder\.LdapFilt[^e]|Encoder\.LdapFilte[^r]|Encoder\.LdapFilter[^E]|Encoder\.LdapFilterE[^n]|Encoder\.LdapFilterEn[^c]|Encoder\.LdapFilterEnc[^o]|Encoder\.LdapFilterEnco[^d]|Encoder\.LdapFilterEncod[^e])*)(\);)`),
+		},
+	}
+}
