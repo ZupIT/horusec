@@ -13,3 +13,27 @@
 // limitations under the License.
 
 package rules
+
+import (
+	"testing"
+
+	"github.com/ZupIT/horusec-engine/text"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNewRules(t *testing.T) {
+	assert.IsType(t, NewRules(), &Rules{})
+}
+
+func TestRules_GetAllRules(t *testing.T) {
+	t.Run("Should return all rules enable", func(t *testing.T) {
+		rules := NewRules().GetAllRules()
+		totalRegexes := 0
+		for i := range rules {
+			textRule := rules[i].(text.TextRule)
+			totalRegexes += len(textRule.Expressions)
+		}
+		assert.Greater(t, len(rules), 0)
+		assert.Greater(t, totalRegexes, 0)
+	})
+}
