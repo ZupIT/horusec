@@ -16,10 +16,12 @@ package eslint
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/eslint"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -117,7 +119,8 @@ func (f *Formatter) parseOutputToVuln(filePath, source string, message eslint.Me
 		Language:     languages.Javascript,
 		SecurityTool: tools.Eslint,
 		Details:      message.Message,
-		Code:         f.GetCodeWithMaxCharacters(source, message.Column),
+		Code:         f.getCode(source, message.Line, message.EndLine),
+		Severity:     severity.Low,
 	}
 }
 
@@ -137,4 +140,22 @@ func (f *Formatter) setIntoAnalysisVulns(vuln *horusec.Vulnerability) {
 		horusec.AnalysisVulnerabilities{
 			Vulnerability: *vuln,
 		})
+}
+
+func (f *Formatter) getCode(source string, line, endLine int) string {
+	var result string
+	startLine := line - 1
+	lines := strings.Split(source, "\n")
+
+	for i, line := range lines {
+		if i >= startLine && i <= endLine {
+			result += line
+		}
+
+		if i > endLine {
+			break
+		}
+	}
+
+	return result
 }
