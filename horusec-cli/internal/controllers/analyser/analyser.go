@@ -16,8 +16,8 @@ package analyser
 
 import (
 	"fmt"
-	horuseccsharp "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/horusec_csharp"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"log"
 	"os"
 	"os/signal"
@@ -43,7 +43,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/scs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"

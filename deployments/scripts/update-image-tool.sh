@@ -71,7 +71,7 @@ getDirectoryAndImageNameByToolName () {
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/safety";;
         "securitycodescan")
             IMAGE_NAME="horuszup/dotnet-core-3.1"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/dotnet/scs/config.go"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/csharp/scs/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/securitycodescan";;
         "hcl")
             IMAGE_NAME="horuszup/tfsec"
