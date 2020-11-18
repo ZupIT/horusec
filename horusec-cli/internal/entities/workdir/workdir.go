@@ -25,6 +25,7 @@ import (
 type WorkDir struct {
 	Go         []string `json:"go"`
 	NetCore    []string `json:"netCore"`
+	CSharp     []string `json:"csharp"`
 	Ruby       []string `json:"ruby"`
 	Python     []string `json:"python"`
 	Java       []string `json:"java"`
@@ -58,9 +59,12 @@ func (w *WorkDir) Type() string {
 }
 
 func (w *WorkDir) Map() map[languages.Language][]string {
+	cSharp := []string{}
+	cSharp = append(cSharp, w.NetCore...)
+	cSharp = append(cSharp, w.CSharp...)
 	return map[languages.Language][]string{
 		languages.Go:         w.Go,
-		languages.DotNet:     w.NetCore,
+		languages.CSharp:     cSharp,
 		languages.Ruby:       w.Ruby,
 		languages.Python:     w.Python,
 		languages.Java:       w.Java,

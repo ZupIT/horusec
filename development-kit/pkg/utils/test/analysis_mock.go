@@ -98,7 +98,7 @@ func ReturnEachTypeOfVulnerability() []horusec.Vulnerability {
 			Code:            "-----BEGIN CERTIFICATE-----",
 			Details:         "Found SSH and/or x.509 Cerficates SecurityCodeScan",
 			SecurityTool:    tools.SecurityCodeScan,
-			Language:        languages.DotNet,
+			Language:        languages.CSharp,
 			Severity:        severity.Low,
 			VulnHash:        uuid.New().String(),
 			Type:            enumHorusec.Vulnerability,

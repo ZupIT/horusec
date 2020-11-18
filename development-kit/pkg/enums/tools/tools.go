@@ -31,6 +31,7 @@ const (
 	GitLeaks         Tool = "GitLeaks"
 	TfSec            Tool = "TfSec"
 	Semgrep          Tool = "Semgrep"
+	HorusecCsharp    Tool = "HorusecCsharp"
 )
 
 func (t Tool) ToString() string {
