@@ -15,8 +15,10 @@
 package eslint
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/eslint"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -54,7 +56,9 @@ func (f *Formatter) executeDockerContainer(projectSubPath string) error {
 		return err
 	}
 
-	logger.LogInfo("", output)
+	f.processOutput(output)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Eslint)
+
 	return nil
 }
 
@@ -65,4 +69,25 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
 		Language: languages.Javascript,
 	}
+}
+
+func (f *Formatter) processOutput(output string) {
+	if output == "" {
+		logger.LogDebugWithLevel(
+			messages.MsgDebugOutputEmpty, logger.DebugLevel, map[string]interface{}{"tool": tools.Eslint.ToString()})
+		return
+	}
+
+	eslintOutput, err := f.parseOutput(output)
+	if err != nil {
+		return
+	}
+
+	logger.LogInfo("", eslintOutput, *eslintOutput, &eslintOutput)
+}
+
+func (f *Formatter) parseOutput(output string) (eslintOutput *[]eslint.Output, err error) {
+	err = jsonUtils.ConvertStringToOutput(output, &eslintOutput)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GoSec, output), err, logger.ErrorLevel)
+	return eslintOutput, err
 }
