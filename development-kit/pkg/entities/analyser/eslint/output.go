@@ -27,11 +27,11 @@ type Message struct {
 }
 
 type Output struct {
-	FilePath            string    `json:"filePath"`
-	Messages            []Message `json:"messages"`
-	ErrorCount          int       `json:"errorCount"`
-	WarningCount        int       `json:"warningCount"`
-	FixableErrorCount   int       `json:"fixableErrorCount"`
-	FixableWarningCount int       `json:"fixableWarningCount"`
-	Source              string    `json:"source"`
+	FilePath            string     `json:"filePath"`
+	Messages            *[]Message `json:"messages"`
+	ErrorCount          int        `json:"errorCount"`
+	WarningCount        int        `json:"warningCount"`
+	FixableErrorCount   int        `json:"fixableErrorCount"`
+	FixableWarningCount int        `json:"fixableWarningCount"`
+	Source              string     `json:"source"`
 }
