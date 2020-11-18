@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'components';
+import { Button, Dialog } from 'components';
 import Styled from './styled';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+
+import EditAccount from './Edit';
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
   const { email, username } = getCurrentUser();
+
+  const [deleteDialogIsOpen, setOpenDeleteDialog] = useState(false);
+  const [deleteInProgress, setDeleteInProgress] = useState(false);
+
+  const [editDialogIsOpen, setOpenEditDialog] = useState(false);
+
+  const handleConfirmDelete = () => {
+    console.log('delete');
+    setDeleteInProgress(true);
+  };
 
   return (
     <Styled.Wrapper>
@@ -53,7 +65,7 @@ const Settings: React.FC = () => {
                   width={90}
                   height={30}
                   icon="delete"
-                  onClick={() => console.log('delete')}
+                  onClick={() => setOpenDeleteDialog(true)}
                 />
 
                 <Button
@@ -64,7 +76,7 @@ const Settings: React.FC = () => {
                   width={90}
                   height={30}
                   icon="edit"
-                  onClick={() => console.log('edit')}
+                  onClick={() => setOpenEditDialog(true)}
                 />
 
                 <Button
@@ -82,6 +94,23 @@ const Settings: React.FC = () => {
           </Styled.Body>
         </Styled.Table>
       </Styled.Content>
+
+      <Dialog
+        message={t('SETTINGS_SCREEN.CONFIRM_DELETE')}
+        confirmText={t('SETTINGS_SCREEN.YES')}
+        loadingConfirm={deleteInProgress}
+        defaultButton
+        hasCancel
+        isVisible={deleteDialogIsOpen}
+        onCancel={() => setOpenDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+      />
+
+      <EditAccount
+        isVisible={editDialogIsOpen}
+        onCancel={() => setOpenEditDialog(false)}
+        onConfirm={() => setOpenEditDialog(false)}
+      />
     </Styled.Wrapper>
   );
 };

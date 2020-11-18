@@ -330,7 +330,14 @@
       "DELETE": "Deletar",
       "EDIT": "Editar",
       "PASSWORD": "Senha"
-    }
+    },
+    "CONFIRM_DELETE": "Você deseja realmente deletar sua conta? Essa ação não poderá ser desfeita.",
+    "YES": "Sim",
+    "EDIT_ACCOUNT": "Editar conta",
+    "SAVE": "Salvar",
+    "EMAIL": "Email",
+    "NAME": "Nome de usuário",
+    "INVALID_EMAIL": "Email inválido"
   },
 
   "SIDE_MENU": {
