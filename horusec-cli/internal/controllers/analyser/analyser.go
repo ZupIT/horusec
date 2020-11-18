@@ -16,8 +16,8 @@ package analyser
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"log"
 	"os"
 	"os/signal"
