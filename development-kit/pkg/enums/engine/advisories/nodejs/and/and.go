@@ -112,7 +112,7 @@ func NewNodeJSAndJWTNeedStrongCipherAlgorithms() text.TextRule {
 func NewNodeJSAndServerHostnameNotVerified() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "1288d900-98b1-4ab6-8b8a-b6f6143a4ca0",
+			ID:          "ff1d81aa-4fa4-4502-b3a4-65743139c0a0",
 			Name:        "Server hostnames should be verified during SSL/TLS connections",
 			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used.  For more information checkout the CWE-297 (https://cwe.mitre.org/data/definitions/297.html) advisory.",
 			Severity:    severity.High.ToString(),

@@ -203,7 +203,7 @@ func NewNodeJSRegularWebSQLDatabasesShouldNotBeUsed() text.TextRule {
 func NewNodeJSRegularLocalStorageShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "f172aec8-1ced-45c7-a057-310b1ebf23f9",
+			ID:          "698a44c8-2baf-495f-8437-5125767e2bbf",
 			Name:        "Local storage should not be used",
 			Description: "Session storage and local storage are HTML 5 features which allow developers to easily store megabytes of data client-side, as opposed to the 4Kb cookies can accommodate. While useful to speed applications up on the client side, it can be dangerous to store sensitive information this way because the data is not encrypted by default and any script on the page may access it. This rule raises an issue when the localStorage and sessionStorage API's are used. For more information checkout the OWSAP A3:2017 (https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html) advisory.",
 			Severity:    severity.Low.ToString(),
