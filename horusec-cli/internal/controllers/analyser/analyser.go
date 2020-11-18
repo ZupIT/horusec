@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	horuseccsharp "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/horusec_csharp"
 	"log"
 	"os"
 	"os/signal"
@@ -173,7 +174,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
-		languages.DotNet:     a.detectVulnerabilityDotNet,
+		languages.CSharp:     a.detectVulnerabilityDotNet,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
 		languages.Java:       a.detectVulnerabilityJava,
@@ -187,8 +188,9 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 }
 
 func (a *Analyser) detectVulnerabilityDotNet(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {

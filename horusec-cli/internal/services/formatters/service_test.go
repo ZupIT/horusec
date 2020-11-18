@@ -119,7 +119,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
 		cliConfig := &config.Config{}
 		cliConfig.WorkDir = &workdir.WorkDir{}
-		cliConfig.WorkDir.NetCore = []string{"test"}
+		cliConfig.WorkDir.CSharp = []string{"test"}
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 

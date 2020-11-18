@@ -57,7 +57,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
 			languages.Leaks,
-			languages.DotNet,
+			languages.CSharp,
 			languages.Ruby,
 			languages.Python,
 			languages.Java,
@@ -110,7 +110,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
 			languages.Leaks,
-			languages.DotNet,
+			languages.CSharp,
 			languages.Ruby,
 			languages.Python,
 			languages.Java,
