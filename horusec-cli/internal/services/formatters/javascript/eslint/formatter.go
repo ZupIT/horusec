@@ -15,6 +15,11 @@
 package eslint
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 )
 
@@ -29,5 +34,35 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.Eslint) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Eslint.ToString(), logger.DebugLevel)
+		return
+	}
 
+	err := f.executeContainer(projectSubPath)
+	f.LogAnalysisError(err, tools.Eslint, projectSubPath)
+
+	f.SetLanguageIsFinished()
+}
+
+func (f *Formatter) executeContainer(projectSubPath string) error {
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Eslint)
+
+	output, err := f.ExecuteContainer(f.getDockerAnalysisData(projectSubPath))
+	if err != nil {
+		f.SetAnalysisError(err)
+		return err
+	}
+
+	logger.LogInfo("", output)
+	return nil
+}
+
+func (f *Formatter) getDockerAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
+	return &dockerEntities.AnalysisData{
+		Image:    ImageName,
+		Tag:      ImageTag,
+		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
+		Language: languages.Javascript,
+	}
 }
