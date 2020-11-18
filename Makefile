@@ -184,6 +184,12 @@ build-install-csharp-cli:
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-csharp"
 	horusec-csharp version
 
+build-install-nodejs-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
+	horusec-nodejs version
+
 # ========================================================================================= #
 
 update-cli:
