@@ -17,14 +17,27 @@ package nodejs
 
 import (
 	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/nodejs/and"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/nodejs/regular"
 )
 
 func AllRulesNodeJSRegular() []text.TextRule {
-	return []text.TextRule{}
+	return []text.TextRule{
+		regular.NewNodeJSRegularNoUseEval(),
+		regular.NewNodeJSRegularNoDisableTlsRejectUnauthorized(),
+		regular.NewNodeJSRegularNoUseMD5Hashing(),
+		regular.NewNodeJSRegularNoUseSAH1Hashing(),
+		regular.NewNodeJSRegularNoReadFileUsingDataFromRequest(),
+		regular.NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest(),
+		regular.NewNodeJSRegularSQLInjectionUsingParams(),
+	}
 }
 
 func AllRulesNodeJSAnd() []text.TextRule {
-	return []text.TextRule{}
+	return []text.TextRule{
+		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),
+		and.NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput(),
+	}
 }
 
 func AllRulesNodeJSOr() []text.TextRule {
