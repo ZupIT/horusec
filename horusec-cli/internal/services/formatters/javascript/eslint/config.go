@@ -38,6 +38,6 @@ const (
 			--rule 'security/detect-pseudoRandomBytes: warn' \
 			--rule 'security/detect-unsafe-regex: warn' \
 			"**/*.js" > /tmp/results.json
-		jq -j -M -c . /tmp/results.json
+		cat /tmp/results.json
 	`
 )

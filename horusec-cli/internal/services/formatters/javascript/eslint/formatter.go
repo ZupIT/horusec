@@ -39,16 +39,16 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	err := f.executeAnalyseDockerContainer(projectSubPath)
+	err := f.executeDockerContainer(projectSubPath)
 	f.LogAnalysisError(err, tools.Eslint, projectSubPath)
 
 	f.SetLanguageIsFinished()
 }
 
-func (f *Formatter) executeAnalyseDockerContainer(projectSubPath string) error {
+func (f *Formatter) executeDockerContainer(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Eslint)
 
-	output, err := f.ExecuteContainer(f.getAnalyseDockerConfig(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
 		f.SetAnalysisError(err)
 		return err
@@ -58,7 +58,7 @@ func (f *Formatter) executeAnalyseDockerContainer(projectSubPath string) error {
 	return nil
 }
 
-func (f *Formatter) getAnalyseDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,
