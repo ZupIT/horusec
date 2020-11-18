@@ -16,10 +16,28 @@ package eslint
 
 const (
 	ImageName = "horuszup/eslint"
-	ImageTag  = "v0.0.1"
+	ImageTag  = "latest"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		eslint --no-eslintrc -f json "**/*.js" > /tmp/results.json
+		eslint \
+			--no-eslintrc \
+			-f json \
+			--resolve-plugins-relative-to /usr/local/lib/node_modules \
+			--plugin security \
+			--rule 'security/detect-buffer-noassert: warn' \
+			--rule 'security/detect-child-process: warn' \
+			--rule 'security/detect-disable-mustache-escape: warn' \
+			--rule 'security/detect-eval-with-expression: warn' \
+			--rule 'security/detect-new-buffer: warn' \
+			--rule 'security/detect-no-csrf-before-method-override: warn' \
+			--rule 'security/detect-non-literal-fs-filename: warn' \
+			--rule 'security/detect-non-literal-regexp: warn' \
+			--rule 'security/detect-non-literal-require: warn' \
+			--rule 'security/detect-object-injection: warn' \
+			--rule 'security/detect-possible-timing-attacks: warn' \
+			--rule 'security/detect-pseudoRandomBytes: warn' \
+			--rule 'security/detect-unsafe-regex: warn' \
+			"**/*.js" > /tmp/results.json
 		jq -j -M -c . /tmp/results.json
 	`
 )
