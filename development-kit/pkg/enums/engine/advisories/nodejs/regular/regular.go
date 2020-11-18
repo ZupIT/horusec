@@ -87,6 +87,22 @@ func NewNodeJSRegularNoUseSAH1Hashing() text.TextRule {
 	}
 }
 
+func NewNodeJSRegularNoUseWeakRandom() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "a35afa4b-7fbd-4872-9fe9-c78243f76c9c",
+			Name:        "No use weak random number generator",
+			Description: "When software generates predictable values in a context requiring unpredictability, it may be possible for an attacker to guess the next value that will be generated, and use this guess to impersonate another user or access sensitive information. As the Math.random() function relies on a weak pseudorandom number generator, this function should not be used for security-critical applications or for protecting sensitive data. In such context, a cryptographically strong pseudorandom number generator (CSPRNG) should be used instead. For more information checkout the CWE-338 (https://cwe.mitre.org/data/definitions/338.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Math\.random\(`),
+		},
+	}
+}
+
 func NewNodeJSRegularNoReadFileUsingDataFromRequest() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -245,6 +261,39 @@ func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(\s+|^)(alert|confirm|prompt)\(`),
+		},
+	}
+}
+
+
+func NewNodeJSRegularSQLInjection() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "88519d1e-6225-418b-8048-9697ef3fbe78",
+			Name:        "SQL Injection",
+			Description: "SQL queries often need to use a hardcoded SQL string with a dynamic parameter coming from a user request. Formatting a string to add those parameters to the request is a bad practice as it can result in an SQL injection. The safe way to add parameters to a SQL query is to use SQL binding mechanisms. For more information checkout the CWE-564 (https://cwe.mitre.org/data/definitions/564.html) and OWASP A1:2017 (https://owasp.org/www-project-top-ten/2017/A1_2017-Injection.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)(query\(|.*=).*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)`),
+		},
+	}
+}
+
+func NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "32fbdff3-2092-4d42-90a2-784842bebfd0",
+			Name:        "Statically serving hidden files is security-sensitive",
+			Description: "Hidden files are created automatically by many tools to save user-preferences, well-known examples are .profile, .bashrc, .bash_history or .git. To simplify the view these files are not displayed by default using operating system commands like ls. Outside of the user environment, hidden files are sensitive because they are used to store privacy-related information or even hard-coded secrets. For more information checkout the CWE-538 (https://cwe.mitre.org/data/definitions/538.html) and OWASP A6:2017 (https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`dotfiles.*allow`),
 		},
 	}
 }

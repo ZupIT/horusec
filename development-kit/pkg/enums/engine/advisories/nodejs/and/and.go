@@ -160,3 +160,21 @@ func NewNodeJSAndUntrustedContentShouldNotBeIncluded() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "04b93a07-d0cf-435b-9a3b-54cb5ff22ce6",
+			Name:        "Mysql Hard-coded credentials are security-sensitive",
+			Description: "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source. It's recommended to customize the configuration of this rule with additional credential words such as \"oauthToken\", \"secret\", others. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`mysql\.createConnection\(`),
+			regexp.MustCompile(`(host|user|database|password|port):\s*["|']\w+["|']`),
+		},
+	}
+}
+

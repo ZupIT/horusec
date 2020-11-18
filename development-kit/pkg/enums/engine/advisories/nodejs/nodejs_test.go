@@ -27,7 +27,7 @@ func TestRulesEnum(t *testing.T) {
 	totalRules = append(totalRules, AllRulesNodeJSRegular()...)
 	totalRules = append(totalRules, AllRulesNodeJSAnd()...)
 	totalRules = append(totalRules, AllRulesNodeJSOr()...)
-	lenExpectedTotalRules := 24
+	lenExpectedTotalRules := 29
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in kotlin", func(t *testing.T) {
 		encountered := map[string]bool{}
 

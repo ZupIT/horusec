@@ -38,6 +38,9 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularLocalStorageShouldNotBeUsed(),
 		regular.NewNodeJSRegularDebuggerStatementsShouldNotBeUsed(),
 		regular.NewNodeJSRegularAlertStatementsShouldNotBeUsed(),
+		regular.NewNodeJSRegularNoUseWeakRandom(),
+		regular.NewNodeJSRegularSQLInjection(),
+		regular.NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive(),
 	}
 }
 
@@ -51,12 +54,14 @@ func AllRulesNodeJSAnd() []text.TextRule {
 		and.NewNodeJSAndServerHostnameNotVerified(),
 		and.NewNodeJSAndServerCertificatesNotVerified(),
 		and.NewNodeJSAndUntrustedContentShouldNotBeIncluded(),
+		and.NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive(),
 	}
 }
 
 func AllRulesNodeJSOr() []text.TextRule {
 	return []text.TextRule{
-		or.NewNodeJSOrEncryptionAlgorithmsWeek(),
+		or.NewNodeJSOrEncryptionAlgorithmsWeak(),
 		or.NewNodeJSOrFileUploadsShouldBeRestricted(),
+		or.NewNodeJSAndAllowingRequestsWithExcessiveContentLengthSecurity(),
 	}
 }
