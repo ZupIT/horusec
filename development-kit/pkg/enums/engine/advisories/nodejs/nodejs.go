@@ -18,6 +18,7 @@ package nodejs
 import (
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/nodejs/and"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/nodejs/or"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/nodejs/regular"
 )
 
@@ -30,6 +31,7 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularNoReadFileUsingDataFromRequest(),
 		regular.NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest(),
 		regular.NewNodeJSRegularSQLInjectionUsingParams(),
+		regular.NewNodeJSRegularXMLParsersShouldNotBeVulnerableToXXEAttacks(),
 	}
 }
 
@@ -37,9 +39,14 @@ func AllRulesNodeJSAnd() []text.TextRule {
 	return []text.TextRule{
 		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),
 		and.NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput(),
+		and.NewNodeJSAndCryptographicRsaShouldBeRobust(),
+		and.NewNodeJSAndCryptographicEcShouldBeRobust(),
+		and.NewNodeJSAndJWTNeedStrongCipherAlgorithms(),
 	}
 }
 
 func AllRulesNodeJSOr() []text.TextRule {
-	return []text.TextRule{}
+	return []text.TextRule{
+		or.NewNodeJSOrEncryptionAlgorithmsWeek(),
+	}
 }

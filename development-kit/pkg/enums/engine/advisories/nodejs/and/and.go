@@ -56,3 +56,55 @@ func NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSAndCryptographicRsaShouldBeRobust() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f434338d-0480-4f80-9af0-cd6a3e61f2d1",
+			Name:        "Cryptographic RSA should be robust",
+			Description: "Most of cryptographic systems require a sufficient key size to be robust against brute-force attacks. n ≥ 2048 for RSA (n is the key length). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.generateKeyPairSync\(.*rsa`),
+			regexp.MustCompile(`(modulusLength:\s*)([0-9][^\d]|[0-9]{2}[^\d]|[0-9]{3}[^\d]|[0-1][0-9]{3}[^\d]|20[0-3][0-9]|204[0-7])`),
+		},
+	}
+}
+
+func NewNodeJSAndCryptographicEcShouldBeRobust() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "4e4bc6ed-9be5-41a6-97f6-34d2b365d8c5",
+			Name:        "Cryptographic EC should be robust",
+			Description: "Most of cryptographic systems require a sufficient key size to be robust against brute-force attacks. n ≥ 224 for ECDH and ECMQV (Examples: secp192r1 is a non-compliant curve (n < 224) but secp224k1 is compliant (n >= 224)). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.generateKeyPairSync\(.*ec`),
+			regexp.MustCompile(`(namedCurve:.*secp)([0-9][^\d]|[0-9]{2}[^\d]|[0-2][0-2][0-3][^\d])`),
+		},
+	}
+}
+
+func NewNodeJSAndJWTNeedStrongCipherAlgorithms() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f8c6b5bb-2e8c-4e63-9db2-7a075e9fe3fc",
+			Name:        "JWT should be signed and verified with strong cipher algorithms",
+			Description: "If a JSON Web Token (JWT) is not signed with a strong cipher algorithm (or not signed at all) an attacker can forge it and impersonate user identities. Don't use none algorithm to sign or verify the validity of an algorithm. Don't use a token without verifying its signature before. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`require('jsonwebtoken')`),
+			regexp.MustCompile(`\.sign\(`),
+			regexp.MustCompile(`((algorithm[s]?:.*none)|(algorithm[s]?:.*RS256))`),
+		},
+	}
+}

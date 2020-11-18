@@ -14,3 +14,28 @@
 
 //nolint:lll multiple regex is not possible broken lines
 package or
+
+import (
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+	"regexp"
+)
+
+func NewNodeJSOrEncryptionAlgorithmsWeek() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "62435d12-f9ae-48a9-a7db-e3b6db988a98",
+			Name:        "Encryption Algorithms Week",
+			Description: "To perform secure cryptography, operation modes and padding scheme are essentials and should be used correctly according to the encryption algorithm:For block cipher encryption algorithms (like AES), the GCM (Galois Counter Mode) mode that works internally with zero/no padding scheme, is recommended. At the opposite, these modes and/or schemes are highly discouraged:Electronic Codebook (ECB) mode is vulnerable because it doesn't provide serious message confidentiality: under a given key any given plaintext block always gets encrypted to the same ciphertext block.Cipher Block Chaining (CBC) with PKCS#5 padding (or PKCS#7) is vulnerable to padding oracle attacks.RSA encryption algorithm should be used with the recommended padding scheme (OAEP). More specifically for block cipher, it's not recommended to use algorithm with a block size inferior than 128 bits. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.createCipheriv\(.*(AES-([0-9][^\d]|[0-9]{2}[^\d]|[0-1][0-9]{2}[^\d]|2[0-5][0-5][^\d]))`),
+			regexp.MustCompile(`\.createCipheriv\(.*(DES|DES-EDE|DES-EDE3|RC2|RC4|BF)`),
+		},
+	}
+}

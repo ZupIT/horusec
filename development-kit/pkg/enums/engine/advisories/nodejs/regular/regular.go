@@ -134,3 +134,19 @@ func NewNodeJSRegularSQLInjectionUsingParams() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSRegularXMLParsersShouldNotBeVulnerableToXXEAttacks() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "8226ed10-a4f0-4683-89a0-2ad782b58340",
+			Name:        "XML parsers should not be vulnerable to XXE attacks",
+			Description: "XML specification allows the use of entities that can be internal or external (file system / network access ...) which could lead to vulnerabilities such as confidential file disclosures or SSRFs. For more information checkout the CWE-827 (https://cwe.mitre.org/data/definitions/827.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.parseXmlString\(.*,.*\)`),
+		},
+	}
+}
