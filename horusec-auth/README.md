@@ -49,7 +49,7 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_GRPC_KEY_PATH               |                                                                   | This environment get grpc certificate key path               | 
 | HORUSEC_ENABLE_APPLICATION_ADMIN    | false                                                             | This environment set if you need active application admin in system. When this environment is setup to `true` only application admin users can create company in horusec. | 
 | HORUSEC_APPLICATION_ADMIN_DATA      | {\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"} | When application admin is enable and auth-type is `horusec` we need create default user application admin with this content in horusec. Don't forget to **escape the json** at the value of the environment variable. | 
-| HORUSEC_AUTH_DISABLE_EMAIL_SERVICE  | true                                                              | Disable email confirmation on user register                  |
+| HORUSEC_DISABLED_BROKER             | true                                                              | Disable email confirmation on user register                  |
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-auth folder**

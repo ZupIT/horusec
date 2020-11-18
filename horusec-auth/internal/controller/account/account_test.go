@@ -164,7 +164,7 @@ func TestCreateAccount(t *testing.T) {
 
 		mockWrite.On("Create").Return(&response.Response{})
 
-		_ = os.Setenv("HORUSEC_AUTH_DISABLE_EMAIL_SERVICE", "true")
+		_ = os.Setenv("HORUSEC_DISABLED_BROKER", "true")
 		appConfig := app.NewConfig()
 
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
