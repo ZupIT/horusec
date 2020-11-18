@@ -15,12 +15,73 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from 'components';
 import Styled from './styled';
+import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 const Settings: React.FC = () => {
+  const { t } = useTranslation();
+  const { email, username } = getCurrentUser();
+
   return (
     <Styled.Wrapper>
-      <h1>Settings</h1>
+      <Styled.Content>
+        <Styled.Title>{t('SETTINGS_SCREEN.TITLE')}</Styled.Title>
+
+        <Styled.Table>
+          <Styled.Head>
+            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.USER')}</Styled.Column>
+
+            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.EMAIL')}</Styled.Column>
+
+            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.ACTION')}</Styled.Column>
+          </Styled.Head>
+
+          <Styled.Body>
+            <Styled.Row>
+              <Styled.Cell>{username}</Styled.Cell>
+
+              <Styled.Cell>{email}</Styled.Cell>
+
+              <Styled.Cell className="row">
+                <Button
+                  rounded
+                  outline
+                  opaque
+                  text={t('SETTINGS_SCREEN.TABLE.DELETE')}
+                  width={90}
+                  height={30}
+                  icon="delete"
+                  onClick={() => console.log('delete')}
+                />
+
+                <Button
+                  outline
+                  rounded
+                  opaque
+                  text={t('SETTINGS_SCREEN.TABLE.EDIT')}
+                  width={90}
+                  height={30}
+                  icon="edit"
+                  onClick={() => console.log('edit')}
+                />
+
+                <Button
+                  outline
+                  rounded
+                  opaque
+                  text={t('SETTINGS_SCREEN.TABLE.PASSWORD')}
+                  width={90}
+                  height={30}
+                  icon="lock"
+                  onClick={() => console.log('senha')}
+                />
+              </Styled.Cell>
+            </Styled.Row>
+          </Styled.Body>
+        </Styled.Table>
+      </Styled.Content>
     </Styled.Wrapper>
   );
 };

@@ -22,6 +22,104 @@ const Wrapper = styled.section`
   max-width: 1200px;
 `;
 
+const Content = styled.div`
+  margin-top: 25px;
+  padding: 25px 15px 10px 25px;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  position: relative;
+`;
+
+const Title = styled.h1`
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-weight: normal;
+  font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
+`;
+
+const Table = styled.div`
+  margin-top: 30px;
+`;
+
+const Head = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 0px 20px;
+`;
+
+const Column = styled.span`
+  text-align: left;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  color: ${({ theme }) => theme.colors.dataTable.column.text};
+  font-weight: normal;
+  width: 100%;
+  display: block;
+  margin-right: 20px;
+
+  &:nth-child(1) {
+    max-width: 180px;
+  }
+`;
+
+const Cell = styled.span`
+  text-align: left;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  color: ${({ theme }) => theme.colors.dataTable.row.text};
+  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+  margin-right: 20px;
+  line-height: 30px;
+  padding: 2px;
+
+  &:nth-child(1) {
+    max-width: 180px;
+  }
+
+  &.row {
+    display: flex;
+    flex-direction: row;
+
+    button {
+      margin-right: 10px;
+    }
+  }
+`;
+
+const Row = styled.div`
+  background-color: ${({ theme }) => theme.colors.dataTable.row.background};
+  margin-bottom: 4px;
+  border-radius: 4px;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const Body = styled.div`
+  overflow-y: scroll;
+  margin-top: 10px;
+  padding-right: 10px;
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.scrollbar};
+    border-radius: 4px;
+  }
+`;
+
 export default {
   Wrapper,
+  Content,
+  Title,
+  Body,
+  Cell,
+  Row,
+  Column,
+  Head,
+  Table,
 };

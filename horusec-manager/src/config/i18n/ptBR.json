@@ -321,6 +321,18 @@
     }
   },
 
+  "SETTINGS_SCREEN": {
+    "TITLE": "Configurações da conta",
+    "TABLE": {
+      "USER": "Usuário",
+      "EMAIL": "Email",
+      "ACTION": "Ação",
+      "DELETE": "Deletar",
+      "EDIT": "Editar",
+      "PASSWORD": "Senha"
+    }
+  },
+
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
