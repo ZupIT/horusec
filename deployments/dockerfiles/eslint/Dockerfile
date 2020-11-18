@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:alpine
+FROM node
 
-RUN npm install global --production --remove-dev eslint;
+RUN npm install -g eslint;
 RUN ln -sf /node_modules/eslint/bin/eslint.js /usr/bin/eslint

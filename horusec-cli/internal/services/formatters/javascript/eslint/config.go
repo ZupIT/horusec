@@ -19,7 +19,7 @@ const (
 	ImageTag  = "v0.0.1"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		eslint -f json "**/*.js" > /tmp/results.json
+		eslint --no-eslintrc -f json "**/*.js" > /tmp/results.json
 		jq -j -M -c . /tmp/results.json
 	`
 )
