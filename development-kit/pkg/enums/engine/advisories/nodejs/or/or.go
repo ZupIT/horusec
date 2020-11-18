@@ -39,3 +39,21 @@ func NewNodeJSOrEncryptionAlgorithmsWeek() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSOrFileUploadsShouldBeRestricted() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "04b93a07-d0cf-435b-9a3b-54cb5ff22ce6",
+			Name:        "File uploads should be restricted",
+			Description: "These minimum restrictions should be applied when handling file uploads: the file upload folder to restrict untrusted files to a specific folder. the file extension of the uploaded file to prevent remote code execution. Also the size of the uploaded file should be limited to prevent denial of service attacks. This requirement is covered by the rule S5693. For more information checkout the CWE-434 (https://cwe.mitre.org/data/definitions/434.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new\sFormidable\(\)(.|\n)*(uploadDir.*=.*(["|']\s*["|']|null|undefined))`),
+			regexp.MustCompile(`new\sFormidable\(\)(.|\n)*(keepExtensions.*=.*true)`),
+			regexp.MustCompile(`(\.diskStorage\(\s*\{)(([^d]|d[^e]|de[^s]|des[^t]|dest[^i]|desti[^n]|destin[^a]|destina[^t]|destinat[^i]|destinati[^o]|destinatio[^n]|destination[^:])*)(\}\s*\))`),
+		},
+	}
+}

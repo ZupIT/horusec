@@ -34,7 +34,7 @@ func NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput() text.TextRu
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)`),
+			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)|from\s.request.`),
 			regexp.MustCompile(`request\(.*(req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
@@ -51,7 +51,7 @@ func NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)`),
+			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)|from\s.request.`),
 			regexp.MustCompile(`\.get\(.*(req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
@@ -80,7 +80,7 @@ func NewNodeJSAndCryptographicEcShouldBeRobust() text.TextRule {
 			ID:          "4e4bc6ed-9be5-41a6-97f6-34d2b365d8c5",
 			Name:        "Cryptographic EC should be robust",
 			Description: "Most of cryptographic systems require a sufficient key size to be robust against brute-force attacks. n ≥ 224 for ECDH and ECMQV (Examples: secp192r1 is a non-compliant curve (n < 224) but secp224k1 is compliant (n >= 224)). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
@@ -102,9 +102,61 @@ func NewNodeJSAndJWTNeedStrongCipherAlgorithms() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`require('jsonwebtoken')`),
+			regexp.MustCompile(`require\(.jsonwebtoken.\)|from\s.jsonwebtoken.`),
 			regexp.MustCompile(`\.sign\(`),
 			regexp.MustCompile(`((algorithm[s]?:.*none)|(algorithm[s]?:.*RS256))`),
+		},
+	}
+}
+
+func NewNodeJSAndServerHostnameNotVerified() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1288d900-98b1-4ab6-8b8a-b6f6143a4ca0",
+			Name:        "Server hostnames should be verified during SSL/TLS connections",
+			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used.  For more information checkout the CWE-297 (https://cwe.mitre.org/data/definitions/297.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
+			regexp.MustCompile(`checkServerIdentity.*\{\s*\}`),
+		},
+	}
+}
+
+func NewNodeJSAndServerCertificatesNotVerified() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1288d900-98b1-4ab6-8b8a-b6f6143a4ca0",
+			Name:        "Server certificates should be verified during SSL/TLS connections",
+			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used.  For more information checkout the CWE-297 (https://cwe.mitre.org/data/definitions/297.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
+			regexp.MustCompile(`rejectUnauthorized.*false`),
+		},
+	}
+}
+
+func NewNodeJSAndUntrustedContentShouldNotBeIncluded() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "9be13831-1147-4b55-b858-c2cbe595f9e4",
+			Name:        "Untrusted content should not be included",
+			Description: "Including content in your site from an untrusted source can expose your users to attackers and even compromise your own site. For that reason, this rule raises an issue for each non-relative URL. For more information checkout the OWASP A1:2017 (https://owasp.org/www-project-top-ten/2017/A1_2017-Injection.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`createElement\(`),
+			regexp.MustCompile(`setAttribute\(.*,.*text/javascript`),
+			regexp.MustCompile(`setAttribute\(.src.,\s*[^"|']\w+[^"|']`),
 		},
 	}
 }

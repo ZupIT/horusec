@@ -32,6 +32,12 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest(),
 		regular.NewNodeJSRegularSQLInjectionUsingParams(),
 		regular.NewNodeJSRegularXMLParsersShouldNotBeVulnerableToXXEAttacks(),
+		regular.NewNodeJSRegularOriginsNotVerified(),
+		regular.NewNodeJSRegularWeakSSLTLSProtocolsShouldNotBeUsed(),
+		regular.NewNodeJSRegularWebSQLDatabasesShouldNotBeUsed(),
+		regular.NewNodeJSRegularLocalStorageShouldNotBeUsed(),
+		regular.NewNodeJSRegularDebuggerStatementsShouldNotBeUsed(),
+		regular.NewNodeJSRegularAlertStatementsShouldNotBeUsed(),
 	}
 }
 
@@ -42,11 +48,15 @@ func AllRulesNodeJSAnd() []text.TextRule {
 		and.NewNodeJSAndCryptographicRsaShouldBeRobust(),
 		and.NewNodeJSAndCryptographicEcShouldBeRobust(),
 		and.NewNodeJSAndJWTNeedStrongCipherAlgorithms(),
+		and.NewNodeJSAndServerHostnameNotVerified(),
+		and.NewNodeJSAndServerCertificatesNotVerified(),
+		and.NewNodeJSAndUntrustedContentShouldNotBeIncluded(),
 	}
 }
 
 func AllRulesNodeJSOr() []text.TextRule {
 	return []text.TextRule{
 		or.NewNodeJSOrEncryptionAlgorithmsWeek(),
+		or.NewNodeJSOrFileUploadsShouldBeRestricted(),
 	}
 }

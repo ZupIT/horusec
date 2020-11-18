@@ -150,3 +150,101 @@ func NewNodeJSRegularXMLParsersShouldNotBeVulnerableToXXEAttacks() text.TextRule
 		},
 	}
 }
+
+func NewNodeJSRegularOriginsNotVerified() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "340829b4-29cb-42c2-a518-e442feaa71f6",
+			Name:        "Origins should be verified during cross-origin communications",
+			Description: "Browsers allow message exchanges between Window objects of different origins. Because any window can send / receive messages from other window it is important to verify the sender's / receiver's identity: When sending message with postMessage method, the identity's receiver should be defined (the wildcard keyword (*) should not be used).\nWhen receiving message with message event, the sender's identity should be verified using the origin and possibly source properties. For more information checkout the OWASP A2:2017 (https://owasp.org/www-project-top-ten/2017/A2_2017-Broken_Authentication) and (https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.postMessage\((\n|.)*,\s*\"\*\"`),
+			regexp.MustCompile(`(\.addEventListener\((\s*|.*)\{)(([^\.]|\.[^o]|\.o[^r]|\.or[^i]|\.ori[^g]|\.orig[^i]|\.origi[^n])*)(\}\s*\))`),
+		},
+	}
+}
+
+func NewNodeJSRegularWeakSSLTLSProtocolsShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "820fcaec-629b-47f4-a097-774de6e8b94c",
+			Name:        "Weak SSL/TLS protocols should not be used",
+			Description: "Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`TLSv1_method|TLSv1\.1`),
+		},
+	}
+}
+
+func NewNodeJSRegularWebSQLDatabasesShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "ad918008-78a5-4ba4-85f2-e473e56a9b3b",
+			Name:        "Web SQL databases should not be used",
+			Description: "The Web SQL Database standard never saw the light of day. It was first formulated, then deprecated by the W3C and was only implemented in some browsers. (It is not supported in Firefox or IE.)\n\nFurther, the use of a Web SQL Database poses security concerns, since you only need its name to access such a database. For more information checkout the OWSAP A3:2017 (https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html) and A9:2017 (https://owasp.org/www-project-top-ten/2017/A9_2017-Using_Components_with_Known_Vulnerabilities.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`window\.openDatabase\(`),
+		},
+	}
+}
+
+func NewNodeJSRegularLocalStorageShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f172aec8-1ced-45c7-a057-310b1ebf23f9",
+			Name:        "Local storage should not be used",
+			Description: "Session storage and local storage are HTML 5 features which allow developers to easily store megabytes of data client-side, as opposed to the 4Kb cookies can accommodate. While useful to speed applications up on the client side, it can be dangerous to store sensitive information this way because the data is not encrypted by default and any script on the page may access it. This rule raises an issue when the localStorage and sessionStorage API's are used. For more information checkout the OWSAP A3:2017 (https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`localStorage\.setItem\(`),
+			regexp.MustCompile(`sessionStorage\.setItem\(`),
+		},
+	}
+}
+
+func NewNodeJSRegularDebuggerStatementsShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f172aec8-1ced-45c7-a057-310b1ebf23f9",
+			Name:        "Debugger statements should not be used",
+			Description: "The debugger statement can be placed anywhere in procedures to suspend execution. Using the debugger statement is similar to setting a breakpoint in the code. By definition such statement must absolutely be removed from the source code to prevent any unexpected behavior or added vulnerability to attacks in production. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`debugger`),
+		},
+	}
+}
+
+func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "8780d9ea-8b54-4415-b604-d44b8ee29fb7",
+			Name:        "Alert statements should not be used",
+			Description: "alert(...) as well as confirm(...) and prompt(...) can be useful for debugging during development, but in production mode this kind of pop-up could expose sensitive information to attackers, and should never be displayed. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\s+|^)(alert|confirm|prompt)\(`),
+		},
+	}
+}
