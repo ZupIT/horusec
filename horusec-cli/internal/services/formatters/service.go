@@ -139,16 +139,26 @@ func (s *Service) RemoveSrcFolderFromPath(filepath string) string {
 }
 
 func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
-	maxLengthCode := 100
 	if column < 0 {
 		column = 0
 	}
-	if len(code) > maxLengthCode {
-		newCode := code[column:]
-		if len(newCode) > maxLengthCode {
-			return newCode[:maxLengthCode]
-		}
-		return newCode
+
+	if len(code) > 100 {
+		return s.getAHundredCharacters(code, column)
 	}
+
 	return code
+}
+
+func (s *Service) getAHundredCharacters(code string, column int) string {
+	if len(code) < column {
+		return code[:100]
+	}
+
+	codeFromColumn := code[column:]
+	if len(codeFromColumn) > 100 {
+		return codeFromColumn[:100]
+	}
+
+	return codeFromColumn
 }
