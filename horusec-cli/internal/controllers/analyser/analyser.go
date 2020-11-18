@@ -45,6 +45,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/eslint"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks"
@@ -218,9 +219,10 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
-	a.monitor.AddProcess(2)
+	a.monitor.AddProcess(3)
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go eslint.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
