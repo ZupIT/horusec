@@ -29,7 +29,7 @@ services:
   #      POSTGRES_DB: keycloak
   #  keycloak:
   #    depends_on:
-  #      - postgresql_keycloak
+  #      - "postgresql_keycloak"
   #    container_name: keycloak
   #    image: jboss/keycloak
   #    ports:

@@ -29,7 +29,7 @@ services:
 #      POSTGRES_DB: keycloak
 #  keycloak:
 #    depends_on:
-#      - postgresql_keycloak
+#      - "postgresql_keycloak"
 #    container_name: keycloak
 #    image: jboss/keycloak
 #    ports:
@@ -175,7 +175,7 @@ services:
       dockerfile: ./horusec-api/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-api
     network_mode: "host"
@@ -198,7 +198,7 @@ services:
       dockerfile: ./horusec-webhook/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-webhook
     network_mode: "host"

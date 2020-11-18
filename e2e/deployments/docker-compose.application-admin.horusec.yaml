@@ -22,7 +22,7 @@ services:
       context: ../../
       dockerfile: ./horusec-account/deployments/Dockerfile
     depends_on:
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-account
     ports:
@@ -39,7 +39,7 @@ services:
       context: ../../
       dockerfile: ./horusec-auth/deployments/Dockerfile
     depends_on:
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-auth
     ports:
