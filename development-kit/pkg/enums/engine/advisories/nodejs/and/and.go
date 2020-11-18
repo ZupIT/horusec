@@ -23,7 +23,7 @@ import (
 	"regexp"
 )
 
-func NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput()  text.TextRule {
+func NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "74736e94-926c-41bc-b4e8-61aad62ba11b",
@@ -40,7 +40,7 @@ func NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput()  text.TextR
 	}
 }
 
-func NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput()  text.TextRule {
+func NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "af548d16-c6d4-46eb-bb35-630cab1c00f1",

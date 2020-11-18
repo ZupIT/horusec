@@ -23,7 +23,7 @@ import (
 	"regexp"
 )
 
-func NewNodeJSRegularNoUseEval()  text.TextRule {
+func NewNodeJSRegularNoUseEval() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "458736c7-8b9a-49f5-9102-f36b12b5a6c2",
@@ -39,7 +39,7 @@ func NewNodeJSRegularNoUseEval()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularNoDisableTlsRejectUnauthorized()  text.TextRule {
+func NewNodeJSRegularNoDisableTlsRejectUnauthorized() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "eb3a06aa-b8a2-4249-a605-24799b0691c7",
@@ -55,7 +55,7 @@ func NewNodeJSRegularNoDisableTlsRejectUnauthorized()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularNoUseMD5Hashing()  text.TextRule {
+func NewNodeJSRegularNoUseMD5Hashing() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "6ca794ec-a8bd-48a3-be37-b535069744f8",
@@ -71,7 +71,7 @@ func NewNodeJSRegularNoUseMD5Hashing()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularNoUseSAH1Hashing()  text.TextRule {
+func NewNodeJSRegularNoUseSAH1Hashing() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "af6492f1-6b64-45f8-807c-ebf52466e74b",
@@ -87,7 +87,7 @@ func NewNodeJSRegularNoUseSAH1Hashing()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularNoReadFileUsingDataFromRequest()  text.TextRule {
+func NewNodeJSRegularNoReadFileUsingDataFromRequest() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "6573c53c-88a8-48cd-a118-6866055a72cf",
@@ -103,7 +103,7 @@ func NewNodeJSRegularNoReadFileUsingDataFromRequest()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest()  text.TextRule {
+func NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "3f6700f2-c9b5-49d0-99e6-367a2c75c6ed",
@@ -119,7 +119,7 @@ func NewNodeJSRegularNoCreateReadStreamUsingDataFromRequest()  text.TextRule {
 	}
 }
 
-func NewNodeJSRegularSQLInjectionUsingParams()  text.TextRule {
+func NewNodeJSRegularSQLInjectionUsingParams() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "624eda63-cfff-4b5c-b13d-be8c0d5f1fcc",
