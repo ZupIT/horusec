@@ -12,21 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:lll multiple regex is not possible broken lines
-package nodejs
+package horusecnodejs
 
-import (
-	"github.com/ZupIT/horusec-engine/text"
+const (
+	ImageName = "horuszup/horusec-nodejs"
+	ImageTag  = "v0.0.1"
+	ImageCmd  = `
+		{{WORK_DIR}}
+		horusec-nodejs run -o="./output-ANALYSISID.json"
+		cat ./output-ANALYSISID.json
+  `
 )
-
-func AllRulesNodeJSRegular() []text.TextRule {
-	return []text.TextRule{}
-}
-
-func AllRulesNodeJSAnd() []text.TextRule {
-	return []text.TextRule{}
-}
-
-func AllRulesNodeJSOr() []text.TextRule {
-	return []text.TextRule{}
-}
