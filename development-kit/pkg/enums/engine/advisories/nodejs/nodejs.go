@@ -42,6 +42,10 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularSQLInjection(),
 		regular.NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive(),
 		regular.NewNodeJSRegularUsingIntrusivePermissionsWithGeolocation(),
+		regular.NewNodeJSRegularHavingAPermissiveCrossOriginResourceSharingPolicy(),
+		regular.NewNodeJSRegularReadingTheStandardInput(),
+		regular.NewNodeJSRegularUsingCommandLineArguments(),
+		regular.NewNodeJSRegularNoLogSensitiveInformationInConsole(),
 	}
 }
 
@@ -60,6 +64,15 @@ func AllRulesNodeJSAnd() []text.TextRule {
 		and.NewNodeJSAndForwardingClientIPAddress(),
 		and.NewNodeJSAndAllowingConfidentialInformationToBeLoggedWithSignale(),
 		and.NewNodeJSAndAllowingBrowsersToPerformDNSPrefetching(),
+		and.NewNodeJSAndDisablingCertificateTransparencyMonitoring(),
+		and.NewNodeJSAndDisablingStrictHTTPNoReferrerPolicy(),
+		and.NewNodeJSAndAllowingBrowsersToSniffMIMETypes(),
+		and.NewNodeJSAndDisablingContentSecurityPolicyFrameAncestorsDirective(),
+		and.NewNodeJSAndAllowingMixedContent(),
+		and.NewNodeJSAndDisablingContentSecurityPolicyFetchDirectives(),
+		and.NewNodeJSAndCreatingCookiesWithoutTheHttpOnlyFlag(),
+		and.NewNodeJSAndCreatingCookiesWithoutTheSecureFlag(),
+		and.NewNodeJSAndNoUseSocketManually(),
 	}
 }
 

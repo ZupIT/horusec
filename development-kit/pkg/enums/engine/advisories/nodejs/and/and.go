@@ -201,7 +201,7 @@ func NewNodeJSAndForwardingClientIPAddress() text.TextRule {
 			ID:          "3625aaac-d09f-4f57-9bdd-2901882c653f",
 			Name:        "Forwarding client IP address",
 			Description: "Users often connect to web servers through HTTP proxies. Proxy can be configured to forward the client IP address via the X-Forwarded-For or Forwarded HTTP headers. IP address is a personal information which can identify a single user and thus impact his privacy. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
-			Severity:    severity.Medium.ToString(),
+			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
@@ -219,7 +219,7 @@ func NewNodeJSAndAllowingConfidentialInformationToBeLoggedWithSignale() text.Tex
 			ID:          "81a94577-4874-434d-a8ce-d5c3950df418",
 			Name:        "Allowing confidential information to be logged with signale",
 			Description: "Log management is an important topic, especially for the security of a web application, to ensure user activity, including potential attackers, is recorded and available for an analyst to understand what's happened on the web application in case of malicious activities. Retention of specific logs for a defined period of time is often necessary to comply with regulations such as GDPR, PCI DSS and others. However, to protect user's privacy, certain informations are forbidden or strongly discouraged from being logged, such as user passwords or credit card numbers, which obviously should not be stored or at least not in clear text. For more information checkout the CWE-532 (https://cwe.mitre.org/data/definitions/532.html) advisory.",
-			Severity:    severity.Medium.ToString(),
+			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
@@ -236,15 +236,171 @@ func NewNodeJSAndAllowingBrowsersToPerformDNSPrefetching() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "77040aa2-5322-4092-849e-c9448fdea3bc",
 			Name:        "Allowing browsers to perform DNS prefetching",
-			Description: "By default, web browsers perform DNS prefetching to reduce latency due to DNS resolutions required when an user clicks links from a website page. It can add significant latency during requests, especially if the page contains many links to cross-origin domains. DNS prefetch allows web browsers to perform DNS resolving in the background before the user clicks a link. This feature can cause privacy issues because DNS resolving from the user's computer is performed without his consent if he doesn't intent to go to the linked website. On a complex private webpage, a combination \"of unique links/DNS resolutions\" can indicate, to a eavesdropper for instance, that the user is visiting the private page. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html advisory.",
-			Severity:    severity.Medium.ToString(),
+			Description: "By default, web browsers perform DNS prefetching to reduce latency due to DNS resolutions required when an user clicks links from a website page. It can add significant latency during requests, especially if the page contains many links to cross-origin domains. DNS prefetch allows web browsers to perform DNS resolving in the background before the user clicks a link. This feature can cause privacy issues because DNS resolving from the user's computer is performed without his consent if he doesn't intent to go to the linked website. On a complex private webpage, a combination \"of unique links/DNS resolutions\" can indicate, to a eavesdropper for instance, that the user is visiting the private page. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`allow\s*:\s*true`),
 			regexp.MustCompile(`dnsPrefetchControl\(`),
 			regexp.MustCompile(`helmet`),
-			regexp.MustCompile(`allow\s*:\s*true`),
+		},
+	}
+}
+
+func NewNodeJSAndDisablingCertificateTransparencyMonitoring() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f135b762-8647-462a-8b00-1198ece1f972",
+			Name:        "Disabling Certificate Transparency monitoring",
+			Description: "Certificate Transparency (CT) is an open-framework to protect against identity theft when certificates are issued. Certificate Authorities (CA) electronically sign certificate after verifying the identify of the certificate owner. Attackers use, among other things, social engineering attacks to trick a CA to correctly verifying a spoofed identity/forged certificate. CAs implement Certificate Transparency framework to publicly log the records of newly issued certificates, allowing the public and in particular the identity owner to monitor these logs to verify that his identify was not usurped. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`expectCt\s*:\s*false`),
+			regexp.MustCompile(`helmet`),
+		},
+	}
+}
+
+func NewNodeJSAndDisablingStrictHTTPNoReferrerPolicy() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "c575e343-7b3c-4d9d-bbd6-c020641c1fa3",
+			Name:        "Disabling strict HTTP no-referrer policy",
+			Description: "Confidential information should not be set inside URLs (GET requests) of the application and a safe (ie: different from unsafe-url or no-referrer-when-downgrade) referrer-Policy header, to control how much information is included in the referer header, should be used. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`policy\s*:(\s|.)*no-referrer-when-downgrade`),
+			regexp.MustCompile(`\.referrerPolicy\(`),
+			regexp.MustCompile(`helmet`),
+		},
+	}
+}
+
+func NewNodeJSAndAllowingBrowsersToSniffMIMETypes() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "37c047e5-e48b-4346-a1f4-eb128f3c5e16",
+			Name:        "Allowing browsers to sniff MIME types",
+			Description: "Implement X-Content-Type-Options header with nosniff value (the only existing value for this header) which is supported by all modern browsers and will prevent browsers from performing MIME type sniffing, so that in case of Content-Type header mismatch, the resource is not interpreted. For example within a <script> object context, JavaScript MIME types are expected (like application/javascript) in the Content-Type header. For more information checkout the OWASP A6:2017 (https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`noSniff\s*:\s*false`),
+			regexp.MustCompile(`helmet`),
+		},
+	}
+}
+
+func NewNodeJSAndDisablingContentSecurityPolicyFrameAncestorsDirective() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "295e4212-13f1-4132-beec-1ce4cb025150",
+			Name:        "Disabling content security policy frame-ancestors directive",
+			Description: "Clickjacking attacks occur when an attacker try to trick an user to click on certain buttons/links of a legit website. This attack can take place with malicious HTML frames well hidden in an attacker website. Implement content security policy frame-ancestors directive which is supported by all modern browsers and will specify the origins of frame allowed to be loaded by the browser (this directive deprecates X-Frame-Options). For more information checkout the OWASP A6:2017 (https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`frameAncestors\s*:(\s|.)*none`),
+			regexp.MustCompile(`helmet`),
+			regexp.MustCompile(`\.contentSecurityPolicy\(`),
+		},
+	}
+}
+
+func NewNodeJSAndAllowingMixedContent() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "11c90831-d161-4f97-96b0-6e2d45f9ef6d",
+			Name:        "Allowing mixed-content",
+			Description: "A mixed-content is when a resource is loaded with the HTTP protocol, from a website accessed with the HTTPs protocol, thus mixed-content are not encrypted and exposed to MITM attacks and could break the entire level of protection that was desired by implementing encryption with the HTTPs protocol. Implement content security policy block-all-mixed-content directive which is supported by all modern browsers and will block loading of mixed-contents. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(directives\s*:\s*\{)(([^b]|b[^l]|bl[^o]|blo[^c]|bloc[^k]|block[^A]|blockA[^l]|blockAl[^l]|blockAll[^M]|blockAllM[^i]|blockAllMi[^x]|blockAllMix[^e]|blockAllMixe[^d]|blockAllMixed[^C]|blockAllMixedC[^o]|blockAllMixedCo[^n]|blockAllMixedCon[^t]|blockAllMixedCont[^e]|blockAllMixedConte[^n]|blockAllMixedConten[^t])*)(\})`),
+			regexp.MustCompile(`helmet`),
+			regexp.MustCompile(`\.contentSecurityPolicy\(`),
+		},
+	}
+}
+
+func NewNodeJSAndDisablingContentSecurityPolicyFetchDirectives() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "c4bd82a9-8089-45fe-9b64-017843f98928",
+			Name:        "Disabling content security policy fetch directives",
+			Description: "Content security policy (CSP) (fetch directives) is a W3C standard which is used by a server to specify, via a http header, the origins from where the browser is allowed to load resources. It can help to mitigate the risk of cross site scripting (XSS) attacks and reduce privileges used by an application. If the website doesn't define CSP header the browser will apply same-origin policy by default. Implement content security policy fetch directives, in particular default-src directive and continue to properly sanitize and validate all inputs of the application, indeed CSP fetch directives is only a tool to reduce the impact of cross site scripting attacks. For more information checkout the OWASP A6:2017 (https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`contentSecurityPolicy\s*:\s*false`),
+			regexp.MustCompile(`helmet`),
+		},
+	}
+}
+
+func NewNodeJSAndCreatingCookiesWithoutTheHttpOnlyFlag() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f65ac143-d2c7-44b8-b7b3-1f33c7cf9a1d",
+			Name:        "Creating cookies without the \"HttpOnly\" flag",
+			Description: "When a cookie is configured with the HttpOnly attribute set to true, the browser guaranties that no client-side script will be able to read it. In most cases, when a cookie is created, the default value of HttpOnly is false and it's up to the developer to decide whether or not the content of the cookie can be read by the client-side script. As a majority of Cross-Site Scripting (XSS) attacks target the theft of session-cookies, the HttpOnly attribute can help to reduce their impact as it won't be possible to exploit the XSS vulnerability to steal session-cookies. By default the HttpOnly flag should be set to true for most of the cookies and it's mandatory for session / sensitive-security cookies. For more information checkout the OWASP A7:2017 (https://owasp.org/www-project-top-ten/2017/A7_2017-Cross-Site_Scripting_(XSS).html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`httpOnly\s*:\s*false`),
+			regexp.MustCompile(`cookieSession\(|session\(|.set\(|csrf\(`),
+		},
+	}
+}
+
+func NewNodeJSAndCreatingCookiesWithoutTheSecureFlag() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "a60c9e48-4a28-41b7-990e-47a9cf237974",
+			Name:        "Creating cookies without the \"secure\" flag",
+			Description: "When a cookie is protected with the secure attribute set to true it will not be send by the browser over an unencrypted HTTP request and thus cannot be observed by an unauthorized person during a man-in-the-middle attack. It is recommended to use HTTPs everywhere so setting the secure flag to true should be the default behaviour when creating cookies. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`secure\s*:\s*false`),
+			regexp.MustCompile(`cookieSession\(|session\(|.set\(|csrf\(`),
+		},
+	}
+}
+
+func NewNodeJSAndNoUseSocketManually() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "508034eb-660f-4004-a852-aa8a013a6d84",
+			Name:        "No use socket manually",
+			Description: "Sockets are vulnerable in multiple ways: They enable a software to interact with the outside world. As this world is full of attackers it is necessary to check that they cannot receive sensitive information or inject dangerous input.The number of sockets is limited and can be exhausted. Which makes the application unresponsive to users who need additional sockets. In many cases there is no need to open a socket yourself. Use instead libraries and existing protocols For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new.*Socket\(`),
+			regexp.MustCompile(`require\(.net.\)|from\s.net.`),
 		},
 	}
 }

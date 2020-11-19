@@ -23,6 +23,23 @@ import (
 	"regexp"
 )
 
+
+func NewNodeJSRegularNoLogSensitiveInformationInConsole() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "71755d83-d536-4839-8997-6b611b319678",
+			Name:        "No Log Sensitive Information in console",
+			Description: "The App logs information. Sensitive information should never be logged. For more information checkout the CWE-532 (https://cwe.mitre.org/data/definitions/532.html) advisory.",
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)((console|log|debug).*\.(l|e|w|c|t|g|c))`),
+		},
+	}
+}
+
 func NewNodeJSRegularNoUseEval() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -310,6 +327,57 @@ func NewNodeJSRegularUsingIntrusivePermissionsWithGeolocation() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`permissions\.query\(.*geolocation`),
 			regexp.MustCompile(`geolocation\.getCurrentPosition\(`),
+		},
+	}
+}
+
+func NewNodeJSRegularHavingAPermissiveCrossOriginResourceSharingPolicy() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f27cc667-219e-4066-99cd-b9c5fd3c94d9",
+			Name:        "Having a permissive Cross-Origin Resource Sharing policy",
+			Description: "Same origin policy in browsers prevents, by default and for security-reasons, a javascript frontend to perform a cross-origin HTTP request to a resource that has a different origin (domain, protocol, or port) from its own. The requested target can append additional HTTP headers in response, called CORS, that act like directives for the browser and change the access control policy / relax the same origin policy. The Access-Control-Allow-Origin header should be set only for a trusted origin and for specific resources. For more information checkout the OWASP A6:2017 (https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Access-Control-Allow-Origin\s*:\s*['|"]\*['|"]`),
+			regexp.MustCompile(`cors\(\)`),
+			regexp.MustCompile(`origin\s*:\s*['|"]\*['|"]`),
+		},
+	}
+}
+
+func NewNodeJSRegularReadingTheStandardInput() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "a07645b9-2d11-43bb-a15e-d5888bffa05c",
+			Name:        "Reading the Standard Input",
+			Description: "It is common for attackers to craft inputs enabling them to exploit software vulnerabilities. Thus any data read from the standard input (stdin) can be dangerous and should be validated. Sanitize all data read from the standard input before using it. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`process\.stdin.read\(\)`),
+			regexp.MustCompile(`process\.stdin`),
+		},
+	}
+}
+
+func NewNodeJSRegularUsingCommandLineArguments() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "5b6e321b-0612-481e-86b2-3d8b2854258f",
+			Name:        "Using command line arguments",
+			Description: "Command line arguments can be dangerous just like any other user input. They should never be used without being first validated and sanitized. Remember also that any user can retrieve the list of processes running on a system, which makes the arguments provided to them visible. Thus passing sensitive information via command line arguments should be considered as insecure. This rule raises an issue when on every program entry points (main methods) when command line arguments are used. The goal is to guide security code reviews. Sanitize all command line arguments before using them. For more information checkout the CWE-88 (https://cwe.mitre.org/data/definitions/88.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(console|(?i)log|exec|spawn).(.|\n)*process.argv`),
 		},
 	}
 }
