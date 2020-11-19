@@ -33,7 +33,6 @@ const (
 			--rule 'security/detect-non-literal-fs-filename: warn' \
 			--rule 'security/detect-non-literal-regexp: warn' \
 			--rule 'security/detect-non-literal-require: warn' \
-			--rule 'security/detect-object-injection: warn' \
 			--rule 'security/detect-possible-timing-attacks: warn' \
 			--rule 'security/detect-pseudoRandomBytes: warn' \
 			--rule 'security/detect-unsafe-regex: warn' \
