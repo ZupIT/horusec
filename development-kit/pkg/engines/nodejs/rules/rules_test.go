@@ -12,22 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package hash
+package rules
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"strings"
+	"testing"
+
+	"github.com/ZupIT/horusec-engine/text"
+	"github.com/stretchr/testify/assert"
 )
 
-func GenerateSHA1(i ...string) (string, error) {
-	j := strings.Join(i, "")
-	b := []byte(j)
+func TestNewRules(t *testing.T) {
+	assert.IsType(t, NewRules(), &Rules{})
+}
 
-	h := sha256.New() //nolint weak cryptographic is necessary to generate hash unique
-	if _, err := h.Write(b); err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(h.Sum(nil)), nil
+func TestRules_GetAllRules(t *testing.T) {
+	t.Run("Should return all rules enable", func(t *testing.T) {
+		rules := NewRules().GetAllRules()
+		totalRegexes := 0
+		for i := range rules {
+			textRule := rules[i].(text.TextRule)
+			totalRegexes += len(textRule.Expressions)
+		}
+		assert.Greater(t, len(rules), 0)
+		assert.Greater(t, totalRegexes, 0)
+	})
 }

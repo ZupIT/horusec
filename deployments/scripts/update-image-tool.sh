@@ -97,9 +97,13 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/horusec-leaks"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/leaks/horusecleaks/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-leaks";;
+        "horusec-nodejs")
+            IMAGE_NAME="horuszup/horusec-nodejs"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/nodejs/horusecnodejs/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-nodejs";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
-            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp"
+            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs"
             exit 1;;
     esac
 }

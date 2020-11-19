@@ -17,6 +17,7 @@ package analyser
 import (
 	"fmt"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"log"
 	"os"
 	"os/signal"
@@ -172,6 +173,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 	}
 }
 
+//nolint:funlen all Languages is greater than 15
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
 		languages.CSharp:     a.detectVulnerabilityDotNet,
@@ -184,6 +186,10 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Ruby:       a.detectVulnerabilityRuby,
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
+		languages.TypeScript: a.detectVulnerabilityGeneric,
+		languages.C:          a.detectVulnerabilityGeneric,
+		languages.PHP:        a.detectVulnerabilityGeneric,
+		languages.HTML:       a.detectVulnerabilityGeneric,
 	}
 }
 
@@ -220,9 +226,10 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
-	a.monitor.AddProcess(2)
+	a.monitor.AddProcess(3)
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {

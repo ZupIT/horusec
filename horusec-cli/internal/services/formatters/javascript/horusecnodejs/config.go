@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package hash
+package horusecnodejs
 
-import (
-	"crypto/sha256"
-	"encoding/hex"
-	"strings"
+const (
+	ImageName = "horuszup/horusec-nodejs"
+	ImageTag  = "v0.0.1"
+	ImageCmd  = `
+		{{WORK_DIR}}
+		horusec-nodejs run -o="./output-ANALYSISID.json"
+		cat ./output-ANALYSISID.json
+  `
 )
-
-func GenerateSHA1(i ...string) (string, error) {
-	j := strings.Join(i, "")
-	b := []byte(j)
-
-	h := sha256.New() //nolint weak cryptographic is necessary to generate hash unique
-	if _, err := h.Write(b); err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(h.Sum(nil)), nil
-}
