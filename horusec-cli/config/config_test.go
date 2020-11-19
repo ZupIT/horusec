@@ -70,7 +70,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetFilterPath(uuid.New().String())
 		configs.SetEnableGitHistoryAnalysis(true)
 		configs.SetProjectPath("./")
-		configs.SetWorkDir(wd.String())
+		configs.SetWorkDir(map[string]interface{}{"netcore": []interface{}{"test"}})
 		configs.SetCertPath("./")
 		configs.SetCertInsecureSkipVerify(true)
 		configs.SetRepositoryName("horus")

@@ -168,7 +168,7 @@ The configuration file receive an object with the content follow:
       "horusecCliRiskAcceptHashes": "",
       "horusecCliWorkDir": {
 	        "go":         [],
-	        "netCore":    [],
+	        "csharp":     [],
 	        "ruby":       [],
 	        "python":     [],
 	        "java" :      [],
@@ -239,6 +239,7 @@ All available flags are:
 | HORUSEC_CLI_REPOSITORY_NAME                     | horusecCliRepositoryName                   | repository-name          | n             |                                         | Used to send the repository name to the server, must be used together with the company token. |
 | HORUSEC_CLI_FALSE_POSITIVE_HASHES               | horusecCliFalsePositiveHashes              | false-positive           | F             |                                         | Used to ignore vulnerability on analysis and setup with type `False positive`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_RISK_ACCEPT_HASHES                  | horusecCliRiskAcceptHashes                 | risk-accept              | R             |                                         | Used to ignore vulnerability on analysis and setup with type `Risk accept`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
+| HORUSEC_CLI_TOOLS_TO_IGNORE                     | horusecCliToolsToIgnore                    | tools-ignore             | T             |                                         | Used to ignore tool on run horusec analysis. Ex.: `T="GoSec, HorusecLeaks"` |
 |                                                 | horusecCliWorkDir                          |                          |               |                                         | This setting tells to horusec the right directory to run a specific language. |
 
 #### Authorization
@@ -262,7 +263,7 @@ Using the web platform **[HORUSEC-MANAGER](http://localhost:8043)** follow there
 
 #### WorkDir
 The WorkDir is an representation to run multiple projects inside one directory, that can be configured through the horusec-config.json file.
-Let's assume that your project is a netcore app using angular and has the following structure:
+Let's assume that your project is a C# with .netcore 3.1 app using angular and has the following structure:
 ```text
 |- NetCoreProject/
 |--- horusec-config.json
@@ -278,7 +279,7 @@ For this example the configuration would be:
 ```bash
 {
     "horusecCliWorkDir": {
-        "netCore": [
+        "csharp": [
             "NetCoreProject"
         ],
         "javaScript": [
@@ -293,7 +294,7 @@ The interface of languages accepts is:
 ```
 {
     go         []string
-    netCore    []string
+    csharp     []string
     ruby       []string
     python     []string
     java       []string

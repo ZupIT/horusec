@@ -16,8 +16,9 @@ package auth
 
 import (
 	"encoding/json"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"time"
+
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
@@ -76,6 +77,14 @@ func (a *Account) Validate() error {
 		validation.Field(&a.Email, validation.Required, validation.Length(1, 255), is.Email),
 		validation.Field(&a.Password, validation.Length(1, 255), validation.Required),
 		validation.Field(&a.Username, validation.Length(1, 255), validation.Required),
+	)
+}
+
+func (a *Account) UpdationValidate() error {
+	return validation.ValidateStruct(a,
+		validation.Field(
+			&a.Email, validation.When(a.Username == "", validation.Required), validation.Length(1, 255), is.Email),
+		validation.Field(&a.Username, validation.Length(1, 255), validation.When(a.Email == "", validation.Required)),
 	)
 }
 

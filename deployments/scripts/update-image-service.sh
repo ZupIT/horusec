@@ -59,12 +59,15 @@ getDirectoryAndImageNameByToolName () {
         "horusec-messages")
             IMAGE_NAME="horuszup/horusec-messages"
             DIRECTORY="./horusec-messages";;
+        "horusec-webhook")
+            IMAGE_NAME="horuszup/horusec-webhook"
+            DIRECTORY="./horusec-webhook";;
         "horusec-migration")
             IMAGE_NAME="horuszup/horusec-migration"
             DIRECTORY="./horusec-migration";;
         *)
             echo "Param Service Name is invalid, please use the examples bellow allowed and try again!"
-            echo "Params Service Name allowed: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages"
+            echo "Params Service Name allowed: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages, horusec-webhook"
             exit 1;;
     esac
     echo "Service selected is: $SERVICE_NAME"

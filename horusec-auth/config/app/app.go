@@ -25,14 +25,14 @@ const (
 	EnvEnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 	EnvApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvAuthType                  = "HORUSEC_AUTH_TYPE"
-	DisableEmailServiceEnv       = "HORUSEC_AUTH_DISABLE_EMAIL_SERVICE"
+	DisabledBrokerEnv            = "HORUSEC_DISABLED_BROKER"
 )
 
 type Config struct {
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
 	AuthType               authEnums.AuthorizationType
-	DisableEmailService    bool
+	DisabledBroker         bool
 }
 
 func NewConfig() *Config {
@@ -41,7 +41,7 @@ func NewConfig() *Config {
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
-		DisableEmailService: env.GetEnvOrDefaultBool(DisableEmailServiceEnv, false),
+		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
 	}
 }
 
@@ -58,5 +58,5 @@ func (a *Config) GetAuthType() authEnums.AuthorizationType {
 }
 
 func (a *Config) IsDisabledBroker() bool {
-	return a.DisableEmailService
+	return a.DisabledBroker
 }

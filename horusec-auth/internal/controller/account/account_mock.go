@@ -15,12 +15,13 @@
 package account
 
 import (
+	"time"
+
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
-	"time"
 )
 
 type Mock struct {
@@ -95,4 +96,9 @@ func (m *Mock) GetAccountIDByEmail(_ string) (uuid.UUID, error) {
 func (m *Mock) GetAccountID(token string) (uuid.UUID, error) {
 	args := m.MethodCalled("GetAccountID")
 	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) UpdateAccount(account *authEntities.Account) error {
+	args := m.MethodCalled("UpdateAccount", account)
+	return mockUtils.ReturnNilOrError(args, 0)
 }

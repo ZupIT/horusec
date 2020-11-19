@@ -16,6 +16,8 @@ package account
 
 import (
 	"fmt"
+	"time"
+
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
@@ -35,7 +37,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/google/uuid"
-	"time"
 )
 
 type IAccount interface {
@@ -53,6 +54,7 @@ type IAccount interface {
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
 	GetAccountID(token string) (uuid.UUID, error)
+	UpdateAccount(account *authEntities.Account) error
 }
 
 type Account struct {
@@ -341,4 +343,8 @@ func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
 	}
 
 	return uuid.Nil, errors.ErrorUnauthorized
+}
+
+func (a *Account) UpdateAccount(account *authEntities.Account) error {
+	return a.accountRepository.Update(account)
 }

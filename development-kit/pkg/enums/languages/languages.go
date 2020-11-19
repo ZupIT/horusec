@@ -20,7 +20,7 @@ type Language string
 
 const (
 	Go         Language = "Go"
-	DotNet     Language = "C#"
+	CSharp     Language = "C#"
 	Ruby       Language = "Ruby"
 	Python     Language = "Python"
 	Java       Language = "Java"
@@ -48,7 +48,7 @@ func ParseStringToLanguage(value string) (l Language) {
 func SupportedLanguages() []Language {
 	return []Language{
 		Go,
-		DotNet,
+		CSharp,
 		Ruby,
 		Python,
 		Java,
@@ -65,7 +65,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 	return map[string]Language{
 		Go.ToString():         Go,
 		Leaks.ToString():      Leaks,
-		DotNet.ToString():     DotNet,
+		CSharp.ToString():     CSharp,
 		Ruby.ToString():       Ruby,
 		Python.ToString():     Python,
 		Java.ToString():       Java,
