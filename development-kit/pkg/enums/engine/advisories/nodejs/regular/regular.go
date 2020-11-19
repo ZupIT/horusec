@@ -34,7 +34,7 @@ func NewNodeJSRegularNoLogSensitiveInformationInConsole() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)((console|log|debug).*\.(log|error|write|warn|clear|table|group|custom)\()`),
+			regexp.MustCompile(`(?i)((console|log|debug).*\.(log|error|write|warn|clear|table|group|custom|info|debug)\()`),
 		},
 	}
 }
