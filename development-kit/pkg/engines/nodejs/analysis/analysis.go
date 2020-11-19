@@ -37,7 +37,8 @@ func NewAnalysis(configs *config.Config) *Analysis {
 }
 
 func (a *Analysis) StartAnalysis() error {
-	textUnits, err := text.LoadDirIntoMultiUnit(a.configs.GetProjectPath(), 5, []string{".js", ".ts"})
+	textUnits, err := text.LoadDirIntoMultiUnit(a.configs.GetProjectPath(), 5, []string{
+		".js", ".ts", ".jsx", ".tsx"})
 	if err != nil {
 		return err
 	}
