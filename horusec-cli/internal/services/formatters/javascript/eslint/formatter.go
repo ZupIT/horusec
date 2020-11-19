@@ -120,7 +120,7 @@ func (f *Formatter) parseOutputToVuln(filePath, source string, message eslint.Me
 		Language:     languages.Javascript,
 		SecurityTool: tools.Eslint,
 		Details:      message.Message,
-		Code:         f.getCode(source, message.Line, message.EndLine),
+		Code:         f.getCode(source, message.Line, message.EndLine, message.Column),
 		Severity:     severity.Low,
 	}
 }
@@ -143,7 +143,7 @@ func (f *Formatter) setIntoAnalysisVulns(vuln *horusec.Vulnerability) {
 		})
 }
 
-func (f *Formatter) getCode(source string, line, endLine int) string {
+func (f *Formatter) getCode(source string, line, endLine, column int) string {
 	var result string
 	startLine := line - 1
 	lines := strings.Split(source, "\n")
@@ -158,5 +158,5 @@ func (f *Formatter) getCode(source string, line, endLine int) string {
 		}
 	}
 
-	return result
+	return f.GetCodeWithMaxCharacters(result, column)
 }
