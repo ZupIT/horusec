@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"log"
 	"os"
 	"os/signal"
@@ -41,7 +42,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/scs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
@@ -174,7 +175,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
-		languages.DotNet:     a.detectVulnerabilityDotNet,
+		languages.CSharp:     a.detectVulnerabilityDotNet,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
 		languages.Java:       a.detectVulnerabilityJava,
@@ -188,8 +189,9 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 }
 
 func (a *Analyser) detectVulnerabilityDotNet(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {

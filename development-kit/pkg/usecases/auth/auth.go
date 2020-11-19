@@ -18,6 +18,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"math/rand"
+	"time"
+
 	"github.com/Nerzal/gocloak/v7"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
@@ -28,9 +32,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
-	"io"
-	"math/rand"
-	"time"
 )
 
 type IUseCases interface {
@@ -53,6 +54,7 @@ type IUseCases interface {
 	NewPasswordFromReadCloser(body io.ReadCloser) (password string, err error)
 	NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error)
 	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *dto.ValidateUnique, err error)
+	NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEntities.Account, error)
 }
 
 type UseCases struct {
@@ -201,6 +203,18 @@ func (u *UseCases) NewAccountFromReadCloser(body io.ReadCloser) (*authEntities.A
 
 	account := createAccount.ToAccount()
 	return account, account.Validate()
+}
+
+func (u *UseCases) NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEntities.Account, error) {
+	updateAccount := &dto.UpdateAccount{}
+	err := json.NewDecoder(body).Decode(&updateAccount)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	account := updateAccount.ToAccount()
+	return account, account.UpdationValidate()
 }
 
 func (u *UseCases) NewEmailDataFromReadCloser(body io.ReadCloser) (data *dto.EmailData, err error) {

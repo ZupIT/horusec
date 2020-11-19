@@ -138,6 +138,7 @@ func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWr
 		router.Post("/logout", handler.Logout)
 		router.Delete("/delete", handler.DeleteAccount)
 		router.Post("/verify-already-used", handler.VerifyAlreadyInUse)
+		router.Patch("/update", handler.Update)
 		router.Options("/", handler.Options)
 	})
 

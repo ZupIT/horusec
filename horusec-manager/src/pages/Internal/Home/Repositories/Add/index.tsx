@@ -37,7 +37,7 @@ interface Props {
 const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { companyID, authzAdmin, authzMember } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -50,17 +50,17 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const [adminGroup, setAdminGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [supervisorGroup, setSupervisorGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzMember,
   });
 
   const resetFields = () => {
@@ -140,6 +140,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
+                initialValue={adminGroup.value}
                 name="adminGroup"
                 type="text"
                 width="100%"
@@ -152,6 +153,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setSupervisorGroup(field)}
+                initialValue={supervisorGroup.value}
                 name="supervisorGroup"
                 type="text"
                 width="100%"
@@ -164,6 +166,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
               <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setUserGroup(field)}
+                initialValue={userGroup.value}
                 name="userGroup"
                 type="text"
                 width="100%"
