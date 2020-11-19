@@ -37,6 +37,8 @@ const (
 			--rule 'security/detect-possible-timing-attacks: warn' \
 			--rule 'security/detect-pseudoRandomBytes: warn' \
 			--rule 'security/detect-unsafe-regex: warn' \
+			--parser-options=ecmaVersion:7 \
+			--parser-options=sourceType:module \
 			"*/**/*.{js,ts,tsx}" > /tmp/results.json
 		cat /tmp/results.json
 	`

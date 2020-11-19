@@ -94,7 +94,7 @@ func (f *Formatter) processOutput(output string) {
 
 func (f *Formatter) parseOutput(output string) (eslintOutput *[]eslint.Output, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &eslintOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GoSec, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Eslint, output), err, logger.ErrorLevel)
 	return eslintOutput, err
 }
 
