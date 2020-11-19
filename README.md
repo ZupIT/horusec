@@ -48,7 +48,7 @@ Currently, performance analysis consists of:
     * [Gosec][Gosec]
     * [Semgrep][Semgrep]
 * C#
-    * [CodeSecuriyScan][CodeSecuriyScan]
+    * [SecuriyCodeScan][SecuriyCodeScan]
     * [HorusecCSharp][HorusecCSharp]
 * Java
     * [HorusecJava][HorusecJava]
@@ -185,7 +185,7 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [HorusecNodeJS]: https://github.com/ZupIT/horusec/tree/master/horusec-nodejs
 [FindSec]: https://find-sec-bugs.github.io
 [Tfsec]: https://github.com/liamg/tfsec
-[CodeSecuriyScan]: https://security-code-scan.github.io/
+[SecuriyCodeScan]: https://security-code-scan.github.io/
 [Semgrep]: https://github.com/returntocorp/semgrep
 [EsLint]: https://github.com/eslint/eslint
 
