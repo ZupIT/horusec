@@ -31,7 +31,6 @@ To change variables environment to run your analysis also you set new values.
 | Environment Name                    | Default Value                                                     | Description                                                  |
 |-------------------------------------|-------------------------------------------------------------------|--------------------------------------------------------------|
 | HORUSEC_SWAGGER_HOST                | http://0.0.0.0:8006                                               | This environment get host to run in swagger                  |
-| HORUSEC_ACCOUNT_URL                 | http://localhost:8003                                             | This environment get horusec url to horusec-account          | 
 | HORUSEC_DATABASE_SQL_URI            | postgresql://root:root@localhost:5432/horusec_db?sslmode=disable  | This environment get uri to connect on database POSTGRES     |
 | HORUSEC_DATABASE_SQL_DIALECT        | postgres                                                          | This environment get dialect to connect on database POSTGRES |
 | HORUSEC_DATABASE_SQL_LOG_MODE       | false                                                             | This environment get bool to enable logs on POSTGRES         |
@@ -42,14 +41,14 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_KEYCLOAK_CLIENT_ID          |                                                                   | This environment get keycloak client id                      | 
 | HORUSEC_KEYCLOAK_CLIENT_SECRET      |                                                                   | This environment get keycloak client secret                  | 
 | HORUSEC_KEYCLOAK_REALM              |                                                                   | This environment get keycloak realm                          |
-| HORUSEC_KEYCLOAK_OTP                | false                                                             | This environment get keycloak opt                            | 
+| HORUSEC_KEYCLOAK_OTP                | false                                                             | This environment get keycloak otp(one-time password)         | 
 | HORUSEC_GRPC_PORT                   | 8007                                                              | This environment get grpc port                               | 
 | HORUSEC_GRPC_USE_CERTS              | false                                                             | This environment get if use of certificates is active or not |
 | HORUSEC_GRPC_CERT_PATH              |                                                                   | This environment get grpc certificate path                   | 
 | HORUSEC_GRPC_KEY_PATH               |                                                                   | This environment get grpc certificate key path               | 
 | HORUSEC_ENABLE_APPLICATION_ADMIN    | false                                                             | This environment set if you need active application admin in system. When this environment is setup to `true` only application admin users can create company in horusec. | 
 | HORUSEC_APPLICATION_ADMIN_DATA      | {\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"} | When application admin is enable and auth-type is `horusec` we need create default user application admin with this content in horusec. Don't forget to **escape the json** at the value of the environment variable. | 
-| HORUSEC_AUTH_DISABLE_EMAIL_SERVICE  | true                                                              | Disable email confirmation on user register                  |
+| HORUSEC_DISABLED_BROKER             | false                                                             | Disable broker dispatch in this service used to emails dispatch |
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-auth folder**
