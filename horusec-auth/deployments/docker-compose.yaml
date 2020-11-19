@@ -37,35 +37,3 @@ services:
       driver: json-file
       options:
         max-size: 10m
-  horusec-auth:
-    build:
-      context: ../../
-      dockerfile: ./horusec-auth/deployments/Dockerfile.dev
-    depends_on:
-      - postgresql
-    restart: always
-    container_name: horusec-auth
-    ports:
-      - "8006:8006"
-    environment:
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable"
-      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_KEYCLOAK_BASE_PATH: ${HORUSEC_KEYCLOAK_BASE_PATH}
-      HORUSEC_KEYCLOAK_CLIENT_ID: ${HORUSEC_KEYCLOAK_CLIENT_ID}
-      HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET}
-      HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM}
-      HORUS_LDAP_BASE: "dc=example,dc=org"
-      HORUS_LDAP_HOST: "ldap-service"
-      HORUS_LDAP_PORT: "389"
-      HORUS_LDAP_USESSL: "false"
-      HORUS_LDAP_SKIP_TLS: "true"
-      HORUS_LDAP_INSECURE_SKIP_VERIFY: "true"
-      HORUS_LDAP_BINDDN: "cn=admin,dc=example,dc=org"
-      HORUS_LDAP_BINDPASSWORD: "admin"
-      HORUS_LDAP_USERFILTER: "(uid=%s)"
-      HORUS_LDAP_GROUPFILTER: "(memberUid=%s)"
-      HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
-      HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
-      HORUSEC_AUTH_TYPE: "horusec"
-      HORUSEC_AUTH_DISABLE_EMAIL_SERVICE: "true"
