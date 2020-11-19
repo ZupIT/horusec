@@ -32,6 +32,7 @@ const (
 	TfSec            Tool = "TfSec"
 	Semgrep          Tool = "Semgrep"
 	Eslint           Tool = "Eslint"
+	HorusecCsharp    Tool = "HorusecCsharp"
 )
 
 func (t Tool) ToString() string {

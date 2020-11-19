@@ -16,6 +16,10 @@ package account
 
 import (
 	"errors"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
@@ -36,9 +40,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
-	"time"
 )
 
 func TestMock(t *testing.T) {
@@ -1049,5 +1050,28 @@ func TestGetAccountIDByEmail(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Equal(t, uuid.Nil, accountID)
+	})
+}
+
+func TestUpdateAccount(t *testing.T) {
+	t.Run("should success update account with no errors", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		cacheRepositoryMock := &cache.Mock{}
+
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		assert.NotNil(t, controller)
+
+		account := &authEntities.Account{
+			Email:    "test@test.com",
+			Username: "test",
+		}
+
+		err := controller.UpdateAccount(account)
+		assert.NoError(t, err)
 	})
 }

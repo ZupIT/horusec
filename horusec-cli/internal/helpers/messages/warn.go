@@ -29,4 +29,6 @@ const (
 		"that are not considered to be analyzed. To see more details use flag --log-level=debug"
 	MsgWarnGitHistoryEnable = "{HORUSEC_CLI} Starting the analysis with git history enabled. " +
 		"ATTENTION the waiting time can be longer when this option is enabled!"
+	MsgWarnNetCoreDeprecated = "{HORUSEC_CLI} 'netCore' key in workdir will change to 'csharp', " +
+		"please change in your horusec-config.json"
 )

@@ -168,7 +168,7 @@ The configuration file receive an object with the content follow:
       "horusecCliRiskAcceptHashes": "",
       "horusecCliWorkDir": {
 	        "go":         [],
-	        "netCore":    [],
+	        "csharp":     [],
 	        "ruby":       [],
 	        "python":     [],
 	        "java" :      [],
@@ -262,7 +262,7 @@ Using the web platform **[HORUSEC-MANAGER](http://localhost:8043)** follow there
 
 #### WorkDir
 The WorkDir is an representation to run multiple projects inside one directory, that can be configured through the horusec-config.json file.
-Let's assume that your project is a netcore app using angular and has the following structure:
+Let's assume that your project is a C# with .netcore 3.1 app using angular and has the following structure:
 ```text
 |- NetCoreProject/
 |--- horusec-config.json
@@ -278,7 +278,7 @@ For this example the configuration would be:
 ```bash
 {
     "horusecCliWorkDir": {
-        "netCore": [
+        "csharp": [
             "NetCoreProject"
         ],
         "javaScript": [
@@ -293,7 +293,7 @@ The interface of languages accepts is:
 ```
 {
     go         []string
-    netCore    []string
+    csharp     []string
     ruby       []string
     python     []string
     java       []string
