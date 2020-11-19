@@ -93,8 +93,8 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/horusec-leaks"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/leaks/horusecleaks/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-leaks";;
-        "horusec-eslint")
-            IMAGE_NAME="horuszup/horusec-eslint"
+        "eslint")
+            IMAGE_NAME="horuszup/eslint"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/eslint/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/eslint";;
         *)
