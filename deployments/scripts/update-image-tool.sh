@@ -93,6 +93,10 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/horusec-leaks"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/leaks/horusecleaks/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-leaks";;
+        "horusec-eslint")
+            IMAGE_NAME="horuszup/horusec-eslint"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/eslint/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/eslint";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
             echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks"
