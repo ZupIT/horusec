@@ -39,7 +39,6 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularDebuggerStatementsShouldNotBeUsed(),
 		regular.NewNodeJSRegularAlertStatementsShouldNotBeUsed(),
 		regular.NewNodeJSRegularNoUseWeakRandom(),
-		regular.NewNodeJSRegularSQLInjection(),
 		regular.NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive(),
 		regular.NewNodeJSRegularUsingIntrusivePermissionsWithGeolocation(),
 		regular.NewNodeJSRegularHavingAPermissiveCrossOriginResourceSharingPolicy(),
@@ -82,5 +81,6 @@ func AllRulesNodeJSOr() []text.TextRule {
 		or.NewNodeJSOrFileUploadsShouldBeRestricted(),
 		or.NewNodeJSOrAllowingRequestsWithExcessiveContentLengthSecurity(),
 		or.NewNodeJSOrNoDisableSanitizeHtml(),
+		or.NewNodeJSOrSQLInjection(),
 	}
 }

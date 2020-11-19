@@ -281,22 +281,6 @@ func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewNodeJSRegularSQLInjection() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "88519d1e-6225-418b-8048-9697ef3fbe78",
-			Name:        "SQL Injection",
-			Description: "SQL queries often need to use a hardcoded SQL string with a dynamic parameter coming from a user request. Formatting a string to add those parameters to the request is a bad practice as it can result in an SQL injection. The safe way to add parameters to a SQL query is to use SQL binding mechanisms. For more information checkout the CWE-564 (https://cwe.mitre.org/data/definitions/564.html) and OWASP A1:2017 (https://owasp.org/www-project-top-ten/2017/A1_2017-Injection.html) advisory.",
-			Severity:    severity.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.Regular,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)(query\(|.*=).*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)`),
-		},
-	}
-}
-
 func NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{

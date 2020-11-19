@@ -29,7 +29,7 @@ func TestNewAnalysis(t *testing.T) {
 }
 
 func TestAnalysis_StartAnalysis(t *testing.T) {
-	t.Run("Should return success when read analysis and return seven vulnerabilities", func(t *testing.T) {
+	t.Run("Should return success when read analysis and return 5 vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.SetOutputFilePath("./csharp-tmp.output.json")
 		configs.SetProjectPath("../../examples/csharp-generic-vuln")
@@ -39,7 +39,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		data := []engine.Finding{}
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 6, len(data))
+		assert.Equal(t, 5, len(data))
 	})
 	t.Run("Should return error when create file", func(t *testing.T) {
 		configs := config.NewConfig()
