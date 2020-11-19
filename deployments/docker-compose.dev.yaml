@@ -29,7 +29,7 @@ services:
 #      POSTGRES_DB: keycloak
 #  keycloak:
 #    depends_on:
-#      - postgresql_keycloak
+#      - "postgresql_keycloak"
 #    container_name: keycloak
 #    image: jboss/keycloak
 #    ports:
@@ -88,36 +88,12 @@ services:
       HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
       HORUSEC_SMTP_PORT: "2525"
       HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
-  horusec-account:
-    build:
-      context: ../
-      dockerfile: ./horusec-account/deployments/Dockerfile.dev
-    depends_on:
-      - "rabbit"
-      - "postgresql"
-    restart: always
-    container_name: horusec-account
-    network_mode: "host"
-    ports:
-      - "8003:8003"
-    volumes:
-      - ../:/usr/app
-    environment:
-      HORUSEC_DISABLED_BROKER: "true"
-      HORUSEC_BROKER_HOST: "127.0.0.1"
-      HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
-      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "127.0.0.1:8007"
   horusec-auth:
     build:
       context: ../
       dockerfile: ./horusec-auth/deployments/Dockerfile.dev
     depends_on:
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-auth
     network_mode: "host"
@@ -152,13 +128,36 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_AUTH_DISABLE_EMAIL_SERVICE: "true"
+      HORUSEC_DISABLED_BROKER: "true"
+  horusec-account:
+    build:
+      context: ../
+      dockerfile: ./horusec-account/deployments/Dockerfile.dev
+    depends_on:
+      - "rabbit"
+      - "postgresql"
+    restart: always
+    container_name: horusec-account
+    network_mode: "host"
+    ports:
+      - "8003:8003"
+    volumes:
+      - ../:/usr/app
+    environment:
+      HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
+      HORUSEC_BROKER_PORT: "5672"
+      HORUSEC_BROKER_USERNAME: "guest"
+      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
   horusec-analytic:
     build:
       context: ../
       dockerfile: ./horusec-analytic/deployments/Dockerfile.dev
     depends_on:
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-analytic
     network_mode: "host"
@@ -169,14 +168,14 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
   horusec-api:
     build:
       context: ../
       dockerfile: ./horusec-api/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-api
     network_mode: "host"
@@ -187,9 +186,8 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "127.0.0.1:8007"
-      HORUSEC_DISABLED_BROKER: "false"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_DISABLED_BROKER: "true"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
@@ -200,7 +198,7 @@ services:
       dockerfile: ./horusec-webhook/deployments/Dockerfile.dev
     depends_on:
       - "rabbit"
-      - postgresql
+      - "postgresql"
     restart: always
     container_name: horusec-webhook
     network_mode: "host"
@@ -211,8 +209,7 @@ services:
     environment:
       HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
-      HORUSEC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
       HORUSEC_DISABLED_BROKER: "true"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
