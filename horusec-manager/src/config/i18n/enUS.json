@@ -343,7 +343,9 @@
     "CHANGE_PASS": "Change Password",
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "INVALID_PASS": "Enter password",
-    "EDIT_SUCCESS": "information successfully changed"
+    "EDIT_SUCCESS": "information successfully changed",
+    "SUCCESS_UPDATE": "A request to verify the new email has been sent to your email.",
+    "CONFIRM":"Ok, I got it."
   },
 
   "SIDE_MENU": {

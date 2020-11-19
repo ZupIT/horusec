@@ -21,7 +21,10 @@ import Styled from './styled';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Field } from 'helpers/interfaces/Field';
-import { getCurrentUser, setCurrentUser } from 'helpers/localStorage/currentUser';
+import {
+  getCurrentUser,
+  setCurrentUser,
+} from 'helpers/localStorage/currentUser';
 import { isValidEmail } from 'helpers/validators';
 import { useTheme } from 'styled-components';
 import accountService from 'services/account';
@@ -40,6 +43,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
+  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
 
   const [nameOfUser, setNameOfUser] = useState<Field>({
     isValid: true,
@@ -51,11 +55,14 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     value: currentUser.email,
   });
 
-  const handleCancel = () => {
-    onCancel();
-
+  const resetFields = () => {
     setEmailOfUser({ isValid: true, value: currentUser.email });
     setNameOfUser({ isValid: true, value: currentUser.username });
+  };
+
+  const handleCancel = () => {
+    onCancel();
+    resetFields();
   };
 
   const handleConfirmSave = () => {
@@ -65,12 +72,18 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       accountService
         .update(nameOfUser.value, emailOfUser.value)
         .then(() => {
-          showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
+          if (emailOfUser.value !== currentUser.email) {
+            setSuccessDialogIsOpen(true);
+          }
+
           setCurrentUser({
             ...currentUser,
             email: emailOfUser.value,
             username: nameOfUser.value,
           });
+
+          showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
+
           onConfirm();
         })
         .catch((err) => {
@@ -83,40 +96,49 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   };
 
   return (
-    <Dialog
-      isVisible={isVisible}
-      message={t('SETTINGS_SCREEN.EDIT_ACCOUNT')}
-      onCancel={handleCancel}
-      onConfirm={handleConfirmSave}
-      confirmText={t('SETTINGS_SCREEN.SAVE')}
-      loadingConfirm={isLoading}
-      disabledColor={colors.button.disableInDark}
-      width={450}
-      disableConfirm={!nameOfUser.isValid || !emailOfUser.isValid}
-      hasCancel
-    >
-      <Styled.Form>
-        <Styled.Field
-          label={t('SETTINGS_SCREEN.NAME')}
-          initialValue={nameOfUser.value}
-          name="nome"
-          width="100%"
-          type="text"
-          onChangeValue={(field) => setNameOfUser(field)}
-        />
+    <>
+      <Dialog
+        isVisible={isVisible}
+        message={t('SETTINGS_SCREEN.EDIT_ACCOUNT')}
+        onCancel={handleCancel}
+        onConfirm={handleConfirmSave}
+        confirmText={t('SETTINGS_SCREEN.SAVE')}
+        loadingConfirm={isLoading}
+        disabledColor={colors.button.disableInDark}
+        width={450}
+        disableConfirm={!nameOfUser.isValid || !emailOfUser.isValid}
+        hasCancel
+      >
+        <Styled.Form>
+          <Styled.Field
+            label={t('SETTINGS_SCREEN.NAME')}
+            initialValue={nameOfUser.value}
+            name="nome"
+            width="100%"
+            type="text"
+            onChangeValue={(field) => setNameOfUser(field)}
+          />
 
-        <Styled.Field
-          label={t('SETTINGS_SCREEN.EMAIL')}
-          initialValue={emailOfUser.value}
-          name="email"
-          width="100%"
-          type="email"
-          onChangeValue={(field) => setEmailOfUser(field)}
-          validation={isValidEmail}
-          invalidMessage={t('SETTINGS_SCREEN.INVALID_EMAIL')}
-        />
-      </Styled.Form>
-    </Dialog>
+          <Styled.Field
+            label={t('SETTINGS_SCREEN.EMAIL')}
+            initialValue={emailOfUser.value}
+            name="email"
+            width="100%"
+            type="email"
+            onChangeValue={(field) => setEmailOfUser(field)}
+            validation={isValidEmail}
+            invalidMessage={t('SETTINGS_SCREEN.INVALID_EMAIL')}
+          />
+        </Styled.Form>
+      </Dialog>
+
+      <Dialog
+        isVisible={successDialogIsOpen}
+        message={t('SETTINGS_SCREEN.SUCCESS_UPDATE')}
+        onConfirm={() => setSuccessDialogIsOpen(false)}
+        confirmText={t('SETTINGS_SCREEN.CONFIRM')}
+      />
+    </>
   );
 };
 

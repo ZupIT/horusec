@@ -343,7 +343,9 @@
     "CHANGE_PASS": "Alterar Senha",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "INVALID_PASS":"Informe a senha",
-    "EDIT_SUCCESS": "Informações alteradas com sucesso!"
+    "EDIT_SUCCESS": "Informações alteradas com sucesso!",
+    "SUCCESS_UPDATE": "Foi enviado para seu e-mail uma solicitação de verificação do novo e-mail.",
+    "CONFIRM": "Ok, entendi."
   },
 
   "SIDE_MENU": {
