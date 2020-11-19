@@ -48,7 +48,7 @@ func TestHorusecCLILanguages(t *testing.T) {
 	}
 	var wg sync.WaitGroup
 	go RunGolangTest(t, &wg)
-	go RunNetCoreTest(t, &wg)
+	go RunCsharpTest(t, &wg)
 	go RunRubyTest(t, &wg)
 	go RunPythonBanditTest(t, &wg)
 	go RunPythonSafetyTest(t, &wg)
@@ -105,11 +105,11 @@ func RunKotlinTest(t *testing.T, s *sync.WaitGroup) {
 	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in kotlin is not expected")
 }
 
-func RunNetCoreTest(t *testing.T, s *sync.WaitGroup) {
+func RunCsharpTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
-	fileOutput := runHorusecCLIUsingZip(t, "netcore3-1")
+	fileOutput := runHorusecCLIUsingZip(t, "csharp")
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in netcore is not expected")
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in csharp is not expected")
 }
 
 func RunRubyTest(t *testing.T, s *sync.WaitGroup) {

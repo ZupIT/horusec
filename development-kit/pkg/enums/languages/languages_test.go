@@ -21,13 +21,13 @@ import (
 
 func TestToString(t *testing.T) {
 	t.Run("should success parse to string", func(t *testing.T) {
-		assert.NotEmpty(t, DotNet.ToString())
+		assert.NotEmpty(t, CSharp.ToString())
 	})
 }
 
 func TestMapEnableLanguages(t *testing.T) {
 	t.Run("should map enable languages", func(t *testing.T) {
-		assert.Len(t, DotNet.MapEnableLanguages(), 10)
+		assert.Len(t, CSharp.MapEnableLanguages(), 10)
 	})
 }
 
