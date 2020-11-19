@@ -37,7 +37,7 @@ const (
 			--rule 'security/detect-possible-timing-attacks: warn' \
 			--rule 'security/detect-pseudoRandomBytes: warn' \
 			--rule 'security/detect-unsafe-regex: warn' \
-			"**/*.js" > /tmp/results.json
+			"*/**/*.{js,ts,tsx}" > /tmp/results.json
 		cat /tmp/results.json
 	`
 )
