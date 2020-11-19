@@ -101,7 +101,8 @@ func (f *Formatter) parseOutput(output string) (eslintOutput *[]eslint.Output, e
 func (f *Formatter) concatOutputIntoAnalysisVulns(output *[]eslint.Output) {
 	for _, file := range *output {
 		for _, message := range *file.Messages {
-			vuln := f.parseOutputToVuln(file.FilePath, file.Source, message)
+			messageRef := &message
+			vuln := f.parseOutputToVuln(file.FilePath, file.Source, messageRef)
 
 			vulnhash.Bind(vuln)
 			f.setCommitAuthor(vuln)
@@ -111,7 +112,7 @@ func (f *Formatter) concatOutputIntoAnalysisVulns(output *[]eslint.Output) {
 	}
 }
 
-func (f *Formatter) parseOutputToVuln(filePath, source string, message eslint.Message) *horusec.Vulnerability {
+func (f *Formatter) parseOutputToVuln(filePath, source string, message *eslint.Message) *horusec.Vulnerability {
 	return &horusec.Vulnerability{
 		File:         filePath,
 		Line:         fmt.Sprintf(`%d`, message.Line),
