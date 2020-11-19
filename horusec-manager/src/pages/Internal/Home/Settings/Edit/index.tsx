@@ -21,9 +21,10 @@ import Styled from './styled';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Field } from 'helpers/interfaces/Field';
-import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import { getCurrentUser, setCurrentUser } from 'helpers/localStorage/currentUser';
 import { isValidEmail } from 'helpers/validators';
 import { useTheme } from 'styled-components';
+import accountService from 'services/account';
 
 interface Props {
   isVisible: boolean;
@@ -33,45 +34,52 @@ interface Props {
 
 const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { t } = useTranslation();
-  const { email, username } = getCurrentUser();
+  const currentUser = getCurrentUser();
   const { colors } = useTheme();
-  // const { dispatchMessage } = useResponseMessage();
-  // const { showSuccessFlash } = useFlashMessage();
+  const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
 
   const [nameOfUser, setNameOfUser] = useState<Field>({
     isValid: true,
-    value: username,
+    value: currentUser.username,
   });
 
   const [emailOfUser, setEmailOfUser] = useState<Field>({
     isValid: true,
-    value: email,
+    value: currentUser.email,
   });
 
   const handleCancel = () => {
     onCancel();
 
-    setEmailOfUser({ isValid: true, value: email });
-    setNameOfUser({ isValid: true, value: username });
+    setEmailOfUser({ isValid: true, value: currentUser.email });
+    setNameOfUser({ isValid: true, value: currentUser.username });
   };
 
   const handleConfirmSave = () => {
-    setLoading(true);
+    if (nameOfUser.isValid && emailOfUser.isValid) {
+      setLoading(true);
 
-    // companyService
-    //   .editUserInCompany(companyID, userToEdit.accountID, role.value)
-    //   .then(() => {
-    //     showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
-    //     onConfirm();
-    //   })
-    //   .catch((err) => {
-    //     dispatchMessage(err?.response?.data);
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+      accountService
+        .update(nameOfUser.value, emailOfUser.value)
+        .then(() => {
+          showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
+          setCurrentUser({
+            ...currentUser,
+            email: emailOfUser.value,
+            username: nameOfUser.value,
+          });
+          onConfirm();
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   return (

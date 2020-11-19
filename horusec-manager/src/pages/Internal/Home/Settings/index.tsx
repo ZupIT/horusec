@@ -21,6 +21,7 @@ import Styled from './styled';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 import EditAccount from './Edit';
+import ChangePassword from './ChangePassword';
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
@@ -30,6 +31,7 @@ const Settings: React.FC = () => {
   const [deleteInProgress, setDeleteInProgress] = useState(false);
 
   const [editDialogIsOpen, setOpenEditDialog] = useState(false);
+  const [changePassDialogIsOpen, setOpenChangePassDialog] = useState(false);
 
   const handleConfirmDelete = () => {
     console.log('delete');
@@ -87,7 +89,7 @@ const Settings: React.FC = () => {
                   width={90}
                   height={30}
                   icon="lock"
-                  onClick={() => console.log('senha')}
+                  onClick={() => setOpenChangePassDialog(true)}
                 />
               </Styled.Cell>
             </Styled.Row>
@@ -110,6 +112,12 @@ const Settings: React.FC = () => {
         isVisible={editDialogIsOpen}
         onCancel={() => setOpenEditDialog(false)}
         onConfirm={() => setOpenEditDialog(false)}
+      />
+
+      <ChangePassword
+        isVisible={changePassDialogIsOpen}
+        onCancel={() => setOpenChangePassDialog(false)}
+        onConfirm={() => setOpenChangePassDialog(false)}
       />
     </Styled.Wrapper>
   );

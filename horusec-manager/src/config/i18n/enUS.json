@@ -337,7 +337,13 @@
     "SAVE": "Save",
     "EMAIL": "Email",
     "NAME": "Username",
-    "INVALID_EMAIL":"Invalid e-mail"
+    "INVALID_EMAIL":"Invalid e-mail",
+    "NEW_PASS": "New Password",
+    "CONFIRM_PASS": "Confirm password",
+    "CHANGE_PASS": "Change Password",
+    "INVALID_CONFIRM_PASS": "Passwords are not the same.",
+    "INVALID_PASS": "Enter password",
+    "EDIT_SUCCESS": "information successfully changed"
   },
 
   "SIDE_MENU": {

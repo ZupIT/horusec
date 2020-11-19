@@ -337,7 +337,13 @@
     "SAVE": "Salvar",
     "EMAIL": "Email",
     "NAME": "Nome de usuário",
-    "INVALID_EMAIL": "Email inválido"
+    "INVALID_EMAIL": "Email inválido",
+    "NEW_PASS": "Nova senha",
+    "CONFIRM_PASS": "Confirmar senha",
+    "CHANGE_PASS": "Alterar Senha",
+    "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
+    "INVALID_PASS":"Informe a senha",
+    "EDIT_SUCCESS": "Informações alteradas com sucesso!"
   },
 
   "SIDE_MENU": {
