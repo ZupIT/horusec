@@ -31,7 +31,7 @@ Horusec is a security tool that centralizes many security test into one result.
 Currently, performance analysis consists of:
 * Python(3.x) => ([Bandit][Bandit] and [Safety][Safety])
 * Ruby => ([Brakeman][Brakeman])
-* Javascript => ([Npm Audit][NpmAudit] and [Yarn Audit][YarnAudit])
+* Javascript => ([Npm Audit][NpmAudit] and [Yarn Audit][YarnAudit] and [Eslint][Eslint])
 * GoLang => ([Gosec][Gosec])
 * .NetCore(3.x) => ([.NetCore][CodeSecuriyScan])
 * Java => ([HorusecJava][HorusecJava])
