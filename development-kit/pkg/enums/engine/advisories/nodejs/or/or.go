@@ -108,7 +108,7 @@ func NewNodeJSOrSQLInjection() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)query\(.*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)`),
-			regexp.MustCompile(`(?i)(var|let|const)?\w*\s*(=|:).*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)`),
+			regexp.MustCompile(`(?i)((?:var|let|const)?\s*\w+.?\s*(=|:).*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)\s*\w+$)`),
 		},
 	}
 }
