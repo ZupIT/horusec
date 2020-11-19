@@ -16,12 +16,13 @@ package analysis
 
 import (
 	"encoding/json"
-	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAnalysis(t *testing.T) {
@@ -29,7 +30,7 @@ func TestNewAnalysis(t *testing.T) {
 }
 
 func TestAnalysis_StartAnalysis(t *testing.T) {
-	t.Run("Should return success when read analysis and return seven vulnerabilities", func(t *testing.T) {
+	t.Run("Should return success when read analysis and return 5 vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.SetOutputFilePath("./csharp-tmp.output.json")
 		configs.SetProjectPath("../../examples/csharp-generic-vuln")

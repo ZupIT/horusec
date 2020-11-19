@@ -29,17 +29,49 @@
 ## What is Horusec?
 Horusec is a security tool that centralizes many security test into one result.
 Currently, performance analysis consists of:
-* Python(3.x) => ([Bandit][Bandit] and [Safety][Safety])
-* Ruby => ([Brakeman][Brakeman])
-* Javascript => ([Npm Audit][NpmAudit] and [Yarn Audit][YarnAudit])
-* GoLang => ([Gosec][Gosec])
-* .NetCore(3.x) => ([.NetCore][CodeSecuriyScan])
-* Java => ([HorusecJava][HorusecJava])
-* Kotlin => ([HorusecKotlin][HorusecKotlin])
-* Terraform => ([Tfsec][Tfsec])
-* Leaks => ([HorusecLeaks][HorusecLeaks])
-* Leaks(optional search in git history) => ([GitLeaks][Gitleaks])
-
+* Python
+    * [Bandit][Bandit]
+    * [Safety][Safety]
+    * [Semgrep][Semgrep]
+* Ruby
+    * [Brakeman][Brakeman]
+* Javascript
+    * [Npm Audit][NpmAudit]
+    * [Yarn Audit][YarnAudit]
+    * [Semgrep][Semgrep]
+    * [HorusecNodeJS][HorusecNodeJS]
+    * [EsLint][EsLint]
+* Typescript
+    * [HorusecNodeJS][HorusecNodeJS]
+    * [Semgrep][Semgrep]
+* GoLang
+    * [Gosec][Gosec]
+    * [Semgrep][Semgrep]
+* C#
+    * [SecuriyCodeScan][SecuriyCodeScan]
+    * [HorusecCSharp][HorusecCSharp]
+* Java
+    * [HorusecJava][HorusecJava]
+    * [Semgrep][Semgrep]
+* Kotlin
+    * [HorusecKotlin][HorusecKotlin]
+* Kubernetes
+    * [HorusecKubernetes][HorusecKubernetes]
+* Terraform
+    * [Tfsec][Tfsec]
+* Leaks
+    * [HorusecLeaks][HorusecLeaks]
+* Leaks(optional search in git history)
+    * [GitLeaks][Gitleaks]
+* PHP
+    * [Semgrep][Semgrep]
+* C
+    * [Semgrep][Semgrep]
+* HTML
+    * [Semgrep][Semgrep]
+* JSON
+    * [Semgrep][Semgrep]
+    
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
 ### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
@@ -148,8 +180,12 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [HorusecKotlin]: https://github.com/ZupIT/horusec/tree/master/horusec-kotlin
 [HorusecJava]: https://github.com/ZupIT/horusec/tree/master/horusec-java
 [HorusecLeaks]: https://github.com/ZupIT/horusec/tree/master/horusec-leaks
+[HorusecKubernetes]: https://github.com/ZupIT/horusec/tree/master/horusec-kubernetes
+[HorusecCSharp]: https://github.com/ZupIT/horusec/tree/master/horusec-csharp
+[HorusecNodeJS]: https://github.com/ZupIT/horusec/tree/master/horusec-nodejs
 [FindSec]: https://find-sec-bugs.github.io
 [Tfsec]: https://github.com/liamg/tfsec
-[CodeSecuriyScan]: https://security-code-scan.github.io/
-
+[SecuriyCodeScan]: https://security-code-scan.github.io/
+[Semgrep]: https://github.com/returntocorp/semgrep
+[EsLint]: https://github.com/eslint/eslint
 

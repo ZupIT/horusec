@@ -33,6 +33,7 @@ const (
 	Semgrep           Tool = "Semgrep"
 	HorusecCsharp     Tool = "HorusecCsharp"
 	HorusecKubernetes Tool = "HorusecKubernetes"
+	HorusecNodejs     Tool = "HorusecNodeJS"
 )
 
 func (t Tool) ToString() string {
