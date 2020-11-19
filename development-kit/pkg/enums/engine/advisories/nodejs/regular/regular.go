@@ -23,7 +23,6 @@ import (
 	"regexp"
 )
 
-
 func NewNodeJSRegularNoLogSensitiveInformationInConsole() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
