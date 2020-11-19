@@ -41,6 +41,7 @@ func AllRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularNoUseWeakRandom(),
 		regular.NewNodeJSRegularSQLInjection(),
 		regular.NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive(),
+		regular.NewNodeJSRegularUsingIntrusivePermissionsWithGeolocation(),
 	}
 }
 
@@ -55,6 +56,10 @@ func AllRulesNodeJSAnd() []text.TextRule {
 		and.NewNodeJSAndServerCertificatesNotVerified(),
 		and.NewNodeJSAndUntrustedContentShouldNotBeIncluded(),
 		and.NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive(),
+		and.NewNodeJSAndUsingShellInterpreterWhenExecutingOSCommands(),
+		and.NewNodeJSAndForwardingClientIPAddress(),
+		and.NewNodeJSAndAllowingConfidentialInformationToBeLoggedWithSignale(),
+		and.NewNodeJSAndAllowingBrowsersToPerformDNSPrefetching(),
 	}
 }
 
@@ -62,6 +67,7 @@ func AllRulesNodeJSOr() []text.TextRule {
 	return []text.TextRule{
 		or.NewNodeJSOrEncryptionAlgorithmsWeak(),
 		or.NewNodeJSOrFileUploadsShouldBeRestricted(),
-		or.NewNodeJSAndAllowingRequestsWithExcessiveContentLengthSecurity(),
+		or.NewNodeJSOrAllowingRequestsWithExcessiveContentLengthSecurity(),
+		or.NewNodeJSOrNoDisableSanitizeHtml(),
 	}
 }

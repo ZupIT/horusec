@@ -51,8 +51,8 @@ func NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)|from\s.request.`),
 			regexp.MustCompile(`\.get\(.*(req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`require\((?:'|\")request(?:'|\")\)|from\s.request.`),
 		},
 	}
 }
@@ -68,8 +68,8 @@ func NewNodeJSAndCryptographicRsaShouldBeRobust() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.generateKeyPairSync\(.*rsa`),
 			regexp.MustCompile(`(modulusLength:\s*)([0-9][^\d]|[0-9]{2}[^\d]|[0-9]{3}[^\d]|[0-1][0-9]{3}[^\d]|20[0-3][0-9]|204[0-7])`),
+			regexp.MustCompile(`\.generateKeyPairSync\(.*rsa`),
 		},
 	}
 }
@@ -85,8 +85,8 @@ func NewNodeJSAndCryptographicEcShouldBeRobust() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.generateKeyPairSync\(.*ec`),
 			regexp.MustCompile(`(namedCurve:.*secp)([0-9][^\d]|[0-9]{2}[^\d]|[0-2][0-2][0-3][^\d])`),
+			regexp.MustCompile(`\.generateKeyPairSync\(.*ec`),
 		},
 	}
 }
@@ -102,9 +102,9 @@ func NewNodeJSAndJWTNeedStrongCipherAlgorithms() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`((algorithm[s]?:.*none)|(algorithm[s]?:.*RS256))`),
 			regexp.MustCompile(`require\(.jsonwebtoken.\)|from\s.jsonwebtoken.`),
 			regexp.MustCompile(`\.sign\(`),
-			regexp.MustCompile(`((algorithm[s]?:.*none)|(algorithm[s]?:.*RS256))`),
 		},
 	}
 }
@@ -120,8 +120,8 @@ func NewNodeJSAndServerHostnameNotVerified() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
 			regexp.MustCompile(`checkServerIdentity.*\{\s*\}`),
+			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
 		},
 	}
 }
@@ -137,8 +137,8 @@ func NewNodeJSAndServerCertificatesNotVerified() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
 			regexp.MustCompile(`rejectUnauthorized.*false`),
+			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
 		},
 	}
 }
@@ -154,9 +154,9 @@ func NewNodeJSAndUntrustedContentShouldNotBeIncluded() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`setAttribute\(.src.,\s*[^"|']\w+[^"|']`),
 			regexp.MustCompile(`createElement\(`),
 			regexp.MustCompile(`setAttribute\(.*,.*text/javascript`),
-			regexp.MustCompile(`setAttribute\(.src.,\s*[^"|']\w+[^"|']`),
 		},
 	}
 }
@@ -164,7 +164,7 @@ func NewNodeJSAndUntrustedContentShouldNotBeIncluded() text.TextRule {
 func NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "04b93a07-d0cf-435b-9a3b-54cb5ff22ce6",
+			ID:          "c25c5d12-1ae0-4d74-bff1-2ccee6548da9",
 			Name:        "Mysql Hard-coded credentials are security-sensitive",
 			Description: "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source. It's recommended to customize the configuration of this rule with additional credential words such as \"oauthToken\", \"secret\", others. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severity.High.ToString(),
@@ -172,9 +172,79 @@ func NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`mysql\.createConnection\(`),
 			regexp.MustCompile(`(host|user|database|password|port):\s*["|']\w+["|']`),
+			regexp.MustCompile(`mysql\.createConnection\(`),
 		},
 	}
 }
 
+func NewNodeJSAndUsingShellInterpreterWhenExecutingOSCommands() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "04b93a07-d0cf-435b-9a3b-54cb5ff22ce6",
+			Name:        "Using shell interpreter when executing OS commands",
+			Description: "Arbitrary OS command injection vulnerabilities are more likely when a shell is spawned rather than a new process, indeed shell meta-chars can be used (when parameters are user-controlled for instance) to inject OS commands. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(\.exec\(|\.execSync\(|\.spawn\(|\.spawnSync\(|\.execFile\(|\.execFileSync\()((.*,(.|\s)*shell\s*:\strue)|(("|')?(\w|\s)+("|')?[^,]\))|(.*,.*\{)(([^s]|s[^h]|sh[^e]|she[^l]|shel[^l])*)(\}))`),
+			regexp.MustCompile(`child_process`),
+		},
+	}
+}
+
+func NewNodeJSAndForwardingClientIPAddress() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "3625aaac-d09f-4f57-9bdd-2901882c653f",
+			Name:        "Forwarding client IP address",
+			Description: "Users often connect to web servers through HTTP proxies. Proxy can be configured to forward the client IP address via the X-Forwarded-For or Forwarded HTTP headers. IP address is a personal information which can identify a single user and thus impact his privacy. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`xfwd\s*:\s*true`),
+			regexp.MustCompile(`http-proxy|http-proxy-middleware`),
+			regexp.MustCompile(`\.createProxyServer\(|\.createProxyMiddleware\(`),
+		},
+	}
+}
+
+func NewNodeJSAndAllowingConfidentialInformationToBeLoggedWithSignale() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "81a94577-4874-434d-a8ce-d5c3950df418",
+			Name:        "Allowing confidential information to be logged with signale",
+			Description: "Log management is an important topic, especially for the security of a web application, to ensure user activity, including potential attackers, is recorded and available for an analyst to understand what's happened on the web application in case of malicious activities. Retention of specific logs for a defined period of time is often necessary to comply with regulations such as GDPR, PCI DSS and others. However, to protect user's privacy, certain informations are forbidden or strongly discouraged from being logged, such as user passwords or credit card numbers, which obviously should not be stored or at least not in clear text. For more information checkout the CWE-532 (https://cwe.mitre.org/data/definitions/532.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`secrets\s*:\s*\[\s*\]`),
+			regexp.MustCompile(`signale`),
+			regexp.MustCompile(`new\sSignale`),
+		},
+	}
+}
+
+func NewNodeJSAndAllowingBrowsersToPerformDNSPrefetching() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "77040aa2-5322-4092-849e-c9448fdea3bc",
+			Name:        "Allowing browsers to perform DNS prefetching",
+			Description: "By default, web browsers perform DNS prefetching to reduce latency due to DNS resolutions required when an user clicks links from a website page. It can add significant latency during requests, especially if the page contains many links to cross-origin domains. DNS prefetch allows web browsers to perform DNS resolving in the background before the user clicks a link. This feature can cause privacy issues because DNS resolving from the user's computer is performed without his consent if he doesn't intent to go to the linked website. On a complex private webpage, a combination \"of unique links/DNS resolutions\" can indicate, to a eavesdropper for instance, that the user is visiting the private page. For more information checkout the OWASP A3:2017 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A3-Sensitive_Data_Exposure.html advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`dnsPrefetchControl\(`),
+			regexp.MustCompile(`helmet`),
+			regexp.MustCompile(`allow\s*:\s*true`),
+		},
+	}
+}

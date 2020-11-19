@@ -265,7 +265,6 @@ func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
 	}
 }
 
-
 func NewNodeJSRegularSQLInjection() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -294,6 +293,23 @@ func NewNodeJSRegularStaticallyServingHiddenFilesIsSecuritySensitive() text.Text
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`dotfiles.*allow`),
+		},
+	}
+}
+
+func NewNodeJSRegularUsingIntrusivePermissionsWithGeolocation() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "37a70026-eb50-4062-86a7-4bd933888cd2",
+			Name:        "Using intrusive permissions With Geolocation",
+			Description: "Powerful features are browser features (geolocation, camera, microphone ...) that can be accessed with JavaScript API and may require a permission granted by the user. These features can have a high impact on privacy and user security thus they should only be used if they are really necessary to implement the critical parts of an application.\n\nThis rule highlights intrusive permissions when requested with the future standard (but currently experimental) web browser query API and specific APIs related to the permission. It is highly recommended to customize this rule with the permissions considered as intrusive in the context of the web application. If geolocation is required, always explain to the user why the application needs it and prefer requesting an approximate location when possible. For more information checkout the CWE-250 (https://cwe.mitre.org/data/definitions/250.html) and OWASP A3:2017 (https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html) advisory.",
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`permissions\.query\(.*geolocation`),
+			regexp.MustCompile(`geolocation\.getCurrentPosition\(`),
 		},
 	}
 }

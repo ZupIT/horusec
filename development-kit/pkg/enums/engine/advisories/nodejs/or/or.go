@@ -58,7 +58,7 @@ func NewNodeJSOrFileUploadsShouldBeRestricted() text.TextRule {
 	}
 }
 
-func NewNodeJSAndAllowingRequestsWithExcessiveContentLengthSecurity() text.TextRule {
+func NewNodeJSOrAllowingRequestsWithExcessiveContentLengthSecurity() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "14fe5ebe-037e-4720-97c5-1c3c2db4d714",
@@ -67,11 +67,31 @@ func NewNodeJSAndAllowingRequestsWithExcessiveContentLengthSecurity() text.TextR
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(new\sFormidable(.|\n)*)maxFileSize\s*=\s*([8-9][0-9]{6}|[1-9][0-9]{6}[0-9]+)`),
 			regexp.MustCompile(`(multer(.|\n)*)fileSize\s*:\s*([8-9][0-9]{6}|[1-9][0-9]{6}[0-9]+)`),
 			regexp.MustCompile(`(multer\(\s*\{)(([^f]|f[^i]|fi[^l]|fil[^e]|file[^S]|fileS[^i]|fileSi[^z]|fileSiz[^e])*)(\}\s*\))`),
+		},
+	}
+}
+
+func NewNodeJSOrNoDisableSanitizeHtml() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "3137ce82-02b2-4894-a5e1-8e46b766321d",
+			Name:        "No Disable Sanitize Html",
+			Description: "To reduce the risk of cross-site scripting attacks, templating systems, such as Twig, Django, Smarty, Groovy's template engine, allow configuration of automatic variable escaping before rendering templates. When escape occurs, characters that make sense to the browser (eg: <a>) will be transformed/replaced with escaped/sanitized values (eg: & lt;a& gt; ). Enable auto-escaping by default and continue to review the use of inputs in order to be sure that the chosen auto-escaping strategy is the right one. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)Mustache.escape`),
+			regexp.MustCompile(`(?i)(Handlebars)?\.compile(.|\s)*noEscape`),
+			regexp.MustCompile(`(?i)(markdownIt|markdown-it)(.|\s)*html.*true`),
+			regexp.MustCompile(`(?i)(marked)?\.setOptions(.|\s)*sanitize.*false`),
+			regexp.MustCompile(`(?i)(kramed)?\.Renderer(.|\s)*sanitize.*false`),
 		},
 	}
 }
