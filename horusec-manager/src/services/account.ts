@@ -40,6 +40,13 @@ const createAccount = (username: string, password: string, email: string) => {
   });
 };
 
+const update = (username: string, email: string) => {
+  return http.patch(`${SERVICE_AUTH}/api/account/update`, {
+    username,
+    email,
+  });
+};
+
 const createAccountFromKeycloak = (accessToken: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/create-account-from-keycloak`, {
     accessToken,
@@ -125,4 +132,5 @@ export default {
   verifyUniqueUsernameEmail,
   getHorusecConfig,
   createAccountFromKeycloak,
+  update,
 };
