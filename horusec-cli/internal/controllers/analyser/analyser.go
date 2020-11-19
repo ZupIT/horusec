@@ -17,6 +17,7 @@ package analyser
 import (
 	"fmt"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 	"log"
 	"os"
 	"os/signal"
@@ -184,6 +185,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Ruby:       a.detectVulnerabilityRuby,
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
+		languages.Yaml:       a.detectVulnerabilityYaml,
 	}
 }
 
@@ -239,6 +241,11 @@ func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
