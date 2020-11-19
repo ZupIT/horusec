@@ -16,12 +16,13 @@ package analysis
 
 import (
 	"encoding/json"
-	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAnalysis(t *testing.T) {
@@ -36,10 +37,10 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
 		fileBytes, err := ioutil.ReadFile("./csharp-tmp.output.json")
-		data := []engine.Finding{}
+		var data []engine.Finding
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 5, len(data))
+		assert.Equal(t, len(data), 5)
 	})
 	t.Run("Should return error when create file", func(t *testing.T) {
 		configs := config.NewConfig()

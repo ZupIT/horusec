@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horuseccsharp
+package horuseckubernetes
 
 import (
 	"errors"
@@ -27,7 +27,7 @@ import (
 )
 
 func TestParseOutputHorusecCsharp(t *testing.T) {
-	t.Run("HorusecCsharp Should not return panic and but append errors found in analysis", func(t *testing.T) {
+	t.Run("HorusecKubernetes Should not return panic and but append errors found in analysis", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("DeleteContainersFromAPI")
@@ -45,25 +45,25 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 			assert.NotEqual(t, len(analysis.Errors), 0)
 		})
 	})
-	t.Run("HorusecCsharp Should not return panic and exists vulnerabilities when call start horusec csharp", func(t *testing.T) {
+	t.Run("HorusecKubernetes Should not return panic and exists vulnerabilities when call start horusec csharp", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		responseContainer := `
-				[
-				  {
-					"ID": "1079260f-aea3-4d10-9b14-1a96d7043dad",
-					"Name": "test vuln",
-					"Severity": "HIGH",
-					"CodeSample": "test code;",
-					"Confidence": "LOW",
-					"Description": "example description.",
-					"SourceLocation": {
-					  "Filename": "test.cs",
-					  "Line": 2,
-					  "Column": 7
-					}
-				  }
-				]
-				`
+			[
+			  {
+				"ID": "1079260f-aea3-4d10-9b14-1a96d7043dad",
+				"Name": "test vuln",
+				"Severity": "HIGH",
+				"CodeSample": "test code;",
+				"Confidence": "LOW",
+				"Description": "example description.",
+				"SourceLocation": {
+				  "Filename": "test.yaml",
+				  "Line": 2,
+				  "Column": 7
+				}
+			  }
+			]
+			`
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("DeleteContainersFromAPI")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(responseContainer, nil)
@@ -79,7 +79,7 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 			assert.NotEqual(t, len(analysis.AnalysisVulnerabilities), 0)
 		})
 	})
-	t.Run("HorusecCsharp Should return empty analysis when format is empty", func(t *testing.T) {
+	t.Run("HorusecKubernetes Should return empty analysis when format is empty", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
@@ -97,7 +97,7 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
-	t.Run("HorusecCsharp Should return empty analysis when format is null", func(t *testing.T) {
+	t.Run("HorusecKubernetes Should return empty analysis when format is null", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
@@ -115,7 +115,7 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
-	t.Run("HorusecCsharp Should return error when invalid output", func(t *testing.T) {
+	t.Run("HorusecKubernetes Should return error when invalid output", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
@@ -136,7 +136,7 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep,horuseccsharp",
+			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep,horuseccsharp,horuseckubernetes",
 		}
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)

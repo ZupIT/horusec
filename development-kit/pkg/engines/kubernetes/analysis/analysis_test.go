@@ -16,13 +16,12 @@ package analysis
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
-	"testing"
-
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"os"
+	"testing"
 )
 
 func TestNewAnalysis(t *testing.T) {
@@ -32,15 +31,15 @@ func TestNewAnalysis(t *testing.T) {
 func TestAnalysis_StartAnalysis(t *testing.T) {
 	t.Run("Should return success when read analysis and return seven vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
-		configs.SetOutputFilePath("./java-tmp.output.json")
-		configs.SetProjectPath("../../examples/java-hardcodedpass")
+		configs.SetOutputFilePath("./kubernetes-tmp.output.json")
+		configs.SetProjectPath("../../examples/kubernetes-yaml")
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
-		fileBytes, err := ioutil.ReadFile("./java-tmp.output.json")
+		fileBytes, err := ioutil.ReadFile("./kubernetes-tmp.output.json")
 		var data []engine.Finding
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 5, len(data))
+		assert.Equal(t, 1, len(data))
 	})
 	t.Run("Should return error when create file", func(t *testing.T) {
 		configs := config.NewConfig()
