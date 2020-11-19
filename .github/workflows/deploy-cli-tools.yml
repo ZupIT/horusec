@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tool_name:
-        description: 'Tool to deploy on dockerhub: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks'
+        description: 'Tool to deploy on dockerhub: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, eslint'
         required: true
       update_type:
         description: 'Update Type: alpha, rc, release, minor, major'
