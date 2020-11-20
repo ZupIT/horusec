@@ -39,12 +39,14 @@ const setTokens = (
   refreshToken: string,
   expiresAt?: string
 ) => {
-  if (accessToken) window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
+  if (accessToken)
+    window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
 
   if (refreshToken)
     window.localStorage.setItem(localStorageKeys.REFRESH_TOKEN, refreshToken);
 
-  if (expiresAt) window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
+  if (expiresAt)
+    window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
 const handleSetKeyclockData = async (
@@ -85,7 +87,9 @@ const isLogged = (): boolean => {
   }
 
   if (authType === authTypes.HORUSEC || authType === authTypes.LDAP) {
-    const expiresAt = window.localStorage.getItem(localStorageKeys.TOKEN_EXPIRES);
+    const expiresAt = window.localStorage.getItem(
+      localStorageKeys.TOKEN_EXPIRES
+    );
 
     if (!accessToken || !expiresAt) return false;
 

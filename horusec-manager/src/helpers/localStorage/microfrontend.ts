@@ -25,7 +25,10 @@ const isAuthenticatedInMicrofrontend = (): boolean => {
 };
 
 const setIsMicrofrontend = (value: boolean) => {
-  window.localStorage.setItem(localStorageKeys.MICROFRONTEND, JSON.stringify(value));
+  window.localStorage.setItem(
+    localStorageKeys.MICROFRONTEND,
+    JSON.stringify(value)
+  );
 };
 
 export { isMicrofrontend, isAuthenticatedInMicrofrontend, setIsMicrofrontend };

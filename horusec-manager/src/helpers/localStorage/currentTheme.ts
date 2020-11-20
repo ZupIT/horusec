@@ -20,7 +20,7 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 
 const getCurrentTheme = () => {
   const currentTheme =
-  window.localStorage.getItem(localStorageKeys.THEME) ||
+    window.localStorage.getItem(localStorageKeys.THEME) ||
     process.env.REACT_APP_HORUSEC_MANAGER_THEME ||
     'dark';
 
