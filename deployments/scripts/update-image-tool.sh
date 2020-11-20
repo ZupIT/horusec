@@ -99,7 +99,7 @@ getDirectoryAndImageNameByToolName () {
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-leaks";;
         "horusec-nodejs")
             IMAGE_NAME="horuszup/horusec-nodejs"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/nodejs/horusecnodejs/config.go"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/horusecnodejs/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-nodejs";;
         "horusec-kubernetes")
             IMAGE_NAME="horuszup/horusec-kubernetes"
