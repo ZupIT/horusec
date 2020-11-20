@@ -215,16 +215,8 @@ func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound
 }
 
 func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
-	switch lang {
-	case languages.Javascript.ToString():
-		return true
-	case languages.TypeScript.ToString():
-		return true
-	case "TSX":
-		return true
-	case "JSX":
-		return true
-	default:
-		return false
-	}
+	return strings.EqualFold(lang, languages.Javascript.ToString()) ||
+		strings.EqualFold(lang, languages.TypeScript.ToString()) ||
+		strings.EqualFold(lang, "TSX") ||
+		strings.EqualFold(lang, "JSX")
 }
