@@ -16,7 +16,7 @@ package eslint
 
 const (
 	ImageName = "horuszup/eslint"
-	ImageTag  = "latest"
+	ImageTag  = "v0.0.1"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		eslint \
