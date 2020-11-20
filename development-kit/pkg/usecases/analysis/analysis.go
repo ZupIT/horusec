@@ -177,6 +177,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecLeaks,
 		tools.Semgrep,
 		tools.HorusecCsharp,
+		tools.HorusecNodejs,
 		tools.Eslint,
 		tools.HorusecKubernetes,
 	}

@@ -31,4 +31,5 @@ const (
 		"ATTENTION the waiting time can be longer when this option is enabled!"
 	MsgWarnNetCoreDeprecated = "{HORUSEC_CLI} 'netCore' key in workdir will change to 'csharp', " +
 		"please change in your horusec-config.json"
+	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the list of vulnerabilities pointed out by Horusec: "
 )
