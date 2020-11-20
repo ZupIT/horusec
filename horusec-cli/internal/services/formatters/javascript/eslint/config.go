@@ -38,7 +38,7 @@ const (
 			--rule 'security/detect-unsafe-regex: warn' \
 			--parser-options=ecmaVersion:7 \
 			--parser-options=sourceType:module \
-			"*/**/*.{js,ts,tsx}" > /tmp/results.json
+			"*/**/*.js" > /tmp/results.json
 		cat /tmp/results.json
 	`
 )
