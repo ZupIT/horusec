@@ -114,7 +114,7 @@ func (f *Formatter) concatOutputIntoAnalysisVulns(output *[]eslint.Output) {
 // nolint
 func (f *Formatter) parseOutputToVuln(filePath, source string, message eslint.Message) *horusec.Vulnerability {
 	return &horusec.Vulnerability{
-		File:         filePath,
+		File:         f.RemoveSrcFolderFromPath(filePath),
 		Line:         fmt.Sprintf(`%d`, message.Line),
 		Column:       fmt.Sprintf(`%d`, message.Column),
 		Language:     languages.Javascript,
