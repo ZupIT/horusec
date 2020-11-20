@@ -41,7 +41,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		data := []engine.Finding{}
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 17)
+		assert.Equal(t, len(data), 16)
 	})
 	t.Run("Should return success when read analysis and return two vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()

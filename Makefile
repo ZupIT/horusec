@@ -155,10 +155,10 @@ install-semver:
 
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
-	horusec version
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec*" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-current" ./horusec-cli/cmd/horusec/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-current"
+	horusec-current version
 
 build-install-leaks-cli:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null
