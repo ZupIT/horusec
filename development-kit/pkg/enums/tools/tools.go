@@ -33,6 +33,7 @@ const (
 	Semgrep           Tool = "Semgrep"
 	HorusecCsharp     Tool = "HorusecCsharp"
 	HorusecKubernetes Tool = "HorusecKubernetes"
+	Eslint            Tool = "Eslint"
 	HorusecNodejs     Tool = "HorusecNodeJS"
 )
 
