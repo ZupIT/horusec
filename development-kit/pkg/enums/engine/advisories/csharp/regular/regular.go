@@ -35,7 +35,7 @@ func NewCsharpRegularNoLogSensitiveInformationInConsole() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`((Log|log).*\.(V|D|I|W|E|F|S))|(Console.Write)`),
+			regexp.MustCompile(`(?i)(((Log|log).*\.(Verbose|Debug|Info|Warn|Erro|ForContext|FromLogContext|Seq))|(Console.Write))`),
 		},
 	}
 }
