@@ -189,10 +189,6 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
 		languages.Yaml:       a.detectVulnerabilityYaml,
-		languages.TypeScript: a.detectVulnerabilityGeneric,
-		languages.C:          a.detectVulnerabilityGeneric,
-		languages.PHP:        a.detectVulnerabilityGeneric,
-		languages.HTML:       a.detectVulnerabilityGeneric,
 	}
 }
 
