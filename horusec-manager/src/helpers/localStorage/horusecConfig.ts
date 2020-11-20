@@ -16,11 +16,6 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { HorusecConfig } from 'helpers/interfaces/HorusecConfig';
-import {
-  setLocalStorage,
-  getLocalStorage,
-  removeLocalStorage,
-} from 'helpers/localStorage/base';
 
 const initialValues: HorusecConfig = {
   authType: null,
@@ -28,16 +23,16 @@ const initialValues: HorusecConfig = {
 };
 
 const getCurrentConfig = (): HorusecConfig => {
-  const config = getLocalStorage(localStorageKeys.CONFIG);
+  const config = window.localStorage.getItem(localStorageKeys.CONFIG);
   return config ? JSON.parse(config) : initialValues;
 };
 
 const setCurrenConfig = (value: HorusecConfig) => {
-  setLocalStorage(localStorageKeys.CONFIG, JSON.stringify(value));
+  window.localStorage.setItem(localStorageKeys.CONFIG, JSON.stringify(value));
 };
 
 const clearCurrentConfig = () => {
-  removeLocalStorage(localStorageKeys.CONFIG);
+  window.localStorage.removeItem(localStorageKeys.CONFIG);
 };
 
 export { getCurrentConfig, setCurrenConfig, clearCurrentConfig };

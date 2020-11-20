@@ -7,7 +7,7 @@
   "horusecCliPrintOutputType": "text",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-  "horusecCliFilesOrPathsToIgnore": "**/e2e/**, **/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, **/development-kit/pkg/enums/engine/advisories/**, **/horusec-lp/.cache/**, **/horusec-lp/public/**, **/deployments/docker-compose*, **/horusec-cli/cmd/horusec/start/analysis/*",
+  "horusecCliFilesOrPathsToIgnore": "**/e2e/**, **/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, **/development-kit/pkg/enums/engine/advisories/**, **/horusec-lp/.cache/**, **/horusec-lp/public/**, **/deployments/docker-compose*, **/horusec-cli/cmd/horusec/start/analysis/*, **/horusec-manager/src/helpers/localStorage/**",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliProjectPath": "./",
   "horusecCliFalsePositiveHashes": "b17a7ef9ebf374c594700c1bfbf9d3594de68f0fc23af6171269f1f629a8abcf, 0870cfa59cfe7ef087e45762ce1d66cb6fdc85196323fcfae2e90167f242e4b3, 3198f2595d15ba1a01174329c944e3af9f7b3a7af7914e857eb9b82684633236, b85977d0bc430b00f17bc9f431d70b272110afea2549ee41bf03369bf99572d2, 312a4ee6b6b74a8c667e6f907568d9feaa0f0a69091f322abbcdf0562b9a3914, a452ff6d2565d67f118c80866a38a25871606751421347211b8932eb55aed85b, 3a0c53aae9a54d01e97417f2e495ca74c1f8874b0e4805fc622e50f7633838a8, 6a669b83a533c64fccc304fd7dbf3d491e85ec0a852f0d154fe813704765da8e, 4d4cc9d51d9c049b4a7bcedd330445d54bab832a8760543ebf990e86c17fdca0, 4868ef9970205c00a1c48b0e3e0debccf5a31e2e68767e25bd1d6bab36966822, f4f5d429ea2a8cbed3813ee58bac655162c65e50c64f68b65de6cfe408ab91c1, 8fd7c193876b7a7d26936c897e15135693d26f55b3c7c91bbdd5024f8ce12f81, 87956a8852a3d1b4b904b48815904ecd8f8932cd577d3a109e4139b3b5955e2c",

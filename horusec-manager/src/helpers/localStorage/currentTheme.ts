@@ -17,11 +17,10 @@
 import * as THEME from 'config/themes';
 import get from 'lodash/get';
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
-import { setLocalStorage, getLocalStorage } from 'helpers/localStorage/base';
 
 const getCurrentTheme = () => {
   const currentTheme =
-    getLocalStorage(localStorageKeys.THEME) ||
+  window.localStorage.getItem(localStorageKeys.THEME) ||
     process.env.REACT_APP_HORUSEC_MANAGER_THEME ||
     'dark';
 
@@ -29,7 +28,7 @@ const getCurrentTheme = () => {
 };
 
 const setCurrentTheme = (value: 'dark' | 'light' | 'galapagos') => {
-  setLocalStorage(localStorageKeys.USER, value);
+  window.localStorage.setItem(localStorageKeys.USER, value);
 };
 
 export { getCurrentTheme, setCurrentTheme };
