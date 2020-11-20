@@ -189,7 +189,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
 		languages.Yaml:       a.detectVulnerabilityYaml,
-		languages.TypeScript: a.detectVulnerabilityTypescript,
+		languages.TypeScript: a.detectVulnerabilityGeneric,
 		languages.C:          a.detectVulnerabilityGeneric,
 		languages.PHP:        a.detectVulnerabilityGeneric,
 		languages.HTML:       a.detectVulnerabilityGeneric,
@@ -233,14 +233,6 @@ func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-}
-
-func (a *Analyser) detectVulnerabilityTypescript(projectSubPath string) {
-	a.monitor.AddProcess(4)
-	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {

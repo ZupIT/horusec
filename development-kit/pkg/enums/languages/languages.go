@@ -55,7 +55,6 @@ func SupportedLanguages() []Language {
 		Java,
 		Kotlin,
 		Javascript,
-		TypeScript,
 		Leaks,
 		HCL,
 		Generic,
