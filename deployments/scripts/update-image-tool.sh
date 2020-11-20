@@ -180,7 +180,7 @@ updateImage () {
     updateVersionInConfigFile
     updateVersionInCliVersionFile
 
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs" ]]
     then
         DIRECTORY_SEMVER="$DIRECTORY_SEMVER/deployments"
     fi
@@ -203,7 +203,7 @@ updateVersionInConfigFile () {
 }
 
 updateVersionInCliVersionFile () {
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs" ]]
     then
         sed -i -e "s/{{VERSION_NOT_FOUND}}/$NEW_RELEASE/g" "./development-kit/pkg/cli_standard/cmd/version/version.go"
     fi
@@ -215,7 +215,7 @@ rollbackVersionInConfigFile () {
 }
 
 rollbackVersionInCliVersionFile () {
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs" ]]
     then
         sed -i -e "s/$NEW_RELEASE/{{VERSION_NOT_FOUND}}/g" "./development-kit/pkg/cli_standard/cmd/version/version.go"
     fi
