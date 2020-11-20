@@ -58,7 +58,7 @@ func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language
 		return nil, err
 	}
 
-	langs = append(langs, languagesFound...)
+	langs = ld.appendLanguagesFound(langs, languagesFound)
 
 	ld.configs.SetProjectPath(directory)
 	err = ld.copyProjectToHorusecFolder(directory)
@@ -85,7 +85,7 @@ func (ld *LanguageDetect) walkInPathAndReturnTotalToSkip(
 		if skip {
 			totalToSkip++
 		}
-		languagesFound = append(languagesFound, currentLanguagesFound...)
+		languagesFound = ld.appendLanguagesFound(languagesFound, currentLanguagesFound)
 		return nil
 	})
 	return totalToSkip, languagesFound, err
@@ -201,4 +201,22 @@ func (ld *LanguageDetect) isSupportedLanguage(langName string) bool {
 	}
 
 	return false
+}
+
+func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound []string) []string {
+	for _, lang := range languagesFound {
+		if ld.isTypescriptOrJavascriptLang(lang) {
+			existingLanguages = append(existingLanguages, languages.Javascript.ToString())
+		} else {
+			existingLanguages = append(existingLanguages, lang)
+		}
+	}
+	return ld.uniqueLanguages(existingLanguages)
+}
+
+func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
+	return strings.EqualFold(lang, languages.Javascript.ToString()) ||
+		strings.EqualFold(lang, languages.TypeScript.ToString()) ||
+		strings.EqualFold(lang, "TSX") ||
+		strings.EqualFold(lang, "JSX")
 }

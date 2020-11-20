@@ -62,12 +62,8 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 			languages.Java,
 			languages.Kotlin,
 			languages.Javascript,
-			languages.TypeScript,
 			languages.Leaks,
 			languages.HCL,
-			languages.C,
-			languages.PHP,
-			languages.HTML,
 			languages.Generic,
 		}, nil)
 
@@ -120,12 +116,8 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 			languages.Java,
 			languages.Kotlin,
 			languages.Javascript,
-			languages.TypeScript,
 			languages.Leaks,
 			languages.HCL,
-			languages.C,
-			languages.PHP,
-			languages.HTML,
 			languages.Generic,
 		}, nil)
 
