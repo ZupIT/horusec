@@ -37,10 +37,10 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
 		fileBytes, err := ioutil.ReadFile("./java-tmp.output.json")
-		data := []engine.Finding{}
+		var data []engine.Finding
 		_ = json.Unmarshal(fileBytes, &data)
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 6)
+		assert.Equal(t, 5, len(data))
 	})
 	t.Run("Should return error when create file", func(t *testing.T) {
 		configs := config.NewConfig()

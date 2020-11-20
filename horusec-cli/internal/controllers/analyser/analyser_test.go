@@ -56,14 +56,19 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
-			languages.Leaks,
 			languages.CSharp,
 			languages.Ruby,
 			languages.Python,
 			languages.Java,
 			languages.Kotlin,
 			languages.Javascript,
+			languages.TypeScript,
+			languages.Leaks,
 			languages.HCL,
+			languages.C,
+			languages.PHP,
+			languages.HTML,
+			languages.Generic,
 		}, nil)
 
 		printResultMock := &printresults.Mock{}
@@ -109,14 +114,19 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
-			languages.Leaks,
 			languages.CSharp,
 			languages.Ruby,
 			languages.Python,
 			languages.Java,
 			languages.Kotlin,
 			languages.Javascript,
+			languages.TypeScript,
+			languages.Leaks,
 			languages.HCL,
+			languages.C,
+			languages.PHP,
+			languages.HTML,
+			languages.Generic,
 		}, nil)
 
 		printResultMock := &printresults.Mock{}

@@ -43,7 +43,7 @@ func NewCsharpOrLDAPInjection() text.TextRule {
 func NewCsharpOrSQLInjectionLinq() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "32fbdff3-2092-4d42-90a2-784842bebfd0",
+			ID:          "64cd7acd-99a8-4640-a2eb-ca839c47040d",
 			Name:        "SQL Injection LINQ",
 			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database.. For more information access: (https://security-code-scan.github.io/#SCS0002).",
 			Severity:    severity.High.ToString(),
@@ -51,8 +51,7 @@ func NewCsharpOrSQLInjectionLinq() text.TextRule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`ExecuteQuery\(.*SELECT .* FROM .* WHERE .* \+ .* \+ .*\)`),
-			regexp.MustCompile(`var .* = "SELECT .* FROM .* WHERE .* \+ .* \+ .*"`),
+			regexp.MustCompile(`(?i)(var|ExecuteQuery).*(=|\().*(SELECT|UPDATE|DELETE|INSERT).*\++`),
 		},
 	}
 }

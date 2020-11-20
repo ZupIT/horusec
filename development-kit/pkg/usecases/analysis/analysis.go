@@ -178,6 +178,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.Semgrep,
 		tools.HorusecCsharp,
 		tools.Eslint,
+		tools.HorusecKubernetes,
 	}
 }
 
@@ -198,6 +199,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.C,
 		languages.HTML,
 		languages.Generic,
+		languages.Yaml,
 		languages.Unknown,
 	}
 }

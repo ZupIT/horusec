@@ -48,22 +48,22 @@ func TestParseOutputHorusecCsharp(t *testing.T) {
 	t.Run("HorusecCsharp Should not return panic and exists vulnerabilities when call start horusec csharp", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		responseContainer := `
-[
-  {
-    "ID": "1079260f-aea3-4d10-9b14-1a96d7043dad",
-    "Name": "test vuln",
-    "Severity": "HIGH",
-    "CodeSample": "test code;",
-    "Confidence": "LOW",
-    "Description": "example description.",
-    "SourceLocation": {
-      "Filename": "test.cs",
-      "Line": 2,
-      "Column": 7
-    }
-  }
-]
-`
+				[
+				  {
+					"ID": "1079260f-aea3-4d10-9b14-1a96d7043dad",
+					"Name": "test vuln",
+					"Severity": "HIGH",
+					"CodeSample": "test code;",
+					"Confidence": "LOW",
+					"Description": "example description.",
+					"SourceLocation": {
+					  "Filename": "test.cs",
+					  "Line": 2,
+					  "Column": 7
+					}
+				  }
+				]
+				`
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("DeleteContainersFromAPI")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(responseContainer, nil)
