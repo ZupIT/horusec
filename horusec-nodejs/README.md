@@ -1,6 +1,6 @@
 # HORUSEC-NODEJS-CLI
 This is a Command Line Interface to make it search vulnerabilities in JavaScript and TypeScript projects.
-To learn more about the structure of this service you can see more in this <a href="../assets/horusec-nodejs.jpg">/assets/horusec-nodejs.jpg</a>.
+To learn more about the structure of this service you can see more in this <a href="../assets/horusec-analysis-cli.jpg">/assets/horusec-analysis-cli.jpg</a>.
 
 ## Using with docker
 To use with docker you can running this example:
