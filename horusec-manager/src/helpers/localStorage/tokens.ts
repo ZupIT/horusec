@@ -21,7 +21,11 @@ import { authTypes } from 'helpers/enums/authTypes';
 import accountService from 'services/account';
 import { setCurrentUser } from './currentUser';
 import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
-import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+} from 'helpers/localStorage/base';
 
 const getAccessToken = (): string => {
   return getLocalStorage(localStorageKeys.ACCESS_TOKEN);
@@ -40,14 +44,12 @@ const setTokens = (
   refreshToken: string,
   expiresAt?: string
 ) => {
-  if (accessToken)
-    setLocalStorage(localStorageKeys.ACCESS_TOKEN, accessToken);
+  if (accessToken) setLocalStorage(localStorageKeys.ACCESS_TOKEN, accessToken);
 
   if (refreshToken)
     setLocalStorage(localStorageKeys.REFRESH_TOKEN, refreshToken);
 
-  if (expiresAt)
-    setLocalStorage(localStorageKeys.TOKEN_EXPIRES, expiresAt);
+  if (expiresAt) setLocalStorage(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
 const handleSetKeyclockData = async (
@@ -88,9 +90,7 @@ const isLogged = (): boolean => {
   }
 
   if (authType === authTypes.HORUSEC || authType === authTypes.LDAP) {
-    const expiresAt = getLocalStorage(
-      localStorageKeys.TOKEN_EXPIRES
-    );
+    const expiresAt = getLocalStorage(localStorageKeys.TOKEN_EXPIRES);
 
     if (!accessToken || !expiresAt) return false;
 

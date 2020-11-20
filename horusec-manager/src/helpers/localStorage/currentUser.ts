@@ -17,12 +17,14 @@
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { User } from 'helpers/interfaces/User';
 import { getCurrentConfig } from './horusecConfig';
-import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+} from 'helpers/localStorage/base';
 
 const getCurrentUser = (): User | null => {
-  const localData: User = JSON.parse(
-    getLocalStorage(localStorageKeys.USER)
-  );
+  const localData: User = JSON.parse(getLocalStorage(localStorageKeys.USER));
 
   return localData;
 };

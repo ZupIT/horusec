@@ -16,7 +16,11 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { HorusecConfig } from 'helpers/interfaces/HorusecConfig';
-import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+} from 'helpers/localStorage/base';
 
 const initialValues: HorusecConfig = {
   authType: null,

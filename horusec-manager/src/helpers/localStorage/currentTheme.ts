@@ -21,7 +21,7 @@ import { setLocalStorage, getLocalStorage } from 'helpers/localStorage/base';
 
 const getCurrentTheme = () => {
   const currentTheme =
-  getLocalStorage(localStorageKeys.THEME) ||
+    getLocalStorage(localStorageKeys.THEME) ||
     process.env.REACT_APP_HORUSEC_MANAGER_THEME ||
     'dark';
 

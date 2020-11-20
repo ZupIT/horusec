@@ -16,7 +16,11 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { Company } from 'helpers/interfaces/Company';
-import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+} from 'helpers/localStorage/base';
 
 const getCurrentCompany = (): Company | null => {
   const localData: Company = JSON.parse(
