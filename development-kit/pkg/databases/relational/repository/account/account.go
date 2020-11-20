@@ -61,7 +61,7 @@ func (a *Account) GetByEmail(email string) (*authEntities.Account, error) {
 
 func (a *Account) Update(account *authEntities.Account) error {
 	account.SetUpdatedAt()
-	return a.databaseWrite.Update(account.ToMap(), map[string]interface{}{"account_id": account.AccountID},
+	return a.databaseWrite.Update(account.ToUpdateMap(), map[string]interface{}{"account_id": account.AccountID},
 		account.GetTable()).GetError()
 }
 

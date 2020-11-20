@@ -118,6 +118,15 @@ func (a *Account) ToMap() map[string]interface{} {
 	}
 }
 
+func (a *Account) ToUpdateMap() map[string]interface{} {
+	return map[string]interface{}{
+		"email":        a.Email,
+		"username":     a.Username,
+		"updated_at":   a.UpdatedAt,
+		"is_confirmed": a.IsConfirmed,
+	}
+}
+
 func (a *Account) IsNotApplicationAdminAccount() bool {
 	return !a.IsApplicationAdmin
 }
