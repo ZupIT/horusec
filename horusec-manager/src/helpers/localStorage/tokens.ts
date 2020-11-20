@@ -21,17 +21,18 @@ import { authTypes } from 'helpers/enums/authTypes';
 import accountService from 'services/account';
 import { setCurrentUser } from './currentUser';
 import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
+import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
 
 const getAccessToken = (): string => {
-  return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
+  return getLocalStorage(localStorageKeys.ACCESS_TOKEN);
 };
 
 const getRefreshToken = (): string => {
-  return window.localStorage.getItem(localStorageKeys.REFRESH_TOKEN);
+  return getLocalStorage(localStorageKeys.REFRESH_TOKEN);
 };
 
 const getExpiresTokenTime = (): string => {
-  return window.localStorage.getItem(localStorageKeys.TOKEN_EXPIRES);
+  return getLocalStorage(localStorageKeys.TOKEN_EXPIRES);
 };
 
 const setTokens = (
@@ -40,13 +41,13 @@ const setTokens = (
   expiresAt?: string
 ) => {
   if (accessToken)
-    window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
+    setLocalStorage(localStorageKeys.ACCESS_TOKEN, accessToken);
 
   if (refreshToken)
-    window.localStorage.setItem(localStorageKeys.REFRESH_TOKEN, refreshToken);
+    setLocalStorage(localStorageKeys.REFRESH_TOKEN, refreshToken);
 
   if (expiresAt)
-    window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
+    setLocalStorage(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
 const handleSetKeyclockData = async (
@@ -70,9 +71,9 @@ const handleSetKeyclockData = async (
 };
 
 const clearTokens = () => {
-  window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
-  window.localStorage.removeItem(localStorageKeys.REFRESH_TOKEN);
-  window.localStorage.removeItem(localStorageKeys.TOKEN_EXPIRES);
+  removeLocalStorage(localStorageKeys.ACCESS_TOKEN);
+  removeLocalStorage(localStorageKeys.REFRESH_TOKEN);
+  removeLocalStorage(localStorageKeys.TOKEN_EXPIRES);
 };
 
 const isLogged = (): boolean => {
@@ -87,7 +88,7 @@ const isLogged = (): boolean => {
   }
 
   if (authType === authTypes.HORUSEC || authType === authTypes.LDAP) {
-    const expiresAt = window.localStorage.getItem(
+    const expiresAt = getLocalStorage(
       localStorageKeys.TOKEN_EXPIRES
     );
 

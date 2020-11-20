@@ -15,17 +15,18 @@
  */
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+import { setLocalStorage, getLocalStorage } from 'helpers/localStorage/base';
 
 const isMicrofrontend = (): boolean => {
-  return window.localStorage.getItem(localStorageKeys.MICROFRONTEND) === 'true';
+  return getLocalStorage(localStorageKeys.MICROFRONTEND) === 'true';
 };
 
 const isAuthenticatedInMicrofrontend = (): boolean => {
-  return window.localStorage.getItem(localStorageKeys.AUTHENTICATED) === 'true';
+  return getLocalStorage(localStorageKeys.AUTHENTICATED) === 'true';
 };
 
 const setIsMicrofrontend = (value: boolean) => {
-  window.localStorage.setItem(
+  setLocalStorage(
     localStorageKeys.MICROFRONTEND,
     JSON.stringify(value)
   );

@@ -16,10 +16,11 @@
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { Company } from 'helpers/interfaces/Company';
+import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
 
 const getCurrentCompany = (): Company | null => {
   const localData: Company = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.COMPANY)
+    getLocalStorage(localStorageKeys.COMPANY)
   );
 
   return localData;
@@ -27,11 +28,11 @@ const getCurrentCompany = (): Company | null => {
 
 const setCurrentCompany = (value: Company) => {
   const company = JSON.stringify(value);
-  window.localStorage.setItem(localStorageKeys.COMPANY, company);
+  setLocalStorage(localStorageKeys.COMPANY, company);
 };
 
 const clearCurrentCompany = () => {
-  window.localStorage.removeItem(localStorageKeys.COMPANY);
+  removeLocalStorage(localStorageKeys.COMPANY);
 };
 
 const isAdminOfCompany = (): boolean => {

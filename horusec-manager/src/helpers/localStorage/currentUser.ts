@@ -17,10 +17,11 @@
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { User } from 'helpers/interfaces/User';
 import { getCurrentConfig } from './horusecConfig';
+import { setLocalStorage, getLocalStorage, removeLocalStorage } from 'helpers/localStorage/base';
 
 const getCurrentUser = (): User | null => {
   const localData: User = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.USER)
+    getLocalStorage(localStorageKeys.USER)
   );
 
   return localData;
@@ -30,11 +31,11 @@ const setCurrentUser = (value: User) => {
   const { username, email, isApplicationAdmin } = value;
 
   const user = JSON.stringify({ username, email, isApplicationAdmin });
-  window.localStorage.setItem(localStorageKeys.USER, user);
+  setLocalStorage(localStorageKeys.USER, user);
 };
 
 const clearCurrentUser = () => {
-  window.localStorage.removeItem(localStorageKeys.USER);
+  removeLocalStorage(localStorageKeys.USER);
 };
 
 const isApplicationAdmin = () => {
