@@ -35,15 +35,12 @@ Currently, performance analysis consists of:
     * [Semgrep][Semgrep]
 * Ruby
     * [Brakeman][Brakeman]
-* Javascript
+* Javascript/Typescript
     * [Npm Audit][NpmAudit]
     * [Yarn Audit][YarnAudit]
     * [Semgrep][Semgrep]
     * [HorusecNodeJS][HorusecNodeJS]
     * [EsLint][EsLint]
-* Typescript
-    * [HorusecNodeJS][HorusecNodeJS]
-    * [Semgrep][Semgrep]
 * GoLang
     * [Gosec][Gosec]
     * [Semgrep][Semgrep]
