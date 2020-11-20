@@ -137,8 +137,7 @@ func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
 		a.analysis = analysisSaved
 	}
-	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(a.config.GetFalsePositiveHashesList(),
-		a.config.GetRiskAcceptHashesList())
+	a.setFalsePositive()
 	a.printController.SetAnalysis(a.analysis)
 	return a.printController.StartPrintResults()
 }
@@ -274,4 +273,28 @@ func (a *Analyser) logProjectSubPath(language languages.Language, subPath string
 		msg := fmt.Sprintf("Running %s in subpath: %s", language.ToString(), subPath)
 		logger.LogDebugWithLevel(msg, logger.DebugLevel)
 	}
+}
+
+func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
+	for _, hash := range list {
+		existing := false
+		for keyAv := range a.analysis.AnalysisVulnerabilities {
+			if hash == a.analysis.AnalysisVulnerabilities[keyAv].Vulnerability.VulnHash {
+				existing = true
+				break
+			}
+		}
+		if !existing {
+			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis+hash, logger.WarnLevel)
+		}
+	}
+}
+
+func (a *Analyser) setFalsePositive() {
+	a.analysis = a.analysis.
+		SetFalsePositivesAndRiskAcceptInVulnerabilities(
+			a.config.GetFalsePositiveHashesList(), a.config.GetRiskAcceptHashesList())
+
+	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashesList())
+	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashesList())
 }
