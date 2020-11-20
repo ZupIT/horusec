@@ -1,6 +1,6 @@
 # HORUSEC-KUBERNETES-CLI
 This is a Command Line Interface to make it search vulnerabilities in kubernetes configuration files.
-To learn more about the structure of this service you can see more in this <a href="../assets/horusec-kubernetes.jpg">/assets/horusec-kubernetes.jpg</a>.
+To learn more about the structure of this service you can see more in this <a href="../assets/horusec-analysis-cli.jpg">/assets/horusec-analysis-cli.jpg</a>.
 
 ## Using with docker
 To use with docker you can running this example:

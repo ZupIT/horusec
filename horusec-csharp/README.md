@@ -1,6 +1,6 @@
 # HORUSEC-CSHARP-CLI
 This is a Command Line Interface to make it search vulnerabilities in C# project.
-To learn more about the structure of this service you can see more in this <a href="../assets/horusec-csharp.jpg">/assets/horusec-csharp.jpg</a>.
+To learn more about the structure of this service you can see more in this <a href="../assets/horusec-analysis-cli.jpg">/assets/horusec-analysis-cli.jpg</a>.
 
 ## Using with docker
 To use with docker you can running this example:

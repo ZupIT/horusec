@@ -16,7 +16,7 @@ package horusecnodejs
 
 const (
 	ImageName = "horuszup/horusec-nodejs"
-	ImageTag  = "v0.0.1"
+	ImageTag  = "v0.0.2"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-nodejs run -o="./output-ANALYSISID.json"
