@@ -28,6 +28,7 @@ const formatChartStacked = (
   };
   const high: number[] = [];
   const low: number[] = [];
+  const info: number[] = [];
   const medium: number[] = [];
   const noSec: number[] = [];
   const audit: number[] = [];
@@ -40,6 +41,7 @@ const formatChartStacked = (
     medium.push(item?.medium);
     noSec.push(item?.noSec);
     low.push(item?.low);
+    info.push(item?.info);
     audit.push(item?.audit);
   });
 
@@ -47,6 +49,7 @@ const formatChartStacked = (
     { name: 'HIGH', data: high },
     { name: 'MEDIUM', data: medium },
     { name: 'LOW', data: low },
+    { name: 'INFO', data: info },
     { name: 'AUDIT', data: audit },
     { name: 'NOSEC', data: noSec },
   ];
