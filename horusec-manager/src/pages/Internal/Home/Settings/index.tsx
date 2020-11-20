@@ -50,11 +50,11 @@ const Settings: React.FC = () => {
     accountService
       .deleteAccount()
       .then(() => {
+        history.replace('/auth');
         clearCurrentUser();
         clearCurrentCompany();
         clearTokens();
-        showSuccessFlash('SETTINGS_SCREEN.SUCCESS_DELETE');
-        history.replace('/auth');
+        showSuccessFlash(t('SETTINGS_SCREEN.SUCCESS_DELETE'));
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
