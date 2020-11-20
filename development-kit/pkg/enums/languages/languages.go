@@ -33,6 +33,7 @@ const (
 	PHP        Language = "PHP"
 	HTML       Language = "HTML"
 	Generic    Language = "Generic"
+	Yaml       Language = "YAML"
 	Unknown    Language = "Unknown"
 )
 
@@ -57,6 +58,7 @@ func SupportedLanguages() []Language {
 		Leaks,
 		HCL,
 		Generic,
+		Yaml,
 		Unknown,
 	}
 }
@@ -73,6 +75,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Javascript.ToString(): Javascript,
 		HCL.ToString():        HCL,
 		Generic.ToString():    Generic,
+		Yaml.ToString():       Yaml,
 	}
 }
 

@@ -16,7 +16,6 @@ package analyser
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"log"
 	"os"
 	"os/signal"
@@ -24,6 +23,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 
 	"github.com/google/uuid"
 
@@ -172,6 +175,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 	}
 }
 
+//nolint:funlen all Languages is greater than 15
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
 		languages.CSharp:     a.detectVulnerabilityDotNet,
@@ -184,6 +188,11 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Ruby:       a.detectVulnerabilityRuby,
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
+		languages.Yaml:       a.detectVulnerabilityYaml,
+		languages.TypeScript: a.detectVulnerabilityGeneric,
+		languages.C:          a.detectVulnerabilityGeneric,
+		languages.PHP:        a.detectVulnerabilityGeneric,
+		languages.HTML:       a.detectVulnerabilityGeneric,
 	}
 }
 
@@ -220,9 +229,10 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
-	a.monitor.AddProcess(2)
+	a.monitor.AddProcess(3)
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
@@ -239,6 +249,11 @@ func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {

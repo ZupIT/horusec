@@ -97,9 +97,17 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/horusec-leaks"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/leaks/horusecleaks/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-leaks";;
+        "horusec-nodejs")
+            IMAGE_NAME="horuszup/horusec-nodejs"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/horusecnodejs/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-nodejs";;
+        "horusec-kubernetes")
+            IMAGE_NAME="horuszup/horusec-kubernetes"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/yaml/horuseckubernetes/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-kubernetes";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
-            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp"
+            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes"
             exit 1;;
     esac
 }
@@ -176,7 +184,7 @@ updateImage () {
     updateVersionInConfigFile
     updateVersionInCliVersionFile
 
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs"  || "$TOOL_NAME" == "horusec-kubernetes" ]]
     then
         DIRECTORY_SEMVER="$DIRECTORY_SEMVER/deployments"
     fi
@@ -199,7 +207,7 @@ updateVersionInConfigFile () {
 }
 
 updateVersionInCliVersionFile () {
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs" || "$TOOL_NAME" == "horusec-kubernetes"  ]]
     then
         sed -i -e "s/{{VERSION_NOT_FOUND}}/$NEW_RELEASE/g" "./development-kit/pkg/cli_standard/cmd/version/version.go"
     fi
@@ -211,7 +219,7 @@ rollbackVersionInConfigFile () {
 }
 
 rollbackVersionInCliVersionFile () {
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs" || "$TOOL_NAME" == "horusec-kubernetes"  ]]
     then
         sed -i -e "s/$NEW_RELEASE/{{VERSION_NOT_FOUND}}/g" "./development-kit/pkg/cli_standard/cmd/version/version.go"
     fi
