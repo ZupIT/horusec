@@ -18,14 +18,26 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog } from 'components';
 import Styled from './styled';
-import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import {
+  getCurrentUser,
+  clearCurrentUser,
+} from 'helpers/localStorage/currentUser';
+import accountService from 'services/account';
 
 import EditAccount from './Edit';
 import ChangePassword from './ChangePassword';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { clearTokens } from 'helpers/localStorage/tokens';
+import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
+import { useHistory } from 'react-router-dom';
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
   const { email, username } = getCurrentUser();
+  const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
+  const history = useHistory();
 
   const [deleteDialogIsOpen, setOpenDeleteDialog] = useState(false);
   const [deleteInProgress, setDeleteInProgress] = useState(false);
@@ -34,8 +46,19 @@ const Settings: React.FC = () => {
   const [changePassDialogIsOpen, setOpenChangePassDialog] = useState(false);
 
   const handleConfirmDelete = () => {
-    console.log('delete');
     setDeleteInProgress(true);
+    accountService
+      .deleteAccount()
+      .then(() => {
+        clearCurrentUser();
+        clearCurrentCompany();
+        clearTokens();
+        showSuccessFlash('SETTINGS_SCREEN.SUCCESS_DELETE');
+        history.replace('/auth');
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      });
   };
 
   return (

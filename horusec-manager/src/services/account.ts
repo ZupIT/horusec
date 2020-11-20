@@ -47,6 +47,10 @@ const update = (username: string, email: string) => {
   });
 };
 
+const deleteAccount = () => {
+  return http.delete(`${SERVICE_AUTH}/api/account/delete`);
+};
+
 const createAccountFromKeycloak = (accessToken: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/create-account-from-keycloak`, {
     accessToken,
@@ -133,4 +137,5 @@ export default {
   getHorusecConfig,
   createAccountFromKeycloak,
   update,
+  deleteAccount,
 };

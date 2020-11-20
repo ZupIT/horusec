@@ -345,7 +345,8 @@
     "INVALID_PASS": "Enter password",
     "EDIT_SUCCESS": "information successfully changed",
     "SUCCESS_UPDATE": "A request to verify the new email has been sent to your email.",
-    "CONFIRM":"Ok, I got it."
+    "CONFIRM":"Ok, I got it.",
+    "SUCCESS_DELETE": "Your account has been successfully deleted!"
   },
 
   "SIDE_MENU": {
