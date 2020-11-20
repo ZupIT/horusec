@@ -85,7 +85,7 @@ func (ld *LanguageDetect) walkInPathAndReturnTotalToSkip(
 		if skip {
 			totalToSkip++
 		}
-		languagesFound = append(languagesFound, currentLanguagesFound...)
+		languagesFound = ld.appendLanguagesFound(languagesFound, currentLanguagesFound)
 		return nil
 	})
 	return totalToSkip, languagesFound, err
@@ -219,6 +219,10 @@ func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
 	case languages.Javascript.ToString():
 		return true
 	case languages.TypeScript.ToString():
+		return true
+	case "TSX":
+		return true
+	case "JSX":
 		return true
 	default:
 		return false
