@@ -203,7 +203,7 @@ func (ld *LanguageDetect) isSupportedLanguage(langName string) bool {
 	return false
 }
 
-func (ld *LanguageDetect) appendLanguagesFound(existingLanguages []string, languagesFound []string) []string {
+func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound []string) []string {
 	for _, lang := range languagesFound {
 		if ld.isTypescriptOrJavascriptLang(lang) {
 			existingLanguages = append(existingLanguages, languages.Javascript.ToString())
