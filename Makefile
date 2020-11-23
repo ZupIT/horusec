@@ -147,7 +147,7 @@ install: compose migrate install-cli
 install-dev: install-manager build-manager install-cli compose-dev migrate
 
 install-cli:
-	curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+	curl -fsSL https://horusec.io/bin/install.sh | bash
 
 install-semver:
 	chmod +x ./deployments/scripts/install-semver.sh

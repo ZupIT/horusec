@@ -17,5 +17,5 @@ jobs:
       - name: Running Horusec Security Download latest version
         shell: bash
         run: |
-          curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+          curl -fsSL https://horusec.io/bin/install.sh | bash
           horusec start -p="./" -e="true"
