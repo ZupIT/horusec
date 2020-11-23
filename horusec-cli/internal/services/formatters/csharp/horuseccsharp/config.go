@@ -16,7 +16,7 @@ package horuseccsharp
 
 const (
 	ImageName = "horuszup/horusec-csharp"
-	ImageTag  = "v0.0.4"
+	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-csharp run -o="./output-ANALYSISID.json"

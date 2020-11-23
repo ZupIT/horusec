@@ -16,7 +16,7 @@ package horusecleaks
 
 const (
 	ImageName = "horuszup/horusec-leaks"
-	ImageTag  = "v0.2.5"
+	ImageTag  = "v0.2.6"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-leaks run -o="./output-ANALYSISID.json"

@@ -16,7 +16,7 @@ package horuseckubernetes
 
 const (
 	ImageName = "horuszup/horusec-kubernetes"
-	ImageTag  = "v0.0.2"
+	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-kubernetes run -o="./output-ANALYSISID.json"
