@@ -28,15 +28,15 @@ horusecIdentifyOS () {
     if [ $(uname) = "Linux" ]; then
         if [ $(uname -m) = "x86_64" ]; then
             echo "Installing Horusec for Linux x64"
-            URL_DOWNLOAD="https://horusec-cli.s3.amazonaws.com/${VERSION_DOWNLOAD}/linux_x64/horusec"
+            URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/linux_x64/horusec"
         else
             echo "Installing Horusec for Linux x86"
-            URL_DOWNLOAD="https://horusec-cli.s3.amazonaws.com/${VERSION_DOWNLOAD}/linux_x86/horusec"
+            URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/linux_x86/horusec"
         fi
     elif [ $(uname) = "Darwin" ]; then
         if [ $(uname -m) = "x86_64" ]; then
             echo "Installing Horusec for Mac x64"
-            URL_DOWNLOAD="https://horusec-cli.s3.amazonaws.com/${VERSION_DOWNLOAD}/mac_x64/horusec"
+            URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/mac_x64/horusec"
         else
             echo "Not enable Horusec to Mac x86"
             exit 1
