@@ -14,10 +14,10 @@
 # limitations under the License.
 
 
-LATEST_VERSION=$(curl -s https://horusec-cli.s3.amazonaws.com/version-cli-latest.txt)
+LATEST_VERSION=$(curl -s https://horusec.io/bin/version-cli-latest.txt)
 
 rm -rf ~/go/bin/horusec
 
-curl "https://horusec-cli.s3.amazonaws.com/$LATEST_VERSION/linux_x64/horusec" -o "$GOPATH/bin/horusec"
+curl "https://horusec.io/bin/$LATEST_VERSION/linux_x64/horusec" -o "$GOPATH/bin/horusec"
 
 chmod +x ~/go/bin/horusec
