@@ -291,7 +291,7 @@
 
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
-    "ADD": "Criar webhook",
+    "ADD": "Adicionar webhook",
     "EDIT": "Editar webhook",
     "SAVE": "Salvar",
     "SEARCH": "Pesquisar por URL",
