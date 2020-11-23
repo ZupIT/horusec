@@ -37,7 +37,7 @@ Currently, performance analysis consists of:
     * [Brakeman][Brakeman]
 * Javascript/Typescript
     * [Npm Audit][NpmAudit]
-    * [Yarn Audit][YarnAudit][Eslint Eslint]
+    * [Yarn Audit][YarnAudit]
     * [Semgrep][Semgrep]
     * [HorusecNodeJS][HorusecNodeJS]
     * [EsLint][EsLint]
