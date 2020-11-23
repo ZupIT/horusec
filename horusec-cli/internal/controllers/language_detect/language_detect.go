@@ -30,7 +30,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	doublestar "github.com/bmatcuk/doublestar/v2"
+	"github.com/bmatcuk/doublestar/v2"
 	"github.com/google/uuid"
 )
 
@@ -51,14 +51,14 @@ func NewLanguageDetect(configs *config.Config, analysisID uuid.UUID) Interface {
 }
 
 func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language, error) {
-	langs := []string{languages.Leaks.ToString()}
+	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err, logger.ErrorLevel)
 		return nil, err
 	}
 
-	langs = append(langs, languagesFound...)
+	langs = ld.appendLanguagesFound(langs, languagesFound)
 
 	ld.configs.SetProjectPath(directory)
 	err = ld.copyProjectToHorusecFolder(directory)
@@ -85,7 +85,7 @@ func (ld *LanguageDetect) walkInPathAndReturnTotalToSkip(
 		if skip {
 			totalToSkip++
 		}
-		languagesFound = append(languagesFound, currentLanguagesFound...)
+		languagesFound = ld.appendLanguagesFound(languagesFound, currentLanguagesFound)
 		return nil
 	})
 	return totalToSkip, languagesFound, err
@@ -201,4 +201,22 @@ func (ld *LanguageDetect) isSupportedLanguage(langName string) bool {
 	}
 
 	return false
+}
+
+func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound []string) []string {
+	for _, lang := range languagesFound {
+		if ld.isTypescriptOrJavascriptLang(lang) {
+			existingLanguages = append(existingLanguages, languages.Javascript.ToString())
+		} else {
+			existingLanguages = append(existingLanguages, lang)
+		}
+	}
+	return ld.uniqueLanguages(existingLanguages)
+}
+
+func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
+	return strings.EqualFold(lang, languages.Javascript.ToString()) ||
+		strings.EqualFold(lang, languages.TypeScript.ToString()) ||
+		strings.EqualFold(lang, "TSX") ||
+		strings.EqualFold(lang, "JSX")
 }

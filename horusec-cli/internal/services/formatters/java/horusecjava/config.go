@@ -16,7 +16,7 @@ package horusecjava
 
 const (
 	ImageName = "horuszup/horusec-java"
-	ImageTag  = "v0.3.3"
+	ImageTag  = "v0.3.5"
 	ImageCmd  = `
 		{{WORK_DIR}}
 		horusec-java run -o="./output-ANALYSISID.json"

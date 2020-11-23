@@ -16,6 +16,8 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"os"
 	"strings"
 
@@ -113,6 +115,7 @@ const (
 	//   kotlin string
 	//   javaScript string
 	//   git string
+	//   generic string
 	// }
 	// Validation: It is mandatory to be valid interface of workdir to proceed
 	EnvWorkDirPath = "HORUSEC_CLI_WORK_DIR"
@@ -146,6 +149,9 @@ const (
 	// Used to skip vulnerability of type risk accept
 	// By default is empty
 	EnvRiskAcceptHashes = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
+	// Used to ignore tools for run
+	// By default is empty
+	EnvToolsToIgnore = "HORUSEC_CLI_TOOLS_TO_IGNORE"
 )
 
 type Config struct {
@@ -171,6 +177,7 @@ type Config struct {
 	RepositoryName                  string
 	FalsePositiveHashes             string
 	RiskAcceptHashes                string
+	ToolsToIgnore                   string
 }
 
 //nolint
@@ -198,6 +205,7 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetRepositoryName(viper.GetString(c.toLowerCamel(EnvRepositoryName)))
 	c.SetFalsePositiveHashes(viper.GetString(c.toLowerCamel(EnvFalsePositiveHashes)))
 	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
+	c.SetToolsToIgnore(viper.GetString(c.toLowerCamel(EnvToolsToIgnore)))
 }
 
 //nolint
@@ -223,6 +231,7 @@ func (c *Config) SetConfigsFromEnvironments() {
 	c.SetRepositoryName(env.GetEnvOrDefault(EnvRepositoryName, c.RepositoryName))
 	c.SetFalsePositiveHashes(env.GetEnvOrDefault(EnvFalsePositiveHashes, c.FalsePositiveHashes))
 	c.SetRiskAcceptHashes(env.GetEnvOrDefault(EnvRiskAcceptHashes, c.RiskAcceptHashes))
+	c.SetToolsToIgnore(env.GetEnvOrDefault(EnvToolsToIgnore, c.ToolsToIgnore))
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -331,8 +340,23 @@ func (c *Config) GetWorkDir() *workdir.WorkDir {
 }
 
 func (c *Config) SetWorkDir(toParse interface{}) {
+	if c.netCoreKeyIsDeprecated(toParse) {
+		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated, logger.WarnLevel)
+	}
 	c.WorkDir = &workdir.WorkDir{}
 	c.WorkDir.ParseInterfaceToStruct(toParse)
+}
+
+// nolint:gocyclo is necessary to check all validations
+func (c *Config) netCoreKeyIsDeprecated(toParse interface{}) bool {
+	workdirParsed, ok := toParse.(map[string]interface{})
+	if ok && workdirParsed["netcore"] != nil {
+		netCore, ok := workdirParsed["netcore"].([]interface{})
+		if ok && netCore != nil && len(netCore) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Config) GetEnableGitHistoryAnalysis() bool {
@@ -427,4 +451,12 @@ func (c *Config) GetFalsePositiveHashesList() (list []string) {
 
 func (c *Config) SetFalsePositiveHashes(falsePositive string) {
 	c.FalsePositiveHashes = falsePositive
+}
+
+func (c *Config) GetToolsToIgnore() string {
+	return c.ToolsToIgnore
+}
+
+func (c *Config) SetToolsToIgnore(toolsToIgnore string) {
+	c.ToolsToIgnore = toolsToIgnore
 }

@@ -31,7 +31,7 @@ const SubTitle = styled.h2`
 `;
 
 const Field = styled(Input)`
-  margin-bottom: 25px;
+  margin-bottom: 45px;
 `;
 
 const Submit = styled(Button)`

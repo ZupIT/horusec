@@ -13,7 +13,7 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 90 "./development-kit"
+	deployments/scripts/coverage.sh 91 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-api"
@@ -31,7 +31,10 @@ coverage-horusec-analytic:
 	deployments/scripts/coverage.sh 98 "./horusec-analytic"
 coverage-horusec-auth:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 98 "./horusec-auth"
+	deployments/scripts/coverage.sh 97 "./horusec-auth"
+coverage-horusec-webhook:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-webhook"
 
 # Check lint of project setup on file .golangci.yml
 lint:
@@ -110,6 +113,8 @@ compose-horusec-api:
 	$(DOCKER_COMPOSE) -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-messages:
 	$(DOCKER_COMPOSE) -f horusec-messages/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-webhook:
+	$(DOCKER_COMPOSE) -f horusec-webhook/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-account:
 	$(DOCKER_COMPOSE) -f horusec-account/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-analytic:
@@ -148,37 +153,48 @@ install-semver:
 	chmod +x ./deployments/scripts/install-semver.sh
 	./deployments/scripts/install-semver.sh
 
+PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli:
-	$(GO) build -o horusec ./horusec-cli/cmd/horusec/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec
-	mv horusec $(GOPATH)/bin
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
 
 build-install-leaks-cli:
-	$(GO) build -o horusec ./horusec-leaks/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-leaks
-	mv horusec $(GOPATH)/bin/horusec-leaks
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" ./horusec-leaks/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-leaks"
 	horusec-leaks version
 
 build-install-kotlin-cli:
-	$(GO) build -o horusec ./horusec-kotlin/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-kotlin
-	mv horusec $(GOPATH)/bin/horusec-kotlin
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" ./horusec-kotlin/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin"
 	horusec-kotlin version
 
 build-install-java-cli:
-	$(GO) build -o horusec ./horusec-java/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-java
-	mv horusec $(GOPATH)/bin/horusec-java
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-java" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-java" ./horusec-java/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-java"
 	horusec-java version
+
+build-install-csharp-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" ./horusec-csharp/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-csharp"
+	horusec-csharp version
+
+build-install-kubernetes-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" ./horusec-kubernetes/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes"
+	horusec-kubernetes version
+
+build-install-nodejs-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
+	horusec-nodejs version
 
 # ========================================================================================= #
 

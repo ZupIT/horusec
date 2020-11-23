@@ -16,6 +16,7 @@ package ldap
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"strings"
 	"time"
 
@@ -24,8 +25,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
@@ -56,7 +56,7 @@ func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.
 	}
 }
 
-func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, error) {
+func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error) {
 	ok, data, err := s.client.Authenticate(credentials.Username, credentials.Password)
 	if err != nil || !ok {
 		return nil, s.verifyAuthenticateErrors(err)
@@ -70,7 +70,7 @@ func (s *Service) Authenticate(credentials *auth.Credentials) (interface{}, erro
 	return s.setLDAPAuthResponse(account), nil
 }
 
-func (s *Service) IsAuthorized(authzData *auth.AuthorizationData) (bool, error) {
+func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
 	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
 
 	if err != nil {
@@ -118,10 +118,10 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 	return errors.ErrorUnauthorized
 }
 
-func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *auth.LdapAuthResponse {
+func (s *Service) setLDAPAuthResponse(account *authEntities.Account) *dto.LdapAuthResponse {
 	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 
-	return &auth.LdapAuthResponse{
+	return &dto.LdapAuthResponse{
 		AccessToken:        accessToken,
 		ExpiresAt:          expiresAt,
 		Username:           account.Username,
@@ -130,11 +130,11 @@ func (s *Service) setLDAPAuthResponse(account *accountEntities.Account) *auth.Ld
 	}
 }
 
-func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*accountEntities.Account, error) {
+func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
 	account, err := s.accountRepo.GetByEmail(data["mail"])
 
 	if account == nil || err != nil {
-		account = &accountEntities.Account{
+		account = &authEntities.Account{
 			Email:    s.pickOne(data, "mail", "uid"),
 			Username: s.pickOne(data, "givenName", "uid"),
 		}
@@ -156,7 +156,7 @@ func (s *Service) pickOne(data map[string]string, first, second string) string {
 	return data[first]
 }
 
-func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]string, error) {
+func (s *Service) getAuthzGroupsName(authzData *dto.AuthorizationData) ([]string, error) {
 	switch authzData.Role {
 	case authEnums.CompanyAdmin, authEnums.CompanyMember:
 		return s.getCompanyAuthzGroupsName(authzData.CompanyID, authzData.Role)
@@ -171,7 +171,7 @@ func (s *Service) getAuthzGroupsName(authzData *auth.AuthorizationData) ([]strin
 	return []string{}, errors.ErrorUnauthorized
 }
 
-func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *auth.AuthorizationData) ([]string, error) {
+func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *dto.AuthorizationData) ([]string, error) {
 	companyAuthzAdmin, err := s.getCompanyAuthzGroupsName(authzData.CompanyID, authEnums.CompanyAdmin)
 	if err != nil {
 		return []string{}, err

@@ -16,20 +16,21 @@ package ldap
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"testing"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
+	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	companyrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
-	repositoryrepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	ldapservice "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
+	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -42,8 +43,8 @@ func TestNewService(t *testing.T) {
 		dbRead := &relational.MockRead{}
 		dbWrite := &relational.MockWrite{}
 
-		ldapService := NewService(dbRead, dbWrite)
-		assert.NotNil(t, ldapService)
+		service := NewService(dbRead, dbWrite)
+		assert.NotNil(t, service)
 	})
 }
 
@@ -51,7 +52,7 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return ldap auth response when authenticate is successfully and user exists", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		user := map[string]string{"username": "test", "email": "test@test.com"}
 		ldapClientServiceMock.On("Authenticate").Return(true, user, nil)
@@ -62,17 +63,17 @@ func TestAuthenticate(t *testing.T) {
 		databaseRead.On("Find").Return()
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -81,7 +82,7 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return ldap auth response when authenticate is successfully and user doesnt exist", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		user := map[string]string{"givenName": "test", "mail": "test@test.com"}
 		ldapClientServiceMock.On("Authenticate").Return(true, user, nil)
@@ -94,17 +95,17 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 		databaseWrite.On("Create").Return(respCreate.SetData(user))
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -113,7 +114,7 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return  error while creating new account by ldap response", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		user := map[string]string{"username": "test", "email": "test@test.com"}
 		ldapClientServiceMock.On("Authenticate").Return(true, user, nil)
@@ -126,17 +127,17 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 		databaseWrite.On("Create").Return(respCreate.SetError(errors.New("test")))
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
@@ -145,21 +146,21 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return return error when failed to authenticate", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, nil)
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
@@ -168,21 +169,21 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return return error when failed to authenticate", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, errorsEnum.ErrorUserDoesNotExist)
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
@@ -191,21 +192,21 @@ func TestAuthenticate(t *testing.T) {
 	t.Run("should return return error when failed to authenticate", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("Authenticate").Return(true, map[string]string{}, errors.New("test"))
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.Credentials{}
-		result, err := ldapService.Authenticate(&credentials)
+		credentials := dto.Credentials{}
+		result, err := service.Authenticate(&credentials)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
@@ -213,7 +214,7 @@ func TestAuthenticate(t *testing.T) {
 }
 
 func TestIsAuthorized(t *testing.T) {
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Username:  "test",
@@ -222,7 +223,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return true and no error when successfully authenticate with company admin", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"admin"}, nil)
 
@@ -235,25 +236,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(company))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.True(t, result)
 		assert.NoError(t, err)
@@ -262,7 +263,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return false and error when invalid ldap group with company admin", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -275,25 +276,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(company))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -302,7 +303,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return true and no error when successfully authenticate with company member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"developer"}, nil)
 
@@ -315,25 +316,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(company))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.True(t, result)
 		assert.NoError(t, err)
@@ -342,7 +343,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return false and error when invalid ldap group with company member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -355,25 +356,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(company))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.CompanyMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -382,7 +383,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return true and no error when successfully authenticate with repository member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"developer"}, nil)
 
@@ -395,25 +396,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.True(t, result)
 		assert.NoError(t, err)
@@ -422,7 +423,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return false and error when invalid ldap group with repository member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -435,25 +436,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositoryMember,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -462,7 +463,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return true and no error when successfully authenticate with repository supervisor", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"supervisor"}, nil)
 
@@ -475,25 +476,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.True(t, result)
 		assert.NoError(t, err)
@@ -502,7 +503,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return false and error when invalid ldap group with repository member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -515,25 +516,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositorySupervisor,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -542,7 +543,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return true and no error when successfully authenticate with repository admin", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"admin"}, nil)
 
@@ -555,25 +556,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.True(t, result)
 		assert.NoError(t, err)
@@ -582,7 +583,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return false and error when invalid ldap group with repository member", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -595,25 +596,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetData(repository))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -622,7 +623,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return error while getting company", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -630,25 +631,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetError(errors.New("test")))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.RepositoryAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -657,7 +658,7 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return error while getting company", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
@@ -665,25 +666,25 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("Find").Return(resp.SetError(errors.New("test")))
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         authEnums.CompanyAdmin,
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -692,18 +693,18 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return error when invalid token", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9" +
 				"lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
 			Role:         authEnums.CompanyAdmin,
@@ -711,7 +712,7 @@ func TestIsAuthorized(t *testing.T) {
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)
@@ -720,29 +721,29 @@ func TestIsAuthorized(t *testing.T) {
 	t.Run("should return error when invalid role in authorization data", func(t *testing.T) {
 		databaseRead := &relational.MockRead{}
 		databaseWrite := &relational.MockWrite{}
-		ldapClientServiceMock := &ldapservice.Mock{}
+		ldapClientServiceMock := &ldapService.Mock{}
 
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
-		ldapService := &Service{
+		service := &Service{
 			client:         ldapClientServiceMock,
-			accountRepo:    accountrepo.NewAccountRepository(databaseRead, databaseWrite),
-			companyRepo:    companyrepo.NewCompanyRepository(databaseRead, databaseWrite),
-			repositoryRepo: repositoryrepo.NewRepository(databaseRead, databaseWrite),
+			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
+			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
+			repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 			cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		credentials := auth.AuthorizationData{
+		credentials := dto.AuthorizationData{
 			Token:        token,
 			Role:         "test",
 			CompanyID:    uuid.New(),
 			RepositoryID: uuid.New(),
 		}
 
-		result, err := ldapService.IsAuthorized(&credentials)
+		result, err := service.IsAuthorized(&credentials)
 
 		assert.False(t, result)
 		assert.Error(t, err)

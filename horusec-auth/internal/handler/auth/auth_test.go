@@ -18,12 +18,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
@@ -64,7 +64,7 @@ func TestAuthByType(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -87,7 +87,7 @@ func TestAuthByType(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -108,7 +108,7 @@ func TestAuthByType(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -164,7 +164,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -187,7 +187,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -210,7 +210,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -233,7 +233,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
@@ -256,7 +256,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 			authController: controllerMock,
 		}
 
-		credentialsBytes, _ := json.Marshal(authEntities.Credentials{Username: "test", Password: "test"})
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()

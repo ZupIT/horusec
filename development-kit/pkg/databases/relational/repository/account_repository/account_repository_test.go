@@ -16,10 +16,10 @@ package accountrepository
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"

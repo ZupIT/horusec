@@ -289,6 +289,38 @@
     }
   },
 
+  "WEBHOOK_SCREEN": {
+    "TITLE": "Webhooks",
+    "ADD": "Criar webhook",
+    "SAVE": "Salvar",
+    "DESCRIPTION_LABEL": "Informe a descrição para o webhook:",
+    "DESCRIPTION": "Descrição",
+    "RESPOSITORY_LABEL": "Selecione o repositório que ira acionar o webhook:",
+    "REPOSITORY": "Repositório",
+    "URL_LABEL": "Insira o endpoint (url) para ser acionado pelo Horusec:",
+    "URL": "Endpoint (URL)",
+    "INVALID_URL": "URL inválida",
+    "ALREADY_TO_REPOSITORY": "Já existe um webhook para o repositório selecionado.",
+    "SUCCESS_CREATE": "Webhook criado com sucesso.",
+    "SUCCESS_DELETE": "Webhook deletado com sucesso.",
+    "SUCCESS_UPDATE": "Webhook alterado com sucesso.",
+    "CONFIRM_DELETE": "Deseja realmente deletar este webhook? Essa ação não poderá ser desfeita.",
+    "YES": "Sim",
+    "HEADERS_LABEL": "Headers",
+    "KEY": "Chave",
+    "VALUE": "Valor",
+    "TABLE": {
+      "EMPTY": "Não há webhooks cadastrados",
+      "METHOD": "Método",
+      "URL": "URL",
+      "REPOSITORY": "Repositório",
+      "DESCRIPTION": "Descrição",
+      "ACTION": "Ação",
+      "DELETE": "Deletar",
+      "EDIT": "Editar"
+    }
+  },
+
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
@@ -297,6 +329,7 @@
     "REPOSITORY": "Repositório",
     "ORGANIZATION_USERS": "Usuários da organização",
     "BACK_ORGANIZATION": "Voltar para organizações",
+    "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair"
   },
 

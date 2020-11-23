@@ -81,7 +81,8 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Contains(t, langs, languages.Leaks)
-		assert.Len(t, langs, 1)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Len(t, langs, 2)
 	})
 
 	t.Run("Should ignore additional folder setup in configs", func(t *testing.T) {
@@ -97,7 +98,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should ignore additional specific file name setup in configs", func(t *testing.T) {
@@ -113,7 +116,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 	t.Run("Should run language detect and return GO and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
@@ -128,7 +133,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should run language detect and return GITLEAKS", func(t *testing.T) {
@@ -143,6 +150,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
 
 		assert.Contains(t, langs, languages.Leaks)
+		assert.Contains(t, langs, languages.Generic)
 	})
 
 	t.Run("Should run language detect and return JAVA and GITLEAKS", func(t *testing.T) {
@@ -158,7 +166,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Java)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
@@ -174,7 +184,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
@@ -190,7 +202,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	//t.Run("Should run language detect and return KOTLIN and GITLEAKS", func(t *testing.T) {
@@ -216,7 +230,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should run language detect and return DOTNET and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "netcore3-1"
+		analysisName := "csharp"
 
 		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
@@ -225,8 +239,9 @@ func TestNewLanguageDetect(t *testing.T) {
 		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
 
 		assert.Contains(t, langs, languages.Leaks)
-		assert.Contains(t, langs, languages.DotNet)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.CSharp)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return PYTHON and GITLEAKS", func(t *testing.T) {
@@ -242,7 +257,8 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return PYTHON and GITLEAKS", func(t *testing.T) {
@@ -258,7 +274,9 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should run language detect and return RUBY and GITLEAKS", func(t *testing.T) {
@@ -274,6 +292,8 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Ruby)
-		assert.Len(t, langs, 2)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.Yaml)
+		assert.Len(t, langs, 4)
 	})
 }

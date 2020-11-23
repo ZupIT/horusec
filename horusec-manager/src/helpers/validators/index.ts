@@ -20,6 +20,7 @@ import hasLowerCase from './hasLowerCase';
 import hasNumber from './hasNumber';
 import hasSpecialCharacter from './hasSpecialCharacter';
 import hasUpperCase from './hasUpperCase';
+import isValidURL from './isValidURL';
 
 export {
   isValidEmail,
@@ -28,4 +29,5 @@ export {
   hasNumber,
   hasSpecialCharacter,
   hasUpperCase,
+  isValidURL,
 };

@@ -15,9 +15,9 @@
 package account
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	accountEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 

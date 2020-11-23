@@ -24,8 +24,6 @@ const login = (params: LoginParams) => {
     accountService
       .login(params)
       .then((result) => {
-        console.log(result);
-
         const userData = result?.data?.content;
         const { accessToken, refreshToken, expiresAt } = userData;
 

@@ -16,7 +16,7 @@ package auth
 
 import (
 	"context"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/stretchr/testify/mock"
@@ -26,7 +26,7 @@ type MockAuthController struct {
 	mock.Mock
 }
 
-func (m *MockAuthController) AuthByType(_ *authEntities.Credentials) (interface{}, error) {
+func (m *MockAuthController) AuthByType(_ *dto.Credentials) (interface{}, error) {
 	args := m.MethodCalled("AuthByType")
 	return args.Get(0), mockUtils.ReturnNilOrError(args, 1)
 }

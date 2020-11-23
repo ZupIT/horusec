@@ -17,8 +17,9 @@ package analysis
 import (
 	"errors"
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	dashboardEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/dashboard"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -52,7 +53,7 @@ func insertAnalysisData() error {
 
 	databaseWrite := adapter.NewRepositoryWrite()
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		Email:     "test@test.com",
 		Username:  "test",
 		CreatedAt: time.Now(),

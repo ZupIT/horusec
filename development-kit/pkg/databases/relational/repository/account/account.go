@@ -16,16 +16,16 @@ package account
 
 import (
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/google/uuid"
 )
 
 type IAccount interface {
-	Create(account *accountEntities.Account) error
-	GetByAccountID(accountID uuid.UUID) (*accountEntities.Account, error)
-	GetByEmail(email string) (*accountEntities.Account, error)
-	Update(account *accountEntities.Account) error
-	GetByUsername(username string) (*accountEntities.Account, error)
+	Create(account *authEntities.Account) error
+	GetByAccountID(accountID uuid.UUID) (*authEntities.Account, error)
+	GetByEmail(email string) (*authEntities.Account, error)
+	Update(account *authEntities.Account) error
+	GetByUsername(username string) (*authEntities.Account, error)
 	DeleteAccount(accountID uuid.UUID) error
 }
 
@@ -41,32 +41,32 @@ func NewAccountRepository(databaseRead SQL.InterfaceRead, databaseWrite SQL.Inte
 	}
 }
 
-func (a *Account) Create(account *accountEntities.Account) error {
+func (a *Account) Create(account *authEntities.Account) error {
 	return a.databaseWrite.Create(account, account.GetTable()).GetError()
 }
 
-func (a *Account) GetByAccountID(accountID uuid.UUID) (*accountEntities.Account, error) {
-	account := &accountEntities.Account{}
+func (a *Account) GetByAccountID(accountID uuid.UUID) (*authEntities.Account, error) {
+	account := &authEntities.Account{}
 	filter := a.databaseRead.SetFilter(map[string]interface{}{"account_id": accountID})
 	result := a.databaseRead.Find(account, filter, account.GetTable())
 	return account, result.GetError()
 }
 
-func (a *Account) GetByEmail(email string) (*accountEntities.Account, error) {
-	account := &accountEntities.Account{}
+func (a *Account) GetByEmail(email string) (*authEntities.Account, error) {
+	account := &authEntities.Account{}
 	filter := a.databaseRead.SetFilter(map[string]interface{}{"email": email})
 	result := a.databaseRead.Find(account, filter, account.GetTable())
 	return account, result.GetError()
 }
 
-func (a *Account) Update(account *accountEntities.Account) error {
+func (a *Account) Update(account *authEntities.Account) error {
 	account.SetUpdatedAt()
 	return a.databaseWrite.Update(account.ToMap(), map[string]interface{}{"account_id": account.AccountID},
 		account.GetTable()).GetError()
 }
 
-func (a *Account) GetByUsername(username string) (*accountEntities.Account, error) {
-	account := &accountEntities.Account{}
+func (a *Account) GetByUsername(username string) (*authEntities.Account, error) {
+	account := &authEntities.Account{}
 	filter := a.databaseRead.SetFilter(map[string]interface{}{"username": username})
 	result := a.databaseRead.Find(account, filter, account.GetTable())
 	return account, result.GetError()

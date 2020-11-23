@@ -19,7 +19,9 @@ import (
 	"context"
 	"errors"
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -43,7 +45,7 @@ func TestNewHandler(t *testing.T) {
 	t.Run("should return a new analysis handler", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
-		result := NewHandler(mockRead, mockWrite)
+		result := NewHandler(mockRead, mockWrite, nil, nil)
 		assert.NotNil(t, result)
 	})
 }
@@ -53,7 +55,7 @@ func TestOptions(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/analysis", nil)
 		w := httptest.NewRecorder()
 
@@ -68,7 +70,7 @@ func TestGet(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodGet, "api/analysis", nil)
 		w := httptest.NewRecorder()
 
@@ -87,7 +89,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(mockResponse.SetError(errors.New("test")))
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
@@ -110,7 +112,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(mockResponse.SetError(errorsEnum.ErrNotFoundRecords))
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
@@ -132,7 +134,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(1, nil, test.CreateAnalysisMock()))
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodGet, "/api/analysis/85d08ec1-7786-4c2d-bf4e-5fee3a010315", nil)
 		w := httptest.NewRecorder()
 
@@ -151,7 +153,7 @@ func TestPut(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodPut, "api/analysis", nil)
 		w := httptest.NewRecorder()
 
@@ -166,7 +168,7 @@ func TestDelete(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil, nil)
 		r, _ := http.NewRequest(http.MethodDelete, "api/analysis", nil)
 		w := httptest.NewRecorder()
 
@@ -177,6 +179,11 @@ func TestDelete(t *testing.T) {
 }
 
 func TestPost(t *testing.T) {
+	mockBroker := &broker.Mock{}
+	config := &app.Config{
+		DisabledBroker: false,
+	}
+	mockBroker.On("Publish").Return(nil)
 	t.Run("Should return 201 when return success in create new analysis", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -202,7 +209,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysisData.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -223,7 +230,7 @@ func TestPost(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", nil)
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -244,7 +251,7 @@ func TestPost(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader([]byte("Wrong:Object")))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -270,7 +277,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -301,7 +308,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -331,7 +338,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -365,7 +372,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysisData.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
@@ -401,7 +408,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -439,7 +446,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -474,7 +481,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
@@ -512,7 +519,7 @@ func TestPost(t *testing.T) {
 			RepositoryName: "",
 		}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, mockBroker, config)
 		r, _ := http.NewRequest(http.MethodPost, "api/analysis", bytes.NewReader(analysis.ToBytes()))
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())

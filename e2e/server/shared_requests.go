@@ -20,8 +20,11 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
@@ -31,7 +34,23 @@ import (
 	"time"
 )
 
-func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
+func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
+	fmt.Println("Running test for Login")
+	loginResp, err := http.Post(
+		"http://127.0.0.1:8006/api/auth/authenticate",
+		"text/json",
+		bytes.NewReader(credentials.ToBytes()),
+	)
+	assert.NoError(t, err, "login, error mount request")
+	assert.Equal(t, http.StatusOK, loginResp.StatusCode, "login error send request")
+
+	var loginResponse map[string]map[string]string
+	_ = json.NewDecoder(loginResp.Body).Decode(&loginResponse)
+	assert.NoError(t, loginResp.Body.Close())
+	return loginResponse["content"]
+}
+
+func CreateCompany(t *testing.T, bearerToken string, company *accountEntities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
@@ -46,7 +65,7 @@ func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Co
 	return createdCompany["content"]["companyID"]
 }
 
-func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountentities.Company) {
+func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountEntities.Company) {
 	fmt.Println("Running test for UpdateCompany")
 	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
 	req.Header.Add("Authorization", bearerToken)
@@ -91,7 +110,7 @@ func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	assert.NoError(t, resp.Body.Close())
 }
 
-func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *accountentities.InviteUser) {
+func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *dto.InviteUser) {
 	fmt.Println("Running test for InviteUserToCompany")
 	req, _ := http.NewRequest(
 		http.MethodPost,
@@ -171,4 +190,115 @@ func GetChartContentWithoutTreatment(t *testing.T, route, bearerToken, companyID
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
 	return res
+}
+
+func CreateRepository(t *testing.T, bearerToken, companyID string, repository *accountEntities.Repository) string {
+	repositoryBytes, _ := json.Marshal(repository)
+	fmt.Println("Running test for CreateRepository")
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies/"+companyID+"/repositories", bytes.NewReader(repositoryBytes))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "create repository error send request")
+	assert.Equal(t, http.StatusCreated, resp.StatusCode, "create repository error check response")
+	var body map[string]map[string]string
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"]["repositoryID"])
+	return body["content"]["repositoryID"]
+}
+
+func UpdateRepository(t *testing.T, bearerToken, companyID, repositoryID string, repository *accountEntities.Repository) {
+	fmt.Println("Running test for UpdateRepository")
+	repositoryBytes, _ := json.Marshal(repository)
+	fmt.Println("Running test for UpdateRepository")
+	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID, bytes.NewReader(repositoryBytes))
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "update repository error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "update repository error check response")
+	var body map[string]map[string]string
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+
+func ReadAllRepositories(t *testing.T, bearerToken, companyID string, isCheckBodyEmpty bool) string {
+	fmt.Println("Running test for ReadAllRepositories")
+	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8003/api/companies/"+companyID+"/repositories", nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read all repositories error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read all repositories error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	if isCheckBodyEmpty {
+		assert.NotEmpty(t, body["content"])
+	}
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+
+func DeleteRepository(t *testing.T, bearerToken, companyID, repositoryID string) {
+	fmt.Println("Running test for DeleteRepository")
+	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID, nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "delete repository error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete repository error check response")
+	var body map[string]map[string]string
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+}
+
+func GenerateRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID string, token api.Token) string {
+	fmt.Println("Running test for GenerateRepositoryToken")
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		"http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens",
+		bytes.NewReader(token.ToBytes()),
+	)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	apiTokenResp, err := httpClient.Do(req)
+	assert.NoError(t, err, "generate repository token error send response")
+	assert.Equal(t, http.StatusCreated, apiTokenResp.StatusCode, "generate repository token error check response")
+
+	var apiToken map[string]string
+	_ = json.NewDecoder(apiTokenResp.Body).Decode(&apiToken)
+	assert.NoError(t, apiTokenResp.Body.Close())
+	assert.NotEmpty(t, apiToken["content"])
+	return apiToken["content"]
+}
+
+func ReadAllRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID string) string {
+	fmt.Println("Running test for ReadAllRepositoryToken")
+	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens", nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "read all repositories tokens error send request")
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "read all repositories tokens error check response")
+	var body map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
+	assert.NotEmpty(t, body["content"])
+	content, _ := json.Marshal(body["content"])
+	return string(content)
+}
+
+func RevokeRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID, tokenID string) {
+	fmt.Println("Running test for RevokeRepositoryToken")
+	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens/"+tokenID, nil)
+	req.Header.Add("Authorization", bearerToken)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(req)
+	assert.NoError(t, err, "delete repository token error send request")
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "delete repository token error check response")
+	var body map[string]map[string]string
+	_ = json.NewDecoder(resp.Body).Decode(&body)
+	assert.NoError(t, resp.Body.Close())
 }

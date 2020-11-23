@@ -38,6 +38,7 @@ import (
 type Interface interface {
 	NewAnalysisRunning() *horusecEntities.Analysis
 	DecodeAnalysisDataFromIoRead(body io.ReadCloser) (analysisData *apiEntities.AnalysisData, err error)
+	DecodeAnalysisFromBytes(body []byte) (analysis *horusecEntities.Analysis, err error)
 	ParseInterfaceToListAnalysis(data interface{}) (analysis []*horusecEntities.Analysis, err error)
 	ParseInterfaceToAnalysis(data interface{}) (analysis *horusecEntities.Analysis, err error)
 	ParsePacketToAnalysis(packet brokerPacket.IPacket) (analysis *horusecEntities.Analysis, err error)
@@ -97,6 +98,28 @@ func (au *UseCases) DecodeAnalysisDataFromIoRead(body io.ReadCloser) (
 	return analysisData, au.validateAnalysis(analysisData.Analysis)
 }
 
+func (au *UseCases) DecodeAnalysisFromBytes(body []byte) (analysis *horusecEntities.Analysis, err error) {
+	if err := json.Unmarshal(body, &analysis); err != nil {
+		return nil, err
+	}
+
+	return analysis, au.validateAnalysisWithRepositoryAndCompany(analysis)
+}
+
+func (au *UseCases) validateAnalysisWithRepositoryAndCompany(analysis *horusecEntities.Analysis) error {
+	return validation.ValidateStruct(analysis,
+		validation.Field(&analysis.ID, validation.Required, is.UUID),
+		validation.Field(&analysis.RepositoryID, validation.Required, is.UUID),
+		validation.Field(&analysis.CompanyID, validation.Required, is.UUID),
+		validation.Field(&analysis.Status,
+			validation.Required, validation.In(horusec.Running, horusec.Success, horusec.Error)),
+		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
+		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
+		validation.Field(&analysis.AnalysisVulnerabilities,
+			validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
+	)
+}
+
 func (au *UseCases) validateAnalysis(analysis *horusecEntities.Analysis) error {
 	return validation.ValidateStruct(analysis,
 		validation.Field(&analysis.ID, validation.Required, is.UUID),
@@ -136,6 +159,7 @@ func (au *UseCases) setupValidationVulnerabilities(vulnerability *horusecEntitie
 	)
 }
 
+// nolint
 func (au *UseCases) sliceTools() []interface{} {
 	return []interface{}{
 		tools.GoSec,
@@ -151,12 +175,19 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecJava,
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
+		tools.Semgrep,
+		tools.HorusecCsharp,
+		tools.HorusecNodejs,
+		tools.Eslint,
+		tools.HorusecKubernetes,
 	}
 }
+
+// nolint
 func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
-		languages.DotNet,
+		languages.CSharp,
 		languages.Ruby,
 		languages.Python,
 		languages.Java,
@@ -164,6 +195,13 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Javascript,
 		languages.Leaks,
 		languages.HCL,
+		languages.PHP,
+		languages.TypeScript,
+		languages.C,
+		languages.HTML,
+		languages.Generic,
+		languages.Yaml,
+		languages.Unknown,
 	}
 }
 func (au *UseCases) sliceSeverities() []interface{} {

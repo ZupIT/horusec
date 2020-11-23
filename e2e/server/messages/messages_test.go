@@ -19,6 +19,7 @@ package messages
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,6 @@ import (
 	"os"
 	"testing"
 
-	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/golang-migrate/migrate/v4"
@@ -69,7 +69,7 @@ func TestMessages(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should run analysis and check if messages are dispatch correctly", func(t *testing.T) {
-		accountToCreate := &accountentities.Account{
+		accountToCreate := &authEntities.Account{
 			Email:    "e2e@example.com",
 			Password: "Ch@ng3m3",
 			Username: "e2e_user",
@@ -78,12 +78,12 @@ func TestMessages(t *testing.T) {
 		CreateAccount(t, accountToCreate)
 
 		// When try login without confirm account return unauthorized
-		loginResp := Login(t, &authEntities.Credentials{
+		loginResp := Login(t, &authDto.Credentials{
 			Username: accountToCreate.Email,
 			Password: accountToCreate.Password,
 		})
-		assert.Equal(t, http.StatusForbidden, loginResp.GetStatusCode())
-
+		assert.Equal(t, http.StatusOK, loginResp.GetStatusCode())
+		defer loginResp.CloseBody()
 		// Get Last account created in database
 		accountCreated := GetLastAccountCreated(t)
 
@@ -91,7 +91,7 @@ func TestMessages(t *testing.T) {
 		ValidateAccount(t, accountCreated.AccountID.String())
 
 		// Check if is possible login now
-		bearerToken := LoginAndReturnAccessToken(t, &authEntities.Credentials{
+		bearerToken := LoginAndReturnAccessToken(t, &authDto.Credentials{
 			Username: accountToCreate.Email,
 			Password: accountToCreate.Password,
 		})
@@ -99,7 +99,7 @@ func TestMessages(t *testing.T) {
 	})
 }
 
-func GetLastAccountCreated(t *testing.T) (accountCreated accountentities.Account) {
+func GetLastAccountCreated(t *testing.T) (accountCreated authEntities.Account) {
 	dbRead := adapter.NewRepositoryRead()
 	sqlUtil := test.NewSQLUtil(dbRead)
 	sqlUtil.GetLast(&accountCreated)

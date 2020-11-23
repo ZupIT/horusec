@@ -16,13 +16,14 @@ package repository
 
 import (
 	"errors"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -33,6 +34,34 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMock(t *testing.T) {
+	m := &Mock{}
+	m.On("Create").Return(nil)
+	m.On("Update").Return(&accountEntities.Repository{}, nil)
+	m.On("Get").Return(&accountEntities.Repository{}, nil)
+	m.On("List").Return(&[]accountEntities.RepositoryResponse{}, nil)
+	m.On("Delete").Return(nil)
+	m.On("GetAllAccountsInRepository").Return(&[]roles.AccountRole{}, nil)
+	m.On("GetByName").Return(&accountEntities.Repository{}, nil)
+	m.On("GetAccountCompanyRole").Return(&roles.AccountCompany{}, nil)
+	err := m.Create(&accountEntities.Repository{}, nil)
+	assert.NoError(t, err)
+	_, err = m.Update(uuid.New(), &accountEntities.Repository{})
+	assert.NoError(t, err)
+	_, err = m.Get(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.List(uuid.New(), uuid.New())
+	assert.NoError(t, err)
+	err = m.Delete(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllAccountsInRepository(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetByName(uuid.New(), "")
+	assert.NoError(t, err)
+	_, err = m.GetAccountCompanyRole(uuid.New(), uuid.New())
+	assert.NoError(t, err)
+}
 
 func TestCreateRepository(t *testing.T) {
 	t.Run("should create repository without errors", func(t *testing.T) {
@@ -131,7 +160,7 @@ func TestList(t *testing.T) {
 	databaseWrite := adapter.NewRepositoryWrite()
 	databaseRead := adapter.NewRepositoryRead()
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		Email:     "test@test.com",
 		Username:  "test",
 		CreatedAt: time.Now(),

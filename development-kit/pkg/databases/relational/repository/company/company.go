@@ -16,10 +16,10 @@ package company
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 	"github.com/google/uuid"
 )
 

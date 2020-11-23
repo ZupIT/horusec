@@ -119,7 +119,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
 		cliConfig := &config.Config{}
 		cliConfig.WorkDir = &workdir.WorkDir{}
-		cliConfig.WorkDir.NetCore = []string{"test"}
+		cliConfig.WorkDir.CSharp = []string{"test"}
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
@@ -203,6 +203,45 @@ func TestSetLanguageIsFinished(t *testing.T) {
 
 		monitorController.SetLanguageIsFinished()
 		assert.Equal(t, 0, monitor.GetProcess())
+	})
+}
+
+func TestToolIsToIgnore(t *testing.T) {
+	t.Run("should return true when language is match", func(t *testing.T) {
+		monitor := horusec.NewMonitor()
+		monitor.AddProcess(1)
+		configs := &config.Config{ToolsToIgnore: "GoSec"}
+
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
+
+		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
+	})
+	t.Run("should return true when language is match uppercase", func(t *testing.T) {
+		monitor := horusec.NewMonitor()
+		monitor.AddProcess(1)
+		configs := &config.Config{ToolsToIgnore: "GOSEC"}
+
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
+
+		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
+	})
+	t.Run("should return true when language is match lowercase and multi tools", func(t *testing.T) {
+		monitor := horusec.NewMonitor()
+		monitor.AddProcess(1)
+		configs := &config.Config{ToolsToIgnore: "SecurityCodeScan , gosEC"}
+
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
+
+		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
+	})
+	t.Run("should return false when language is not match", func(t *testing.T) {
+		monitor := horusec.NewMonitor()
+		monitor.AddProcess(1)
+		configs := &config.Config{ToolsToIgnore: "SECURITYCODESCAN"}
+
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, configs, &horusec.Monitor{})
+
+		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
 }
 

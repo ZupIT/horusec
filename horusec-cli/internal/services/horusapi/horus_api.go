@@ -58,6 +58,7 @@ func (s *Service) SendAnalysis(analysis *horusec.Analysis) {
 		s.loggerSendError(err)
 		return
 	}
+	defer response.CloseBody()
 
 	s.loggerSendError(s.verifyResponseCreateAnalysis(response))
 }
@@ -72,6 +73,7 @@ func (s *Service) GetAnalysis(analysisID uuid.UUID) *horusec.Analysis {
 		s.loggerSendError(err)
 		return nil
 	}
+	defer response.CloseBody()
 	body, err := s.verifyResponseFindAnalysis(response)
 	s.loggerSendError(err)
 	return body

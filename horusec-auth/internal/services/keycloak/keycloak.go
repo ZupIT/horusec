@@ -19,7 +19,7 @@ import (
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
@@ -43,11 +43,11 @@ func NewKeycloakAuthService(databaseRead relational.InterfaceRead) services.IAut
 	}
 }
 
-func (s *Service) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
+func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error) {
 	return s.keycloak.LoginOtp(credentials.Username, credentials.Password, credentials.Otp)
 }
 
-func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) IsAuthorized(authorizationData *dto.AuthorizationData) (bool, error) {
 	if isActive, err := s.keycloak.IsActiveToken(authorizationData.Token); err != nil || !isActive {
 		return false, err
 	}
@@ -55,8 +55,8 @@ func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData
 	return s.authorizeByRole()[authorizationData.Role](authorizationData)
 }
 
-func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error) {
-	return map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error){
+func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*dto.AuthorizationData) (bool, error) {
+	return map[authEnums.HorusecRoles]func(*dto.AuthorizationData) (bool, error){
 		authEnums.CompanyMember:        s.isCompanyMember,
 		authEnums.CompanyAdmin:         s.isCompanyAdmin,
 		authEnums.RepositoryMember:     s.isRepositoryMember,
@@ -65,7 +65,7 @@ func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntitie
 	}
 }
 
-func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -78,7 +78,7 @@ func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationD
 	return true, nil
 }
 
-func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -91,7 +91,7 @@ func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationDa
 	return true, nil
 }
 
-func (s *Service) isRepositoryMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -106,7 +106,7 @@ func (s *Service) isRepositoryMember(authorizationData *authEntities.Authorizati
 	return true, nil
 }
 
-func (s *Service) isRepositorySupervisor(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -122,7 +122,7 @@ func (s *Service) isRepositorySupervisor(authorizationData *authEntities.Authori
 	return true, nil
 }
 
-func (s *Service) isRepositoryAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositoryAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -138,7 +138,7 @@ func (s *Service) isRepositoryAdmin(authorizationData *authEntities.Authorizatio
 	return true, nil
 }
 
-func (s *Service) isNotCompanyAdmin(authorizationData *authEntities.AuthorizationData, accountID uuid.UUID) bool {
+func (s *Service) isNotCompanyAdmin(authorizationData *dto.AuthorizationData, accountID uuid.UUID) bool {
 	accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
 	return errCompany != nil || accountCompany.IsNotAdmin()
 }

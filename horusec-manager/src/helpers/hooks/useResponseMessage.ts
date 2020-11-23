@@ -46,6 +46,9 @@ const useResponseMessage = () => {
       '{ACCOUNT} repository name already in use': t(
         'API_ERRORS.REPO_NAME_IN_USE'
       ),
+      'already exists webhook to repository selected': t(
+        'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
+      ),
       generic: t('API_ERRORS.GENERIC_ERROR'),
     };
 

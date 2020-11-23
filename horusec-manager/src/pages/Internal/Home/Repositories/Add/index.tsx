@@ -15,7 +15,7 @@
  */
 
 import React, { useState } from 'react';
-import { Dialog } from 'components';
+import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -37,7 +37,7 @@ interface Props {
 const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { companyID, authzAdmin, authzMember } = getCurrentCompany();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -50,17 +50,17 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const [adminGroup, setAdminGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [supervisorGroup, setSupervisorGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzAdmin,
   });
 
   const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
-    value: '',
+    value: authzMember,
   });
 
   const resetFields = () => {
@@ -137,9 +137,10 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
+                initialValue={adminGroup.value}
                 name="adminGroup"
                 type="text"
                 width="100%"
@@ -149,9 +150,10 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setSupervisorGroup(field)}
+                initialValue={supervisorGroup.value}
                 name="supervisorGroup"
                 type="text"
                 width="100%"
@@ -161,9 +163,10 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('REPOSITORIES_SCREEN.USER')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setUserGroup(field)}
+                initialValue={userGroup.value}
                 name="userGroup"
                 type="text"
                 width="100%"
