@@ -15,7 +15,9 @@
 package health
 
 import (
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 
 	netHTTP "net/http"
 
@@ -28,10 +30,15 @@ type Handler struct {
 	httpUtil.Interface
 	postgresRead  relational.InterfaceRead
 	postgresWrite relational.InterfaceWrite
+	config        app.IAppConfig
+	broker        brokerLib.IBroker
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
 	return &Handler{
+		broker:        broker,
+		config:        config,
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,
 	}
@@ -53,6 +60,12 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	if !h.postgresRead.IsAvailable() || !h.postgresWrite.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, errors.ErrorDatabaseIsNotHealth)
 		return
+	}
+	if !h.config.IsDisabledBroker() {
+		if !h.broker.IsAvailable() {
+			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
+			return
+		}
 	}
 	httpUtil.StatusOK(w, "service is healthy")
 }

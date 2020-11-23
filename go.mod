@@ -5,9 +5,8 @@ go 1.14
 require (
 	github.com/Microsoft/go-winio v0.4.15 // indirect
 	github.com/Nerzal/gocloak/v7 v7.5.0
-	github.com/ZupIT/horusec-engine v0.2.7
+	github.com/ZupIT/horusec-engine v0.2.8
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/auth0/go-jwt-middleware v0.0.0-20201030150249-d783b5c46b39
 	github.com/bmatcuk/doublestar v1.3.2 // indirect

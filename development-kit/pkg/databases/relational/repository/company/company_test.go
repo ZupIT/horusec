@@ -18,12 +18,12 @@ import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"os"
 	"testing"
 	"time"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/roles"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -32,6 +32,28 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMock(t *testing.T) {
+	m := &Mock{}
+	m.On("Create").Return(&accountEntities.Company{}, nil)
+	m.On("Update").Return(&accountEntities.Company{}, nil)
+	m.On("GetByID").Return(&accountEntities.Company{}, nil)
+	m.On("GetAllOfAccount").Return(&[]accountEntities.CompanyResponse{}, nil)
+	m.On("Delete").Return(nil)
+	m.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
+	_, err := m.Create(&accountEntities.Company{}, nil)
+	assert.NoError(t, err)
+	_, err = m.Update(uuid.New(), &accountEntities.Company{})
+	assert.NoError(t, err)
+	_, err = m.GetByID(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllOfAccount(uuid.New())
+	assert.NoError(t, err)
+	err = m.Delete(uuid.New())
+	assert.NoError(t, err)
+	_, err = m.GetAllAccountsInCompany(uuid.New())
+	assert.NoError(t, err)
+}
 
 func TestCreateCompany(t *testing.T) {
 	t.Run("should use current connection to create a company", func(t *testing.T) {
@@ -154,7 +176,7 @@ func TestGetAllOfAccount(t *testing.T) {
 	databaseWrite := adapter.NewRepositoryWrite()
 	databaseRead := adapter.NewRepositoryRead()
 
-	account := &accountEntities.Account{
+	account := &authEntities.Account{
 		Email:     "test@test.com",
 		Username:  "test",
 		CreatedAt: time.Now(),

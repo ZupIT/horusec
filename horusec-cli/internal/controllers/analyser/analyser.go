@@ -16,7 +16,6 @@ package analyser
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"log"
 	"os"
 	"os/signal"
@@ -24,6 +23,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
+
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/kotlin/horuseckotlin"
@@ -40,9 +45,11 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dotnet/scs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/eslint"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks"
@@ -131,8 +138,7 @@ func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
 		a.analysis = analysisSaved
 	}
-	a.analysis = a.analysis.SetFalsePositivesAndRiskAcceptInVulnerabilities(a.config.GetFalsePositiveHashesList(),
-		a.config.GetRiskAcceptHashesList())
+	a.setFalsePositive()
 	a.printController.SetAnalysis(a.analysis)
 	return a.printController.StartPrintResults()
 }
@@ -169,9 +175,10 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 	}
 }
 
+//nolint:funlen all Languages is greater than 15
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
-		languages.DotNet:     a.detectVulnerabilityDotNet,
+		languages.CSharp:     a.detectVulnerabilityDotNet,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
 		languages.Java:       a.detectVulnerabilityJava,
@@ -180,12 +187,15 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Python:     a.detectVulnerabilityPython,
 		languages.Ruby:       a.detectVulnerabilityRuby,
 		languages.HCL:        a.detectVulnerabilityHCL,
+		languages.Generic:    a.detectVulnerabilityGeneric,
+		languages.Yaml:       a.detectVulnerabilityYaml,
 	}
 }
 
 func (a *Analyser) detectVulnerabilityDotNet(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {
@@ -215,9 +225,11 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
-	a.monitor.AddProcess(2)
+	a.monitor.AddProcess(4)
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go eslint.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
@@ -234,6 +246,16 @@ func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {
@@ -253,4 +275,28 @@ func (a *Analyser) logProjectSubPath(language languages.Language, subPath string
 		msg := fmt.Sprintf("Running %s in subpath: %s", language.ToString(), subPath)
 		logger.LogDebugWithLevel(msg, logger.DebugLevel)
 	}
+}
+
+func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
+	for _, hash := range list {
+		existing := false
+		for keyAv := range a.analysis.AnalysisVulnerabilities {
+			if hash == a.analysis.AnalysisVulnerabilities[keyAv].Vulnerability.VulnHash {
+				existing = true
+				break
+			}
+		}
+		if !existing {
+			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis+hash, logger.WarnLevel)
+		}
+	}
+}
+
+func (a *Analyser) setFalsePositive() {
+	a.analysis = a.analysis.
+		SetFalsePositivesAndRiskAcceptInVulnerabilities(
+			a.config.GetFalsePositiveHashesList(), a.config.GetRiskAcceptHashesList())
+
+	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashesList())
+	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashesList())
 }

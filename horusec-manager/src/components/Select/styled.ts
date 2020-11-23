@@ -38,12 +38,6 @@ interface OptionItem {
 const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: column;
-
-  ${({ disabled }) =>
-    disabled &&
-    css`
-      opacity: 0.3;
-    `};
 `;
 
 const Title = styled.span`
@@ -66,6 +60,7 @@ const Container = styled.div<WrapperProps>`
     disabled &&
     css`
       cursor: not-allowed;
+      opacity: 0.3;
     `};
 
   ${({ rounded }) =>

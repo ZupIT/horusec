@@ -1,3 +1,17 @@
+# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 definitions:
   account.Company:
     properties:
@@ -8,34 +22,6 @@ definitions:
       description:
         type: string
       name:
-        type: string
-    type: object
-  account.CreateAccount:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  account.EmailData:
-    properties:
-      email:
-        type: string
-    type: object
-  account.InviteUser:
-    properties:
-      email:
-        type: string
-      role:
-        type: string
-    type: object
-  account.LoginData:
-    properties:
-      email:
-        type: string
-      password:
         type: string
     type: object
   account.Repository:
@@ -51,18 +37,34 @@ definitions:
       name:
         type: string
     type: object
-  account.ResetCodeData:
+  account.RepositoryResponse:
     properties:
-      code:
+      authzAdmin:
         type: string
-      email:
+      authzMember:
+        type: string
+      authzSupervisor:
+        type: string
+      companyID:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      repositoryID:
+        type: string
+      role:
+        type: string
+      updatedAt:
         type: string
     type: object
-  account.ValidateUnique:
+  dto.InviteUser:
     properties:
       email:
         type: string
-      username:
+      role:
         type: string
     type: object
   http.Response:
@@ -84,485 +86,62 @@ definitions:
       role:
         type: string
     type: object
+  webhook.Headers:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  webhook.ResponseWebhook:
+    properties:
+      companyID:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      headers:
+        items:
+          $ref: '#/definitions/webhook.Headers'
+        type: array
+      method:
+        type: string
+      repository:
+        $ref: '#/definitions/account.RepositoryResponse'
+        type: object
+      repositoryID:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+      webhookID:
+        type: string
+    type: object
+  webhook.Webhook:
+    properties:
+      description:
+        type: string
+      headers:
+        items:
+          $ref: '#/definitions/webhook.Headers'
+        type: array
+      method:
+        type: string
+      url:
+        type: string
+    type: object
 info:
   contact:
     email: horusec@zup.com.br
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
-  /api/account/change-password:
-    post:
-      consumes:
-      - application/json
-      description: change password!
-      operationId: change-password
-      parameters:
-      - description: new password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: NO CONTENT
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Account
-  /api/account/create-account:
-    post:
-      consumes:
-      - application/json
-      description: Create a new account!
-      operationId: create-account
-      parameters:
-      - description: create account info
-        in: body
-        name: CreateAccount
-        required: true
-        schema:
-          $ref: '#/definitions/account.CreateAccount'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: STATUS CREATED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
-  /api/account/delete:
-    delete:
-      consumes:
-      - application/json
-      description: Delete account and all permissions!
-      operationId: delete-account
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: NO CONTENT
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Account
-  /api/account/login:
-    post:
-      consumes:
-      - application/json
-      description: login into account!
-      operationId: login
-      parameters:
-      - description: login data info
-        in: body
-        name: LoginData
-        required: true
-        schema:
-          $ref: '#/definitions/account.LoginData'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
-  /api/account/logout:
-    post:
-      consumes:
-      - application/json
-      description: logout!
-      operationId: logout
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: NO CONTENT
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Account
-  /api/account/renew-token:
-    post:
-      consumes:
-      - application/json
-      description: renew token!
-      operationId: renew-token
-      parameters:
-      - description: refresh token
-        in: body
-        name: refreshToken
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Account
-  /api/account/send-code:
-    post:
-      consumes:
-      - application/json
-      description: send reset password code!
-      operationId: reset-password-code
-      parameters:
-      - description: reset password email info
-        in: body
-        name: EmailData
-        required: true
-        schema:
-          $ref: '#/definitions/account.EmailData'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: NO CONTENT
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
-  /api/account/validate-code:
-    post:
-      consumes:
-      - application/json
-      description: validate reset password code!
-      operationId: validate-password-code
-      parameters:
-      - description: reset password data info
-        in: body
-        name: ResetCodeData
-        required: true
-        schema:
-          $ref: '#/definitions/account.ResetCodeData'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: NO CONTENT
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "401":
-          description: UNAUTHORIZED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
-  /api/account/validate/{accountID}:
-    get:
-      consumes:
-      - application/json
-      description: validate email!
-      operationId: validate-email
-      parameters:
-      - description: accountID of the account
-        in: path
-        name: accountID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
-  /api/account/verify-already-used:
-    post:
-      consumes:
-      - application/json
-      description: Verify if email and username already in use!
-      operationId: validate-unique
-      parameters:
-      - description: validate unique info
-        in: body
-        name: ValidateUnique
-        required: true
-        schema:
-          $ref: '#/definitions/account.ValidateUnique'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: STATUS CREATED
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      tags:
-      - Account
   /api/companies:
     get:
       consumes:
@@ -1152,7 +731,7 @@ paths:
         name: InviteUser
         required: true
         schema:
-          $ref: '#/definitions/account.InviteUser'
+          $ref: '#/definitions/dto.InviteUser'
       - description: companyID of the repository
         in: path
         name: companyID
@@ -1407,7 +986,7 @@ paths:
         name: InviteUser
         required: true
         schema:
-          $ref: '#/definitions/account.InviteUser'
+          $ref: '#/definitions/dto.InviteUser'
       - description: companyID of the company
         in: path
         name: companyID
@@ -1610,6 +1189,262 @@ paths:
               type: object
       tags:
       - Health
+  /api/webhook/{companyID}:
+    get:
+      consumes:
+      - application/json
+      description: get webhook!
+      operationId: get-webhook
+      parameters:
+      - description: companyID of the webhook
+        in: path
+        name: companyID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  items:
+                    allOf:
+                    - $ref: '#/definitions/webhook.ResponseWebhook'
+                    - properties:
+                        headers:
+                          items:
+                            $ref: '#/definitions/webhook.Headers'
+                          type: array
+                        repository:
+                          $ref: '#/definitions/account.RepositoryResponse'
+                      type: object
+                  type: array
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhooks
+  /api/webhook/{companyID}/{repositoryID}:
+    post:
+      consumes:
+      - application/json
+      description: create webhook!
+      operationId: create-webhook
+      parameters:
+      - description: webhook info, method allowed is POST
+        in: body
+        name: Webhook
+        required: true
+        schema:
+          allOf:
+          - $ref: '#/definitions/webhook.Webhook'
+          - properties:
+              headers:
+                items:
+                  $ref: '#/definitions/webhook.Headers'
+                type: array
+            type: object
+      - description: companyID of the webhook
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhooks
+  /api/webhook/{companyID}/{repositoryID}/{webhookID}:
+    delete:
+      consumes:
+      - application/json
+      description: get webhook by repositoryID!
+      operationId: delete-webhook
+      parameters:
+      - description: companyID of the webhook
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: webhookID of the webhook
+        in: path
+        name: webhookID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204": {}
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhooks
+    put:
+      consumes:
+      - application/json
+      description: get webhook by repositoryID!
+      operationId: update-webhook
+      parameters:
+      - description: webhook info, method allowed is POST
+        in: body
+        name: Webhook
+        required: true
+        schema:
+          allOf:
+          - $ref: '#/definitions/webhook.Webhook'
+          - properties:
+              headers:
+                items:
+                  $ref: '#/definitions/webhook.Headers'
+                type: array
+            type: object
+      - description: companyID of the webhook
+        in: path
+        name: companyID
+        required: true
+        type: string
+      - description: repositoryID of the webhook
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: webhookID of the webhook
+        in: path
+        name: webhookID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204": {}
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhooks
 securityDefinitions:
   ApiKeyAuth:
     in: header

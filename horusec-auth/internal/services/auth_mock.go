@@ -15,7 +15,7 @@
 package services
 
 import (
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -23,12 +23,12 @@ type MockAuthService struct {
 	mock.Mock
 }
 
-func (m *MockAuthService) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
+func (m *MockAuthService) Authenticate(credentials *dto.Credentials) (interface{}, error) {
 	args := m.MethodCalled("Authenticate")
 	return args.Get(0).(interface{}), args.Error(1)
 }
 
-func (m *MockAuthService) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (m *MockAuthService) IsAuthorized(authorizationData *dto.AuthorizationData) (bool, error) {
 	args := m.MethodCalled("IsAuthorized")
 	return args.Bool(0), args.Error(1)
 }

@@ -31,7 +31,7 @@ const Form = styled.form`
 `;
 
 const Field = styled(Input)`
-  margin-top: 20px;
+  margin: 20px 0;
 `;
 
 const Wrapper = styled.div`

@@ -128,6 +128,20 @@ func TestDelete(t *testing.T) {
 		assert.Error(t, err)
 		mockWrite.AssertCalled(t, "Delete")
 	})
+	t.Run("should return an error when delete fails", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+
+		resp := &response.Response{}
+		mockWrite.On("Delete").Return(resp)
+
+		repository := NewTokenRepository(mockRead, mockWrite)
+
+		err := repository.Delete(uuid.New())
+
+		assert.Error(t, err)
+		mockWrite.AssertCalled(t, "Delete")
+	})
 }
 
 func TestGetByValue(t *testing.T) {
@@ -265,4 +279,44 @@ func TestGetAllOfRepository(t *testing.T) {
 		assert.Nil(t, tokens)
 		mockRead.AssertCalled(t, "Find")
 	})
+}
+
+func TestRepository_GetAllOfCompany(t *testing.T) {
+	mockRead := &relational.MockRead{}
+	mockWrite := &relational.MockWrite{}
+	repositoryID := uuid.New()
+	tokenList := &[]api.Token{
+		{
+			TokenID:      uuid.New(),
+			Description:  "test",
+			RepositoryID: &repositoryID,
+			CompanyID:    uuid.New(),
+			SuffixValue:  "test",
+			Value:        "test",
+			CreatedAt:    time.Now(),
+			ExpiresAt:    time.Now(),
+		},
+		{
+			TokenID:      uuid.New(),
+			Description:  "test",
+			RepositoryID: &repositoryID,
+			CompanyID:    uuid.New(),
+			SuffixValue:  "test",
+			Value:        "test",
+			CreatedAt:    time.Now(),
+			ExpiresAt:    time.Now(),
+		},
+	}
+	resp := &response.Response{}
+	resp.SetData(tokenList)
+
+	mockRead.On("SetFilter").Return(&gorm.DB{})
+	mockRead.On("Find").Return(resp)
+
+	repository := NewTokenRepository(mockRead, mockWrite)
+
+	_, err := repository.GetAllOfCompany(uuid.New())
+
+	assert.NoError(t, err)
+	mockRead.AssertCalled(t, "Find")
 }

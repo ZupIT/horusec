@@ -15,10 +15,10 @@
 package cache
 
 import (
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"testing"
 	"time"
 
-	entitiesAccount "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -49,13 +49,13 @@ func TestToBytes(t *testing.T) {
 func TestConvertValueToEntity(t *testing.T) {
 	c := &Cache{}
 
-	account := &entitiesAccount.Account{
+	account := &authEntities.Account{
 		Email: "test@test.com",
 	}
 
 	c.Value = account.ToBytes()
 
-	toParse := &entitiesAccount.Account{}
+	toParse := &authEntities.Account{}
 
 	err := c.ConvertValueToEntity(toParse)
 	assert.NoError(t, err)

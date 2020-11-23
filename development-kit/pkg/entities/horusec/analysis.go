@@ -82,7 +82,7 @@ func (a *Analysis) SetAnalysisError(err error) {
 	if err != nil {
 		toAppend := ""
 		if len(a.Errors) > 0 {
-			a.Errors += ", " + err.Error()
+			a.Errors += "; " + err.Error()
 			return
 		}
 		a.Errors += toAppend + err.Error()

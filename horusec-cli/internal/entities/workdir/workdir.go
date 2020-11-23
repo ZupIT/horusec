@@ -25,6 +25,7 @@ import (
 type WorkDir struct {
 	Go         []string `json:"go"`
 	NetCore    []string `json:"netCore"`
+	CSharp     []string `json:"csharp"`
 	Ruby       []string `json:"ruby"`
 	Python     []string `json:"python"`
 	Java       []string `json:"java"`
@@ -32,6 +33,7 @@ type WorkDir struct {
 	JavaScript []string `json:"javaScript"`
 	Leaks      []string `json:"leaks"`
 	HCL        []string `json:"hcl"`
+	Generic    []string `json:"generic"`
 }
 
 func (w *WorkDir) String() string {
@@ -57,9 +59,12 @@ func (w *WorkDir) Type() string {
 }
 
 func (w *WorkDir) Map() map[languages.Language][]string {
+	cSharp := []string{}
+	cSharp = append(cSharp, w.NetCore...)
+	cSharp = append(cSharp, w.CSharp...)
 	return map[languages.Language][]string{
 		languages.Go:         w.Go,
-		languages.DotNet:     w.NetCore,
+		languages.CSharp:     cSharp,
 		languages.Ruby:       w.Ruby,
 		languages.Python:     w.Python,
 		languages.Java:       w.Java,
@@ -67,6 +72,7 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 		languages.Javascript: w.JavaScript,
 		languages.Leaks:      w.Leaks,
 		languages.HCL:        w.HCL,
+		languages.Generic:    w.Generic,
 	}
 }
 

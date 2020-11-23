@@ -441,7 +441,11 @@ func NewLeaksRegularHardCodedPassword() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(password.*=\s*['|\"]\w+[[:print:]]*['|\"])|(pass.*=\s*['|\"]\w+[[:print:]]*['|\"]\s)|(pwd.*=\s*['|\"]\w+[[:print:]]*['|\"]\s)|(passwd.*=\s*['|\"]\w+[[:print:]]*['|\"]\s)|(senha.*=\s*['|\"]\w+[[:print:]]*['|\"])`),
+			regexp.MustCompile(`(?i)(set)?password\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?pass\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?pwd\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?passwd\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?senha\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
 		},
 	}
 }

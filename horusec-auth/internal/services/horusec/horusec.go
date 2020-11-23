@@ -21,13 +21,13 @@ import (
 	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	accountUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/account"
+	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	"github.com/google/uuid"
 	"time"
@@ -38,8 +38,8 @@ type Service struct {
 	repoAccountRepository repoAccountRepository.IAccountRepository
 	repositoryRepo        repositoryRepo.IRepository
 	accountRepository     repositoryAccount.IAccount
-	accountUseCases       accountUseCases.IAccount
 	cacheRepository       cache.Interface
+	authUseCases          authUseCases.IUseCases
 	accountRepositoryRepo repoAccountRepository.IAccountRepository
 }
 
@@ -50,14 +50,14 @@ func NewHorusAuthService(
 		repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, postgresWrite),
 		repositoryRepo:        repositoryRepo.NewRepository(postgresRead, postgresWrite),
 		accountRepository:     repositoryAccount.NewAccountRepository(postgresRead, postgresWrite),
-		accountUseCases:       accountUseCases.NewAccountUseCases(),
 		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, postgresWrite),
 		cacheRepository:       cache.NewCacheRepository(postgresRead, postgresWrite),
+		authUseCases:          authUseCases.NewAuthUseCases(),
 	}
 }
 
-func (s *Service) Authenticate(credentials *authEntities.Credentials) (interface{}, error) {
-	loginData := &accountEntities.LoginData{
+func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error) {
+	loginData := &dto.LoginData{
 		Email:    credentials.Username,
 		Password: credentials.Password,
 	}
@@ -65,20 +65,20 @@ func (s *Service) Authenticate(credentials *authEntities.Credentials) (interface
 	return s.login(loginData)
 }
 
-func (s *Service) login(loginData *accountEntities.LoginData) (*accountEntities.LoginResponse, error) {
+func (s *Service) login(loginData *dto.LoginData) (*dto.LoginResponse, error) {
 	account, err := s.accountRepository.GetByEmail(loginData.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := s.accountUseCases.ValidateLogin(account, loginData); err != nil {
+	if err := s.authUseCases.ValidateLogin(account, loginData); err != nil {
 		return nil, err
 	}
 
 	return s.setLoginResponse(account)
 }
 
-func (s *Service) setLoginResponse(account *accountEntities.Account) (*accountEntities.LoginResponse, error) {
+func (s *Service) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
 	accessToken, expiresAt, _ := s.createTokenWithAccountPermissions(account)
 	refreshToken := jwt.CreateRefreshToken()
 	err := s.cacheRepository.Set(
@@ -87,20 +87,20 @@ func (s *Service) setLoginResponse(account *accountEntities.Account) (*accountEn
 		return nil, err
 	}
 
-	return account.ToLoginResponse(accessToken, refreshToken, expiresAt), nil
+	return s.authUseCases.ToLoginResponse(account, accessToken, refreshToken, expiresAt), nil
 }
 
-func (s *Service) createTokenWithAccountPermissions(account *accountEntities.Account) (string, time.Time, error) {
+func (s *Service) createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error) {
 	accountRepository, _ := s.accountRepositoryRepo.GetOfAccount(account.AccountID)
-	return jwt.CreateToken(account, s.accountUseCases.MapRepositoriesRoles(&accountRepository))
+	return jwt.CreateToken(account, s.authUseCases.MapRepositoriesRoles(&accountRepository))
 }
 
-func (s *Service) IsAuthorized(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) IsAuthorized(authorizationData *dto.AuthorizationData) (bool, error) {
 	return s.authorizeByRole()[authorizationData.Role](authorizationData)
 }
 
-func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error) {
-	return map[authEnums.HorusecRoles]func(*authEntities.AuthorizationData) (bool, error){
+func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*dto.AuthorizationData) (bool, error) {
+	return map[authEnums.HorusecRoles]func(*dto.AuthorizationData) (bool, error){
 		authEnums.CompanyMember:        s.isCompanyMember,
 		authEnums.CompanyAdmin:         s.isCompanyAdmin,
 		authEnums.RepositoryMember:     s.isRepositoryMember,
@@ -110,7 +110,7 @@ func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*authEntitie
 	}
 }
 
-func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -123,7 +123,7 @@ func (s *Service) isCompanyMember(authorizationData *authEntities.AuthorizationD
 	return true, nil
 }
 
-func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -136,7 +136,7 @@ func (s *Service) isCompanyAdmin(authorizationData *authEntities.AuthorizationDa
 	return true, nil
 }
 
-func (s *Service) isRepositoryMember(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -151,7 +151,7 @@ func (s *Service) isRepositoryMember(authorizationData *authEntities.Authorizati
 	return true, nil
 }
 
-func (s *Service) isRepositorySupervisor(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -167,7 +167,7 @@ func (s *Service) isRepositorySupervisor(authorizationData *authEntities.Authori
 	return true, nil
 }
 
-func (s *Service) isRepositoryAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isRepositoryAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
@@ -183,12 +183,12 @@ func (s *Service) isRepositoryAdmin(authorizationData *authEntities.Authorizatio
 	return true, nil
 }
 
-func (s *Service) isNotCompanyAdmin(authorizationData *authEntities.AuthorizationData, accountID uuid.UUID) bool {
+func (s *Service) isNotCompanyAdmin(authorizationData *dto.AuthorizationData, accountID uuid.UUID) bool {
 	accountCompany, errCompany := s.repositoryRepo.GetAccountCompanyRole(accountID, authorizationData.CompanyID)
 	return errCompany != nil || accountCompany.IsNotAdmin()
 }
 
-func (s *Service) isApplicationAdmin(authorizationData *authEntities.AuthorizationData) (bool, error) {
+func (s *Service) isApplicationAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized

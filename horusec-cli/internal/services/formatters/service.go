@@ -44,6 +44,7 @@ type IService interface {
 	SetMonitor(monitor *horusec.Monitor)
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
+	ToolIsToIgnore(tool tools.Tool) bool
 }
 
 type Service struct {
@@ -139,16 +140,39 @@ func (s *Service) RemoveSrcFolderFromPath(filepath string) string {
 }
 
 func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
-	maxLengthCode := 100
 	if column < 0 {
 		column = 0
 	}
-	if len(code) > maxLengthCode {
-		newCode := code[column:]
-		if len(newCode) > maxLengthCode {
-			return newCode[:maxLengthCode]
-		}
-		return newCode
+
+	if len(code) > 100 {
+		return s.getAHundredCharacters(code, column)
 	}
+
 	return code
+}
+
+func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
+	allTools := strings.Split(s.config.GetToolsToIgnore(), ",")
+
+	for _, toolToIgnore := range allTools {
+		if strings.EqualFold(strings.TrimSpace(toolToIgnore), tool.ToString()) {
+			s.SetLanguageIsFinished()
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *Service) getAHundredCharacters(code string, column int) string {
+	if len(code) < column {
+		return code[:100]
+	}
+
+	codeFromColumn := code[column:]
+	if len(codeFromColumn) > 100 {
+		return codeFromColumn[:100]
+	}
+
+	return codeFromColumn
 }

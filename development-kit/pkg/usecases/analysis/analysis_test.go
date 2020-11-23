@@ -17,6 +17,7 @@ package analysis
 import (
 	"encoding/json"
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -265,5 +266,19 @@ func TestNewAnalysisRunning(t *testing.T) {
 		analysis := useCases.NewAnalysisRunning()
 		assert.NotEmpty(t, analysis.CreatedAt)
 		assert.Equal(t, horusec.Running, analysis.Status)
+	})
+}
+
+func TestUseCases_DecodeAnalysisFromBytes(t *testing.T) {
+	t.Run("Should decode analysis from bytes with success", func(t *testing.T) {
+		analysis := test.CreateAnalysisMock()
+		newAnalysis, err := NewAnalysisUseCases().DecodeAnalysisFromBytes(analysis.ToBytes())
+		assert.NoError(t, err)
+		assert.NotEmpty(t, newAnalysis)
+	})
+	t.Run("Should decode analysis from bytes with error", func(t *testing.T) {
+		newAnalysis, err := NewAnalysisUseCases().DecodeAnalysisFromBytes([]byte("Wrong datatype"))
+		assert.Error(t, err)
+		assert.Empty(t, newAnalysis)
 	})
 }

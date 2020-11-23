@@ -24,6 +24,7 @@ const (
 	HorusecAnalysisFinish       Queue = "horusec-analysis-finish"
 	HorusecAnalyser             Queue = "horusec-analyser"
 	HorusecEmail                Queue = "horusec-email"
+	HorusecWebhookDispatch      Queue = "horusec-webhook-dispatch"
 	UNKNOWN                     Queue = "unknown"
 )
 
