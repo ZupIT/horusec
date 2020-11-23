@@ -176,6 +176,10 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
 		tools.Semgrep,
+		tools.HorusecCsharp,
+		tools.HorusecNodejs,
+		tools.Eslint,
+		tools.HorusecKubernetes,
 	}
 }
 
@@ -183,7 +187,7 @@ func (au *UseCases) sliceTools() []interface{} {
 func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
-		languages.DotNet,
+		languages.CSharp,
 		languages.Ruby,
 		languages.Python,
 		languages.Java,
@@ -196,6 +200,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.C,
 		languages.HTML,
 		languages.Generic,
+		languages.Yaml,
 		languages.Unknown,
 	}
 }

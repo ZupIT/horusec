@@ -20,7 +20,7 @@ type Language string
 
 const (
 	Go         Language = "Go"
-	DotNet     Language = "C#"
+	CSharp     Language = "C#"
 	Ruby       Language = "Ruby"
 	Python     Language = "Python"
 	Java       Language = "Java"
@@ -33,6 +33,7 @@ const (
 	PHP        Language = "PHP"
 	HTML       Language = "HTML"
 	Generic    Language = "Generic"
+	Yaml       Language = "YAML"
 	Unknown    Language = "Unknown"
 )
 
@@ -48,7 +49,7 @@ func ParseStringToLanguage(value string) (l Language) {
 func SupportedLanguages() []Language {
 	return []Language{
 		Go,
-		DotNet,
+		CSharp,
 		Ruby,
 		Python,
 		Java,
@@ -57,6 +58,7 @@ func SupportedLanguages() []Language {
 		Leaks,
 		HCL,
 		Generic,
+		Yaml,
 		Unknown,
 	}
 }
@@ -65,7 +67,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 	return map[string]Language{
 		Go.ToString():         Go,
 		Leaks.ToString():      Leaks,
-		DotNet.ToString():     DotNet,
+		CSharp.ToString():     CSharp,
 		Ruby.ToString():       Ruby,
 		Python.ToString():     Python,
 		Java.ToString():       Java,
@@ -73,6 +75,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Javascript.ToString(): Javascript,
 		HCL.ToString():        HCL,
 		Generic.ToString():    Generic,
+		Yaml.ToString():       Yaml,
 	}
 }
 

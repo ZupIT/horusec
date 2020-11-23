@@ -16,6 +16,8 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"os"
 	"strings"
 
@@ -338,8 +340,23 @@ func (c *Config) GetWorkDir() *workdir.WorkDir {
 }
 
 func (c *Config) SetWorkDir(toParse interface{}) {
+	if c.netCoreKeyIsDeprecated(toParse) {
+		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated, logger.WarnLevel)
+	}
 	c.WorkDir = &workdir.WorkDir{}
 	c.WorkDir.ParseInterfaceToStruct(toParse)
+}
+
+// nolint:gocyclo is necessary to check all validations
+func (c *Config) netCoreKeyIsDeprecated(toParse interface{}) bool {
+	workdirParsed, ok := toParse.(map[string]interface{})
+	if ok && workdirParsed["netcore"] != nil {
+		netCore, ok := workdirParsed["netcore"].([]interface{})
+		if ok && netCore != nil && len(netCore) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Config) GetEnableGitHistoryAnalysis() bool {

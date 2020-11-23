@@ -1416,7 +1416,7 @@ func NewJavaAndRSAUsageWithShortKey() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`KeyPairGenerator.getInstance\(.*\)`),
-			regexp.MustCompile(`initialize\(\b(0|[1-9][0-9]?)\b|\b(0|[1-9][0-9][0-9]?)\b|\b(0|[1][0-9][0-9][0-9]|[2][0][0-4][0-7]?)\b\)`),
+			regexp.MustCompile(`(initialize\()(\)|[0-9][^\d]|[0-9]{2}[^\d]|[0-9]{3}[^\d]|[0-1][0-9]{3}[^\d]|20[0-3][0-9]|204[0-7])`),
 		},
 	}
 }
@@ -1433,7 +1433,7 @@ func NewJavaAndBlowfishUsageWithShortKey() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`KeyGenerator.getInstance\(['|"]Blowfish['|"]\)`),
-			regexp.MustCompile(`init\(\b(0|[1-9][0-9]?)\b|\b(0|[1][0-2][0-7]?)\b\)`),
+			regexp.MustCompile(`(init\()(\)|[0-9][^\d]|[0-9]{2}[^\d]|[0-1][0-2][0-7])`),
 		},
 	}
 }

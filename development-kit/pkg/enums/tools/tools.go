@@ -17,20 +17,24 @@ package tools
 type Tool string
 
 const (
-	GoSec            Tool = "GoSec"
-	SecurityCodeScan Tool = "SecurityCodeScan"
-	Brakeman         Tool = "Brakeman"
-	Safety           Tool = "Safety"
-	Bandit           Tool = "Bandit"
-	NpmAudit         Tool = "NpmAudit"
-	YarnAudit        Tool = "YarnAudit"
-	SpotBugs         Tool = "SpotBugs"
-	HorusecKotlin    Tool = "HorusecKotlin"
-	HorusecJava      Tool = "HorusecJava"
-	HorusecLeaks     Tool = "HorusecLeaks"
-	GitLeaks         Tool = "GitLeaks"
-	TfSec            Tool = "TfSec"
-	Semgrep          Tool = "Semgrep"
+	GoSec             Tool = "GoSec"
+	SecurityCodeScan  Tool = "SecurityCodeScan"
+	Brakeman          Tool = "Brakeman"
+	Safety            Tool = "Safety"
+	Bandit            Tool = "Bandit"
+	NpmAudit          Tool = "NpmAudit"
+	YarnAudit         Tool = "YarnAudit"
+	SpotBugs          Tool = "SpotBugs"
+	HorusecKotlin     Tool = "HorusecKotlin"
+	HorusecJava       Tool = "HorusecJava"
+	HorusecLeaks      Tool = "HorusecLeaks"
+	GitLeaks          Tool = "GitLeaks"
+	TfSec             Tool = "TfSec"
+	Semgrep           Tool = "Semgrep"
+	HorusecCsharp     Tool = "HorusecCsharp"
+	HorusecKubernetes Tool = "HorusecKubernetes"
+	Eslint            Tool = "Eslint"
+	HorusecNodejs     Tool = "HorusecNodeJS"
 )
 
 func (t Tool) ToString() string {

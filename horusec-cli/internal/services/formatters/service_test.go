@@ -119,7 +119,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
 		cliConfig := &config.Config{}
 		cliConfig.WorkDir = &workdir.WorkDir{}
-		cliConfig.WorkDir.NetCore = []string{"test"}
+		cliConfig.WorkDir.CSharp = []string{"test"}
 
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, cliConfig, &horusec.Monitor{})
 
@@ -297,7 +297,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 24:     io.WriteString(h, s) // #nohorus
 	`, newCode)
 	})
-	t.Run("should return first 200 characters when text is so bigger", func(t *testing.T) {
+	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
 		code := "text"
 		for i := 0; i <= 200; i++ {
@@ -306,5 +306,15 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		column := 74
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Equal(t, "4041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889", newCode)
+	})
+	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
+		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
+		code := "text"
+		for i := 0; i <= 200; i++ {
+			code += strconv.Itoa(i)
+		}
+		column := 999
+		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
+		assert.Len(t, newCode, 100)
 	})
 }

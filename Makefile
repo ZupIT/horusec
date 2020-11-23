@@ -153,37 +153,48 @@ install-semver:
 	chmod +x ./deployments/scripts/install-semver.sh
 	./deployments/scripts/install-semver.sh
 
+PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli:
-	$(GO) build -o horusec ./horusec-cli/cmd/horusec/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec
-	mv horusec $(GOPATH)/bin
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
 
 build-install-leaks-cli:
-	$(GO) build -o horusec ./horusec-leaks/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-leaks
-	mv horusec $(GOPATH)/bin/horusec-leaks
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" ./horusec-leaks/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-leaks"
 	horusec-leaks version
 
 build-install-kotlin-cli:
-	$(GO) build -o horusec ./horusec-kotlin/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-kotlin
-	mv horusec $(GOPATH)/bin/horusec-kotlin
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" ./horusec-kotlin/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin"
 	horusec-kotlin version
 
 build-install-java-cli:
-	$(GO) build -o horusec ./horusec-java/cmd/app/main.go
-	chmod +x horusec
-	rm -rf $(GOPATH)/bin/horusec-java
-	mv horusec $(GOPATH)/bin/horusec-java
-	cd ..
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-java" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-java" ./horusec-java/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-java"
 	horusec-java version
+
+build-install-csharp-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" ./horusec-csharp/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-csharp"
+	horusec-csharp version
+
+build-install-kubernetes-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" ./horusec-kubernetes/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes"
+	horusec-kubernetes version
+
+build-install-nodejs-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
+	horusec-nodejs version
 
 # ========================================================================================= #
 

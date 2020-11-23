@@ -210,5 +210,5 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 			"Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
 	cmd.PersistentFlags().
 		StringVarP(&s.configs.ToolsToIgnore, "tools-ignore", "T", s.configs.GetToolsToIgnore(),
-			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep. Example: -T=\"GoSec, Brakeman\"")
+			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint. Example: -T=\"GoSec, Brakeman\"")
 }
