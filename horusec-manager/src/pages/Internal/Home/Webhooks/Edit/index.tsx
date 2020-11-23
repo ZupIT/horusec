@@ -134,7 +134,7 @@ const AddWebhook: React.FC<Props> = ({
   return (
     <Dialog
       isVisible={isVisible}
-      message={t('WEBHOOK_SCREEN.ADD')}
+      message={t('WEBHOOK_SCREEN.EDIT')}
       onCancel={onCancel}
       onConfirm={handleConfirmSave}
       confirmText={t('WEBHOOK_SCREEN.SAVE')}
@@ -200,7 +200,7 @@ const AddWebhook: React.FC<Props> = ({
           <Styled.Wrapper key={index}>
             <Styled.Field
               label={t('WEBHOOK_SCREEN.KEY')}
-              name="key"
+              name={`key-${index}`}
               onChangeValue={({ value }) =>
                 handleSetHeader(index, value, headers[index].value)
               }
@@ -210,7 +210,7 @@ const AddWebhook: React.FC<Props> = ({
 
             <Styled.Field
               label={t('WEBHOOK_SCREEN.VALUE')}
-              name="value"
+              name={`value-${index}`}
               type="text"
               onChangeValue={({ value }) =>
                 handleSetHeader(index, headers[index].key, value)

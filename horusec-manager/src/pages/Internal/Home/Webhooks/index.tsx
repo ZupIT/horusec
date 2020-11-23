@@ -41,6 +41,7 @@ const Webhooks: React.FC = () => {
   const [filteredWebhooks, setFilteredWebhooks] = useState<Webhook[]>([]);
   const [webhookToDelete, setWebhookToDelete] = useState<Webhook>();
   const [webhookToEdit, setWebhookToEdit] = useState<Webhook>();
+  const [webhookToCopy, setWebhookToCopy] = useState<Webhook>();
 
   const [isLoading, setLoading] = useState(false);
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
@@ -178,7 +179,7 @@ const Webhooks: React.FC = () => {
                     outline
                     opaque
                     text={t('WEBHOOK_SCREEN.TABLE.DELETE')}
-                    width={90}
+                    width={80}
                     height={30}
                     icon="delete"
                     onClick={() => setWebhookToDelete(webhook)}
@@ -189,10 +190,24 @@ const Webhooks: React.FC = () => {
                     rounded
                     opaque
                     text={t('WEBHOOK_SCREEN.TABLE.EDIT')}
-                    width={90}
+                    width={80}
                     height={30}
                     icon="edit"
                     onClick={() => setWebhookToEdit(webhook)}
+                  />
+
+                  <Button
+                    outline
+                    rounded
+                    opaque
+                    text={t('WEBHOOK_SCREEN.TABLE.COPY')}
+                    width={80}
+                    height={30}
+                    icon="copy"
+                    onClick={() => {
+                      setWebhookToCopy(webhook);
+                      setAddWebhookVisible(true);
+                    }}
                   />
                 </Styled.Cell>
               </Styled.Row>
@@ -203,7 +218,11 @@ const Webhooks: React.FC = () => {
 
       <AddWebhook
         isVisible={addWebhookVisible}
-        onCancel={() => setAddWebhookVisible(false)}
+        onCancel={() => {
+          setAddWebhookVisible(false);
+          setWebhookToCopy(null);
+        }}
+        webhookToCopy={webhookToCopy}
         onConfirm={() => {
           setAddWebhookVisible(false);
           fetchData();

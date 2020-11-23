@@ -292,6 +292,7 @@
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
     "ADD": "Create webhook",
+    "EDIT": "Edit webhook",
     "SAVE": "Save",
     "SEARCH": "Search by URL",
     "DESCRIPTION_LABEL": "Enter the description for the webhook:",
@@ -318,7 +319,8 @@
       "DESCRIPTION": "Description",
       "ACTION": "Action",
       "DELETE": "Delete",
-      "EDIT": "Edit"
+      "EDIT": "Edit",
+      "COPY": "Copy"
     }
   },
 
