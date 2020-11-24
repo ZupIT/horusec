@@ -15,8 +15,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
+	"path"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
@@ -74,8 +74,9 @@ func ExecuteCobra() {
 }
 
 func setConfigsData() {
-	path, _ := os.Getwd()
-	configs.ConfigFilePath = fmt.Sprintf("%s/horusec-config.json", path)
+	currentDir, _ := os.Getwd()
+	configs.ConfigFilePath = path.Join(currentDir, "horusec-config.json")
+
 	configs.SetConfigsFromViper()
 	configs.SetConfigsFromEnvironments()
 }
