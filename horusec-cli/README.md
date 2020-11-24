@@ -10,30 +10,30 @@ To install you can follow some steps:
 #### - Installing download binary
 * Example of link to download binary automatic for `linux` and `mac` in **latest version**
     ```bash
-    curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+    curl -fsSL https://horusec.io/bin/install.sh | bash
     ```
 * Example of link to download binary automatic for `linux` and `mac` in **specific version**
     ```bash
-    curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash -s v1-0-0
+    curl -fsSL https://horusec.io/bin/install.sh | bash -s v1-0-0
     ```
 * All versions are enable in:
-    * https://horusec-cli.s3.amazonaws.com/all-version-cli.txt
+    * https://horusec.io/bin/all-version-cli.txt
 * All operational system enable are:
     * `linux_x86`, `linux_x64`, `mac_x64`, `win_x86`, `win_x64`
 * Download binary manually
     * Also Replace your $version and $os
-        * https://horusec-cli.s3.amazonaws.com/$version/$os/horusec
+        * https://horusec.io/bin/$version/$os/horusec
     * Example to download the latest version manually to `windows x64`:
         ```bash
-        curl "https://horusec-cli.s3.amazonaws.com/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+        curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
         ```
     * Example to download the latest version manually to `linux x64`:
         ```bash
-        curl "https://horusec-cli.s3.amazonaws.com/latest/linux_x64/horusec" -o "./horusec" && chmod +x ./horusec && ./horusec version
+        curl "https://horusec.io/bin/latest/linux_x64/horusec" -o "./horusec" && chmod +x ./horusec && ./horusec version
         ```
     * Example to download the latest version manually to `mac x64`:
         ```bash
-        curl "https://horusec-cli.s3.amazonaws.com/latest/mac_x64/horusec" -o "./horusec" && chmod +x ./horusec && ./horusec version
+        curl "https://horusec.io/bin/latest/mac_x64/horusec" -o "./horusec" && chmod +x ./horusec && ./horusec version
         ```
 ##### - Integrate in your pipeline
 To integrate horusec in your pipeline also your download binary and run yourself.
@@ -52,7 +52,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Running Horusec Security
       run: |
-        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+        curl -fsSL https://horusec.io/bin/install.sh | bash
         horusec start -p="./" -e="true"
 ```
 
@@ -64,7 +64,7 @@ stages {
                 docker { image 'docker:dind' }
             }
             steps {
-                sh 'curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash'
+                sh 'curl -fsSL https://horusec.io/bin/install.sh | bash'
                 sh 'horusec start -p="./" -e="true"'
             }
         }
@@ -88,7 +88,7 @@ jobs:
       - run:
           name: Horusec Security Test
           command: |
-            curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
+            curl -fsSL https://horusec.io/bin/install.sh | bash
             horus start -p ./ -e "true"
 workflows:
   pipeline:

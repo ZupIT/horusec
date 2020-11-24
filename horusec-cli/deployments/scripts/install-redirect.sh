@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-URL_TO_REDIRECT="https://horusec-cli.s3.amazonaws.com/install.sh"
+URL_TO_REDIRECT="https://horusec.io/bin/install.sh"
 VERSION_DOWNLOAD=$1
 
 horusecSetVersion () {

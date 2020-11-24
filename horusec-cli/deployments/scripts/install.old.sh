@@ -48,6 +48,8 @@ horusecIdentifyOS () {
 }
 
 horusecDownloadAndInstall () {
+    echo "You are using a install method that will be depracated soon. check our documentation at https://docs.horusec.io"
+
     INSTALL_PATH="/usr/local/bin"
 
     if [ ! -d "$INSTALL_PATH" ]; then
