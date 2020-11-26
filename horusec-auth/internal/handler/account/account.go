@@ -232,34 +232,36 @@ func (h *Handler) checkVerifyResetPasswordCodeErrors(w http.ResponseWriter, err 
 // @Router /api/account/change-password [post]
 // @Security ApiKeyAuth
 func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
-	accountID, password := h.getChangePasswordData(w, r)
-	if accountID == uuid.Nil || password == "" {
-		return
-	}
-
-	err := h.controller.ChangePassword(accountID, password)
-	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
-	}
-
-	httpUtil.StatusNoContent(w)
-}
-
-func (h *Handler) getChangePasswordData(w http.ResponseWriter, r *http.Request) (uuid.UUID, string) {
 	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
-	if err != nil {
+	if err != nil || accountID == uuid.Nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
-		return uuid.Nil, ""
+		return
 	}
 
 	password, err := h.useCases.NewPasswordFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, errors.ErrorMissingOrInvalidPassword)
-		return uuid.Nil, ""
+		return
 	}
+	h.executeChangePassword(w, accountID, password)
+}
 
-	return accountID, password
+func (h *Handler) executeChangePassword(w http.ResponseWriter, accountID uuid.UUID, password string) {
+	err := h.controller.ChangePassword(accountID, password)
+	switch err {
+	case errors.ErrorInvalidPassword:
+		httpUtil.StatusConflict(w, err)
+		return
+	case errors.ErrNotFoundRecords:
+		httpUtil.StatusNotFound(w, err)
+		return
+	case nil:
+		httpUtil.StatusNoContent(w)
+		return
+	default:
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
 }
 
 // @Tags Account
