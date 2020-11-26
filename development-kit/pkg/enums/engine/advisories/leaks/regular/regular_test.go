@@ -245,6 +245,52 @@ services:
 	})
 }
 
+func TestNewLeaksRegularTwitterClientID(t *testing.T) {
+	t.Run("Should return vulnerable code NewLeaksRegularTwitterClientID", func(t *testing.T) {
+		code := `
+version: '3'
+services:
+  backend:
+    image: image/my-backend:latest
+    environment:
+      TWITTER_CLIENT_ID: '1h6433fsvygnyre5a40'
+`
+		rule := NewLeaksRegularTwitterClientID()
+		textFile, err := text.NewTextFile("deployments/docker-compose.yaml", []byte(code))
+		assert.NoError(t, err)
+		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
+		assert.Len(t, findings, 1)
+		assert.Equal(t, engine.Finding{
+			ID:             rule.ID,
+			Name:           rule.Name,
+			Severity:       rule.Severity,
+			CodeSample:     `TWITTER_CLIENT_ID: '1h6433fsvygnyre5a40'`,
+			Confidence:     rule.Confidence,
+			Description:    rule.Description,
+			SourceLocation: engine.Location{
+				Filename: "deployments/docker-compose.yaml",
+				Line:     7,
+				Column:   6,
+			},
+		}, findings[0])
+	})
+	t.Run("Should not return vulnerable code NewLeaksRegularTwitterClientID", func(t *testing.T) {
+		code := `
+version: '3'
+services:
+  backend:
+    image: image/my-backend:latest
+    environment:
+	  TWITTER_CLIENT_ID: ${SECRET_KEY}
+`
+		rule := NewLeaksRegularTwitterClientID()
+		textFile, err := text.NewTextFile("deployments/docker-compose.yaml", []byte(code))
+		assert.NoError(t, err)
+		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
+		assert.Len(t, findings, 0)
+	})
+}
+
 func TestNewLeaksRegularTwitterSecretKey(t *testing.T) {
 	t.Run("Should return vulnerable code NewLeaksRegularTwitterSecretKey", func(t *testing.T) {
 		code := `
