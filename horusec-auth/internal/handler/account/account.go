@@ -251,16 +251,12 @@ func (h *Handler) executeChangePassword(w http.ResponseWriter, accountID uuid.UU
 	switch err {
 	case errors.ErrorInvalidPassword:
 		httpUtil.StatusConflict(w, err)
-		return
 	case errors.ErrNotFoundRecords:
 		httpUtil.StatusNotFound(w, err)
-		return
 	case nil:
 		httpUtil.StatusNoContent(w)
-		return
 	default:
 		httpUtil.StatusInternalServerError(w, err)
-		return
 	}
 }
 
