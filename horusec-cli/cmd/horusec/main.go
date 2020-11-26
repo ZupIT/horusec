@@ -53,7 +53,6 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	rootCmd.PersistentFlags().StringVar(&LogLevel, "log-level", logger.InfoLevel.String(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
-	rootCmd.PersistentFlags().StringVar(&ConfigPath, "config", ConfigPath, "Set the config file path. eg.: --config=\"./configs/horusec-config.json\"")
 
 	cobra.OnInitialize(initConfig)
 }
