@@ -621,7 +621,7 @@ services:
   backend:
     image: image/my-backend:latest
     environment:
-      GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb\ apps\Vgoogleusercontent\5com'
+      GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb.apps.googleusercontent.com'
 `
 		rule := NewLeaksRegularGoogleGCPServiceAccount()
 		textFile, err := text.NewTextFile("deployments/docker-compose.yaml", []byte(code))
@@ -632,7 +632,7 @@ services:
 			ID:             rule.ID,
 			Name:           rule.Name,
 			Severity:       rule.Severity,
-			CodeSample:     `GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb\ apps\Vgoogleusercontent\5com'`,
+			CodeSample:     `GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb.apps.googleusercontent.com'`,
 			Confidence:     rule.Confidence,
 			Description:    rule.Description,
 			SourceLocation: engine.Location{

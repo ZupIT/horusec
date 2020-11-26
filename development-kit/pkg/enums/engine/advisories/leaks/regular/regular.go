@@ -249,7 +249,7 @@ func NewLeaksRegularGoogleGCPServiceAccount() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`"type": "service_account"`),
 			regexp.MustCompile(`(?i)(google|gcp|youtube|drive|yt)(.{0,20})?['\"][AIza[0-9a-z\\-_]{35}]['\"]`),
-			regexp.MustCompile(`(?i)(google|gcp|auth)(.{0,20})?['\"][0-9]+-[0-9a-z_]{32}\\.apps\\.googleusercontent\\.com['\"]`),
+			regexp.MustCompile(`(?i)(google|gcp|auth)(.{0,20})?['\"][0-9]+-[0-9a-z_]{32}\.apps\.googleusercontent\.com['\"]`),
 		},
 	}
 }
