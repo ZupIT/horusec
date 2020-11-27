@@ -169,7 +169,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Ch@ng3m3"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
@@ -189,7 +189,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Ch@ng3m3"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errors.New("test"))
 
@@ -532,14 +532,16 @@ func TestResetPassword(t *testing.T) {
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
+			Password:  "Other@Pass123",
 		}
+		account.SetPasswordHash()
 		token, _, _ := jwt.CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp)
-		passwordBytes, _ := json.Marshal("123456")
+		passwordBytes, _ := json.Marshal("Ch@ng3m3")
 		cacheRepositoryMock.On("Del").Return(nil)
 
 		resp2 := &response.Response{}
@@ -573,7 +575,7 @@ func TestResetPassword(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp.SetError(errors.New("test")))
-		passwordBytes, _ := json.Marshal("123456")
+		passwordBytes, _ := json.Marshal("Ch@ng3m3")
 
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
