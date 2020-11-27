@@ -108,7 +108,6 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     accountService
       .getHorusecConfig()
       .then((result) => {
-        console.log(result.data);
         setCurrentConfig(result?.data?.content);
       })
       .catch((err) => {

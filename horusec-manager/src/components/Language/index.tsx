@@ -41,7 +41,7 @@ const Language: React.FC = () => {
   return (
     <Styled.Wrapper>
       {!showButton || (
-        <Styled.Button onClick={handleShowList}>
+        <Styled.Button id="language" onClick={handleShowList}>
           <Styled.CurrentLanguage>
             {currentLanguage?.name}
           </Styled.CurrentLanguage>
@@ -55,6 +55,7 @@ const Language: React.FC = () => {
           {allLanguages.map((language, index) => (
             <Styled.LanguageItem
               key={index}
+              id={language.i18nValue}
               onClick={() => handleCurrentLanguage(language)}
             >
               <Icon name={language.icon} size="30px" />
