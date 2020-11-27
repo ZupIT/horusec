@@ -84,6 +84,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Up manager
+        run: cd horusec-manager && npm i
       - name: e2e
         uses: cypress-io/github-action@v2
         with:
