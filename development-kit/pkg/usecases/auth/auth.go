@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"regexp"
 	"time"
 
 	"github.com/Nerzal/gocloak/v7"
@@ -56,6 +57,8 @@ type IUseCases interface {
 	NewValidateUniqueFromReadCloser(body io.ReadCloser) (validateUnique *dto.ValidateUnique, err error)
 	NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEntities.Account, error)
 }
+
+const DefaultRegexPasswordValidation = ""
 
 type UseCases struct {
 }
@@ -202,7 +205,11 @@ func (u *UseCases) NewAccountFromReadCloser(body io.ReadCloser) (*authEntities.A
 	}
 
 	account := createAccount.ToAccount()
-	return account, account.Validate()
+	return account, validation.ValidateStruct(account,
+		validation.Field(&account.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&account.Password, u.getPasswordValidation()...),
+		validation.Field(&account.Username, validation.Length(1, 255), validation.Required),
+	)
 }
 
 func (u *UseCases) NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEntities.Account, error) {
@@ -241,12 +248,24 @@ func (u *UseCases) NewPasswordFromReadCloser(body io.ReadCloser) (password strin
 	if body == nil {
 		return "", errors.ErrorErrorEmptyBody
 	}
+	err = json.NewDecoder(body).Decode(&password)
+	_ = body.Close()
+	if err != nil {
+		return "", err
+	}
 
-	buf := new(bytes.Buffer)
-	_, _ = buf.ReadFrom(body)
-	password = buf.String()
+	return password, validation.Validate(password, u.getPasswordValidation()...)
+}
 
-	return password, validation.Validate(password, validation.Required, validation.Length(1, 255))
+func (u *UseCases) getPasswordValidation() []validation.Rule {
+	return []validation.Rule{
+		validation.Required,
+		validation.Length(8, 255),
+		validation.Match(regexp.MustCompile(`[A-Z]`)).Error("must be a character upper case"),
+		validation.Match(regexp.MustCompile(`[a-z]`)).Error("must be a character lower case"),
+		validation.Match(regexp.MustCompile(`[0-9]`)).Error("must be a character digit"),
+		validation.Match(regexp.MustCompile(`[!@#$&*-._]`)).Error("must be a character special"),
+	}
 }
 
 func (u *UseCases) NewRefreshTokenFromReadCloser(body io.ReadCloser) (token string, err error) {

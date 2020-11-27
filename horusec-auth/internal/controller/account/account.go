@@ -16,6 +16,8 @@ package account
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"time"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -220,7 +222,10 @@ func (a *Account) ChangePassword(accountID uuid.UUID, password string) error {
 	if err != nil {
 		return err
 	}
-
+	if err := a.checkIfPasswordHashIsEqualNewPassword(account.Password, password); err != nil {
+		logger.LogError("{ACCOUNT} Error on validate password: ", err)
+		return errors.ErrorInvalidPassword
+	}
 	account.Password = password
 	account.SetPasswordHash()
 	_ = a.cacheRepository.Del(accountID.String())
@@ -347,4 +352,15 @@ func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
 
 func (a *Account) UpdateAccount(account *authEntities.Account) error {
 	return a.accountRepository.Update(account)
+}
+
+func (a *Account) checkIfPasswordHashIsEqualNewPassword(passwordHash, newPassword string) error {
+	if passwordHash == "" || newPassword == "" {
+		return errors.ErrorNewPasswordOrPasswordHashNotBeEmpty
+	}
+	isValid := crypto.CheckPasswordHash(newPassword, passwordHash)
+	if isValid {
+		return errors.ErrorNewPasswordNotEqualOldPassword
+	}
+	return nil
 }
