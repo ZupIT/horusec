@@ -20,5 +20,10 @@ describe('Login in the application when a correct username and password.', () =>
     cy.get('#ptBR').click();
 
     cy.get('#submit-login').should('contain.text', 'Entrar');
+
+    cy.get('#language').click();
+    cy.get('#enUS').click();
+
+    cy.get('#submit-login').should('contain.text', 'Sign in');
   });
 });
