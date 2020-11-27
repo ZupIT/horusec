@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { Input, Select } from 'components';
+import { Input, Select, Icon } from 'components';
 
 interface SelectProps {
   color: string;
@@ -53,10 +53,15 @@ const URLSelect = styled(Select)<SelectProps>`
   }
 `;
 
+const OptionIcon = styled(Icon)`
+  margin-right: 10px;
+`;
+
 export default {
   Form,
   Field,
   Label,
   Wrapper,
   URLSelect,
+  OptionIcon,
 };
