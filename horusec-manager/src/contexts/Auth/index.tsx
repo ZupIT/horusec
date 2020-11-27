@@ -23,7 +23,7 @@ import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { Authenticator } from 'helpers/interfaces/Authenticator';
 import accountService from 'services/account';
-import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
+import { setCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 import defaultAuth from './default';
 import keycloakAuth from './keycloak';
@@ -108,7 +108,8 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     accountService
       .getHorusecConfig()
       .then((result) => {
-        setCurrenConfig(result?.data?.content);
+        console.log(result.data);
+        setCurrentConfig(result?.data?.content);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);

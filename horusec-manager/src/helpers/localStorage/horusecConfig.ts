@@ -27,7 +27,7 @@ const getCurrentConfig = (): HorusecConfig => {
   return config ? JSON.parse(config) : initialValues;
 };
 
-const setCurrenConfig = (value: HorusecConfig) => {
+const setCurrentConfig = (value: HorusecConfig) => {
   window.localStorage.setItem(localStorageKeys.CONFIG, JSON.stringify(value));
 };
 
@@ -35,4 +35,4 @@ const clearCurrentConfig = () => {
   window.localStorage.removeItem(localStorageKeys.CONFIG);
 };
 
-export { getCurrentConfig, setCurrenConfig, clearCurrentConfig };
+export { getCurrentConfig, setCurrentConfig, clearCurrentConfig };

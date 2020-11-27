@@ -25,19 +25,19 @@ function API_HOST(ENV_ENDPOINT: any) {
 }
 
 const SERVICE_ACCOUNT = isLocalHost
-  ? 'http://localhost:8003'
+  ? 'http://127.0.0.1:8003'
   : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_ACCOUNT);
 
 const SERVICE_API = isLocalHost
-  ? 'http://localhost:8000'
+  ? 'http://127.0.0.1:8000'
   : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_API);
 
 const SERVICE_ANALYTIC = isLocalHost
-  ? 'http://localhost:8005'
+  ? 'http://127.0.0.1:8005'
   : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_ANALYTIC);
 
 const SERVICE_AUTH = isLocalHost
-  ? 'http://localhost:8006'
+  ? 'http://127.0.0.1:8006'
   : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_AUTH);
 
 export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC, SERVICE_AUTH };

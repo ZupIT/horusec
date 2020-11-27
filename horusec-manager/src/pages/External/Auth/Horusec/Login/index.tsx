@@ -71,6 +71,7 @@ function LoginScreen() {
       </Styled.ForgotPass>
 
       <Styled.Submit
+        id="submit-login"
         isDisabled={!password.isValid || !email.isValid}
         isLoading={loginInProgress}
         text={t('LOGIN_SCREEN.SUBMIT')}
