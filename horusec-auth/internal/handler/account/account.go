@@ -19,7 +19,6 @@ import (
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	cacheRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -32,6 +31,8 @@ import (
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 )
 
 type Handler struct {
