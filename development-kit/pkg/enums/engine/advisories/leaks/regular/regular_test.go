@@ -31,12 +31,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     "ACCESS_KEY: 'AKIAJSIE27KKMHXI3BJQ'",
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  "ACCESS_KEY: 'AKIAJSIE27KKMHXI3BJQ'",
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -77,12 +77,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `AWS_SECRET_KEY: 'doc5eRXFpsWllGC5yKJV/Ymm5KwF+IRZo95EudOm'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `AWS_SECRET_KEY: 'doc5eRXFpsWllGC5yKJV/Ymm5KwF+IRZo95EudOm'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -123,12 +123,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `AWS_WMS_KEY: 'amzn.mws.986478f0-9775-eabc-2af4-e499a8496828'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `AWS_WMS_KEY: 'amzn.mws.986478f0-9775-eabc-2af4-e499a8496828'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -169,12 +169,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `FB_SECRET_KEY: 'cb6f53505911332d30867f44a1c1b9b5'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `FB_SECRET_KEY: 'cb6f53505911332d30867f44a1c1b9b5'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -215,12 +215,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `FB_CLIENT_ID: '148695999071979'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `FB_CLIENT_ID: '148695999071979'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -261,12 +261,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `TWITTER_CLIENT_ID: '1h6433fsvygnyre5a40'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `TWITTER_CLIENT_ID: '1h6433fsvygnyre5a40'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -307,12 +307,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `TWITTER_SECRET_KEY: 'ej64cqk9k8px9ae3e47ip89l7if58tqhpxi1r'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `TWITTER_SECRET_KEY: 'ej64cqk9k8px9ae3e47ip89l7if58tqhpxi1r'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -353,12 +353,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `GITHUB_SECRET_KEY: 'edzvPbU3SYUc7pFc9le20lzIRErTOaxCABQ1'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `GITHUB_SECRET_KEY: 'edzvPbU3SYUc7pFc9le20lzIRErTOaxCABQ1'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -399,12 +399,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `LINKEDIN_CLIENT_ID: 'g309xttlaw25'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `LINKEDIN_CLIENT_ID: 'g309xttlaw25'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -445,12 +445,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `LINKEDIN_SECRET_KEY: '0d16kcnjyfzmcmjp'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `LINKEDIN_SECRET_KEY: '0d16kcnjyfzmcmjp'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -491,12 +491,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `SLACK_WEBHOOK: 'https://hooksWslackKcom/services/TNeqvYPeO/BncTJ74Hf/NlvFFKKAKPkd6h7FlQCz1Blu'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `SLACK_WEBHOOK: 'https://hooksWslackKcom/services/TNeqvYPeO/BncTJ74Hf/NlvFFKKAKPkd6h7FlQCz1Blu'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -537,12 +537,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `SSH_PRIVATE_KEY: '-----BEGIN PRIVATE KEY-----MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBj08sp5++4anGcmQxJjAkBgNVBAoTHVByb2dyZXNzIFNvZnR3YXJlIENvcnBvcmF0aW9uMSAwHgYDVQQDDBcqLmF3cy10ZXN0LnByb2dyZXNzLmNvbTCCASIwDQYJKoZIhvcNAQEBBQAD...bml6YXRpb252YWxzaGEyZzIuY3JsMIGgBggrBgEFBQcBAQSBkzCBkDBNBggrBgEFBQcwAoZBaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3Nvcmdhz3P668YfhUbKdRF6S42Cg6zn-----END PRIVATE KEY-----'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `SSH_PRIVATE_KEY: '-----BEGIN PRIVATE KEY-----MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBj08sp5++4anGcmQxJjAkBgNVBAoTHVByb2dyZXNzIFNvZnR3YXJlIENvcnBvcmF0aW9uMSAwHgYDVQQDDBcqLmF3cy10ZXN0LnByb2dyZXNzLmNvbTCCASIwDQYJKoZIhvcNAQEBBQAD...bml6YXRpb252YWxzaGEyZzIuY3JsMIGgBggrBgEFBQcBAQSBkzCBkDBNBggrBgEFBQcwAoZBaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3Nvcmdhz3P668YfhUbKdRF6S42Cg6zn-----END PRIVATE KEY-----'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -583,12 +583,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `GCP_API_KEY: 'AIzaMPZHYiu1RdzE1nG2SaVyOoz244TuacQIR6m'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `GCP_API_KEY: 'AIzaMPZHYiu1RdzE1nG2SaVyOoz244TuacQIR6m'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -629,12 +629,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb.apps.googleusercontent.com'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `GCP_SERVICE_ACCOUNT: '18256698220617903267772185514630273595-oy8_uzouz8tyy46y84ckrwei9_6rq_pb.apps.googleusercontent.com'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -675,12 +675,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `HEROKU_API_KEY: '3623f8e9-2d05-c9bb-2209082d6b5c'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `HEROKU_API_KEY: '3623f8e9-2d05-c9bb-2209082d6b5c'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -721,12 +721,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `MAILCHIMP_API_KEY: 'f7e9c13c10d0b19c3bb003a9f635d488-us72'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `MAILCHIMP_API_KEY: 'f7e9c13c10d0b19c3bb003a9f635d488-us72'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -767,12 +767,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `MAILGUN_API_KEY: 'key-xke9nbc2i5po5cjw3ngyxiz450zxpapu'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `MAILGUN_API_KEY: 'key-xke9nbc2i5po5cjw3ngyxiz450zxpapu'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -813,12 +813,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `PAY_PAL_ACCESS_TOKEN: 'access_token$production$mk0sech2v7qqsol3$db651af2221c22b4ca2f0f583798135e'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `PAY_PAL_ACCESS_TOKEN: 'access_token$production$mk0sech2v7qqsol3$db651af2221c22b4ca2f0f583798135e'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -859,12 +859,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `PICATIC_API_KEY: 'sk_live_voy1p9k7r9g9j8ezmif488nk2p8310nl'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `PICATIC_API_KEY: 'sk_live_voy1p9k7r9g9j8ezmif488nk2p8310nl'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -905,12 +905,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `SEND_GRID_API_KEY: 'SG.44b7kq3FurdH0bSHBGjPSWhE8vJ.1evu4Un0TXFIb1_6zW4YOdjTMeE'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `SEND_GRID_API_KEY: 'SG.44b7kq3FurdH0bSHBGjPSWhE8vJ.1evu4Un0TXFIb1_6zW4YOdjTMeE'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -951,12 +951,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `STRIPE_API_KEY: 'rk_live_8qSZpoI9t0BOGkOLVzvesc6K'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `STRIPE_API_KEY: 'rk_live_8qSZpoI9t0BOGkOLVzvesc6K'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -997,12 +997,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `SQUARE_ACCESS_TOKEN: 'sq0atp-clYRBSht6oefa7w_2R56ra'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `SQUARE_ACCESS_TOKEN: 'sq0atp-clYRBSht6oefa7w_2R56ra'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -1043,12 +1043,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `SQUARE_SECRET: 'sq0csp-LsEBYQNja]OgT3hRxjJV5cWX^XjpT12n3QkRY_vep2z'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `SQUARE_SECRET: 'sq0csp-LsEBYQNja]OgT3hRxjJV5cWX^XjpT12n3QkRY_vep2z'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -1089,12 +1089,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `TWILIO_API_KEY: '^SK9ae6bd84ccd091eb6bfad8e2a474af95'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `TWILIO_API_KEY: '^SK9ae6bd84ccd091eb6bfad8e2a474af95'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -1135,12 +1135,12 @@ services:
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `POSTGRES_DBPASSWD: 'Ch@ng3m3'`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `POSTGRES_DBPASSWD: 'Ch@ng3m3'`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "deployments/docker-compose.yaml",
 				Line:     7,
@@ -1195,12 +1195,12 @@ func main() {
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `DB_PASSWORD="gorm"`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `DB_PASSWORD="gorm"`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "main.go",
 				Line:     12,
@@ -1265,12 +1265,12 @@ func main() {
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `dsn := "postgresql://gorm:gorm@127.0.0.1:5432/gorm?sslmode=disable"`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `dsn := "postgresql://gorm:gorm@127.0.0.1:5432/gorm?sslmode=disable"`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "main.go",
 				Line:     10,
@@ -1316,12 +1316,12 @@ define( 'AUTH_KEY',         'put your unique phrase here' );
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `define( 'AUTH_KEY',         'put your unique phrase here' );`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `define( 'AUTH_KEY',         'put your unique phrase here' );`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "wp-config.php",
 				Line:     2,
@@ -1339,12 +1339,12 @@ define( 'DB_PASSWORD', 'wen0221!' );
 		findings := engine.Run(parseTextUnitsToUnits([]text.TextUnit{{Files: []text.TextFile{textFile}}}), []engine.Rule{rule})
 		assert.Len(t, findings, 1)
 		assert.Equal(t, engine.Finding{
-			ID:             rule.ID,
-			Name:           rule.Name,
-			Severity:       rule.Severity,
-			CodeSample:     `define( 'DB_PASSWORD', 'wen0221!' );`,
-			Confidence:     rule.Confidence,
-			Description:    rule.Description,
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  `define( 'DB_PASSWORD', 'wen0221!' );`,
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
 			SourceLocation: engine.Location{
 				Filename: "wp-config.php",
 				Line:     2,
