@@ -84,7 +84,9 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Set manager location
-        run: cd horusec-manager
       - name: e2e
         uses: cypress-io/github-action@v2
+        with:
+          record: false
+          config-file: horusec-manager/cypress.json
+          project: horusec-manager
