@@ -249,7 +249,7 @@ func NewLeaksRegularGoogleGCPServiceAccount() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`"type": "service_account"`),
 			regexp.MustCompile(`(?i)(google|gcp|youtube|drive|yt)(.{0,20})?['\"][AIza[0-9a-z\\-_]{35}]['\"]`),
-			regexp.MustCompile(`(?i)(google|gcp|auth)(.{0,20})?['\"][0-9]+-[0-9a-z_]{32}\\.apps\\.googleusercontent\\.com['\"]`),
+			regexp.MustCompile(`(?i)(google|gcp|auth)(.{0,20})?['\"][0-9]+-[0-9a-z_]{32}\.apps\.googleusercontent\.com['\"]`),
 		},
 	}
 }
@@ -425,7 +425,7 @@ func NewLeaksRegularHardCodedCredentialGeneric() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)(dbpasswd|dbuser|dbname|dbhost|api_key|apikey|client_secret|clientsecret|access_key|accesskey|secret_key|secretkey)(.{0,20})?['|"]([0-9a-zA-Z-_\/+!{}/=]{4,120})['|"]`),
+			regexp.MustCompile(`(?i)(dbpasswd|dbuser|dbname|dbhost|api_key|apikey|client_secret|clientsecret|access_key|accesskey|secret_key|secretkey)(.{0,20})?['|"]([0-9a-zA-Z-_\/+!{}/=:@#%\*]{4,120})['|"]`),
 		},
 	}
 }
@@ -441,7 +441,11 @@ func NewLeaksRegularHardCodedPassword() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)((set)?password.*(=|\()\s*['|\"]\w+[[:print:]]*['|\"])|((set)?pass.*(=|\()\s*['|\"]\w+[[:print:]]*['|\"]\s)|((set)?pwd.*(=|\()\s*['|\"]\w+[[:print:]]*['|\"]\s)|((set)?passwd.*(=|\()\s*['|\"]\w+[[:print:]]*['|\"]\s)|((set)?senha.*(=|\()\s*['|\"]\w+[[:print:]]*['|\"])`),
+			regexp.MustCompile(`(?i)(set)?password\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?pass\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?pwd\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?passwd\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
+			regexp.MustCompile(`(?i)(set)?senha\s*(.?=.?|\()\s*['|\"]\w+[[:print:]]*['|\"]`),
 		},
 	}
 }
@@ -473,7 +477,7 @@ func NewLeaksRegularWPConfig() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`define(.{0,20})?(DB_CHARSET|NONCE_SALT|LOGGED_IN_SALT|AUTH_SALT|NONCE_KEY|DB_HOST|DB_PASSWORD|AUTH_KEY|SECURE_AUTH_KEY|LOGGED_IN_KEY|DB_NAME|DB_USER)(.{0,20})?[''|"].{10,120}[''|"]`),
+			regexp.MustCompile(`define(.{0,20})?(DB_CHARSET|NONCE_SALT|LOGGED_IN_SALT|AUTH_SALT|NONCE_KEY|DB_HOST|DB_PASSWORD|AUTH_KEY|SECURE_AUTH_KEY|LOGGED_IN_KEY|DB_NAME|DB_USER).*,\s*[''|"].{6,120}[''|"]`),
 		},
 	}
 }

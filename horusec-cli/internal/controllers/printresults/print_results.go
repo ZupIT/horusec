@@ -238,7 +238,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("Column: %s", vulnerability.Column))
 	fmt.Println(fmt.Sprintf("SecurityTool: %s", vulnerability.SecurityTool))
 	fmt.Println(fmt.Sprintf("Confidence: %s", vulnerability.Confidence))
-	fmt.Println(fmt.Sprintf("File: %s", vulnerability.File))
+	fmt.Println(fmt.Sprintf("File: %s/%s", pr.configs.GetProjectPath(), vulnerability.File))
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
 	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
