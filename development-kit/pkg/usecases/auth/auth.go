@@ -248,12 +248,13 @@ func (u *UseCases) NewPasswordFromReadCloser(body io.ReadCloser) (password strin
 	if body == nil {
 		return "", errors.ErrorErrorEmptyBody
 	}
-	err = json.NewDecoder(body).Decode(&password)
-	_ = body.Close()
+	defer func() { _ = body.Close() }()
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(body)
 	if err != nil {
 		return "", err
 	}
-
+	password = buf.String()
 	return password, validation.Validate(password, u.getPasswordValidation()...)
 }
 

@@ -21,12 +21,13 @@ import (
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 )
 
 type Handler struct {
@@ -53,7 +54,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @ID get type
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} http.Response{content=auth.ConfigAuth{}} "STATUS OK"
+// @Success 200 {object} http.Response{content=auth.ConfigAuth}} "STATUS OK"
 // @Router /api/auth/config [get]
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
