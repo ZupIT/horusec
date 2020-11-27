@@ -27,7 +27,7 @@ interface Props {
 const Flash: React.FC<Props> = ({ isVisible, message, type }) => {
   return (
     <>
-      <Styled.Wrapper type={type} isVisible={isVisible}>
+      <Styled.Wrapper id="flash-message" type={type} isVisible={isVisible}>
         <Icon name={type} size="16px" />
 
         <Styled.Text>{message}</Styled.Text>
