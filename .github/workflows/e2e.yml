@@ -84,6 +84,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Up manager
+        run: make compose-e2e-manager
       - name: e2e
         uses: cypress-io/github-action@v2
         with:
