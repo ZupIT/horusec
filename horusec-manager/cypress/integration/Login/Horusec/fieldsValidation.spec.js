@@ -17,6 +17,13 @@ describe('Validation the field of login form.', () => {
     cy.get('#email-error').should('contain.text', 'Invalid e-mail');
   });
 
+  it('Turn visible password.', () => {
+    cy.get('#password').should('have.attr', 'type', 'password');
+    cy.get('#icon-view').click();
+    cy.get('#password').should('have.attr', 'type', 'text');
+    cy.get('#icon-no-view').click();
+  });
+
   it('Check if show error message of empty password', () => {
     cy.get('#password').click().type('teste').clear().blur();
     cy.get('#password-error').should('contain.text', 'Enter password');
