@@ -87,6 +87,4 @@ jobs:
       - name: e2e
         uses: cypress-io/github-action@v2
         with:
-          record: false
-          config-file: horusec-manager/cypress.json
-          project: horusec-manager
+          working-directory: horusec-manager
