@@ -86,3 +86,13 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+env:
+  - name: "REACT_APP_HORUSEC_ENDPOINT_API"
+    value: "https://api-horus-dev.zup.com.br"
+  - name: "REACT_APP_HORUSEC_ENDPOINT_ANALYTIC"
+    value: "https://analytic-horus-dev.zup.com.br"
+  - name: "REACT_APP_HORUSEC_ENDPOINT_ACCOUNT"
+    value: "https://account-horus-dev.zup.com.br"
+  - name: "REACT_APP_HORUSEC_ENDPOINT_AUTH"
+    value: "https://auth-horus-dev.zup.com.br"
