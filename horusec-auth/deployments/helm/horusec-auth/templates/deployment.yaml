@@ -50,9 +50,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8005
+              containerPort: 8006
               protocol: TCP
-          env:          
+            - name: grcp
+              containerPort: 8007
+              protocol: TCP
+          env:
           {{- range .Values.env }}
             - name: {{ .name }}
               value: "{{ .value }}"
