@@ -343,8 +343,7 @@ func TestNewValidateUniqueFromReadCloser(t *testing.T) {
 
 func TestNewPasswordFromReadCloser(t *testing.T) {
 	t.Run("should return required value when valid password", func(t *testing.T) {
-		bytes, _ := json.Marshal("")
-		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
 
 		useCases := NewAuthUseCases()
 		_, err := useCases.NewPasswordFromReadCloser(readCloser)
@@ -352,7 +351,7 @@ func TestNewPasswordFromReadCloser(t *testing.T) {
 		assert.Equal(t, "cannot be blank", err.Error())
 	})
 	t.Run("should return not valid length when valid password", func(t *testing.T) {
-		bytes, _ := json.Marshal("@tEst12")
+		bytes, _ := json.Marshal("@t3st")
 		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
 
 		useCases := NewAuthUseCases()
@@ -394,7 +393,7 @@ func TestNewPasswordFromReadCloser(t *testing.T) {
 		useCases := NewAuthUseCases()
 		password, err := useCases.NewPasswordFromReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.Equal(t, "@t33sstEE", password)
+		assert.Equal(t, "\"@t33sstEE\"", password)
 	})
 	t.Run("should return error when parsing invalid data", func(t *testing.T) {
 		useCases := NewAuthUseCases()

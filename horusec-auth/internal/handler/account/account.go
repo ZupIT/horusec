@@ -386,10 +386,11 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 // @ID update-account
 // @Accept  json
 // @Produce  json
+// @Param UpdateAccount body account.UpdateAccount true "update account info"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/delete [delete]
+// @Router /api/account/update [patch]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getAccountUpdateData(w, r)
