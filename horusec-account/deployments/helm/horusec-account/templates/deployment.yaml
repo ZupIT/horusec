@@ -20,18 +20,18 @@ metadata:
   labels:
     {{- include "horusec-account-helm.labels" . | nindent 4 }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-{{- end }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "horusec-account-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
+      {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
       labels:
         {{- include "horusec-account-helm.selectorLabels" . | nindent 8 }}
     spec:
@@ -52,17 +52,17 @@ spec:
             - name: http
               containerPort: 8003
               protocol: TCP
-          env:          
+          env:
           {{- range .Values.env }}
-            - name: {{ .name }}
-              value: "{{ .value }}" 
+          - name: {{ .name }}
+            value: "{{ .value }}"
           {{- end }}
           {{- range .Values.envFromSecret }}
-            - name: {{ .name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .key }}
-                  key: {{ .key }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .key }}
+                key: {{ .key }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

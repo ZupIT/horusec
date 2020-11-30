@@ -88,7 +88,7 @@ tolerations: []
 
 affinity: {}
 
-env:          
+env:
   - name: "HORUSEC_PORT"
     value: "8003"
   - name: "HORUSEC_SWAGGER_HOST"
