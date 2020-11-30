@@ -226,10 +226,15 @@ func (a *Account) ChangePassword(accountID uuid.UUID, password string) error {
 		logger.LogError("{ACCOUNT} Error on validate password: ", err)
 		return errors.ErrorInvalidPassword
 	}
-	account.Password = password
-	account.SetPasswordHash()
+	account = a.setNewPasswordInAccount(account, password)
 	_ = a.cacheRepository.Del(accountID.String())
 	return a.accountRepository.Update(account)
+}
+
+func (a *Account) setNewPasswordInAccount(account *authEntities.Account, password string) *authEntities.Account {
+	account.Password = password
+	account.SetPasswordHash()
+	return account
 }
 
 func (a *Account) RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error) {

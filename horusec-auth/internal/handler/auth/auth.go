@@ -15,7 +15,7 @@
 package auth
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	authDTO "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	netHTTP "net/http"
@@ -54,7 +54,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @ID get type
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} http.Response{content=auth.ConfigAuth}} "STATUS OK"
+// @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Router /api/auth/config [get]
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
@@ -68,7 +68,7 @@ func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @ID authenticate login
 // @Accept  json
 // @Produce  json
-// @Param Credentials body auth.Credentials true "auth info"
+// @Param Credentials body dto.Credentials true "auth info"
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -89,7 +89,7 @@ func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	httpUtil.StatusOK(w, response)
 }
 
-func (h *Handler) getCredentials(r *netHTTP.Request) (*dto.Credentials, error) {
+func (h *Handler) getCredentials(r *netHTTP.Request) (*authDTO.Credentials, error) {
 	credentials, err := h.authUseCases.NewCredentialsFromReadCloser(r.Body)
 	if err != nil {
 		return credentials, err
