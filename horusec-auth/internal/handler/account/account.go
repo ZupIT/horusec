@@ -57,8 +57,8 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @ID create-account-keycloak
 // @Accept  json
 // @Produce  json
-// @Param KeycloakToken body account.KeycloakToken true "keycloak token info"
-// @Success 200 {object} http.Response{content=account.CreateAccountFromKeycloakResponse{}} "STATUS OK"
+// @Param KeycloakToken body dto.KeycloakToken true "keycloak token info"
+// @Success 200 {object} http.Response{content=dto.CreateAccountFromKeycloakResponse} "STATUS OK"
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -94,7 +94,7 @@ func (h *Handler) checkCreateAccountFromKeycloakErrors(
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param CreateAccount body account.CreateAccount true "create account info"
+// @Param CreateAccount body dto.CreateAccount true "create account info"
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -154,7 +154,7 @@ func (h *Handler) ValidateEmail(w http.ResponseWriter, r *http.Request) {
 // @ID reset-password-code
 // @Accept  json
 // @Produce  json
-// @Param EmailData body account.EmailData true "reset password email info"
+// @Param EmailData body dto.EmailData true "reset password email info"
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -189,7 +189,7 @@ func (h *Handler) checkSendResetPasswordCodeErrors(w http.ResponseWriter, err er
 // @ID validate-password-code
 // @Accept  json
 // @Produce  json
-// @Param ResetCodeData body account.ResetCodeData true "reset password data info"
+// @Param ResetCodeData body dto.ResetCodeData true "reset password data info"
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
@@ -335,7 +335,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 // @ID validate-unique
 // @Accept  json
 // @Produce  json
-// @Param ValidateUnique body account.ValidateUnique true "validate unique info"
+// @Param ValidateUnique body dto.ValidateUnique true "validate unique info"
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
@@ -386,7 +386,7 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 // @ID update-account
 // @Accept  json
 // @Produce  json
-// @Param UpdateAccount body account.UpdateAccount true "update account info"
+// @Param UpdateAccount body dto.UpdateAccount true "update account info"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
