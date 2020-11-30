@@ -202,4 +202,4 @@ build-install-nodejs-cli:
 HELM_SERVICE_NAME ?= ""
 
 helm-upgrade:
-	helm upgrade --install --force $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME)
+	helm upgrade --install $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME)
