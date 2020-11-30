@@ -29,6 +29,7 @@ import {
   hasUpperCase,
 } from 'helpers/validators';
 import { useTheme } from 'styled-components';
+import accountService from 'services/account';
 
 interface Props {
   isVisible: boolean;
@@ -43,8 +44,8 @@ const ChangePassword: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  // const { dispatchMessage } = useResponseMessage();
-  // const { showSuccessFlash } = useFlashMessage();
+  const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -99,18 +100,18 @@ const ChangePassword: React.FC<Props> = ({
   const handleConfirmSave = () => {
     setLoading(true);
 
-    // companyService
-    //   .editUserInCompany(companyID, userToEdit.accountID, role.value)
-    //   .then(() => {
-    //     showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
-    //     onConfirm();
-    //   })
-    //   .catch((err) => {
-    //     dispatchMessage(err?.response?.data);
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    accountService
+      .updatePassword(password.value)
+      .then(() => {
+        showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
+        onConfirm();
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -157,6 +158,8 @@ const ChangePassword: React.FC<Props> = ({
         <Styled.Info>{t('CREATE_ACCOUNT_SCREEN.NO_EQUALS')}</Styled.Info>
 
         <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.USER_NAME')}</Styled.Item>
+
+        <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.OLD_PASS')}</Styled.Item>
       </Styled.PassRequirements>
 
       <Styled.Form>

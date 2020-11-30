@@ -63,7 +63,8 @@
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUBMIT": "Cadastrar",
     "CONFIRM": "Ok, entendi.",
-    "SUCCESS_CREATE_ACCOUNT": "Foi enviado um email para verificação da sua conta."
+    "SUCCESS_CREATE_ACCOUNT": "Foi enviado um email para verificação da sua conta.",
+    "OLD_PASS": "Antiga senha"
   },
 
   "COMPANY_SCREEN": {

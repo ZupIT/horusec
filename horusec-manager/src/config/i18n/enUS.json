@@ -63,7 +63,8 @@
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
-    "SUCCESS_CREATE_ACCOUNT": "An e-mail has been sent to verify your account."
+    "SUCCESS_CREATE_ACCOUNT": "An e-mail has been sent to verify your account.",
+    "OLD_PASS": "Old Password"
   },
 
   "COMPANY_SCREEN": {

@@ -77,6 +77,14 @@ const changePassword = (token: string, password: string) => {
   });
 };
 
+const updatePassword = (password: string) => {
+  return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+  });
+};
+
 const verifyUniqueUsernameEmail = (email: string, username: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/verify-already-used`, {
     email,
@@ -138,4 +146,5 @@ export default {
   createAccountFromKeycloak,
   update,
   deleteAccount,
+  updatePassword,
 };
