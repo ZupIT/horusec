@@ -97,6 +97,12 @@ env:
     value: "postgres"
   - name: "HORUSEC_DATABASE_SQL_LOG_MODE"
     value: "false"
+  - name: "HORUSEC_GRPC_AUTH_URL"
+    value: "horus-auth:8007"
+  - name: "HORUSEC_GRPC_USE_CERTS"
+    value: "false"
+  - name: "HORUSEC_GRPC_CERT_PATH"
+    value: ""
 
 envFromSecret:
   - name: "HORUSEC_DATABASE_SQL_URI"
