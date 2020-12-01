@@ -39,7 +39,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8003"),
+		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
 		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
