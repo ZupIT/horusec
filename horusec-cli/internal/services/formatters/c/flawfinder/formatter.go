@@ -128,5 +128,5 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getFilePathFromPackageName(filePath string) string {
 	return fileUtil.GetPathIntoFilename(filePath,
-		fmt.Sprintf("%s/.horusec/%s/", f.GetConfigProjectPath(), f.GetAnalysisID()))
+		fmt.Sprintf("%s/", f.GetConfigProjectPath()))
 }
