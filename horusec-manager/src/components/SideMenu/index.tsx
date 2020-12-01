@@ -28,10 +28,13 @@ import {
   clearCurrentCompany,
 } from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
+  const { authType } = getCurrentConfig();
 
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
@@ -172,13 +175,15 @@ const SideMenu: React.FC = () => {
         </Styled.WrapperLogoRoutes>
 
         <Styled.OptionsWrapper>
-          <Styled.Option
-            dataFor="side-options"
-            dataTip={t('SIDE_MENU.CONFIG')}
-            name="config"
-            size="15"
-            onClick={goToSettings}
-          />
+          {authType === authTypes.HORUSEC ? (
+            <Styled.Option
+              dataFor="side-options"
+              dataTip={t('SIDE_MENU.CONFIG')}
+              name="config"
+              size="15"
+              onClick={goToSettings}
+            />
+          ) : null}
 
           <Styled.Option
             dataFor="side-options"

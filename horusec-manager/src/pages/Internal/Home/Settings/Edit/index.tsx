@@ -28,6 +28,8 @@ import {
 import { isValidEmail } from 'helpers/validators';
 import { useTheme } from 'styled-components';
 import accountService from 'services/account';
+import useAuth from 'helpers/hooks/useAuth';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   isVisible: boolean;
@@ -41,6 +43,8 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
+  const { logout } = useAuth();
+  const history = useHistory();
 
   const [isLoading, setLoading] = useState(false);
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
@@ -95,6 +99,11 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     }
   };
 
+  const confirmSuccessChangeEmail = () => {
+    setSuccessDialogIsOpen(false);
+    logout().then(() => history.replace('/auth'));
+  };
+
   return (
     <>
       <Dialog
@@ -135,7 +144,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       <Dialog
         isVisible={successDialogIsOpen}
         message={t('SETTINGS_SCREEN.SUCCESS_UPDATE')}
-        onConfirm={() => setSuccessDialogIsOpen(false)}
+        onConfirm={confirmSuccessChangeEmail}
         confirmText={t('SETTINGS_SCREEN.CONFIRM')}
       />
     </>
