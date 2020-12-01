@@ -154,7 +154,7 @@ func (a *Account) sendValidateAccountEmail(account *authEntities.Account) error 
 }
 
 func (a *Account) getConfirmationEmailURL(accountID uuid.UUID) string {
-	apiURL := env.GetEnvOrDefault("HORUSEC_API_URL", "http://localhost:8003")
+	apiURL := env.GetEnvOrDefault("HORUSEC_API_URL", "http://localhost:8006")
 	return fmt.Sprintf("%s/api/account/validate/%s", apiURL, accountID)
 }
 
@@ -378,8 +378,7 @@ func (a *Account) handleAccountEmailChange(
 	if accountUpdate.Email != "" && account.Email != accountUpdate.Email {
 		account.Email = accountUpdate.Email
 		account.IsConfirmed = false
-
-		return nil, a.sendValidateAccountEmail(account)
+		return account, a.sendValidateAccountEmail(account)
 	}
 
 	return account, nil
