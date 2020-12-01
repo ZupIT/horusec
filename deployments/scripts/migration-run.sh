@@ -33,7 +33,7 @@ runMigration() {
 
     docker run --name migrate \
         --rm -v $(pwd)/$MIGRATION_PATH:/migrations \
-        --network=container:postgresql migrate/migrate \
+        --network=container:postgresql migrate/migrate:v4.13.0 \
         -path=/migrations/ \
         -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
         $MIGRATE_TYPE "$MIGRATE_NUMBERS"
