@@ -38,7 +38,7 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
-		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
+		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
 		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
