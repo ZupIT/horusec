@@ -30,7 +30,7 @@ const (
 )
 
 type Config struct {
-	HorusecAPIURL             string
+	HorusecAPIURL          string
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
 	AuthType               authEnums.AuthorizationType
