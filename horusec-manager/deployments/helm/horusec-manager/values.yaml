@@ -40,7 +40,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: ""
+    - host: "horus-dev.zup.com.br"
       paths:
         - /
 
@@ -71,10 +71,10 @@ affinity: {}
 
 env:
   - name: "REACT_APP_HORUSEC_ENDPOINT_API"
-    value: ""
+    value: 'https:\\/\\/api-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_ANALYTIC"
-    value: ""
+    value: 'https:\\/\\/analytic-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_ACCOUNT"
-    value: ""
+    value: 'https:\\/\\/account-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_AUTH"
-    value: ""
+    value: 'https:\\/\\/auth-horus-dev.zup.com.br'

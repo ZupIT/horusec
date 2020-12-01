@@ -40,7 +40,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: ""
+    - host: "api-horus-dev.zup.com.br"
       paths:
         - /
 

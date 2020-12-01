@@ -41,7 +41,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: ""
+    - host: "analytic-horus-dev.zup.com.br"
       paths:
         - /
 
