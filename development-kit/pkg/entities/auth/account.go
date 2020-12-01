@@ -127,6 +127,12 @@ func (a *Account) ToUpdateMap() map[string]interface{} {
 	}
 }
 
+func (a *Account) ToUpdatePasswordMap() map[string]interface{} {
+	return map[string]interface{}{
+		"password": a.Password,
+	}
+}
+
 func (a *Account) IsNotApplicationAdminAccount() bool {
 	return !a.IsApplicationAdmin
 }

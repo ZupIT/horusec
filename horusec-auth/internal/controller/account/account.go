@@ -228,7 +228,7 @@ func (a *Account) ChangePassword(accountID uuid.UUID, password string) error {
 	}
 	account = a.setNewPasswordInAccount(account, password)
 	_ = a.cacheRepository.Del(accountID.String())
-	return a.accountRepository.Update(account)
+	return a.accountRepository.UpdatePassword(account)
 }
 
 func (a *Account) setNewPasswordInAccount(account *authEntities.Account, password string) *authEntities.Account {

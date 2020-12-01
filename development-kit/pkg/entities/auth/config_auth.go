@@ -21,6 +21,7 @@ import (
 
 type ConfigAuth struct {
 	ApplicationAdminEnable bool                   `json:"applicationAdminEnable"`
+	DisabledBroker         bool                   `json:"disabledBroker"`
 	AuthType               auth.AuthorizationType `json:"authType"`
 }
 
