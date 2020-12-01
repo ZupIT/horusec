@@ -23,6 +23,7 @@ require (
 	github.com/go-openapi/spec v0.19.12 // indirect
 	github.com/go-openapi/swag v0.19.11 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/gocarina/gocsv v0.0.0-20201103164230-b291445e0dd2
 	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.2

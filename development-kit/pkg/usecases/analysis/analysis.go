@@ -180,6 +180,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecNodejs,
 		tools.Eslint,
 		tools.HorusecKubernetes,
+		tools.FlawFinder,
 	}
 }
 
