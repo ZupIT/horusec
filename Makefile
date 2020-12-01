@@ -200,6 +200,7 @@ build-install-nodejs-cli:
 
 # HELM_SERVICE_NAME="horusec-account" make helm-upgrade
 HELM_SERVICE_NAME ?= ""
+KUBE_NAMESPACE ?= "horus-dev"
 
 helm-upgrade:
-	helm upgrade --install $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME) -n horus-dev
+	helm upgrade --wait -i $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME) -n $(KUBE_NAMESPACE) --debug

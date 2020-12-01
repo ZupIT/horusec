@@ -9,7 +9,6 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-namespace: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -90,11 +89,11 @@ env:
   - name: "HORUSEC_GRPC_KEY_PATH"
     value: ""
   - name: "HORUSEC_BROKER_HOST"
-    value: ""
+    value: "horus-mq-rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_DISABLED_BROKER"
-    value: "true"
+    value: "false"
   - name: "HORUSEC_AUTH_TYPE"
     value: "horusec"
   - name: "HORUSEC_ENABLE_APPLICATION_ADMIN"
@@ -125,16 +124,16 @@ env:
     value: ""
 
 envFromSecret:
-  - name: "HORUSEC_LDAP_BINDDN"
-    key: "ldap-binddn"
-  - name: "HORUSEC_LDAP_BINDPASSWORD"
-    key: "ldap-bindpassword"
-  - name: "HORUSEC_KEYCLOAK_CLIENT_ID"
-    key: "keycloak-client-id"
-  - name: "HORUSEC_KEYCLOAK_CLIENT_SECRET"
-    key: "keycloak-client-secret"
-  - name: "HORUSEC_APPLICATION_ADMIN_DATA"
-    key: "application-admin-data"
+#  - name: "HORUSEC_LDAP_BINDDN"
+#    key: "ldap-binddn"
+#  - name: "HORUSEC_LDAP_BINDPASSWORD"
+#    key: "ldap-bindpassword"
+#  - name: "HORUSEC_KEYCLOAK_CLIENT_ID"
+#    key: "keycloak-client-id"
+#  - name: "HORUSEC_KEYCLOAK_CLIENT_SECRET"
+#    key: "keycloak-client-secret"
+#  - name: "HORUSEC_APPLICATION_ADMIN_DATA"
+#    key: "application-admin-data"
   - name: "HORUSEC_BROKER_USERNAME"
     key: "broker-username"
   - name: "HORUSEC_BROKER_PASSWORD"

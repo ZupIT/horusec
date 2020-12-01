@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "horusec-auth-helm.fullname" . }}
-  namespace: {{ .Values.namespace }}
   labels:
     {{- include "horusec-auth-helm.labels" . | nindent 4 }}
 spec:

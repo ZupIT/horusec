@@ -80,7 +80,7 @@ env:
   - name: "HORUSEC_DATABASE_SQL_LOG_MODE"
     value: "false"
   - name: "HORUSEC_BROKER_HOST"
-    value: ""
+    value: "horus-mq-rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_HTTP_TIMEOUT"
@@ -95,4 +95,3 @@ envFromSecret:
     key: "database-uri"
   - name: "HORUSEC_JWT_SECRET_KEY"
     key: "jwt-token"
-  

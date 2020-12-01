@@ -73,7 +73,7 @@ env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_BROKER_HOST"
-    value: ""
+    value: "horus-mq-rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
@@ -88,6 +88,8 @@ env:
     value: "false"
   - name: "HORUSEC_GRPC_CERT_PATH"
     value: ""
+  - name: "HORUSEC_DISABLED_BROKER"
+    value: "false"
 
 envFromSecret:
   - name: "HORUSEC_BROKER_USERNAME"
