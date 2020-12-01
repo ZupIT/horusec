@@ -59,6 +59,7 @@ func SupportedLanguages() []Language {
 		HCL,
 		Generic,
 		Yaml,
+		C,
 		Unknown,
 	}
 }
@@ -76,6 +77,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		HCL.ToString():        HCL,
 		Generic.ToString():    Generic,
 		Yaml.ToString():       Yaml,
+		C.ToString():          C,
 	}
 }
 
