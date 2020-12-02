@@ -13,7 +13,16 @@
 # limitations under the License.
 
 definitions:
-  account.CreateAccountFromKeycloakResponse:
+  dto.CreateAccount:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.CreateAccountFromKeycloakResponse:
     properties:
       accountID:
         type: string
@@ -24,34 +33,42 @@ definitions:
       username:
         type: string
     type: object
-  account.KeycloakToken:
-    properties:
-      accessToken:
-        type: string
-    type: object
-  auth.AuthorizationData:
-    properties:
-      companyID:
-        type: string
-      repositoryID:
-        type: string
-      role:
-        type: string
-      token:
-        type: string
-    type: object
-  auth.ConfigAuth:
-    properties:
-      applicationAdminEnable:
-        type: boolean
-      authType:
-        type: string
-    type: object
-  auth.Credentials:
+  dto.Credentials:
     properties:
       otp:
         type: string
       password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.EmailData:
+    properties:
+      email:
+        type: string
+    type: object
+  dto.KeycloakToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
+  dto.ResetCodeData:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
+  dto.UpdateAccount:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.ValidateUnique:
+    properties:
+      email:
         type: string
       username:
         type: string
@@ -71,9 +88,111 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Auth
 paths:
+  /api/account/change-password:
+    post:
+      consumes:
+      - application/json
+      description: change password!
+      operationId: change-password
+      parameters:
+      - description: new password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /api/account/create-account:
+    post:
+      consumes:
+      - application/json
+      description: Create a new account!
+      operationId: create-account
+      parameters:
+      - description: create account info
+        in: body
+        name: CreateAccount
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAccount'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: STATUS CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
   /api/account/create-account-from-keycloak:
     post:
       consumes:
@@ -86,7 +205,7 @@ paths:
         name: KeycloakToken
         required: true
         schema:
-          $ref: '#/definitions/account.KeycloakToken'
+          $ref: '#/definitions/dto.KeycloakToken'
       produces:
       - application/json
       responses:
@@ -97,7 +216,7 @@ paths:
             - $ref: '#/definitions/http.Response'
             - properties:
                 content:
-                  $ref: '#/definitions/account.CreateAccountFromKeycloakResponse'
+                  $ref: '#/definitions/dto.CreateAccountFromKeycloakResponse'
               type: object
         "201":
           description: STATUS CREATED
@@ -128,17 +247,17 @@ paths:
               type: object
       tags:
       - Account
-  /api/auth/account-id:
-    get:
+  /api/account/delete:
+    delete:
       consumes:
       - application/json
-      description: get account by token and auth type!
-      operationId: get account id
+      description: Delete account and all permissions!
+      operationId: delete-account
       produces:
       - application/json
       responses:
-        "200":
-          description: STATUS OK
+        "204":
+          description: NO CONTENT
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -146,7 +265,16 @@ paths:
                 content:
                   type: string
               type: object
-        "400":
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
           description: INTERNAL SERVER ERROR
           schema:
             allOf:
@@ -155,26 +283,68 @@ paths:
                 content:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       tags:
-      - Auth
-  /api/auth/authenticate:
+      - Account
+  /api/account/logout:
     post:
       consumes:
       - application/json
-      description: authenticate login by type!
-      operationId: authenticate login
-      parameters:
-      - description: auth info
-        in: body
-        name: Credentials
-        required: true
-        schema:
-          $ref: '#/definitions/auth.Credentials'
+      description: logout!
+      operationId: logout
       produces:
       - application/json
       responses:
         "200":
-          description: STATUS OK
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /api/account/renew-token:
+    post:
+      consumes:
+      - application/json
+      description: renew token!
+      operationId: renew-token
+      parameters:
+      - description: refresh token
+        in: body
+        name: refreshToken
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -191,8 +361,46 @@ paths:
                 content:
                   type: string
               type: object
-        "403":
-          description: STATUS FORBIDDEN
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /api/account/send-code:
+    post:
+      consumes:
+      - application/json
+      description: send reset password code!
+      operationId: reset-password-code
+      parameters:
+      - description: reset password email info
+        in: body
+        name: EmailData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EmailData'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
@@ -210,20 +418,210 @@ paths:
                   type: string
               type: object
       tags:
-      - Auth
-  /api/auth/authorize:
+      - Account
+  /api/account/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update account username and/or email
+      operationId: update-account
+      parameters:
+      - description: update account info
+        in: body
+        name: UpdateAccount
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateAccount'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /api/account/validate-code:
     post:
       consumes:
       - application/json
-      description: verify if request is valid!
-      operationId: authenticate request
+      description: validate reset password code!
+      operationId: validate-password-code
       parameters:
-      - description: authorization data
+      - description: reset password data info
         in: body
-        name: AuthorizationData
+        name: ResetCodeData
         required: true
         schema:
-          $ref: '#/definitions/auth.AuthorizationData'
+          $ref: '#/definitions/dto.ResetCodeData'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "401":
+          description: UNAUTHORIZED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
+  /api/account/validate/{accountID}:
+    get:
+      consumes:
+      - application/json
+      description: validate email!
+      operationId: validate-email
+      parameters:
+      - description: accountID of the account
+        in: path
+        name: accountID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
+  /api/account/verify-already-used:
+    post:
+      consumes:
+      - application/json
+      description: Verify if email and username already in use!
+      operationId: validate-unique
+      parameters:
+      - description: validate unique info
+        in: body
+        name: ValidateUnique
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ValidateUnique'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: STATUS CREATED
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Account
+  /api/auth/authenticate:
+    post:
+      consumes:
+      - application/json
+      description: authenticate login by type!
+      operationId: authenticate login
+      parameters:
+      - description: auth info
+        in: body
+        name: Credentials
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Credentials'
       produces:
       - application/json
       responses:
@@ -267,15 +665,6 @@ paths:
       responses:
         "200":
           description: STATUS OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/http.Response'
-            - properties:
-                content:
-                  $ref: '#/definitions/auth.ConfigAuth'
-              type: object
-        "400":
-          description: BAD REQUEST
           schema:
             allOf:
             - $ref: '#/definitions/http.Response'
