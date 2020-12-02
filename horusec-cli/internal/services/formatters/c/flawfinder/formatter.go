@@ -40,18 +40,18 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.FlawFinder) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.FlawFinder.ToString(), logger.DebugLevel)
+	if f.ToolIsToIgnore(tools.Flawfinder) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Flawfinder.ToString(), logger.DebugLevel)
 		return
 	}
 
 	err := f.startFlawFinder(projectSubPath)
 	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.FlawFinder, projectSubPath)
+	f.LogAnalysisError(err, tools.Flawfinder, projectSubPath)
 }
 
 func (f *Formatter) startFlawFinder(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.FlawFinder)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Flawfinder)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
@@ -59,7 +59,7 @@ func (f *Formatter) startFlawFinder(projectSubPath string) error {
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.FlawFinder)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder)
 	return f.parseOutput(output)
 }
 
@@ -67,7 +67,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.FlawFinder),
+		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
 }
@@ -85,23 +85,22 @@ func (f *Formatter) parseOutput(output string) error {
 }
 
 func (f *Formatter) appendResults(results []c.Result) {
-	for _, result := range results {
-		flawFinderResult := result
+	for index := range results {
 		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
 			horusec.AnalysisVulnerabilities{
-				Vulnerability: *f.setVulnerabilityData(&flawFinderResult),
+				Vulnerability: *f.setVulnerabilityData(results, index),
 			})
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(result *c.Result) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(results []c.Result, index int) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = result.GetSeverity()
-	vulnerability.Details = result.GetDetails()
-	vulnerability.Line = result.Line
-	vulnerability.Column = result.Column
-	vulnerability.Code = f.GetCodeWithMaxCharacters(result.Context, 0)
-	vulnerability.File = result.GetFilename()
+	vulnerability.Severity = results[index].GetSeverity()
+	vulnerability.Details = results[index].GetDetails()
+	vulnerability.Line = results[index].Line
+	vulnerability.Column = results[index].Column
+	vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].Context, 0)
+	vulnerability.File = results[index].GetFilename()
 	vulnerability = vulnhash.Bind(vulnerability)
 
 	return f.setCommitAuthor(vulnerability)
@@ -121,7 +120,7 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horus
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.FlawFinder
+	vulnerabilitySeverity.SecurityTool = tools.Flawfinder
 	vulnerabilitySeverity.Language = languages.C
 	return vulnerabilitySeverity
 }
