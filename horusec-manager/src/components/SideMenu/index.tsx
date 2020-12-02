@@ -34,7 +34,7 @@ import { authTypes } from 'helpers/enums/authTypes';
 const SideMenu: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { authType } = getCurrentConfig();
+  const { authType, disabledBroker } = getCurrentConfig();
 
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
@@ -90,6 +90,7 @@ const SideMenu: React.FC = () => {
       path: '/home/webhooks',
       type: 'route',
       roles: ['admin'],
+      rule: () => !disabledBroker,
     },
   ];
 
@@ -119,17 +120,19 @@ const SideMenu: React.FC = () => {
 
   const renderRoute = (route: InternalRoute, index: number) => {
     if (route.roles.includes(userRoleInCurrentCompany())) {
-      return (
-        <Styled.RouteItem
-          key={index}
-          isActive={route.path === selectedRoute?.path}
-          onClick={() => handleSelectedRoute(route)}
-        >
-          <Icon name={route.icon} size="15" />
+      if (!route?.rule || (route?.rule && route?.rule())) {
+        return (
+          <Styled.RouteItem
+            key={index}
+            isActive={route.path === selectedRoute?.path}
+            onClick={() => handleSelectedRoute(route)}
+          >
+            <Icon name={route.icon} size="15" />
 
-          <Styled.RouteName>{route.name}</Styled.RouteName>
-        </Styled.RouteItem>
-      );
+            <Styled.RouteName>{route.name}</Styled.RouteName>
+          </Styled.RouteItem>
+        );
+      }
     }
   };
 

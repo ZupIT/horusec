@@ -19,6 +19,7 @@ export interface InternalRoute {
   icon: string;
   path?: string;
   roles?: string[];
+  rule?(): boolean;
   subRoutes?: InternalRoute[];
   type: 'route' | 'subRoute';
 }

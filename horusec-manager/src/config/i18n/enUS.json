@@ -63,7 +63,8 @@
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
-    "SUCCESS_CREATE_ACCOUNT": "An e-mail has been sent to verify your account.",
+    "SUCCESS_CREATE_ACCOUNT": "Your Horusec account has been successfully created!",
+    "SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM": "An e-mail has been sent to verify your account.",
     "OLD_PASS": "Old Password"
   },
 
