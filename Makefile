@@ -198,6 +198,9 @@ build-install-nodejs-cli:
 
 # ========================================================================================= #
 
-update-cli:
-	chmod +x ./horusec-cli/deployments/scripts/update-image.sh
-	./horusec-cli/deployments/scripts/update-image.sh $UPDATE_TYPE $SEND_NEW_VERSION_TO_S3 $IS_TO_UPDATE_LATEST
+# HELM_SERVICE_NAME="horusec-account" make helm-upgrade
+HELM_SERVICE_NAME ?= ""
+KUBE_NAMESPACE ?= "horus-dev"
+
+helm-upgrade:
+	helm upgrade --wait -i $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME) -n $(KUBE_NAMESPACE) --debug

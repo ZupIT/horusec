@@ -185,4 +185,3 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [SecuriyCodeScan]: https://security-code-scan.github.io/
 [Semgrep]: https://github.com/returntocorp/semgrep
 [EsLint]: https://github.com/eslint/eslint
-
