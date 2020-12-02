@@ -119,6 +119,7 @@ func (c *Controller) GetAuthConfig(_ context.Context,
 	return &authGrpc.GetAuthConfigResponse{
 		ApplicationAdminEnable: c.appConfig.EnableApplicationAdmin,
 		AuthType:               authType.ToString(),
+		DisabledBroker:         c.appConfig.DisabledBroker,
 	}, nil
 }
 

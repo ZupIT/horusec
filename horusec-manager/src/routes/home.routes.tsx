@@ -34,6 +34,7 @@ import Repositories from 'pages/Internal/Home/Repositories';
 import Users from 'pages/Internal/Home/Users';
 import Vulnerabilities from 'pages/Internal/Home/Vulnerabilities';
 import Webhooks from 'pages/Internal/Home/Webhooks';
+import Settings from 'pages/Internal/Home/Settings';
 
 function HomeRoutes() {
   const history = useHistory();
@@ -86,6 +87,8 @@ function HomeRoutes() {
         />
 
         <Route path={`${path}/webhooks`} component={() => <Webhooks />} />
+
+        <Route path={`${path}/settings`} component={() => <Settings />} />
       </Switch>
     </HomeLayout>
   );

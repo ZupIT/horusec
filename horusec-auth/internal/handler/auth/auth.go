@@ -60,6 +60,7 @@ func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
 		AuthType:               h.appConfig.GetAuthType(),
+		DisabledBroker:         h.appConfig.IsDisabledBroker(),
 	})
 }
 
