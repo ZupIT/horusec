@@ -62,7 +62,7 @@ Currently, performance analysis consists of:
     * [GitLeaks][Gitleaks]
 * PHP
     * [Semgrep][Semgrep]
-* C
+* C/C++
     * [Semgrep][Semgrep]
     * [Flawfinder][Flawfinder]
 * HTML
