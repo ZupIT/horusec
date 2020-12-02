@@ -990,13 +990,16 @@ func TestDeleteAccount(t *testing.T) {
 func TestUpdateAccount(t *testing.T) {
 	t.Run("should return status code 200 when updated with success", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
 
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
 		token, _, _ := jwt.CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		r.Header.Add("Authorization", token)
 		w := httptest.NewRecorder()
@@ -1008,12 +1011,15 @@ func TestUpdateAccount(t *testing.T) {
 
 	t.Run("should return status code 401 when request does not have a token", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, nil))
 
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
 		mockWrite.On("Update").Return(&response.Response{})
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
 
@@ -1022,16 +1028,39 @@ func TestUpdateAccount(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
+	t.Run("should return status code 500 when fails get user", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, errors.New("test"), nil))
+		token, _, _ := jwt.CreateToken(account, nil)
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
+		r.Header.Add("Authorization", token)
+		w := httptest.NewRecorder()
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
 	t.Run("should return status code 500 when update fails", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
-
-		response := &response.Response{}
-		mockWrite.On("Update").Return(response.SetError(errors.New("test")))
+		mockRead := &relational.MockRead{}
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
+
+		mockWrite.On("Update").Return(response.NewResponse(0, errors.New("test"), nil))
 		token, _, _ := jwt.CreateToken(account, nil)
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		r.Header.Add("Authorization", token)
 		w := httptest.NewRecorder()

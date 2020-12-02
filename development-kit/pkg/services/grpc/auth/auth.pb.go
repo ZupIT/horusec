@@ -286,6 +286,7 @@ type GetAuthConfigResponse struct {
 
 	ApplicationAdminEnable bool   `protobuf:"varint,1,opt,name=ApplicationAdminEnable,proto3" json:"ApplicationAdminEnable,omitempty"`
 	AuthType               string `protobuf:"bytes,2,opt,name=AuthType,proto3" json:"AuthType,omitempty"`
+	DisabledBroker         bool   `protobuf:"bytes,2,opt,name=DisabledBroker,proto3" json:"DisabledBroker,omitempty"`
 }
 
 func (x *GetAuthConfigResponse) Reset() {

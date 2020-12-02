@@ -1111,17 +1111,21 @@ func TestUpdateAccount(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
+		resp := &response.Response{}
+
+		account := &authEntities.Account{
+			Email:    "test@test.com",
+			Username: "test",
+		}
+		resp.SetData(account)
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		mockWrite.On("Update").Return(&response.Response{})
 
 		appConfig := app.NewConfig()
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
-
-		account := &authEntities.Account{
-			Email:    "test@test.com",
-			Username: "test",
-		}
 
 		err := controller.UpdateAccount(account)
 		assert.NoError(t, err)

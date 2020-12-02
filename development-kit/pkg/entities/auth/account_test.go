@@ -15,10 +15,11 @@
 package auth
 
 import (
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetPassword(t *testing.T) {
@@ -110,6 +111,25 @@ func TestToMap(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, account.ToMap())
+	})
+}
+
+func TestToUpdateMap(t *testing.T) {
+	t.Run("should success parse to map", func(t *testing.T) {
+		account := &Account{
+			AccountID:   uuid.New(),
+			Email:       "test",
+			Password:    "test",
+			Username:    "test",
+			IsConfirmed: false,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		}
+
+		accountMap := account.ToUpdateMap()
+
+		assert.NotEmpty(t, account)
+		assert.Empty(t, accountMap["password"])
 	})
 }
 

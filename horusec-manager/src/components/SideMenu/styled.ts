@@ -120,10 +120,10 @@ const SubMenu = styled.div<SubMenuProps>`
     `};
 `;
 
-const Back = styled(Icon)`
-  margin: 20px 0px 0px 17px;
+const Option = styled(Icon)`
   width: 30px;
   cursor: pointer;
+  margin: 0 0 20px 15px;
 `;
 
 export default {
@@ -137,5 +137,5 @@ export default {
   SubMenu,
   SubRoutesList,
   SubRouteItem,
-  Back,
+  Option,
 };

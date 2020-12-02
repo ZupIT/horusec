@@ -58,16 +58,16 @@ type Service struct {
 
 func NewLDAPClient() ILDAPService {
 	return &Service{
-		Base:               env.GetEnvOrDefault("HORUS_LDAP_BASE", ""),
-		Host:               env.GetEnvOrDefault("HORUS_LDAP_HOST", ""),
-		Port:               env.GetEnvOrDefaultInt("HORUS_LDAP_PORT", 389),
-		UseSSL:             env.GetEnvOrDefaultBool("HORUS_LDAP_USESSL", false),
-		SkipTLS:            env.GetEnvOrDefaultBool("HORUS_LDAP_SKIP_TLS", true),
-		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUS_LDAP_INSECURE_SKIP_VERIFY", true),
-		BindDN:             env.GetEnvOrDefault("HORUS_LDAP_BINDDN", ""),
-		BindPassword:       env.GetEnvOrDefault("HORUS_LDAP_BINDPASSWORD", ""),
-		UserFilter:         env.GetEnvOrDefault("HORUS_LDAP_USERFILTER", ""),
-		GroupFilter:        env.GetEnvOrDefault("HORUS_LDAP_GROUPFILTER", ""),
+		Base:               env.GetEnvOrDefault("HORUSEC_LDAP_BASE", ""),
+		Host:               env.GetEnvOrDefault("HORUSEC_LDAP_HOST", ""),
+		Port:               env.GetEnvOrDefaultInt("HORUSEC_LDAP_PORT", 389),
+		UseSSL:             env.GetEnvOrDefaultBool("HORUSEC_LDAP_USESSL", false),
+		SkipTLS:            env.GetEnvOrDefaultBool("HORUSEC_LDAP_SKIP_TLS", true),
+		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
+		BindDN:             env.GetEnvOrDefault("HORUSEC_LDAP_BINDDN", ""),
+		BindPassword:       env.GetEnvOrDefault("HORUSEC_LDAP_BINDPASSWORD", ""),
+		UserFilter:         env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", ""),
+		GroupFilter:        env.GetEnvOrDefault("HORUSEC_LDAP_GROUPFILTER", ""),
 		Attributes:         []string{"uid", "mail", "givenName"},
 	}
 }

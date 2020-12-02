@@ -187,4 +187,3 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [Semgrep]: https://github.com/returntocorp/semgrep
 [EsLint]: https://github.com/eslint/eslint
 [Flawfinder]: https://github.com/david-a-wheeler/flawfinder
-
