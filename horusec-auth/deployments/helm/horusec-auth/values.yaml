@@ -1,33 +1,14 @@
-# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# Default values for horusec-analytic-helm.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
-  repository: horuszup/horusec-analytic
+  repository: horuszup/horusec-auth
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: v1.1.0
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-namespace: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -53,13 +34,13 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8005
-  targetPort: 8005
+  port: 8006
+  targetPort: 8006
 
 ingress:
   enabled: true
   hosts:
-    - host: ""
+    - host: "auth-horus-dev.zup.com.br"
       paths:
         - /
 
@@ -88,19 +69,76 @@ tolerations: []
 
 affinity: {}
 
-env:          
+env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_PORT"
-    value: "8005"
+    value: "8006"
   - name: "HORUSEC_DATABASE_SQL_DIALECT"
     value: "postgres"
   - name: "HORUSEC_DATABASE_SQL_LOG_MODE"
     value: "false"
+  - name: "HORUSEC_API_URL"
+    value: ""
+  - name: "HORUSEC_GRPC_PORT"
+    value: "8007"
+  - name: "HORUSEC_GRPC_USE_CERTS"
+    value: "false"
+  - name: "HORUSEC_GRPC_CERT_PATH"
+    value: ""
+  - name: "HORUSEC_GRPC_KEY_PATH"
+    value: ""
+  - name: "HORUSEC_BROKER_HOST"
+    value: "horus-mq-rabbitmq"
+  - name: "HORUSEC_BROKER_PORT"
+    value: "5672"
+  - name: "HORUSEC_DISABLED_BROKER"
+    value: "false"
+  - name: "HORUSEC_AUTH_TYPE"
+    value: "horusec"
+  - name: "HORUSEC_ENABLE_APPLICATION_ADMIN"
+    value: "false"
+  - name: "HORUSEC_KEYCLOAK_BASE_PATH"
+    value: ""
+  - name: "HORUSEC_KEYCLOAK_REALM"
+    value: ""
+  - name: "HORUSEC_KEYCLOAK_OTP"
+    value: "false"
+  - name: "HORUSEC_LDAP_BASE"
+    value: ""
+  - name: "HORUSEC_LDAP_HOST"
+    value: ""
+  - name: "HORUSEC_LDAP_PORT"
+    value: "389"
+  - name: "HORUSEC_LDAP_USESSL"
+    value: "false"
+  - name: "HORUSEC_LDAP_SKIP_TLS"
+    value: "true"
+  - name: "HORUSEC_LDAP_INSECURE_SKIP_VERIFY"
+    value: "true"
+  - name: "HORUSEC_LDAP_USERFILTER"
+    value: ""
+  - name: "HORUSEC_LDAP_GROUPFILTER"
+    value: ""
+  - name: "HORUSEC_LDAP_ADMIN_GROUP"
+    value: ""
 
 envFromSecret:
+#  - name: "HORUSEC_LDAP_BINDDN"
+#    key: "ldap-binddn"
+#  - name: "HORUSEC_LDAP_BINDPASSWORD"
+#    key: "ldap-bindpassword"
+#  - name: "HORUSEC_KEYCLOAK_CLIENT_ID"
+#    key: "keycloak-client-id"
+#  - name: "HORUSEC_KEYCLOAK_CLIENT_SECRET"
+#    key: "keycloak-client-secret"
+#  - name: "HORUSEC_APPLICATION_ADMIN_DATA"
+#    key: "application-admin-data"
+  - name: "HORUSEC_BROKER_USERNAME"
+    key: "broker-username"
+  - name: "HORUSEC_BROKER_PASSWORD"
+    key: "broker-password"
   - name: "HORUSEC_DATABASE_SQL_URI"
     key: "database-uri"
   - name: "HORUSEC_JWT_SECRET_KEY"
     key: "jwt-token"
-  

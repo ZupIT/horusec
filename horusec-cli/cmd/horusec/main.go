@@ -15,8 +15,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
+	"path"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
@@ -27,6 +27,7 @@ import (
 )
 
 var LogLevel = logger.InfoLevel.String()
+var ConfigPath = "./horusec-config.json"
 var configs *config.Config
 
 var rootCmd = &cobra.Command{
@@ -74,12 +75,22 @@ func ExecuteCobra() {
 }
 
 func setConfigsData() {
-	path, _ := os.Getwd()
-	configs.ConfigFilePath = fmt.Sprintf("%s/horusec-config.json", path)
+	configs.ConfigFilePath = getConfigPath()
+
 	configs.SetConfigsFromViper()
 	configs.SetConfigsFromEnvironments()
 }
 
 func initConfig() {
 	logger.SetLogLevel(LogLevel)
+}
+
+func getConfigPath() string {
+	isAbs := path.IsAbs(ConfigPath)
+	if isAbs {
+		return ConfigPath
+	}
+
+	currentDir, _ := os.Getwd()
+	return path.Join(currentDir, ConfigPath)
 }
