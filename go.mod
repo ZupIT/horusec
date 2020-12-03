@@ -23,6 +23,7 @@ require (
 	github.com/go-openapi/spec v0.19.12 // indirect
 	github.com/go-openapi/swag v0.19.11 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/gocarina/gocsv v0.0.0-20201103164230-b291445e0dd2
 	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.2
@@ -67,6 +68,7 @@ require (
 	golang.org/x/tools v0.0.0-20201105220310-78b158585360 // indirect
 	google.golang.org/genproto v0.0.0-20201106154455-f9bfe239b0ba // indirect
 	google.golang.org/grpc v1.33.2
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1 // indirect
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect

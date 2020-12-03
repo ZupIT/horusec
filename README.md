@@ -62,8 +62,9 @@ Currently, performance analysis consists of:
     * [GitLeaks][Gitleaks]
 * PHP
     * [Semgrep][Semgrep]
-* C
+* C/C++
     * [Semgrep][Semgrep]
+    * [Flawfinder][Flawfinder]
 * HTML
     * [Semgrep][Semgrep]
 * JSON
@@ -185,3 +186,4 @@ This project exists thanks to all the [contributors]((https://github.com/ZupIT/h
 [SecuriyCodeScan]: https://security-code-scan.github.io/
 [Semgrep]: https://github.com/returntocorp/semgrep
 [EsLint]: https://github.com/eslint/eslint
+[Flawfinder]: https://github.com/david-a-wheeler/flawfinder
