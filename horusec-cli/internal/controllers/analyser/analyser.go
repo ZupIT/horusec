@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
 	"log"
 	"os"
 	"os/signal"
@@ -189,6 +190,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
 		languages.Yaml:       a.detectVulnerabilityYaml,
+		languages.C:          a.detectVulnerabilityC,
 	}
 }
 
@@ -251,6 +253,11 @@ func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go flawfinder.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {

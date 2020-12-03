@@ -205,13 +205,22 @@ func (ld *LanguageDetect) isSupportedLanguage(langName string) bool {
 
 func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound []string) []string {
 	for _, lang := range languagesFound {
-		if ld.isTypescriptOrJavascriptLang(lang) {
-			existingLanguages = append(existingLanguages, languages.Javascript.ToString())
-		} else {
-			existingLanguages = append(existingLanguages, lang)
-		}
+		existingLanguages = ld.updateExistingLanguages(lang, existingLanguages)
 	}
+
 	return ld.uniqueLanguages(existingLanguages)
+}
+
+func (ld *LanguageDetect) updateExistingLanguages(lang string, existingLanguages []string) []string {
+	if ld.isTypescriptOrJavascriptLang(lang) {
+		return append(existingLanguages, languages.Javascript.ToString())
+	}
+
+	if ld.isCPlusPLusOrCLang(lang) {
+		return append(existingLanguages, languages.C.ToString())
+	}
+
+	return append(existingLanguages, lang)
 }
 
 func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
@@ -219,4 +228,9 @@ func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
 		strings.EqualFold(lang, languages.TypeScript.ToString()) ||
 		strings.EqualFold(lang, "TSX") ||
 		strings.EqualFold(lang, "JSX")
+}
+
+func (ld *LanguageDetect) isCPlusPLusOrCLang(lang string) bool {
+	return strings.EqualFold(lang, "C++") ||
+		strings.EqualFold(lang, "C")
 }
