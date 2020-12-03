@@ -181,6 +181,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.Eslint,
 		tools.HorusecKubernetes,
 		tools.Flawfinder,
+		tools.PhpCS,
 	}
 }
 

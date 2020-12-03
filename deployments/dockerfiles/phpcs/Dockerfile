@@ -21,3 +21,5 @@ RUN composer global config bin-dir /usr/local/bin
 RUN composer global require "squizlabs/php_codesniffer=*"
 
 RUN composer require --dev pheromone/phpcs-security-audit
+
+RUN phpcs --config-set installed_paths /vendor/pheromone/phpcs-security-audit/Security
