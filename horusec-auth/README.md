@@ -71,3 +71,4 @@ To update swagger.json, you need run command into **root horusec-auth folder**
 ```bash
 swag init -g ./cmd/app/main.go
 ```
+
