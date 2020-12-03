@@ -40,6 +40,7 @@ type IController interface {
 }
 
 type Controller struct {
+	authGrpc.UnimplementedAuthServiceServer
 	horusAuthService    services.IAuthService
 	keycloakAuthService services.IAuthService
 	ldapAuthService     services.IAuthService
@@ -48,7 +49,7 @@ type Controller struct {
 }
 
 func NewAuthController(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) IController {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Controller {
 	return &Controller{
 		appConfig:           appConfig,
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead, postgresWrite),
