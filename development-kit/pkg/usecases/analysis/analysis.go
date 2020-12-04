@@ -20,7 +20,6 @@ import (
 	"time"
 
 	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"

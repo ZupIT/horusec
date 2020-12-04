@@ -16,8 +16,6 @@ package analyser
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs"
 	"log"
 	"os"
 	"os/signal"
@@ -25,6 +23,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs"
 
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
