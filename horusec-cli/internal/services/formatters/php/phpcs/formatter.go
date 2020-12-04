@@ -122,7 +122,7 @@ func (f *Formatter) setVulnerabilityData(filepath string, result phpEntities.Mes
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, f.getFilePathFromPackageName(vulnerability.File))
+	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
 
 	vulnerability.CommitAuthor = commitAuthor.Author
 	vulnerability.CommitHash = commitAuthor.CommitHash
