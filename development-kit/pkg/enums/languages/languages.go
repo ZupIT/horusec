@@ -46,6 +46,7 @@ func ParseStringToLanguage(value string) (l Language) {
 	return Unknown
 }
 
+//nolint
 func SupportedLanguages() []Language {
 	return []Language{
 		Go,

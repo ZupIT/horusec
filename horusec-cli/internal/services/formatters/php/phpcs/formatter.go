@@ -17,7 +17,7 @@ package phpcs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/php"
+	phpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/php/phpcs"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -100,7 +100,7 @@ func (f *Formatter) parseMessages(filepath string, result interface{}) {
 	}
 }
 
-func (f *Formatter) appendResults(filepath string, message php.Message) {
+func (f *Formatter) appendResults(filepath string, message phpEntities.Message) {
 	if message.IsValidMessage() {
 		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
 			horusec.AnalysisVulnerabilities{
@@ -109,13 +109,12 @@ func (f *Formatter) appendResults(filepath string, message php.Message) {
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(filepath string, result php.Message) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(filepath string, result phpEntities.Message) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Low
+	vulnerability.Severity = severity.Info
 	vulnerability.Details = result.Message
 	vulnerability.Line = result.GetLine()
 	vulnerability.Column = result.GetColumn()
-	//vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].Context, 0)
 	vulnerability.File = f.RemoveSrcFolderFromPath(filepath)
 	vulnerability = vulnhash.Bind(vulnerability)
 
@@ -146,8 +145,8 @@ func (f *Formatter) getFilePathFromPackageName(filePath string) string {
 		fmt.Sprintf("%s/", f.GetConfigProjectPath()))
 }
 
-func (f *Formatter) parseToResult(messageInterface interface{}) *php.Result {
-	var result *php.Result
+func (f *Formatter) parseToResult(messageInterface interface{}) *phpEntities.Result {
+	var result *phpEntities.Result
 
 	bytes, _ := json.Marshal(messageInterface)
 	_ = json.Unmarshal(bytes, &result)
