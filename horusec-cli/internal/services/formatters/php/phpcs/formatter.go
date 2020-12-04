@@ -22,7 +22,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -69,7 +68,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Image:    ImageName,
 		Tag:      ImageTag,
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.PhpCS),
-		Language: languages.C,
+		Language: languages.PHP,
 	}
 }
 
@@ -138,11 +137,6 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity.SecurityTool = tools.PhpCS
 	vulnerabilitySeverity.Language = languages.PHP
 	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getFilePathFromPackageName(filePath string) string {
-	return fileUtil.GetPathIntoFilename(filePath,
-		fmt.Sprintf("%s/", f.GetConfigProjectPath()))
 }
 
 func (f *Formatter) parseToResult(messageInterface interface{}) *phpEntities.Result {
