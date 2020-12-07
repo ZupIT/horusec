@@ -18,3 +18,9 @@ import "errors"
 
 var ErrorUnauthorized = errors.New("you do not have enough privileges for this action")
 var ErrorTokenExpired = errors.New("this authorization token has expired, please renew it")
+var ErrorUnauthorizedCompanyMember = errors.New("user unauthorized as company member")
+var ErrorUnauthorizedCompanyAdmin = errors.New("user unauthorized as company admin")
+var ErrorUnauthorizedRepositoryMember = errors.New("user unauthorized as repository member")
+var ErrorUnauthorizedRepositorySupervisor = errors.New("user unauthorized as repository supervisor")
+var ErrorUnauthorizedRepositoryAdmin = errors.New("user unauthorized as repository admin")
+var ErrorUnauthorizedApplicationAdmin = errors.New("user unauthorized as application admin")
