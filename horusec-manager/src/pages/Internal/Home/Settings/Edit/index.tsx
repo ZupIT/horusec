@@ -30,6 +30,7 @@ import { useTheme } from 'styled-components';
 import accountService from 'services/account';
 import useAuth from 'helpers/hooks/useAuth';
 import { useHistory } from 'react-router-dom';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 interface Props {
   isVisible: boolean;
@@ -45,6 +46,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { showSuccessFlash } = useFlashMessage();
   const { logout } = useAuth();
   const history = useHistory();
+  const { disabledBroker } = getCurrentConfig();
 
   const [isLoading, setLoading] = useState(false);
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
@@ -76,7 +78,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       accountService
         .update(nameOfUser.value, emailOfUser.value)
         .then(() => {
-          if (emailOfUser.value !== currentUser.email) {
+          if (emailOfUser.value !== currentUser.email && !disabledBroker) {
             setSuccessDialogIsOpen(true);
           }
 

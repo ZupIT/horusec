@@ -21,12 +21,14 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Field } from 'helpers/interfaces/Field';
 import useAuth from 'helpers/hooks/useAuth';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();
   const { path } = useRouteMatch();
   const { login, loginInProgress } = useAuth();
+  const { disabledBroker } = getCurrentConfig();
 
   const [email, setEmail] = useState<Field>({ value: '', isValid: false });
   const [password, setPassword] = useState<Field>({
@@ -64,11 +66,13 @@ function LoginScreen() {
         invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
       />
 
-      <Styled.ForgotPass
-        onClick={() => history.push(`${path}/recovery-password`)}
-      >
-        {t('LOGIN_SCREEN.FORGOT_PASS')}
-      </Styled.ForgotPass>
+      {!disabledBroker ? (
+        <Styled.ForgotPass
+          onClick={() => history.push(`${path}/recovery-password`)}
+        >
+          {t('LOGIN_SCREEN.FORGOT_PASS')}
+        </Styled.ForgotPass>
+      ) : null}
 
       <Styled.Submit
         isDisabled={!password.isValid || !email.isValid}
