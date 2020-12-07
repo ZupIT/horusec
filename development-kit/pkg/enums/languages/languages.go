@@ -46,6 +46,7 @@ func ParseStringToLanguage(value string) (l Language) {
 	return Unknown
 }
 
+//nolint
 func SupportedLanguages() []Language {
 	return []Language{
 		Go,
@@ -60,6 +61,7 @@ func SupportedLanguages() []Language {
 		Generic,
 		Yaml,
 		C,
+		PHP,
 		Unknown,
 	}
 }
@@ -78,6 +80,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Generic.ToString():    Generic,
 		Yaml.ToString():       Yaml,
 		C.ToString():          C,
+		PHP.ToString():        PHP,
 	}
 }
 
