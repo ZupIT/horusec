@@ -40,6 +40,17 @@ const createAccount = (username: string, password: string, email: string) => {
   });
 };
 
+const update = (username: string, email: string) => {
+  return http.patch(`${SERVICE_AUTH}/api/account/update`, {
+    username,
+    email,
+  });
+};
+
+const deleteAccount = () => {
+  return http.delete(`${SERVICE_AUTH}/api/account/delete`);
+};
+
 const createAccountFromKeycloak = (accessToken: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/create-account-from-keycloak`, {
     accessToken,
@@ -61,7 +72,15 @@ const changePassword = (token: string, password: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
-      Authorization: `Bearer ${token}`,
+      'X-Horusec-Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+const updatePassword = (password: string) => {
+  return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
+    headers: {
+      'Content-Type': 'text/plain',
     },
   });
 };
@@ -87,7 +106,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
       axios
         .post(`${SERVICE_AUTH}/api/account/renew-token`, refreshToken, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            'X-Horusec-Authorization': `Bearer ${accessToken}`,
             'Content-type': 'text/plain',
           },
         })
@@ -125,4 +144,7 @@ export default {
   verifyUniqueUsernameEmail,
   getHorusecConfig,
   createAccountFromKeycloak,
+  update,
+  deleteAccount,
+  updatePassword,
 };

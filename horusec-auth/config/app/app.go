@@ -41,7 +41,7 @@ func NewConfig() *Config {
 	return &Config{
 		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
 		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
-		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
+		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
 		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),

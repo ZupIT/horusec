@@ -31,7 +31,7 @@ coverage-horusec-analytic:
 	deployments/scripts/coverage.sh 98 "./horusec-analytic"
 coverage-horusec-auth:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 97 "./horusec-auth"
+	deployments/scripts/coverage.sh 96 "./horusec-auth"
 coverage-horusec-webhook:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-webhook"

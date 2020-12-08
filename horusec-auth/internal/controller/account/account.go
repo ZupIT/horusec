@@ -16,6 +16,8 @@ package account
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"time"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -219,11 +221,19 @@ func (a *Account) ChangePassword(accountID uuid.UUID, password string) error {
 	if err != nil {
 		return err
 	}
+	if err := a.checkIfPasswordHashIsEqualNewPassword(account.Password, password); err != nil {
+		logger.LogError("{ACCOUNT} Error on validate password: ", err)
+		return errors.ErrorInvalidPassword
+	}
+	account = a.setNewPasswordInAccount(account, password)
+	_ = a.cacheRepository.Del(accountID.String())
+	return a.accountRepository.UpdatePassword(account)
+}
 
+func (a *Account) setNewPasswordInAccount(account *authEntities.Account, password string) *authEntities.Account {
 	account.Password = password
 	account.SetPasswordHash()
-	_ = a.cacheRepository.Del(accountID.String())
-	return a.accountRepository.Update(account)
+	return account
 }
 
 func (a *Account) RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error) {
@@ -344,6 +354,41 @@ func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
 	return uuid.Nil, errors.ErrorUnauthorized
 }
 
-func (a *Account) UpdateAccount(account *authEntities.Account) error {
+func (a *Account) UpdateAccount(accountUpdate *authEntities.Account) error {
+	account, err := a.accountRepository.GetByAccountID(accountUpdate.AccountID)
+	if err != nil {
+		return err
+	}
+
+	if accountUpdate.Username != "" {
+		account.Username = accountUpdate.Username
+	}
+
+	account, err = a.handleAccountEmailChange(account, accountUpdate)
+	if err != nil {
+		return err
+	}
+
 	return a.accountRepository.Update(account)
+}
+
+func (a *Account) handleAccountEmailChange(
+	account, accountUpdate *authEntities.Account) (*authEntities.Account, error) {
+	if accountUpdate.Email != "" && account.Email != accountUpdate.Email {
+		account.Email = accountUpdate.Email
+		account.IsConfirmed = false
+		return account, a.sendValidateAccountEmail(account)
+	}
+
+	return account, nil
+}
+func (a *Account) checkIfPasswordHashIsEqualNewPassword(passwordHash, newPassword string) error {
+	if passwordHash == "" || newPassword == "" {
+		return errors.ErrorNewPasswordOrPasswordHashNotBeEmpty
+	}
+	isValid := crypto.CheckPasswordHash(newPassword, passwordHash)
+	if isValid {
+		return errors.ErrorNewPasswordNotEqualOldPassword
+	}
+	return nil
 }

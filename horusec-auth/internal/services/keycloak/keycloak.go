@@ -68,11 +68,11 @@ func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*dto.Authori
 func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedCompanyMember
 	}
 
 	if _, err = s.repoAccountCompany.GetAccountCompany(accountID, authorizationData.CompanyID); err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedCompanyMember
 	}
 
 	return true, nil
@@ -81,11 +81,11 @@ func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (boo
 func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedCompanyAdmin
 	}
 
 	if s.isNotCompanyAdmin(authorizationData, accountID) {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedCompanyAdmin
 	}
 
 	return true, nil
@@ -94,12 +94,12 @@ func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool
 func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedRepositoryMember
 	}
 
 	if _, err = s.repoAccountRepository.GetAccountRepository(accountID, authorizationData.RepositoryID); err != nil {
 		if s.isNotCompanyAdmin(authorizationData, accountID) {
-			return false, errors.ErrorUnauthorized
+			return false, errors.ErrorUnauthorizedRepositoryMember
 		}
 	}
 
@@ -109,13 +109,13 @@ func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (
 func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedRepositorySupervisor
 	}
 
 	if accountRepository, err := s.repoAccountRepository.GetAccountRepository(accountID,
 		authorizationData.RepositoryID); err != nil || accountRepository.IsNotSupervisorOrAdmin() {
 		if s.isNotCompanyAdmin(authorizationData, accountID) {
-			return false, errors.ErrorUnauthorized
+			return false, errors.ErrorUnauthorizedRepositorySupervisor
 		}
 	}
 
@@ -125,13 +125,13 @@ func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationDat
 func (s *Service) isRepositoryAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
 	accountID, err := s.keycloak.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
-		return false, errors.ErrorUnauthorized
+		return false, errors.ErrorUnauthorizedRepositoryAdmin
 	}
 
 	if accountRepository, errRepository := s.repoAccountRepository.GetAccountRepository(accountID,
 		authorizationData.RepositoryID); errRepository != nil || accountRepository.IsNotAdmin() {
 		if s.isNotCompanyAdmin(authorizationData, accountID) {
-			return false, errors.ErrorUnauthorized
+			return false, errors.ErrorUnauthorizedRepositoryAdmin
 		}
 	}
 

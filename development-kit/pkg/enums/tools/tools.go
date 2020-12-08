@@ -35,6 +35,8 @@ const (
 	HorusecKubernetes Tool = "HorusecKubernetes"
 	Eslint            Tool = "Eslint"
 	HorusecNodejs     Tool = "HorusecNodeJS"
+	Flawfinder        Tool = "Flawfinder"
+	PhpCS             Tool = "PhpCS"
 )
 
 func (t Tool) ToString() string {

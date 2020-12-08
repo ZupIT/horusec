@@ -24,6 +24,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs"
+
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
@@ -189,6 +192,8 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.HCL:        a.detectVulnerabilityHCL,
 		languages.Generic:    a.detectVulnerabilityGeneric,
 		languages.Yaml:       a.detectVulnerabilityYaml,
+		languages.C:          a.detectVulnerabilityC,
+		languages.PHP:        a.detectVulnerabilityPHP,
 	}
 }
 
@@ -251,6 +256,16 @@ func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go flawfinder.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go phpcs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {

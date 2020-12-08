@@ -63,7 +63,9 @@
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
-    "SUCCESS_CREATE_ACCOUNT": "An e-mail has been sent to verify your account."
+    "SUCCESS_CREATE_ACCOUNT": "Your Horusec account has been successfully created!",
+    "SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM": "An e-mail has been sent to verify your account.",
+    "OLD_PASS": "Old Password"
   },
 
   "COMPANY_SCREEN": {
@@ -291,8 +293,10 @@
 
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
-    "ADD": "Create webhook",
+    "ADD": "Add webhook",
+    "EDIT": "Edit webhook",
     "SAVE": "Save",
+    "SEARCH": "Search by URL",
     "DESCRIPTION_LABEL": "Enter the description for the webhook:",
     "DESCRIPTION": "Description",
     "RESPOSITORY_LABEL": "Select the repository that will trigger the webhook:",
@@ -305,20 +309,49 @@
     "SUCCESS_DELETE": "Webhook successfully deleted.",
     "SUCCESS_UPDATE": "Webhook successfully updated.",
     "CONFIRM_DELETE": "Do you really want to delete this webhook? This action cannot be undone.",
-    "YES": "Sim",
+    "YES": "Yes",
     "HEADERS_LABEL": "Headers",
     "KEY": "Key",
     "VALUE": "Value",
     "TABLE": {
-      "EMPTY": "There are no registered webhooks",
+      "EMPTY": "No registered webhooks were found",
       "METHOD": "Method",
       "URL": "URL",
       "REPOSITORY": "Repository",
       "DESCRIPTION": "Description",
       "ACTION": "Action",
       "DELETE": "Delete",
-      "EDIT": "Edit"
+      "EDIT": "Edit",
+      "COPY": "Copy"
     }
+  },
+
+  "SETTINGS_SCREEN": {
+    "TITLE": "Account configurations",
+    "TABLE": {
+      "USER": "User",
+      "EMAIL": "Email",
+      "ACTION": "Action",
+      "DELETE": "Delete",
+      "EDIT": "Edit",
+      "PASSWORD": "Password"
+    },
+    "CONFIRM_DELETE": "Do you really want to delete your account This action cannot be undone.",
+    "YES": "Yes",
+    "EDIT_ACCOUNT": "Edit account",
+    "SAVE": "Save",
+    "EMAIL": "Email",
+    "NAME": "Username",
+    "INVALID_EMAIL":"Invalid e-mail",
+    "NEW_PASS": "New Password",
+    "CONFIRM_PASS": "Confirm password",
+    "CHANGE_PASS": "Change Password",
+    "INVALID_CONFIRM_PASS": "Passwords are not the same.",
+    "INVALID_PASS": "Enter password",
+    "EDIT_SUCCESS": "information successfully changed",
+    "SUCCESS_UPDATE": "A request to verify the new email has been sent to your email.",
+    "CONFIRM":"Ok, I got it.",
+    "SUCCESS_DELETE": "Your account has been successfully deleted!"
   },
 
   "SIDE_MENU": {
@@ -329,6 +362,7 @@
     "REPOSITORY": "Repository",
     "ORGANIZATION_USERS": "Organization users",
     "BACK_ORGANIZATION": "Back to organizations",
+    "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout"
   },
@@ -343,7 +377,8 @@
     "ALREADY_IN_COMPANY": "This user is already part of this organization.",
     "PRIVILEGES": "You do not have sufficient permissions to perform this action.",
     "REPO_NAME_IN_USE": "Repository name already in use.",
-    "USERNAME_IN_USE": "Username already in use."
+    "USERNAME_IN_USE": "Username already in use.",
+    "SAME_PASSWORD": "The new password cannot be the same as the current one."
   },
 
   "NOT_FOUND_SCREEN": {

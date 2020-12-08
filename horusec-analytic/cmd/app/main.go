@@ -15,9 +15,10 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec/horusec-analytic/config/grpc"
 	"log"
 	"net/http"
+
+	"github.com/ZupIT/horusec/horusec-analytic/config/grpc"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
@@ -36,7 +37,7 @@ import (
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Authorization
+// @name X-Horusec-Authorization
 func main() {
 	postgresRead := adapter.NewRepositoryRead()
 

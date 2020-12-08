@@ -47,7 +47,7 @@ func TestSendAnalysis(t *testing.T) {
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   &cliConfig.Config{RepositoryAuthorization: "test", Headers: `{"some-header": "some-value"}`},
 		}
 
 		assert.NotPanics(t, func() {

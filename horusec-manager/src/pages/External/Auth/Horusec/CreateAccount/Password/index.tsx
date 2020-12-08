@@ -28,9 +28,11 @@ import {
   hasUpperCase,
 } from 'helpers/validators';
 import { CreateAccountContext } from 'contexts/CreateAccount';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 
 function PasswordForm() {
   const { t } = useTranslation();
+  const { disabledBroker } = getCurrentConfig();
   const history = useHistory();
   const {
     password,
@@ -146,7 +148,11 @@ function PasswordForm() {
       <Dialog
         isVisible={successDialogVisible}
         confirmText={t('CREATE_ACCOUNT_SCREEN.CONFIRM')}
-        message={t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')}
+        message={
+          disabledBroker
+            ? t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')
+            : t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM')
+        }
         onConfirm={() => history.push('/auth')}
         roundedButton
       />

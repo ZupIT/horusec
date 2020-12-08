@@ -19,16 +19,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"testing"
 
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -77,7 +78,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
@@ -119,7 +120,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -163,7 +164,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -197,7 +198,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+"123")
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+"123")
 
 		w := httptest.NewRecorder()
 
@@ -226,7 +227,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -264,7 +265,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -305,7 +306,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -345,7 +346,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -380,7 +381,7 @@ func TestCreateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
 
@@ -509,7 +510,7 @@ func TestList(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -544,7 +545,7 @@ func TestList(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -574,7 +575,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		handler.UpdateAccountCompany(w, r)
 
@@ -596,7 +597,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		handler.UpdateAccountCompany(w, r)
 
@@ -620,7 +621,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("Authorization", "Bearer "+getTestAuthorizationToken())
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")

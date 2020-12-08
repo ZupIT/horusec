@@ -126,18 +126,22 @@ generateBinaries () {
 
     if [[ "$SEND_NEW_VERSION_TO_S3" == "true" ]]
     then
-        aws s3 cp "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec-cli/$ACTUAL_RELEASE_FORMATTED" --recursive
+        aws s3 cp "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/$ACTUAL_RELEASE_FORMATTED" --recursive
     fi
+    docker build -t "horuszup/horusec-cli:$ACTUAL_RELEASE" -f horusec-cli/deployments/Dockerfile .
+    docker push "horuszup/horusec-cli:$ACTUAL_RELEASE"
 
     if [[ "$IS_TO_UPDATE_LATEST" == "true" ]]
     then
         echo "$ACTUAL_RELEASE_FORMATTED" > ./horusec-cli/deployments/version-cli-latest.txt
-        aws s3 cp ./horusec-cli/deployments/version-cli-latest.txt s3://horusec-cli/version-cli-latest.txt
-        aws s3 cp "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec-cli/latest" --recursive
+        aws s3 cp ./horusec-cli/deployments/version-cli-latest.txt s3://horusec.io/bin/version-cli-latest.txt
+        aws s3 cp "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/latest" --recursive
+        docker build -t "horuszup/horusec-cli:latest" -f horusec-cli/deployments/Dockerfile .
+        docker push "horuszup/horusec-cli:latest"
     fi
 
     echo "$ACTUAL_RELEASE_FORMATTED" >> ./horusec-cli/deployments/all-version-cli.txt
-    aws s3 cp ./horusec-cli/deployments/all-version-cli.txt s3://horusec-cli/all-version-cli.txt
+    aws s3 cp ./horusec-cli/deployments/all-version-cli.txt s3://horusec.io/bin/all-version-cli.txt
 }
 
 resetAlphaRcToMaster () {

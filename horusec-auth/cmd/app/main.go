@@ -41,7 +41,7 @@ import (
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Authorization
+// @name X-Horusec-Authorization
 // nolint
 func main() {
 	var broker brokerLib.IBroker

@@ -28,10 +28,13 @@ import {
   clearCurrentCompany,
 } from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
+  const { authType, disabledBroker } = getCurrentConfig();
 
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
@@ -83,10 +86,11 @@ const SideMenu: React.FC = () => {
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),
-      icon: 'link',
+      icon: 'webhook',
       path: '/home/webhooks',
       type: 'route',
       roles: ['admin'],
+      rule: () => !disabledBroker,
     },
   ];
 
@@ -116,23 +120,31 @@ const SideMenu: React.FC = () => {
 
   const renderRoute = (route: InternalRoute, index: number) => {
     if (route.roles.includes(userRoleInCurrentCompany())) {
-      return (
-        <Styled.RouteItem
-          key={index}
-          isActive={route.path === selectedRoute?.path}
-          onClick={() => handleSelectedRoute(route)}
-        >
-          <Icon name={route.icon} size="15" />
+      if (!route?.rule || (route?.rule && route?.rule())) {
+        return (
+          <Styled.RouteItem
+            key={index}
+            isActive={route.path === selectedRoute?.path}
+            onClick={() => handleSelectedRoute(route)}
+          >
+            <Icon name={route.icon} size="15" />
 
-          <Styled.RouteName>{route.name}</Styled.RouteName>
-        </Styled.RouteItem>
-      );
+            <Styled.RouteName>{route.name}</Styled.RouteName>
+          </Styled.RouteItem>
+        );
+      }
     }
   };
 
   const backToOrganization = () => {
     clearCurrentCompany();
     history.replace('/organization');
+  };
+
+  const goToSettings = () => {
+    history.replace('/home/settings');
+    setSelectedRoute(null);
+    setSelectedSubRoute(null);
   };
 
   const fetchSubRoutes = () =>
@@ -166,15 +178,25 @@ const SideMenu: React.FC = () => {
         </Styled.WrapperLogoRoutes>
 
         <Styled.OptionsWrapper>
-          <Helper />
+          {authType === authTypes.HORUSEC ? (
+            <Styled.Option
+              dataFor="side-options"
+              dataTip={t('SIDE_MENU.CONFIG')}
+              name="config"
+              size="15"
+              onClick={goToSettings}
+            />
+          ) : null}
 
-          <Styled.Back
+          <Styled.Option
             dataFor="side-options"
             dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
             name="grid"
             size="15"
             onClick={backToOrganization}
           />
+
+          <Helper />
 
           <Logout />
 

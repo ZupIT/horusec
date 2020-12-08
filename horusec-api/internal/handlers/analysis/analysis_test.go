@@ -18,14 +18,15 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
-	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	enumsHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -215,7 +216,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -236,7 +237,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -257,7 +258,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -283,7 +284,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -314,7 +315,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -343,7 +344,7 @@ func TestPost(t *testing.T) {
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -377,7 +378,7 @@ func TestPost(t *testing.T) {
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -414,7 +415,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -452,7 +453,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -487,7 +488,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)
@@ -525,7 +526,7 @@ func TestPost(t *testing.T) {
 		ctx = context.WithValue(ctx, middlewares.RepositoryIDCtxKey, uuid.New())
 		ctx = context.WithValue(ctx, middlewares.CompanyIDCtxKey, uuid.New())
 		r = r.WithContext(ctx)
-		r.Header.Set("Authorization", uuid.New().String())
+		r.Header.Set("X-Horusec-Authorization", uuid.New().String())
 		w := httptest.NewRecorder()
 
 		handler.Post(w, r)

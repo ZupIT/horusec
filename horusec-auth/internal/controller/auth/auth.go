@@ -16,6 +16,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
@@ -40,6 +41,7 @@ type IController interface {
 }
 
 type Controller struct {
+	authGrpc.UnimplementedAuthServiceServer
 	horusAuthService    services.IAuthService
 	keycloakAuthService services.IAuthService
 	ldapAuthService     services.IAuthService
@@ -48,7 +50,7 @@ type Controller struct {
 }
 
 func NewAuthController(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) IController {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Controller {
 	return &Controller{
 		appConfig:           appConfig,
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead, postgresWrite),
@@ -73,6 +75,7 @@ func (c *Controller) AuthByType(credentials *dto.Credentials) (interface{}, erro
 
 func (c *Controller) IsAuthorized(_ context.Context,
 	data *authGrpc.IsAuthorizedData) (*authGrpc.IsAuthorizedResponse, error) {
+	c.logGrpcRequest("IsAuthorized")
 	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
 		return c.setIsAuthorizedResponse(c.horusAuthService.IsAuthorized(c.parseToAuthorizationData(data)))
@@ -110,6 +113,7 @@ func (c *Controller) setIsAuthorizedResponse(isAuthorized bool, err error) (*aut
 
 func (c *Controller) GetAuthConfig(_ context.Context,
 	_ *authGrpc.GetAuthConfigData) (*authGrpc.GetAuthConfigResponse, error) {
+	c.logGrpcRequest("GetAuthConfig")
 	authType := c.getAuthorizationType()
 	if authType == authEnums.Unknown {
 		logger.LogError("", errors.ErrorInvalidAuthType)
@@ -119,6 +123,7 @@ func (c *Controller) GetAuthConfig(_ context.Context,
 	return &authGrpc.GetAuthConfigResponse{
 		ApplicationAdminEnable: c.appConfig.EnableApplicationAdmin,
 		AuthType:               authType.ToString(),
+		DisabledBroker:         c.appConfig.DisabledBroker,
 	}, nil
 }
 
@@ -128,6 +133,7 @@ func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
 
 func (c *Controller) GetAccountID(_ context.Context,
 	data *authGrpc.GetAccountIDData) (*authGrpc.GetAccountIDResponse, error) {
+	c.logGrpcRequest("GetAccountID")
 	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
 		return c.setGetAccountIDResponse(jwt.GetAccountIDByJWTToken(data.Token))
@@ -149,4 +155,8 @@ func (c *Controller) setGetAccountIDResponse(accountID uuid.UUID, err error) (*a
 	return &authGrpc.GetAccountIDResponse{
 		AccountID: accountID.String(),
 	}, nil
+}
+
+func (c *Controller) logGrpcRequest(method string) {
+	logger.LogInfo(fmt.Sprintf("{AUTH_GRPC} Received request for: %s", method))
 }
