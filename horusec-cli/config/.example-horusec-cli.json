@@ -17,5 +17,8 @@
   "horusecCliRepositoryName": "horus",
   "horusecCliFalsePositiveHashes": "hash1, hash2",
   "horusecCliRiskAcceptHashes": "hash3, hash4",
-  "horusecCliToolsToIgnore": "GoSec"
+  "horusecCliToolsToIgnore": "GoSec",
+  "horusecCliHeaders": {
+    "X-Headers": "some-other-value"
+  }
 }
