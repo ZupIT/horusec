@@ -16,15 +16,16 @@ package middlewares
 
 import (
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestNewHorusAuthzMiddleware(t *testing.T) {
@@ -50,7 +51,7 @@ func TestIsMember(t *testing.T) {
 		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -72,7 +73,7 @@ func TestIsMember(t *testing.T) {
 		handler := middleware.IsCompanyMember(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -97,7 +98,7 @@ func TestIsCompanyAdmin(t *testing.T) {
 		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -119,7 +120,7 @@ func TestIsCompanyAdmin(t *testing.T) {
 		handler := middleware.IsCompanyAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -144,7 +145,7 @@ func TestIsRepositoryMember(t *testing.T) {
 		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -166,7 +167,7 @@ func TestIsRepositoryMember(t *testing.T) {
 		handler := middleware.IsRepositoryMember(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -191,7 +192,7 @@ func TestIsRepositorySupervisor(t *testing.T) {
 		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -213,7 +214,7 @@ func TestIsRepositorySupervisor(t *testing.T) {
 		handler := middleware.IsRepositorySupervisor(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -237,7 +238,7 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -259,7 +260,7 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		handler := middleware.IsRepositoryAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -283,7 +284,7 @@ func TestSetContextAccountID(t *testing.T) {
 		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -305,7 +306,7 @@ func TestSetContextAccountID(t *testing.T) {
 		handler := middleware.SetContextAccountID(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -331,7 +332,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -355,7 +356,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -379,7 +380,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		handler := middleware.IsApplicationAdmin(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)

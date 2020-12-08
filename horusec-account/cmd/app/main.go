@@ -16,10 +16,11 @@
 package main
 
 import (
-	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 	"log"
 	"net/http"
+
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 
 	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
@@ -40,7 +41,7 @@ import (
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Authorization
+// @name X-Horusec-Authorization
 func main() {
 	var broker brokerLib.IBroker
 

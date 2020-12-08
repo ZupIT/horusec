@@ -16,12 +16,13 @@ package middlewares
 
 import (
 	"context"
+	"net/http"
+
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	"google.golang.org/grpc"
-	"net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -146,7 +147,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler
 }
 
 func (h *HorusAuthzMiddleware) setContextAndReturn(next http.Handler, w http.ResponseWriter, r *http.Request) {
-	ctx, err := h.setAccountIDInContext(r, r.Header.Get("Authorization"))
+	ctx, err := h.setAccountIDInContext(r, r.Header.Get("X-Horusec-Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 		return
@@ -158,7 +159,7 @@ func (h *HorusAuthzMiddleware) setContextAndReturn(next http.Handler, w http.Res
 func (h *HorusAuthzMiddleware) setAuthorizedData(r *http.Request,
 	role authEnums.HorusecRoles) *authGrpc.IsAuthorizedData {
 	return &authGrpc.IsAuthorizedData{
-		Token:        r.Header.Get("Authorization"),
+		Token:        r.Header.Get("X-Horusec-Authorization"),
 		Role:         role.ToString(),
 		CompanyID:    chi.URLParam(r, "companyID"),
 		RepositoryID: chi.URLParam(r, "repositoryID"),

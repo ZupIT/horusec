@@ -552,7 +552,7 @@ func TestResetPassword(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -581,7 +581,7 @@ func TestResetPassword(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -604,7 +604,7 @@ func TestResetPassword(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -655,7 +655,7 @@ func TestRenewToken(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -685,7 +685,7 @@ func TestRenewToken(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -724,7 +724,7 @@ func TestRenewToken(t *testing.T) {
 			Email:     "test@test.com",
 		}
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -759,7 +759,7 @@ func TestLogout(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", "Bearer "+token)
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -782,7 +782,7 @@ func TestLogout(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", "Bearer "+token)
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -934,7 +934,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -962,7 +962,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -979,7 +979,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", "invalid token")
+		r.Header.Add("X-Horusec-Authorization", "invalid token")
 
 		handler.DeleteAccount(w, r)
 
@@ -1001,7 +1001,7 @@ func TestUpdateAccount(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)
@@ -1041,7 +1041,7 @@ func TestUpdateAccount(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)
@@ -1062,7 +1062,7 @@ func TestUpdateAccount(t *testing.T) {
 		appConfig := app.NewConfig()
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)

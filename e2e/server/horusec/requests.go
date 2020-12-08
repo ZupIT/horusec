@@ -20,6 +20,11 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+	"testing"
+	"time"
+
 	accountDto "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
@@ -30,10 +35,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/request"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"strings"
-	"testing"
-	"time"
 )
 
 func CreateAccount(t *testing.T, account *authEntities.Account) {
@@ -67,7 +68,7 @@ func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "logout error mount request")
@@ -81,7 +82,7 @@ func Logout(t *testing.T, bearerToken string) {
 func ReadAllRepositoryTokenWithoutTreatment(t *testing.T, bearerToken, companyID, repositoryID string) httpResponse.Interface {
 	fmt.Println("Running test for ReadAllRepositoryToken")
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
 	return res
@@ -93,7 +94,7 @@ func GenerateCompanyToken(t *testing.T, bearerToken, companyID string, token api
 		"http://127.0.0.1:8000/api/companies/"+companyID+"/tokens",
 		bytes.NewReader(token.ToBytes()),
 	)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	apiTokenResp, err := httpClient.Do(req)
 	assert.NoError(t, err, "generate company token error send response")
@@ -109,7 +110,7 @@ func GenerateCompanyToken(t *testing.T, bearerToken, companyID string, token api
 func ReadAllCompanyToken(t *testing.T, bearerToken, companyID string) string {
 	fmt.Println("Running test for ReadAllCompanyToken")
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/companies/"+companyID+"/tokens", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "read all companies tokens error send request")
@@ -125,7 +126,7 @@ func ReadAllCompanyToken(t *testing.T, bearerToken, companyID string) string {
 func RevokeCompanyToken(t *testing.T, bearerToken, companyID, tokenID string) {
 	fmt.Println("Running test for RevokeCompanyToken")
 	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8000/api/companies/"+companyID+"/tokens/"+tokenID, nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "delete company token error send request")
@@ -142,7 +143,7 @@ func InsertAnalysisWithRepositoryToken(t *testing.T, analysisData *api.AnalysisD
 		"http://127.0.0.1:8000/api/analysis",
 		bytes.NewReader(analysisData.ToBytes()),
 	)
-	req.Header.Add("Authorization", repositoryToken)
+	req.Header.Add("X-Horusec-Authorization", repositoryToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "InsertAnalysisWithRepositoryToken error send response")
@@ -162,7 +163,7 @@ func InsertAnalysisWithCompanyToken(t *testing.T, analysisData *api.AnalysisData
 		"http://127.0.0.1:8000/api/analysis",
 		bytes.NewReader(analysisData.ToBytes()),
 	)
-	req.Header.Add("Authorization", companyToken)
+	req.Header.Add("X-Horusec-Authorization", companyToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "InsertAnalysisWithRepositoryToken error send response")
@@ -178,7 +179,7 @@ func InsertAnalysisWithCompanyToken(t *testing.T, analysisData *api.AnalysisData
 func GetAnalysisByID(t *testing.T, analysisID, authorization string) string {
 	fmt.Println("Running test for GetAnalysisByID")
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/analysis/"+analysisID, nil)
-	req.Header.Add("Authorization", authorization)
+	req.Header.Add("X-Horusec-Authorization", authorization)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "read analysis by ID error send request")
@@ -201,7 +202,7 @@ func GetChartContent(t *testing.T, route, bearerToken, companyID, repositoryID s
 	if repositoryID != "" {
 		URL = fmt.Sprintf("http://127.0.0.1:8005/api/dashboard/companies/%s/repositories/%s/%s?initialDate=%s&finalDate=%s", companyID, repositoryID, route, initialDateStr, finalDateStr)
 	}
-	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": bearerToken, "Content-type": "application/json"})
+	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"X-Horusec-Authorization": bearerToken, "Content-type": "application/json"})
 	assert.NoError(t, err)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
@@ -253,7 +254,7 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 	if repositoryID != "" {
 		URL = fmt.Sprintf("http://127.0.0.1:8005/api/dashboard/companies/%s/repositories/%s/details?query=%s&page=1&size=1000", companyID, repositoryID, queryGraphQL)
 	}
-	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"Authorization": bearerToken, "Content-Type": "application/json"})
+	req, err := request.NewHTTPRequest().Request(http.MethodGet, URL, nil, map[string]string{"X-Horusec-Authorization": bearerToken, "Content-Type": "application/json"})
 	assert.NoError(t, err)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	assert.NoError(t, err)
@@ -267,7 +268,7 @@ func GetChartDetailsUsingGraphQLAndReturnBody(t *testing.T, bearerToken, company
 func GetAllVulnerabilitiesToManager(t *testing.T, bearerToken, companyID, repositoryID string, queryString string) string {
 	fmt.Println("Running test for GetAllVulnerabilitiesToManager")
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management?"+queryString, nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "read vulnerabilities error send request")
@@ -286,7 +287,7 @@ func UpdateVulnerabilitiesType(t *testing.T, bearerToken, companyID, repositoryI
 		http.MethodPut,
 		"http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/management/"+vulnerabilityID+"/type",
 		bytes.NewReader(vulnType.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "update vulnerabilities error send request")
@@ -304,7 +305,7 @@ func InviteUserToRepository(t *testing.T, bearerToken, companyID, repositoryID s
 		http.MethodPost,
 		"http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles",
 		bytes.NewReader(user.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "invite user in repository error send request")
@@ -319,7 +320,7 @@ func ReadAllUserInRepository(t *testing.T, bearerToken, companyID, repositoryID 
 		http.MethodGet,
 		"http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles",
 		nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "read all user in repository error send request")
@@ -337,7 +338,7 @@ func UpdateUserInRepository(t *testing.T, bearerToken, companyID, repositoryID, 
 		http.MethodPatch,
 		"http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles/"+accountID,
 		bytes.NewReader(account.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "update user in repository error send request")
@@ -352,7 +353,7 @@ func RemoveUserInRepository(t *testing.T, bearerToken, companyID, repositoryID, 
 		http.MethodDelete,
 		"http://127.0.0.1:8003/api/companies/"+companyID+"/repositories/"+repositoryID+"/roles/"+accountID,
 		nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "delete user in repository error send request")

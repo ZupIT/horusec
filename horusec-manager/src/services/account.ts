@@ -72,7 +72,7 @@ const changePassword = (token: string, password: string) => {
   return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
-      Authorization: `Bearer ${token}`,
+      'X-Horusec-Authorization': `Bearer ${token}`,
     },
   });
 };
@@ -106,7 +106,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
       axios
         .post(`${SERVICE_AUTH}/api/account/renew-token`, refreshToken, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            'X-Horusec-Authorization': `Bearer ${accessToken}`,
             'Content-type': 'text/plain',
           },
         })

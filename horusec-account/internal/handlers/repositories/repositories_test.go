@@ -19,13 +19,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 
 	repositoriesUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
@@ -53,7 +54,7 @@ func setAuthorizationHeader(r *http.Request) {
 	}
 
 	token, _, _ := jwt.CreateToken(account, nil)
-	r.Header.Add("Authorization", token)
+	r.Header.Add("X-Horusec-Authorization", token)
 }
 
 func getRepositoryMock() *accountEntities.Repository {
@@ -740,7 +741,7 @@ func TestList(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
@@ -767,7 +768,7 @@ func TestList(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", "")
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.List(w, r)
@@ -790,7 +791,7 @@ func TestList(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
