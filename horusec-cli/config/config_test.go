@@ -41,6 +41,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, configs.CertPath, "")
 		assert.Equal(t, configs.CertInsecureSkipVerify, false)
 		assert.Equal(t, configs.ReturnErrorIfFoundVulnerability, false)
+		assert.Equal(t, configs.Headers, "")
 		path, _ := os.Getwd()
 		assert.Equal(t, configs.ProjectPath, path)
 		assert.Equal(t, configs.WorkDir, Config{}.WorkDir)
@@ -53,6 +54,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, configs.ToolsToIgnore, "")
 		assert.Equal(t, 0, len(configs.GetFalsePositiveHashesList()))
 		assert.Equal(t, 0, len(configs.GetRiskAcceptHashesList()))
+		assert.Equal(t, configs.Headers, "")
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		configs := &Config{}
@@ -77,6 +79,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetFalsePositiveHashes("123456789")
 		configs.SetRiskAcceptHashes("987654321")
 		configs.SetToolsToIgnore("HorusecLeaks")
+		configs.SetHeaders(map[string]string{"header1": "value1"})
 		assert.NotEqual(t, configs.GetHorusecAPIUri(), "http://0.0.0.0:8000")
 		assert.NotEqual(t, configs.GetTimeoutInSecondsRequest(), int64(300))
 		assert.NotEqual(t, configs.GetTimeoutInSecondsAnalysis(), int64(600))
@@ -98,6 +101,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, configs.GetRiskAcceptHashes(), "")
 		assert.NotEqual(t, configs.GetToolsToIgnore(), "")
 		assert.NotNil(t, configs.GetWorkDir())
+		assert.NotEmpty(t, configs.GetHeaders())
 	})
 	t.Run("Should return horusec config using viper file", func(t *testing.T) {
 		path, err := os.Getwd()
@@ -120,6 +124,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "./assets", configs.FilesOrPathsToIgnore)
 		assert.Equal(t, true, configs.ReturnErrorIfFoundVulnerability)
 		assert.Equal(t, "./", configs.ProjectPath)
+		assert.Equal(t, `{"x-headers":"some-other-value"}`, configs.Headers)
 		assert.Equal(t, wd, configs.WorkDir)
 		assert.Equal(t, configs.FilterPath, "./tmp")
 		assert.Equal(t, configs.EnableGitHistoryAnalysis, true)
@@ -158,6 +163,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvFalsePositiveHashes, "hash1, hash2"))
 		assert.NoError(t, os.Setenv(EnvRiskAcceptHashes, "hash3, hash4"))
 		assert.NoError(t, os.Setenv(EnvToolsToIgnore, "TfSec"))
+		assert.NoError(t, os.Setenv(EnvHeaders, `{"X-other-header": "some-value"}`))
 		configs.SetConfigsFromEnvironments()
 		assert.Equal(t, "http://horusec.com", configs.HorusecAPIUri)
 		assert.Equal(t, int64(50), configs.TimeoutInSecondsRequest)
@@ -180,6 +186,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "hash3, hash4", configs.RiskAcceptHashes)
 		assert.Equal(t, 2, len(configs.GetRiskAcceptHashesList()))
 		assert.Equal(t, "TfSec", configs.GetToolsToIgnore())
+		assert.Equal(t, map[string]string{"X-other-header": "some-value"}, configs.GetHeaders())
 	})
 }
 
@@ -206,5 +213,6 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliFalsePositiveHashes", configs.toLowerCamel(EnvFalsePositiveHashes))
 		assert.Equal(t, "horusecCliRiskAcceptHashes", configs.toLowerCamel(EnvRiskAcceptHashes))
 		assert.Equal(t, "horusecCliToolsToIgnore", configs.toLowerCamel(EnvToolsToIgnore))
+		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
 	})
 }

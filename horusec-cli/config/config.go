@@ -210,7 +210,7 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetFalsePositiveHashes(viper.GetString(c.toLowerCamel(EnvFalsePositiveHashes)))
 	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
 	c.SetToolsToIgnore(viper.GetString(c.toLowerCamel(EnvToolsToIgnore)))
-	c.SetHeaders(viper.GetString(c.toLowerCamel(EnvHeaders)))
+	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 }
 
 //nolint
@@ -473,6 +473,8 @@ func (c *Config) GetHeaders() (headers map[string]string) {
 	return headers
 }
 
-func (c *Config) SetHeaders(headers string) {
-	c.Headers = headers
+func (c *Config) SetHeaders(headers interface{}) {
+	bytes, err := json.Marshal(headers)
+	logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.ErrorLevel)
+	c.Headers = string(bytes)
 }
