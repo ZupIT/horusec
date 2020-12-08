@@ -69,6 +69,8 @@ const AddWebhook: React.FC<Props> = ({
   const resetFields = () => {
     setHeaders([{ key: '', value: '' }]);
     setSelectedRepository(null);
+    setDescription({ isValid: false, value: '' });
+    setUrl({ isValid: false, value: '' });
   };
 
   const handleCancel = () => {

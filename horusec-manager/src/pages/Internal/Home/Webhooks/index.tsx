@@ -114,7 +114,7 @@ const Webhooks: React.FC = () => {
         <Button
           text={t('WEBHOOK_SCREEN.ADD')}
           rounded
-          width={150}
+          width={200}
           icon="plus"
           onClick={() => setAddWebhookVisible(true)}
         />
