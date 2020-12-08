@@ -1448,6 +1448,6 @@ paths:
 securityDefinitions:
   ApiKeyAuth:
     in: header
-    name: Authorization
+    name: X-Horusec-Authorization
     type: apiKey
 swagger: "2.0"

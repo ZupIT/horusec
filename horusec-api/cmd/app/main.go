@@ -15,13 +15,14 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
 	brokerConfig "github.com/ZupIT/horusec/horusec-api/config/broker"
 	"github.com/ZupIT/horusec/horusec-api/config/grpc"
 	"github.com/go-chi/chi"
-	"log"
-	"net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 
@@ -41,7 +42,7 @@ import (
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Authorization
+// @name X-Horusec-Authorization
 func main() {
 	var broker brokerLib.IBroker
 

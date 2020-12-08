@@ -1285,7 +1285,7 @@ var doc = `{
     "securityDefinitions": {
         "ApiKeyAuth": {
             "type": "apiKey",
-            "name": "Authorization",
+            "name": "X-Horusec-Authorization",
             "in": "header"
         }
     }

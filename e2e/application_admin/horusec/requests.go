@@ -19,12 +19,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"testing"
+
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func CreateAccount(t *testing.T, account *authEntities.Account) {
@@ -58,7 +59,7 @@ func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "logout error mount request")
@@ -73,7 +74,7 @@ func CreateCompanyApplicationAdmin(t *testing.T, bearerToken string, company *ac
 	companyBytes, _ := json.Marshal(company)
 	fmt.Println("Running test for CreateCompany")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(companyBytes))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
 	assert.NoError(t, err, "create company error send request")
@@ -88,7 +89,7 @@ func CreateCompanyApplicationAdmin(t *testing.T, bearerToken string, company *ac
 func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountentities.Company) {
 	fmt.Println("Running test for UpdateCompany")
 	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "update company error send request")
@@ -102,7 +103,7 @@ func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *
 func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) string {
 	fmt.Println("Running test for ReadAllCompanies")
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8003/api/companies", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "read all companies error send request")
@@ -120,7 +121,7 @@ func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) s
 func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	fmt.Println("Running test for DeleteCompany")
 	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8003/api/companies/"+companyID, nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "delete company error send request")

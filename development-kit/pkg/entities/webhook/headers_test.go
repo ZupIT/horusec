@@ -16,15 +16,16 @@ package webhook
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHeaderType_Value(t *testing.T) {
 	var h HeaderType
 	h = []Headers{
 		{
-			Key:   "Authorization",
+			Key:   "X-Horusec-Authorization",
 			Value: "Bearer Token",
 		},
 	}
@@ -42,7 +43,7 @@ func TestHeaderType_Scan(t *testing.T) {
 		var h HeaderType
 		bytes, err := json.Marshal([]Headers{
 			{
-				Key:   "Authorization",
+				Key:   "X-Horusec-Authorization",
 				Value: "Bearer Token",
 			},
 		})
