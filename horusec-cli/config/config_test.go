@@ -15,6 +15,7 @@
 package config
 
 import (
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -54,7 +55,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, configs.ToolsToIgnore, "")
 		assert.Equal(t, 0, len(configs.GetFalsePositiveHashesList()))
 		assert.Equal(t, 0, len(configs.GetRiskAcceptHashesList()))
-		assert.Equal(t, configs.Headers, "")
+		assert.Equal(t, "", configs.Headers)
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		configs := &Config{}
@@ -163,7 +164,9 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvFalsePositiveHashes, "hash1, hash2"))
 		assert.NoError(t, os.Setenv(EnvRiskAcceptHashes, "hash3, hash4"))
 		assert.NoError(t, os.Setenv(EnvToolsToIgnore, "TfSec"))
-		assert.NoError(t, os.Setenv(EnvHeaders, `{"X-other-header": "some-value"}`))
+		headersBytes, err := json.Marshal(map[string]string{"X-other-header": "some-value"})
+		assert.NoError(t, err)
+		assert.NoError(t, os.Setenv(EnvHeaders, string(headersBytes)))
 		configs.SetConfigsFromEnvironments()
 		assert.Equal(t, "http://horusec.com", configs.HorusecAPIUri)
 		assert.Equal(t, int64(50), configs.TimeoutInSecondsRequest)

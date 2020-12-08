@@ -474,7 +474,14 @@ func (c *Config) GetHeaders() (headers map[string]string) {
 }
 
 func (c *Config) SetHeaders(headers interface{}) {
-	bytes, err := json.Marshal(headers)
-	logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.ErrorLevel)
-	c.Headers = string(bytes)
+	if headers != nil && headers != "" {
+		headersString, ok := headers.(string)
+		if ok {
+			c.Headers = headersString
+		} else {
+			bytes, err := json.Marshal(headers)
+			logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.ErrorLevel)
+			c.Headers = string(bytes)
+		}
+	}
 }
