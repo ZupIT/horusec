@@ -16,11 +16,12 @@ package jwt
 
 import (
 	"fmt"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
@@ -84,7 +85,7 @@ func TestAuthMiddleware(t *testing.T) {
 			Email:     "test@test.com",
 			Username:  "test",
 		}, nil)
-		req.Header.Set("Authorization", "Bearer "+token)
+		req.Header.Set("X-Horusec-Authorization", "Bearer "+token)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 		assert.Equal(t, http.StatusOK, rr.Code)
@@ -95,7 +96,7 @@ func TestAuthMiddleware(t *testing.T) {
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 
-		req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NT"+
+		req.Header.Set("X-Horusec-Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NT"+
 			"Y3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
 
 		rr := httptest.NewRecorder()

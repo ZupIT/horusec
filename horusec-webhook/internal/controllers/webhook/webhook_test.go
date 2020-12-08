@@ -16,6 +16,9 @@ package webhook
 
 import (
 	"errors"
+	"net/http"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/webhook"
 	entitiesWebhook "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
@@ -28,8 +31,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 )
@@ -168,7 +169,7 @@ func TestMock_DispatchRequest(t *testing.T) {
 			Method:    http.MethodPost,
 			Headers: []entitiesWebhook.Headers{
 				{
-					Key:   "Authorization",
+					Key:   "X-Horusec-Authorization",
 					Value: "Bearer Token",
 				},
 			},

@@ -233,7 +233,7 @@ func (h *Handler) checkVerifyResetPasswordCodeErrors(w http.ResponseWriter, err 
 // @Router /api/account/change-password [post]
 // @Security ApiKeyAuth
 func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
-	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
 	if err != nil || accountID == uuid.Nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -289,7 +289,7 @@ func (h *Handler) RenewToken(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 	accessToken, refreshToken string, err error) {
-	accessToken = r.Header.Get("Authorization")
+	accessToken = r.Header.Get("X-Horusec-Authorization")
 	if accessToken == "" {
 		httpUtil.StatusBadRequest(w, errors.ErrorEmptyAuthorizationToken)
 		return "", "", errors.ErrorEmptyAuthorizationToken
@@ -315,7 +315,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Router /api/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -367,7 +367,7 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 // @Router /api/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
-	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return
@@ -407,7 +407,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getAccountUpdateData(w http.ResponseWriter, r *http.Request) (*auth.Account, error) {
-	accountID, err := h.controller.GetAccountID(r.Header.Get("Authorization"))
+	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, errors.ErrorDoNotHavePermissionToThisAction)
 		return nil, errors.ErrorDoNotHavePermissionToThisAction

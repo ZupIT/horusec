@@ -19,11 +19,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+
+	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/e2e/server/keycloak/entities"
@@ -57,7 +58,7 @@ func LogoutUserInKeycloak(t *testing.T, bearerToken, username string) {
 	assert.NotEmpty(t, userID)
 	fmt.Println("Running test for LogoutUsersInKeycloak: " + username)
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+userID+"/logout", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("Content-Type", "application/json")
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -69,7 +70,7 @@ func LogoutUserInKeycloak(t *testing.T, bearerToken, username string) {
 func CreateUserInKeyCloak(t *testing.T, userRepresentation *entities.UserRepresentation, credentials *entities.UserRepresentationCredentials, bearerToken string) {
 	fmt.Println("Running test for CreateUserInKeyCloak")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/admin/realms/master/users", bytes.NewReader(userRepresentation.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("content-type", "application/json")
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -85,7 +86,7 @@ func CreateUserInKeyCloak(t *testing.T, userRepresentation *entities.UserReprese
 	}
 	assert.NotEmpty(t, idToSetCredential)
 	req, _ = http.NewRequest(http.MethodPut, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+idToSetCredential+"/reset-password", bytes.NewReader(credentials.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("content-type", "application/json")
 	httpClient = http.Client{}
 	resp, err = httpClient.Do(req)
@@ -98,7 +99,7 @@ func CreateUserInKeyCloak(t *testing.T, userRepresentation *entities.UserReprese
 	allRoles = append(allRoles, role)
 	allRolesBytes, _ := json.Marshal(allRoles)
 	req, _ = http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+idToSetCredential+"/role-mappings/realm", bytes.NewReader(allRolesBytes))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("content-type", "application/json")
 	httpClient = http.Client{}
 	resp, err = httpClient.Do(req)
@@ -109,7 +110,7 @@ func CreateUserInKeyCloak(t *testing.T, userRepresentation *entities.UserReprese
 
 func ListAllUsersInKeycloak(t *testing.T, bearerToken string) []map[string]interface{} {
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/auth/admin/realms/master/users", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "DeleteAllUsersInKeyCloak: get all users error mount request")
@@ -133,7 +134,7 @@ func DeleteAllUsersInKeyCloak(t *testing.T, bearerToken string) {
 	assert.Equal(t, len(allUsers)-1, len(idsToRemove))
 	for _, id := range idsToRemove {
 		req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8080/auth/admin/realms/master/users/"+id, nil)
-		req.Header.Add("Authorization", bearerToken)
+		req.Header.Add("X-Horusec-Authorization", bearerToken)
 		httpClient := http.Client{}
 		resp, err := httpClient.Do(req)
 		assert.NoError(t, err, "DeleteAllUsersInKeyCloak: remove user of id: "+id+" error mount request")
@@ -152,7 +153,7 @@ func GetClientSecretInAccountClient(t *testing.T, bearerToken string) string {
 	}
 	assert.NotEmpty(t, clientID)
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/auth/admin/realms/master/clients/"+clientID+"/client-secret", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "GetClientSecretInAccountClient mount request")
@@ -189,7 +190,7 @@ func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
 	clientID := client["id"].(string)
 	clientBytes, _ := json.Marshal(client)
 	req, _ := http.NewRequest(http.MethodPut, "http://127.0.0.1:8080/auth/admin/realms/master/clients/"+clientID, bytes.NewReader(clientBytes))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("content-type", "application/json")
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -203,7 +204,7 @@ func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
 	allRoles := GetAllRolesFromClientID(t, bearerToken, clientID)
 	allRolesBytes, _ := json.Marshal(allRoles)
 	req, _ = http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/auth/admin/realms/master/roles-by-id/"+roleID+"/composites", bytes.NewReader(allRolesBytes))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	req.Header.Add("content-type", "application/json")
 	httpClient = http.Client{}
 	resp, err = httpClient.Do(req)
@@ -214,7 +215,7 @@ func UpdateRolesToAcceptOAuth(t *testing.T, bearerToken string) {
 
 func ListAllClientsInKeycloak(t *testing.T, bearerToken string) []map[string]interface{} {
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/auth/admin/realms/master/clients", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "ListAllClientsInKeycloak mount request")
@@ -228,7 +229,7 @@ func ListAllClientsInKeycloak(t *testing.T, bearerToken string) []map[string]int
 
 func GetRoleAdminInKeycloak(t *testing.T, bearerToken string) map[string]interface{} {
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/auth/admin/realms/master/roles", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "ListAllRolesInKeycloak mount request")
@@ -249,7 +250,7 @@ func GetRoleAdminInKeycloak(t *testing.T, bearerToken string) map[string]interfa
 
 func GetAllRolesFromClientID(t *testing.T, bearerToken, clientID string) []map[string]interface{} {
 	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/auth/admin/realms/master/clients/"+clientID+"/roles", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "ListAllRolesInKeycloak mount request")

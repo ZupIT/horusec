@@ -19,10 +19,11 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/google/uuid"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
@@ -90,7 +91,7 @@ func (s *Service) sendFindAnalysisRequest(analysisID uuid.UUID) (httpResponse.In
 		return nil, err
 	}
 
-	req.Header.Add("Authorization", s.config.GetRepositoryAuthorization())
+	req.Header.Add("X-Horusec-Authorization", s.config.GetRepositoryAuthorization())
 	return s.httpUtil.DoRequest(req, tlsConfig)
 }
 
@@ -105,7 +106,7 @@ func (s *Service) sendCreateAnalysisRequest(analysis *horusec.Analysis) (httpRes
 		return nil, err
 	}
 
-	req.Header.Add("Authorization", s.config.GetRepositoryAuthorization())
+	req.Header.Add("X-Horusec-Authorization", s.config.GetRepositoryAuthorization())
 	return s.httpUtil.DoRequest(req, tlsConfig)
 }
 

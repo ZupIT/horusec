@@ -15,11 +15,12 @@
 package webhook
 
 import (
+	"net/http"
+	"testing"
+
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestWebhook_GetMethod(t *testing.T) {
@@ -58,14 +59,14 @@ func TestWebhook_GetHeaders(t *testing.T) {
 	w := &Webhook{
 		Headers: []Headers{
 			{
-				Key:   "Authorization",
+				Key:   "X-Horusec-Authorization",
 				Value: "Bearer token",
 			},
 		},
 	}
 	headerMap := w.GetHeaders()
 	assert.NotEmpty(t, headerMap)
-	assert.Equal(t, "Bearer token", headerMap["Authorization"])
+	assert.Equal(t, "Bearer token", headerMap["X-Horusec-Authorization"])
 }
 
 func TestWebhook_Validate(t *testing.T) {

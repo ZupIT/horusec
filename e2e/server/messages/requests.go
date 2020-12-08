@@ -20,6 +20,10 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+	"testing"
+
 	accountentities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	accountDto "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -27,9 +31,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"strings"
-	"testing"
 )
 
 func CreateAccount(t *testing.T, account *authEntities.Account) {
@@ -91,7 +92,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "logout error mount request")
@@ -105,7 +106,7 @@ func Logout(t *testing.T, bearerToken string) {
 func CreateCompany(t *testing.T, bearerToken string, company *accountentities.Company) (CompanyID string) {
 	fmt.Println("Running test for CreateCompany")
 	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(company.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
 	assert.NoError(t, err, "create company error send request")
@@ -123,7 +124,7 @@ func InviteUserToCompany(t *testing.T, bearerToken, companyID string, user *acco
 		http.MethodPost,
 		"http://127.0.0.1:8003/api/companies/"+companyID+"/roles",
 		bytes.NewReader(user.ToBytes()))
-	req.Header.Add("Authorization", bearerToken)
+	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
 	assert.NoError(t, err, "invite user error send request")

@@ -76,7 +76,7 @@ func (t *TokenAuthz) verifyValidateTokenErrors(w http.ResponseWriter, err error)
 }
 
 func (t *TokenAuthz) getTokenHashFromAuthorizationHeader(r *http.Request) (string, error) {
-	tokenStr := r.Header.Get("Authorization")
+	tokenStr := r.Header.Get("X-Horusec-Authorization")
 	if tokenStr == "" {
 		return "", errors.ErrorUnauthorized
 	}
