@@ -85,7 +85,7 @@ func TestAuthMiddleware(t *testing.T) {
 			Email:     "test@test.com",
 			Username:  "test",
 		}, nil)
-		req.Header.Set("X-Horusec-Authorization", "Bearer "+token)
+		req.Header.Set("Authorization", "Bearer "+token)
 		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 		assert.Equal(t, http.StatusOK, rr.Code)
