@@ -126,17 +126,19 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
           {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG')}
         </Styled.Title>
 
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
-        <ReactApexChart
-          height={250}
-          width="100%"
-          series={chartValues}
-          options={{ ...options, colors: chartColors, labels: chartLabels }}
-          type="donut"
-        />
+        {isLoading ? (
+          <Styled.LoadingWrapper>
+            <Icon name="loading" size="200px" className="loading" />
+          </Styled.LoadingWrapper>
+        ) : (
+          <ReactApexChart
+            height={250}
+            width="100%"
+            series={chartValues}
+            options={{ ...options, colors: chartColors, labels: chartLabels }}
+            type="donut"
+          />
+        )}
       </Styled.Wrapper>
     </div>
   );
