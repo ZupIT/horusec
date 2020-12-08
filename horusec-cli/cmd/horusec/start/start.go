@@ -179,6 +179,9 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 		StringVarP(&s.configs.RepositoryAuthorization, "authorization", "a", s.configs.GetRepositoryAuthorization(),
 			"The authorization token for the Horusec API")
 	cmd.PersistentFlags().
+			StringVar(&s.configs.Headers, "headers", s.configs.Headers,
+			"The headers dynamic to send on request in Horusec API")
+	cmd.PersistentFlags().
 		BoolVarP(&s.configs.ReturnErrorIfFoundVulnerability, "return-error", "e", s.configs.GetReturnErrorIfFoundVulnerability(),
 			"The return-error is the option to check if you can return \"exit(1)\" if found vulnerabilities. Example -e=\"true\"")
 	cmd.PersistentFlags().
