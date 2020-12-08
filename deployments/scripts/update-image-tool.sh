@@ -101,6 +101,14 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/eslint"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/eslint/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/eslint";;
+        "phpcs")
+            IMAGE_NAME="horuszup/horusec-phpcs"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/php/phpcs/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/phpcs";;
+        "flawfinder")
+            IMAGE_NAME="horuszup/horusec-flawfinder"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/c/flawfinder/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/flawfinder";;
         "horusec-nodejs")
             IMAGE_NAME="horuszup/horusec-nodejs"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/horusecnodejs/config.go"
@@ -111,7 +119,7 @@ getDirectoryAndImageNameByToolName () {
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-kubernetes";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
-            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes"
+            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes, phpcs, flawfinder"
             exit 1;;
     esac
 }

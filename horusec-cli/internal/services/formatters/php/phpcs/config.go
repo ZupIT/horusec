@@ -16,7 +16,7 @@ package phpcs
 
 const (
 	ImageName = "horuszup/horusec-phpcs"
-	ImageTag  = "v0.0.1"
+	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 		phpcs --report=json --standard=/vendor/pheromone/phpcs-security-audit/example_drupal7_ruleset.xml . > /tmp/result-ANALYSISID.json
