@@ -177,6 +177,9 @@ The configuration file receive an object with the content follow:
 	        "javaScript": [],
 	        "leaks":      [],
             "generic":    [],
+            "php":        [],
+            "c":          [],
+            "yaml":       [],
                 "hlc":        []    
       }
 }
@@ -307,6 +310,9 @@ The interface of languages accepts is:
     leaks      []string
     hlc        []string
     generic    []string
+    php        []string
+    c          []string
+    yaml       []string
 }
 ```
 

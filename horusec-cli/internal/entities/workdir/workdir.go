@@ -33,6 +33,9 @@ type WorkDir struct {
 	JavaScript []string `json:"javaScript"`
 	Leaks      []string `json:"leaks"`
 	HCL        []string `json:"hcl"`
+	PHP        []string `json:"php"`
+	C          []string `json:"c"`
+	Yaml       []string `json:"yaml"`
 	Generic    []string `json:"generic"`
 }
 
@@ -59,7 +62,7 @@ func (w *WorkDir) Type() string {
 }
 
 func (w *WorkDir) Map() map[languages.Language][]string {
-	cSharp := []string{}
+	var cSharp []string
 	cSharp = append(cSharp, w.NetCore...)
 	cSharp = append(cSharp, w.CSharp...)
 	return map[languages.Language][]string{
@@ -73,6 +76,9 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 		languages.Leaks:      w.Leaks,
 		languages.HCL:        w.HCL,
 		languages.Generic:    w.Generic,
+		languages.PHP:        w.PHP,
+		languages.C:          w.C,
+		languages.Yaml:       w.Yaml,
 	}
 }
 
