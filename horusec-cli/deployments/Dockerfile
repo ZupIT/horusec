@@ -25,6 +25,8 @@ RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horus
 
 FROM docker
 
+RUN apk add git
+
 COPY --from=builder /bin/horusec /usr/local/bin
 RUN chmod +x /usr/local/bin/horusec
 
