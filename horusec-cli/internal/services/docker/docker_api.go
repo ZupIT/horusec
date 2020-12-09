@@ -273,8 +273,13 @@ func (d *API) DeleteContainersFromAPI() {
 	}
 }
 
-func (d *API) getSourceFolder() string {
-	path := fmt.Sprintf("%s/.horusec/%s", d.config.ProjectPath, d.analysisID.String())
+func (d *API) getSourceFolder() (path string) {
+	if d.config.GetContainerBindProjectPath() != "" {
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.ContainerBindProjectPath, d.analysisID.String())
+	} else {
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.ProjectPath, d.analysisID.String())
+	}
+
 	separator := path[1:2]
 	if separator == ":" {
 		return d.getSourceFolderFromWindows(path)

@@ -155,6 +155,9 @@ const (
 	// Used send others headers on request to send in horusec-api
 	// By default is empty
 	EnvHeaders = "HORUSEC_CLI_HEADERS"
+	// Used to pass project path in host when running horusec cli inside a container
+	// By default is empty
+	EnvContainerBindProjectPath = "HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH"
 )
 
 type Config struct {
@@ -182,6 +185,7 @@ type Config struct {
 	FalsePositiveHashes             string
 	RiskAcceptHashes                string
 	ToolsToIgnore                   string
+	ContainerBindProjectPath        string
 }
 
 //nolint
@@ -211,6 +215,7 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
 	c.SetToolsToIgnore(viper.GetString(c.toLowerCamel(EnvToolsToIgnore)))
 	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
+	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
 }
 
 //nolint
@@ -238,6 +243,7 @@ func (c *Config) SetConfigsFromEnvironments() {
 	c.SetRiskAcceptHashes(env.GetEnvOrDefault(EnvRiskAcceptHashes, c.RiskAcceptHashes))
 	c.SetToolsToIgnore(env.GetEnvOrDefault(EnvToolsToIgnore, c.ToolsToIgnore))
 	c.SetHeaders(env.GetEnvOrDefault(EnvHeaders, c.Headers))
+	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.ContainerBindProjectPath))
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -484,4 +490,12 @@ func (c *Config) SetHeaders(headers interface{}) {
 			c.Headers = string(bytes)
 		}
 	}
+}
+
+func (c *Config) GetContainerBindProjectPath() string {
+	return c.ContainerBindProjectPath
+}
+
+func (c *Config) SetContainerBindProjectPath(containerBindProjectPath string) {
+	c.ContainerBindProjectPath = containerBindProjectPath
 }
