@@ -169,7 +169,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Ch@ng3m3"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
@@ -189,7 +189,7 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Test"}
+		account := &authEntities.Account{Email: "test@test.com", Username: "test", Password: "Ch@ng3m3"}
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errors.New("test"))
 
@@ -532,14 +532,16 @@ func TestResetPassword(t *testing.T) {
 			AccountID: uuid.New(),
 			Username:  "test",
 			Email:     "test@test.com",
+			Password:  "Other@Pass123",
 		}
+		account.SetPasswordHash()
 		token, _, _ := jwt.CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp)
-		passwordBytes, _ := json.Marshal("123456")
+		passwordBytes, _ := json.Marshal("Ch@ng3m3")
 		cacheRepositoryMock.On("Del").Return(nil)
 
 		resp2 := &response.Response{}
@@ -550,7 +552,7 @@ func TestResetPassword(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -573,13 +575,13 @@ func TestResetPassword(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp.SetError(errors.New("test")))
-		passwordBytes, _ := json.Marshal("123456")
+		passwordBytes, _ := json.Marshal("Ch@ng3m3")
 
 		appConfig := app.NewConfig()
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -602,7 +604,7 @@ func TestResetPassword(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -653,7 +655,7 @@ func TestRenewToken(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -683,7 +685,7 @@ func TestRenewToken(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -722,7 +724,7 @@ func TestRenewToken(t *testing.T) {
 			Email:     "test@test.com",
 		}
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
 
@@ -757,7 +759,7 @@ func TestLogout(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", "Bearer "+token)
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -780,7 +782,7 @@ func TestLogout(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		token, _, _ := jwt.CreateToken(account, nil)
-		r.Header.Add("Authorization", "Bearer "+token)
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -932,7 +934,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -960,7 +962,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
 
@@ -977,7 +979,7 @@ func TestDeleteAccount(t *testing.T) {
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
-		r.Header.Add("Authorization", "invalid token")
+		r.Header.Add("X-Horusec-Authorization", "invalid token")
 
 		handler.DeleteAccount(w, r)
 
@@ -988,15 +990,18 @@ func TestDeleteAccount(t *testing.T) {
 func TestUpdateAccount(t *testing.T) {
 	t.Run("should return status code 200 when updated with success", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
 
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
 		token, _, _ := jwt.CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)
@@ -1006,12 +1011,15 @@ func TestUpdateAccount(t *testing.T) {
 
 	t.Run("should return status code 401 when request does not have a token", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, nil, nil))
 
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
 		mockWrite.On("Update").Return(&response.Response{})
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
 
@@ -1020,18 +1028,41 @@ func TestUpdateAccount(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
+	t.Run("should return status code 500 when fails get user", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+
+		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(0, errors.New("test"), nil))
+		token, _, _ := jwt.CreateToken(account, nil)
+		mockWrite.On("Update").Return(&response.Response{})
+
+		appConfig := app.NewConfig()
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
+		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
+		r.Header.Add("X-Horusec-Authorization", token)
+		w := httptest.NewRecorder()
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
 	t.Run("should return status code 500 when update fails", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
-
-		response := &response.Response{}
-		mockWrite.On("Update").Return(response.SetError(errors.New("test")))
+		mockRead := &relational.MockRead{}
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
+
+		mockWrite.On("Update").Return(response.NewResponse(0, errors.New("test"), nil))
 		token, _, _ := jwt.CreateToken(account, nil)
 
 		appConfig := app.NewConfig()
-		handler := NewHandler(nil, nil, mockWrite, nil, appConfig)
+		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
-		r.Header.Add("Authorization", token)
+		r.Header.Add("X-Horusec-Authorization", token)
 		w := httptest.NewRecorder()
 
 		handler.Update(w, r)

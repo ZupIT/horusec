@@ -29,7 +29,7 @@ instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
   const accessToken = getAccessToken();
 
   if (accessToken) {
-    config.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    config.headers.common['X-Horusec-Authorization'] = `Bearer ${accessToken}`;
   }
 
   return config;

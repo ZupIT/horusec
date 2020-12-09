@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, Select, Icon } from 'components';
+import { Dialog, Select } from 'components';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import Styled from './styled';
@@ -27,19 +27,25 @@ import { get } from 'lodash';
 import { isValidURL } from 'helpers/validators';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import webhookService from 'services/webhook';
-import { WebhookHeader } from 'helpers/interfaces/Webhook';
+import { Webhook, WebhookHeader } from 'helpers/interfaces/Webhook';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { cloneDeep } from 'lodash';
 
 interface Props {
   isVisible: boolean;
+  webhookToCopy: Webhook;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
 
-const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
+const AddWebhook: React.FC<Props> = ({
+  isVisible,
+  onCancel,
+  onConfirm,
+  webhookToCopy,
+}) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { companyID } = getCurrentCompany();
@@ -63,6 +69,8 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const resetFields = () => {
     setHeaders([{ key: '', value: '' }]);
     setSelectedRepository(null);
+    setDescription({ isValid: false, value: '' });
+    setUrl({ isValid: false, value: '' });
   };
 
   const handleCancel = () => {
@@ -95,6 +103,25 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       });
   };
 
+  const handleSetHeader = (index: number, key: string, value: string) => {
+    const headersCopy = cloneDeep(headers);
+    const header = { key, value };
+    headersCopy[index] = header;
+    setHeaders(headersCopy);
+  };
+
+  const handleRemoveHeader = () => {
+    const headersCopy = cloneDeep(headers);
+    headersCopy.pop();
+    setHeaders(headersCopy);
+  };
+
+  useEffect(() => {
+    setHeaders(webhookToCopy?.headers || [{ key: '', value: '' }]);
+    setDescription({ value: webhookToCopy?.description, isValid: true });
+    setUrl({ value: webhookToCopy?.url, isValid: true });
+  }, [webhookToCopy]);
+
   useEffect(() => {
     const fetchRepositories = () => {
       repositoryService.getAll(companyID).then((result) => {
@@ -104,13 +131,6 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
     fetchRepositories();
   }, [companyID]);
-
-  const handleSetHeader = (index: number, key: string, value: string) => {
-    const headersCopy = cloneDeep(headers);
-    const header = { key, value };
-    headersCopy[index] = header;
-    setHeaders(headersCopy);
-  };
 
   return (
     <Dialog
@@ -134,6 +154,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           name="description"
           type="text"
           width="100%"
+          initialValue={description.value}
         />
 
         <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
@@ -169,6 +190,7 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             width="400px"
             validation={isValidURL}
             invalidMessage={t('WEBHOOK_SCREEN.INVALID_URL')}
+            initialValue={url.value}
           />
         </Styled.Wrapper>
 
@@ -178,24 +200,34 @@ const AddWebhook: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           <Styled.Wrapper key={index}>
             <Styled.Field
               label={t('WEBHOOK_SCREEN.KEY')}
-              name="key"
+              name={`key-${index}`}
               onChangeValue={({ value }) =>
                 handleSetHeader(index, value, headers[index].value)
               }
               width="200px"
+              initialValue={headers[index]?.key}
             />
 
             <Styled.Field
               label={t('WEBHOOK_SCREEN.VALUE')}
-              name="value"
+              name={`value-${index}`}
               onChangeValue={({ value }) =>
                 handleSetHeader(index, headers[index].key, value)
               }
               width="200px"
+              initialValue={headers[index]?.value}
             />
 
-            {index + 1 === headers.length && headers.length !== 3 ? (
-              <Icon
+            {index + 1 === headers.length && headers.length !== 1 ? (
+              <Styled.OptionIcon
+                name="delete"
+                size="20px"
+                onClick={handleRemoveHeader}
+              />
+            ) : null}
+
+            {index + 1 === headers.length && headers.length !== 5 ? (
+              <Styled.OptionIcon
                 name="plus"
                 size="20px"
                 onClick={() => setHeaders([...headers, { key: '', value: '' }])}

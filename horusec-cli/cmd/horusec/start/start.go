@@ -179,6 +179,9 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 		StringVarP(&s.configs.RepositoryAuthorization, "authorization", "a", s.configs.GetRepositoryAuthorization(),
 			"The authorization token for the Horusec API")
 	cmd.PersistentFlags().
+		StringVar(&s.configs.Headers, "headers", s.configs.Headers,
+			"The headers dynamic to send on request in Horusec API. Example --headers=\"{\"X-Auth-Service\": \"my-value\"}\"")
+	cmd.PersistentFlags().
 		BoolVarP(&s.configs.ReturnErrorIfFoundVulnerability, "return-error", "e", s.configs.GetReturnErrorIfFoundVulnerability(),
 			"The return-error is the option to check if you can return \"exit(1)\" if found vulnerabilities. Example -e=\"true\"")
 	cmd.PersistentFlags().
@@ -210,5 +213,5 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 			"Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
 	cmd.PersistentFlags().
 		StringVarP(&s.configs.ToolsToIgnore, "tools-ignore", "T", s.configs.GetToolsToIgnore(),
-			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint. Example: -T=\"GoSec, Brakeman\"")
+			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
 }

@@ -12,16 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- if .Values.serviceAccount.create -}}
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ include "horusec-messages.serviceAccountName" . }}
-  namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "horusec-messages.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-{{- end }}
+FROM python:3.7-alpine
+
+RUN apk add --no-cache git bash
+RUN pip install flawfinder

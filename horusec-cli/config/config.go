@@ -152,6 +152,9 @@ const (
 	// Used to ignore tools for run
 	// By default is empty
 	EnvToolsToIgnore = "HORUSEC_CLI_TOOLS_TO_IGNORE"
+	// Used send others headers on request to send in horusec-api
+	// By default is empty
+	EnvHeaders = "HORUSEC_CLI_HEADERS"
 )
 
 type Config struct {
@@ -162,6 +165,7 @@ type Config struct {
 	TimeoutInSecondsAnalysis        int64
 	MonitorRetryInSeconds           int64
 	RepositoryAuthorization         string
+	Headers                         string
 	PrintOutputType                 string
 	JSONOutputFilePath              string
 	TypesOfVulnerabilitiesToIgnore  string
@@ -206,6 +210,7 @@ func (c *Config) SetConfigsFromViper() {
 	c.SetFalsePositiveHashes(viper.GetString(c.toLowerCamel(EnvFalsePositiveHashes)))
 	c.SetRiskAcceptHashes(viper.GetString(c.toLowerCamel(EnvRiskAcceptHashes)))
 	c.SetToolsToIgnore(viper.GetString(c.toLowerCamel(EnvToolsToIgnore)))
+	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 }
 
 //nolint
@@ -232,6 +237,7 @@ func (c *Config) SetConfigsFromEnvironments() {
 	c.SetFalsePositiveHashes(env.GetEnvOrDefault(EnvFalsePositiveHashes, c.FalsePositiveHashes))
 	c.SetRiskAcceptHashes(env.GetEnvOrDefault(EnvRiskAcceptHashes, c.RiskAcceptHashes))
 	c.SetToolsToIgnore(env.GetEnvOrDefault(EnvToolsToIgnore, c.ToolsToIgnore))
+	c.SetHeaders(env.GetEnvOrDefault(EnvHeaders, c.Headers))
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -459,4 +465,23 @@ func (c *Config) GetToolsToIgnore() string {
 
 func (c *Config) SetToolsToIgnore(toolsToIgnore string) {
 	c.ToolsToIgnore = toolsToIgnore
+}
+
+func (c *Config) GetHeaders() (headers map[string]string) {
+	err := json.Unmarshal([]byte(c.Headers), &headers)
+	logger.LogErrorWithLevel("Error on unmarshal headers to map", err, logger.ErrorLevel)
+	return headers
+}
+
+func (c *Config) SetHeaders(headers interface{}) {
+	if headers != nil && headers != "" {
+		headersString, ok := headers.(string)
+		if ok {
+			c.Headers = headersString
+		} else {
+			bytes, err := json.Marshal(headers)
+			logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.ErrorLevel)
+			c.Headers = string(bytes)
+		}
+	}
 }

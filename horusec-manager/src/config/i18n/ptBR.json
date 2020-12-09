@@ -63,7 +63,9 @@
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUBMIT": "Cadastrar",
     "CONFIRM": "Ok, entendi.",
-    "SUCCESS_CREATE_ACCOUNT": "Foi enviado um email para verificação da sua conta."
+    "SUCCESS_CREATE_ACCOUNT": "Sua conta Horusec foi criada com sucesso!",
+    "SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM": "Foi enviado um email para verificação da sua conta.",
+    "OLD_PASS": "Antiga senha"
   },
 
   "COMPANY_SCREEN": {
@@ -291,8 +293,10 @@
 
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
-    "ADD": "Criar webhook",
+    "ADD": "Adicionar webhook",
+    "EDIT": "Editar webhook",
     "SAVE": "Salvar",
+    "SEARCH": "Pesquisar por URL",
     "DESCRIPTION_LABEL": "Informe a descrição para o webhook:",
     "DESCRIPTION": "Descrição",
     "RESPOSITORY_LABEL": "Selecione o repositório que ira acionar o webhook:",
@@ -310,15 +314,44 @@
     "KEY": "Chave",
     "VALUE": "Valor",
     "TABLE": {
-      "EMPTY": "Não há webhooks cadastrados",
+      "EMPTY": "Não foram encontrados webhooks cadastrados",
       "METHOD": "Método",
       "URL": "URL",
       "REPOSITORY": "Repositório",
       "DESCRIPTION": "Descrição",
       "ACTION": "Ação",
       "DELETE": "Deletar",
-      "EDIT": "Editar"
+      "EDIT": "Editar",
+      "COPY": "Copiar"
     }
+  },
+
+  "SETTINGS_SCREEN": {
+    "TITLE": "Configurações da conta",
+    "TABLE": {
+      "USER": "Usuário",
+      "EMAIL": "Email",
+      "ACTION": "Ação",
+      "DELETE": "Deletar",
+      "EDIT": "Editar",
+      "PASSWORD": "Senha"
+    },
+    "CONFIRM_DELETE": "Você deseja realmente deletar sua conta? Essa ação não poderá ser desfeita.",
+    "YES": "Sim",
+    "EDIT_ACCOUNT": "Editar conta",
+    "SAVE": "Salvar",
+    "EMAIL": "Email",
+    "NAME": "Nome de usuário",
+    "INVALID_EMAIL": "Email inválido",
+    "NEW_PASS": "Nova senha",
+    "CONFIRM_PASS": "Confirmar senha",
+    "CHANGE_PASS": "Alterar Senha",
+    "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
+    "INVALID_PASS":"Informe a senha",
+    "EDIT_SUCCESS": "Informações alteradas com sucesso!",
+    "SUCCESS_UPDATE": "Foi enviado para seu e-mail uma solicitação de verificação do novo e-mail.",
+    "CONFIRM": "Ok, entendi.",
+    "SUCCESS_DELETE": "Sua conta foi deletada com sucesso!"
   },
 
   "SIDE_MENU": {
@@ -329,6 +362,7 @@
     "REPOSITORY": "Repositório",
     "ORGANIZATION_USERS": "Usuários da organização",
     "BACK_ORGANIZATION": "Voltar para organizações",
+    "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair"
   },
@@ -343,7 +377,8 @@
     "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização.",
     "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação.",
     "REPO_NAME_IN_USE": "Nome do repositório já em uso.",
-    "USERNAME_IN_USE": "Nome de usuário já em uso"
+    "USERNAME_IN_USE": "Nome de usuário já em uso",
+    "SAME_PASSWORD": "A nova senha não pode ser igual a atual."
   },
 
   "NOT_FOUND_SCREEN": {

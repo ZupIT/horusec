@@ -34,4 +34,5 @@ message GetAuthConfigData {}
 message GetAuthConfigResponse {
   bool ApplicationAdminEnable = 1;
   string AuthType = 2;
+  bool DisabledBroker = 3;
 }

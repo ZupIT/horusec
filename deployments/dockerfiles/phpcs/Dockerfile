@@ -12,19 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "horusec-messages.fullname" . }}
-  namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "horusec-messages.labels" . | nindent 4 }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    {{- include "horusec-messages.selectorLabels" . | nindent 4 }}
+FROM php:7.4-alpine
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN composer global config bin-dir /usr/local/bin
+
+RUN composer global require "squizlabs/php_codesniffer=*"
+
+RUN composer require --dev pheromone/phpcs-security-audit
+
+RUN phpcs --config-set installed_paths /vendor/pheromone/phpcs-security-audit/Security

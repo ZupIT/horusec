@@ -25,10 +25,12 @@ const (
 	EnvEnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 	EnvApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvAuthType                  = "HORUSEC_AUTH_TYPE"
+	EnvHorusecAPIURL             = "HORUSEC_API_URL"
 	DisabledBrokerEnv            = "HORUSEC_DISABLED_BROKER"
 )
 
 type Config struct {
+	HorusecAPIURL          string
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
 	AuthType               authEnums.AuthorizationType
@@ -37,8 +39,9 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
+		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
 		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
-		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, true),
+		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
 		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
@@ -55,6 +58,10 @@ func (a *Config) GetApplicationAdminData() (entity *dto.CreateAccount, err error
 
 func (a *Config) GetAuthType() authEnums.AuthorizationType {
 	return a.AuthType
+}
+
+func (a *Config) GetHorusecAPIURL() string {
+	return a.HorusecAPIURL
 }
 
 func (a *Config) IsDisabledBroker() bool {

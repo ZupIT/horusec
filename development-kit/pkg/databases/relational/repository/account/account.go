@@ -25,6 +25,7 @@ type IAccount interface {
 	GetByAccountID(accountID uuid.UUID) (*authEntities.Account, error)
 	GetByEmail(email string) (*authEntities.Account, error)
 	Update(account *authEntities.Account) error
+	UpdatePassword(account *authEntities.Account) error
 	GetByUsername(username string) (*authEntities.Account, error)
 	DeleteAccount(accountID uuid.UUID) error
 }
@@ -61,7 +62,13 @@ func (a *Account) GetByEmail(email string) (*authEntities.Account, error) {
 
 func (a *Account) Update(account *authEntities.Account) error {
 	account.SetUpdatedAt()
-	return a.databaseWrite.Update(account.ToMap(), map[string]interface{}{"account_id": account.AccountID},
+	return a.databaseWrite.Update(account.ToUpdateMap(), map[string]interface{}{"account_id": account.AccountID},
+		account.GetTable()).GetError()
+}
+
+func (a *Account) UpdatePassword(account *authEntities.Account) error {
+	account.SetUpdatedAt()
+	return a.databaseWrite.Update(account.ToUpdatePasswordMap(), map[string]interface{}{"account_id": account.AccountID},
 		account.GetTable()).GetError()
 }
 

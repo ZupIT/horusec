@@ -16,5 +16,6 @@
 
 export interface HorusecConfig {
   applicationAdminEnable: boolean;
+  disabledBroker: boolean;
   authType: 'horusec' | 'keycloak' | 'ldap';
 }

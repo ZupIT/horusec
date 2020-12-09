@@ -46,7 +46,7 @@ func TestIsAuthorized(t *testing.T) {
 		middleware := NewTokenAuthz(mockRead)
 		handler := middleware.IsAuthorized(http.HandlerFunc(test.Handler))
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -68,7 +68,7 @@ func TestIsAuthorized(t *testing.T) {
 		middleware := NewTokenAuthz(mockRead)
 		handler := middleware.IsAuthorized(http.HandlerFunc(test.Handler))
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -107,7 +107,7 @@ func TestIsAuthorized(t *testing.T) {
 		middleware := NewTokenAuthz(mockRead)
 		handler := middleware.IsAuthorized(http.HandlerFunc(test.Handler))
 		req, _ := http.NewRequest("GET", "http://test", nil)
-		req.Header.Add("Authorization", "123")
+		req.Header.Add("X-Horusec-Authorization", "123")
 
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)

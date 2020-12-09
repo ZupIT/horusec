@@ -342,16 +342,59 @@ func TestNewValidateUniqueFromReadCloser(t *testing.T) {
 }
 
 func TestNewPasswordFromReadCloser(t *testing.T) {
-	t.Run("should return no error when valid password", func(t *testing.T) {
-		bytes, _ := json.Marshal("t3st3c")
+	t.Run("should return required value when valid password", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewPasswordFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "cannot be blank", err.Error())
+	})
+	t.Run("should return not valid length when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal("@t3st")
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewPasswordFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "the length must be between 8 and 255", err.Error())
+	})
+	t.Run("should return not valid upper case when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal("teesstee")
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewPasswordFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "must be a character upper case", err.Error())
+	})
+	t.Run("should return not valid number when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal("teesstEE")
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewPasswordFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "must be a character digit", err.Error())
+	})
+	t.Run("should return not valid special when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal("t33sstEE")
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewPasswordFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "must be a character special", err.Error())
+	})
+	t.Run("should validate with success", func(t *testing.T) {
+		bytes, _ := json.Marshal("@t33sstEE")
 		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
 
 		useCases := NewAuthUseCases()
 		password, err := useCases.NewPasswordFromReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.Equal(t, "\"t3st3c\"", password)
+		assert.Equal(t, "\"@t33sstEE\"", password)
 	})
-
 	t.Run("should return error when parsing invalid data", func(t *testing.T) {
 		useCases := NewAuthUseCases()
 		_, err := useCases.NewPasswordFromReadCloser(nil)
@@ -427,11 +470,81 @@ func TestNewRefreshTokenFromReadCloser(t *testing.T) {
 }
 
 func TestNewAccountFromReadCloser(t *testing.T) {
-	t.Run("should success parse read closer to account", func(t *testing.T) {
+	t.Run("should return required value when valid password", func(t *testing.T) {
 		bytes, _ := json.Marshal(&authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
-			Password:  "test",
+			Password:  "",
+			AccountID: uuid.New(),
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAccountFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "password: cannot be blank.", err.Error())
+	})
+	t.Run("should return not valid length when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.Account{
+			Email:     "test@test.com",
+			Username:  "test",
+			Password:  "@tEst12",
+			AccountID: uuid.New(),
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAccountFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "password: the length must be between 8 and 255.", err.Error())
+	})
+	t.Run("should return not valid upper case when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.Account{
+			Email:     "test@test.com",
+			Username:  "test",
+			Password:  "teesstee",
+			AccountID: uuid.New(),
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAccountFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "password: must be a character upper case.", err.Error())
+	})
+	t.Run("should return not valid number when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.Account{
+			Email:     "test@test.com",
+			Username:  "test",
+			Password:  "teesstEE",
+			AccountID: uuid.New(),
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAccountFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "password: must be a character digit.", err.Error())
+	})
+	t.Run("should return not valid special when valid password", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.Account{
+			Email:     "test@test.com",
+			Username:  "test",
+			Password:  "t33sstEE",
+			AccountID: uuid.New(),
+		})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		useCases := NewAuthUseCases()
+		_, err := useCases.NewAccountFromReadCloser(readCloser)
+		assert.Error(t, err)
+		assert.Equal(t, "password: must be a character special.", err.Error())
+	})
+	t.Run("should validate with success", func(t *testing.T) {
+		bytes, _ := json.Marshal(&authEntities.Account{
+			Email:     "test@test.com",
+			Username:  "test",
+			Password:  "@t33sstEE",
 			AccountID: uuid.New(),
 		})
 		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
@@ -439,7 +552,9 @@ func TestNewAccountFromReadCloser(t *testing.T) {
 		useCases := NewAuthUseCases()
 		account, err := useCases.NewAccountFromReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotEmpty(t, account)
+		assert.Equal(t, "@t33sstEE", account.Password)
+		assert.Equal(t, "test@test.com", account.Email)
+		assert.Equal(t, "test", account.Username)
 	})
 
 	t.Run("should return error when parsing invalid data", func(t *testing.T) {

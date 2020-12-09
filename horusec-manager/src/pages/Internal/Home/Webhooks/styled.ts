@@ -30,6 +30,14 @@ const Wrapper = styled.section`
   max-width: 1200px;
 `;
 
+const Options = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+`;
+
 const Content = styled.div`
   margin-top: 25px;
   padding: 25px 15px 10px 25px;
@@ -97,21 +105,21 @@ const Cell = styled.span`
   }
 
   &:nth-child(1) {
-    max-width: 150px;
+    max-width: 120px;
     margin: 0;
   }
 
   &:nth-child(2) {
-    max-width: 100px;
+    max-width: 230px;
   }
 
   &:nth-child(3) {
-    max-width: 250px;
+    min-width: 270px;
     margin-right: 15px;
   }
 
   &:nth-child(4) {
-    min-width: 300px;
+    max-width: 100px;
   }
 
   &:nth-child(5) {
@@ -130,21 +138,21 @@ const Column = styled.span`
   margin-right: 15px;
 
   &:nth-child(1) {
-    max-width: 150px;
+    max-width: 120px;
     margin: 0;
   }
 
   &:nth-child(2) {
-    max-width: 100px;
+    max-width: 230px;
     margin-left: 5px;
   }
 
   &:nth-child(3) {
-    max-width: 250px;
+    min-width: 270px;
   }
 
   &:nth-child(4) {
-    min-width: 300px;
+    max-width: 100px;
   }
 
   &:nth-child(5) {
@@ -213,6 +221,7 @@ const Tag = styled.span<TagProps>`
 
 export default {
   Wrapper,
+  Options,
   Tag,
   Content,
   Title,
