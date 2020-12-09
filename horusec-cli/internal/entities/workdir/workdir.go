@@ -61,6 +61,7 @@ func (w *WorkDir) Type() string {
 	return ""
 }
 
+//nolint
 func (w *WorkDir) Map() map[languages.Language][]string {
 	var cSharp []string
 	cSharp = append(cSharp, w.NetCore...)
