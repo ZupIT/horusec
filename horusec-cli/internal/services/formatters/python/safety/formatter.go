@@ -174,6 +174,6 @@ func (f *Formatter) getDefaultVulnerabilitySeverityInSafety() *horusec.Vulnerabi
 	vulnerabilitySeverity.SecurityTool = tools.Safety
 	vulnerabilitySeverity.Confidence = "-"
 	vulnerabilitySeverity.Column = "0"
-	vulnerabilitySeverity.File = "requirements.txt"
+	vulnerabilitySeverity.File = f.GetFilepathFromFilename("requirements.txt")
 	return vulnerabilitySeverity
 }
