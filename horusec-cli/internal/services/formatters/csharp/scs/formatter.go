@@ -16,7 +16,6 @@ package scs
 
 import (
 	"encoding/json"
-	"fmt"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
@@ -139,11 +138,6 @@ func (f *Formatter) appendVulnerabilities(vulnerability *horusec.Vulnerability) 
 		horusec.AnalysisVulnerabilities{
 			Vulnerability: *vulnerability,
 		})
-}
-
-func (f *Formatter) getFilePathFromPackageName(filePath string) string {
-	return fileUtil.GetPathIntoFilename(filePath,
-		fmt.Sprintf("%s/.horusec/%s/", f.GetConfigProjectPath(), f.GetAnalysisID()))
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
