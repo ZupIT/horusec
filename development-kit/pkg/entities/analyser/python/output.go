@@ -14,7 +14,9 @@
 
 package python
 
-import "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+)
 
 type BanditOutput struct {
 	Results []BanditResult `json:"results"`
@@ -43,4 +45,12 @@ type SafetyIssues struct {
 	InstalledVersion string `json:"installed_version"`
 	Description      string `json:"description"`
 	ID               string `json:"id"`
+}
+
+func (b *BanditResult) GetFile() string {
+	if b.FileName != "" && b.FileName[0:2] == "./" {
+		return b.FileName[2:]
+	}
+
+	return b.FileName
 }

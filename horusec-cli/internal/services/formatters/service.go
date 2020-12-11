@@ -45,6 +45,7 @@ type IService interface {
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
 	ToolIsToIgnore(tool tools.Tool) bool
+	GetFilepathFromFilename(filename string) string
 }
 
 type Service struct {
@@ -175,4 +176,13 @@ func (s *Service) getAHundredCharacters(code string, column int) string {
 	}
 
 	return codeFromColumn
+}
+
+func (s *Service) GetFilepathFromFilename(filename string) string {
+	filepath := file.GetPathIntoFilename(filename, s.GetConfigProjectPath())
+	if filepath != "" {
+		return filepath[1:]
+	}
+
+	return filepath
 }

@@ -16,7 +16,6 @@ package scs
 
 import (
 	"encoding/json"
-	"fmt"
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
@@ -106,7 +105,7 @@ func (f *Formatter) setVulnerabilitySeverityData(output dotnet.Output) *horusec.
 	data.Details = f.removeCsprojPathFromDetails(output.IssueText)
 	data.Line = output.GetLine()
 	data.Column = output.GetColumn()
-	data.File = output.GetFilename()
+	data.File = f.GetFilepathFromFilename(output.GetFilename())
 
 	// Set data.VulnHash value
 	data = vulnhash.Bind(data)
@@ -115,7 +114,7 @@ func (f *Formatter) setVulnerabilitySeverityData(output dotnet.Output) *horusec.
 }
 
 func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, f.getFilePathFromPackageName(vulnerability.File))
+	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
 
 	vulnerability.CommitAuthor = commitAuthor.Author
 	vulnerability.CommitHash = commitAuthor.CommitHash
@@ -139,11 +138,6 @@ func (f *Formatter) appendVulnerabilities(vulnerability *horusec.Vulnerability) 
 		horusec.AnalysisVulnerabilities{
 			Vulnerability: *vulnerability,
 		})
-}
-
-func (f *Formatter) getFilePathFromPackageName(filePath string) string {
-	return fileUtil.GetPathIntoFilename(filePath,
-		fmt.Sprintf("%s/.horusec/%s/", f.GetConfigProjectPath(), f.GetAnalysisID()))
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

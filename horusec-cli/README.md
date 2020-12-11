@@ -98,11 +98,11 @@ workflows:
 
 * Example using `code-build`:
     *   Environment:
-        - `CUstom Image`
-            - Environment type: `Linux` 
-            - Image registry: `Other registry`
-            - External registry URL: `horuszup/horusec-cli`
-            - Image Version: `Alway use the latest image for this runtime version`
+        - `Managed image`
+            - Operational system: `Ubuntu` 
+            - Execution time: `Standard`
+            - Image: `Any`
+            - Image Version: `Latest`
             - Privileged: `true`
             - Allow AWS CodeBuild to modify this service role so it can be used with this build project: `true`
 
@@ -111,10 +111,24 @@ workflows:
     version: 0.2
     
     phases:
+      install:
+        runtime-versions:
+            docker: 19
       build:
         commands:
-           - sh /usr/local/bin/hoursec-cli.sh -p="./" -e="true"
+           - docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec-vscode horuszup/horusec-cli:latest horusec start -p /src/horusec-vscode -P $(pwd)
     ```
+
+#### Docker image
+We also have a docker image for the cli that can be used to replace the binary. Here is an example of use:
+
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v {path of project in host}:/src/horusec-vscode horuszup/horusec-cli:latest horusec start -p /src/horusec-vscode -P {path of project in host}`
+  
+We use a bind with the local docker through the volume `-v /var/run/docker.sock:/var/run/docker.sock` (on windows --> `-v //var/run/docker.sock:/var/run/docker.sock`).
+
+A bind type volume it is created to allow the container to access the project `-v path of project in host:/src/horusec-vscode` (`/src/horusec-vscode` --> represents the project path inside the container).
+
+In this case due the docker.sock we need to have the path to the project inside container passed in -p flag, and the original host path in the -P flag.
 
 #### Check the installation
 ```bash
