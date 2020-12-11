@@ -116,6 +116,17 @@ workflows:
            - sh /usr/local/bin/hoursec-cli.sh -p="./" -e="true"
     ```
 
+#### Docker image
+We also have a docker image for the cli that can be used to replace the binary. Here is an example of use:
+
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v {path of project in host}:/src/horusec-vscode horuszup/horusec-cli:latest horusec start -p /src/horusec-vscode -P {path of project in host}`
+  
+We use a bind with the local docker through the volume `-v /var/run/docker.sock:/var/run/docker.sock` (on windows --> `-v //var/run/docker.sock:/var/run/docker.sock`).
+
+A bind type volume it is created to allow the container to access the project `-v path of project in host:/src/horusec-vscode` (`/src/horusec-vscode` --> represents the project path inside the container).
+
+In this case due the docker.sock we need to have the path to the project inside container passed in -p flag, and the original host path in the -P flag.
+
 #### Check the installation
 ```bash
 horusec version
