@@ -98,11 +98,11 @@ workflows:
 
 * Example using `code-build`:
     *   Environment:
-        - `CUstom Image`
-            - Environment type: `Linux` 
-            - Image registry: `Other registry`
-            - External registry URL: `horuszup/horusec-cli`
-            - Image Version: `Alway use the latest image for this runtime version`
+        - `Managed image`
+            - Operational system: `Ubuntu` 
+            - Execution time: `Standard`
+            - Image: `Any`
+            - Image Version: `Latest`
             - Privileged: `true`
             - Allow AWS CodeBuild to modify this service role so it can be used with this build project: `true`
 
@@ -111,9 +111,12 @@ workflows:
     version: 0.2
     
     phases:
+      install:
+        runtime-versions:
+            docker: 19
       build:
         commands:
-           - sh /usr/local/bin/hoursec-cli.sh -p="./" -e="true"
+           - docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec-vscode horuszup/horusec-cli:latest horusec start -p /src/horusec-vscode -P $(pwd)
     ```
 
 #### Docker image
