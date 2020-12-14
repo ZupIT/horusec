@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-import Moment from 'moment';
+import { getCurrentLanguage } from 'helpers/localStorage/currentLanguage';
+import { format } from 'date-fns';
 
 const formatInitialAndFinalDate = (initial: Date, final: Date) => {
-  const initialDate = Moment(initial).format('YYYY-MM-DD[T][00]:[00]:[00][Z]');
-  const finalDate = Moment(final).format('YYYY-MM-DD[T][23]:[59]:[59][Z]');
+  const initialDate = format(initial, `yyyy-MM-dd'T00:00:00Z'`);
+  const finalDate = format(final, `yyyy-MM-dd'T23:59:59Z'`);
 
   return { initialDate, finalDate };
 };
 
-export { formatInitialAndFinalDate };
+const formatToHumanDate = (date: string) => {
+  const { dateFormat } = getCurrentLanguage();
+
+  return format(new Date(date), dateFormat);
+};
+
+export { formatInitialAndFinalDate, formatToHumanDate };

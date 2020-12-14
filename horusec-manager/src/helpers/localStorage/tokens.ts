@@ -15,7 +15,7 @@
  */
 
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
-import moment from 'moment';
+import { isPast } from 'date-fns';
 import { getCurrentConfig } from './horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import accountService from 'services/account';
@@ -93,10 +93,7 @@ const isLogged = (): boolean => {
 
     if (!accessToken || !expiresAt) return false;
 
-    const now = moment();
-    const expiresTime = moment(expiresAt);
-
-    return expiresTime.isSameOrAfter(now);
+    return !isPast(new Date(expiresAt));
   }
 
   return false;

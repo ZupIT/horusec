@@ -21,12 +21,10 @@ import { Button, Icon, Dialog } from 'components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
-import useLanguage from 'helpers/hooks/useLanguage';
-import { find } from 'lodash';
-import moment from 'moment';
 import AddToken from './Add';
 import { Company } from 'helpers/interfaces/Company';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { formatToHumanDate } from 'helpers/formatters/date';
 
 interface Props {
   isVisible: boolean;
@@ -40,9 +38,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
   const { showSuccessFlash } = useFlashMessage();
 
   const [tokens, setTokens] = useState<RepositoryToken[]>([]);
-  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
-  const { i18n } = useTranslation();
-  const { allLanguages } = useLanguage();
+
   const [isLoading, setLoading] = useState(true);
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
 
@@ -88,11 +84,6 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
     //eslint-disable-next-line
   }, [selectedCompany]);
 
-  useEffect(() => {
-    const lang = find(allLanguages, { i18nValue: i18n.language });
-    setDateFormat(lang.dateFormat);
-  }, [i18n.language, allLanguages]);
-
   return isVisible ? (
     <Styled.Background>
       <Styled.Wrapper>
@@ -135,9 +126,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
 
                 <Styled.Cell>{token.description}</Styled.Cell>
 
-                <Styled.Cell>
-                  {moment(token.expiresAt).format(dateFormat.toUpperCase())}
-                </Styled.Cell>
+                <Styled.Cell>{formatToHumanDate(token.expiresAt)}</Styled.Cell>
 
                 <Styled.Cell className="row">
                   <Button

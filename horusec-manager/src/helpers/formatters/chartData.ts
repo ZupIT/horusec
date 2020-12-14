@@ -15,7 +15,7 @@
  */
 
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
-import moment from 'moment';
+import { formatToHumanDate } from 'helpers/formatters/date';
 
 const formatChartStacked = (
   listOfData: any[],
@@ -35,7 +35,7 @@ const formatChartStacked = (
 
   listOfData.forEach((item) => {
     formattedData.categories.push(
-      labeIsDate ? moment(item[labelKey]).format('DD/MM/yyyy') : item[labelKey]
+      labeIsDate ? formatToHumanDate(item[labelKey]) : item[labelKey]
     );
     high.push(item?.high);
     medium.push(item?.medium);

@@ -22,11 +22,9 @@ import { Button, Icon, Dialog } from 'components';
 import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
-import useLanguage from 'helpers/hooks/useLanguage';
-import { find } from 'lodash';
-import moment from 'moment';
 import AddToken from './Add';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { formatToHumanDate } from 'helpers/formatters/date';
 
 interface Props {
   isVisible: boolean;
@@ -44,9 +42,6 @@ const Tokens: React.FC<Props> = ({
   const { showSuccessFlash } = useFlashMessage();
 
   const [tokens, setTokens] = useState<RepositoryToken[]>([]);
-  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
-  const { i18n } = useTranslation();
-  const { allLanguages } = useLanguage();
   const [isLoading, setLoading] = useState(true);
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
 
@@ -99,11 +94,6 @@ const Tokens: React.FC<Props> = ({
     //eslint-disable-next-line
   }, [repoToManagerTokens]);
 
-  useEffect(() => {
-    const lang = find(allLanguages, { i18nValue: i18n.language });
-    setDateFormat(lang.dateFormat);
-  }, [i18n.language, allLanguages]);
-
   return isVisible ? (
     <Styled.Background>
       <Styled.Wrapper>
@@ -148,9 +138,7 @@ const Tokens: React.FC<Props> = ({
 
                 <Styled.Cell>{token.description}</Styled.Cell>
 
-                <Styled.Cell>
-                  {moment(token.expiresAt).format(dateFormat.toUpperCase())}
-                </Styled.Cell>
+                <Styled.Cell>{formatToHumanDate(token.expiresAt)}</Styled.Cell>
 
                 <Styled.Cell className="row">
                   <Button
