@@ -15,9 +15,12 @@
 package health
 
 import (
+	"fmt"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 
 	netHTTP "net/http"
 
@@ -32,15 +35,17 @@ type Handler struct {
 	postgresWrite relational.InterfaceWrite
 	config        app.IAppConfig
 	broker        brokerLib.IBroker
+	grpcCon       *grpc.ClientConn
 }
 
 func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
-	broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
+	broker brokerLib.IBroker, config app.IAppConfig, grpcCon *grpc.ClientConn) httpUtil.Interface {
 	return &Handler{
 		broker:        broker,
 		config:        config,
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,
+		grpcCon:       grpcCon,
 	}
 }
 
@@ -61,11 +66,18 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 		httpUtil.StatusInternalServerError(w, errors.ErrorDatabaseIsNotHealth)
 		return
 	}
+
 	if !h.config.IsDisabledBroker() {
 		if !h.broker.IsAvailable() {
 			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
 			return
 		}
 	}
+
+	if state := h.grpcCon.GetState(); state != connectivity.Idle && state != connectivity.Ready {
+		httpUtil.StatusInternalServerError(w, fmt.Errorf(errors.ErrorGrpcConnectionNotReady, state.String()))
+		return
+	}
+
 	httpUtil.StatusOK(w, "service is healthy")
 }

@@ -55,7 +55,7 @@ func (r *Router) GetRouter(postgresRead relational.InterfaceRead, grpcCon *grpc.
 	r.setMiddleware()
 	r.RouterCompanyAnalytic(postgresRead, grpcCon)
 	r.RouterRepositoryAnalytic(postgresRead, grpcCon)
-	r.RouterHealth(postgresRead)
+	r.RouterHealth(postgresRead, grpcCon)
 	return r.router
 }
 
@@ -99,8 +99,8 @@ func (r *Router) RouterMetrics() *Router {
 	return r
 }
 
-func (r *Router) RouterHealth(postgresRead relational.InterfaceRead) *Router {
-	handler := health.NewHandler(postgresRead)
+func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, grpcCon *grpc.ClientConn) *Router {
+	handler := health.NewHandler(postgresRead, grpcCon)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
 		router.Options("/", handler.Options)

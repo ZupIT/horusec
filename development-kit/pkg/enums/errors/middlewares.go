@@ -24,3 +24,5 @@ var ErrorUnauthorizedRepositoryMember = errors.New("user unauthorized as reposit
 var ErrorUnauthorizedRepositorySupervisor = errors.New("user unauthorized as repository supervisor")
 var ErrorUnauthorizedRepositoryAdmin = errors.New("user unauthorized as repository admin")
 var ErrorUnauthorizedApplicationAdmin = errors.New("user unauthorized as application admin")
+
+const SomethingWentWrongInGrpcRequest = "something went wrong in grpc request"

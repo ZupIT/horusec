@@ -15,6 +15,9 @@
 package health
 
 import (
+	"fmt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 	netHTTP "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -30,15 +33,17 @@ type Handler struct {
 	databaseRead  SQL.InterfaceRead
 	databaseWrite SQL.InterfaceWrite
 	appConfig     app.IAppConfig
+	grpcCon       *grpc.ClientConn
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, appConfig app.IAppConfig) *Handler {
+	databaseWrite SQL.InterfaceWrite, appConfig app.IAppConfig, grpcCon *grpc.ClientConn) *Handler {
 	return &Handler{
 		broker:        broker,
 		databaseWrite: databaseWrite,
 		databaseRead:  databaseRead,
 		appConfig:     appConfig,
+		grpcCon:       grpcCon,
 	}
 }
 
@@ -64,6 +69,11 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	if !h.databaseWrite.IsAvailable() || !h.databaseRead.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, errors.ErrorRelationalDatabaseIsNotHealth)
+		return
+	}
+
+	if state := h.grpcCon.GetState(); state != connectivity.Idle && state != connectivity.Ready {
+		httpUtil.StatusInternalServerError(w, fmt.Errorf(errors.ErrorGrpcConnectionNotReady, state.String()))
 		return
 	}
 

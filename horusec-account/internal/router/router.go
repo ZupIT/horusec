@@ -64,7 +64,7 @@ func (r *Router) setMiddleware() {
 
 func (r *Router) setAPIRoutes(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead, databaseWrite SQL.InterfaceWrite,
 	appConfig app.IAppConfig, grpcCon *grpc.ClientConn) {
-	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig)
+	r.RouterHealth(broker, databaseRead, databaseWrite, appConfig, grpcCon)
 	r.RouterCompany(broker, databaseRead, databaseWrite, appConfig, grpcCon)
 	r.RouterWebhook(databaseRead, databaseWrite, grpcCon)
 }
@@ -164,8 +164,8 @@ func (r *Router) routerCompanyRepositories(databaseRead SQL.InterfaceRead,
 }
 
 func (r *Router) RouterHealth(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, appConfig app.IAppConfig) *Router {
-	handler := health.NewHandler(broker, databaseRead, databaseWrite, appConfig)
+	databaseWrite SQL.InterfaceWrite, appConfig app.IAppConfig, grpcCon *grpc.ClientConn) *Router {
+	handler := health.NewHandler(broker, databaseRead, databaseWrite, appConfig, grpcCon)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
 		router.Options("/", handler.Options)
