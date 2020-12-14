@@ -16,10 +16,11 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"os"
 	"strings"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 
 	"github.com/iancoleman/strcase"
 

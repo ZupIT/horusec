@@ -18,10 +18,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/horusec-cli/config"
