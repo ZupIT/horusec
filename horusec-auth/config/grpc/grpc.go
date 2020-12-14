@@ -20,12 +20,14 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 func SetUpGRPCServer(
@@ -55,6 +57,7 @@ func setupWithCerts(
 	}
 
 	server := grpc.NewServer(grpc.Creds(grpCredentials))
+	grpc_health_v1.RegisterHealthServer(server, health.NewHealthCheckGrpc())
 	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, postgresWrite, appConfig))
 	if err := server.Serve(getNetListener()); err != nil {
 		logger.LogPanic("failed to setup grpc server", err)
