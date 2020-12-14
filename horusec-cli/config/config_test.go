@@ -56,6 +56,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 0, len(configs.GetFalsePositiveHashesList()))
 		assert.Equal(t, 0, len(configs.GetRiskAcceptHashesList()))
 		assert.Equal(t, "", configs.Headers)
+		assert.Equal(t, "", configs.ContainerBindProjectPath)
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		configs := &Config{}
@@ -81,6 +82,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetRiskAcceptHashes("987654321")
 		configs.SetToolsToIgnore("HorusecLeaks")
 		configs.SetHeaders(map[string]string{"header1": "value1"})
+		configs.SetContainerBindProjectPath("test")
 		assert.NotEqual(t, configs.GetHorusecAPIUri(), "http://0.0.0.0:8000")
 		assert.NotEqual(t, configs.GetTimeoutInSecondsRequest(), int64(300))
 		assert.NotEqual(t, configs.GetTimeoutInSecondsAnalysis(), int64(600))
@@ -103,6 +105,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, configs.GetToolsToIgnore(), "")
 		assert.NotNil(t, configs.GetWorkDir())
 		assert.NotEmpty(t, configs.GetHeaders())
+		assert.NotEmpty(t, configs.GetContainerBindProjectPath())
 	})
 	t.Run("Should return horusec config using viper file", func(t *testing.T) {
 		path, err := os.Getwd()
@@ -134,6 +137,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, configs.FalsePositiveHashes, "hash1, hash2")
 		assert.Equal(t, configs.RiskAcceptHashes, "hash3, hash4")
 		assert.Equal(t, configs.ToolsToIgnore, "GoSec")
+		assert.Equal(t, configs.ContainerBindProjectPath, "test")
 	})
 	t.Run("Should return horusec config using viper file and override by environment", func(t *testing.T) {
 		authorization := uuid.New().String()
@@ -164,6 +168,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvFalsePositiveHashes, "hash1, hash2"))
 		assert.NoError(t, os.Setenv(EnvRiskAcceptHashes, "hash3, hash4"))
 		assert.NoError(t, os.Setenv(EnvToolsToIgnore, "TfSec"))
+		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "test"))
 		headersBytes, err := json.Marshal(map[string]string{"X-other-header": "some-value"})
 		assert.NoError(t, err)
 		assert.NoError(t, os.Setenv(EnvHeaders, string(headersBytes)))
@@ -190,6 +195,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 2, len(configs.GetRiskAcceptHashesList()))
 		assert.Equal(t, "TfSec", configs.GetToolsToIgnore())
 		assert.Equal(t, map[string]string{"X-other-header": "some-value"}, configs.GetHeaders())
+		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 	})
 }
 
@@ -217,5 +223,6 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliRiskAcceptHashes", configs.toLowerCamel(EnvRiskAcceptHashes))
 		assert.Equal(t, "horusecCliToolsToIgnore", configs.toLowerCamel(EnvToolsToIgnore))
 		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
+		assert.Equal(t, "horusecCliContainerBindProjectPath", configs.toLowerCamel(EnvContainerBindProjectPath))
 	})
 }

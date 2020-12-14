@@ -123,7 +123,7 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.YarnAudit
 	vulnerabilitySeverity.Language = languages.Javascript
-	vulnerabilitySeverity.File = "yarn.lock"
+	vulnerabilitySeverity.File = f.GetFilepathFromFilename("yarn.lock")
 	return vulnerabilitySeverity
 }
 

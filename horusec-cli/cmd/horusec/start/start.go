@@ -214,4 +214,7 @@ func (s *Start) loadFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().
 		StringVarP(&s.configs.ToolsToIgnore, "tools-ignore", "T", s.configs.GetToolsToIgnore(),
 			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
+	cmd.PersistentFlags().
+		StringVarP(&s.configs.ContainerBindProjectPath, "container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(),
+			"Used to pass project path in host when running horusec cli inside a container.")
 }

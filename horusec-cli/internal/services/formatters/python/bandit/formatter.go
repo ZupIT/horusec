@@ -120,7 +120,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Code, 0)
 	vulnerabilitySeverity.Line = strconv.Itoa(issues[index].LineNumber)
 	vulnerabilitySeverity.Confidence = issues[index].IssueConfidence
-	vulnerabilitySeverity.File = issues[index].FileName
+	vulnerabilitySeverity.File = issues[index].GetFile()
 
 	// Set vulnerabilitySeverity.VulnHash value
 	vulnerabilitySeverity = vulnhash.Bind(vulnerabilitySeverity)

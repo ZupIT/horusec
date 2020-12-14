@@ -123,7 +123,7 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horus
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
-	vulnerabilitySeverity.File = "package-lock.json"
+	vulnerabilitySeverity.File = f.GetFilepathFromFilename("package-lock.json")
 	vulnerabilitySeverity.SecurityTool = tools.NpmAudit
 	vulnerabilitySeverity.Language = languages.Javascript
 	return vulnerabilitySeverity

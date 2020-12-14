@@ -18,10 +18,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/horusec-cli/config"
@@ -238,7 +239,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("Column: %s", vulnerability.Column))
 	fmt.Println(fmt.Sprintf("SecurityTool: %s", vulnerability.SecurityTool))
 	fmt.Println(fmt.Sprintf("Confidence: %s", vulnerability.Confidence))
-	fmt.Println(fmt.Sprintf("File: %s/%s", pr.configs.GetProjectPath(), vulnerability.File))
+	fmt.Println(fmt.Sprintf("File: %s/%s", pr.getProjectPath(), vulnerability.File))
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
 	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
@@ -312,4 +313,12 @@ func (pr *PrintResults) logSeparator(isToShow bool) {
 	if isToShow {
 		fmt.Println(fmt.Sprintf("\n==================================================================================\n"))
 	}
+}
+
+func (pr *PrintResults) getProjectPath() string {
+	if pr.configs.GetContainerBindProjectPath() != "" {
+		return pr.configs.GetContainerBindProjectPath()
+	}
+
+	return pr.configs.GetProjectPath()
 }
