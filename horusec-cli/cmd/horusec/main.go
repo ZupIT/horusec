@@ -28,7 +28,7 @@ import (
 
 var LogLevel = logger.InfoLevel.String()
 var ConfigPath = "./horusec-config.json"
-var configs *config.Config
+var configs config.IConfig
 
 var rootCmd = &cobra.Command{
 	Use:   "horusec",
@@ -75,10 +75,9 @@ func ExecuteCobra() {
 }
 
 func setConfigsData() {
-	configs.ConfigFilePath = getConfigPath()
-
-	configs.SetConfigsFromViper()
-	configs.SetConfigsFromEnvironments()
+	configs.SetConfigFilePath(getConfigPath())
+	_ = configs.NewConfigsFromViper()
+	_ = configs.NewConfigsFromEnvironments()
 }
 
 func initConfig() {

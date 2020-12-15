@@ -6,7 +6,7 @@
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
   "horusecCliPrintOutputType": "text",
   "horusecCliJsonOutputFilepath": "",
-  "horusecCliTypesOfVulnerabilitiesToIgnore": "",
+  "horusecCliSeveritiesToIgnore": "",
   "horusecCliFilesOrPathsToIgnore": "**/e2e/**, **/examples/**, **/*.toml, **/*_test.go, **/*_mock.go, **/*README.md, **/development-kit/pkg/enums/engine/advisories/**, **/horusec-lp/.cache/**, **/horusec-lp/public/**, **/deployments/docker-compose*, **/horusec-cli/cmd/horusec/start/analysis/*, **/horusec-manager/src/helpers/localStorage/**",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliProjectPath": "./",

@@ -53,10 +53,10 @@ type Service struct {
 	docker     dockerService.Interface
 	gitService git.IService
 	monitor    *horusec.Monitor
-	config     *cliConfig.Config
+	config     cliConfig.IConfig
 }
 
-func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config *cliConfig.Config,
+func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
 	monitor *horusec.Monitor) IService {
 	return &Service{
 		analysis:   analysis,
@@ -83,7 +83,14 @@ func (s *Service) GetCommitAuthor(line, filePath string) (commitAuthor horusec.C
 }
 
 func (s *Service) GetConfigProjectPath() string {
-	return file.ReplacePathSeparator(fmt.Sprintf("%s/%s/%s", s.config.ProjectPath, ".horusec", s.analysis.ID.String()))
+	return file.ReplacePathSeparator(
+		fmt.Sprintf(
+			"%s/%s/%s",
+			s.config.GetProjectPath(),
+			".horusec",
+			s.analysis.ID.String(),
+		),
+	)
 }
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
@@ -153,10 +160,8 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
-	allTools := strings.Split(s.config.GetToolsToIgnore(), ",")
-
-	for _, toolToIgnore := range allTools {
-		if strings.EqualFold(strings.TrimSpace(toolToIgnore), tool.ToString()) {
+	for _, toolToIgnore := range s.config.GetToolsToIgnore() {
+		if strings.EqualFold(toolToIgnore, tool.ToString()) {
 			s.SetLanguageIsFinished()
 			return true
 		}
