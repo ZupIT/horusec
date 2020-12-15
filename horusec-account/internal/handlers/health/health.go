@@ -16,8 +16,8 @@ package health
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 	netHTTP "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -29,21 +29,23 @@ import (
 )
 
 type Handler struct {
-	broker        brokerLib.IBroker
-	databaseRead  SQL.InterfaceRead
-	databaseWrite SQL.InterfaceWrite
-	appConfig     app.IAppConfig
-	grpcCon       *grpc.ClientConn
+	broker                 brokerLib.IBroker
+	databaseRead           SQL.InterfaceRead
+	databaseWrite          SQL.InterfaceWrite
+	appConfig              app.IAppConfig
+	grpcCon                *grpc.ClientConn
+	grpcHealthCheckService health.ICheckClient
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
 	databaseWrite SQL.InterfaceWrite, appConfig app.IAppConfig, grpcCon *grpc.ClientConn) *Handler {
 	return &Handler{
-		broker:        broker,
-		databaseWrite: databaseWrite,
-		databaseRead:  databaseRead,
-		appConfig:     appConfig,
-		grpcCon:       grpcCon,
+		broker:                 broker,
+		databaseWrite:          databaseWrite,
+		databaseRead:           databaseRead,
+		appConfig:              appConfig,
+		grpcCon:                grpcCon,
+		grpcHealthCheckService: health.NewHealthCheckGrpcClient(grpcCon),
 	}
 }
 
@@ -51,6 +53,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// nolint
 // @Tags Health
 // @Description Check if Health of service it's OK!
 // @ID health
@@ -72,8 +75,8 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		return
 	}
 
-	if state := h.grpcCon.GetState(); state != connectivity.Idle && state != connectivity.Ready {
-		httpUtil.StatusInternalServerError(w, fmt.Errorf(errors.ErrorGrpcConnectionNotReady, state.String()))
+	if isAvailable, state := h.grpcHealthCheckService.IsAvailable(); !isAvailable {
+		httpUtil.StatusInternalServerError(w, fmt.Errorf(errors.ErrorGrpcConnectionNotReady, state))
 		return
 	}
 

@@ -60,6 +60,7 @@ func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handl
 	})
 }
 
+// nolint
 func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r, configAuth, err := h.getConfigAuthAndSetInContext(r)

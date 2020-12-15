@@ -6,23 +6,23 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-type Check struct {
+type CheckServer struct {
 }
 
-func NewHealthCheckGrpc() *Check {
-	return &Check{}
+func NewHealthCheckGrpcServer() *CheckServer {
+	return &CheckServer{}
 }
 
-func (c *Check) Check(context.Context,
+func (c *CheckServer) Check(context.Context,
 	*grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
-	logger.LogInfo("sending the grpc Check request for health check")
+	logger.LogInfo("sending the grpc CheckServer request for health check")
 
 	return &grpc_health_v1.HealthCheckResponse{
 		Status: grpc_health_v1.HealthCheckResponse_SERVING,
 	}, nil
 }
 
-func (c *Check) Watch(_ *grpc_health_v1.HealthCheckRequest, server grpc_health_v1.Health_WatchServer) error {
+func (c *CheckServer) Watch(_ *grpc_health_v1.HealthCheckRequest, server grpc_health_v1.Health_WatchServer) error {
 	logger.LogInfo("sending the grpc Watch request for health check")
 
 	return server.Send(&grpc_health_v1.HealthCheckResponse{
