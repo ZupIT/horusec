@@ -198,8 +198,8 @@ func (m *Mock) NormalizeConfigs() IConfig {
 	return args.Get(0).(*Config)
 }
 
-func (m *Mock) NewConfigsFromCobraAndLoadsFlags(cmd *cobra.Command) IConfig {
-	args := m.MethodCalled("NewConfigsFromCobraAndLoadsFlags")
+func (m *Mock) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig {
+	args := m.MethodCalled("NewConfigsFromCobraAndLoadsCmdStartFlags")
 	return args.Get(0).(*Config)
 }
 func (m *Mock) NewConfigsFromViper() IConfig {

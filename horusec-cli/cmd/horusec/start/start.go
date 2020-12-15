@@ -59,7 +59,7 @@ func (s *Start) CreateCobraCmd() *cobra.Command {
 		Example: "horusec start",
 		RunE:    s.runECobraCmd,
 	}
-	s.configs.NewConfigsFromCobraAndLoadsFlags(startCmd)
+	s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd)
 	return startCmd
 }
 

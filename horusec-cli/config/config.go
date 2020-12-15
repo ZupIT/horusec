@@ -35,7 +35,7 @@ import (
 )
 
 //nolint
-func (c *Config) NewConfigsFromCobraAndLoadsFlags(cmd *cobra.Command) IConfig {
+func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig {
 	cmd.PersistentFlags().
 		Int64VarP(&c.monitorRetryInSeconds, "monitor-retry-count", "m", c.GetMonitorRetryInSeconds(),
 			"The number of retries for the monitor.")

@@ -312,7 +312,7 @@ func TestNewHorusecConfig(t *testing.T) {
 				return nil
 			},
 		}
-		configs.NewConfigsFromCobraAndLoadsFlags(cobraCmd)
+		configs.NewConfigsFromCobraAndLoadsCmdStartFlags(cobraCmd)
 		cobraCmd.SetArgs([]string{"-p", "/home/usr/project", "-F", "SOMEHASHALEATORY1,SOMEHASHALEATORY2", "-R", "SOMEHASHALEATORY3,SOMEHASHALEATORY4"})
 		assert.NoError(t, cobraCmd.Execute())
 		assert.Equal(t, "/home/usr/project", configs.GetProjectPath())
@@ -432,7 +432,7 @@ func TestConfigMock(t *testing.T) {
 	m.On("NormalizeConfigs").Return(&Config{projectPath: "./"})
 	m.On("NewConfigsFromEnvironments").Return(&Config{})
 	m.On("NewConfigsFromEnvironments").Return(&Config{})
-	m.On("NewConfigsFromCobraAndLoadsFlags").Return(&Config{})
+	m.On("NewConfigsFromCobraAndLoadsCmdStartFlags").Return(&Config{})
 	m.SetConfigFilePath(".")
 	assert.NotEmpty(t, m.GetConfigFilePath())
 	m.SetHorusecAPIURI(".")
@@ -488,5 +488,5 @@ func TestConfigMock(t *testing.T) {
 	assert.NotEmpty(t, m.NormalizeConfigs())
 	m.NewConfigsFromEnvironments()
 	m.NewConfigsFromEnvironments()
-	m.NewConfigsFromCobraAndLoadsFlags(&cobra.Command{})
+	m.NewConfigsFromCobraAndLoadsCmdStartFlags(&cobra.Command{})
 }

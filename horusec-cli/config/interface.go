@@ -6,7 +6,7 @@ import (
 )
 
 type IConfig interface {
-	NewConfigsFromCobraAndLoadsFlags(cmd *cobra.Command) IConfig
+	NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig
 	NewConfigsFromViper() IConfig
 	NewConfigsFromEnvironments() IConfig
 
