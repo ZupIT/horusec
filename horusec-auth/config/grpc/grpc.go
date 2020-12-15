@@ -42,6 +42,7 @@ func SetUpGRPCServer(
 func setupWithoutCerts(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
 	server := grpc.NewServer()
+	grpc_health_v1.RegisterHealthServer(server, health.NewHealthCheckGrpc())
 	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, postgresWrite, appConfig))
 	if err := server.Serve(getNetListener()); err != nil {
 		logger.LogPanic("failed to setup grpc server", err)
