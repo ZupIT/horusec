@@ -26,6 +26,7 @@ import (
 
 type Interface interface {
 	StartAnalysis() error
+	StartAnalysisCustomRules(customRules []engine.Rule) []engine.Finding
 }
 
 type Analysis struct {
@@ -54,6 +55,23 @@ func (a *Analysis) StartAnalysis() error {
 	logger.LogDebugWithLevel("Sending units and rules to engine "+
 		" and expected response in path: ", logger.DebugLevel, outputFilePath)
 	return engine.RunOutputInJSON([]engine.Unit{textUnit}, allRules, outputFilePath)
+}
+
+func (a *Analysis) StartAnalysisCustomRules(customRules []engine.Rule) []engine.Finding {
+	textUnit, err := text.LoadDirIntoSingleUnit(a.configs.GetProjectPath(), []string{".kt", ".kts"})
+	if err != nil {
+		logger.LogError("failed to get text unity", err)
+		return nil
+	}
+	a.logJSON("Text Unit selected is: ", textUnit)
+
+	allRules := append(a.serviceRules.GetAllRules(), customRules...)
+	a.logJSON("All rules selected are: ", allRules)
+
+	outputFilePath := a.configs.GetOutputFilePath()
+	logger.LogDebugWithLevel("Sending units and rules to engine "+
+		" and expected response in path: ", logger.DebugLevel, outputFilePath)
+	return engine.Run([]engine.Unit{textUnit}, allRules)
 }
 
 func (a *Analysis) logJSON(message string, content interface{}) {

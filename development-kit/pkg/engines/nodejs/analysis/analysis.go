@@ -54,6 +54,25 @@ func (a *Analysis) StartAnalysis() error {
 	return engine.RunOutputInJSON(units, allRules, outputFilePath)
 }
 
+func (a *Analysis) StartAnalysisCustomRules(customRules []engine.Rule) []engine.Finding {
+	textUnits, err := text.LoadDirIntoMultiUnit(a.configs.GetProjectPath(), 5, []string{
+		".js", ".ts", ".jsx", ".tsx"})
+	if err != nil {
+		logger.LogError("failed to get text unity", err)
+		return nil
+	}
+	units := a.parseTextUnitsToUnits(textUnits)
+	a.logJSON("Texts Units selected are: ", textUnits)
+
+	allRules := append(a.serviceRules.GetAllRules(), customRules...)
+	a.logJSON("All rules selected are: ", allRules)
+
+	outputFilePath := a.configs.GetOutputFilePath()
+	logger.LogDebugWithLevel("Sending units and rules to engine "+
+		" and expected response in path: ", logger.DebugLevel, outputFilePath)
+	return engine.Run(units, allRules)
+}
+
 func (a *Analysis) logJSON(message string, content interface{}) {
 	b, err := json.Marshal(content)
 	if err == nil {

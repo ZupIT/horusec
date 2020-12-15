@@ -15,17 +15,18 @@
 package horusecjava
 
 import (
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strconv"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/analysis"
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 )
@@ -53,46 +54,15 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 func (f *Formatter) startHorusecJavaAnalysis(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecJava)
 
-	output, err := f.ExecuteContainer(f.getImageTagCmd(projectSubPath))
-	if err != nil {
-		f.SetAnalysisError(err)
-		return err
-	}
+	findings := f.execEngine(projectSubPath)
+
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecJava)
-	return f.formatOutput(output)
+	return f.setOutputInHorusecAnalysis(findings)
 }
 
-func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecJava),
-		Language: languages.Java,
-	}
-}
-
-func (f *Formatter) formatOutput(output string) error {
-	var reportOutput []engine.Finding
-	if output == "" || output == "null" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
-			map[string]interface{}{"tool": tools.HorusecJava.ToString()})
-
-		return f.setOutputInHorusecAnalysis(reportOutput)
-	}
-	javaOutput, err := f.convertOutputAndValidate(output, &reportOutput)
-	if err != nil {
-		return err
-	}
-	return f.setOutputInHorusecAnalysis(javaOutput)
-}
-
-func (f *Formatter) convertOutputAndValidate(
-	output string, reportOutput *[]engine.Finding) ([]engine.Finding, error) {
-	if err := jsonUtils.ConvertStringToOutput(output, reportOutput); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.HorusecJava, output), err, logger.ErrorLevel)
-		return *reportOutput, err
-	}
-	return *reportOutput, nil
+func (f *Formatter) execEngine(projectSubPath string) []engine.Finding {
+	controller := analysis.NewAnalysis(&config.Config{ProjectPath: f.GetConfigProjectPath() + "/" + projectSubPath})
+	return controller.StartAnalysisCustomRules(nil)
 }
 
 func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) error {
