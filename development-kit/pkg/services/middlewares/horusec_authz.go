@@ -16,6 +16,7 @@ package middlewares
 
 import (
 	"context"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"net/http"
 
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -59,16 +60,19 @@ func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handl
 	})
 }
 
+// nolint
 func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r, configAuth, err := h.getConfigAuthAndSetInContext(r)
 		if err != nil {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
 		if configAuth.ApplicationAdminEnable {
 			response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.ApplicationAdmin))
 			if err != nil || !response.GetIsAuthorized() {
+				logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 				httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 				return
 			}
@@ -90,6 +94,7 @@ func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.CompanyMember))
 		if err != nil || !response.GetIsAuthorized() {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
@@ -102,6 +107,7 @@ func (h *HorusAuthzMiddleware) IsCompanyAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.CompanyAdmin))
 		if err != nil || !response.GetIsAuthorized() {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
@@ -114,6 +120,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryMember(next http.Handler) http.Handle
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.RepositoryMember))
 		if err != nil || !response.GetIsAuthorized() {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
@@ -126,6 +133,7 @@ func (h *HorusAuthzMiddleware) IsRepositorySupervisor(next http.Handler) http.Ha
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.RepositorySupervisor))
 		if err != nil || !response.GetIsAuthorized() {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
@@ -138,6 +146,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response, err := h.grpcClient.IsAuthorized(h.ctx, h.setAuthorizedData(r, authEnums.RepositoryAdmin))
 		if err != nil || !response.GetIsAuthorized() {
+			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
@@ -149,6 +158,7 @@ func (h *HorusAuthzMiddleware) IsRepositoryAdmin(next http.Handler) http.Handler
 func (h *HorusAuthzMiddleware) setContextAndReturn(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	ctx, err := h.setAccountIDInContext(r, r.Header.Get("X-Horusec-Authorization"))
 	if err != nil {
+		logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 		httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 		return
 	}

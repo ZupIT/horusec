@@ -16,6 +16,7 @@ package health
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"net/http"
 	"net/http/httptest"
@@ -30,7 +31,7 @@ func TestNewHandler(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil)
+		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil, nil)
 		assert.NotNil(t, handler)
 	})
 }
@@ -40,7 +41,7 @@ func TestOptions(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil)
+		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, nil, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -54,15 +55,26 @@ func TestGet(t *testing.T) {
 	t.Run("should return 200 everything its ok", func(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
+
 		config := &app.Config{
 			DisabledBroker: false,
 		}
+
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 		postgresMockRead.On("IsAvailable").Return(true)
 		postgresMockWrite.On("IsAvailable").Return(true)
+		mockGrpcService.On("IsAvailable").Return(true, "READY")
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
+		handler := Handler{
+			postgresRead:           postgresMockRead,
+			postgresWrite:          postgresMockWrite,
+			config:                 config,
+			broker:                 brokerMock,
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -73,13 +85,22 @@ func TestGet(t *testing.T) {
 	t.Run("should return 200 everything its ok and config disable", func(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 		config := &app.Config{
 			DisabledBroker: true,
 		}
+
 		postgresMockRead.On("IsAvailable").Return(true)
 		postgresMockWrite.On("IsAvailable").Return(true)
+		mockGrpcService.On("IsAvailable").Return(true, "READY")
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, nil, config)
+		handler := Handler{
+			postgresRead:           postgresMockRead,
+			postgresWrite:          postgresMockWrite,
+			config:                 config,
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -87,18 +108,26 @@ func TestGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
+
 	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
 		config := &app.Config{
 			DisabledBroker: false,
 		}
-		brokerMock := &broker.Mock{}
+
 		brokerMock.On("IsAvailable").Return(false)
 		postgresMockRead.On("IsAvailable").Return(true)
 		postgresMockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
+		handler := Handler{
+			postgresRead:  postgresMockRead,
+			postgresWrite: postgresMockWrite,
+			config:        config,
+			broker:        brokerMock,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -120,7 +149,12 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
+		handler := Handler{
+			postgresRead:  postgresMockRead,
+			postgresWrite: postgresMockWrite,
+			config:        config,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -142,7 +176,43 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 
-		handler := NewHandler(postgresMockRead, postgresMockWrite, brokerMock, config)
+		handler := Handler{
+			postgresRead:  postgresMockRead,
+			postgresWrite: postgresMockWrite,
+			config:        config,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when failed to connect to grpc", func(t *testing.T) {
+		postgresMockRead := &relational.MockRead{}
+		postgresMockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
+
+		config := &app.Config{
+			DisabledBroker: false,
+		}
+
+		brokerMock := &broker.Mock{}
+		brokerMock.On("IsAvailable").Return(true)
+		postgresMockRead.On("IsAvailable").Return(true)
+		postgresMockWrite.On("IsAvailable").Return(true)
+		mockGrpcService.On("IsAvailable").Return(false, "TRANSIENT_FAILURE")
+
+		handler := Handler{
+			postgresRead:           postgresMockRead,
+			postgresWrite:          postgresMockWrite,
+			config:                 config,
+			broker:                 brokerMock,
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

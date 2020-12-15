@@ -15,6 +15,9 @@
 package health
 
 import (
+	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
+	"google.golang.org/grpc"
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -25,12 +28,16 @@ import (
 
 type Handler struct {
 	httpUtil.Interface
-	postgresRead relational.InterfaceRead
+	postgresRead           relational.InterfaceRead
+	grpcCon                *grpc.ClientConn
+	grpcHealthCheckService health.ICheckClient
 }
 
-func NewHandler(postgresRead relational.InterfaceRead) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead, grpcCon *grpc.ClientConn) httpUtil.Interface {
 	return &Handler{
-		postgresRead: postgresRead,
+		postgresRead:           postgresRead,
+		grpcCon:                grpcCon,
+		grpcHealthCheckService: health.NewHealthCheckGrpcClient(grpcCon),
 	}
 }
 
@@ -49,6 +56,11 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	if !h.postgresRead.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorDatabaseIsNotHealth)
+		return
+	}
+
+	if isAvailable, state := h.grpcHealthCheckService.IsAvailable(); !isAvailable {
+		httpUtil.StatusInternalServerError(w, fmt.Errorf(EnumErrors.ErrorGrpcConnectionNotReady, state))
 		return
 	}
 
