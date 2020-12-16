@@ -129,7 +129,7 @@ function AddCompany() {
             text={t('COMPANY_SCREEN.CANCEL')}
             width={100}
             height={40}
-            onClick={() => history.push('/organization')}
+            onClick={() => history.push('/')}
           />
 
           <Styled.Btn

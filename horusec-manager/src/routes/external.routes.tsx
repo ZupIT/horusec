@@ -15,21 +15,16 @@
  */
 
 import React from 'react';
-import { SideMenu, Footer } from 'components';
-import Styled from './styled';
+import { Route, Switch } from 'react-router-dom';
+import Auth from 'pages/External/Auth';
+import NotFound from 'pages/NotFound';
 
-function HomeLayout({ children }: { children: JSX.Element }) {
-  return (
-    <>
-      <Styled.Wrapper>
-        <SideMenu />
+const ExternalRoutes = () => (
+  <Switch>
+    <Route path="/auth" component={Auth} />
 
-        {children}
-      </Styled.Wrapper>
+    <Route path="*" component={NotFound} />
+  </Switch>
+);
 
-      <Footer />
-    </>
-  );
-}
-
-export default HomeLayout;
+export default ExternalRoutes;

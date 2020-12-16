@@ -41,7 +41,7 @@ function LoginScreen() {
 
     if (email.isValid && password.isValid) {
       login({ username: email.value, password: password.value }).then(() => {
-        history.push('/organization');
+        history.replace('/dashboard');
       });
     }
   };

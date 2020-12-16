@@ -61,7 +61,7 @@ const handleSetKeyclockData = async (
       setCurrentUser(userData);
 
       if (window.location.pathname === '/auth') {
-        window.location.replace('/home');
+        window.location.replace('/');
       }
     });
   }
@@ -91,7 +91,11 @@ const isLogged = (): boolean => {
       localStorageKeys.TOKEN_EXPIRES
     );
 
+    console.log(!accessToken || !expiresAt);
+
     if (!accessToken || !expiresAt) return false;
+
+    console.log(!isPast(new Date(expiresAt)));
 
     return !isPast(new Date(expiresAt));
   }

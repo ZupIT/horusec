@@ -14,26 +14,66 @@
  * limitations under the License.
  */
 
-import React, { lazy } from 'react';
-import { Switch } from 'react-router-dom';
+import React from 'react';
+import { isAdminOfCompany } from 'helpers/localStorage/currentCompany';
+import { Redirect, Switch } from 'react-router-dom';
+
+import Dashboard from 'pages/Internal/Dashboard';
+import Repositories from 'pages/Internal/Repositories';
+import Users from 'pages/Internal/Users';
+import Vulnerabilities from 'pages/Internal/Vulnerabilities';
+import Webhooks from 'pages/Internal/Webhooks';
+import Settings from 'pages/Internal/Settings';
 import { PrivateRoute } from 'components';
 
-const InternalRoutes = () => (
-  <Switch>
-    <PrivateRoute
-      exact={false}
-      path="/organization"
-      component={lazy(() => import('./company.routes'))}
-    />
+function InternalRoutes() {
+  return (
+    <Switch>
+      <Redirect
+        exact
+        from="/dashboard"
+        to={
+          isAdminOfCompany()
+            ? '/dashboard/organization'
+            : '/dashboard/repositories'
+        }
+      />
 
-    <PrivateRoute
-      exact={false}
-      path="/home"
-      component={lazy(() => import('./home.routes'))}
-    />
+      <PrivateRoute
+        path={'/dashboard/organization'}
+        exact
+        component={() => <Dashboard type="company" />}
+      />
 
-    {/* <Route component={lazy(() => import('pages/NotFound'))} /> */}
-  </Switch>
-);
+      <PrivateRoute
+        path={'/dashboard/repositories'}
+        exact
+        component={() => <Dashboard type="repository" />}
+      />
+
+      <PrivateRoute
+        exact
+        path={'/vulnerabilities'}
+        component={() => <Vulnerabilities />}
+      />
+
+      <PrivateRoute
+        exact
+        path={'/repositories'}
+        component={() => <Repositories />}
+      />
+
+      <PrivateRoute
+        exact
+        path={'/organization-users'}
+        component={() => <Users />}
+      />
+
+      <PrivateRoute exact path={'/webhooks'} component={() => <Webhooks />} />
+
+      <PrivateRoute exact path={'/settings'} component={() => <Settings />} />
+    </Switch>
+  );
+}
 
 export default InternalRoutes;

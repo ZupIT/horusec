@@ -15,15 +15,21 @@
  */
 
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import Auth from 'pages/External/Auth';
+import { SideMenu, Footer } from 'components';
+import Styled from './styled';
 
-const AuthRoutes = () => (
-  <Switch>
-    <Redirect exact from="/" to="/auth" />
+function InternalLayout({ children }: { children: JSX.Element }) {
+  return (
+    <>
+      <Styled.Wrapper>
+        <SideMenu />
 
-    <Route path="/auth" component={Auth} />
-  </Switch>
-);
+        {children}
+      </Styled.Wrapper>
 
-export default AuthRoutes;
+      <Footer />
+    </>
+  );
+}
+
+export default InternalLayout;

@@ -50,7 +50,7 @@ const NotFound: React.FC = () => {
         <Styled.BackBtn
           rounded
           text={t('NOT_FOUND_SCREEN.BACK')}
-          onClick={() => history.replace('/home')}
+          onClick={() => history.replace('/')}
         />
       </Styled.Content>
 

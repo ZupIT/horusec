@@ -15,15 +15,21 @@
  */
 
 import React, { Suspense } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import AuthRoutes from './auth.routes';
-import InternalRoutes from './internal.routes';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom';
 import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
+
+import ExternalRoutes from './external.routes';
+import InternalRoutes from './internal.routes';
+import { isLogged } from 'helpers/localStorage/tokens';
 
 const Routes = () => (
   <BrowserRouter basename={isMicrofrontend() ? '/horusec' : '/'}>
     <Suspense fallback="">
-      <AuthRoutes />
+      <Route exact path="/">
+        {isLogged() ? <Redirect to="/dashboard" /> : <Redirect to="/auth" />}
+      </Route>
+
+      <ExternalRoutes />
 
       <InternalRoutes />
     </Suspense>

@@ -25,7 +25,6 @@ import { find } from 'lodash';
 import {
   isAdminOfCompany,
   userRoleInCurrentCompany,
-  clearCurrentCompany,
 } from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -44,20 +43,20 @@ const SideMenu: React.FC = () => {
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
       type: 'route',
-      path: '/home/dashboard',
+      path: '/dashboard',
       roles: ['admin', 'member'],
       subRoutes: [
         {
           name: t('SIDE_MENU.ORGANIZATION'),
           icon: 'grid',
-          path: '/home/dashboard/organization',
+          path: '/dashboard/organization',
           type: 'subRoute',
           roles: ['admin'],
         },
         {
           name: t('SIDE_MENU.REPOSITORIES'),
           icon: 'columns',
-          path: '/home/dashboard/repositories',
+          path: '/dashboard/repositories',
           type: 'subRoute',
           roles: ['admin', 'member'],
         },
@@ -66,28 +65,28 @@ const SideMenu: React.FC = () => {
     {
       name: t('SIDE_MENU.VULNERABILITIES'),
       icon: 'shield',
-      path: '/home/vulnerabilities',
+      path: '/vulnerabilities',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
-      path: '/home/repositories',
+      path: '/repositories',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.ORGANIZATION_USERS'),
       icon: 'users',
-      path: '/home/organization-users',
+      path: '/organization-users',
       type: 'route',
       roles: ['admin'],
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
-      path: '/home/webhooks',
+      path: '/webhooks',
       type: 'route',
       roles: ['admin'],
       rule: () => !disabledBroker,
@@ -136,13 +135,8 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  const backToOrganization = () => {
-    clearCurrentCompany();
-    history.replace('/organization');
-  };
-
   const goToSettings = () => {
-    history.replace('/home/settings');
+    history.replace('/settings');
     setSelectedRoute(null);
     setSelectedSubRoute(null);
   };
@@ -187,14 +181,6 @@ const SideMenu: React.FC = () => {
               onClick={goToSettings}
             />
           ) : null}
-
-          <Styled.Option
-            dataFor="side-options"
-            dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
-            name="grid"
-            size="15"
-            onClick={backToOrganization}
-          />
 
           <Helper />
 

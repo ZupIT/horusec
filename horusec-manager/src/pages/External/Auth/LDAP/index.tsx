@@ -42,7 +42,7 @@ function LDAPAuth() {
 
     if (username.isValid && password.isValid) {
       login({ username: username.value, password: password.value }).then(() => {
-        history.push('/organization');
+        history.push('/dashboard');
       });
     }
   };
