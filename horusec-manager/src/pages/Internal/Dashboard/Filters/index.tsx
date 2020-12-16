@@ -19,8 +19,8 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Calendar, Select } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import repositoryService from 'services/repository';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface FilterProps {
   onApply: (values: FilterValues) => void;
@@ -29,22 +29,23 @@ interface FilterProps {
 
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
   const [repositories, setRepositories] = useState<any[]>([]);
+
   const [filters, setFilters] = useState<FilterValues>({
     initialDate: yesterday,
     finalDate: new Date(),
     repositoryID: null,
-    companyID,
+    companyID: null,
   });
 
   useEffect(() => {
     const fetchRepositories = () => {
-      repositoryService.getAll(companyID).then((result) => {
+      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
         setRepositories(result.data.content);
         setFilters({
           ...filters,
@@ -57,13 +58,16 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       });
     };
 
-    if (type === 'repository') {
-      fetchRepositories();
-    } else if (filters) {
-      onApply(filters);
+    if (currentWorkspace) {
+      if (type === 'repository') {
+        fetchRepositories();
+      } else if (filters) {
+        onApply({ ...filters, companyID: currentWorkspace.companyID });
+      }
     }
+
     // eslint-disable-next-line
-  }, []);
+  }, [currentWorkspace]);
 
   return (
     <Styled.Container>

@@ -385,5 +385,9 @@
     "ERROR": "Erro 404.",
     "MESSAGE": "Não conseguimos encontrar a página que você está procurando.",
     "BACK": "Voltar para a home"
+  },
+  "NEW_WORKSPACE_SCREEN": {
+    "MESSAGE": "Adicione um novo Workspace para começar a usar o Horusec.",
+    "ACTION": "Adicionar workspace"
   }
 }

@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { SideMenu, Footer } from 'components';
-import Styled from './styled';
-import { WorkspaceProvider } from 'contexts/Workspace';
+import { useContext } from 'react';
+import { WorkspaceContext } from 'contexts/Workspace';
 
-function InternalLayout({ children }: { children: JSX.Element }) {
-  return (
-    <WorkspaceProvider>
-      <>
-        <Styled.Wrapper>
-          <SideMenu />
+const useWorkspace = () => {
+  const context = useContext(WorkspaceContext);
+  return { ...context };
+};
 
-          {children}
-        </Styled.Wrapper>
-
-        <Footer />
-      </>
-    </WorkspaceProvider>
-  );
-}
-
-export default InternalLayout;
+export default useWorkspace;

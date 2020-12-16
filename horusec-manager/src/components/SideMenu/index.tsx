@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
@@ -22,16 +22,14 @@ import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
-import {
-  isAdminOfCompany,
-  userRoleInCurrentCompany,
-} from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
+  const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
   const { authType, disabledBroker } = getCurrentConfig();
 
@@ -43,20 +41,20 @@ const SideMenu: React.FC = () => {
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
       type: 'route',
-      path: '/dashboard',
+      path: '/home/dashboard',
       roles: ['admin', 'member'],
       subRoutes: [
         {
           name: t('SIDE_MENU.ORGANIZATION'),
           icon: 'grid',
-          path: '/dashboard/organization',
+          path: '/home/dashboard/organization',
           type: 'subRoute',
           roles: ['admin'],
         },
         {
           name: t('SIDE_MENU.REPOSITORIES'),
           icon: 'columns',
-          path: '/dashboard/repositories',
+          path: '/home/dashboard/repositories',
           type: 'subRoute',
           roles: ['admin', 'member'],
         },
@@ -65,43 +63,33 @@ const SideMenu: React.FC = () => {
     {
       name: t('SIDE_MENU.VULNERABILITIES'),
       icon: 'shield',
-      path: '/vulnerabilities',
+      path: '/home/vulnerabilities',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
-      path: '/repositories',
+      path: '/home/repositories',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.ORGANIZATION_USERS'),
       icon: 'users',
-      path: '/organization-users',
+      path: '/home/organization-users',
       type: 'route',
       roles: ['admin'],
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
-      path: '/webhooks',
+      path: '/home/webhooks',
       type: 'route',
       roles: ['admin'],
       rule: () => !disabledBroker,
     },
   ];
-
-  useEffect(() => {
-    setSelectedRoute(routes[0]);
-
-    isAdminOfCompany()
-      ? setSelectedSubRoute(routes[0].subRoutes[0])
-      : setSelectedSubRoute(routes[0].subRoutes[1]);
-
-    // eslint-disable-next-line
-  }, []);
 
   const handleSelectedRoute = (route: InternalRoute) => {
     if (route.type === 'route') {
@@ -118,7 +106,7 @@ const SideMenu: React.FC = () => {
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
-    if (route.roles.includes(userRoleInCurrentCompany())) {
+    if (route.roles.includes(currentWorkspace?.role)) {
       if (!route?.rule || (route?.rule && route?.rule())) {
         return (
           <Styled.RouteItem
@@ -136,7 +124,7 @@ const SideMenu: React.FC = () => {
   };
 
   const goToSettings = () => {
-    history.replace('/settings');
+    history.replace('/home/settings');
     setSelectedRoute(null);
     setSelectedSubRoute(null);
   };
@@ -145,7 +133,7 @@ const SideMenu: React.FC = () => {
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
   const renderSubRoute = (subRoute: InternalRoute, index: number) => {
-    if (subRoute.roles.includes(userRoleInCurrentCompany())) {
+    if (subRoute.roles.includes(currentWorkspace?.role)) {
       return (
         <Styled.SubRouteItem
           key={index}

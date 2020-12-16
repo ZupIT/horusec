@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-import React, { Suspense } from 'react';
-import { BrowserRouter, Redirect, Route } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
-
-import ExternalRoutes from './external.routes';
-import InternalRoutes from './internal.routes';
 import { isLogged } from 'helpers/localStorage/tokens';
 
 const Routes = () => (
   <BrowserRouter basename={isMicrofrontend() ? '/horusec' : '/'}>
     <Suspense fallback="">
-      <Route exact path="/">
-        {isLogged() ? <Redirect to="/dashboard" /> : <Redirect to="/auth" />}
-      </Route>
+      <Switch>
+        <Route exact path="/">
+          {isLogged() ? <Redirect to="/home" /> : <Redirect to="/auth" />}
+        </Route>
 
-      <ExternalRoutes />
+        <Route
+          path="/auth"
+          component={lazy(() => import('pages/External/Auth'))}
+        />
 
-      <InternalRoutes />
+        <Route path="/home" component={lazy(() => import('pages/Internal'))} />
+
+        <Route component={lazy(() => import('pages/NotFound'))} />
+      </Switch>
     </Suspense>
   </BrowserRouter>
 );

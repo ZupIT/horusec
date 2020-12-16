@@ -15,24 +15,29 @@
  */
 
 import React from 'react';
-import { SideMenu, Footer } from 'components';
 import Styled from './styled';
-import { WorkspaceProvider } from 'contexts/Workspace';
+import { useTranslation } from 'react-i18next';
 
-function InternalLayout({ children }: { children: JSX.Element }) {
+import WorkspaceVector from 'assets/svg/not_found.svg';
+import { useHistory } from 'react-router-dom';
+
+const AddWorkspace: React.FC = () => {
+  const { t } = useTranslation();
+  const history = useHistory();
+
   return (
-    <WorkspaceProvider>
-      <>
-        <Styled.Wrapper>
-          <SideMenu />
+    <Styled.Content>
+      <Styled.Illustration src={WorkspaceVector} />
 
-          {children}
-        </Styled.Wrapper>
+      <Styled.Message>{t('NEW_WORKSPACE_SCREEN.MESSAGE')}</Styled.Message>
 
-        <Footer />
-      </>
-    </WorkspaceProvider>
+      <Styled.BackBtn
+        rounded
+        text={t('NEW_WORKSPACE_SCREEN.ACTION')}
+        onClick={() => history.push('workspaces')}
+      />
+    </Styled.Content>
   );
-}
+};
 
-export default InternalLayout;
+export default AddWorkspace;

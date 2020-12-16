@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Auth from 'pages/External/Auth';
-import NotFound from 'pages/NotFound';
-
-const ExternalRoutes = () => (
-  <Switch>
-    <Route path="/auth" component={Auth} />
-
-    <Route path="*" component={NotFound} />
-  </Switch>
-);
-
-export default ExternalRoutes;
+export interface Workspace {
+  companyID: string;
+  name: string;
+  description: string;
+  role: string;
+  authzAdmin?: string;
+  authzMember?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

@@ -91,11 +91,7 @@ const isLogged = (): boolean => {
       localStorageKeys.TOKEN_EXPIRES
     );
 
-    console.log(!accessToken || !expiresAt);
-
     if (!accessToken || !expiresAt) return false;
-
-    console.log(!isPast(new Date(expiresAt)));
 
     return !isPast(new Date(expiresAt));
   }
