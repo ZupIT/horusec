@@ -65,7 +65,7 @@ func TestGetSliceStringValueOrDefault(t *testing.T) {
 	})
 
 	t.Run("should return slice default value", func(t *testing.T) {
-		result := GetSliceStringValueOrDefault([]string{""}, []string{"123"})
+		result := GetSliceStringValueOrDefault([]string{}, []string{"123"})
 		assert.NotEmpty(t, result)
 		assert.Equal(t, []string{"123"}, result)
 	})
