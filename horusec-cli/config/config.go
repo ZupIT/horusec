@@ -173,11 +173,11 @@ func (c *Config) SetConfigFilePath(configFilePath string) {
 }
 
 func (c *Config) GetHorusecAPIUri() string {
-	return c.horusecAPIUri
+	return valueordefault.GetStringValueOrDefault(c.horusecAPIUri, "http://0.0.0.0:8000")
 }
 
 func (c *Config) SetHorusecAPIURI(horusecAPIURI string) {
-	c.horusecAPIUri = valueordefault.GetStringValueOrDefault(horusecAPIURI, "http://0.0.0.0:8000")
+	c.horusecAPIUri = horusecAPIURI
 }
 
 func (c *Config) GetTimeoutInSecondsRequest() int64 {
