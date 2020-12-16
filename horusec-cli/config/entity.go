@@ -77,8 +77,8 @@ const (
 	//     - package-lock.json
 	// Then your workdir would be:
 	// {
-	//   "csharp": "NetCoreProject",
-	//   "javaScript": "NetCoreProject/views"
+	//   "csharp": ["NetCoreProject"],
+	//   "javaScript": ["NetCoreProject/views"]
 	// }
 	// The interface is:
 	// {
