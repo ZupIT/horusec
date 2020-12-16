@@ -16,8 +16,9 @@ package phpcs
 
 import (
 	"encoding/json"
-	"fmt"
-	phpEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/php/phpcs"
+
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs/entities"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -45,25 +46,23 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	err := f.startPhpCs(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.PhpCS, projectSubPath)
+	f.SetAnalysisError(f.startPhpCs(projectSubPath), tools.PhpCS, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS)
+	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startPhpCs(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.PhpCS)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS)
 	return f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,
@@ -76,7 +75,6 @@ func (f *Formatter) parseOutput(output string) error {
 	var results map[string]interface{}
 
 	if err := json.Unmarshal([]byte(output), &results); err != nil {
-		f.SetAnalysisError(fmt.Errorf("{HORUSEC_CLI} Error %s", output))
 		return err
 	}
 
@@ -95,20 +93,13 @@ func (f *Formatter) parseResults(results map[string]interface{}) {
 
 func (f *Formatter) parseMessages(filepath string, result interface{}) {
 	for _, message := range f.parseToResult(result).Messages {
-		f.appendResults(filepath, message)
+		if message.IsValidMessage() {
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(filepath, message))
+		}
 	}
 }
 
-func (f *Formatter) appendResults(filepath string, message phpEntities.Message) {
-	if message.IsValidMessage() {
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *f.setVulnerabilityData(filepath, message),
-			})
-	}
-}
-
-func (f *Formatter) setVulnerabilityData(filepath string, result phpEntities.Message) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = severity.Info
 	vulnerability.Details = result.Message
@@ -116,20 +107,7 @@ func (f *Formatter) setVulnerabilityData(filepath string, result phpEntities.Mes
 	vulnerability.Column = result.GetColumn()
 	vulnerability.File = f.RemoveSrcFolderFromPath(filepath)
 	vulnerability = vulnhash.Bind(vulnerability)
-
-	return f.setCommitAuthor(vulnerability)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	return f.SetCommitAuthor(vulnerability)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -139,8 +117,8 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) parseToResult(messageInterface interface{}) *phpEntities.Result {
-	var result *phpEntities.Result
+func (f *Formatter) parseToResult(messageInterface interface{}) *entities.Result {
+	var result *entities.Result
 
 	bytes, _ := json.Marshal(messageInterface)
 	_ = json.Unmarshal(bytes, &result)

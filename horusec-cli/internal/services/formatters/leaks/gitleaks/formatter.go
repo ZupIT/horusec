@@ -15,10 +15,12 @@
 package gitleaks
 
 import (
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/leaks"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks/entities"
+
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -45,21 +47,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GitLeaks.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startGitLeaksAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.GitLeaks, projectSubPath)
+
+	f.SetAnalysisError(f.startGitLeaks(projectSubPath), tools.GitLeaks, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startGitLeaksAnalysis(projectSubPath string) error {
+func (f *Formatter) startGitLeaks(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GitLeaks)
 
-	output, err := f.ExecuteContainer(f.gitLeaksImageTagCmd(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks)
 	return f.formatOutputGitLeaks(output)
 }
 
@@ -67,63 +68,55 @@ func (f *Formatter) formatOutputGitLeaks(output string) error {
 	if output == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
 			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
-		f.setGitLeaksOutPutInHorusecAnalysis([]leaks.Issue{})
+		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
 		return nil
 	}
+
 	issues, err := f.parseOutputToIssues(output)
 	if err != nil {
 		return err
 	}
+
 	f.setGitLeaksOutPutInHorusecAnalysis(issues)
 	return nil
 }
 
-func (f *Formatter) parseOutputToIssues(output string) ([]leaks.Issue, error) {
-	var issues []leaks.Issue
+func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error) {
+	var issues []entities.Issue
 	err := jsonUtils.ConvertStringToOutput(output, &issues)
 	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err, logger.ErrorLevel)
 	return issues, err
 }
 
-func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []leaks.Issue) {
+func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) {
 	for key := range issues {
 		vulnerability := f.setupVulnerabilitiesSeveritiesGitLeaks(&issues[key])
-		f.factoryAddVulnerabilityBySeverityGitLeaks(vulnerability)
+		f.AddNewVulnerabilityIntoAnalysis(vulnerability)
 	}
 }
 
-func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *leaks.Issue) (
+func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
 	vulnerabilitySeverity *horusec.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
 	vulnerabilitySeverity.Severity = severity.High
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File
-
-	// Set vulnerabilitySeverity.VulnHash value
 	vulnerabilitySeverity = vulnhash.Bind(vulnerabilitySeverity)
-
 	return f.setCommitAuthor(vulnerabilitySeverity, issue)
 }
 
-func (f *Formatter) factoryAddVulnerabilityBySeverityGitLeaks(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-		horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability, issue *leaks.Issue) *horusec.Vulnerability {
+func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability,
+	issue *entities.Issue) *horusec.Vulnerability {
 	vulnerability.CommitAuthor = issue.Author
 	vulnerability.CommitMessage = strings.ReplaceAll(issue.CommitMessage, "\n", "")
 	vulnerability.CommitEmail = issue.Email
 	vulnerability.CommitDate = issue.Date
 	vulnerability.CommitHash = issue.Commit
-
 	return vulnerability
 }
 
-func (f *Formatter) gitLeaksImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	return &dockerEntities.AnalysisData{
 		Image:    ImageName,
 		Tag:      ImageTag,

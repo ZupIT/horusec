@@ -16,12 +16,19 @@ package formatters
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	"os"
+	"strconv"
 	"strings"
 
+	engine "github.com/ZupIT/horusec-engine"
+	cliStandard "github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -32,20 +39,23 @@ import (
 type IService interface {
 	LogDebugWithReplace(msg string, tool tools.Tool)
 	GetAnalysisID() string
-	SetAnalysisError(err error)
 	ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error)
 	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
 	GetAnalysis() *horusec.Analysis
-	SetLanguageIsFinished()
-	LogAnalysisError(err error, tool tools.Tool, projectSubPath string)
+	SetToolFinishedAnalysis()
+	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
 	SetMonitor(monitor *horusec.Monitor)
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
 	ToolIsToIgnore(tool tools.Tool) bool
 	GetFilepathFromFilename(filename string) string
+	GetEngineConfig(projectSubPath string) *cliStandard.Config
+	SetCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability
+	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error
+	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
 }
 
 type Service struct {
@@ -108,12 +118,9 @@ func (s *Service) GetAnalysis() *horusec.Analysis {
 	return s.analysis
 }
 
-func (s *Service) SetAnalysisError(err error) {
-	s.analysis.SetAnalysisError(err)
-}
-
-func (s *Service) LogAnalysisError(err error, tool tools.Tool, projectSubPath string) {
+func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath string) {
 	if err != nil {
+		s.analysis.SetAnalysisError(err)
 		msg := s.GetAnalysisIDErrorMessage(tool, "")
 		if projectSubPath != "" {
 			msg += " | ProjectSubPath -> " + projectSubPath
@@ -124,7 +131,7 @@ func (s *Service) LogAnalysisError(err error, tool tools.Tool, projectSubPath st
 	}
 }
 
-func (s *Service) SetLanguageIsFinished() {
+func (s *Service) SetToolFinishedAnalysis() {
 	s.monitor.RemoveProcess(1)
 }
 
@@ -157,7 +164,7 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 
 	for _, toolToIgnore := range allTools {
 		if strings.EqualFold(strings.TrimSpace(toolToIgnore), tool.ToString()) {
-			s.SetLanguageIsFinished()
+			s.SetToolFinishedAnalysis()
 			return true
 		}
 	}
@@ -185,4 +192,67 @@ func (s *Service) GetFilepathFromFilename(filename string) string {
 	}
 
 	return filepath
+}
+
+func (s *Service) GetEngineConfig(projectSubPath string) *cliStandard.Config {
+	var projectPath string
+
+	if projectSubPath != "" && projectSubPath[0:1] == string(os.PathSeparator) {
+		projectPath = fmt.Sprintf("%s%s", s.GetConfigProjectPath(), projectSubPath)
+	} else {
+		projectPath = fmt.Sprintf("%s%s%s", s.GetConfigProjectPath(), string(os.PathSeparator), projectSubPath)
+	}
+
+	return &cliStandard.Config{ProjectPath: projectPath}
+}
+
+func (s *Service) SetCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
+	commitAuthor := s.GetCommitAuthor(vulnerability.Line, vulnerability.File)
+
+	vulnerability.CommitAuthor = commitAuthor.Author
+	vulnerability.CommitEmail = commitAuthor.Email
+	vulnerability.CommitHash = commitAuthor.CommitHash
+	vulnerability.CommitMessage = commitAuthor.Message
+	vulnerability.CommitDate = commitAuthor.Date
+
+	return vulnerability
+}
+
+func (s *Service) ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool,
+	language languages.Language) error {
+	for index := range findings {
+		s.setVulnerabilityDataByFindings(findings, index, tool, language)
+	}
+
+	return nil
+}
+
+func (s *Service) setVulnerabilityDataByFindings(findings []engine.Finding, index int, tool tools.Tool,
+	language languages.Language) {
+	vulnerability := s.setVulnerabilityDataByFindingIndex(findings, index, tool, language)
+	vulnerability = s.SetCommitAuthor(vulnerability)
+	vulnerability = hash.Bind(vulnerability)
+	s.AddNewVulnerabilityIntoAnalysis(vulnerability)
+}
+
+func (s *Service) AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability) {
+	s.GetAnalysis().AnalysisVulnerabilities = append(s.GetAnalysis().AnalysisVulnerabilities,
+		horusec.AnalysisVulnerabilities{
+			Vulnerability: *vulnerability,
+		})
+}
+
+func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, index int, tool tools.Tool,
+	language languages.Language) *horusec.Vulnerability {
+	return &horusec.Vulnerability{
+		Line:         strconv.Itoa(findings[index].SourceLocation.Line),
+		Column:       strconv.Itoa(findings[index].SourceLocation.Column),
+		Confidence:   findings[index].Confidence,
+		File:         s.RemoveSrcFolderFromPath(findings[index].SourceLocation.Filename),
+		Code:         s.GetCodeWithMaxCharacters(findings[index].CodeSample, findings[index].SourceLocation.Column),
+		Details:      findings[index].Name + "\n" + findings[index].Description,
+		SecurityTool: tool,
+		Language:     language,
+		Severity:     severity.ParseStringToSeverity(findings[index].Severity),
+	}
 }

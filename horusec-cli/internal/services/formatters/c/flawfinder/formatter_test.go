@@ -18,13 +18,14 @@ import (
 	"bytes"
 	"encoding/csv"
 	"errors"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func getCsvString() string {
@@ -106,12 +107,14 @@ func TestStartCFlawfinder(t *testing.T) {
 			formatter.StartAnalysis("")
 		})
 	})
+
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep,flawfinder",
+			ToolsToIgnore: "flawfinder",
 		}
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

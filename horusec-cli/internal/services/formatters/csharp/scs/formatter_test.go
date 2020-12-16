@@ -34,7 +34,7 @@ func TestParseOutput(t *testing.T) {
 			WorkDir: &workdir.WorkDir{},
 		}
 
-		output := "{\"Filename\": \"Vulnerabilities.cs(11,22)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS1234\", \"IssueText\": \"test\"}" +
+		output := "{\"Filename\": \"Vulnerabilities.cs(11,22)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS1234\", \"IssueText\": \"test/[/src/test\"}" +
 			"{\"Filename\": \"Vulnerabilities.cs(33,44)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0021\", \"IssueText\": \"test\"}" +
 			"{\"Filename\": \"Vulnerabilities.cs(55,66)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0012\", \"IssueText\": \"test\"}" +
 			"{\"Filename\": \"Vulnerabilities.cs(77,88)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0020\", \"IssueText\": \"test\"}" +
@@ -70,12 +70,14 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
 	})
+
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
+			ToolsToIgnore: "securitycodescan",
 		}
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

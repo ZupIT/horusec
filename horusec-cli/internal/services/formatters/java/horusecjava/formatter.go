@@ -15,16 +15,9 @@
 package horusecjava
 
 import (
-	"strconv"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/analysis"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
-
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -46,63 +39,19 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecJava.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startHorusecJavaAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.HorusecJava, projectSubPath)
-}
 
-func (f *Formatter) startHorusecJavaAnalysis(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecJava)
-
-	findings := f.execEngine(projectSubPath)
-
+	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecJava, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecJava)
-	return f.setOutputInHorusecAnalysis(findings)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) execEngine(projectSubPath string) []engine.Finding {
-	controller := analysis.NewAnalysis(&config.Config{ProjectPath: f.GetConfigProjectPath() + "/" + projectSubPath})
-	return controller.StartAnalysisCustomRules(nil)
+func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecJava)
+	findings := f.execEngineAnalysis(projectSubPath)
+	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecJava, languages.Java)
 }
 
-func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) error {
-	for index := range reportOutput {
-		vulnerability := f.setupVulnerabilitiesSeverities(reportOutput, index)
-		vulnerability = f.setupCommitAuthorInVulnerability(vulnerability)
-
-		// Set vulnerabilitySeverity.VulnHash value
-		vulnerability = vulnhash.Bind(vulnerability)
-
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *vulnerability,
-			})
-	}
-	return nil
-}
-
-func (f *Formatter) setupVulnerabilitiesSeverities(
-	reportOutput []engine.Finding, index int) (
-	vulnerabilitySeverity *horusec.Vulnerability) {
-	line := strconv.Itoa(reportOutput[index].SourceLocation.Line)
-	return &horusec.Vulnerability{
-		Line:         line,
-		Column:       strconv.Itoa(reportOutput[index].SourceLocation.Column),
-		Confidence:   reportOutput[index].Confidence,
-		File:         f.RemoveSrcFolderFromPath(reportOutput[index].SourceLocation.Filename),
-		Code:         f.GetCodeWithMaxCharacters(reportOutput[index].CodeSample, reportOutput[index].SourceLocation.Column),
-		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
-		SecurityTool: tools.HorusecJava,
-		Language:     languages.Java,
-		Severity:     severity.ParseStringToSeverity(reportOutput[index].Severity),
-	}
-}
-func (f *Formatter) setupCommitAuthorInVulnerability(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitMessage = commitAuthor.Message
-	vulnerability.CommitDate = commitAuthor.Date
-	return vulnerability
+func (f *Formatter) execEngineAnalysis(projectSubPath string) []engine.Finding {
+	service := analysis.NewAnalysis(f.GetEngineConfig(projectSubPath))
+	return service.StartAnalysisCustomRules(nil)
 }

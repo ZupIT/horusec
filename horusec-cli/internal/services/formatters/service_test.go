@@ -41,22 +41,20 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		mock.On("AddWorkDirInCmd").Return("")
 		mock.On("GetConfigProjectPath").Return("")
 		mock.On("GetAnalysis").Return(&horusec.Analysis{})
-		mock.On("SetLanguageIsFinished").Return()
+		mock.On("SetToolFinishedAnalysis").Return()
 		mock.On("LogAnalysisError").Return()
 		mock.On("SetMonitor").Return()
 		mock.On("RemoveSrcFolderFromPath").Return("")
 		mock.On("GetCodeWithMaxCharacters").Return("")
 		mock.LogDebugWithReplace("", "")
 		_ = mock.GetAnalysisID()
-		mock.SetAnalysisError(errors.New(""))
 		_, _ = mock.ExecuteContainer(&dockerEntities.AnalysisData{})
 		_ = mock.GetAnalysisIDErrorMessage("", "")
 		_ = mock.GetCommitAuthor("", "")
 		_ = mock.AddWorkDirInCmd("", "", "")
 		_ = mock.GetConfigProjectPath()
 		_ = mock.GetAnalysis()
-		mock.SetLanguageIsFinished()
-		mock.LogAnalysisError(errors.New(""), "", "")
+		mock.SetAnalysisError(errors.New(""), "", "")
 		mock.SetMonitor(&horusec.Monitor{})
 		_ = mock.RemoveSrcFolderFromPath("")
 		_ = mock.GetCodeWithMaxCharacters("", 0)
@@ -166,29 +164,19 @@ func TestGetAnalysis(t *testing.T) {
 	})
 }
 
-func TestSetAnalysisError(t *testing.T) {
-	t.Run("should success set analysis errors", func(t *testing.T) {
-		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, &horusec.Monitor{})
-
-		monitorController.SetAnalysisError(errors.New("test"))
-
-		assert.NotEmpty(t, monitorController.GetAnalysis().Errors)
-	})
-}
-
 func TestLogAnalysisError(t *testing.T) {
 	t.Run("should not panic when logging error", func(t *testing.T) {
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, &horusec.Monitor{})
 
 		assert.NotPanics(t, func() {
-			monitorController.LogAnalysisError(errors.New("test"), tools.GoSec, "")
+			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "")
 		})
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, &horusec.Monitor{})
 
 		assert.NotPanics(t, func() {
-			monitorController.LogAnalysisError(errors.New("test"), tools.GoSec, "/tmp")
+			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "/tmp")
 		})
 	})
 }
@@ -201,7 +189,7 @@ func TestSetLanguageIsFinished(t *testing.T) {
 		monitorController := NewFormatterService(&horusec.Analysis{}, &docker.Mock{}, &config.Config{}, nil)
 		monitorController.SetMonitor(monitor)
 
-		monitorController.SetLanguageIsFinished()
+		monitorController.SetToolFinishedAnalysis()
 		assert.Equal(t, 0, monitor.GetProcess())
 	})
 }

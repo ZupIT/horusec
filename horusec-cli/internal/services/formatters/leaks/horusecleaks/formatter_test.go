@@ -15,132 +15,40 @@
 package horusecleaks
 
 import (
-	"errors"
 	"testing"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
-	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseOutputHorusecJava(t *testing.T) {
-	t.Run("HorusecJava Should not return panic and but append errors found in analysis", func(t *testing.T) {
+func TestStartAnalysis(t *testing.T) {
+	t.Run("should success execute analysis without errors", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
-		dockerAPIControllerMock.On("DeleteContainersFromAPI")
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
+		service := &formatters.Mock{}
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		service.On("LogDebugWithReplace")
+		service.On("SetToolFinishedAnalysis")
+		service.On("LogAnalysisError")
+		service.On("ToolIsToIgnore").Return(false)
+		service.On("GetEngineConfig").Return(config.NewConfig())
+		service.On("ParseFindingsToVulnerabilities").Return(nil)
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
-			assert.Equal(t, len(analysis.AnalysisVulnerabilities), 0)
-			assert.NotEqual(t, len(analysis.Errors), 0)
 		})
+
+		assert.Empty(t, len(analysis.Errors))
 	})
-	t.Run("HorusecJava Should not return panic and exists vulnerabilities when call start horusec java", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-		responseContainer := `
-[
-  {
-    "ID": "b4c300cd-1cdd-4039-9b19-8163acd91bac",
-    "Name": "Password found in a hardcoded URL",
-    "Severity": "HIGH",
-    "CodeSample": "postgresql://root:root@postgresql:5432/horusec_db?sslmode=disable;",
-    "Confidence": "HIGH",
-    "Description": "A password was found in a hardcoded URL, this can lead to not only the leak of this password but also a failure point to some more sophisticated CSRF and SSRF attacks. Check CWE-352 (https://cwe.mitre.org/data/definitions/352.html) and CWE-918 (https://cwe.mitre.org/data/definitions/918.html) for more details.",
-    "SourceLocation": {
-      "Filename": "deployments/docker-compose.dev.yaml",
-      "Line": 2,
-      "Column": 7
-    }
-  }
-]
-`
-		dockerAPIControllerMock := &docker.Mock{}
-		dockerAPIControllerMock.On("DeleteContainersFromAPI")
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(responseContainer, nil)
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+	t.Run("should ignore this tool", func(t *testing.T) {
+		service := &formatters.Mock{}
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		service.On("ToolIsToIgnore").Return(true)
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
-			assert.NotEqual(t, len(analysis.AnalysisVulnerabilities), 0)
 		})
-	})
-	t.Run("HorusecJava Should return empty analysis when format is empty", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
-
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-
-		formatter := Formatter{
-			service,
-		}
-
-		err := formatter.formatOutput("")
-		assert.NoError(t, err)
-		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
-	})
-	t.Run("HorusecJava Should return empty analysis when format is null", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
-
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-
-		formatter := Formatter{
-			service,
-		}
-
-		err := formatter.formatOutput("null")
-		assert.NoError(t, err)
-		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
-	})
-	t.Run("HorusecJava Should return error when invalid output", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
-
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-
-		formatter := Formatter{
-			service,
-		}
-
-		err := formatter.formatOutput("invalid output")
-		assert.Error(t, err)
-	})
-	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-		formatter := NewFormatter(service)
-
-		formatter.StartAnalysis("")
 	})
 }
