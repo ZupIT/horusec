@@ -262,6 +262,7 @@ All available flags are:
 | HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH         | EnvContainerBindProjectPath                | container-bind-project-path | P             |                                         | Used to pass project path in host when running horusec cli inside a container |
 | HORUSEC_CLI_HEADERS                             | horusecCliHeaders                          | headers                     |               |                                         | Used to send dynamic headers on dispatch http request to horusec api service |
 |                                                 | horusecCliWorkDir                          |                             |               |                                         | This setting tells to horusec the right directory to run a specific language. |
+|                                                 | horusecCliWorkDir                          |                             |               |                                         | This setting tells to horusec the right directory to run a specific language. |
 
 #### Authorization
 For run an analysis is necessary get an token of repository.

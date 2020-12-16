@@ -379,8 +379,9 @@ func (c *Config) SetIsTimeout(isTimeout bool) {
 }
 
 func (c *Config) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	content := toolsconfig.ToolsConfigsStruct{}
 	return valueordefault.GetInterfaceValueOrDefault(
-		c.toolsConfig, toolsconfig.NewMapToolConfig()).(map[tools.Tool]toolsconfig.ToolConfig)
+		c.toolsConfig, content.ToMap()).(map[tools.Tool]toolsconfig.ToolConfig)
 }
 
 func (c *Config) SetToolsConfig(toolsConfig interface{}) {

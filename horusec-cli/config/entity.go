@@ -137,7 +137,7 @@ const (
 	// {
 	//
 	// }
-	EnvToolsConfig = "HORUSEC_CLI_TOOLS_TO_IGNORE"
+	EnvToolsConfig = "HORUSEC_CLI_TOOLS_CONFIG"
 	// Used send others headers on request to send in horusec-api
 	// By default is empty
 	EnvHeaders = "HORUSEC_CLI_HEADERS"
