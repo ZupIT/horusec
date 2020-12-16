@@ -15,6 +15,8 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
@@ -39,7 +41,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, uuid.Nil.String(), configs.GetRepositoryAuthorization())
 		assert.Equal(t, "text", configs.GetPrintOutputType())
 		assert.Equal(t, "", configs.GetJSONOutputFilePath())
-		assert.Equal(t, 0, len(configs.GetSeveritiesToIgnore()))
+		assert.Equal(t, 2, len(configs.GetSeveritiesToIgnore()))
 		assert.Equal(t, 0, len(configs.GetFilesOrPathsToIgnore()))
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, currentPath, configs.GetProjectPath())
@@ -56,6 +58,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 0, len(configs.GetHeaders()))
 		assert.Equal(t, "", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.IsEmptyRepositoryAuthorization())
+		assert.Equal(t, 0, len(configs.GetToolsConfig()))
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		currentPath, _ := os.Getwd()
@@ -73,7 +76,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetReturnErrorIfFoundVulnerability(true)
 		configs.SetProjectPath("./some-other-file-path")
 		configs.SetFilterPath("./run-this-path")
-		configs.SetWorkDir(map[string]interface{}{"netcore": []interface{}{"test"}})
+		configs.SetWorkDir(map[string]interface{}{"netcore": []string{"test"}})
 		configs.SetEnableGitHistoryAnalysis(true)
 		configs.SetCertInsecureSkipVerify(true)
 		configs.SetCertPath("./certs")
@@ -85,6 +88,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetHeaders(map[string]string{"x-header": "value"})
 		configs.SetContainerBindProjectPath("./some-other-file-path")
 		configs.SetIsTimeout(true)
+		configs.SetToolsConfig(map[tools.Tool]toolsconfig.ToolConfig{tools.Eslint: {ImagePath: "docker.io/company/eslint:latest", IsToIgnore: true}})
 		assert.NotEqual(t, "", configs.GetConfigFilePath())
 		assert.NotEqual(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
 		assert.NotEqual(t, int64(300), configs.GetTimeoutInSecondsRequest())
@@ -98,7 +102,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.NotEqual(t, currentPath, configs.GetProjectPath())
 		assert.NotEqual(t, "", configs.GetFilterPath())
-		assert.NotEqual(t, Config{}.workDir, configs.GetWorkDir())
+		assert.NotEqual(t, workdir.NewWorkDir(), configs.GetWorkDir())
 		assert.NotEqual(t, false, configs.GetEnableGitHistoryAnalysis())
 		assert.NotEqual(t, false, configs.GetCertInsecureSkipVerify())
 		assert.NotEqual(t, "", configs.GetCertPath())
@@ -110,6 +114,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, 0, len(configs.GetHeaders()))
 		assert.NotEqual(t, "", configs.GetContainerBindProjectPath())
 		assert.NotEqual(t, false, configs.GetIsTimeout())
+		assert.NotEqual(t, toolsconfig.ToolConfig{}, configs.GetToolsConfig()[tools.Eslint])
 	})
 	t.Run("Should return horusec config using old viper file", func(t *testing.T) {
 		viper.Reset()
@@ -135,7 +140,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./", configs.GetProjectPath())
 		assert.Equal(t, "./tmp", configs.GetFilterPath())
-		assert.Equal(t, &workdir.WorkDir{}, configs.GetWorkDir())
+		assert.Equal(t, workdir.NewWorkDir(), configs.GetWorkDir())
 		assert.Equal(t, true, configs.GetEnableGitHistoryAnalysis())
 		assert.Equal(t, true, configs.GetCertInsecureSkipVerify())
 		assert.Equal(t, "", configs.GetCertPath())
@@ -146,6 +151,10 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"GoSec"}, configs.GetToolsToIgnore())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, toolsconfig.ToolConfig{
+			IsToIgnore: true,
+			ImagePath:  "docker.io/company/gosec:latest",
+		}, configs.GetToolsConfig()[tools.GoSec])
 	})
 	t.Run("Should return horusec config using new viper file", func(t *testing.T) {
 		viper.Reset()
@@ -171,7 +180,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./", configs.GetProjectPath())
 		assert.Equal(t, "./tmp", configs.GetFilterPath())
-		assert.Equal(t, &workdir.WorkDir{}, configs.GetWorkDir())
+		assert.Equal(t, workdir.NewWorkDir(), configs.GetWorkDir())
 		assert.Equal(t, true, configs.GetEnableGitHistoryAnalysis())
 		assert.Equal(t, true, configs.GetCertInsecureSkipVerify())
 		assert.Equal(t, "", configs.GetCertPath())
@@ -182,6 +191,10 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"GoSec"}, configs.GetToolsToIgnore())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, toolsconfig.ToolConfig{
+			IsToIgnore: true,
+			ImagePath:  "docker.io/company/gosec:latest",
+		}, configs.GetToolsConfig()[tools.GoSec])
 	})
 	t.Run("Should return horusec config using viper file and override by environment", func(t *testing.T) {
 		viper.Reset()
@@ -231,7 +244,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./horusec-manager", configs.GetProjectPath())
 		assert.Equal(t, "src", configs.GetFilterPath())
-		assert.Equal(t, &workdir.WorkDir{}, configs.GetWorkDir())
+		assert.Equal(t, workdir.NewWorkDir(), configs.GetWorkDir())
 		assert.Equal(t, false, configs.GetEnableGitHistoryAnalysis())
 		assert.Equal(t, false, configs.GetCertInsecureSkipVerify())
 		assert.Equal(t, "./", configs.GetCertPath())
@@ -292,7 +305,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./horusec-manager", configs.GetProjectPath())
 		assert.Equal(t, "src", configs.GetFilterPath())
-		assert.Equal(t, &workdir.WorkDir{}, configs.GetWorkDir())
+		assert.Equal(t, workdir.NewWorkDir(), configs.GetWorkDir())
 		assert.Equal(t, false, configs.GetEnableGitHistoryAnalysis())
 		assert.Equal(t, false, configs.GetCertInsecureSkipVerify())
 		assert.Equal(t, "./", configs.GetCertPath())
@@ -347,6 +360,7 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliToolsToIgnore", configs.toLowerCamel(EnvToolsToIgnore))
 		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
 		assert.Equal(t, "horusecCliContainerBindProjectPath", configs.toLowerCamel(EnvContainerBindProjectPath))
+		assert.Equal(t, "horusecCliToolsConfig", configs.toLowerCamel(EnvToolsConfig))
 	})
 }
 

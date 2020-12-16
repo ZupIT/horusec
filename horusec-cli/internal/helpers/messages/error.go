@@ -71,12 +71,11 @@ const (
 	// Fired when an unexpected error occurs when run tool in docker
 	MsgErrorRunToolInDocker = "{HORUSEC_CLI} Something error went wrong in {{0}} tool " +
 		"| analysisID -> {{1}} | output -> {{2}}"
-	// Fired after copy project to .horusec folder and check if exists and not found the folder
-	MsgErrorNotFoundHorusecFolder = "{HORUSEC_CLI} Error when find .horusec folder in directory analysis: "
-	// Fired after copy project to .horusec folder and check if exists and not found the folder
-	MsgErrorInAddHorusecFolderInGitIgnore = "{HORUSEC_CLI} Error when try insert .horusec folder in gitignore file"
 	// Fired when to be parse string of the WorkDir Entity and return error
 	MsgErrorParseStringToWorkDir = "{HORUSEC_CLI} Error when try parse workdir string to entity. Returning default values"
+	// Fired when to be parse string of the WorkDir Entity and return error
+	MsgErrorParseStringToToolsConfig = "{HORUSEC_CLI} Error when try parse tools config string to entity." +
+		" Returning default values"
 	// Fired when finish analysis and send to print results and exists errors in analysis
 	MsgErrorFoundErrorsInAnalysis   = "{HORUSEC_CLI} During execution we found some problems:"
 	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt " +

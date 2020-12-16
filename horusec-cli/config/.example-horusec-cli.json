@@ -22,5 +22,11 @@
   "horusecCliContainerBindProjectPath": "test",
   "horusecCliHeaders": {
     "X-Headers": "some-other-value"
+  },
+  "horusecCliToolsConfig": {
+    "GoSec": {
+      "isToIgnore": true,
+      "imagePath": "docker.io/company/gosec:latest"
+    }
   }
 }

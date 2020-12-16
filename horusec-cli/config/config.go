@@ -16,9 +16,11 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/spf13/cobra"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -28,7 +30,6 @@ import (
 	"github.com/iancoleman/strcase"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/text"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
@@ -133,6 +134,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetToolsToIgnore(viper.GetStringSlice(c.toLowerCamel(EnvToolsToIgnore)))
 	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
+	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
 	return c
 }
 
@@ -168,67 +170,67 @@ func (c *Config) GetConfigFilePath() string {
 }
 
 func (c *Config) SetConfigFilePath(configFilePath string) {
-	c.configFilePath = configFilePath
+	c.configFilePath = valueordefault.GetPathOrCurrentPath(configFilePath)
 }
 
 func (c *Config) GetHorusecAPIUri() string {
-	return c.horusecAPIUri
+	return valueordefault.GetStringValueOrDefault(c.horusecAPIUri, "http://0.0.0.0:8000")
 }
 
 func (c *Config) SetHorusecAPIURI(horusecAPIURI string) {
-	c.horusecAPIUri = text.GetStringValueOrDefault(horusecAPIURI, "http://0.0.0.0:8000")
+	c.horusecAPIUri = horusecAPIURI
 }
 
 func (c *Config) GetTimeoutInSecondsRequest() int64 {
-	return c.timeoutInSecondsRequest
+	return valueordefault.GetInt64ValueOrDefault(c.timeoutInSecondsRequest, int64(300))
 }
 
 func (c *Config) SetTimeoutInSecondsRequest(timeoutInSecondsRequest int64) {
-	c.timeoutInSecondsRequest = text.GetInt64ValueOrDefault(timeoutInSecondsRequest, int64(300))
+	c.timeoutInSecondsRequest = timeoutInSecondsRequest
 }
 
 func (c *Config) GetTimeoutInSecondsAnalysis() int64 {
-	return c.timeoutInSecondsAnalysis
+	return valueordefault.GetInt64ValueOrDefault(c.timeoutInSecondsAnalysis, int64(600))
 }
 
 func (c *Config) SetTimeoutInSecondsAnalysis(timeoutInSecondsAnalysis int64) {
-	c.timeoutInSecondsAnalysis = text.GetInt64ValueOrDefault(timeoutInSecondsAnalysis, int64(600))
+	c.timeoutInSecondsAnalysis = timeoutInSecondsAnalysis
 }
 
 func (c *Config) GetMonitorRetryInSeconds() int64 {
-	return c.monitorRetryInSeconds
+	return valueordefault.GetInt64ValueOrDefault(c.monitorRetryInSeconds, int64(15))
 }
 
 func (c *Config) SetMonitorRetryInSeconds(retryInterval int64) {
-	c.monitorRetryInSeconds = text.GetInt64ValueOrDefault(retryInterval, int64(15))
+	c.monitorRetryInSeconds = retryInterval
 }
 
 func (c *Config) GetRepositoryAuthorization() string {
-	return c.repositoryAuthorization
+	return valueordefault.GetStringValueOrDefault(c.repositoryAuthorization, uuid.Nil.String())
 }
 
 func (c *Config) SetRepositoryAuthorization(repositoryAuthorization string) {
-	c.repositoryAuthorization = text.GetStringValueOrDefault(repositoryAuthorization, uuid.Nil.String())
+	c.repositoryAuthorization = repositoryAuthorization
 }
 
 func (c *Config) GetPrintOutputType() string {
-	return c.printOutputType
+	return valueordefault.GetStringValueOrDefault(c.printOutputType, "text")
 }
 
 func (c *Config) SetPrintOutputType(printOutputType string) {
-	c.printOutputType = text.GetStringValueOrDefault(printOutputType, "text")
+	c.printOutputType = printOutputType
 }
 
 func (c *Config) GetJSONOutputFilePath() string {
-	return c.jsonOutputFilePath
+	return valueordefault.GetStringValueOrDefault(c.jsonOutputFilePath, "")
 }
 
 func (c *Config) SetJSONOutputFilePath(jsonOutputFilePath string) {
-	c.jsonOutputFilePath = text.GetStringValueOrDefault(jsonOutputFilePath, "")
+	c.jsonOutputFilePath = jsonOutputFilePath
 }
 
 func (c *Config) GetSeveritiesToIgnore() []string {
-	return c.severitiesToIgnore
+	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"AUDIT", "INFO"})
 }
 
 func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {
@@ -252,16 +254,11 @@ func (c *Config) SetReturnErrorIfFoundVulnerability(returnError bool) {
 }
 
 func (c *Config) GetProjectPath() string {
-	return c.projectPath
+	return valueordefault.GetPathOrCurrentPath(c.projectPath)
 }
 
 func (c *Config) SetProjectPath(projectPath string) {
-	path, err := os.Getwd()
-	if err != nil {
-		c.projectPath = text.GetStringValueOrDefault(projectPath, "./")
-	} else {
-		c.projectPath = text.GetStringValueOrDefault(projectPath, path)
-	}
+	c.projectPath = projectPath
 }
 
 func (c *Config) GetFilterPath() string {
@@ -273,15 +270,19 @@ func (c *Config) SetFilterPath(filterPath string) {
 }
 
 func (c *Config) GetWorkDir() *workdir.WorkDir {
-	return c.workDir
+	return valueordefault.GetInterfaceValueOrDefault(c.workDir, workdir.NewWorkDir()).(*workdir.WorkDir)
 }
 
-func (c *Config) SetWorkDir(toParse interface{}) {
-	if c.netCoreKeyIsDeprecated(toParse) {
+func (c *Config) SetWorkDir(input interface{}) {
+	if c.netCoreKeyIsDeprecated(input) {
 		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated, logger.WarnLevel)
 	}
-	c.workDir = &workdir.WorkDir{}
-	c.workDir.ParseInterfaceToStruct(toParse)
+	if input != nil {
+		c.workDir = c.workDir.ParseInterfaceToStruct(input)
+	}
+	if c.workDir == nil {
+		c.workDir = workdir.NewWorkDir()
+	}
 }
 
 func (c *Config) GetEnableGitHistoryAnalysis() bool {
@@ -301,11 +302,11 @@ func (c *Config) SetCertInsecureSkipVerify(certInsecureSkipVerify bool) {
 }
 
 func (c *Config) GetCertPath() string {
-	return c.certPath
+	return valueordefault.GetStringValueOrDefault(c.certPath, "")
 }
 
 func (c *Config) SetCertPath(certPath string) {
-	c.certPath = text.GetStringValueOrDefault(certPath, "")
+	c.certPath = certPath
 }
 
 func (c *Config) GetEnableCommitAuthor() bool {
@@ -317,7 +318,7 @@ func (c *Config) SetEnableCommitAuthor(isEnable bool) {
 }
 
 func (c *Config) GetRepositoryName() string {
-	return c.repositoryName
+	return valueordefault.GetStringValueOrDefault(c.repositoryName, "")
 }
 
 func (c *Config) SetRepositoryName(repositoryName string) {
@@ -345,11 +346,14 @@ func (c *Config) GetToolsToIgnore() (output []string) {
 }
 
 func (c *Config) SetToolsToIgnore(toolsToIgnore []string) {
+	if len(toolsToIgnore) > 0 {
+		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated, logger.WarnLevel)
+	}
 	c.toolsToIgnore = c.factoryParseInputToSliceString(toolsToIgnore)
 }
 
 func (c *Config) GetHeaders() (headers map[string]string) {
-	return c.headers
+	return valueordefault.GetMapStringStringValueOrDefault(c.headers, map[string]string{})
 }
 
 func (c *Config) SetHeaders(headers interface{}) {
@@ -372,6 +376,16 @@ func (c *Config) GetIsTimeout() bool {
 
 func (c *Config) SetIsTimeout(isTimeout bool) {
 	c.isTimeout = isTimeout
+}
+
+func (c *Config) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	content := toolsconfig.ToolsConfigsStruct{}
+	return valueordefault.GetInterfaceValueOrDefault(
+		c.toolsConfig, content.ToMap()).(map[tools.Tool]toolsconfig.ToolConfig)
+}
+
+func (c *Config) SetToolsConfig(toolsConfig interface{}) {
+	c.toolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(toolsConfig)
 }
 
 func (c *Config) IsEmptyRepositoryAuthorization() bool {
@@ -405,6 +419,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"riskAcceptHashes":                c.riskAcceptHashes,
 		"toolsToIgnore":                   c.toolsToIgnore,
 		"headers":                         c.headers,
+		"toolsConfig":                     c.toolsConfig,
 		"workDir":                         c.workDir,
 	}
 }

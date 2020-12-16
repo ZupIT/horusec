@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/mock"
@@ -184,6 +185,13 @@ func (m *Mock) GetIsTimeout() bool {
 }
 func (m *Mock) SetIsTimeout(isTimeout bool) {
 	_ = m.MethodCalled("SetIsTimeout")
+}
+func (m *Mock) GetToolsConfig() map[string]toolsconfig.ToolConfig {
+	args := m.MethodCalled("GetToolsConfig")
+	return args.Get(0).(map[string]toolsconfig.ToolConfig)
+}
+func (m *Mock) SetToolsConfig(toolsConfig interface{}) {
+	_ = m.MethodCalled("SetToolsConfig")
 }
 func (m *Mock) IsEmptyRepositoryAuthorization() bool {
 	args := m.MethodCalled("IsEmptyRepositoryAuthorization")

@@ -16,21 +16,23 @@ package docker
 
 import (
 	"fmt"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
 type AnalysisData struct {
-	Image    string
-	Tag      string
-	CMD      string
-	Language languages.Language
+	ImagePath string
+	CMD       string
+	Language  languages.Language
 }
 
 func (a *AnalysisData) IsInvalid() bool {
-	return a.Image == "" || a.Tag == "" || a.CMD == ""
+	return a.ImagePath == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) GetContainerImageNameWithTag() string {
-	return fmt.Sprintf("%s:%s", a.Image, a.Tag)
+func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageName, imageTag string) {
+	if imagePathInConfig != "" {
+		a.ImagePath = imagePathInConfig
+	} else {
+		a.ImagePath = fmt.Sprintf("docker.io/%s:%s", imageName, imageTag)
+	}
 }

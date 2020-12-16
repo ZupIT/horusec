@@ -95,7 +95,6 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetWorkDir("{\"go\": \"test\"}")
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -144,6 +143,7 @@ func TestValidateConfigs(t *testing.T) {
 		config.SetCertPath("INVALID PATH")
 
 		err := useCases.ValidateConfigs(config)
+		assert.Error(t, err)
 		assert.Equal(t, "certPath: project path is invalid: .",
 			err.Error())
 	})

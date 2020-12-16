@@ -17,6 +17,7 @@ package formatters
 import (
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -38,6 +39,7 @@ type IService interface {
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
+	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
 	GetAnalysis() *horusec.Analysis
 	SetLanguageIsFinished()
 	LogAnalysisError(err error, tool tools.Tool, projectSubPath string)
@@ -91,6 +93,10 @@ func (s *Service) GetConfigProjectPath() string {
 			s.analysis.ID.String(),
 		),
 	)
+}
+
+func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	return s.config.GetToolsConfig()
 }
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
@@ -160,6 +166,7 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
+	// TODO method GetToolsToIgnore will deprecated in future
 	for _, toolToIgnore := range s.config.GetToolsToIgnore() {
 		if strings.EqualFold(toolToIgnore, tool.ToString()) {
 			s.SetLanguageIsFinished()
@@ -167,7 +174,7 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 		}
 	}
 
-	return false
+	return s.config.GetToolsConfig()[tool].IsToIgnore
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {
