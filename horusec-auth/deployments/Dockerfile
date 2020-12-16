@@ -24,8 +24,13 @@ RUN go get -t -v -d ./...
 
 RUN GOOS=linux go build -a -o horusec-auth-main ./horusec-auth/cmd/app/main.go
 
+RUN GRPC_HEALTH_PROBE_VERSION=v0.3.2 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+    chmod +x /bin/grpc_health_probe
+
 FROM alpine
 
 COPY --from=builder /horusec/horusec-auth-main .
+COPY --from=builder /bin/grpc_health_probe ./grpc_health_probe
 
 ENTRYPOINT ["./horusec-auth-main"]
