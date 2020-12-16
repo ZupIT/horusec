@@ -65,12 +65,12 @@ func (f *Formatter) startTfSec(projectSubPath string) error {
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.TfSec.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) parseOutput(output string) error {

@@ -39,22 +39,46 @@ type WorkDir struct {
 	Generic    []string `json:"generic"`
 }
 
+//nolint:funlen parse struct is necessary > 15 lines
+func NewWorkDir() *WorkDir {
+	return &WorkDir{
+		Go:         []string{},
+		NetCore:    []string{},
+		CSharp:     []string{},
+		Ruby:       []string{},
+		Python:     []string{},
+		Java:       []string{},
+		Kotlin:     []string{},
+		JavaScript: []string{},
+		Leaks:      []string{},
+		HCL:        []string{},
+		PHP:        []string{},
+		C:          []string{},
+		Yaml:       []string{},
+		Generic:    []string{},
+	}
+}
+
 func (w *WorkDir) String() string {
 	bytes, _ := json.Marshal(w)
 	return string(bytes)
 }
 
-func (w *WorkDir) ParseInterfaceToStruct(toParse interface{}) {
+func (w *WorkDir) ParseInterfaceToStruct(toParse interface{}) *WorkDir {
+	if _, ok := toParse.(*WorkDir); ok {
+		return toParse.(*WorkDir)
+	}
 	bytes, err := json.Marshal(toParse)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
-		return
+		return w
 	}
 
 	err = json.Unmarshal(bytes, &w)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
 	}
+	return w
 }
 
 func (w *WorkDir) Type() string {

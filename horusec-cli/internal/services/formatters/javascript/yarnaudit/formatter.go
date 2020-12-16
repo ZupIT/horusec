@@ -212,12 +212,12 @@ func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
 }
 
 func (f *Formatter) getConfigDataYarn(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    npmaudit.ImageName,
-		Tag:      npmaudit.ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit.ToLowerCamel()].ImagePath, npmaudit.ImageName, npmaudit.ImageTag)
+	return ad
 }
 
 func (f *Formatter) getConfigCMD(projectSubPath string) string {

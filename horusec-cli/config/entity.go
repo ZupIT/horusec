@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 )
 
@@ -76,20 +77,25 @@ const (
 	//     - package-lock.json
 	// Then your workdir would be:
 	// {
-	//   "netCore": "NetCoreProject",
+	//   "csharp": "NetCoreProject",
 	//   "javaScript": "NetCoreProject/views"
 	// }
 	// The interface is:
 	// {
-	//   go string
-	//   netCore string
-	//   ruby string
-	//   python string
-	//   java string
-	//   kotlin string
-	//   javaScript string
-	//   git string
-	//   generic string
+	//   go         []string
+	//   netCore    []string DEPRECATED on 23 nov 2020
+	//   csharp     []string
+	//   ruby       []string
+	//   python     []string
+	//   java       []string
+	//   kotlin     []string
+	//   javaScript []string
+	//   leaks      []string
+	//   hcl        []string
+	//   php        []string
+	//   c          []string
+	//   yaml       []string
+	//   generic    []string
 	// }
 	// Validation: It is mandatory to be valid interface of workdir to proceed
 	EnvWorkDirPath = "HORUSEC_CLI_WORK_DIR"
@@ -123,9 +129,14 @@ const (
 	// Used to skip vulnerability of type risk accept
 	// By default is empty
 	EnvRiskAcceptHashes = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
-	// Used to ignore tools for run
-	// By default is empty
+	// DEPRECATED on 16 dec 2020
 	EnvToolsToIgnore = "HORUSEC_CLI_TOOLS_TO_IGNORE"
+	// Used to set configurations of tools
+	// By default is setup:
+	// {
+	//
+	// }
+	EnvToolsConfig = "HORUSEC_CLI_TOOLS_TO_IGNORE"
 	// Used send others headers on request to send in horusec-api
 	// By default is empty
 	EnvHeaders = "HORUSEC_CLI_HEADERS"
@@ -158,6 +169,7 @@ type Config struct {
 	falsePositiveHashes             []string
 	riskAcceptHashes                []string
 	toolsToIgnore                   []string
+	toolsConfig                     map[string]toolsconfig.ToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
 }

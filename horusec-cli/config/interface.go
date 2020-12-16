@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
 )
@@ -84,6 +85,9 @@ type IConfig interface {
 
 	GetIsTimeout() bool
 	SetIsTimeout(isTimeout bool)
+
+	GetToolsConfig() map[string]toolsconfig.ToolConfig
+	SetToolsConfig(toolsConfig interface{})
 
 	IsEmptyRepositoryAuthorization() bool
 	ToBytes(isMarshalIndent bool) (bytes []byte)

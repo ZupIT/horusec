@@ -71,13 +71,13 @@ func (f *Formatter) startSafetyAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image: ImageName,
-		Tag:   ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD: f.AddWorkDirInCmd(ImageCmd,
 			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Safety.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) parseOutput(output string) {

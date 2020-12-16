@@ -62,23 +62,11 @@ const (
 )
 
 func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
-	t.Run("Should return return error when image is empty", func(t *testing.T) {
+	t.Run("Should return return error when ImagePath is empty", func(t *testing.T) {
 		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: "",
-			Tag:   "tag",
-			CMD:   "cmd",
-		})
-
-		assert.Error(t, err)
-	})
-
-	t.Run("Should return return error when tag is empty", func(t *testing.T) {
-		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: "image",
-			Tag:   "",
-			CMD:   "cmd",
+			ImagePath: "",
+			CMD:       "cmd",
 		})
 
 		assert.Error(t, err)
@@ -87,9 +75,8 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	t.Run("Should return return error when cmd is empty", func(t *testing.T) {
 		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: "image",
-			Tag:   "tag",
-			CMD:   "",
+			ImagePath: "image",
+			CMD:       "",
 		})
 
 		assert.Error(t, err)
@@ -98,9 +85,8 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	t.Run("Should return error when pull image aleatory", func(t *testing.T) {
 		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: "john",
-			Tag:   "doe",
-			CMD:   "command",
+			ImagePath: "john:doe",
+			CMD:       "command",
 		})
 
 		assert.Error(t, err)
@@ -109,12 +95,12 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	t.Run("Should create valid canonical image path", func(t *testing.T) {
 		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: "test/image-7.4.6",
-			Tag:   "latest",
-			CMD:   "cmd",
+			ImagePath: "docker.io/dockercloud/hello-world:latest",
+			CMD:       "cmd",
 		})
 
 		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "Error response from daemon: invalid mount config for type \"bind\": bind source path does not exist: /.horusec/")
 	})
 
 	t.Run("Should return error when list image to check if exist", func(t *testing.T) {
@@ -122,11 +108,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -138,11 +124,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -158,11 +144,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -179,11 +165,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ContainerStart").Return(ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -203,11 +189,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -228,11 +214,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
@@ -253,11 +239,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
-		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
-			Image: ImageName,
-			Tag:   ImageTag,
-			CMD:   Cmd,
-		})
+		ad := &dockerEntities.AnalysisData{
+			CMD: Cmd,
+		}
+		ad.SetFullImagePath("", ImageName, ImageTag)
+		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.NoError(t, err)
 	})

@@ -131,12 +131,12 @@ func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Brakeman),
 		Language: languages.Ruby,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {

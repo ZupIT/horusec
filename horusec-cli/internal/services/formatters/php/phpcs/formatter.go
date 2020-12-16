@@ -64,12 +64,12 @@ func (f *Formatter) startPhpCs(projectSubPath string) error {
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.PhpCS),
 		Language: languages.PHP,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.PhpCS.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) parseOutput(output string) error {
