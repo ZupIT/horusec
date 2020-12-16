@@ -353,7 +353,7 @@ func (c *Config) SetToolsToIgnore(toolsToIgnore []string) {
 }
 
 func (c *Config) GetHeaders() (headers map[string]string) {
-	return c.headers
+	return valueordefault.GetMapStringStringValueOrDefault(c.headers, map[string]string{})
 }
 
 func (c *Config) SetHeaders(headers interface{}) {
