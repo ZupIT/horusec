@@ -12,42 +12,42 @@ type ToolConfig struct {
 	ImagePath  string `json:"imagePath"`
 }
 
-func ParseInterfaceToMapToolsConfig(input interface{}) (output map[string]ToolConfig) {
+func ParseInterfaceToMapToolsConfig(input interface{}) (output map[tools.Tool]ToolConfig) {
 	bytes, err := json.Marshal(input)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
-		return MapToolsConfig()
+		return NewMapToolConfig()
 	}
 
 	err = json.Unmarshal(bytes, &output)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
-		return MapToolsConfig()
+		return NewMapToolConfig()
 	}
 	return output
 }
 
 //nolint:funlen parse struct is necessary > 15 lines
-func MapToolsConfig() map[string]ToolConfig {
-	return map[string]ToolConfig{
-		tools.GoSec.ToLowerCamel():             {IsToIgnore: true, ImagePath: ""},
-		tools.SecurityCodeScan.ToLowerCamel():  {IsToIgnore: true, ImagePath: ""},
-		tools.Brakeman.ToLowerCamel():          {IsToIgnore: true, ImagePath: ""},
-		tools.Safety.ToLowerCamel():            {IsToIgnore: true, ImagePath: ""},
-		tools.Bandit.ToLowerCamel():            {IsToIgnore: true, ImagePath: ""},
-		tools.NpmAudit.ToLowerCamel():          {IsToIgnore: true, ImagePath: ""},
-		tools.YarnAudit.ToLowerCamel():         {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecKotlin.ToLowerCamel():     {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecJava.ToLowerCamel():       {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecLeaks.ToLowerCamel():      {IsToIgnore: true, ImagePath: ""},
-		tools.GitLeaks.ToLowerCamel():          {IsToIgnore: true, ImagePath: ""},
-		tools.TfSec.ToLowerCamel():             {IsToIgnore: true, ImagePath: ""},
-		tools.Semgrep.ToLowerCamel():           {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecCsharp.ToLowerCamel():     {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecKubernetes.ToLowerCamel(): {IsToIgnore: true, ImagePath: ""},
-		tools.Eslint.ToLowerCamel():            {IsToIgnore: true, ImagePath: ""},
-		tools.HorusecNodejs.ToLowerCamel():     {IsToIgnore: true, ImagePath: ""},
-		tools.Flawfinder.ToLowerCamel():        {IsToIgnore: true, ImagePath: ""},
-		tools.PhpCS.ToLowerCamel():             {IsToIgnore: true, ImagePath: ""},
+func NewMapToolConfig() map[tools.Tool]ToolConfig {
+	return map[tools.Tool]ToolConfig{
+		tools.GoSec:             {IsToIgnore: true, ImagePath: ""},
+		tools.SecurityCodeScan:  {IsToIgnore: true, ImagePath: ""},
+		tools.Brakeman:          {IsToIgnore: true, ImagePath: ""},
+		tools.Safety:            {IsToIgnore: true, ImagePath: ""},
+		tools.Bandit:            {IsToIgnore: true, ImagePath: ""},
+		tools.NpmAudit:          {IsToIgnore: true, ImagePath: ""},
+		tools.YarnAudit:         {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecKotlin:     {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecJava:       {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecLeaks:      {IsToIgnore: true, ImagePath: ""},
+		tools.GitLeaks:          {IsToIgnore: true, ImagePath: ""},
+		tools.TfSec:             {IsToIgnore: true, ImagePath: ""},
+		tools.Semgrep:           {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecCsharp:     {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecKubernetes: {IsToIgnore: true, ImagePath: ""},
+		tools.Eslint:            {IsToIgnore: true, ImagePath: ""},
+		tools.HorusecNodejs:     {IsToIgnore: true, ImagePath: ""},
+		tools.Flawfinder:        {IsToIgnore: true, ImagePath: ""},
+		tools.PhpCS:             {IsToIgnore: true, ImagePath: ""},
 	}
 }

@@ -67,7 +67,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecJava),
 		Language: languages.Java,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecJava.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecJava].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

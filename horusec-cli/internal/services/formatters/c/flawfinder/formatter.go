@@ -68,7 +68,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

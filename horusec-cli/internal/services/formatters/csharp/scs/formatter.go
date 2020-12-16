@@ -146,7 +146,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

@@ -128,7 +128,7 @@ func (f *Formatter) gitLeaksImageTagCmd(projectSubPath string) *dockerEntities.A
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GitLeaks),
 		Language: languages.Leaks,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.GitLeaks.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

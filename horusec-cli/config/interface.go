@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
@@ -86,7 +87,7 @@ type IConfig interface {
 	GetIsTimeout() bool
 	SetIsTimeout(isTimeout bool)
 
-	GetToolsConfig() map[string]toolsconfig.ToolConfig
+	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
 	SetToolsConfig(toolsConfig interface{})
 
 	IsEmptyRepositoryAuthorization() bool

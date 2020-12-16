@@ -69,7 +69,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.TfSec.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.TfSec].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

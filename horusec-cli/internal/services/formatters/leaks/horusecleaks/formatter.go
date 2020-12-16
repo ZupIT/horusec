@@ -67,7 +67,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecLeaks),
 		Language: languages.Leaks,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecLeaks.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecLeaks].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

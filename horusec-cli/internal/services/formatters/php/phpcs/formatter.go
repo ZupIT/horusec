@@ -68,7 +68,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.PhpCS),
 		Language: languages.PHP,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.PhpCS.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.PhpCS].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

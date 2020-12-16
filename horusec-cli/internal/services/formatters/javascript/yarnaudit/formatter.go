@@ -216,7 +216,7 @@ func (f *Formatter) getConfigDataYarn(projectSubPath string) *dockerEntities.Ana
 		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit.ToLowerCamel()].ImagePath, npmaudit.ImageName, npmaudit.ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath, npmaudit.ImageName, npmaudit.ImageTag)
 	return ad
 }
 

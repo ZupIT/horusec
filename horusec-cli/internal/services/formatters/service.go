@@ -39,7 +39,7 @@ type IService interface {
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
-	GetToolsConfig() map[string]toolsconfig.ToolConfig
+	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
 	GetAnalysis() *horusec.Analysis
 	SetLanguageIsFinished()
 	LogAnalysisError(err error, tool tools.Tool, projectSubPath string)
@@ -95,7 +95,7 @@ func (s *Service) GetConfigProjectPath() string {
 	)
 }
 
-func (s *Service) GetToolsConfig() map[string]toolsconfig.ToolConfig {
+func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
 	return s.config.GetToolsConfig()
 }
 
@@ -174,7 +174,7 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 		}
 	}
 
-	return s.config.GetToolsConfig()[tool.ToLowerCamel()].IsToIgnore
+	return s.config.GetToolsConfig()[tool].IsToIgnore
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {

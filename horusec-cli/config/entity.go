@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 )
@@ -169,7 +170,7 @@ type Config struct {
 	falsePositiveHashes             []string
 	riskAcceptHashes                []string
 	toolsToIgnore                   []string
-	toolsConfig                     map[string]toolsconfig.ToolConfig
+	toolsConfig                     map[tools.Tool]toolsconfig.ToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
 }

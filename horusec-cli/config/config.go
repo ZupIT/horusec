@@ -16,6 +16,7 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
@@ -377,9 +378,9 @@ func (c *Config) SetIsTimeout(isTimeout bool) {
 	c.isTimeout = isTimeout
 }
 
-func (c *Config) GetToolsConfig() map[string]toolsconfig.ToolConfig {
+func (c *Config) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
 	return valueordefault.GetInterfaceValueOrDefault(
-		c.toolsConfig, toolsconfig.MapToolsConfig()).(map[string]toolsconfig.ToolConfig)
+		c.toolsConfig, toolsconfig.NewMapToolConfig()).(map[tools.Tool]toolsconfig.ToolConfig)
 }
 
 func (c *Config) SetToolsConfig(toolsConfig interface{}) {

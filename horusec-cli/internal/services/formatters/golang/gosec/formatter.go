@@ -143,6 +143,6 @@ func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.Analy
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GoSec),
 		Language: languages.Go,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.GoSec.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
 	return ad
 }

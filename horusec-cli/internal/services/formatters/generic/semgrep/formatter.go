@@ -72,7 +72,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Semgrep),
 		Language: languages.Generic,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Semgrep.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Semgrep].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

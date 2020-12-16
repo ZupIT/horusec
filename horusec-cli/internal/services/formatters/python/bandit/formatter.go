@@ -69,7 +69,7 @@ func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.Analy
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Bandit),
 		Language: languages.Python,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

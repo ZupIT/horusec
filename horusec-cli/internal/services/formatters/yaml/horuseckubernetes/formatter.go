@@ -69,7 +69,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecKubernetes),
 		Language: languages.Yaml,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

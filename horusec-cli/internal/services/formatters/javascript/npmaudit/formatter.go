@@ -188,7 +188,7 @@ func (f *Formatter) getConfigDataNpm(projectSubPath string) *dockerEntities.Anal
 		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

@@ -135,7 +135,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Brakeman),
 		Language: languages.Ruby,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

@@ -226,7 +226,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.SpotBugs),
 		Language: languages.Java,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.SpotBugs.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.SpotBugs].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

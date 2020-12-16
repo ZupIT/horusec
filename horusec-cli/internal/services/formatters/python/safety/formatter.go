@@ -76,7 +76,7 @@ func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.Analy
 			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Safety.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

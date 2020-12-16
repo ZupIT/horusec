@@ -73,7 +73,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
 		Language: languages.Javascript,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Eslint.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Eslint].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

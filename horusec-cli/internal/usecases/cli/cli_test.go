@@ -95,7 +95,6 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetWorkDir("{\"go\": \"test\"}")
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
