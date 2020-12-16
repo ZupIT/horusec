@@ -70,10 +70,10 @@ func (f *Formatter) executeDockerContainer(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	ad := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.SpotBugs),
-		Language: languages.Java,
+		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
+		Language: languages.Javascript,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.SpotBugs.ToLowerCamel()].ImagePath, ImageName, ImageTag)
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Eslint.ToLowerCamel()].ImagePath, ImageName, ImageTag)
 	return ad
 }
 

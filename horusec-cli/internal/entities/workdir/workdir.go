@@ -16,10 +16,10 @@ package workdir
 
 import (
 	"encoding/json"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
 type WorkDir struct {
@@ -73,12 +73,10 @@ func (w *WorkDir) ParseInterfaceToStruct(toParse interface{}) *WorkDir {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
 		return w
 	}
-
-	err = json.Unmarshal(bytes, &w)
-	if err != nil {
+	if err = json.Unmarshal(bytes, &w); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
 	}
-	return w
+	return w.setEmptyOrSliceEmptyInNilContent()
 }
 
 func (w *WorkDir) Type() string {
@@ -114,4 +112,51 @@ func (w *WorkDir) GetArrayByLanguage(language languages.Language) []string {
 	}
 
 	return []string{""}
+}
+
+//nolint:gocyclo validation is necessary > 5 conditions
+func (w *WorkDir) setEmptyOrSliceEmptyInNilContent() *WorkDir {
+	if w.Go == nil {
+		w.Go = []string{}
+	}
+	if w.NetCore == nil {
+		w.NetCore = []string{}
+	}
+	if w.CSharp == nil {
+		w.CSharp = []string{}
+	}
+	if w.Ruby == nil {
+		w.Ruby = []string{}
+	}
+	if w.Python == nil {
+		w.Python = []string{}
+	}
+	if w.Java == nil {
+		w.Java = []string{}
+	}
+	if w.Kotlin == nil {
+		w.Kotlin = []string{}
+	}
+	if w.JavaScript == nil {
+		w.JavaScript = []string{}
+	}
+	if w.Leaks == nil {
+		w.Leaks = []string{}
+	}
+	if w.HCL == nil {
+		w.HCL = []string{}
+	}
+	if w.PHP == nil {
+		w.PHP = []string{}
+	}
+	if w.C == nil {
+		w.C = []string{}
+	}
+	if w.Yaml == nil {
+		w.Yaml = []string{}
+	}
+	if w.Generic == nil {
+		w.Generic = []string{}
+	}
+	return w
 }

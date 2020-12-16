@@ -144,6 +144,7 @@ func TestValidateConfigs(t *testing.T) {
 		config.SetCertPath("INVALID PATH")
 
 		err := useCases.ValidateConfigs(config)
+		assert.Error(t, err)
 		assert.Equal(t, "certPath: project path is invalid: .",
 			err.Error())
 	})

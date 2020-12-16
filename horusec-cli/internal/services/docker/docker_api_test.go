@@ -100,7 +100,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "Error response from daemon: invalid mount config for type \"bind\": bind source path does not exist: /.horusec/")
+		assert.Contains(t, err.Error(), "Error response from daemon: invalid mount config for type \"bind\": bind source path does not exist:")
 	})
 
 	t.Run("Should return error when list image to check if exist", func(t *testing.T) {

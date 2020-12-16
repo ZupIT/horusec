@@ -218,6 +218,9 @@ func (au *UseCases) validateCertPath(dir string) func(value interface{}) error {
 
 func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string) func(value interface{}) error {
 	return func(value interface{}) error {
+		if workDir == nil {
+			return errors.New(messages.MsgErrorParseStringToWorkDir)
+		}
 		for _, pathsByLanguage := range workDir.Map() {
 			for _, projectSubPath := range pathsByLanguage {
 				err := au.validateIfExistPathInProjectToWorkDir(projectPath, projectSubPath)
