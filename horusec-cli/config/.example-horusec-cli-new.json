@@ -24,9 +24,6 @@
     "hash3",
     "hash4"
   ],
-  "horusecCliToolsToIgnore": [
-    "GoSec"
-  ],
   "horusecCliContainerBindProjectPath": "test",
   "horusecCliHeaders": {
     "X-Headers": "some-other-value"
