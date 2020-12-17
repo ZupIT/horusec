@@ -43,9 +43,8 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		analysis := AnalysisMock()
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		outputAnalysis := `[
 			{"line":"-----BEGIN RSA PRIVATE KEY----- # nohorus","offender":"-----BEGIN RSA PRIVATE KEY-----","commit":"736d81a5a1dc3a14a88a526c01c99a9ba50b7af7","repo":"code","rule":"Asymmetric Private Key","commitMessage":"Adding gitleaks\n","author":"Wilian Gabriel","email":"wilian.silva@zup.com.br","file":"deployments/certs/ca-key.pem","date":"2020-05-06T16:15:25-03:00","tags":"key, AsymmetricPrivateKey"},
@@ -76,9 +75,8 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 	t.Run("Should run no error when empty output", func(t *testing.T) {
 		analysis := AnalysisMock()
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -95,9 +93,8 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
 		analysis := AnalysisMock()
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -114,9 +111,8 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
 		analysis := AnalysisMock()
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -136,9 +132,8 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
+		config := &cliConfig.Config{}
+		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

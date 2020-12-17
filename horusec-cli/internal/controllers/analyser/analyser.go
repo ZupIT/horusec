@@ -71,7 +71,7 @@ type Analyser struct {
 	monitor           *horusec.Monitor
 	dockerSDK         docker.Interface
 	analysis          *horusec.Analysis
-	config            *cliConfig.Config
+	config            cliConfig.IConfig
 	analysisUseCases  analysisUseCases.Interface
 	languageDetect    languageDetect.Interface
 	printController   printresults.Interface
@@ -79,7 +79,7 @@ type Analyser struct {
 	formatterService  formatters.IService
 }
 
-func NewAnalyser(config *cliConfig.Config) Interface {
+func NewAnalyser(config cliConfig.IConfig) Interface {
 	useCases := analysisUseCases.NewAnalysisUseCases()
 	analysis := useCases.NewAnalysisRunning()
 	dockerAPI := docker.NewDockerAPI(dockerClient.NewDockerClient(), config, analysis.ID)
@@ -153,7 +153,7 @@ func (a *Analyser) setMonitor(monitor *horusec.Monitor) {
 
 func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
 	for _, language := range langs {
-		for _, projectSubPath := range a.config.WorkDir.GetArrayByLanguage(language) {
+		for _, projectSubPath := range a.config.GetWorkDir().GetArrayByLanguage(language) {
 			if a.shouldAnalysePath(projectSubPath) {
 				a.logProjectSubPath(language, projectSubPath)
 				a.mapDetectVulnerabilityByLanguage()[language](projectSubPath)
@@ -167,10 +167,10 @@ func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
 func (a *Analyser) runMonitorTimeout(monitor int64) {
 	if monitor <= 0 {
 		a.dockerSDK.DeleteContainersFromAPI()
-		a.config.IsTimeout = true
+		a.config.SetIsTimeout(true)
 	}
 
-	if !a.monitor.IsFinished() && !a.config.IsTimeout {
+	if !a.monitor.IsFinished() && !a.config.GetIsTimeout() {
 		logger.LogInfoWithLevel(
 			fmt.Sprintf(messages.MsgInfoMonitorTimeoutIn+strconv.Itoa(int(monitor))+"s"), logger.InfoLevel)
 		time.Sleep(time.Duration(a.config.GetMonitorRetryInSeconds()) * time.Second)
@@ -310,8 +310,8 @@ func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
 func (a *Analyser) setFalsePositive() {
 	a.analysis = a.analysis.
 		SetFalsePositivesAndRiskAcceptInVulnerabilities(
-			a.config.GetFalsePositiveHashesList(), a.config.GetRiskAcceptHashesList())
+			a.config.GetFalsePositiveHashes(), a.config.GetRiskAcceptHashes())
 
-	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashesList())
-	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashesList())
+	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashes())
+	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashes())
 }

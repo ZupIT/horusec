@@ -42,9 +42,8 @@ func getAnalysis() *horusec.Analysis {
 }
 
 func TestNewFormatter(t *testing.T) {
-	config := &cliConfig.Config{
-		WorkDir: &workdir.WorkDir{},
-	}
+	config := &cliConfig.Config{}
+	config.SetWorkDir(&workdir.WorkDir{})
 
 	service := formatters.NewFormatterService(nil, nil, config, &horusec.Monitor{})
 
@@ -55,9 +54,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return error when start analysis", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -75,9 +73,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should execute analysis without error", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 		output := `{"issues": [{"dependency": "jinja2","vulnerable_below": "2.7.2","installed_version": "2.7.2","description": "The default configuration for bccache.FileSystemBytecodeCache in Jinja2 before 2.7.2 does not properly create temporary files, which allows local users to gain privileges via a crafted .cache file with a name starting with __jinja2_ in /tmp.","id": "123"}]}`
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -95,9 +92,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return nil when output is empty analysis", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -115,9 +111,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return nil when output is wrong format analysis", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -134,9 +129,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
+		config := &cliConfig.Config{}
+		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

@@ -55,6 +55,15 @@ func GetEnvOrDefaultBool(env string, defaultValue bool) bool {
 	return strings.EqualFold(value, "true") || value == "1"
 }
 
+func GetEnvOrDefaultInterface(env string, defaultValue interface{}) interface{} {
+	value := os.Getenv(env)
+	if value == "" {
+		return defaultValue
+	}
+
+	return value
+}
+
 func GetHorusecManagerURL() string {
 	return GetEnvOrDefault("HORUSEC_MANAGER_URL", "http://localhost:8043")
 }

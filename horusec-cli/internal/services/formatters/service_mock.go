@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	utilsMock "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -116,4 +117,9 @@ func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, 
 
 func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *horusec.Vulnerability) {
 	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
+}
+
+func (m *Mock) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	args := m.MethodCalled("GetToolsConfig")
+	return args.Get(0).(map[tools.Tool]toolsconfig.ToolConfig)
 }

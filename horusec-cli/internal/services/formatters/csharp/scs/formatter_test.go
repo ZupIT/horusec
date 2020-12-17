@@ -30,9 +30,8 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &horusec.Analysis{}
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "{\"Filename\": \"Vulnerabilities.cs(11,22)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS1234\", \"IssueText\": \"test/[/src/test\"}" +
 			"{\"Filename\": \"Vulnerabilities.cs(33,44)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0021\", \"IssueText\": \"test\"}" +
@@ -56,9 +55,8 @@ func TestParseOutput(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "Could not find any project in test"
 
@@ -74,9 +72,9 @@ func TestParseOutput(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "securitycodescan",
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+		config.SetToolsToIgnore([]string{"securitycodescan"})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
@@ -87,9 +85,8 @@ func TestParseOutput(t *testing.T) {
 
 func TestParseStringToStruct(t *testing.T) {
 	t.Run("Should return error when unmarshall a invalid data", func(t *testing.T) {
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(&horusec.Analysis{}, nil, config, &horusec.Monitor{})
 

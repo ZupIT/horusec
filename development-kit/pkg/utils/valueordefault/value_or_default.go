@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package text
+package valueordefault
+
+import "os"
 
 func GetStringValueOrDefault(data, defaultValue string) string {
 	if data != "" {
@@ -21,9 +23,45 @@ func GetStringValueOrDefault(data, defaultValue string) string {
 
 	return defaultValue
 }
-
+func GetPathOrCurrentPath(path string) string {
+	if path != "" {
+		return path
+	}
+	currentPath, err := os.Getwd()
+	if err != nil {
+		return "./"
+	}
+	return currentPath
+}
 func GetInt64ValueOrDefault(data, defaultValue int64) int64 {
 	if data != 0 {
+		return data
+	}
+
+	return defaultValue
+}
+
+func GetSliceStringValueOrDefault(data, defaultValue []string) []string {
+	if len(data) > 0 {
+		return data
+	}
+
+	return defaultValue
+}
+func GetMapStringStringValueOrDefault(data, defaultValue map[string]string) map[string]string {
+	if len(data) > 0 {
+		return data
+	}
+
+	return defaultValue
+}
+func GetInterfaceValueOrDefault(data, defaultValue interface{}) interface{} {
+	if data != nil {
+		if _, ok := data.(map[string]interface{}); ok {
+			if len(data.(map[string]interface{})) == 0 {
+				return defaultValue
+			}
+		}
 		return data
 	}
 

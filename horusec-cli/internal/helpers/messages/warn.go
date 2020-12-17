@@ -29,7 +29,9 @@ const (
 		"that are not considered to be analyzed. To see more details use flag --log-level=debug"
 	MsgWarnGitHistoryEnable = "{HORUSEC_CLI} Starting the analysis with git history enabled. " +
 		"ATTENTION the waiting time can be longer when this option is enabled!"
-	MsgWarnNetCoreDeprecated = "{HORUSEC_CLI} 'netCore' key in workdir will change to 'csharp', " +
-		"please change in your horusec-config.json"
+	MsgWarnNetCoreDeprecated = "{HORUSEC_CLI} The 'netcore' key will be removed in the next release after 23 dec 2020," +
+		" please use csharp key in workdir"
+	MsgWarnToolsToIgnoreDeprecated = "{HORUSEC_CLI} The option 'tools to ignore' key will be removed in the next release" +
+		" after 16 jan 2021, please use tools config option"
 	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the list of vulnerabilities pointed out by Horusec: "
 )

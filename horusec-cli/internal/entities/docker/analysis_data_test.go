@@ -22,9 +22,8 @@ import (
 func TestIsValid(t *testing.T) {
 	t.Run("Should return false for valid data ", func(t *testing.T) {
 		data := &AnalysisData{
-			Image: "test",
-			Tag:   "test",
-			CMD:   "test",
+			ImagePath: "docker.io/test:latest",
+			CMD:       "test",
 		}
 
 		assert.False(t, data.IsInvalid())
@@ -37,13 +36,18 @@ func TestIsValid(t *testing.T) {
 }
 
 func TestGetContainerImageNameWithTag(t *testing.T) {
-	t.Run("Should success get container image name ", func(t *testing.T) {
+	t.Run("Should success set image path in config path", func(t *testing.T) {
 		data := &AnalysisData{
-			Image: "test",
-			Tag:   "test",
-			CMD:   "test",
+			CMD: "test",
 		}
-
-		assert.NotEmpty(t, data.GetContainerImageNameWithTag())
+		data.SetFullImagePath("other-host.io/t/test:latest", "t", "v1.0.0")
+		assert.Equal(t, "other-host.io/t/test:latest", data.ImagePath)
+	})
+	t.Run("Should success set image path default", func(t *testing.T) {
+		data := &AnalysisData{
+			CMD: "test",
+		}
+		data.SetFullImagePath("", "t", "v1.0.0")
+		assert.NotEmpty(t, "docker.io/t:v1.0.0", data.ImagePath)
 	})
 }

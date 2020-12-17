@@ -44,12 +44,12 @@ type Interface interface {
 type API struct {
 	ctx                    goContext.Context
 	dockerClient           dockerService.Interface
-	config                 *cliConfig.Config
+	config                 cliConfig.IConfig
 	analysisID             uuid.UUID
 	pathDestinyInContainer string
 }
 
-func NewDockerAPI(docker dockerService.Interface, config *cliConfig.Config, analysisID uuid.UUID) Interface {
+func NewDockerAPI(docker dockerService.Interface, config cliConfig.IConfig, analysisID uuid.UUID) Interface {
 	return &API{
 		ctx:                    goContext.Background(),
 		dockerClient:           docker,
@@ -64,34 +64,24 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
 
-	canonicalURL, imageNameWithTag := d.configureImagePath(data)
-	if err := d.pullNewImage(canonicalURL, imageNameWithTag); err != nil {
+	if err := d.pullNewImage(data.ImagePath); err != nil {
 		return "", err
 	}
 
-	return d.logStatusAndExecuteCRDContainer(imageNameWithTag, d.replaceCMDAnalysisID(data.CMD))
+	return d.logStatusAndExecuteCRDContainer(data.ImagePath, d.replaceCMDAnalysisID(data.CMD))
 }
 
-func (d *API) configureImagePath(data *dockerEntities.AnalysisData) (canonicalURL, imageNameWithTag string) {
-	imageNameWithTag = data.GetContainerImageNameWithTag()
-	return d.setCanonicalImageURL(imageNameWithTag), imageNameWithTag
-}
-
-func (d *API) setCanonicalImageURL(imageNameWithTag string) string {
-	return fmt.Sprintf("docker.io/%s", imageNameWithTag)
-}
-
-func (d *API) pullNewImage(canonicalURL, imageNameWithTag string) error {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imageNameWithTag)
-	if imageNotExist, err := d.checkImageNotExists(imageNameWithTag); err != nil || !imageNotExist {
+func (d *API) pullNewImage(imagePath string) error {
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imagePath)
+	if imageNotExist, err := d.checkImageNotExists(imagePath); err != nil || !imageNotExist {
 		return err
 	}
 
-	return d.downloadImage(canonicalURL)
+	return d.downloadImage(imagePath)
 }
 
-func (d *API) downloadImage(canonicalURL string) error {
-	reader, err := d.dockerClient.ImagePull(d.ctx, canonicalURL, dockerTypes.ImagePullOptions{})
+func (d *API) downloadImage(imagePath string) error {
+	reader, err := d.dockerClient.ImagePull(d.ctx, imagePath, dockerTypes.ImagePullOptions{})
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err, logger.ErrorLevel)
 		return err
@@ -107,9 +97,9 @@ func (d *API) downloadImage(canonicalURL string) error {
 	return nil
 }
 
-func (d *API) checkImageNotExists(imageNameWithTag string) (bool, error) {
+func (d *API) checkImageNotExists(imagePath string) (bool, error) {
 	args := dockerTypesFilters.NewArgs()
-	args.Add("reference", imageNameWithTag)
+	args.Add("reference", imagePath)
 	options := dockerTypes.ImageListOptions{Filters: args}
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)
@@ -275,9 +265,9 @@ func (d *API) DeleteContainersFromAPI() {
 
 func (d *API) getSourceFolder() (path string) {
 	if d.config.GetContainerBindProjectPath() != "" {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.ContainerBindProjectPath, d.analysisID.String())
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.GetContainerBindProjectPath(), d.analysisID.String())
 	} else {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.ProjectPath, d.analysisID.String())
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.GetProjectPath(), d.analysisID.String())
 	}
 
 	separator := path[1:2]

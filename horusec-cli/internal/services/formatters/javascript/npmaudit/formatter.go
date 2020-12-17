@@ -166,12 +166,12 @@ func isModuleInScannerText(isFoundModule bool, module, scannerText string) bool 
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) getConfigCMD(projectSubPath string) string {

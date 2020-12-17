@@ -42,9 +42,8 @@ func getAnalysis() *horusec.Analysis {
 }
 
 func TestNewFormatter(t *testing.T) {
-	config := &cliConfig.Config{
-		WorkDir: &workdir.WorkDir{},
-	}
+	config := &cliConfig.Config{}
+	config.SetWorkDir(&workdir.WorkDir{})
 
 	service := formatters.NewFormatterService(nil, nil, config, &horusec.Monitor{})
 
@@ -55,9 +54,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return error when start analysis", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -75,9 +73,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return analysis bandit without error", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -96,9 +93,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return analysis bandit without error", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -117,9 +113,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return analysis bandit without error with issue of informative", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `{"results": [{"issue_text": "Use of assert detected. The enclosed code will be removed when compiling to optimized byte code."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -138,9 +133,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should return nil when output is wrong format analysis", func(t *testing.T) {
 		analysis := getAnalysis()
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -157,9 +151,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
+		config := &cliConfig.Config{}
+		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

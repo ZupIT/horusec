@@ -60,12 +60,12 @@ func (f *Formatter) startFlawfinder(projectSubPath string) error {
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {

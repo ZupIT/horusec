@@ -117,10 +117,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GoSec),
 		Language: languages.Go,
 	}
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
 }

@@ -66,12 +66,12 @@ func (f *Formatter) startEsLint(projectSubPath string) error {
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
 		Language: languages.Javascript,
 	}
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Eslint].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) processOutput(output string) {

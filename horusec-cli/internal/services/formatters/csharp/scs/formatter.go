@@ -121,13 +121,13 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image: ImageName,
-		Tag:   ImageTag,
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(),
-			projectSubPath, "*.csproj"), tools.SecurityCodeScan),
+	analysisData := &dockerEntities.AnalysisData{
+		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) verifyIsCsProjError(output string, err error) error {

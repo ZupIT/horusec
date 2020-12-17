@@ -22,11 +22,11 @@ import (
 )
 
 func TestGetCommitAuthor(t *testing.T) {
+	c := &config.Config{}
+	c.SetProjectPath("../../../../")
+	c.SetEnableCommitAuthor(true)
 	service := Service{
-		config: &config.Config{
-			ProjectPath:        "../../../../",
-			EnableCommitAuthor: true,
-		},
+		config: c,
 	}
 
 	t.Run("Should success get commit author", func(t *testing.T) {

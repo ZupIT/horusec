@@ -39,11 +39,11 @@ type Interface interface {
 }
 
 type LanguageDetect struct {
-	configs    *config.Config
+	configs    config.IConfig
 	analysisID uuid.UUID
 }
 
-func NewLanguageDetect(configs *config.Config, analysisID uuid.UUID) Interface {
+func NewLanguageDetect(configs config.IConfig, analysisID uuid.UUID) Interface {
 	return &LanguageDetect{
 		analysisID: analysisID,
 		configs:    configs,
@@ -148,12 +148,10 @@ func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 }
 
 func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
-	if ld.configs.GetFilesOrPathsToIgnore() != "" {
-		for _, value := range strings.Split(ld.configs.GetFilesOrPathsToIgnore(), ",") {
-			matched, _ := doublestar.Match(strings.TrimSpace(value), path)
-			if matched {
-				return true
-			}
+	for _, value := range ld.configs.GetFilesOrPathsToIgnore() {
+		matched, _ := doublestar.Match(strings.TrimSpace(value), path)
+		if matched {
+			return true
 		}
 	}
 	return false
