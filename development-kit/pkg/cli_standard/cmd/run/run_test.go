@@ -16,12 +16,8 @@ package run
 
 import (
 	"bytes"
-	"io/ioutil"
-	"os"
+	"errors"
 	"testing"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/regular"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/jvm/and"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/google/uuid"
@@ -29,11 +25,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestController struct {
+type TestControllerNoError struct {
 }
 
-func (t *TestController) StartAnalysis() error {
+func (t *TestControllerNoError) StartAnalysis() error {
 	return nil
+}
+
+type TestControllerWithError struct {
+}
+
+func (t *TestControllerWithError) StartAnalysis() error {
+	return errors.New("test")
 }
 
 func TestNewRunCommand(t *testing.T) {
@@ -46,11 +49,12 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+
 	t.Run("Should return error because not exists path to run in analysis", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
 		configs.ProjectPath = "./not exists path"
-		cmd := NewRunCommand(configs, &TestController{})
+		cmd := NewRunCommand(configs, &TestControllerNoError{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -60,11 +64,12 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 
 		assert.Error(t, cobraCmd.Execute())
 	})
+
 	t.Run("Should return error because output is empty to run in analysis", func(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = ""
 		configs.ProjectPath = "./"
-		cmd := NewRunCommand(configs, &TestController{})
+		cmd := NewRunCommand(configs, &TestControllerNoError{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -74,11 +79,10 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 
 		assert.Error(t, cobraCmd.Execute())
 	})
-	t.Run("Should return success in analysis with kotlin", func(t *testing.T) {
+
+	t.Run("Should return success in analysis", func(t *testing.T) {
 		configs := config.NewConfig()
-		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
-		configs.ProjectPath = "../../../engines/examples/kotlin-hardcodedpass"
-		cmd := NewRunCommand(configs, &TestController{})
+		cmd := NewRunCommand(configs, &TestControllerNoError{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -87,17 +91,11 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
-		content, err := ioutil.ReadFile(configs.OutputFilePath)
-		assert.NoError(t, err)
-		strContent := string(content)
-		assert.Contains(t, strContent, and.NewJvmAndPotentialAndroidSQLInjection().Metadata.ID)
-		assert.NoError(t, os.RemoveAll(configs.OutputFilePath))
 	})
-	t.Run("Should return success in analysis with java", func(t *testing.T) {
+
+	t.Run("Should return error in analysis", func(t *testing.T) {
 		configs := config.NewConfig()
-		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
-		configs.ProjectPath = "../../../engines/examples/java-hardcodedpass"
-		cmd := NewRunCommand(configs, &TestController{})
+		cmd := NewRunCommand(configs, &TestControllerWithError{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -105,10 +103,6 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		cobraCmd.SetOut(stdoutMock)
 		logrus.SetOutput(stdoutMock)
 
-		assert.NoError(t, cobraCmd.Execute())
-		content, err := ioutil.ReadFile(configs.OutputFilePath)
-		assert.NoError(t, err)
-		assert.Contains(t, string(content), regular.NewJavaRegularInsecureRandomNumberGenerator().Metadata.ID)
-		assert.NoError(t, os.RemoveAll(configs.OutputFilePath))
+		assert.Error(t, cobraCmd.Execute())
 	})
 }

@@ -17,7 +17,6 @@ package horusecnodejs
 import (
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/stretchr/testify/assert"
@@ -30,9 +29,9 @@ func TestStartAnalysis(t *testing.T) {
 
 		service.On("LogDebugWithReplace")
 		service.On("SetToolFinishedAnalysis")
-		service.On("LogAnalysisError")
+		service.On("SetAnalysisError")
 		service.On("ToolIsToIgnore").Return(false)
-		service.On("GetEngineConfig").Return(config.NewConfig())
+		service.On("GetProjectPathWithWorkdir").Return(".")
 		service.On("ParseFindingsToVulnerabilities").Return(nil)
 
 		assert.NotPanics(t, func() {
@@ -40,6 +39,21 @@ func TestStartAnalysis(t *testing.T) {
 		})
 
 		assert.Empty(t, len(analysis.Errors))
+	})
+
+	t.Run("should return error when getting text unit", func(t *testing.T) {
+		service := &formatters.Mock{}
+
+		service.On("LogDebugWithReplace")
+		service.On("SetToolFinishedAnalysis")
+		service.On("SetAnalysisError")
+		service.On("ToolIsToIgnore").Return(false)
+		service.On("GetProjectPathWithWorkdir").Return("!!!")
+		service.On("ParseFindingsToVulnerabilities").Return(nil)
+
+		assert.NotPanics(t, func() {
+			NewFormatter(service).StartAnalysis("")
+		})
 	})
 
 	t.Run("should ignore this tool", func(t *testing.T) {

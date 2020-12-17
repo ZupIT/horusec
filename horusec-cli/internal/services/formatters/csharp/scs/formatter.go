@@ -56,8 +56,12 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
-	if errCsProj := f.verifyIsCsProjError(output, err); err != nil || errCsProj != nil {
+	if err != nil {
 		return err
+	}
+
+	if errCsproj := f.verifyIsCsProjError(output, err); errCsproj != nil {
+		return errCsproj
 	}
 
 	f.parseOutput(output)
