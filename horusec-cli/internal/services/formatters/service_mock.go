@@ -123,3 +123,8 @@ func (m *Mock) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
 	args := m.MethodCalled("GetToolsConfig")
 	return args.Get(0).(map[tools.Tool]toolsconfig.ToolConfig)
 }
+
+func (m *Mock) IsDockerDisabled() bool {
+	args := m.MethodCalled("IsDockerDisabled")
+	return args.Get(0).(bool)
+}
