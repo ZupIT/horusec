@@ -21,10 +21,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp/and"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp/or"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp/regular"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Interface interface {
 	GetAllRules() (rules []engine.Rule)
+	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
 }
 
 type Rules struct{}
@@ -47,6 +49,16 @@ func (r *Rules) GetAllRules() (rules []engine.Rule) {
 	}
 
 	return rules
+}
+
+func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
+	textUnit, err := text.LoadDirIntoSingleUnit(projectPath, r.getExtensions())
+	logger.LogDebugJSON("Text Unit selected is: ", textUnit)
+	return []engine.Unit{textUnit}, err
+}
+
+func (r *Rules) getExtensions() []string {
+	return []string{".cs", ".vb", ".cshtml", ".csproj", ".xml"}
 }
 
 func allRulesCsharpRegular() []text.TextRule {

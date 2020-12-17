@@ -16,7 +16,6 @@ package controllers
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/leaks"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -35,42 +34,16 @@ func NewAnalysis(configs *config.Config) *Analysis {
 }
 
 func (a *Analysis) StartAnalysis() error {
-	textUnit, err := a.getTextUnit()
+	textUnit, err := a.serviceRules.GetTextUnitByRulesExt(a.configs.GetProjectPath())
 	if err != nil {
 		return err
 	}
 
-	return engine.RunOutputInJSON(textUnit, a.getAllRules(), a.getOutputFilePath())
-}
-
-func (a *Analysis) getTextUnit() ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(a.configs.GetProjectPath(), 5, a.getExtensions())
-	units := a.parseTextUnitsToUnits(textUnits)
-	logger.LogDebugJSON("Texts Units selected are: ", units)
-	return units, err
-}
-
-func (a *Analysis) getExtensions() []string {
-	return []string{"**"}
+	return engine.RunOutputInJSON(textUnit, a.getAllRules(), a.configs.GetOutputFilePath())
 }
 
 func (a *Analysis) getAllRules() []engine.Rule {
 	allRules := a.serviceRules.GetAllRules()
 	logger.LogDebugJSON("All rules selected are: ", allRules)
 	return allRules
-}
-
-func (a *Analysis) getOutputFilePath() string {
-	outputFilePath := a.configs.GetOutputFilePath()
-	logger.LogDebugWithLevel("Sending units and rules to engine "+
-		" and expected response in path: ", logger.DebugLevel, outputFilePath)
-	return outputFilePath
-}
-
-func (a *Analysis) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-
-	return units
 }

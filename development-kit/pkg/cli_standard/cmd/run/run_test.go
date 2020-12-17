@@ -20,15 +20,21 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/regular"
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/jvm/and"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	javaAnalysis "github.com/ZupIT/horusec/development-kit/pkg/engines/java/analysis"
-	kotlinAnalysis "github.com/ZupIT/horusec/development-kit/pkg/engines/kotlin/analysis"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/java/regular"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/engine/advisories/jvm/and"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
+
+type TestController struct {
+}
+
+func (t *TestController) StartAnalysis() error {
+	return nil
+}
 
 func TestNewRunCommand(t *testing.T) {
 	t.Run("Should create new run and not return empty", func(t *testing.T) {
@@ -44,8 +50,7 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
 		configs.ProjectPath = "./not exists path"
-		controller := kotlinAnalysis.NewAnalysis(configs)
-		cmd := NewRunCommand(configs, controller)
+		cmd := NewRunCommand(configs, &TestController{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -59,8 +64,7 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = ""
 		configs.ProjectPath = "./"
-		controller := kotlinAnalysis.NewAnalysis(configs)
-		cmd := NewRunCommand(configs, controller)
+		cmd := NewRunCommand(configs, &TestController{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -74,8 +78,7 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
 		configs.ProjectPath = "../../../engines/examples/kotlin-hardcodedpass"
-		controller := kotlinAnalysis.NewAnalysis(configs)
-		cmd := NewRunCommand(configs, controller)
+		cmd := NewRunCommand(configs, &TestController{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 
@@ -94,8 +97,7 @@ func TestRun_CreateCobraCmd(t *testing.T) {
 		configs := config.NewConfig()
 		configs.OutputFilePath = uuid.New().String() + "-tmp.json"
 		configs.ProjectPath = "../../../engines/examples/java-hardcodedpass"
-		controller := javaAnalysis.NewAnalysis(configs)
-		cmd := NewRunCommand(configs, controller)
+		cmd := NewRunCommand(configs, &TestController{})
 
 		cobraCmd := cmd.CreateCobraCmd()
 

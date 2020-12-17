@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:lll multiple regex is not possible broken lines
 package java
 
 import (
@@ -21,10 +22,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/or"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/regular"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/jvm"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Interface interface {
 	GetAllRules() (rules []engine.Rule)
+	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
 }
 
 type Rules struct {
@@ -57,6 +60,16 @@ func (r *Rules) addJavaRules(rules []engine.Rule) []engine.Rule {
 	}
 
 	return rules
+}
+
+func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
+	textUnit, err := text.LoadDirIntoSingleUnit(projectPath, r.getExtensions())
+	logger.LogDebugJSON("Text Unit selected is: ", textUnit)
+	return []engine.Unit{textUnit}, err
+}
+
+func (r *Rules) getExtensions() []string {
+	return []string{".java"}
 }
 
 func allRulesJavaRegular() []text.TextRule {

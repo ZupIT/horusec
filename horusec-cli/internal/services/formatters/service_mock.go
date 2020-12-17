@@ -16,7 +16,6 @@ package formatters
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -100,9 +99,9 @@ func (m *Mock) GetFilepathFromFilename(_ string) string {
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetEngineConfig(_ string) *config.Config {
-	args := m.MethodCalled("GetEngineConfig")
-	return args.Get(0).(*config.Config)
+func (m *Mock) GetProjectPathWithWorkdir(_ string) string {
+	args := m.MethodCalled("GetProjectPathWithWorkdir")
+	return args.Get(0).(string)
 }
 
 func (m *Mock) SetCommitAuthor(_ *horusec.Vulnerability) *horusec.Vulnerability {

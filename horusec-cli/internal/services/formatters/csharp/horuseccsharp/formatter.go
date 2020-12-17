@@ -16,7 +16,7 @@ package horuseccsharp
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp/analysis"
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -26,11 +26,13 @@ import (
 
 type Formatter struct {
 	formatters.IService
+	csharp.Interface
 }
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
 		service,
+		csharp.NewRules(),
 	}
 }
 
@@ -47,11 +49,21 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecCsharp)
-	findings := f.execEngineAnalysis(projectSubPath)
+
+	findings, err := f.execEngineAnalysis(projectSubPath)
+	if err != nil {
+		return err
+	}
+
 	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecCsharp, languages.CSharp)
 }
 
-func (f *Formatter) execEngineAnalysis(projectSubPath string) []engine.Finding {
-	service := analysis.NewAnalysis(f.GetEngineConfig(projectSubPath))
-	return service.StartAnalysisCustomRules(nil)
+func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
+	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
+	if err != nil {
+		return nil, err
+	}
+
+	allRules := f.GetAllRules()
+	return engine.Run(textUnit, allRules), nil
 }

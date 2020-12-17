@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	engine "github.com/ZupIT/horusec-engine"
-	cliStandard "github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -52,7 +51,7 @@ type IService interface {
 	GetCodeWithMaxCharacters(code string, column int) string
 	ToolIsToIgnore(tool tools.Tool) bool
 	GetFilepathFromFilename(filename string) string
-	GetEngineConfig(projectSubPath string) *cliStandard.Config
+	GetProjectPathWithWorkdir(projectSubPath string) string
 	SetCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability
 	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error
 	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
@@ -194,16 +193,12 @@ func (s *Service) GetFilepathFromFilename(filename string) string {
 	return filepath
 }
 
-func (s *Service) GetEngineConfig(projectSubPath string) *cliStandard.Config {
-	var projectPath string
-
+func (s *Service) GetProjectPathWithWorkdir(projectSubPath string) string {
 	if projectSubPath != "" && projectSubPath[0:1] == string(os.PathSeparator) {
-		projectPath = fmt.Sprintf("%s%s", s.GetConfigProjectPath(), projectSubPath)
-	} else {
-		projectPath = fmt.Sprintf("%s%s%s", s.GetConfigProjectPath(), string(os.PathSeparator), projectSubPath)
+		return fmt.Sprintf("%s%s", s.GetConfigProjectPath(), projectSubPath)
 	}
 
-	return &cliStandard.Config{ProjectPath: projectPath}
+	return fmt.Sprintf("%s%s%s", s.GetConfigProjectPath(), string(os.PathSeparator), projectSubPath)
 }
 
 func (s *Service) SetCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
@@ -248,11 +243,16 @@ func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, 
 		Line:         strconv.Itoa(findings[index].SourceLocation.Line),
 		Column:       strconv.Itoa(findings[index].SourceLocation.Column),
 		Confidence:   findings[index].Confidence,
-		File:         s.RemoveSrcFolderFromPath(findings[index].SourceLocation.Filename),
+		File:         s.RemoveSrcFolderFromPath(s.removeHorusecFolder(findings[index].SourceLocation.Filename)),
 		Code:         s.GetCodeWithMaxCharacters(findings[index].CodeSample, findings[index].SourceLocation.Column),
 		Details:      findings[index].Name + "\n" + findings[index].Description,
 		SecurityTool: tool,
 		Language:     language,
 		Severity:     severity.ParseStringToSeverity(findings[index].Severity),
 	}
+}
+
+func (s *Service) removeHorusecFolder(filepath string) string {
+	toRemove := fmt.Sprintf("/.horusec/%s", s.analysis.ID)
+	return strings.ReplaceAll(filepath, toRemove, "")
 }

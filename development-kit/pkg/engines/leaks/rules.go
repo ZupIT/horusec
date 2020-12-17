@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:lll multiple regex is not possible broken lines
 package leaks
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/leaks/regular"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Interface interface {
 	GetAllRules() (rules []engine.Rule)
+	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
 }
 
 type Rules struct{}
@@ -41,6 +44,25 @@ func (r *Rules) addLeaksRules(rules []engine.Rule) []engine.Rule {
 	}
 
 	return rules
+}
+
+func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
+	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
+	units := r.parseTextUnitsToUnits(textUnits)
+	logger.LogDebugJSON("Texts Units selected are: ", units)
+	return units, err
+}
+
+func (r *Rules) getExtensions() []string {
+	return []string{"**"}
+}
+
+func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
+	for index := range textUnits {
+		units = append(units, textUnits[index])
+	}
+
+	return units
 }
 
 func allRulesLeaksRegular() []text.TextRule {
