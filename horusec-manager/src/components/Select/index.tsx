@@ -25,6 +25,8 @@ interface Props {
   title?: string;
   options: any[];
   disabled?: boolean;
+  fixedItemTitle?: string;
+  onClickFixedItem?: () => void;
   keyLabel: string;
   onChangeValue: (value: any) => any;
   className?: string;
@@ -49,6 +51,8 @@ const Select: React.FC<Props> = ({
   width,
   optionsHeight,
   selectText,
+  fixedItemTitle,
+  onClickFixedItem,
 }) => {
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);
@@ -114,11 +118,21 @@ const Select: React.FC<Props> = ({
             <Styled.OptionItem
               rounded={rounded}
               key={index}
+              className="options-item"
               onClick={() => handleSelectedValue(option)}
             >
               {option[keyLabel]}
             </Styled.OptionItem>
           ))}
+
+          {fixedItemTitle ? (
+            <Styled.FixedOptionItem
+              rounded={rounded}
+              onClick={onClickFixedItem}
+            >
+              {fixedItemTitle}
+            </Styled.FixedOptionItem>
+          ) : null}
         </Styled.OptionsList>
 
         <Icon name="down" size="12px" />

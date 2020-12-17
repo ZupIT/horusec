@@ -26,14 +26,14 @@ import webhookService from 'services/webhook';
 import AddWebhook from './Add';
 import EditWebhook from './Edit';
 
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 const Webhooks: React.FC = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -51,7 +51,7 @@ const Webhooks: React.FC = () => {
     setLoading(true);
 
     webhookService
-      .getAll(companyID)
+      .getAll(currentWorkspace?.companyID)
       .then((result) => {
         setWebhooks(result?.data?.content);
         setFilteredWebhooks(result?.data?.content);

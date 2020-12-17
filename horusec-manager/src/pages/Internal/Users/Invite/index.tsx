@@ -22,9 +22,9 @@ import { isValidEmail } from 'helpers/validators';
 import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
 import companyService from 'services/company';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface Props {
   isVisible: boolean;
@@ -44,7 +44,7 @@ const InviteToCompany: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -76,7 +76,11 @@ const InviteToCompany: React.FC<Props> = ({
       setLoading(true);
 
       companyService
-        .createUserInCompany(companyID, email.value, role.value)
+        .createUserInCompany(
+          currentWorkspace?.companyID,
+          email.value,
+          role.value
+        )
         .then(() => {
           showSuccessFlash(t('USERS_SCREEN.INVITE_SUCCESS'));
           onConfirm();

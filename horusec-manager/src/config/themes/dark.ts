@@ -85,6 +85,7 @@ export default {
       border: '#FFFFFF',
       hover: '#444447',
       darkBackground: '#343436',
+      highlight: '#F7901E',
     },
 
     flashMessage: {

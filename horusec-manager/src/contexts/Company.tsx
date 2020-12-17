@@ -19,7 +19,6 @@ import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Company } from 'helpers/interfaces/Company';
 import { useHistory } from 'react-router-dom';
-import { setCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTranslation } from 'react-i18next';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
@@ -151,7 +150,6 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
     companyService
       .getOne(companyId)
       .then((res) => {
-        setCurrentCompany(res?.data?.content);
         history.push('/home');
       })
       .catch((err) => {

@@ -19,10 +19,10 @@ import { Dialog, Select, Permissions } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import companyService from 'services/company';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Account } from 'helpers/interfaces/Account';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface Props {
   isVisible: boolean;
@@ -43,7 +43,7 @@ const EditUserRole: React.FC<Props> = ({
   onConfirm,
 }) => {
   const { t } = useTranslation();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -71,7 +71,11 @@ const EditUserRole: React.FC<Props> = ({
     setLoading(true);
 
     companyService
-      .editUserInCompany(companyID, userToEdit.accountID, role.value)
+      .editUserInCompany(
+        currentWorkspace?.companyID,
+        userToEdit.accountID,
+        role.value
+      )
       .then(() => {
         showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
         onConfirm();

@@ -22,11 +22,11 @@ import { isEmptyString } from 'helpers/validators';
 import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
 import repositoryService from 'services/repository';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface Props {
   isVisible: boolean;
@@ -37,7 +37,7 @@ interface Props {
 const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID, authzAdmin, authzMember } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -50,17 +50,17 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const [adminGroup, setAdminGroup] = useState<Field>({
     isValid: false,
-    value: authzAdmin,
+    value: currentWorkspace?.authzAdmin,
   });
 
   const [supervisorGroup, setSupervisorGroup] = useState<Field>({
     isValid: false,
-    value: authzAdmin,
+    value: currentWorkspace?.authzAdmin,
   });
 
   const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
-    value: authzMember,
+    value: currentWorkspace?.authzMember,
   });
 
   const resetFields = () => {
@@ -74,7 +74,7 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       setLoading(true);
 
       repositoryService
-        .create(companyID, name.value, description.value, {
+        .create(currentWorkspace.companyID, name.value, description.value, {
           authzAdmin: adminGroup.value,
           authzMember: userGroup.value,
           authzSupervisor: supervisorGroup.value,

@@ -20,17 +20,17 @@ import { SearchBar, Button, Icon, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { Account } from 'helpers/interfaces/Account';
 
 import InviteToCompany from './Invite';
 import EditUserRole from './Edit';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 const Users: React.FC = () => {
   const { t } = useTranslation();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -49,7 +49,7 @@ const Users: React.FC = () => {
   const fetchData = () => {
     setLoading(true);
     companyService
-      .getUsersInCompany(companyID)
+      .getUsersInCompany(currentWorkspace?.companyID)
       .then((result) => {
         setUsers(result?.data?.content);
         setFilteredUsers(result?.data?.content);
@@ -77,7 +77,7 @@ const Users: React.FC = () => {
   const handleConfirmDeleteUser = () => {
     setDeleteLoading(true);
     companyService
-      .removeUserInCompany(companyID, userToDelete.accountID)
+      .removeUserInCompany(currentWorkspace?.companyID, userToDelete.accountID)
       .then(() => {
         showSuccessFlash(t('USERS_SCREEN.REMOVE_SUCCESS'));
         setUserToDelete(null);
@@ -92,7 +92,7 @@ const Users: React.FC = () => {
   };
 
   // eslint-disable-next-line
-  useEffect(() => fetchData(), []);
+  useEffect(() => fetchData(), [currentWorkspace]);
 
   return (
     <Styled.Wrapper>

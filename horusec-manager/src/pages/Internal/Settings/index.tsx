@@ -29,7 +29,6 @@ import ChangePassword from './ChangePassword';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { clearTokens } from 'helpers/localStorage/tokens';
-import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { useHistory } from 'react-router-dom';
 
 const Settings: React.FC = () => {
@@ -52,7 +51,6 @@ const Settings: React.FC = () => {
       .then(() => {
         history.replace('/auth');
         clearCurrentUser();
-        clearCurrentCompany();
         clearTokens();
         showSuccessFlash(t('SETTINGS_SCREEN.SUCCESS_DELETE'));
       })

@@ -26,10 +26,15 @@ import ReactTooltip from 'react-tooltip';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
-  const { currentWorkspace } = useWorkspace();
+  const {
+    currentWorkspace,
+    allWorkspaces,
+    handleSetCurrentWorkspace,
+  } = useWorkspace();
   const { t } = useTranslation();
   const { authType, disabledBroker } = getCurrentConfig();
 
@@ -148,11 +153,34 @@ const SideMenu: React.FC = () => {
     }
   };
 
+  const handleSelectedWorkspace = (workspace: Workspace) => {
+    handleSetCurrentWorkspace(workspace);
+    history.replace('/home/dashboard');
+    setSelectedRoute(null);
+    setSelectedSubRoute(null);
+  };
+
   return (
     <>
       <Styled.SideMenu>
         <Styled.WrapperLogoRoutes>
           <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+
+          {allWorkspaces && allWorkspaces.length > 0 ? (
+            <Styled.SelectWrapper>
+              <Styled.SelectWorkspace
+                selectText="Selecione"
+                options={allWorkspaces}
+                initialValue={currentWorkspace}
+                onChangeValue={(value) => handleSelectedWorkspace(value)}
+                keyLabel="name"
+                title="WORKSPACE"
+                optionsHeight={`${allWorkspaces.length * 32 + 45}px`}
+                fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
+                onClickFixedItem={() => history.push('/home/workspaces')}
+              />
+            </Styled.SelectWrapper>
+          ) : null}
 
           <Styled.RoutesList>
             {routes.map((route, index) => renderRoute(route, index))}

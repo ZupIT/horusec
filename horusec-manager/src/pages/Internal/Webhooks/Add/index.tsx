@@ -21,7 +21,6 @@ import { useTheme } from 'styled-components';
 import Styled from './styled';
 import { Field } from 'helpers/interfaces/Field';
 import repositoryService from 'services/repository';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { Repository } from 'helpers/interfaces/Repository';
 import { get } from 'lodash';
 import { isValidURL } from 'helpers/validators';
@@ -30,6 +29,7 @@ import webhookService from 'services/webhook';
 import { Webhook, WebhookHeader } from 'helpers/interfaces/Webhook';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { cloneDeep } from 'lodash';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface Props {
   isVisible: boolean;
@@ -48,7 +48,7 @@ const AddWebhook: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
 
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -83,7 +83,7 @@ const AddWebhook: React.FC<Props> = ({
 
     webhookService
       .create(
-        companyID,
+        currentWorkspace?.companyID,
         selectedRepository.repositoryID,
         url.value,
         httpMethod,
@@ -124,13 +124,13 @@ const AddWebhook: React.FC<Props> = ({
 
   useEffect(() => {
     const fetchRepositories = () => {
-      repositoryService.getAll(companyID).then((result) => {
+      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
         setRepositories(result.data.content);
       });
     };
 
     fetchRepositories();
-  }, [companyID]);
+  }, [currentWorkspace]);
 
   return (
     <Dialog

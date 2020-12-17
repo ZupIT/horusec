@@ -19,20 +19,36 @@ import companyService from 'services/company';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { useHistory } from 'react-router-dom';
+import { roles } from 'helpers/enums/roles';
 
 interface WorkspaceCtx {
   currentWorkspace: Workspace;
+  allWorkspaces: Workspace[];
+  handleSetCurrentWorkspace: (workspace: Workspace) => void;
+  isAdminOfWorkspace: boolean;
 }
 
 const WorkspaceContext = React.createContext<WorkspaceCtx>({
   currentWorkspace: null,
+  isAdminOfWorkspace: false,
+  allWorkspaces: [],
+  handleSetCurrentWorkspace: null,
 });
 
 const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace>(null);
+  const [allWorkspaces, setAllWorkspaces] = useState<Workspace[]>([]);
+  const [isAdminOfWorkspace, setIsAdminOfWorkspace] = useState<boolean>(false);
 
   const { dispatchMessage } = useResponseMessage();
   const history = useHistory();
+
+  const handleSetCurrentWorkspace = (workspace: Workspace) => {
+    setCurrentWorkspace(workspace);
+
+    const isAdmin = workspace?.role === roles.ADMIN;
+    setIsAdminOfWorkspace(isAdmin);
+  };
 
   const fetchAll = () => {
     companyService
@@ -41,7 +57,8 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         const workspaces = result?.data?.content as Workspace[];
 
         if (workspaces && workspaces.length > 0) {
-          setCurrentWorkspace(workspaces[0]);
+          setAllWorkspaces(workspaces);
+          handleSetCurrentWorkspace(workspaces[0]);
           history.replace('/home/dashboard');
         } else {
           history.replace('/home/add-workspace');
@@ -62,6 +79,9 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
     <WorkspaceContext.Provider
       value={{
         currentWorkspace,
+        allWorkspaces,
+        isAdminOfWorkspace,
+        handleSetCurrentWorkspace,
       }}
     >
       {children}

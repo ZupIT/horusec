@@ -18,7 +18,6 @@ import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import { SearchBar, Select, Icon, Pagination } from 'components';
 import { useTranslation } from 'react-i18next';
-import { getCurrentCompany } from 'helpers/localStorage/currentCompany';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
@@ -31,6 +30,7 @@ import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { get, find } from 'lodash';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 const INITIAL_PAGE = 1;
 
@@ -39,13 +39,13 @@ const Vulnerabilities: React.FC = () => {
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace } = useWorkspace();
   const [isLoading, setLoading] = useState(true);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
   const [filters, setFilters] = useState<FilterVuln>({
-    companyID: companyID,
+    companyID: currentWorkspace?.companyID,
     repositoryID: null,
     vulnHash: null,
     vulnSeverity: null,
@@ -179,7 +179,7 @@ const Vulnerabilities: React.FC = () => {
 
   useEffect(() => {
     const fetchRepositories = () => {
-      repositoryService.getAll(companyID).then((result) => {
+      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
         setRepositories(result.data.content);
 
         if (result.data?.content.length > 0) {
@@ -195,7 +195,7 @@ const Vulnerabilities: React.FC = () => {
 
     fetchRepositories();
     // eslint-disable-next-line
-  }, [i18n.language]);
+  }, [i18n.language, currentWorkspace]);
 
   return (
     <Styled.Wrapper>

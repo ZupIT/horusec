@@ -364,7 +364,8 @@
     "BACK_ORGANIZATION": "Voltar para organizações",
     "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
-    "LOGOUT": "Sair"
+    "LOGOUT": "Sair",
+    "MANAGE_WORKSPACES": "Gerenciar Workspaces"
   },
 
   "API_ERRORS": {

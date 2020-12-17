@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-export enum localStorageKeys {
-  LANGUAGE = '@HORUSEC:LANGUAGE',
-  THEME = '@HORUSEC:THEME',
-  USER = '@HORUSEC:USER',
-  CONFIG = '@HORUSEC:CONFIG',
-  TOKEN_EXPIRES = '@HORUSEC:TOKEN_EXPIRES',
-  ACCESS_TOKEN = 'access-token',
-  REFRESH_TOKEN = 'refresh-token',
-  MICROFRONTEND = 'isMicrofrontend',
-  AUTHENTICATED = 'isAuthenticated',
+export enum roles {
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  SUPERVISOR = 'supervisor',
 }

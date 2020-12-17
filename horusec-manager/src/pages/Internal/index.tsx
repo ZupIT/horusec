@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import { isAdminOfCompany } from 'helpers/localStorage/currentCompany';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
@@ -27,9 +26,11 @@ import Vulnerabilities from 'pages/Internal/Vulnerabilities';
 import Webhooks from 'pages/Internal/Webhooks';
 import Settings from 'pages/Internal/Settings';
 import AddWorkspace from 'pages/Internal/AddWorkspace';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
+  const { isAdminOfWorkspace } = useWorkspace();
 
   return (
     <InternalLayout>
@@ -50,7 +51,7 @@ function InternalRoutes() {
           exact
           from={`${path}/dashboard`}
           to={
-            isAdminOfCompany()
+            isAdminOfWorkspace
               ? `${path}/dashboard/organization`
               : `${path}/dashboard/repositories`
           }

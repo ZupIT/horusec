@@ -21,6 +21,7 @@ import { Calendar, Select } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { Repository } from 'helpers/interfaces/Repository';
 
 interface FilterProps {
   onApply: (values: FilterValues) => void;
@@ -46,14 +47,17 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   useEffect(() => {
     const fetchRepositories = () => {
       repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        setRepositories(result.data.content);
+        const repositories: Repository[] = result.data.content;
+        setRepositories(repositories);
+
         setFilters({
           ...filters,
-          repositoryID: result?.data?.content[0]?.repositoryID,
+          repositoryID: repositories[0]?.repositoryID,
         });
+
         onApply({
           ...filters,
-          repositoryID: result?.data?.content[0]?.repositoryID,
+          repositoryID: repositories[0]?.repositoryID,
         });
       });
     };
@@ -107,7 +111,9 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         text={t('DASHBOARD_SCREEN.APPLY')}
         rounded
         width={78}
-        onClick={() => onApply(filters)}
+        onClick={() =>
+          onApply({ ...filters, companyID: currentWorkspace.companyID })
+        }
       />
     </Styled.Container>
   );

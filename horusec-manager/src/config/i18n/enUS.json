@@ -364,7 +364,8 @@
     "BACK_ORGANIZATION": "Back to organizations",
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "MANAGE_WORKSPACES": "Manage Workspaces"
   },
 
   "API_ERRORS": {

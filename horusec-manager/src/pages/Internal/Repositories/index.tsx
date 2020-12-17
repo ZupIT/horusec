@@ -21,20 +21,17 @@ import { useTranslation } from 'react-i18next';
 import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import {
-  getCurrentCompany,
-  isAdminOfCompany,
-} from 'helpers/localStorage/currentCompany';
 
 import AddRepository from './Add';
 import EditRepository from './Edit';
 import InviteToRepository from './Invite';
 import Tokens from './Tokens';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
-  const { companyID } = getCurrentCompany();
+  const { currentWorkspace, isAdminOfWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -56,7 +53,7 @@ const Repositories: React.FC = () => {
   const fetchData = () => {
     setLoading(true);
     repositoryService
-      .getAll(companyID)
+      .getAll(currentWorkspace?.companyID)
       .then((result) => {
         setRepositories(result?.data?.content);
         setFilteredRepos(result?.data?.content);
@@ -99,7 +96,7 @@ const Repositories: React.FC = () => {
   };
 
   // eslint-disable-next-line
-  useEffect(() => fetchData(), []);
+  useEffect(() => fetchData(), [currentWorkspace]);
 
   return (
     <Styled.Wrapper>
@@ -109,7 +106,7 @@ const Repositories: React.FC = () => {
           onSearch={(value) => onSearchRepository(value)}
         />
 
-        {isAdminOfCompany() ? (
+        {isAdminOfWorkspace ? (
           <Button
             text={t('REPOSITORIES_SCREEN.CREATE_REPO')}
             rounded
@@ -162,7 +159,7 @@ const Repositories: React.FC = () => {
                       onClick={() => setRepoToEdit(repo)}
                     />
 
-                    {isAdminOfCompany() ? (
+                    {isAdminOfWorkspace ? (
                       <>
                         <Button
                           rounded
