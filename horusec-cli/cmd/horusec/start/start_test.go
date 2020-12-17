@@ -60,8 +60,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -91,8 +91,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -123,8 +123,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
@@ -151,8 +151,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -179,8 +179,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -208,8 +208,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -238,8 +238,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -267,8 +267,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
@@ -295,8 +295,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
 			useCases:           cli.NewCLIUseCases(),
@@ -336,8 +336,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
 			useCases:           cli.NewCLIUseCases(),
@@ -381,8 +381,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
 			useCases:           cli.NewCLIUseCases(),
@@ -420,8 +420,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
 			useCases:           cli.NewCLIUseCases(),

@@ -65,12 +65,12 @@ func (f *Formatter) startBanditAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Bandit),
 		Language: languages.Python,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) parseOutput(output string) {

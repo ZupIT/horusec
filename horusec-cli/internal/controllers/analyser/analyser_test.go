@@ -47,11 +47,10 @@ func TestNewAnalyser(t *testing.T) {
 
 func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
-		configs := &config.Config{
-			EnableGitHistoryAnalysis: true,
-			EnableCommitAuthor:       true,
-		}
-		configs.WorkDir = &workdir.WorkDir{}
+		configs := &config.Config{}
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.SetEnableCommitAuthor(true)
+		configs.SetEnableGitHistoryAnalysis(true)
 
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
@@ -105,7 +104,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	})
 	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetWorkDir(&workdir.WorkDir{})
 
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
@@ -159,7 +158,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	})
 	t.Run("Should run error in language detect", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
+		configs.SetWorkDir(&workdir.WorkDir{})
 
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{}, errors.New("test"))

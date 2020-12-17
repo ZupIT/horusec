@@ -24,7 +24,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 )
 
@@ -33,12 +33,12 @@ type IService interface {
 }
 
 type Service struct {
-	config *cliConfig.Config
+	config config.IConfig
 }
 
-func NewGitService(config *cliConfig.Config) IService {
+func NewGitService(configs config.IConfig) IService {
 	return &Service{
-		config: config,
+		config: configs,
 	}
 }
 
@@ -46,7 +46,7 @@ func (s *Service) GetCommitAuthor(line, filePath string) (commitAuthor horusec.C
 	if !s.existsGitFolderInPath() {
 		return s.getCommitAuthorNotFound()
 	}
-	if s.config.IsCommitAuthorEnable() {
+	if s.config.GetEnableCommitAuthor() {
 		return s.executeGitBlame(line, filePath)
 	}
 
@@ -88,7 +88,7 @@ func (s *Service) executeCMD(line, filePath string) ([]byte, error) {
 		" ^^^^^date^^^^^: ^^^^^%ci^^^^^,%n  ^^^^^commitHash^^^^^:"+
 		" ^^^^^%H^^^^^%n }", lineAndPath)
 
-	cmd.Dir = s.config.ProjectPath
+	cmd.Dir = s.config.GetProjectPath()
 	response, err := cmd.Output()
 	if err != nil {
 		logger.LogErrorWithLevel(
@@ -131,7 +131,7 @@ func (s *Service) getCleanOutput(output []byte) string {
 }
 
 func (s *Service) existsGitFolderInPath() bool {
-	if _, err := os.Stat(file.ReplacePathSeparator(s.config.ProjectPath + "/.git")); os.IsNotExist(err) {
+	if _, err := os.Stat(file.ReplacePathSeparator(s.config.GetProjectPath() + "/.git")); os.IsNotExist(err) {
 		return false
 	}
 

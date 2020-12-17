@@ -63,12 +63,12 @@ func (f *Formatter) startHorusecKotlinAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecKotlin),
 		Language: languages.Kotlin,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecKotlin].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) formatOutput(output string) error {

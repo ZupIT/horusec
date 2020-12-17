@@ -222,12 +222,12 @@ func (f *Formatter) isJavaOutput(fileName string) bool {
 }
 
 func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.SpotBugs),
 		Language: languages.Java,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.SpotBugs].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) verifyOutputErrors(output string) (err error) {

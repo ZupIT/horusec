@@ -40,7 +40,7 @@ var (
 
 type PrintResults struct {
 	analysis         *horusecEntities.Analysis
-	configs          *config.Config
+	configs          config.IConfig
 	totalVulns       int
 	sonarqubeService sonarqube.Interface
 }
@@ -50,7 +50,7 @@ type Interface interface {
 	SetAnalysis(analysis *horusecEntities.Analysis)
 }
 
-func NewPrintResults(analysis *horusecEntities.Analysis, configs *config.Config) Interface {
+func NewPrintResults(analysis *horusecEntities.Analysis, configs config.IConfig) Interface {
 	return &PrintResults{
 		analysis:         analysis,
 		configs:          configs,
@@ -71,7 +71,7 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
-	if pr.configs.IsTimeout {
+	if pr.configs.GetIsTimeout() {
 		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs, logger.ErrorLevel)
 	}
 
@@ -80,9 +80,9 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
-	case pr.configs.PrintOutputType == string(cli.JSON):
+	case pr.configs.GetPrintOutputType() == string(cli.JSON):
 		return pr.runPrintResultsJSON()
-	case pr.configs.PrintOutputType == string(cli.SonarQube):
+	case pr.configs.GetPrintOutputType() == string(cli.SonarQube):
 		return pr.runPrintResultsSonarQube()
 	default:
 		return pr.runPrintResultsText()
@@ -146,10 +146,9 @@ func (pr *PrintResults) isTypeVulnToSkip(vuln *horusecEntities.Vulnerability) bo
 }
 
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
-	listTypesToIgnore := strings.Split(pr.configs.TypesOfVulnerabilitiesToIgnore, ",")
 	ignore = false
 
-	for _, typeToIgnore := range listTypesToIgnore {
+	for _, typeToIgnore := range pr.configs.GetSeveritiesToIgnore() {
 		if strings.EqualFold(vulnerabilityType, strings.TrimSpace(typeToIgnore)) ||
 			vulnerabilityType == string(severity.NoSec) || vulnerabilityType == string(severity.Info) {
 			ignore = true
@@ -177,7 +176,7 @@ func (pr *PrintResults) returnDefaultErrOutputJSON(err error) error {
 }
 
 func (pr *PrintResults) parseFilePathToAbsAndCreateOutputJSON(bytesToWrite []byte) error {
-	completePath, err := filepath.Abs(pr.configs.JSONOutputFilePath)
+	completePath, err := filepath.Abs(pr.configs.GetJSONOutputFilePath())
 	if err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
@@ -255,7 +254,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 
 // nolint
 func (pr *PrintResults) printCommitAuthor(vulnerability *horusecEntities.Vulnerability) {
-	if !pr.configs.IsCommitAuthorEnable() {
+	if !pr.configs.GetEnableCommitAuthor() {
 		return
 	}
 	fmt.Println(fmt.Sprintf("Commit Author: %s", vulnerability.CommitAuthor))
