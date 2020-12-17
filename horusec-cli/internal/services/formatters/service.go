@@ -265,6 +265,6 @@ func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, 
 }
 
 func (s *Service) removeHorusecFolder(filepath string) string {
-	toRemove := fmt.Sprintf("/.horusec/%s", s.analysis.ID)
+	toRemove := fmt.Sprintf("%s/", s.GetConfigProjectPath())
 	return strings.ReplaceAll(filepath, toRemove, "")
 }
