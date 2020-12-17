@@ -17,9 +17,10 @@ package analyser
 import (
 	"bytes"
 	"errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 
@@ -48,9 +49,10 @@ func TestNewAnalyser(t *testing.T) {
 func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.SetWorkDir(&workdir.WorkDir{Go: []string{"test"}})
 		configs.SetEnableCommitAuthor(true)
 		configs.SetEnableGitHistoryAnalysis(true)
+		configs.SetFalsePositiveHashes([]string{"test"})
 
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
@@ -64,6 +66,9 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 			languages.Leaks,
 			languages.HCL,
 			languages.Generic,
+			languages.C,
+			languages.PHP,
+			languages.Yaml,
 		}, nil)
 
 		printResultMock := &printresults.Mock{}
@@ -104,7 +109,8 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 	})
 	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.SetWorkDir(&workdir.WorkDir{Go: []string{"test"}})
+		configs.SetFalsePositiveHashes([]string{"test"})
 
 		languageDetectMock := &languageDetect.Mock{}
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
@@ -118,6 +124,9 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 			languages.Leaks,
 			languages.HCL,
 			languages.Generic,
+			languages.C,
+			languages.PHP,
+			languages.Yaml,
 		}, nil)
 
 		printResultMock := &printresults.Mock{}
