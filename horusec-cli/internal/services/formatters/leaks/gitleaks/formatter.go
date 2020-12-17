@@ -43,7 +43,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.GitLeaks) {
+	if f.ToolIsToIgnore(tools.GitLeaks) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GitLeaks.ToString(), logger.DebugLevel)
 		return
 	}

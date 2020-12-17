@@ -16,22 +16,20 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
-	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
-	"github.com/spf13/cobra"
 	"path/filepath"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-
-	"github.com/iancoleman/strcase"
-
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/google/uuid"
+	"github.com/iancoleman/strcase"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -103,6 +101,9 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	cmd.PersistentFlags().
 		StringVarP(&c.containerBindProjectPath, "container-bind-project-path", "P", c.GetContainerBindProjectPath(),
 			"Used to pass project path in host when running horusec cli inside a container.")
+	cmd.PersistentFlags().
+		BoolVarP(&c.disableDocker, "disable-docker", "D", c.GetDisableDocker(),
+			"Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
 	return c
 }
 
@@ -135,6 +136,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
+	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
 	return c
 }
 
@@ -162,6 +164,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetToolsToIgnore(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvToolsToIgnore, c.toolsToIgnore)))
 	c.SetHeaders(env.GetEnvOrDefaultInterface(EnvHeaders, c.headers))
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
+	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
 	return c
 }
 
@@ -421,6 +424,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"headers":                         c.headers,
 		"toolsConfig":                     c.toolsConfig,
 		"workDir":                         c.workDir,
+		"disableDocker":                   c.disableDocker,
 	}
 }
 
@@ -486,4 +490,12 @@ func (c *Config) replaceCommaToSpaceSliceString(input []string) (response []stri
 		response = append(response, newItem)
 	}
 	return response
+}
+
+func (c *Config) GetDisableDocker() bool {
+	return c.disableDocker
+}
+
+func (c *Config) SetDisableDocker(disableDocker bool) {
+	c.disableDocker = disableDocker
 }

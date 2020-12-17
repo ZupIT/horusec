@@ -37,17 +37,19 @@ type IStart interface {
 }
 
 type Start struct {
-	useCases           cli.Interface
-	configs            config.IConfig
-	analyserController analyser.Interface
-	startPrompt        prompt.Interface
+	useCases               cli.Interface
+	configs                config.IConfig
+	analyserController     analyser.Interface
+	startPrompt            prompt.Interface
+	requirementsController requirements.IRequirements
 }
 
 func NewStartCommand(configs config.IConfig) IStart {
 	return &Start{
-		useCases:    cli.NewCLIUseCases(),
-		configs:     configs,
-		startPrompt: prompt.NewPrompt(),
+		useCases:               cli.NewCLIUseCases(),
+		configs:                configs,
+		startPrompt:            prompt.NewPrompt(),
+		requirementsController: requirements.NewRequirements(),
 	}
 }
 
@@ -96,12 +98,22 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 		_ = cmd.Help()
 		return err
 	}
+
 	s.configs.NormalizeConfigs()
-	if s.configs.GetEnableGitHistoryAnalysis() {
-		requirements.NewRequirements().ValidateGit()
-	}
+	s.validateRequirements()
+
 	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs+string(s.configs.ToBytes(true)), logger.DebugLevel)
 	return nil
+}
+
+func (s *Start) validateRequirements() {
+	if s.configs.GetEnableGitHistoryAnalysis() {
+		s.requirementsController.ValidateGit()
+	}
+
+	if !s.configs.GetDisableDocker() {
+		s.requirementsController.ValidateDocker()
+	}
 }
 
 func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {

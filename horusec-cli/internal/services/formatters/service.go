@@ -36,29 +36,6 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/git"
 )
 
-type IService interface {
-	LogDebugWithReplace(msg string, tool tools.Tool)
-	GetAnalysisID() string
-	ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error)
-	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
-	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
-	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
-	GetConfigProjectPath() string
-	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
-	GetAnalysis() *horusec.Analysis
-	SetToolFinishedAnalysis()
-	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
-	SetMonitor(monitor *horusec.Monitor)
-	RemoveSrcFolderFromPath(filepath string) string
-	GetCodeWithMaxCharacters(code string, column int) string
-	ToolIsToIgnore(tool tools.Tool) bool
-	GetFilepathFromFilename(filename string) string
-	GetProjectPathWithWorkdir(projectSubPath string) string
-	SetCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability
-	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error
-	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
-}
-
 type Service struct {
 	analysis   *horusec.Analysis
 	docker     dockerService.Interface
@@ -267,4 +244,13 @@ func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, 
 func (s *Service) removeHorusecFolder(filepath string) string {
 	toRemove := fmt.Sprintf("%s/", s.GetConfigProjectPath())
 	return strings.ReplaceAll(filepath, toRemove, "")
+}
+
+func (s *Service) IsDockerDisabled() bool {
+	isDisabled := s.config.GetDisableDocker()
+	if isDisabled {
+		s.SetToolFinishedAnalysis()
+	}
+
+	return isDisabled
 }

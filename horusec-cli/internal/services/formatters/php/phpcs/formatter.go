@@ -41,7 +41,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.PhpCS) {
+	if f.ToolIsToIgnore(tools.PhpCS) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.PhpCS.ToString(), logger.DebugLevel)
 		return
 	}

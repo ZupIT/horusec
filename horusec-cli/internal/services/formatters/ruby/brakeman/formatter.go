@@ -41,7 +41,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Brakeman) {
+	if f.ToolIsToIgnore(tools.Brakeman) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Brakeman.ToString(), logger.DebugLevel)
 		return
 	}

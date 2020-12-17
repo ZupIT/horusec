@@ -181,6 +181,7 @@ The configuration file receive an object with the content follow:
       "horusecCliFalsePositiveHashes": "",
       "horusecCliRiskAcceptHashes": "",
       "horusecCliContainerBindProjectPath": "",
+      "horusecCliDisableDocker": false,
       "horusecCliWorkDir": {
 	        "go":         [],
 	        "csharp":     [],
@@ -226,6 +227,7 @@ export HORUSEC_CLI_REPOSITORY_NAME=""
 export HORUSEC_CLI_FALSE_POSITIVE_HASHES=""
 export HORUSEC_CLI_RISK_ACCEPT_HASHES=""
 export HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH=""
+export HORUSEC_CLI_DISABLE_DOCKER="false"
 ```
 
 ### Using Flags
@@ -244,6 +246,7 @@ All available flags are:
 | HORUSEC_CLI_TYPES_OF_VULNERABILITIES_TO_IGNORE  | horusecCliTypesOfVulnerabilitiesToIgnore   | ignore-severity             | s             |                                         | You can specified some type of vulnerabilities to no apply with a error. The types available are: "LOW, MEDIUM, HIGH, AUDIT". Ex.: LOW, AUDIT all vulnerabilities of type configured are ignored |
 | HORUSEC_CLI_JSON_OUTPUT_FILEPATH                | horusecCliJsonOutputFilepath               | json-output-file            | O             |                                         | Name of the json file to save result of the analysis Ex.:`./output.json` |
 | HORUSEC_CLI_FILES_OR_PATHS_TO_IGNORE            | horusecCliFilesOrPathsToIgnore             | ignore                      | i             |                                         | You can specified some path absolutes of files or folders to ignore in sent to analysis. Ex.: `/home/user/go/project/helpers/ , /home/user/go/project/utils/logger.go, **/*tests.go` This examples all files inside the folder helpers are ignored and the file `logger.go` is ignored too. Is recommended you not send `node_modules`, `vendor`, etc.. folders of dependence of the your project |
+| HORUSEC_CLI_DISABLE_DOCKER                      | horusecCliDisableDocker                    | disable-docker              | D             | false                                   | Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. `Example: -D="true"`|
 | HORUSEC_CLI_HORUSEC_API_URI                     | horusecCliHorusecApiUri                    | horusec-url                 | u             | http://0.0.0.0:8000                     | This setting has the purpose of identifying where the url where the horusec-api service is hosted will be |
 | HORUSEC_CLI_TIMEOUT_IN_SECONDS_REQUEST          | horusecCliTimeoutInSecondsRequest          | request-timeout             | r             | 300                                     | This setting will identify how long I want to wait in seconds to send the analysis object to horusec-api. The minimum time is 10. |
 | HORUSEC_CLI_TIMEOUT_IN_SECONDS_ANALYSIS         | horusecCliTimeoutInSecondsAnalysis         | analysis-timeout            | t             | 600                                     | This setting will identify how long I want to wait in seconds to carry out an analysis that includes: "acquiring a project", "sending it to analysis", "containers" and "acquiring a response". The minimum time is 10. |

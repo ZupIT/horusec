@@ -144,6 +144,10 @@ const (
 	// Used to pass project path in host when running horusec cli inside a container
 	// By default is empty
 	EnvContainerBindProjectPath = "HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH"
+	// Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs.
+	// By default is false
+	// Validation: It is mandatory to be in "false", "true"
+	EnvDisableDocker = "HORUSEC_CLI_DISABLE_DOCKER"
 )
 
 type Config struct {
@@ -165,6 +169,7 @@ type Config struct {
 	enableGitHistoryAnalysis        bool
 	certInsecureSkipVerify          bool
 	enableCommitAuthor              bool
+	disableDocker                   bool
 	severitiesToIgnore              []string
 	filesOrPathsToIgnore            []string
 	falsePositiveHashes             []string
