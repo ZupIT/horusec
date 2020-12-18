@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { Button } from 'components';
+import { Input } from 'components';
 
 const Title = styled.h1`
   font-weight: normal;
@@ -37,17 +37,6 @@ const Form = styled.form`
   display: block;
 `;
 
-const Btn = styled(Button)`
-  display: block;
-  margin-right: 30px;
-`;
-
-const OptionsWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-`;
-
 const Wrapper = styled.div`
   display: flex;
   align-items: flex-end;
@@ -61,12 +50,15 @@ const Label = styled.label`
   width: 150px;
 `;
 
+const Field = styled(Input)`
+  margin: 20px 0 30px 0;
+`;
+
 export default {
   Title,
   SubTitle,
   Form,
-  OptionsWrapper,
-  Btn,
   Wrapper,
   Label,
+  Field,
 };

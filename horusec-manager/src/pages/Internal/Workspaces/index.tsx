@@ -23,10 +23,13 @@ import { Workspace } from 'helpers/interfaces/Workspace';
 import { roles } from 'helpers/enums/roles';
 import { formatToHumanDate } from 'helpers/formatters/date';
 
+import AddWorkspace from './Add';
+
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
-  const { allWorkspaces, isAdminOfWorkspace } = useWorkspace();
+  const { allWorkspaces, fetchAllWorkspaces } = useWorkspace();
 
+  const [addWorkspaceVisible, setAddWorkspaceVisible] = useState(false);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
   );
@@ -55,15 +58,13 @@ const Workspaces: React.FC = () => {
           onSearch={(value) => onSearch(value)}
         />
 
-        {isAdminOfWorkspace ? (
-          <Button
-            text={t('WORKSPACES_SCREEN.ADD')}
-            rounded
-            width={180}
-            icon="plus"
-            onClick={() => console.log(true)}
-          />
-        ) : null}
+        <Button
+          text={t('WORKSPACES_SCREEN.ADD')}
+          rounded
+          width={180}
+          icon="plus"
+          onClick={() => setAddWorkspaceVisible(true)}
+        />
       </Styled.Options>
 
       <Styled.Content>
@@ -144,6 +145,15 @@ const Workspaces: React.FC = () => {
           </Styled.Body>
         </Styled.Table>
       </Styled.Content>
+
+      <AddWorkspace
+        isVisible={addWorkspaceVisible}
+        onConfirm={() => {
+          setAddWorkspaceVisible(false);
+          fetchAllWorkspaces();
+        }}
+        onCancel={() => setAddWorkspaceVisible(false)}
+      />
     </Styled.Wrapper>
   );
 };

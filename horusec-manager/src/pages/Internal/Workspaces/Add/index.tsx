@@ -15,7 +15,7 @@
  */
 
 import React, { useState } from 'react';
-import { Dialog, Input } from 'components';
+import { Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -102,7 +102,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       hasCancel
     >
       <Styled.Form onSubmit={handleConfirmSave}>
-        <Input
+        <Styled.Field
           name="name"
           label={t('WORKSPACES_SCREEN.TABLE.NAME')}
           width="100%"
@@ -111,7 +111,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           invalidMessage={t('WORKSPACES_SCREEN.INVALID_WORKSPACE_NAME')}
         />
 
-        <Input
+        <Styled.Field
           name="description"
           label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
           width="100%"
@@ -122,7 +122,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           <Styled.Wrapper>
             <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN_EMAIL')}</Styled.Label>
 
-            <Input
+            <Styled.Field
               name="adminGroup"
               initialValue={emailAdmin.value}
               label={t('WORKSPACES_SCREEN.EMAIL')}
@@ -140,7 +140,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
 
-              <Input
+              <Styled.Field
                 name="adminGroup"
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
@@ -150,7 +150,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('WORKSPACES_SCREEN.USER')}</Styled.Label>
 
-              <Input
+              <Styled.Field
                 name="userGroup"
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setMemberGroup(field)}
@@ -158,25 +158,6 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             </Styled.Wrapper>
           </>
         ) : null}
-
-        <Styled.OptionsWrapper>
-          <Styled.Btn
-            outline
-            text={t('WORKSPACES_SCREEN.CANCEL')}
-            width={100}
-            height={40}
-            onClick={onCancel}
-          />
-
-          <Styled.Btn
-            isDisabled={!name.isValid}
-            isLoading={isLoading}
-            type="submit"
-            text={t('WORKSPACES_SCREEN.SAVE')}
-            width={100}
-            height={40}
-          />
-        </Styled.OptionsWrapper>
       </Styled.Form>
     </Dialog>
   );
