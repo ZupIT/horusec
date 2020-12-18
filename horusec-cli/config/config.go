@@ -21,6 +21,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/spf13/cobra"
+	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -35,82 +37,48 @@ import (
 	"github.com/spf13/viper"
 )
 
+func NewConfig() IConfig {
+	return &Config{}
+}
+
+func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) IConfig {
+	c.SetLogLevel(c.extractFlagValueString(cmd, "log-level", c.GetLogLevel()))
+	c.SetConfigFilePath(c.extractFlagValueString(cmd, "config-file-path", c.GetConfigFilePath()))
+	return c
+}
+
 //nolint
 func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig {
-	cmd.PersistentFlags().
-		Int64VarP(&c.monitorRetryInSeconds, "monitor-retry-count", "m", c.GetMonitorRetryInSeconds(),
-			"The number of retries for the monitor.")
-	cmd.PersistentFlags().
-		StringVarP(&c.printOutputType, "output-format", "o", c.GetPrintOutputType(),
-			"The format for the output to be shown. Options are: text (stdout), json, sonarqube")
-	cmd.PersistentFlags().
-		StringSliceVarP(&c.severitiesToIgnore, "ignore-severity", "s", c.GetSeveritiesToIgnore(),
-			"The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, NOSEC\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.jsonOutputFilePath, "json-output-file", "O", c.GetJSONOutputFilePath(),
-			"If your pass output-format you can configure the output JSON location. Example: -O=\"/tmp/output.json\"")
-	cmd.PersistentFlags().
-		StringSliceVarP(&c.filesOrPathsToIgnore, "ignore", "i", c.GetFilesOrPathsToIgnore(),
-			"Paths to ignore in the analysis. Example: -i=\"/home/user/project/assets, /home/user/project/deployments\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.horusecAPIUri, "horusec-url", "u", c.GetHorusecAPIUri(),
-			"The Horusec API address to access the analysis engine")
-	cmd.PersistentFlags().
-		Int64VarP(&c.timeoutInSecondsRequest, "request-timeout", "r", c.GetTimeoutInSecondsRequest(),
-			"The timeout threshold for the request to the Horusec API")
-	cmd.PersistentFlags().
-		Int64VarP(&c.timeoutInSecondsAnalysis, "analysis-timeout", "t", c.GetTimeoutInSecondsAnalysis(),
-			"The timeout threshold for the Horusec CLI wait for the analysis to complete.")
-	cmd.PersistentFlags().
-		StringVarP(&c.repositoryAuthorization, "authorization", "a", c.GetRepositoryAuthorization(),
-			"The authorization token for the Horusec API")
-	cmd.PersistentFlags().
-		StringToStringVar(&c.headers, "headers", c.GetHeaders(),
-			"The headers dynamic to send on request in Horusec API. Example --headers=\"{\"X-Auth-Service\": \"my-value\"}\"")
-	cmd.PersistentFlags().
-		BoolVarP(&c.returnErrorIfFoundVulnerability, "return-error", "e", c.GetReturnErrorIfFoundVulnerability(),
-			"The return-error is the option to check if you can return \"exit(1)\" if found vulnerabilities. Example -e=\"true\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.projectPath, "project-path", "p", c.GetProjectPath(),
-			"Path to run an analysis in your project")
-	cmd.PersistentFlags().
-		StringVarP(&c.filterPath, "filter-path", "f", c.GetFilterPath(),
-			"Filter the path to run the analysis")
-	cmd.PersistentFlags().
-		BoolVar(&c.enableGitHistoryAnalysis, "enable-git-history", c.GetEnableGitHistoryAnalysis(),
-			"When this value is \"true\" we will run tool gitleaks and search vulnerability in all git history of the project. Example --enable-git-history=\"true\"")
-	cmd.PersistentFlags().
-		BoolVarP(&c.certInsecureSkipVerify, "insecure-skip-verify", "S", c.GetCertInsecureSkipVerify(),
-			"Insecure skip verify cert authority. PLEASE, try not to use it. Example -S=\"true\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.certPath, "certificate-path", "C", c.GetCertPath(),
-			"Path to certificate of authority. Example -C=\"/example/ca.crt\"")
-	cmd.PersistentFlags().
-		BoolVarP(&c.enableCommitAuthor, "enable-commit-author", "G", c.GetEnableCommitAuthor(),
-			"Used to enable or disable search with vulnerability author. Example -G=\"true\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.repositoryName, "repository-name", "n", c.GetRepositoryName(),
-			"Used to send repository name to horus server. Example -n=\"horus\"")
-	cmd.PersistentFlags().
-		StringSliceVarP(&c.falsePositiveHashes, "false-positive", "F", c.GetFalsePositiveHashes(),
-			"Used to ignore a vulnerability by hash and setting it to be of the false positive type. Example -F=\"hash1, hash2\"")
-	cmd.PersistentFlags().
-		StringSliceVarP(&c.riskAcceptHashes, "risk-accept", "R", c.GetRiskAcceptHashes(),
-			"Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
-	cmd.PersistentFlags().
-		StringSliceVarP(&c.toolsToIgnore, "tools-ignore", "T", c.GetToolsToIgnore(),
-			"Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
-	cmd.PersistentFlags().
-		StringVarP(&c.containerBindProjectPath, "container-bind-project-path", "P", c.GetContainerBindProjectPath(),
-			"Used to pass project path in host when running horusec cli inside a container.")
+	c.SetMonitorRetryInSeconds(c.extractFlagValueInt64(cmd, "monitor-retry-count", c.GetMonitorRetryInSeconds()))
+	c.SetPrintOutputType(c.extractFlagValueString(cmd, "output-format", c.GetPrintOutputType()))
+	c.SetJSONOutputFilePath(c.extractFlagValueString(cmd, "json-output-file", c.GetJSONOutputFilePath()))
+	c.SetSeveritiesToIgnore(c.extractFlagValueStringSlice(cmd, "ignore-severity", c.GetSeveritiesToIgnore()))
+	c.SetFilesOrPathsToIgnore(c.extractFlagValueStringSlice(cmd, "ignore", c.GetFilesOrPathsToIgnore()))
+	c.SetHorusecAPIURI(c.extractFlagValueString(cmd, "horusec-url", c.GetHorusecAPIUri()))
+	c.SetTimeoutInSecondsRequest(c.extractFlagValueInt64(cmd, "request-timeout", c.GetTimeoutInSecondsRequest()))
+	c.SetTimeoutInSecondsAnalysis(c.extractFlagValueInt64(cmd, "analysis-timeout", c.GetTimeoutInSecondsAnalysis()))
+	c.SetRepositoryAuthorization(c.extractFlagValueString(cmd, "authorization", c.GetRepositoryAuthorization()))
+	c.SetHeaders(c.extractFlagValueStringToString(cmd, "headers", c.GetHeaders()))
+	c.SetReturnErrorIfFoundVulnerability(c.extractFlagValueBool(cmd, "return-error", c.GetReturnErrorIfFoundVulnerability()))
+	c.SetProjectPath(c.extractFlagValueString(cmd, "project-path", c.GetProjectPath()))
+	c.SetFilterPath(c.extractFlagValueString(cmd, "filter-path", c.GetFilterPath()))
+	c.SetEnableGitHistoryAnalysis(c.extractFlagValueBool(cmd, "enable-git-history", c.GetEnableGitHistoryAnalysis()))
+	c.SetCertInsecureSkipVerify(c.extractFlagValueBool(cmd, "insecure-skip-verify", c.GetCertInsecureSkipVerify()))
+	c.SetCertPath(c.extractFlagValueString(cmd, "certificate-path", c.GetCertPath()))
+	c.SetEnableCommitAuthor(c.extractFlagValueBool(cmd, "enable-commit-author", c.GetEnableCommitAuthor()))
+	c.SetRepositoryName(c.extractFlagValueString(cmd, "repository-name", c.GetRepositoryName()))
+	c.SetFalsePositiveHashes(c.extractFlagValueStringSlice(cmd, "false-positive", c.GetFalsePositiveHashes()))
+	c.SetRiskAcceptHashes(c.extractFlagValueStringSlice(cmd, "risk-accept", c.GetRiskAcceptHashes()))
+	c.SetToolsToIgnore(c.extractFlagValueStringSlice(cmd, "tools-ignore", c.GetToolsToIgnore()))
+	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
 	return c
 }
 
 //nolint
 func (c *Config) NewConfigsFromViper() IConfig {
-	viper.SetConfigFile(c.GetConfigFilePath())
-	logger.LogErrorWithLevel("Error on read config file path", viper.ReadInConfig(), logger.ErrorLevel)
-
+	if existsViperConfig := c.setViperConfigsAndReturnIfExistFile(); !existsViperConfig {
+		return c
+	}
 	c.SetHorusecAPIURI(viper.GetString(c.toLowerCamel(EnvHorusecAPIUri)))
 	c.SetTimeoutInSecondsRequest(viper.GetInt64(c.toLowerCamel(EnvTimeoutInSecondsRequest)))
 	c.SetTimeoutInSecondsAnalysis(viper.GetInt64(c.toLowerCamel(EnvTimeoutInSecondsAnalysis)))
@@ -165,12 +133,28 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	return c
 }
 
+func (c *Config) GetDefaultConfigFilePath() string {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorGetCurrentPath, err, logger.ErrorLevel)
+	}
+	return path.Join(currentDir, "horusec-config.json")
+}
+
 func (c *Config) GetConfigFilePath() string {
-	return c.configFilePath
+	return valueordefault.GetStringValueOrDefault(c.ConfigFilePath, c.GetDefaultConfigFilePath())
 }
 
 func (c *Config) SetConfigFilePath(configFilePath string) {
-	c.configFilePath = valueordefault.GetPathOrCurrentPath(configFilePath)
+	c.ConfigFilePath = configFilePath
+}
+
+func (c *Config) GetLogLevel() string {
+	return valueordefault.GetStringValueOrDefault(c.LogLevel, logger.InfoLevel.String())
+}
+func (c *Config) SetLogLevel(logLevel string) {
+	c.LogLevel = logLevel
+	logger.SetLogLevel(c.LogLevel)
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -392,10 +376,67 @@ func (c *Config) IsEmptyRepositoryAuthorization() bool {
 	return c.repositoryAuthorization == "" || c.repositoryAuthorization == uuid.Nil.String()
 }
 
+func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue string) string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetString(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultValue int64) int64 {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetInt64(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultValue bool) bool {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetBool(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueStringSlice(cmd *cobra.Command, name string, defaultValue []string) []string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetStringSlice(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueStringToString(
+	cmd *cobra.Command, name string, defaultValue map[string]string) map[string]string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetStringToString(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
+	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath+c.GetConfigFilePath(), logger.DebugLevel)
+	if _, err := os.Stat(c.GetConfigFilePath()); os.IsNotExist(err) {
+		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath, logger.DebugLevel)
+		return false
+	}
+	viper.SetConfigFile(c.GetConfigFilePath())
+	logger.LogPanicWithLevel(messages.MsgPanicGetConfigFilePath, viper.ReadInConfig(), logger.PanicLevel)
+	return true
+}
+
 //nolint:funlen parse struct is necessary > 15 lines
 func (c *Config) toMap() map[string]interface{} {
 	return map[string]interface{}{
-		"configFilePath":                  c.configFilePath,
+		"configFilePath":                  c.ConfigFilePath,
 		"horusecAPIUri":                   c.horusecAPIUri,
 		"repositoryAuthorization":         c.repositoryAuthorization,
 		"filterPath":                      c.filterPath,
@@ -441,6 +482,8 @@ func (c *Config) NormalizeConfigs() IConfig {
 	}
 	projectPath, _ := filepath.Abs(c.GetProjectPath())
 	c.SetProjectPath(projectPath)
+	configFilePath, _ := filepath.Abs(c.GetConfigFilePath())
+	c.SetConfigFilePath(configFilePath)
 	return c
 }
 

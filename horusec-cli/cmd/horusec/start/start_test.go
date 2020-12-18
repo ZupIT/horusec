@@ -72,7 +72,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -103,7 +103,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./"})
 
@@ -135,7 +135,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-e", "true"})
 
@@ -163,7 +163,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -191,7 +191,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -220,7 +220,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -250,7 +250,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -279,7 +279,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-a", "NOT_VALID_AUTHORIZATION", "-e", "true"})
 
@@ -305,7 +305,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "json", "-O", "./tmp-json.json"})
 
@@ -346,7 +346,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "sonarqube", "-O", "./tmp-sonarqube.json"})
 
@@ -391,7 +391,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", dstZip, "-s", "HIGH"})
 
@@ -430,7 +430,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", dstZip})
 
