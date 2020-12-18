@@ -58,13 +58,17 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
       .then((result) => {
         const workspaces = result?.data?.content as Workspace[];
 
-        if (workspaces && workspaces.length > 0) {
-          setAllWorkspaces(workspaces);
-          handleSetCurrentWorkspace(workspaces[0]);
+        setAllWorkspaces(workspaces);
 
+        if (workspaces && workspaces.length > 0) {
+          handleSetCurrentWorkspace(workspaces[0]);
           if (redirect) history.replace('/home/dashboard');
-        } else if (redirect) {
-          history.replace('/home/add-workspace');
+        } else {
+          handleSetCurrentWorkspace(null);
+
+          if (redirect) {
+            history.replace('/home/add-workspace');
+          }
         }
       })
       .catch((err) => {

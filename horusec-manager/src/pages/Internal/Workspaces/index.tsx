@@ -16,19 +16,26 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Button } from 'components';
+import { SearchBar, Button, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { roles } from 'helpers/enums/roles';
 import { formatToHumanDate } from 'helpers/formatters/date';
+import companyService from 'services/company';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import AddWorkspace from './Add';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
+  const { dispatchMessage } = useResponseMessage();
+  const { showSuccessFlash } = useFlashMessage();
   const { allWorkspaces, fetchAllWorkspaces } = useWorkspace();
 
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
+  const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
   const [addWorkspaceVisible, setAddWorkspaceVisible] = useState(false);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
@@ -44,6 +51,23 @@ const Workspaces: React.FC = () => {
     } else {
       setFilteredWorkspaces(allWorkspaces);
     }
+  };
+
+  const handleConfirmDeleteWorkspace = () => {
+    setDeleteIsLoading(true);
+    companyService
+      .remove(workspaceToDelete.companyID)
+      .then(() => {
+        showSuccessFlash(t('WORKSPACES_SCREEN.REMOVE_SUCCESS'));
+        setWorkspaceToDelete(null);
+        fetchAllWorkspaces();
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setDeleteIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -113,7 +137,7 @@ const Workspaces: React.FC = () => {
                         width={100}
                         height={30}
                         icon="delete"
-                        onClick={() => console.log(workspace)}
+                        onClick={() => setWorkspaceToDelete(workspace)}
                       />
 
                       <Button
@@ -153,6 +177,17 @@ const Workspaces: React.FC = () => {
           fetchAllWorkspaces();
         }}
         onCancel={() => setAddWorkspaceVisible(false)}
+      />
+
+      <Dialog
+        message={t('WORKSPACES_SCREEN.CONFIRM_DELETE')}
+        confirmText={t('WORKSPACES_SCREEN.YES')}
+        loadingConfirm={deleteIsLoading}
+        defaultButton
+        hasCancel
+        isVisible={!!workspaceToDelete}
+        onCancel={() => setWorkspaceToDelete(null)}
+        onConfirm={handleConfirmDeleteWorkspace}
       />
     </Styled.Wrapper>
   );
