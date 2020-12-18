@@ -38,7 +38,10 @@ import (
 )
 
 func NewConfig() IConfig {
-	return &Config{}
+	return &Config{
+		workDir:     workdir.NewWorkDir(),
+		toolsConfig: toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+	}
 }
 
 func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) IConfig {
