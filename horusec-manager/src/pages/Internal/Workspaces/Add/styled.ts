@@ -40,7 +40,7 @@ const Form = styled.form`
 const Wrapper = styled.div`
   display: flex;
   align-items: flex-end;
-  margin-top: 25px;
+  margin-top: 45px;
   width: 100%;
 `;
 

@@ -54,7 +54,7 @@ const InviteToCompany: React.FC<Props> = ({
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.USER'),
+      name: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];

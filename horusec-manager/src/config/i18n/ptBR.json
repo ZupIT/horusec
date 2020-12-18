@@ -112,7 +112,7 @@
     "INVALID_DESCRIPTION": "Descrição inválida",
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
-    "USER": "Usuário:",
+    "MEMBER": "Membro:",
     "GROUP_NAME": "Nome do grupo",
     "EMAIL": "E-mail",
     "INVALID_EMAIL_ADMIN": "E-mail Inválido!"
@@ -205,7 +205,7 @@
 
   "PERMISSIONS": {
     "ADMIN": "Administrador",
-    "USER": "Usuário",
+    "MEMBER": "Membro",
     "SUPERVISOR": "Supervisor",
     "TITLE": "Permissões",
     "REPOSITORY": {
@@ -253,7 +253,7 @@
       "ROLE": {
         "ADMIN": "Administrador",
         "SUPERVISOR": "Supervisor",
-        "MEMBER": "Usuário"
+        "MEMBER": "Membro"
       }
     },
     "REMOVE_SUCCESS": "Usuário removido com sucesso!",

@@ -57,7 +57,7 @@ const EditUserRole: React.FC<Props> = ({
       value: 'supervisor',
     },
     {
-      name: t('PERMISSIONS.USER'),
+      name: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];

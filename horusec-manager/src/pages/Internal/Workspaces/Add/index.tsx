@@ -15,7 +15,7 @@
  */
 
 import React, { useState } from 'react';
-import { Dialog } from 'components';
+import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -122,8 +122,8 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           <Styled.Wrapper>
             <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN_EMAIL')}</Styled.Label>
 
-            <Styled.Field
-              name="adminGroup"
+            <Input
+              name="emailAdmin"
               initialValue={emailAdmin.value}
               label={t('WORKSPACES_SCREEN.EMAIL')}
               onChangeValue={(field: Field) => setEmailAdmin(field)}
@@ -140,7 +140,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             <Styled.Wrapper>
               <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
 
-              <Styled.Field
+              <Input
                 name="adminGroup"
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
@@ -148,10 +148,10 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
             </Styled.Wrapper>
 
             <Styled.Wrapper>
-              <Styled.Label>{t('WORKSPACES_SCREEN.USER')}</Styled.Label>
+              <Styled.Label>{t('WORKSPACES_SCREEN.MEMBER')}</Styled.Label>
 
-              <Styled.Field
-                name="userGroup"
+              <Input
+                name="memberGroup"
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setMemberGroup(field)}
               />
