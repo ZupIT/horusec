@@ -17,6 +17,7 @@ package horusecjava
 import (
 	"testing"
 
+	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/stretchr/testify/assert"
@@ -33,6 +34,7 @@ func TestStartAnalysis(t *testing.T) {
 		service.On("ToolIsToIgnore").Return(false)
 		service.On("GetProjectPathWithWorkdir").Return(".")
 		service.On("ParseFindingsToVulnerabilities").Return(nil)
+		service.On("GetCustomRulesByTool").Return([]engine.Rule{})
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
@@ -50,6 +52,7 @@ func TestStartAnalysis(t *testing.T) {
 		service.On("ToolIsToIgnore").Return(false)
 		service.On("GetProjectPathWithWorkdir").Return("!!!")
 		service.On("ParseFindingsToVulnerabilities").Return(nil)
+		service.On("GetCustomRulesByTool").Return([]engine.Rule{})
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")

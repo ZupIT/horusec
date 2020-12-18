@@ -15,6 +15,7 @@
 package scs
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -61,6 +62,22 @@ func TestParseOutput(t *testing.T) {
 		output := "Could not find any project in test"
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+	})
+
+	t.Run("Should error executing container", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
