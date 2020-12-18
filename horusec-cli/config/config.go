@@ -142,19 +142,19 @@ func (c *Config) GetDefaultConfigFilePath() string {
 }
 
 func (c *Config) GetConfigFilePath() string {
-	return valueordefault.GetStringValueOrDefault(c.ConfigFilePath, c.GetDefaultConfigFilePath())
+	return valueordefault.GetStringValueOrDefault(c.configFilePath, c.GetDefaultConfigFilePath())
 }
 
 func (c *Config) SetConfigFilePath(configFilePath string) {
-	c.ConfigFilePath = configFilePath
+	c.configFilePath = configFilePath
 }
 
 func (c *Config) GetLogLevel() string {
-	return valueordefault.GetStringValueOrDefault(c.LogLevel, logger.InfoLevel.String())
+	return valueordefault.GetStringValueOrDefault(c.logLevel, logger.InfoLevel.String())
 }
 func (c *Config) SetLogLevel(logLevel string) {
-	c.LogLevel = logLevel
-	logger.SetLogLevel(c.LogLevel)
+	c.logLevel = logLevel
+	logger.SetLogLevel(c.logLevel)
 }
 
 func (c *Config) GetHorusecAPIUri() string {
@@ -436,7 +436,7 @@ func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 //nolint:funlen parse struct is necessary > 15 lines
 func (c *Config) toMap() map[string]interface{} {
 	return map[string]interface{}{
-		"configFilePath":                  c.ConfigFilePath,
+		"configFilePath":                  c.configFilePath,
 		"horusecAPIUri":                   c.horusecAPIUri,
 		"repositoryAuthorization":         c.repositoryAuthorization,
 		"filterPath":                      c.filterPath,

@@ -148,8 +148,8 @@ const (
 
 type Config struct {
 	// Globals Command Flags
-	LogLevel       string
-	ConfigFilePath string
+	logLevel       string
+	configFilePath string
 
 	// Start Command Flags
 	horusecAPIUri                   string
