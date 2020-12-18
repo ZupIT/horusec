@@ -265,3 +265,59 @@ Now add the new tool or language to the interface array according to what was ad
 And it's ready. Now horusec is inte.grated with the new tool and generating unified reports.
 
 Feel free to send us a pull request and collaborate with the project. We will love it!
+
+## Adding Custom Rules
+At Horusec you have the possibility to add rules dynamically that will be executed on our engines.
+
+#### 1 - Horusec Custom Rules Json
+
+To do this it is necessary to create a json file containing the following pattern:
+
+ ```horusec-custom-rules.json
+[
+   {
+      "ID": "0d6c505a-4986-4771-91db-ec4f4ebface7",
+      "Name": "Vulnerability name",
+      "Description": "Description of the vulnerability",
+      "Severity": "INFO",
+      "Confidence": "LOW",
+      "Type": "AndMatch",
+      "Tool": "HorusecCsharp",
+      "Expressions": [
+         "Regex to respective vulnerability"
+      ]
+   },
+   {
+      "ID": "837c504d-38b4-4ea6-987b-d91e92ac86a2",
+      "Name": "Cookie Without HttpOnly Flag",
+      "Description": "It is recommended to specify the HttpOnly flag to new cookie. For more information access: (https://security-code-scan.github.io/#SCS0009) or (https://cwe.mitre.org/data/definitions/1004.html).",
+      "Severity": "LOW",
+      "Confidence": "LOW",
+      "Type": "OrMatch",
+      "Tool": "HorusecCsharp",
+      "Expressions": [
+         "httpOnlyCookies\s*=\s*['|"]false['|"]",
+         "(new\sHttpCookie\(.*\))(.*|\n)*(\.HttpOnly\s*=\s*false)",
+         "(new\sHttpCookie)(([^H]|H[^t]|Ht[^t]|Htt[^p]|Http[^O]|HttpO[^n]|HttpOn[^l]|HttpOnl[^y])*)(})"
+      ]
+   }
+]
+```
+
+#### 2 - Json Explanation
+
+| Field           | Description                                                                                                                                          |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| ID              | Random UUID that will be used to identify the vulnerability, your rules should not duplicate this id.                                                |
+| Name            | String with the name of the vulnerability.                                                                                                           |
+| Description     | String with the description of the vulnerability.                                                                                                    |
+| Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                            |
+| Confidence      | String with the confidence of the vulnerability with the possible values: (LOW, MEDIUM, HIGH).                                                       |
+| Type            | String with the regex type with the possible values: (Regular, OrMatch, AndMatch).                                                                   |
+| Tool            | String with the regex type with the possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |
+| Expressions     | Array of string containing all the regex ti detect the vulnerability                                                                                 |
+
+
+#### 3 - Custom Rules Flag
+
+`horusec start -c="{path to your horusec custom rules files}"`
