@@ -163,6 +163,10 @@ const (
 	// By default is false
 	// Validation: It is mandatory to be in "false", "true"
 	EnvDisableDocker = "HORUSEC_CLI_DISABLE_DOCKER"
+	// Used to pass the path to the horusec custom rules file. Example: -c="./horusec/horusec-custom-rules.json".
+	// By default is empty
+	// Validation: It is mandatory to be a valida path and contains file name
+	EnvCustomRulesPath = "HORUSEC_CLI_CUSTOM_RULES_PATH"
 )
 
 type Config struct {
@@ -175,6 +179,7 @@ type Config struct {
 	printOutputType                 string
 	jsonOutputFilePath              string
 	projectPath                     string
+	customRulesPath                 string
 	containerBindProjectPath        string
 	timeoutInSecondsRequest         int64
 	timeoutInSecondsAnalysis        int64

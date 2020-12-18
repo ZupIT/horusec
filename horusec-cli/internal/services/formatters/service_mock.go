@@ -128,3 +128,8 @@ func (m *Mock) IsDockerDisabled() bool {
 	args := m.MethodCalled("IsDockerDisabled")
 	return args.Get(0).(bool)
 }
+
+func (m *Mock) GetCustomRulesByTool(_ tools.Tool) []engine.Rule {
+	args := m.MethodCalled("GetCustomRulesByTool")
+	return args.Get(0).([]engine.Rule)
+}

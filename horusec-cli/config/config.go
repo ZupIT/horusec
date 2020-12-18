@@ -104,6 +104,9 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	cmd.PersistentFlags().
 		BoolVarP(&c.disableDocker, "disable-docker", "D", c.GetDisableDocker(),
 			"Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
+	cmd.PersistentFlags().
+		StringVarP(&c.customRulesPath, "custom-rules-path", "c", c.GetCustomRulesPath(),
+			"Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
 	return c
 }
 
@@ -137,6 +140,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
 	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
+	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
 	return c
 }
 
@@ -165,6 +169,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetHeaders(env.GetEnvOrDefaultInterface(EnvHeaders, c.headers))
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
 	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
+	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
 	return c
 }
 
@@ -425,6 +430,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"toolsConfig":                     c.toolsConfig,
 		"workDir":                         c.workDir,
 		"disableDocker":                   c.disableDocker,
+		"customRulesPath":                 c.customRulesPath,
 	}
 }
 
@@ -498,4 +504,12 @@ func (c *Config) GetDisableDocker() bool {
 
 func (c *Config) SetDisableDocker(disableDocker bool) {
 	c.disableDocker = disableDocker
+}
+
+func (c *Config) GetCustomRulesPath() string {
+	return c.customRulesPath
+}
+
+func (c *Config) SetCustomRulesPath(customRulesPath string) {
+	c.customRulesPath = customRulesPath
 }

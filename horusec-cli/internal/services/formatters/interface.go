@@ -49,4 +49,5 @@ type IService interface {
 	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error
 	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
 	IsDockerDisabled() bool
+	GetCustomRulesByTool(tool tools.Tool) []engine.Rule
 }

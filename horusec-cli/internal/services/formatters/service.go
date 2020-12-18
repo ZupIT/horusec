@@ -32,26 +32,29 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
+	customrules "github.com/ZupIT/horusec/horusec-cli/internal/services/custom_rules"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/git"
 )
 
 type Service struct {
-	analysis   *horusec.Analysis
-	docker     dockerService.Interface
-	gitService git.IService
-	monitor    *horusec.Monitor
-	config     cliConfig.IConfig
+	analysis           *horusec.Analysis
+	docker             dockerService.Interface
+	gitService         git.IService
+	monitor            *horusec.Monitor
+	config             cliConfig.IConfig
+	customRulesService customrules.IService
 }
 
 func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
 	monitor *horusec.Monitor) IService {
 	return &Service{
-		analysis:   analysis,
-		docker:     docker,
-		gitService: git.NewGitService(config),
-		monitor:    monitor,
-		config:     config,
+		analysis:           analysis,
+		docker:             docker,
+		gitService:         git.NewGitService(config),
+		monitor:            monitor,
+		config:             config,
+		customRulesService: customrules.NewCustomRulesService(config),
 	}
 }
 
@@ -253,4 +256,8 @@ func (s *Service) IsDockerDisabled() bool {
 	}
 
 	return isDisabled
+}
+
+func (s *Service) GetCustomRulesByTool(tool tools.Tool) []engine.Rule {
+	return s.customRulesService.GetCustomRulesByTool(tool)
 }

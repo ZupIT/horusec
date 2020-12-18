@@ -93,6 +93,9 @@ type IConfig interface {
 	GetDisableDocker() bool
 	SetDisableDocker(disableDocker bool)
 
+	GetCustomRulesPath() string
+	SetCustomRulesPath(customRulesPath string)
+
 	IsEmptyRepositoryAuthorization() bool
 	ToBytes(isMarshalIndent bool) (bytes []byte)
 	NormalizeConfigs() IConfig

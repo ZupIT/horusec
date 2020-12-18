@@ -64,6 +64,6 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 		return nil, err
 	}
 
-	allRules := f.GetAllRules()
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecKotlin)...)
 	return engine.Run(textUnit, allRules), nil
 }
