@@ -30,6 +30,7 @@ interface SubMenuProps {
 const SideMenu = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
   min-width: 165px;
+  max-width: 165px;
   display: flex;
   flex-direction: column;
   z-index: 2;

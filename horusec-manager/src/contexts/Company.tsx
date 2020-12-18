@@ -99,17 +99,6 @@ const CompanyProvider = ({ children }: CompanyProviderPops) => {
     ldapGroups?: LDAPGroups
   ) => {
     setLoading(true);
-    companyService
-      .create(name, adminEmail, ldapGroups)
-      .then(() => {
-        showSuccessFlash(t('COMPANY_SCREEN.CREATE_SUCCESS'));
-        setLoading(false);
-        history.push('/organization');
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setLoading(false);
-      });
   };
 
   const updateCompany = (

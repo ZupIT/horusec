@@ -18,6 +18,7 @@ import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import Dashboard from 'pages/Internal/Dashboard';
 import Repositories from 'pages/Internal/Repositories';
@@ -26,7 +27,7 @@ import Vulnerabilities from 'pages/Internal/Vulnerabilities';
 import Webhooks from 'pages/Internal/Webhooks';
 import Settings from 'pages/Internal/Settings';
 import AddWorkspace from 'pages/Internal/AddWorkspace';
-import useWorkspace from 'helpers/hooks/useWorkspace';
+import Workspaces from 'pages/Internal/Workspaces';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
@@ -44,7 +45,7 @@ function InternalRoutes() {
         <PrivateRoute
           exact
           path={`${path}/workspaces`}
-          component={() => <h1>Workspaces</h1>}
+          component={() => <Workspaces />}
         />
 
         <Redirect

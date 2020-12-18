@@ -26,6 +26,7 @@ interface WorkspaceCtx {
   allWorkspaces: Workspace[];
   handleSetCurrentWorkspace: (workspace: Workspace) => void;
   isAdminOfWorkspace: boolean;
+  fetchAllWorkspaces: () => void;
 }
 
 const WorkspaceContext = React.createContext<WorkspaceCtx>({
@@ -33,6 +34,7 @@ const WorkspaceContext = React.createContext<WorkspaceCtx>({
   isAdminOfWorkspace: false,
   allWorkspaces: [],
   handleSetCurrentWorkspace: null,
+  fetchAllWorkspaces: null,
 });
 
 const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
@@ -50,7 +52,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
     setIsAdminOfWorkspace(isAdmin);
   };
 
-  const fetchAll = () => {
+  const fetchAll = (redirect?: boolean) => {
     companyService
       .getAll()
       .then((result) => {
@@ -59,8 +61,9 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         if (workspaces && workspaces.length > 0) {
           setAllWorkspaces(workspaces);
           handleSetCurrentWorkspace(workspaces[0]);
-          history.replace('/home/dashboard');
-        } else {
+
+          if (redirect) history.replace('/home/dashboard');
+        } else if (redirect) {
           history.replace('/home/add-workspace');
         }
       })
@@ -70,7 +73,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   useEffect(() => {
-    fetchAll();
+    fetchAll(true);
 
     // eslint-disable-next-line
   }, []);
@@ -82,6 +85,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         allWorkspaces,
         isAdminOfWorkspace,
         handleSetCurrentWorkspace,
+        fetchAllWorkspaces: fetchAll,
       }}
     >
       {children}
