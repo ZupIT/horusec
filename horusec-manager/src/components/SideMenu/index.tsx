@@ -50,9 +50,9 @@ const SideMenu: React.FC = () => {
       roles: ['admin', 'member'],
       subRoutes: [
         {
-          name: t('SIDE_MENU.ORGANIZATION'),
+          name: t('SIDE_MENU.WORKSPACE'),
           icon: 'grid',
-          path: '/home/dashboard/organization',
+          path: '/home/dashboard/workspace',
           type: 'subRoute',
           roles: ['admin'],
         },
@@ -78,13 +78,6 @@ const SideMenu: React.FC = () => {
       path: '/home/repositories',
       type: 'route',
       roles: ['admin', 'member'],
-    },
-    {
-      name: t('SIDE_MENU.ORGANIZATION_USERS'),
-      icon: 'users',
-      path: '/home/organization-users',
-      type: 'route',
-      roles: ['admin'],
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),

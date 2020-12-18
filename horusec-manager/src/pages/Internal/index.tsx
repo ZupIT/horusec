@@ -22,7 +22,6 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import Dashboard from 'pages/Internal/Dashboard';
 import Repositories from 'pages/Internal/Repositories';
-import Users from 'pages/Internal/Users';
 import Vulnerabilities from 'pages/Internal/Vulnerabilities';
 import Webhooks from 'pages/Internal/Webhooks';
 import Settings from 'pages/Internal/Settings';
@@ -53,13 +52,13 @@ function InternalRoutes() {
           from={`${path}/dashboard`}
           to={
             isAdminOfWorkspace
-              ? `${path}/dashboard/organization`
+              ? `${path}/dashboard/workspace`
               : `${path}/dashboard/repositories`
           }
         />
 
         <PrivateRoute
-          path={`${path}/dashboard/organization`}
+          path={`${path}/dashboard/workspace`}
           exact
           component={() => <Dashboard type="company" />}
         />
@@ -80,12 +79,6 @@ function InternalRoutes() {
           exact
           path={`${path}/repositories`}
           component={() => <Repositories />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/organization-users`}
-          component={() => <Users />}
         />
 
         <PrivateRoute
