@@ -33,12 +33,14 @@ import (
 	"testing"
 )
 
+const S = string(os.PathSeparator)
+
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("./analysis")
-	_ = os.RemoveAll("./tmp")
+	_ = os.RemoveAll("." + S + "analysis")
+	_ = os.RemoveAll("." + S + "tmp")
 	code := m.Run()
-	_ = os.RemoveAll("./analysis")
-	_ = os.RemoveAll("./tmp")
+	_ = os.RemoveAll("." + S + "analysis")
+	_ = os.RemoveAll("." + S + "tmp")
 	os.Exit(code)
 }
 
@@ -141,13 +143,13 @@ func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 }
 
 func runHorusecCLIUsingZip(t *testing.T, zipName string, othersFlags ...map[string]string) string {
-	assert.NoError(t, os.MkdirAll("./tmp", 0750))
+	assert.NoError(t, os.MkdirAll("." + S + "tmp", 0750))
 	fakeAnalysisID := uuid.New().String()
-	fileOutput := fmt.Sprintf("./tmp/horusec-analysis-%s.json", fakeAnalysisID)
-	destPath := "analysis/" + fakeAnalysisID
+	fileOutput := fmt.Sprintf("." +S+"tmp"+S+"horusec-analysis-%s.json", fakeAnalysisID)
+	destPath := "analysis"+ S + fakeAnalysisID
 	destPath, err := filepath.Abs(destPath)
 	assert.NoError(t, err)
-	srcPath := "../../../development-kit/pkg/utils/test/zips/" + zipName + "/" + zipName + ".zip"
+	srcPath := ".."+S+".."+S+".."+S+"development-kit"+S+"pkg"+S+"utils"+S+"test"+S+"zips"+S+"" + zipName + S + zipName + ".zip"
 	assert.NoError(t, zip.NewZip().UnZip(srcPath, destPath))
 	flags := map[string]string{
 		"-p": strings.TrimSpace(destPath),
@@ -161,7 +163,7 @@ func runHorusecCLIUsingZip(t *testing.T, zipName string, othersFlags ...map[stri
 	}
 	cmdArguments := []string{
 		"run",
-		"../../../horusec-cli/cmd/horusec/main.go",
+		".."+S+".."+S+".."+S+"horusec-cli"+S+"cmd"+S+"horusec"+S+"main.go",
 		"start",
 	}
 	for flag, value := range flags {
