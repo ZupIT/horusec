@@ -270,7 +270,6 @@ Feel free to send us a pull request and collaborate with the project. We will lo
 At Horusec you have the possibility to add rules dynamically that will be executed on our engines.
 
 #### 1 - Horusec Custom Rules Json
-
 To do this it is necessary to create a json file containing the following pattern:
 
  ```horusec-custom-rules.json
@@ -279,9 +278,9 @@ To do this it is necessary to create a json file containing the following patter
       "ID": "0d6c505a-4986-4771-91db-ec4f4ebface7",
       "Name": "Vulnerability name",
       "Description": "Description of the vulnerability",
-      "Severity": "INFO",
-      "Confidence": "LOW",
-      "Type": "AndMatch",
+      "Severity": "Vulnerability severity",
+      "Confidence": "Confidence of the vulnerability",
+      "Type": "Regex type",
       "Tool": "HorusecCsharp",
       "Expressions": [
          "Regex to respective vulnerability"
@@ -312,12 +311,20 @@ To do this it is necessary to create a json file containing the following patter
 | Name            | String with the name of the vulnerability.                                                                                                           |
 | Description     | String with the description of the vulnerability.                                                                                                    |
 | Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                            |
-| Confidence      | String with the confidence of the vulnerability with the possible values: (LOW, MEDIUM, HIGH).                                                       |
+| Confidence      | String with the confidence of the vulnerability report with the possible values: (LOW, MEDIUM, HIGH).                                                |
 | Type            | String with the regex type with the possible values: (Regular, OrMatch, AndMatch).                                                                   |
 | Tool            | String with the regex type with the possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |
-| Expressions     | Array of string containing all the regex ti detect the vulnerability                                                                                 |
+| Expressions     | Array of string containing all the regex that will detect the vulnerability.                                                                         |
 
+#### 3 - Regex Types
 
-#### 3 - Custom Rules Flag
+| Type            | Description                                                                                                                                          |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| OrMatch         | If any regex in the array matches this vulnerability will be reported. Regexes need to be in the context of the same vulnerability.                  |
+| Regular         | If any regex in the array matches this vulnerability will be reported. Regexes don't need to be related.                                             |
+| AndMatch        | In this type all regexes must match for the vulnerability to be reported.                                                                            |
 
-`horusec start -c="{path to your horusec custom rules files}"`
+#### 4 - Custom Rules Flag
+To use the rules you created use the `-c` flag passing the path to the json file.
+
+`horusec start -c="{path to your horusec custom rules json file}"`

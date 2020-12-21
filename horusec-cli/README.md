@@ -182,6 +182,7 @@ The configuration file receive an object with the content follow:
       "horusecCliRiskAcceptHashes": "",
       "horusecCliContainerBindProjectPath": "",
       "horusecCliDisableDocker": false,
+      "horusecCliCustomRulesPath": "",
       "horusecCliWorkDir": {
 	        "go":         [],
 	        "csharp":     [],
@@ -228,6 +229,7 @@ export HORUSEC_CLI_FALSE_POSITIVE_HASHES=""
 export HORUSEC_CLI_RISK_ACCEPT_HASHES=""
 export HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH=""
 export HORUSEC_CLI_DISABLE_DOCKER="false"
+export HORUSEC_CLI_CUSTOM_RULES_PATH=""
 ```
 
 ### Using Flags
@@ -261,6 +263,7 @@ All available flags are:
 | HORUSEC_CLI_REPOSITORY_NAME                     | horusecCliRepositoryName                   | repository-name             | n             |                                         | Used to send the repository name to the server, must be used together with the company token. |
 | HORUSEC_CLI_FALSE_POSITIVE_HASHES               | horusecCliFalsePositiveHashes              | false-positive              | F             |                                         | Used to ignore vulnerability on analysis and setup with type `False positive`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_RISK_ACCEPT_HASHES                  | horusecCliRiskAcceptHashes                 | risk-accept                 | R             |                                         | Used to ignore vulnerability on analysis and setup with type `Risk accept`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
+| HORUSEC_CLI_CUSTOM_RULES_PATH                   | horusecCliCustomRulesPath                  | custom-rules-path           | c             |                                         | Used to pass the path to the horusec custom rules file. Example: -c="./horusec/horusec-custom-rules.json". |
 | HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH         | EnvContainerBindProjectPath                | container-bind-project-path | P             |                                         | Used to pass project path in host when running horusec cli inside a container |
 | HORUSEC_CLI_HEADERS                             | horusecCliHeaders                          | headers                     |               |                                         | Used to send dynamic headers on dispatch http request to horusec api service |
 |                                                 | horusecCliWorkDir                          |                             |               |                                         | This setting tells to horusec the right directory to run a specific language. |
