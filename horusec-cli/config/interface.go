@@ -8,12 +8,17 @@ import (
 )
 
 type IConfig interface {
+	NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) IConfig
 	NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig
 	NewConfigsFromViper() IConfig
 	NewConfigsFromEnvironments() IConfig
 
+	GetDefaultConfigFilePath() string
 	GetConfigFilePath() string
 	SetConfigFilePath(configFilePath string)
+
+	GetLogLevel() string
+	SetLogLevel(logLevel string)
 
 	GetHorusecAPIUri() string
 	SetHorusecAPIURI(horusecAPIURI string)

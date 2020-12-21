@@ -137,9 +137,7 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Contains(t, err.Error(), "horusec-cli/internal/usecases/cli/NOT EXISTS PATH: no such file or directory.")
 	})
 	t.Run("Should return error because cert path is not valid", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.NewConfigsFromViper()
-		config.NewConfigsFromEnvironments()
+		config := cliConfig.NewConfig()
 		config.SetCertPath("INVALID PATH")
 
 		err := useCases.ValidateConfigs(config)
@@ -149,9 +147,7 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when is duplicated false positive and risk accepted", func(t *testing.T) {
 		hash := "1e836029-4e90-4151-bb4a-d86ef47f96b6"
-		config := &cliConfig.Config{}
-		config.NewConfigsFromViper()
-		config.NewConfigsFromEnvironments()
+		config := cliConfig.NewConfig()
 		config.SetFalsePositiveHashes([]string{hash})
 		config.SetRiskAcceptHashes([]string{hash})
 
@@ -160,9 +156,7 @@ func TestValidateConfigs(t *testing.T) {
 			err.Error())
 	})
 	t.Run("Should return not error when validate false positive and risk accepted", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.NewConfigsFromViper()
-		config.NewConfigsFromEnvironments()
+		config := cliConfig.NewConfig()
 		config.SetFalsePositiveHashes([]string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"})
 		config.SetRiskAcceptHashes([]string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"})
 

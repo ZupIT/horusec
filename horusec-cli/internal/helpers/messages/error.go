@@ -89,4 +89,5 @@ const (
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
 	MsgErrorYarnProcess    = "{HORUSEC_CLI} Error Yarn returned an error: "
 	MsgErrorDeferFileClose = "{HORUSEC_CLI} Error defer file close: "
+	MsgErrorGetCurrentPath = "{HORUSEC-CLI} Error on get current path"
 )

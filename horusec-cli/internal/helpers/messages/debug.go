@@ -34,11 +34,9 @@ const (
 	// Fired when tool finish an analysis
 	MsgDebugToolFinishAnalysis = "{HORUSEC_CLI} {{0}} is finished in analysisID: "
 	// Fired when output of the analysis was run in docker is empty
-	MsgDebugOutputEmpty = "{HORUSEC_CLI} When format Output it's Empty!"
-	// Fired when .horusec has been added in .gitignore
-	MsgDebugAddingHorusecFolderInGitIgnore = "{HORUSEC_CLI} Horusec Folder has added in .gitignore in location: "
-	// Fired when not exist .gitignore and horusec will generated for you
-	MsgDebugGitIgnoreGenerated = "{HORUSEC_CLI} We generated .gitignore in location: "
+	MsgDebugOutputEmpty              = "{HORUSEC_CLI} When format Output it's Empty!"
+	MsgDebugConfigFileRunningOnPath  = "{HORUSEC_CLI} Config file running on path: "
+	MsgDebugConfigFileNotFoundOnPath = "{HORUSEC_CLI} Config file not found"
 	// Fired when occurs of ignore folder or file to send horusec analysis
 	MsgDebugFolderOrFileIgnored = "{HORUSEC_CLI} The file ou folder was ignored to send analysis:"
 	// Fired when configs already validate and before start analysis
