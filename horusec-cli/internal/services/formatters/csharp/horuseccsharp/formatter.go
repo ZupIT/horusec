@@ -65,12 +65,12 @@ func (f *Formatter) startHorusecCsharpAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecCsharp),
 		Language: languages.CSharp,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecCsharp].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) formatOutput(output string) error {

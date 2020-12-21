@@ -14,6 +14,8 @@
 
 package tools
 
+import "github.com/iancoleman/strcase"
+
 type Tool string
 
 const (
@@ -41,4 +43,8 @@ const (
 
 func (t Tool) ToString() string {
 	return string(t)
+}
+
+func (t Tool) ToLowerCamel() string {
+	return strcase.ToLowerCamel(strcase.ToSnake(t.ToString()))
 }

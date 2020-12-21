@@ -22,3 +22,5 @@ var ErrorDatabaseIsNotHealth = errors.New("{ERROR_HTTP} database is not health")
 var ErrorCacheIsNotHealth = errors.New("{ERROR_HTTP} cache is not health")
 var ErrorRelationalDatabaseIsNotHealth = errors.New("{ERROR_HTTP} relational database is not healthy")
 var ErrorGenericInternalError = errors.New("{ERROR_HTTP} something went wrong, sorry for the inconvenience")
+
+const ErrorGrpcConnectionNotReady = "{ERROR_GRPC} grpc connection is not ready, state: %s"

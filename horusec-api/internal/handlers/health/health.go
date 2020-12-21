@@ -15,10 +15,12 @@
 package health
 
 import (
+	"fmt"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
-
+	"google.golang.org/grpc"
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -28,19 +30,23 @@ import (
 
 type Handler struct {
 	httpUtil.Interface
-	postgresRead  relational.InterfaceRead
-	postgresWrite relational.InterfaceWrite
-	config        app.IAppConfig
-	broker        brokerLib.IBroker
+	postgresRead           relational.InterfaceRead
+	postgresWrite          relational.InterfaceWrite
+	config                 app.IAppConfig
+	broker                 brokerLib.IBroker
+	grpcCon                *grpc.ClientConn
+	grpcHealthCheckService health.ICheckClient
 }
 
 func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
-	broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
+	broker brokerLib.IBroker, config app.IAppConfig, grpcCon *grpc.ClientConn) httpUtil.Interface {
 	return &Handler{
-		broker:        broker,
-		config:        config,
-		postgresRead:  postgresRead,
-		postgresWrite: postgresWrite,
+		broker:                 broker,
+		config:                 config,
+		postgresRead:           postgresRead,
+		postgresWrite:          postgresWrite,
+		grpcCon:                grpcCon,
+		grpcHealthCheckService: health.NewHealthCheckGrpcClient(grpcCon),
 	}
 }
 
@@ -48,6 +54,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// nolint
 // @Tags Health
 // @Description Check if Health of service it's OK!
 // @ID health
@@ -61,11 +68,18 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 		httpUtil.StatusInternalServerError(w, errors.ErrorDatabaseIsNotHealth)
 		return
 	}
+
 	if !h.config.IsDisabledBroker() {
 		if !h.broker.IsAvailable() {
 			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
 			return
 		}
 	}
+
+	if isAvailable, state := h.grpcHealthCheckService.IsAvailable(); !isAvailable {
+		httpUtil.StatusInternalServerError(w, fmt.Errorf(errors.ErrorGrpcConnectionNotReady, state))
+		return
+	}
+
 	httpUtil.StatusOK(w, "service is healthy")
 }

@@ -30,9 +30,8 @@ func TestStartHCLTfSec(t *testing.T) {
 	t.Run("should success execute container and process output", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &horusec.Analysis{}
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `{"results":[{"rule_id":"AWS018","link":"https://github.com/liamg/tfsec/wiki/AWS018","location":{"filename":"/src/terraform/main.tf","start_line":2,"end_line":5},"description":"Resource 'aws_security_group_rule.my-rule' should include a description for auditing purposes.","severity":"ERROR"},{"rule_id":"AWS006","link":"https://github.com/liamg/tfsec/wiki/AWS006","location":{"filename":"/src/terraform/main.tf","start_line":4,"end_line":4},"description":"Resource 'aws_security_group_rule.my-rule' defines a fully open ingress security group rule.","severity":"WARNING"},{"rule_id":"AWS004","link":"https://github.com/liamg/tfsec/wiki/AWS004","location":{"filename":"/src/terraform/main.tf","start_line":9,"end_line":9},"description":"Resource 'aws_alb_listener.my-alb-listener' uses plain HTTP instead of HTTPS.","severity":"ERROR"},{"rule_id":"AWS003","link":"https://github.com/liamg/tfsec/wiki/AWS003","location":{"filename":"/src/terraform/main.tf","start_line":12,"end_line":14},"description":"Resource 'aws_db_security_group.my-group' uses EC2 Classic. Use a VPC instead.","severity":"ERROR"},{"rule_id":"AZU003","link":"https://github.com/liamg/tfsec/wiki/AZU003","location":{"filename":"/src/terraform/main.tf","start_line":18,"end_line":18},"description":"Resource 'azurerm_managed_disk.source' defines an unencrypted managed disk.","severity":"ERROR"}]}`
 
@@ -50,9 +49,8 @@ func TestStartHCLTfSec(t *testing.T) {
 	t.Run("should return error when invalid output", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &horusec.Analysis{}
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "!@#!@#"
 
@@ -69,9 +67,8 @@ func TestStartHCLTfSec(t *testing.T) {
 	t.Run("should return error when executing container", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &horusec.Analysis{}
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -85,9 +82,10 @@ func TestStartHCLTfSec(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

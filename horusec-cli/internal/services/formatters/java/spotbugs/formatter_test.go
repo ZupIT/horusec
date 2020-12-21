@@ -44,9 +44,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -106,9 +105,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		analysis := AnalysisMock()
 
@@ -124,9 +122,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("clone error"))
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		analysis := AnalysisMock()
 
@@ -141,9 +138,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "this text is wrong for java output"
 
@@ -163,9 +159,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		analysis := AnalysisMock()
 
@@ -180,9 +175,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -204,9 +198,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -228,9 +221,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -252,9 +244,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -312,9 +303,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -371,9 +361,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -430,9 +419,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591121686000" analysisTimestamp="1591121687367" release="">
@@ -489,9 +477,8 @@ func TestJava_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := `<?xml version="1.0" encoding="UTF-8"?>
 			<BugCollection version="4.0.0-beta4" sequence="0" timestamp="1591213178000" analysisTimestamp="1591213179658" release="">
@@ -621,9 +608,9 @@ func TestJava_StartAnalysis(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep",
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

@@ -1,14 +1,15 @@
 {
-  "horusecCliHorusecApiUri": "http://dev.horusec.com",
+  "horusecCliHorusecApiUri": "http://old-viper.horusec.com",
   "horusecCliTimeoutInSecondsRequest": 20,
   "horusecCliTimeoutInSecondsAnalysis": 100,
   "horusecCliMonitorRetryInSeconds": 10,
   "horusecCliRepositoryAuthorization": "8beffdca-636e-4d73-a22f-b0f7c3cff1c4",
   "horusecCliPrintOutputType": "json",
   "horusecCliJsonOutputFilepath": "./output.json",
-  "horusecCliTypesOfVulnerabilitiesToIgnore": "NOSEC",
+  "horusecCliSeveritiesToIgnore": "INFO",
   "horusecCliFilesOrPathsToIgnore": "./assets",
   "horusecCliReturnErrorIfFoundVulnerability": true,
+  "horusecCliEnableCommitAuthor": true,
   "horusecCliProjectPath": "./",
   "horusecCliFilterPath": "./tmp",
   "horusecCliEnableGitHistoryAnalysis": true,
@@ -21,5 +22,11 @@
   "horusecCliContainerBindProjectPath": "test",
   "horusecCliHeaders": {
     "X-Headers": "some-other-value"
+  },
+  "horusecCliToolsConfig": {
+    "GoSec": {
+      "isToIgnore": true,
+      "imagePath": "docker.io/company/gosec:latest"
+    }
   }
 }

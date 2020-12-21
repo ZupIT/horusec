@@ -17,6 +17,7 @@ package start
 import (
 	"bytes"
 	"errors"
+	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -52,6 +53,9 @@ func TestStartCommand_Execute(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+	globalCmd := &cobra.Command{}
+	_ = globalCmd.PersistentFlags().String("log-level", "", "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
+	_ = globalCmd.PersistentFlags().String("config-file-path", "", "Path of the file horusec-config.json to setup content of horusec")
 	t.Run("Should execute command exec without error and ask to user if is to run in current directory", func(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
@@ -59,9 +63,9 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs := config.NewConfig()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -69,10 +73,11 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
+			globalCmd:          globalCmd,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -91,19 +96,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./"})
 
@@ -123,19 +129,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-e", "true"})
 
@@ -151,19 +158,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -179,19 +187,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -208,19 +217,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -238,19 +248,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
@@ -267,19 +278,20 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: analyserControllerMock,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-a", "NOT_VALID_AUTHORIZATION", "-e", "true"})
 
@@ -295,17 +307,18 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "json", "-O", "./tmp-json.json"})
 
@@ -336,17 +349,18 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "sonarqube", "-O", "./tmp-sonarqube.json"})
 
@@ -381,17 +395,18 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", dstZip, "-s", "HIGH"})
 
@@ -420,17 +435,18 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
-		configs.WorkDir = &workdir.WorkDir{}
-		configs.SetConfigsFromEnvironments()
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.NewConfigsFromEnvironments()
 
 		cmd := &Start{
+			globalCmd:          globalCmd,
 			useCases:           cli.NewCLIUseCases(),
 			configs:            configs,
 			startPrompt:        promptMock,
 			analyserController: nil,
 		}
 
-		cobraCmd := cmd.CreateCobraCmd()
+		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-p", dstZip})
 

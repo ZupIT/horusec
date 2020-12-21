@@ -15,6 +15,8 @@
 package health
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
+	"google.golang.org/grpc"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -27,7 +29,7 @@ func TestNewHandler(t *testing.T) {
 	t.Run("should success create a new handler", func(t *testing.T) {
 		postgresMock := &relational.MockRead{}
 
-		handler := NewHandler(postgresMock)
+		handler := NewHandler(postgresMock, &grpc.ClientConn{})
 		assert.NotEmpty(t, handler)
 	})
 }
@@ -36,7 +38,7 @@ func TestHandler_Options(t *testing.T) {
 	t.Run("should return 204 when call options", func(t *testing.T) {
 		postgresMock := &relational.MockRead{}
 
-		handler := NewHandler(postgresMock)
+		handler := NewHandler(postgresMock, &grpc.ClientConn{})
 
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
@@ -50,10 +52,15 @@ func TestHandler_Options(t *testing.T) {
 func TestHandler_Get(t *testing.T) {
 	t.Run("should return 200 when all dependence return success when call get", func(t *testing.T) {
 		postgresMock := &relational.MockRead{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
 		postgresMock.On("IsAvailable").Return(true)
+		mockGrpcService.On("IsAvailable").Return(true, "READY")
 
-		handler := NewHandler(postgresMock)
+		handler := Handler{
+			postgresRead:           postgresMock,
+			grpcHealthCheckService: mockGrpcService,
+		}
 
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
@@ -65,10 +72,36 @@ func TestHandler_Get(t *testing.T) {
 
 	t.Run("should return 500 when postgres database is not ok when call get", func(t *testing.T) {
 		postgresMock := &relational.MockRead{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
 		postgresMock.On("IsAvailable").Return(false)
+		mockGrpcService.On("IsAvailable").Return(true, "READY")
 
-		handler := NewHandler(postgresMock)
+		handler := Handler{
+			postgresRead:           postgresMock,
+			grpcHealthCheckService: mockGrpcService,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 when failed to connect to grpc", func(t *testing.T) {
+		postgresMock := &relational.MockRead{}
+		mockGrpcService := &health.MockHealthCheckClient{}
+
+		postgresMock.On("IsAvailable").Return(true)
+		mockGrpcService.On("IsAvailable").Return(false, "TRANSIENT_FAILURE")
+
+		handler := Handler{
+			postgresRead:           postgresMock,
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

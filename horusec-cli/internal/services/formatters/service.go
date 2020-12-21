@@ -17,6 +17,7 @@ package formatters
 import (
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -38,6 +39,7 @@ type IService interface {
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
+	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
 	GetAnalysis() *horusec.Analysis
 	SetLanguageIsFinished()
 	LogAnalysisError(err error, tool tools.Tool, projectSubPath string)
@@ -53,10 +55,10 @@ type Service struct {
 	docker     dockerService.Interface
 	gitService git.IService
 	monitor    *horusec.Monitor
-	config     *cliConfig.Config
+	config     cliConfig.IConfig
 }
 
-func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config *cliConfig.Config,
+func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
 	monitor *horusec.Monitor) IService {
 	return &Service{
 		analysis:   analysis,
@@ -83,7 +85,18 @@ func (s *Service) GetCommitAuthor(line, filePath string) (commitAuthor horusec.C
 }
 
 func (s *Service) GetConfigProjectPath() string {
-	return file.ReplacePathSeparator(fmt.Sprintf("%s/%s/%s", s.config.ProjectPath, ".horusec", s.analysis.ID.String()))
+	return file.ReplacePathSeparator(
+		fmt.Sprintf(
+			"%s/%s/%s",
+			s.config.GetProjectPath(),
+			".horusec",
+			s.analysis.ID.String(),
+		),
+	)
+}
+
+func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	return s.config.GetToolsConfig()
 }
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
@@ -153,16 +166,15 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
-	allTools := strings.Split(s.config.GetToolsToIgnore(), ",")
-
-	for _, toolToIgnore := range allTools {
-		if strings.EqualFold(strings.TrimSpace(toolToIgnore), tool.ToString()) {
+	// TODO method GetToolsToIgnore will deprecated in future
+	for _, toolToIgnore := range s.config.GetToolsToIgnore() {
+		if strings.EqualFold(toolToIgnore, tool.ToString()) {
 			s.SetLanguageIsFinished()
 			return true
 		}
 	}
 
-	return false
+	return s.config.GetToolsConfig()[tool].IsToIgnore
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {

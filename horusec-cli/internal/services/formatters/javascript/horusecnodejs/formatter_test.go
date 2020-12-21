@@ -33,9 +33,8 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 		dockerAPIControllerMock.On("DeleteContainersFromAPI")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -68,9 +67,8 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 		dockerAPIControllerMock.On("DeleteContainersFromAPI")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(responseContainer, nil)
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -83,9 +81,8 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -101,9 +98,8 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -119,9 +115,8 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 
-		config := &cliConfig.Config{
-			WorkDir: &workdir.WorkDir{},
-		}
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -135,9 +130,9 @@ func TestParseOutputHorusecNodeJS(t *testing.T) {
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
-		config := &cliConfig.Config{
-			ToolsToIgnore: "gosec,securitycodescan,brakeman,safety,bandit,npmaudit,yarnaudit,spotbugs,horuseckotlin,horusecjava,horusecleaks,gitleaks,tfsec,semgrep,horuseccsharp,horusecnodejs",
-		}
+		config := &cliConfig.Config{}
+		config.SetToolsToIgnore([]string{"gosec", "securitycodescan", "brakeman", "safety", "bandit", "npmaudit", "yarnaudit", "spotbugs", "horuseckotlin", "horusecjava", "horusecleaks", "horusecnodejs", "gitleaks", "tfsec", "semgrep"})
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

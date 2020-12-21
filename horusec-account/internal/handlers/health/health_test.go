@@ -15,6 +15,8 @@
 package health
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
+	"google.golang.org/grpc"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,7 +33,8 @@ func TestOptions(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{})
+		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{}, &grpc.ClientConn{})
+
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -46,12 +49,21 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
+		mockGrpcService.On("IsAvailable").Return(true, "READY")
 		brokerMock.On("IsAvailable").Return(true)
 		mockRead.On("IsAvailable").Return(true)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{})
+		handler := Handler{
+			broker:                 brokerMock,
+			databaseRead:           mockRead,
+			databaseWrite:          mockWrite,
+			appConfig:              &app.Config{},
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -64,12 +76,21 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
+		mockGrpcService.On("IsAvailable").Return(false, "READY")
 		brokerMock.On("IsAvailable").Return(true)
 		mockRead.On("IsAvailable").Return(false)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{})
+		handler := Handler{
+			broker:                 brokerMock,
+			databaseRead:           mockRead,
+			databaseWrite:          mockWrite,
+			appConfig:              &app.Config{},
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -82,12 +103,21 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
+		mockGrpcService.On("IsAvailable").Return(false, "READY")
 		brokerMock.On("IsAvailable").Return(true)
 		mockRead.On("IsAvailable").Return(true)
 		mockWrite.On("IsAvailable").Return(false)
 
-		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{})
+		handler := Handler{
+			broker:                 brokerMock,
+			databaseRead:           mockRead,
+			databaseWrite:          mockWrite,
+			appConfig:              &app.Config{},
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -100,12 +130,48 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
 
+		mockGrpcService.On("IsAvailable").Return(false, "READY")
 		brokerMock.On("IsAvailable").Return(false)
 		mockRead.On("IsAvailable").Return(true)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(brokerMock, mockRead, mockWrite, &app.Config{})
+		handler := Handler{
+			broker:                 brokerMock,
+			databaseRead:           mockRead,
+			databaseWrite:          mockWrite,
+			appConfig:              &app.Config{},
+			grpcHealthCheckService: mockGrpcService,
+		}
+
+		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+		w := httptest.NewRecorder()
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return status code 500 when grpc failed to connect", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockGrpcService := &health.MockHealthCheckClient{}
+
+		mockGrpcService.On("IsAvailable").Return(false, "TRANSIENT_FAILURE")
+		brokerMock.On("IsAvailable").Return(true)
+		mockRead.On("IsAvailable").Return(true)
+		mockWrite.On("IsAvailable").Return(true)
+
+		handler := Handler{
+			broker:                 brokerMock,
+			databaseRead:           mockRead,
+			databaseWrite:          mockWrite,
+			appConfig:              &app.Config{},
+			grpcHealthCheckService: mockGrpcService,
+		}
+
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

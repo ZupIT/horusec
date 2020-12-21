@@ -124,12 +124,12 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability, issue 
 }
 
 func (f *Formatter) gitLeaksImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GitLeaks),
 		Language: languages.Leaks,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) getDefaultSeverity() *horusec.Vulnerability {
