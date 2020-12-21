@@ -28,6 +28,7 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import HandleWorkspace from './Handle';
 import Tokens from './Tokens';
+import Users from './Users';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -40,6 +41,9 @@ const Workspaces: React.FC = () => {
   const [workspaceToEdit, setWorkspaceToEdit] = useState<Workspace>(null);
   const [handleWorkspaceVisible, setHandleWorkspaceVisible] = useState(false);
   const [workspaceToManagerTokens, setWorkspaceToManagerTokens] = useState<
+    Workspace
+  >(null);
+  const [workspaceToManagerUsers, setWorkspaceToManagerUsers] = useState<
     Workspace
   >(null);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
@@ -158,7 +162,7 @@ const Workspaces: React.FC = () => {
                         width={200}
                         height={30}
                         icon="grid"
-                        onClick={() => console.log(workspace)}
+                        onClick={() => setWorkspaceToManagerUsers(workspace)}
                       />
 
                       <Button
@@ -203,8 +207,14 @@ const Workspaces: React.FC = () => {
 
       <Tokens
         isVisible={!!workspaceToManagerTokens}
-        selectedCompany={workspaceToManagerTokens}
+        selectedWorkspace={workspaceToManagerTokens}
         onClose={() => setWorkspaceToManagerTokens(null)}
+      />
+
+      <Users
+        isVisible={!!workspaceToManagerUsers}
+        selectedWorkspace={workspaceToManagerUsers}
+        onClose={() => setWorkspaceToManagerUsers(null)}
       />
     </Styled.Wrapper>
   );

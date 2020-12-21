@@ -23,22 +23,22 @@ import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import { Company } from 'helpers/interfaces/Company';
 
 import SuccessAddToken from './Success';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 interface Props {
   isVisible: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-  selectedCompany: Company;
+  selectedWorkspace: Workspace;
 }
 
 const AddToken: React.FC<Props> = ({
   isVisible,
   onCancel,
   onConfirm,
-  selectedCompany,
+  selectedWorkspace,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -61,7 +61,7 @@ const AddToken: React.FC<Props> = ({
       setLoading(true);
 
       companyService
-        .createToken(selectedCompany.companyID, description.value)
+        .createToken(selectedWorkspace.companyID, description.value)
         .then((res) => {
           onConfirm();
           resetFields();

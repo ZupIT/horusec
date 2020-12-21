@@ -118,7 +118,37 @@
     "MEMBER": "Member:",
     "GROUP_NAME": "Group Name",
     "EMAIL": "E-mail",
-    "INVALID_EMAIL_ADMIN": "Invalid email."
+    "INVALID_EMAIL_ADMIN": "Invalid email.",
+    "USERS": {
+      "TITLE": "Users of Workspace",
+      "SEARCH": "Search by e-mail",
+      "INVITE": "Invite User",
+      "EDIT_USER": "Edit User",
+      "EDIT_SUBTITLE": "Edit the user below:",
+      "INVITE_SUBTITLE": "Invite a new user below:",
+      "EMAIL": "E-mail",
+      "INVALID_EMAIL": "Invalid e-mail",
+      "CONFIRM_DELETE": "Do you really want remove this user of workspace?",
+      "YES": "Yes",
+      "SAVE": "Save",
+      "TABLE": {
+        "EMPTY": "There are no matching users for this workspace",
+        "USER": "User",
+        "EMAIL": "E-mail",
+        "PERMISSION": "Permission",
+        "ACTION": "Action",
+        "DELETE": "Delete",
+        "EDIT": "Edit",
+        "ROLE": {
+          "ADMIN": "Administrator",
+          "SUPERVISOR": "Supervisor",
+          "MEMBER": "Member"
+        }
+      },
+      "REMOVE_SUCCESS": "User removed successfully!",
+      "INVITE_SUCCESS": "User added successfully!",
+      "EDIT_SUCCESS": "User edited successfully!"
+    }
   },
 
   "DASHBOARD_SCREEN": {
@@ -232,38 +262,6 @@
       }
     }
   },
-
-  "USERS_SCREEN": {
-    "TITLE": "Users",
-    "SEARCH": "Search by e-mail",
-    "INVITE": "Invite User",
-    "EDIT_USER": "Edit User",
-    "EDIT_SUBTITLE": "Edit the user below:",
-    "INVITE_SUBTITLE": "Invite a new user below:",
-    "EMAIL": "E-mail",
-    "INVALID_EMAIL": "Invalid e-mail",
-    "CONFIRM_DELETE": "Do you really want to delete this user? This action cannot be undone.",
-    "YES": "Yes",
-    "SAVE": "Save",
-    "TABLE": {
-      "EMPTY": "There are no matching users for this workspace",
-      "USER": "User",
-      "EMAIL": "E-mail",
-      "PERMISSION": "Permission",
-      "ACTION": "Action",
-      "DELETE": "Delete",
-      "EDIT": "Edit",
-      "ROLE": {
-        "ADMIN": "Administrator",
-        "SUPERVISOR": "Supervisor",
-        "MEMBER": "Member"
-      }
-    },
-    "REMOVE_SUCCESS": "User removed successfully!",
-    "INVITE_SUCCESS": "User added successfully!",
-    "EDIT_SUCCESS": "User edited successfully!"
-  },
-
   "VULNERABILITIES_SCREEN": {
     "SEARCH": "Search for hash Vulnerability",
     "TITLE": "Vulnerabilities",

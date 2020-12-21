@@ -118,7 +118,37 @@
     "MEMBER": "Membro:",
     "GROUP_NAME": "Nome do grupo",
     "EMAIL": "E-mail",
-    "INVALID_EMAIL_ADMIN": "E-mail Inválido!"
+    "INVALID_EMAIL_ADMIN": "E-mail Inválido!",
+    "USERS": {
+      "TITLE": "Usuários do Workspace",
+      "SEARCH": "Pesquisar por email",
+      "INVITE": "Convidar usuário",
+      "EDIT_USER": "Editar usuário",
+      "EDIT_SUBTITLE": "Edite o usuário abaixo:",
+      "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
+      "EMAIL": "Email",
+      "INVALID_EMAIL": "Email inválido",
+      "CONFIRM_DELETE": "Deseja realmente remover este usuário do workspace?",
+      "YES": "Sim",
+      "SAVE": "Salvar",
+      "TABLE": {
+        "EMPTY": "Não há usuarios correspondentes para este workspace",
+        "USER": "Usuário",
+        "EMAIL": "Email",
+        "PERMISSION": "Permissão",
+        "ACTION": "Ação",
+        "DELETE": "Deletar",
+        "EDIT": "Editar",
+        "ROLE": {
+          "ADMIN": "Administrador",
+          "SUPERVISOR": "Supervisor",
+          "MEMBER": "Membro"
+        }
+      },
+      "REMOVE_SUCCESS": "Usuário removido com sucesso!",
+      "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
+      "EDIT_SUCCESS": "Usuário editado com sucesso!"
+    }
   },
 
   "DASHBOARD_SCREEN": {
@@ -231,37 +261,6 @@
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
-  },
-
-  "USERS_SCREEN": {
-    "TITLE": "Usuários",
-    "SEARCH": "Pesquisar por email",
-    "INVITE": "Convidar usuário",
-    "EDIT_USER": "Editar usuário",
-    "EDIT_SUBTITLE": "Edite o usuário abaixo:",
-    "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
-    "EMAIL": "Email",
-    "INVALID_EMAIL": "Email inválido",
-    "CONFIRM_DELETE": "Deseja realmente deletar este usuário? Essa ação não poderá ser desfeita.",
-    "YES": "Sim",
-    "SAVE": "Salvar",
-    "TABLE": {
-      "EMPTY": "Não há usuarios correspondentes para este workspace",
-      "USER": "Usuário",
-      "EMAIL": "Email",
-      "PERMISSION": "Permissão",
-      "ACTION": "Ação",
-      "DELETE": "Deletar",
-      "EDIT": "Editar",
-      "ROLE": {
-        "ADMIN": "Administrador",
-        "SUPERVISOR": "Supervisor",
-        "MEMBER": "Membro"
-      }
-    },
-    "REMOVE_SUCCESS": "Usuário removido com sucesso!",
-    "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
-    "EDIT_SUCCESS": "Usuário editado com sucesso!"
   },
 
   "VULNERABILITIES_SCREEN": {

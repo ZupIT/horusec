@@ -22,17 +22,17 @@ import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
-import { Company } from 'helpers/interfaces/Company';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { formatToHumanDate } from 'helpers/formatters/date';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 interface Props {
   isVisible: boolean;
-  selectedCompany: Company;
+  selectedWorkspace: Workspace;
   onClose: () => void;
 }
 
-const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
+const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -47,7 +47,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
   const fetchData = () => {
     setLoading(true);
     companyService
-      .getAllTokens(selectedCompany.companyID)
+      .getAllTokens(selectedWorkspace.companyID)
       .then((result) => {
         setTokens(result?.data?.content);
       })
@@ -77,11 +77,11 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
   };
 
   useEffect(() => {
-    if (selectedCompany) {
+    if (selectedWorkspace) {
       fetchData();
     }
     //eslint-disable-next-line
-  }, [selectedCompany]);
+  }, [selectedWorkspace]);
 
   return isVisible ? (
     <Styled.Background>
@@ -158,7 +158,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedCompany }) => {
 
       <AddToken
         isVisible={addTokenVisible}
-        selectedCompany={selectedCompany}
+        selectedWorkspace={selectedWorkspace}
         onCancel={() => setAddTokenVisible(false)}
         onConfirm={() => {
           setAddTokenVisible(false);
