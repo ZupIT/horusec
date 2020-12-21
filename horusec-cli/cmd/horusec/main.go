@@ -15,25 +15,20 @@
 package main
 
 import (
-	"os"
-	"path"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/version"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/spf13/cobra"
+	"os"
 )
 
-var LogLevel = logger.InfoLevel.String()
-var ConfigPath = "./horusec-config.json"
-var configs config.IConfig
-
+var configs = config.NewConfig()
 var rootCmd = &cobra.Command{
 	Use:   "horusec",
 	Short: "Horusec CLI prepares packages to be analyzed by the Horusec Analysis API",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.LogPrint("Horusec Command Line IHelp is an orchestrates security," +
+		logger.LogPrint("Horusec Command Line is an orchestrates security," +
 			"tests and centralizes all results into a database for further analysis and metrics.")
 		return cmd.Help()
 	},
@@ -45,15 +40,14 @@ horusec start -p="/home/user/projects/my-project"
 
 // nolint
 func init() {
-	//initialize empty config
-	configs = &config.Config{}
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&LogLevel, "log-level", logger.InfoLevel.String(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
-
-	cobra.OnInitialize(initConfig)
+	startCmd := start.NewStartCommand(configs)
+	_ = rootCmd.PersistentFlags().String("log-level", configs.GetLogLevel(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
+	_ = rootCmd.PersistentFlags().String("config-file-path", configs.GetConfigFilePath(), "Path of the file horusec-config.json to setup content of horusec")
+	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
+	rootCmd.AddCommand(startCmd.CreateStartCommand())
+	cobra.OnInitialize(func() {
+		startCmd.SetGlobalCmd(rootCmd)
+	})
 }
 
 func main() {
@@ -61,33 +55,9 @@ func main() {
 }
 
 func ExecuteCobra() {
-	setConfigsData()
-	rootCmd.AddCommand(start.NewStartCommand(configs).CreateCobraCmd())
-	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
-
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	} else {
 		os.Exit(0)
 	}
-}
-
-func setConfigsData() {
-	configs.SetConfigFilePath(getConfigPath())
-	_ = configs.NewConfigsFromViper()
-	_ = configs.NewConfigsFromEnvironments()
-}
-
-func initConfig() {
-	logger.SetLogLevel(LogLevel)
-}
-
-func getConfigPath() string {
-	isAbs := path.IsAbs(ConfigPath)
-	if isAbs {
-		return ConfigPath
-	}
-
-	currentDir, _ := os.Getwd()
-	return path.Join(currentDir, ConfigPath)
 }
