@@ -73,6 +73,23 @@ const HandleWorkspace: React.FC<Props> = ({
     value: currentUser.email,
   });
 
+  const setValues = (
+    nameToset?: string,
+    descToSet?: string,
+    adminToSet?: string,
+    memberToSet?: string
+  ) => {
+    setName({ value: nameToset, isValid: nameToset ? true : false });
+    setDescription({ value: descToSet, isValid: false });
+    setEmailAdmin({ value: currentUser?.email, isValid: false });
+    setAdminGroup({ value: adminToSet, isValid: false });
+    setMemberGroup({ value: memberToSet, isValid: false });
+  };
+
+  const clearInputs = () => {
+    setValues();
+  };
+
   const handleCreate = () => {
     companyService
       .create(name.value, description.value, emailAdmin.value, {
@@ -88,6 +105,7 @@ const HandleWorkspace: React.FC<Props> = ({
       })
       .finally(() => {
         setLoading(false);
+        clearInputs();
       });
   };
 
@@ -112,6 +130,7 @@ const HandleWorkspace: React.FC<Props> = ({
       })
       .finally(() => {
         setLoading(false);
+        clearInputs();
       });
   };
 
@@ -121,23 +140,6 @@ const HandleWorkspace: React.FC<Props> = ({
 
       workspaceToEdit ? handleEdit() : handleCreate();
     }
-  };
-
-  const setValues = (
-    nameToset?: string,
-    descToSet?: string,
-    adminToSet?: string,
-    memberToSet?: string
-  ) => {
-    setName({ value: nameToset, isValid: nameToset ? true : false });
-    setDescription({ value: descToSet, isValid: false });
-    setEmailAdmin({ value: currentUser?.email, isValid: false });
-    setAdminGroup({ value: adminToSet, isValid: false });
-    setMemberGroup({ value: memberToSet, isValid: false });
-  };
-
-  const clearInputs = () => {
-    setValues();
   };
 
   useEffect(() => {
