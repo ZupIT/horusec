@@ -85,6 +85,8 @@
       "USERS": "Workspace users",
       "TOKENS": "Tokens"
     },
+    "DESCRIPTION": "Description",
+    "ACTION": "Action",
     "CONFIRM_DELETE": "Do you really want to delete this workspace? This action cannot be undone.",
     "REMOVE_SUCCESS": "Workspace deleted successfully!",
     "YES": "Yes",

@@ -85,6 +85,8 @@
       "USERS": "Usuários do Workspace",
       "TOKENS": "Tokens"
     },
+    "DESCRIPTION": "Descrição",
+    "ACTION": "Ação",
     "CONFIRM_DELETE": "Deseja realmente deletar este workspace? Essa ação não poderá ser desfeita.",
     "REMOVE_SUCCESS": "Workspace deletado com sucesso!",
     "YES": "Sim",

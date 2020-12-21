@@ -27,6 +27,7 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import HandleWorkspace from './Handle';
+import Tokens from './Tokens';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -38,6 +39,9 @@ const Workspaces: React.FC = () => {
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
   const [workspaceToEdit, setWorkspaceToEdit] = useState<Workspace>(null);
   const [handleWorkspaceVisible, setHandleWorkspaceVisible] = useState(false);
+  const [workspaceToManagerTokens, setWorkspaceToManagerTokens] = useState<
+    Workspace
+  >(null);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
   );
@@ -165,7 +169,7 @@ const Workspaces: React.FC = () => {
                         width={100}
                         height={30}
                         icon="lock"
-                        onClick={() => console.log(workspace)}
+                        onClick={() => setWorkspaceToManagerTokens(workspace)}
                       />
                     </>
                   ) : null}
@@ -195,6 +199,12 @@ const Workspaces: React.FC = () => {
         isVisible={!!workspaceToDelete}
         onCancel={() => setWorkspaceToDelete(null)}
         onConfirm={handleConfirmDeleteWorkspace}
+      />
+
+      <Tokens
+        isVisible={!!workspaceToManagerTokens}
+        selectedCompany={workspaceToManagerTokens}
+        onClose={() => setWorkspaceToManagerTokens(null)}
       />
     </Styled.Wrapper>
   );
