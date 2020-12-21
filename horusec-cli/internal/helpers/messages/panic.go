@@ -20,7 +20,8 @@ const (
 	// Fired when starting horusec does not have all the necessary settings to proceed
 	MsgPanicGitRequirementsToRunHorusec = "{HORUSEC_CLI} Missing required GIT in min. version 2.01 to start"
 	// Fired when horusec failed to acquire $HOME directory on user's machine
-	MsgPanicNotFoundHomeDir = "{HORUSEC_CLI} Error on getting home directory."
+	MsgPanicGetFlagValue = "{HORUSEC_CLI} Error on getting flag value, check and try again: "
 	// Fired when is necessary connect in docker
-	MsgPanicNotConnectDocker = "{HORUSEC_CLI} Error when try connect in docker."
+	MsgPanicNotConnectDocker  = "{HORUSEC_CLI} Error when try connect in docker."
+	MsgPanicGetConfigFilePath = "{HORUSEC-CLI} Error on get config file path."
 )

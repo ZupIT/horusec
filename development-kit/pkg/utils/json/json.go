@@ -30,3 +30,32 @@ func ConvertInterfaceToOutput(input, output interface{}) error {
 func ConvertStringToOutput(input string, output interface{}) error {
 	return json.Unmarshal([]byte(input), &output)
 }
+
+func ConvertInterfaceToString(input interface{}) (string, error) {
+	if input != nil && input != "" {
+		inputString, ok := input.(string)
+		if ok {
+			return inputString, nil
+		}
+		bytes, err := json.Marshal(input)
+		return string(bytes), err
+	}
+	return "", nil
+}
+
+func ConvertInterfaceToMapString(input interface{}) (output map[string]string, err error) {
+	if input != nil {
+		if _, ok := input.(map[string]string); ok {
+			return input.(map[string]string), nil
+		}
+		if _, ok := input.(string); ok {
+			return output, json.Unmarshal([]byte(input.(string)), &output)
+		}
+		bytes, err := json.Marshal(input)
+		if err != nil {
+			return map[string]string{}, nil
+		}
+		return output, json.Unmarshal(bytes, &output)
+	}
+	return map[string]string{}, nil
+}

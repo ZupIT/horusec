@@ -44,10 +44,13 @@ func TestSendAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{StatusCode: 201}), nil)
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
+		config.SetHeaders(map[string]string{"some-header": "some-value"})
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test", Headers: `{"some-header": "some-value"}`},
+			config:   config,
 		}
 
 		assert.NotPanics(t, func() {
@@ -71,10 +74,12 @@ func TestSendAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(response), nil)
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   config,
 		}
 
 		assert.NotPanics(t, func() {
@@ -92,10 +97,12 @@ func TestSendAnalysis(t *testing.T) {
 		response := &http.Response{}
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(response), errors.New("test"))
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   config,
 		}
 
 		assert.NotPanics(t, func() {
@@ -123,7 +130,8 @@ func TestSendAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("test"))
-		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 		config.SetCertPath("./horus_api.go")
 		config.SetCertInsecureSkipVerify(true)
 
@@ -141,7 +149,8 @@ func TestSendAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("test"))
-		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 		config.SetCertPath("./invalid_path")
 		config.SetCertInsecureSkipVerify(true)
 
@@ -171,10 +180,12 @@ func TestService_GetAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{StatusCode: 200, Body: body}), nil)
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   config,
 		}
 
 		analysisResponse := service.GetAnalysis(analysisContent.ID)
@@ -188,10 +199,12 @@ func TestService_GetAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{StatusCode: 400, Body: body}), nil)
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   config,
 		}
 
 		analysisResponse := service.GetAnalysis(analysis.ID)
@@ -202,10 +215,12 @@ func TestService_GetAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("some error"))
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 
 		service := Service{
 			httpUtil: httpMock,
-			config:   &cliConfig.Config{RepositoryAuthorization: "test"},
+			config:   config,
 		}
 
 		analysisResponse := service.GetAnalysis(analysis.ID)
@@ -216,7 +231,8 @@ func TestService_GetAnalysis(t *testing.T) {
 
 		httpMock := &client.Mock{}
 		httpMock.On("DoRequest").Return(httpResponse.NewHTTPResponse(&http.Response{}), errors.New("some error"))
-		config := &cliConfig.Config{RepositoryAuthorization: "test"}
+		config := &cliConfig.Config{}
+		config.SetRepositoryAuthorization("test")
 		config.SetCertPath("./invalid_path")
 		config.SetCertInsecureSkipVerify(true)
 

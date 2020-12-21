@@ -57,7 +57,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.JSONOutputFilePath = "/tmp/horusec.json"
+		configs.SetJSONOutputFilePath("/tmp/horusec.json")
 
 		printResults := &PrintResults{
 			analysis: analysis,
@@ -75,7 +75,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.PrintOutputType = "JSON"
+		configs.SetPrintOutputType("JSON")
 
 		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
 
@@ -89,7 +89,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		analysis.SetAnalysisError(errors.New("ERROR GET REPOSITORY"))
 
 		configs := &config.Config{}
-		configs.PrintOutputType = "json"
+		configs.SetPrintOutputType("json")
 
 		printResults := &PrintResults{
 			analysis: analysis,
@@ -105,12 +105,11 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		analysis := test.CreateAnalysisMock()
 
 		analysis.AnalysisVulnerabilities = append(analysis.AnalysisVulnerabilities, horusec.AnalysisVulnerabilities{Vulnerability: test.GetGoVulnerabilityWithSeverity(severity.Low)})
-
+		configs := &config.Config{}
+		configs.SetIsTimeout(true)
 		printResults := &PrintResults{
 			analysis: analysis,
-			configs: &config.Config{
-				IsTimeout: true,
-			},
+			configs:  configs,
 		}
 
 		totalVulns, err := printResults.StartPrintResults()
@@ -153,9 +152,8 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 	})
 
 	t.Run("Should return 12 vulnerabilities with commit authors", func(t *testing.T) {
-		configs := &config.Config{
-			EnableCommitAuthor: true,
-		}
+		configs := &config.Config{}
+		configs.SetEnableCommitAuthor(true)
 
 		analysis := test.CreateAnalysisMock()
 
@@ -196,7 +194,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.TypesOfVulnerabilitiesToIgnore = "MEDIUM, LOW"
+		configs.SetSeveritiesToIgnore([]string{"MEDIUM", "LOW"})
 
 		printResults := &PrintResults{
 			analysis: analysis,

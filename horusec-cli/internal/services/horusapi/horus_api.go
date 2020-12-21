@@ -39,10 +39,10 @@ type IService interface {
 
 type Service struct {
 	httpUtil client.Interface
-	config   *cliConfig.Config
+	config   cliConfig.IConfig
 }
 
-func NewHorusecAPIService(config *cliConfig.Config) IService {
+func NewHorusecAPIService(config cliConfig.IConfig) IService {
 	return &Service{
 		httpUtil: client.NewHTTPClient(10),
 		config:   config,
@@ -50,7 +50,7 @@ func NewHorusecAPIService(config *cliConfig.Config) IService {
 }
 
 func (s *Service) SendAnalysis(analysis *horusec.Analysis) {
-	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.GetIsTimeout() {
 		return
 	}
 
@@ -65,7 +65,7 @@ func (s *Service) SendAnalysis(analysis *horusec.Analysis) {
 }
 
 func (s *Service) GetAnalysis(analysisID uuid.UUID) *horusec.Analysis {
-	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.GetIsTimeout() {
 		return nil
 	}
 
@@ -136,7 +136,7 @@ func (s *Service) verifyResponseFindAnalysis(response httpResponse.Interface) (a
 }
 
 func (s *Service) getHorusecAPIURL() string {
-	return fmt.Sprintf("%s/api/analysis", s.config.HorusecAPIUri)
+	return fmt.Sprintf("%s/api/analysis", s.config.GetHorusecAPIUri())
 }
 
 func (s *Service) loggerSendError(err error) {
@@ -148,10 +148,10 @@ func (s *Service) loggerSendError(err error) {
 
 func (s *Service) setTLSConfig() (*tls.Config, error) {
 	tlsConfig := &tls.Config{}
-	tlsConfig.InsecureSkipVerify = s.config.CertInsecureSkipVerify
+	tlsConfig.InsecureSkipVerify = s.config.GetCertInsecureSkipVerify()
 
-	if s.config.CertPath != "" {
-		caCert, err := ioutil.ReadFile(s.config.CertPath)
+	if s.config.GetCertPath() != "" {
+		caCert, err := ioutil.ReadFile(s.config.GetCertPath())
 		if err != nil {
 			return tlsConfig, err
 		}
@@ -167,7 +167,7 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 func (s *Service) newRequestData(analysis *horusec.Analysis) []byte {
 	analysisData := &api.AnalysisData{
 		Analysis:       analysis,
-		RepositoryName: s.config.RepositoryName,
+		RepositoryName: s.config.GetRepositoryName(),
 	}
 
 	return analysisData.ToBytes()

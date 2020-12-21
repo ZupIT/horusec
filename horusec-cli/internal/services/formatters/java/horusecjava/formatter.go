@@ -63,12 +63,12 @@ func (f *Formatter) startHorusecJavaAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	return &dockerEntities.AnalysisData{
-		Image:    ImageName,
-		Tag:      ImageTag,
+	ad := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecJava),
 		Language: languages.Java,
 	}
+	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecJava].ImagePath, ImageName, ImageTag)
+	return ad
 }
 
 func (f *Formatter) formatOutput(output string) error {

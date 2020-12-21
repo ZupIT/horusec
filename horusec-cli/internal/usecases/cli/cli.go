@@ -30,53 +30,84 @@ import (
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
+type ConfigToValidate struct {
+	horusecAPIUri                   string
+	timeoutInSecondsRequest         int64
+	timeoutInSecondsAnalysis        int64
+	monitorRetryInSeconds           int64
+	repositoryAuthorization         string
+	printOutputType                 string
+	jSONOutputFilePath              string
+	severitiesToIgnore              []string
+	filesOrPathsToIgnore            []string
+	returnErrorIfFoundVulnerability bool
+	projectPath                     string
+	workDir                         *workdir.WorkDir
+	certInsecureSkipVerify          bool
+	certPath                        string
+	falsePositiveHashes             []string
+	riskAcceptHashes                []string
+}
+
 type UseCases struct{}
 
 type Interface interface {
-	ValidateConfigs(config *cliConfig.Config) error
-	NormalizeConfigs(configs *cliConfig.Config) *cliConfig.Config
+	ValidateConfigs(config cliConfig.IConfig) error
 }
 
 func NewCLIUseCases() Interface {
 	return &UseCases{}
 }
-func (au *UseCases) NormalizeConfigs(c *cliConfig.Config) *cliConfig.Config {
-	if c.JSONOutputFilePath != "" {
-		c.JSONOutputFilePath, _ = filepath.Abs(c.JSONOutputFilePath)
-	}
-	c.ProjectPath, _ = filepath.Abs(c.ProjectPath)
-	c.FilesOrPathsToIgnore = strings.TrimSpace(c.FilesOrPathsToIgnore)
-	c.TypesOfVulnerabilitiesToIgnore = strings.TrimSpace(c.TypesOfVulnerabilitiesToIgnore)
-	c.IsTimeout = false
-	return c
-}
 
 //nolint
-func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
-	return validation.ValidateStruct(config,
-		validation.Field(&config.HorusecAPIUri, validation.Required),
-		validation.Field(&config.TimeoutInSecondsRequest, validation.Required, validation.Min(10)),
-		validation.Field(&config.TimeoutInSecondsAnalysis, validation.Required, validation.Min(10)),
-		validation.Field(&config.MonitorRetryInSeconds, validation.Required, validation.Min(10)),
-		validation.Field(&config.RepositoryAuthorization, validation.Required, is.UUID),
-		validation.Field(&config.PrintOutputType, validation.Required, au.validationOutputTypes()),
-		validation.Field(&config.JSONOutputFilePath, validation.By(au.checkAndValidateJSONOutputFilePath(config))),
-		validation.Field(&config.TypesOfVulnerabilitiesToIgnore, validation.By(au.validationSeverities)),
-		validation.Field(&config.FilesOrPathsToIgnore),
-		validation.Field(&config.ReturnErrorIfFoundVulnerability, validation.In(true, false)),
-		validation.Field(&config.ProjectPath, validation.By(au.validateIfIsValidPath(config.ProjectPath))),
-		validation.Field(&config.WorkDir, validation.By(au.validateWorkDir(config.WorkDir, config.ProjectPath))),
-		validation.Field(&config.CertInsecureSkipVerify, validation.In(true, false)),
-		validation.Field(&config.CertPath, validation.By(au.validateCertPath(config.CertPath))),
-		validation.Field(&config.FalsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
-		validation.Field(&config.RiskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
+func (au *UseCases) ValidateConfigs(config cliConfig.IConfig) error {
+	c := au.parseConfigsToConfigValidate(config)
+	return validation.ValidateStruct(&c,
+		validation.Field(&c.horusecAPIUri, validation.Required),
+		validation.Field(&c.timeoutInSecondsRequest, validation.Required, validation.Min(10)),
+		validation.Field(&c.timeoutInSecondsAnalysis, validation.Required, validation.Min(10)),
+		validation.Field(&c.monitorRetryInSeconds, validation.Required, validation.Min(10)),
+		validation.Field(&c.repositoryAuthorization, validation.Required, is.UUID),
+		validation.Field(&c.printOutputType, validation.Required, au.validationOutputTypes()),
+		validation.Field(&c.jSONOutputFilePath, validation.By(au.checkAndValidateJSONOutputFilePath(config))),
+		validation.Field(&c.severitiesToIgnore, validation.By(au.validationSeverities(config))),
+		validation.Field(&c.filesOrPathsToIgnore),
+		validation.Field(&c.returnErrorIfFoundVulnerability, validation.In(true, false)),
+		validation.Field(&c.projectPath, validation.By(au.validateIfIsValidPath(config.GetProjectPath()))),
+		validation.Field(&c.workDir, validation.By(au.validateWorkDir(config.GetWorkDir(), config.GetProjectPath()))),
+		validation.Field(&c.certInsecureSkipVerify, validation.In(true, false)),
+		validation.Field(&c.certPath, validation.By(au.validateCertPath(config.GetCertPath()))),
+		validation.Field(&c.falsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
+		validation.Field(&c.riskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
 	)
 }
 
-func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
+//nolint:funlen parse struct is necessary > 15 lines
+func (au *UseCases) parseConfigsToConfigValidate(config cliConfig.IConfig) ConfigToValidate {
+	return ConfigToValidate{
+		horusecAPIUri:                   config.GetHorusecAPIUri(),
+		timeoutInSecondsRequest:         config.GetTimeoutInSecondsRequest(),
+		timeoutInSecondsAnalysis:        config.GetTimeoutInSecondsAnalysis(),
+		monitorRetryInSeconds:           config.GetMonitorRetryInSeconds(),
+		repositoryAuthorization:         config.GetRepositoryAuthorization(),
+		printOutputType:                 config.GetPrintOutputType(),
+		jSONOutputFilePath:              config.GetJSONOutputFilePath(),
+		severitiesToIgnore:              config.GetSeveritiesToIgnore(),
+		filesOrPathsToIgnore:            config.GetFilesOrPathsToIgnore(),
+		returnErrorIfFoundVulnerability: config.GetReturnErrorIfFoundVulnerability(),
+		projectPath:                     config.GetProjectPath(),
+		workDir:                         config.GetWorkDir(),
+		certInsecureSkipVerify:          config.GetCertInsecureSkipVerify(),
+		certPath:                        config.GetCertPath(),
+		falsePositiveHashes:             config.GetFalsePositiveHashes(),
+		riskAcceptHashes:                config.GetRiskAcceptHashes(),
+	}
+}
+
+func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, falsePositive := range config.GetFalsePositiveHashesList() {
-			for _, riskAccept := range config.GetRiskAcceptHashesList() {
+		for _, falsePositive := range config.GetFalsePositiveHashes() {
+			for _, riskAccept := range config.GetRiskAcceptHashes() {
 				if falsePositive == riskAccept {
 					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
 				}
@@ -86,10 +117,10 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig
 	}
 }
 
-func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
+func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, riskAccept := range config.GetRiskAcceptHashesList() {
-			for _, falsePositive := range config.GetFalsePositiveHashesList() {
+		for _, riskAccept := range config.GetRiskAcceptHashes() {
+			for _, falsePositive := range config.GetFalsePositiveHashes() {
 				if riskAccept == falsePositive {
 					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
 				}
@@ -99,9 +130,9 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Co
 	}
 }
 
-func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config) func(value interface{}) error {
+func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		if config.PrintOutputType == cli.JSON.ToString() || config.PrintOutputType == cli.SonarQube.ToString() {
+		if config.GetPrintOutputType() == cli.JSON.ToString() || config.GetPrintOutputType() == cli.SonarQube.ToString() {
 			if err := au.validateJSONOutputFilePath(config); err != nil {
 				return err
 			}
@@ -110,17 +141,17 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config)
 	}
 }
 
-func (au *UseCases) validateJSONOutputFilePath(config *cliConfig.Config) error {
-	if len(config.JSONOutputFilePath) < 5 {
+func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig) error {
+	if len(config.GetJSONOutputFilePath()) < 5 {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + ".json file path is required")
 	}
-	totalChars := len(config.JSONOutputFilePath) - 1
-	ext := config.JSONOutputFilePath[totalChars-4:]
+	totalChars := len(config.GetJSONOutputFilePath()) - 1
+	ext := config.GetJSONOutputFilePath()[totalChars-4:]
 	if ext != ".json" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid .json file")
 	}
 
-	if output, err := filepath.Abs(config.JSONOutputFilePath); err != nil || output == "" {
+	if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
 	}
 	return nil
@@ -134,19 +165,16 @@ func (au *UseCases) validationOutputTypes() validation.InRule {
 	)
 }
 
-func (au *UseCases) validationSeverities(value interface{}) error {
-	if value != nil {
-		if value.(string) == "" {
-			return nil
-		}
-		for _, item := range strings.Split(value.(string), ",") {
+func (au *UseCases) validationSeverities(config cliConfig.IConfig) func(value interface{}) error {
+	return func(value interface{}) error {
+		for _, item := range config.GetSeveritiesToIgnore() {
 			if !au.checkIfExistItemInSliceOfSeverity(strings.TrimSpace(item)) {
 				return fmt.Errorf("%s %s. See severities enable: %v",
 					messages.MsgErrorSeverityNotValid, item, au.sliceSeverityEnable())
 			}
 		}
+		return nil
 	}
-	return nil
 }
 
 func (au *UseCases) checkIfExistItemInSliceOfSeverity(item string) bool {
@@ -165,6 +193,7 @@ func (au *UseCases) sliceSeverityEnable() []severity.Severity {
 		severity.Medium,
 		severity.High,
 		severity.Audit,
+		severity.Info,
 	}
 }
 
@@ -189,6 +218,9 @@ func (au *UseCases) validateCertPath(dir string) func(value interface{}) error {
 
 func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string) func(value interface{}) error {
 	return func(value interface{}) error {
+		if workDir == nil {
+			return errors.New(messages.MsgErrorParseStringToWorkDir)
+		}
 		for _, pathsByLanguage := range workDir.Map() {
 			for _, projectSubPath := range pathsByLanguage {
 				err := au.validateIfExistPathInProjectToWorkDir(projectPath, projectSubPath)
