@@ -40,9 +40,17 @@ const create = (
   });
 };
 
-const update = (companyId: string, name: string, ldapGroups?: LDAPGroups) => {
+const update = (
+  companyId: string,
+  name: string,
+  description?: string,
+  adminEmail?: string,
+  ldapGroups?: LDAPGroups
+) => {
   return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
     name,
+    adminEmail,
+    description,
     ...ldapGroups,
   });
 };

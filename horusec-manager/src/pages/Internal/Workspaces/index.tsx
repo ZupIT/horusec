@@ -26,7 +26,7 @@ import companyService from 'services/company';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
-import AddWorkspace from './Add';
+import HandleWorkspace from './Handle';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +36,8 @@ const Workspaces: React.FC = () => {
 
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
-  const [addWorkspaceVisible, setAddWorkspaceVisible] = useState(false);
+  const [workspaceToEdit, setWorkspaceToEdit] = useState<Workspace>(null);
+  const [handleWorkspaceVisible, setHandleWorkspaceVisible] = useState(false);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
   );
@@ -70,6 +71,11 @@ const Workspaces: React.FC = () => {
       });
   };
 
+  const setVisibleHandleModal = (isVisible: boolean, workspace?: Workspace) => {
+    setHandleWorkspaceVisible(isVisible);
+    setWorkspaceToEdit(workspace || null);
+  };
+
   useEffect(() => {
     setFilteredWorkspaces(allWorkspaces);
   }, [allWorkspaces]);
@@ -87,7 +93,7 @@ const Workspaces: React.FC = () => {
           rounded
           width={180}
           icon="plus"
-          onClick={() => setAddWorkspaceVisible(true)}
+          onClick={() => setVisibleHandleModal(true)}
         />
       </Styled.Options>
 
@@ -126,7 +132,7 @@ const Workspaces: React.FC = () => {
                         width={100}
                         height={30}
                         icon="edit"
-                        onClick={() => console.log(workspace)}
+                        onClick={() => setVisibleHandleModal(true, workspace)}
                       />
 
                       <Button
@@ -170,13 +176,14 @@ const Workspaces: React.FC = () => {
         </Styled.Table>
       </Styled.Content>
 
-      <AddWorkspace
-        isVisible={addWorkspaceVisible}
+      <HandleWorkspace
+        isVisible={handleWorkspaceVisible}
+        workspaceToEdit={workspaceToEdit}
         onConfirm={() => {
-          setAddWorkspaceVisible(false);
+          setVisibleHandleModal(false);
           fetchAllWorkspaces();
         }}
-        onCancel={() => setAddWorkspaceVisible(false)}
+        onCancel={() => setVisibleHandleModal(false)}
       />
 
       <Dialog

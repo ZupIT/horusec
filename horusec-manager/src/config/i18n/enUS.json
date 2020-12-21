@@ -71,6 +71,7 @@
   "WORKSPACES_SCREEN": {
     "SEARCH": "Search Workspace",
     "ADD": "Add Workspace",
+    "EDIT_WORKSPACE": "Edit Workspace",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "TITLE": "Workspace management",

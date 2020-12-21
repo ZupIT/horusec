@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
@@ -28,14 +28,21 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 interface Props {
   isVisible: boolean;
+  workspaceToEdit?: Workspace;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
-const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
+const HandleWorkspace: React.FC<Props> = ({
+  isVisible,
+  onCancel,
+  onConfirm,
+  workspaceToEdit,
+}) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { currentWorkspace } = useWorkspace();
@@ -66,34 +73,97 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
     value: currentUser.email,
   });
 
-  const handleConfirmSave = () => {
+  const handleCreate = () => {
+    companyService
+      .create(name.value, description.value, emailAdmin.value, {
+        authzAdmin: adminGroup.value,
+        authzMember: memberGroup.value,
+      })
+      .then(() => {
+        onConfirm();
+        showSuccessFlash(t('WORKSPACES_SCREEN.CREATE_SUCCESS'));
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleEdit = () => {
+    companyService
+      .update(
+        workspaceToEdit.companyID,
+        name.value,
+        description.value,
+        emailAdmin.value,
+        {
+          authzAdmin: adminGroup.value,
+          authzMember: memberGroup.value,
+        }
+      )
+      .then(() => {
+        onConfirm();
+        showSuccessFlash(t('WORKSPACES_SCREEN.UPDATE_SUCCESS'));
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleSubmit = () => {
     if (name.isValid) {
       setLoading(true);
 
-      companyService
-        .create(name.value, description.value, emailAdmin.value, {
-          authzAdmin: adminGroup.value,
-          authzMember: memberGroup.value,
-        })
-        .then(() => {
-          onConfirm();
-          showSuccessFlash(t('WORKSPACES_SCREEN.CREATE_SUCCESS'));
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      workspaceToEdit ? handleEdit() : handleCreate();
     }
   };
+
+  const setValues = (
+    nameToset?: string,
+    descToSet?: string,
+    adminToSet?: string,
+    memberToSet?: string
+  ) => {
+    setName({ value: nameToset, isValid: nameToset ? true : false });
+    setDescription({ value: descToSet, isValid: false });
+    setEmailAdmin({ value: currentUser?.email, isValid: false });
+    setAdminGroup({ value: adminToSet, isValid: false });
+    setMemberGroup({ value: memberToSet, isValid: false });
+  };
+
+  const clearInputs = () => {
+    setValues();
+  };
+
+  useEffect(() => {
+    setValues(
+      workspaceToEdit?.name,
+      workspaceToEdit?.description,
+      workspaceToEdit?.authzAdmin,
+      workspaceToEdit?.authzMember
+    );
+
+    // eslint-disable-next-line
+  }, [workspaceToEdit]);
 
   return (
     <Dialog
       isVisible={isVisible}
-      message={t('WORKSPACES_SCREEN.ADD')}
-      onCancel={onCancel}
-      onConfirm={handleConfirmSave}
+      message={
+        workspaceToEdit
+          ? t('WORKSPACES_SCREEN.EDIT_WORKSPACE')
+          : t('WORKSPACES_SCREEN.ADD')
+      }
+      onCancel={() => {
+        clearInputs();
+        onCancel();
+      }}
+      onConfirm={handleSubmit}
       confirmText={t('WORKSPACES_SCREEN.SAVE')}
       disableConfirm={!name.isValid}
       disabledColor={colors.button.disableInDark}
@@ -101,7 +171,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
       width={600}
       hasCancel
     >
-      <Styled.Form onSubmit={handleConfirmSave}>
+      <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
           name="name"
           label={t('WORKSPACES_SCREEN.TABLE.NAME')}
@@ -109,6 +179,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           onChangeValue={(field: Field) => setName(field)}
           validation={isEmptyString}
           invalidMessage={t('WORKSPACES_SCREEN.INVALID_WORKSPACE_NAME')}
+          initialValue={name.value}
         />
 
         <Styled.Field
@@ -116,6 +187,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
           width="100%"
           onChangeValue={(field: Field) => setDescription(field)}
+          initialValue={description.value}
         />
 
         {applicationAdminEnable ? (
@@ -142,6 +214,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
               <Input
                 name="adminGroup"
+                initialValue={adminGroup.value}
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setAdminGroup(field)}
               />
@@ -152,6 +225,7 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
               <Input
                 name="memberGroup"
+                initialValue={memberGroup.value}
                 label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                 onChangeValue={(field: Field) => setMemberGroup(field)}
               />
@@ -163,4 +237,4 @@ const AddWorkspace: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   );
 };
 
-export default AddWorkspace;
+export default HandleWorkspace;
