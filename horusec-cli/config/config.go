@@ -72,6 +72,8 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetRiskAcceptHashes(c.extractFlagValueStringSlice(cmd, "risk-accept", c.GetRiskAcceptHashes()))
 	c.SetToolsToIgnore(c.extractFlagValueStringSlice(cmd, "tools-ignore", c.GetToolsToIgnore()))
 	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
+	c.SetDisableDocker(c.extractFlagValueBool(cmd, "disable-docker", c.GetDisableDocker()))
+	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
 	return c
 }
 

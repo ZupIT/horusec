@@ -113,6 +113,11 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
 	_ = startCmd.PersistentFlags().
 		StringP("container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(), "Used to pass project path in host when running horusec cli inside a container.")
+	_ = startCmd.PersistentFlags().
+		StringP("custom-rules-path", "c", s.configs.GetContainerBindProjectPath(), "Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
+	_ = startCmd.PersistentFlags().
+		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
+
 	return startCmd
 }
 
