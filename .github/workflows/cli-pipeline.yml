@@ -49,4 +49,4 @@ jobs:
           go build -o horusec ./horusec-cli/cmd/horusec/main.go
           chmod +x horusec
           sudo mv horusec /usr/local/bin
-          horusec start -p="."
+          horusec start -p="./"

@@ -7,7 +7,7 @@
   "horusecCliPrintOutputType":"text",
   "horusecCliJsonOutputFilePath": "",
   "horusecCliProjectPath":"./",
-  "horusecCliContainerBindProjectPath": "./",
+  "horusecCliContainerBindProjectPath": "",
   "horusecCliTimeoutInSecondsRequest":300,
   "horusecCliTimeoutInSecondsAnalysis": 800,
   "horusecCliMonitorRetryInSeconds": 10,
