@@ -17,6 +17,7 @@ package zip
 import (
 	"archive/zip"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"io"
 	"os"
 	"path/filepath"
@@ -37,8 +38,9 @@ func NewZip() Interface {
 	return &Zip{}
 }
 
+//nolint:funlen unzip is not necessary broken smaller methods
 func (z *Zip) UnZip(src, dest string) error {
-	r, err := zip.OpenReader(src)
+	r, err := zip.OpenReader(file.ReplacePathSeparator(src))
 	if err != nil {
 		return err
 	}
@@ -47,7 +49,8 @@ func (z *Zip) UnZip(src, dest string) error {
 		if err != nil {
 			return err
 		}
-		if err := z.createFileAndFolderToUnZip(dest, contentFileOpenedOnZip, fileOpenedOnZip); err != nil {
+		err = z.createFileAndFolderToUnZip(file.ReplacePathSeparator(dest), contentFileOpenedOnZip, fileOpenedOnZip)
+		if err != nil {
 			return err
 		}
 	}
@@ -92,21 +95,21 @@ func (z *Zip) createFileToUnzip(
 
 func (z *Zip) addFileNameOnDest(dest, fileName string) string {
 	if strings.Contains(fileName, "analysis-") {
-		spliced := strings.Split(fileName, "/")
+		spliced := strings.Split(fileName, string(os.PathSeparator))
 		if len(spliced) == 1 {
 			fileName = spliced[0]
 		} else {
-			fileName = strings.Join(spliced[1:], "/")
+			fileName = strings.Join(spliced[1:], string(os.PathSeparator))
 		}
 	}
-	if dest[len(dest)-1:] == "/" {
+	if dest[len(dest)-1:] == string(os.PathSeparator) {
 		return dest + fileName
 	}
-	return fmt.Sprintf("%s/%s", dest, fileName)
+	return fmt.Sprintf("%s%s%s", dest, string(os.PathSeparator), fileName)
 }
 
 func (z *Zip) ConvertFilesToZip(filesAndFolders []string, directory, fileName string) error {
-	fullPathDestiny := z.getFullPathDestiny(directory, fileName)
+	fullPathDestiny := z.getFullPathDestiny(file.ReplacePathSeparator(directory), file.ReplacePathSeparator(fileName))
 	if err := z.createFolders(filesAndFolders, directory, fullPathDestiny); err != nil {
 		return err
 	}
@@ -120,16 +123,17 @@ func (z *Zip) ConvertFilesToZip(filesAndFolders []string, directory, fileName st
 }
 
 func (z *Zip) getFullPathDestiny(directory, fileName string) (defaultFullPathDestiny string) {
-	if directory[len(directory)-1:] == "/" {
-		defaultFullPathDestiny = fmt.Sprintf("%s.horusec/%s", directory, fileName)
+	if directory[len(directory)-1:] == string(os.PathSeparator) {
+		defaultFullPathDestiny = fmt.Sprintf("%s.horusec%s%s", directory, string(os.PathSeparator), fileName)
 	} else {
-		defaultFullPathDestiny = fmt.Sprintf("%s/.horusec/%s", directory, fileName)
+		defaultFullPathDestiny = fmt.Sprintf("%s%s.horusec%s%s",
+			string(os.PathSeparator), string(os.PathSeparator), directory, fileName)
 	}
 	return defaultFullPathDestiny
 }
 
 func (z *Zip) CompressFolderToZip(source, target string) error {
-	baseDir, zipFile, archive, err := z.createZipFile(source, target)
+	baseDir, zipFile, archive, err := z.createZipFile(file.ReplacePathSeparator(source), file.ReplacePathSeparator(target))
 	if err != nil {
 		return err
 	}
@@ -158,12 +162,12 @@ func (z *Zip) walkToSendAllSubDirectories(source, baseDir string, archive *zip.W
 
 func (z *Zip) copyFilesToDest(filesAndFolders []string, directory, fullPathDestiny string) error {
 	for _, value := range filesAndFolders {
-		file, err := os.Stat(value)
+		fileOpened, err := os.Stat(file.ReplacePathSeparator(value))
 		if err != nil {
 			return err
 		}
-		if !file.IsDir() {
-			fileDestiny := strings.ReplaceAll(value, directory, fullPathDestiny+"/")
+		if !fileOpened.IsDir() {
+			fileDestiny := strings.ReplaceAll(value, directory, fullPathDestiny+string(os.PathSeparator))
 			if err := z.copyFile(value, fileDestiny); err != nil {
 				return err
 			}
@@ -180,11 +184,11 @@ func (z *Zip) createFolders(filesAndFolders []string, directory, fullPathDestiny
 
 func (z *Zip) runLoopToCreateAllFolders(filesAndFolders []string, directory, fullPathDestiny string) error {
 	for _, value := range filesAndFolders {
-		file, err := os.Stat(value)
+		fileOpened, err := os.Stat(file.ReplacePathSeparator(value))
 		if err != nil {
 			return err
 		}
-		if file.IsDir() {
+		if fileOpened.IsDir() {
 			folderToCreate := strings.ReplaceAll(value, directory, fullPathDestiny)
 			if err := z.mkdir(folderToCreate); err != nil {
 				return err
@@ -254,7 +258,7 @@ func (z *Zip) setupHeaderInSubDirectory(source, path, baseDir string, info os.Fi
 		header.Name = filepath.Join(baseDir, strings.TrimPrefix(path, source))
 	}
 	if info.IsDir() {
-		header.Name += "/"
+		header.Name += string(os.PathSeparator)
 	} else {
 		header.Method = zip.Deflate
 	}
@@ -267,14 +271,14 @@ func (z *Zip) createSubDirectoryOnZip(
 	if info.IsDir() {
 		return nil
 	}
-	file, err := os.Open(path)
+	fileOpened, err := os.Open(path)
 	if err != nil {
 		return err
 	}
 
 	defer func() {
-		logger.LogError("Error defer file close", file.Close())
+		logger.LogError("Error defer file close", fileOpened.Close())
 	}()
-	_, err = io.Copy(writer, file)
+	_, err = io.Copy(writer, fileOpened)
 	return err
 }
