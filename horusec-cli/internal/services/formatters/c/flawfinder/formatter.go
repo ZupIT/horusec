@@ -15,17 +15,15 @@
 package flawfinder
 
 import (
-	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/c"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	flawfinderEntities "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder/entities"
 	"github.com/gocarina/gocsv"
 )
 
@@ -40,60 +38,51 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Flawfinder) {
+	if f.ToolIsToIgnore(tools.Flawfinder) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Flawfinder.ToString(), logger.DebugLevel)
 		return
 	}
 
-	err := f.startFlawFinder(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.Flawfinder, projectSubPath)
+	f.SetAnalysisError(f.startFlawfinder(projectSubPath), tools.Flawfinder, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startFlawFinder(projectSubPath string) error {
+func (f *Formatter) startFlawfinder(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Flawfinder)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder)
 	return f.parseOutput(output)
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var results []c.Result
+	var results []flawfinderEntities.Result
 
 	if err := gocsv.UnmarshalString(output, &results); err != nil {
-		f.SetAnalysisError(fmt.Errorf("{HORUSEC_CLI} Error %s", output))
 		return err
 	}
 
-	f.appendResults(results)
+	for index := range results {
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(results, index))
+	}
+
 	return nil
 }
 
-func (f *Formatter) appendResults(results []c.Result) {
-	for index := range results {
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *f.setVulnerabilityData(results, index),
-			})
-	}
-}
-
-func (f *Formatter) setVulnerabilityData(results []c.Result, index int) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(results []flawfinderEntities.Result, index int) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = results[index].GetSeverity()
 	vulnerability.Details = results[index].GetDetails()
@@ -101,21 +90,8 @@ func (f *Formatter) setVulnerabilityData(results []c.Result, index int) *horusec
 	vulnerability.Column = results[index].Column
 	vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].Context, 0)
 	vulnerability.File = results[index].GetFilename()
-	vulnerability = vulnhash.Bind(vulnerability)
-
-	return f.setCommitAuthor(vulnerability)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, f.getFilePathFromPackageName(vulnerability.File))
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	vulnerability = hash.Bind(vulnerability)
+	return f.SetCommitAuthor(vulnerability)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -123,9 +99,4 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity.SecurityTool = tools.Flawfinder
 	vulnerabilitySeverity.Language = languages.C
 	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getFilePathFromPackageName(filePath string) string {
-	return fileUtil.GetPathIntoFilename(filePath,
-		fmt.Sprintf("%s/", f.GetConfigProjectPath()))
 }

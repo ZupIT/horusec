@@ -62,8 +62,9 @@ func (r *Repository) Create(
 
 func (r *Repository) Update(
 	companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+	dataToUpdate := data.SetUpdateData().MapToUpdate()
 	response := r.databaseWrite.Update(
-		data.SetUpdateData(),
+		dataToUpdate,
 		getCompanyByIDFilter(companyID),
 		data.GetTable(),
 	)
@@ -72,7 +73,7 @@ func (r *Repository) Update(
 		return nil, response.GetError()
 	}
 
-	return response.GetData().(*accountEntities.Company), response.GetError()
+	return data, response.GetError()
 }
 
 func (r *Repository) GetByID(companyID uuid.UUID) (*accountEntities.Company, error) {

@@ -18,12 +18,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/python"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -31,9 +29,11 @@ import (
 	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/safety/entities"
 )
 
 type Formatter struct {
@@ -47,37 +47,36 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Safety) {
+	if f.ToolIsToIgnore(tools.Safety) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Safety.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startSafetyAnalysis(projectSubPath)
-	f.LogAnalysisError(err, tools.Safety, projectSubPath)
-	f.SetLanguageIsFinished()
+
+	f.SetAnalysisError(f.startSafety(projectSubPath), tools.Safety, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startSafetyAnalysis(projectSubPath string) error {
+func (f *Formatter) startSafety(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Safety)
 
-	output, err := f.ExecuteContainer(f.getAnalysisData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
 	f.parseOutput(output)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety)
 	return nil
 }
 
-func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
+		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) {
@@ -97,13 +96,13 @@ func (f *Formatter) parseOutput(output string) {
 	f.setSafetyOutPutInHorusecAnalysis(safetyOutput.Issues)
 }
 
-func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput python.SafetyOutput, err error) {
+func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entities.SafetyOutput, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &safetyOutput)
 	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err, logger.ErrorLevel)
 	return safetyOutput, err
 }
 
-func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []python.SafetyIssues) {
+func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue) {
 	for index := range issues {
 		vulnerability := f.setupVulnerabilitiesSeveritiesSafety(issues, index)
 		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
@@ -114,17 +113,14 @@ func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []python.SafetyIssue
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
-	issues []python.SafetyIssues, index int) *horusec.Vulnerability {
+	issues []entities.Issue, index int) *horusec.Vulnerability {
 	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
 
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverityInSafety()
 	vulnerabilitySeverity.Details = issues[index].Description
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vulnerabilitySeverity.Line = f.getVulnerabilityLineByName(lineContent, vulnerabilitySeverity.File)
-
-	// Set vulnerabilitySeverity.VulnHash value
-	vulnerabilitySeverity = vulnhash.Bind(vulnerabilitySeverity)
-
+	vulnerabilitySeverity = hash.Bind(vulnerabilitySeverity)
 	return f.setCommitAuthor(vulnerabilitySeverity)
 }
 

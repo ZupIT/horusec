@@ -16,18 +16,19 @@ package semgrep
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/general/semgrep"
+	"path/filepath"
+	"strconv"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"path/filepath"
-	"strconv"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep/entities"
 )
 
 type Formatter struct {
@@ -41,58 +42,52 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Semgrep) {
+	if f.ToolIsToIgnore(tools.Semgrep) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Semgrep.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startSecurityCodeScanAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.SecurityCodeScan, projectSubPath)
+
+	f.SetAnalysisError(f.startSemgrep(projectSubPath), tools.SecurityCodeScan, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startSecurityCodeScanAnalysis(projectSubPath string) error {
+func (f *Formatter) startSemgrep(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Semgrep)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	err = f.parseOutput(output)
-	if err != nil {
-		f.SetAnalysisError(err)
-	}
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep)
-	return err
+	return f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Semgrep),
 		Language: languages.Generic,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Semgrep].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Semgrep].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var analysis *semgrep.Analysis
+	var analysis *entities.Analysis
 
-	err := json.Unmarshal([]byte(output), &analysis)
-	if err != nil {
+	if err := json.Unmarshal([]byte(output), &analysis); err != nil {
 		return err
 	}
 
 	for _, result := range analysis.Results {
 		item := result
-		f.setAnalysisResults(f.setVulnerabilityData(&item))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&item))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(result *semgrep.Result) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(result *entities.Result) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilityData()
 	data.Details = result.Extra.Message
 	data.Severity = f.getSeverity(result.Extra.Severity)
@@ -101,22 +96,8 @@ func (f *Formatter) setVulnerabilityData(result *semgrep.Result) *horusec.Vulner
 	data.File = result.Path
 	data.Code = f.GetCodeWithMaxCharacters(result.Extra.Code, 0)
 	data.Language = f.getLanguageByFile(result.Path)
-
-	data = vulnhash.Bind(data)
-
-	return f.setCommitAuthor(data)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	data = hash.Bind(data)
+	return f.SetCommitAuthor(data)
 }
 
 func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
@@ -132,6 +113,7 @@ func (f *Formatter) getLanguageByFile(file string) languages.Language {
 
 func (f *Formatter) getExtension(file string) string {
 	ext := filepath.Ext(file)
+
 	for _, item := range f.getExtensionList() {
 		if item == ext {
 			return ext
@@ -168,13 +150,6 @@ func (f *Formatter) getExtensionList() []string {
 		".c",
 		".html",
 	}
-}
-
-func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-		horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
 }
 
 func (f *Formatter) getSeverity(resultSeverity string) severity.Severity {

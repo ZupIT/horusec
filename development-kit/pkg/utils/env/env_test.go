@@ -101,3 +101,15 @@ func TestGetHorusecManagerURL(t *testing.T) {
 		assert.Equal(t, "test-url.com", GetHorusecManagerURL())
 	})
 }
+
+func TestGetEnvOrDefaultInterface(t *testing.T) {
+	t.Run("should success get env as interface", func(t *testing.T) {
+		_ = os.Setenv("TEST_ENV", "test")
+		assert.Equal(t, "test", GetEnvOrDefaultInterface("TEST_ENV", "default"))
+	})
+
+	t.Run("should return default value", func(t *testing.T) {
+		_ = os.Setenv("TEST_ENV", "")
+		assert.Equal(t, "default", GetEnvOrDefaultInterface("TEST_ENV", "default"))
+	})
+}

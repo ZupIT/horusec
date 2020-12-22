@@ -17,6 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { Flash } from 'components';
 import { flashMessageType } from 'helpers/enums/flashMessageType';
+
 interface FlashMessageProps {
   children: JSX.Element;
 }

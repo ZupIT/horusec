@@ -14,6 +14,8 @@
 
 package config
 
+import "github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+
 type Config struct {
 	LogLevel       string
 	ProjectPath    string
@@ -38,6 +40,8 @@ func (c *Config) SetLogLevel(logLevel string) {
 }
 
 func (c *Config) GetOutputFilePath() string {
+	logger.LogDebugWithLevel("Sending units and rules to engine and expected response in path: ",
+		logger.DebugLevel, c.OutputFilePath)
 	return c.OutputFilePath
 }
 

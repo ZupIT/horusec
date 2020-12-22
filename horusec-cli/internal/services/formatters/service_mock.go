@@ -15,10 +15,13 @@
 package formatters
 
 import (
+	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	utilsMock "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -26,58 +29,107 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) LogDebugWithReplace(msg string, tool tools.Tool) {
+func (m *Mock) LogDebugWithReplace(_ string, _ tools.Tool) {
 	_ = m.MethodCalled("LogDebugWithReplace")
 }
+
 func (m *Mock) GetAnalysisID() string {
 	args := m.MethodCalled("GetAnalysisID")
 	return args.Get(0).(string)
 }
-func (m *Mock) SetAnalysisError(err error) {
-	_ = m.MethodCalled("SetAnalysisError")
-}
-func (m *Mock) ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error) {
+
+func (m *Mock) ExecuteContainer(_ *dockerEntities.AnalysisData) (output string, err error) {
 	args := m.MethodCalled("ExecuteContainer")
-	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 0)
+	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetAnalysisIDErrorMessage(tool tools.Tool, output string) string {
+
+func (m *Mock) GetAnalysisIDErrorMessage(_ tools.Tool, _ string) string {
 	args := m.MethodCalled("GetAnalysisIDErrorMessage")
 	return args.Get(0).(string)
 }
-func (m *Mock) GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor) {
+
+func (m *Mock) GetCommitAuthor(_, _ string) (commitAuthor horusec.CommitAuthor) {
 	args := m.MethodCalled("GetCommitAuthor")
 	return args.Get(0).(horusec.CommitAuthor)
 }
-func (m *Mock) AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string {
+
+func (m *Mock) AddWorkDirInCmd(_ string, _ string, _ tools.Tool) string {
 	args := m.MethodCalled("AddWorkDirInCmd")
 	return args.Get(0).(string)
 }
+
 func (m *Mock) GetConfigProjectPath() string {
 	args := m.MethodCalled("GetConfigProjectPath")
 	return args.Get(0).(string)
 }
+
 func (m *Mock) GetAnalysis() *horusec.Analysis {
 	args := m.MethodCalled("GetAnalysis")
 	return args.Get(0).(*horusec.Analysis)
 }
-func (m *Mock) SetLanguageIsFinished() {
-	_ = m.MethodCalled("SetLanguageIsFinished")
+
+func (m *Mock) SetToolFinishedAnalysis() {
+	_ = m.MethodCalled("SetToolFinishedAnalysis")
 }
-func (m *Mock) LogAnalysisError(err error, tool tools.Tool, projectSubPath string) {
-	_ = m.MethodCalled("LogAnalysisError")
+
+func (m *Mock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
+	_ = m.MethodCalled("SetAnalysisError")
 }
-func (m *Mock) SetMonitor(monitor *horusec.Monitor) {
+
+func (m *Mock) SetMonitor(_ *horusec.Monitor) {
 	_ = m.MethodCalled("SetMonitor")
 }
-func (m *Mock) RemoveSrcFolderFromPath(filepath string) string {
+
+func (m *Mock) RemoveSrcFolderFromPath(_ string) string {
 	args := m.MethodCalled("RemoveSrcFolderFromPath")
 	return args.Get(0).(string)
 }
-func (m *Mock) GetCodeWithMaxCharacters(code string, column int) string {
+
+func (m *Mock) GetCodeWithMaxCharacters(_ string, _ int) string {
 	args := m.MethodCalled("GetCodeWithMaxCharacters")
 	return args.Get(0).(string)
 }
-func (m *Mock) ToolIsToIgnore(tool tools.Tool) bool {
+
+func (m *Mock) ToolIsToIgnore(_ tools.Tool) bool {
 	args := m.MethodCalled("ToolIsToIgnore")
 	return args.Get(0).(bool)
+}
+
+func (m *Mock) GetFilepathFromFilename(_ string) string {
+	args := m.MethodCalled("GetFilepathFromFilename")
+	return args.Get(0).(string)
+}
+
+func (m *Mock) GetProjectPathWithWorkdir(_ string) string {
+	args := m.MethodCalled("GetProjectPathWithWorkdir")
+	return args.Get(0).(string)
+}
+
+func (m *Mock) SetCommitAuthor(_ *horusec.Vulnerability) *horusec.Vulnerability {
+	args := m.MethodCalled("SetCommitAuthor")
+	return args.Get(0).(*horusec.Vulnerability)
+}
+
+func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, _ languages.Language) error {
+	args := m.MethodCalled("ParseFindingsToVulnerabilities")
+	return utilsMock.ReturnNilOrError(args, 0)
+}
+
+func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *horusec.Vulnerability) {
+	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
+}
+
+func (m *Mock) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+	args := m.MethodCalled("GetToolsConfig")
+	return args.Get(0).(map[tools.Tool]toolsconfig.ToolConfig)
+}
+
+func (m *Mock) IsDockerDisabled() bool {
+	args := m.MethodCalled("IsDockerDisabled")
+	return args.Get(0).(bool)
+}
+
+func (m *Mock) GetCustomRulesByTool(_ tools.Tool) []engine.Rule {
+	args := m.MethodCalled("GetCustomRulesByTool")
+	return args.Get(0).([]engine.Rule)
 }

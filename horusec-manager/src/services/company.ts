@@ -26,17 +26,31 @@ const getOne = (companyId: string) => {
   return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
 };
 
-const create = (name: string, adminEmail?: string, ldapGroups?: LDAPGroups) => {
+const create = (
+  name: string,
+  description?: string,
+  adminEmail?: string,
+  ldapGroups?: LDAPGroups
+) => {
   return http.post(`${SERVICE_ACCOUNT}/api/companies`, {
     name,
+    description,
     adminEmail,
     ...ldapGroups,
   });
 };
 
-const update = (companyId: string, name: string, ldapGroups?: LDAPGroups) => {
+const update = (
+  companyId: string,
+  name: string,
+  description?: string,
+  adminEmail?: string,
+  ldapGroups?: LDAPGroups
+) => {
   return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
     name,
+    adminEmail,
+    description,
     ...ldapGroups,
   });
 };
