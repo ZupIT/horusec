@@ -35,16 +35,16 @@ func NewRules() Interface {
 }
 
 func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for _, rule := range allRulesKubernetesAnd() {
-		rules = append(rules, rule)
+	for index := range allRulesKubernetesAnd() {
+		rules = append(rules, allRulesKubernetesAnd()[index])
 	}
 
-	for _, rule := range allRulesKubernetesOr() {
-		rules = append(rules, rule)
+	for index := range allRulesKubernetesOr() {
+		rules = append(rules, allRulesKubernetesOr()[index])
 	}
 
-	for _, rule := range allRulesKubernetesRegular() {
-		rules = append(rules, rule)
+	for index := range allRulesKubernetesRegular() {
+		rules = append(rules, allRulesKubernetesRegular()[index])
 	}
 
 	return rules
