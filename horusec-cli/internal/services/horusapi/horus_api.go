@@ -21,15 +21,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/google/uuid"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
 	httpResponse "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/google/uuid"
 )
 
 type IService interface {
@@ -165,9 +165,14 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 }
 
 func (s *Service) newRequestData(analysis *horusec.Analysis) []byte {
+	repositoryName := s.config.GetRepositoryName()
+	if repositoryName == "" {
+		repositoryName = filepath.Base(s.config.GetProjectPath())
+	}
+
 	analysisData := &api.AnalysisData{
 		Analysis:       analysis,
-		RepositoryName: s.config.GetRepositoryName(),
+		RepositoryName: repositoryName,
 	}
 
 	return analysisData.ToBytes()
