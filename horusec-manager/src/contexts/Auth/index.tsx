@@ -19,7 +19,6 @@ import React, { useState, useEffect } from 'react';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
-import { clearCurrentCompany } from 'helpers/localStorage/currentCompany';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { Authenticator } from 'helpers/interfaces/Authenticator';
 import accountService from 'services/account';
@@ -66,7 +65,6 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
 
   const clearLocalStorage = () => {
     clearCurrentUser();
-    clearCurrentCompany();
     clearTokens();
   };
 

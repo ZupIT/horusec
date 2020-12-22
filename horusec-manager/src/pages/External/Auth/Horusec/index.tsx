@@ -27,6 +27,7 @@ function HorusecAuth() {
         <Route exact path={path} component={lazy(() => import('./Login'))} />
 
         <Route
+          exact
           path={`${path}/create-account`}
           component={lazy(() => import('./CreateAccount'))}
         />
