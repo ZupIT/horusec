@@ -36,4 +36,5 @@ mongo-init.js
 tmp/
 bin
 *tmp*
+*examples*
 .horusec/
