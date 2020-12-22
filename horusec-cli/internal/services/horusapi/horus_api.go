@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -165,14 +164,9 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 }
 
 func (s *Service) newRequestData(analysis *horusec.Analysis) []byte {
-	repositoryName := s.config.GetRepositoryName()
-	if repositoryName == "" {
-		repositoryName = filepath.Base(s.config.GetProjectPath())
-	}
-
 	analysisData := &api.AnalysisData{
 		Analysis:       analysis,
-		RepositoryName: repositoryName,
+		RepositoryName: s.config.GetRepositoryName(),
 	}
 
 	return analysisData.ToBytes()

@@ -16,15 +16,16 @@ package config
 
 import (
 	"encoding/json"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/spf13/cobra"
-	"os"
-	"path"
-	"path/filepath"
-	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -305,7 +306,11 @@ func (c *Config) SetEnableCommitAuthor(isEnable bool) {
 }
 
 func (c *Config) GetRepositoryName() string {
-	return valueordefault.GetStringValueOrDefault(c.repositoryName, "")
+	if repositoryName := valueordefault.GetStringValueOrDefault(c.repositoryName, ""); repositoryName != "" {
+		return repositoryName
+	}
+
+	return filepath.Base(c.GetProjectPath())
 }
 
 func (c *Config) SetRepositoryName(repositoryName string) {
