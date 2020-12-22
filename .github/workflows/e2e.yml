@@ -20,7 +20,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make test-e2e-cli
+        run: |
+          env GOOS=linux GOARCH=amd64 go build -o "e2e/cli/scan_languages/tmp-horusec" ./horusec-cli/cmd/horusec/main.go
+          make test-e2e-cli
   e2e-cli-macos:
     name: e2e-cli-macos
     runs-on: macos-latest
@@ -34,7 +36,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make test-e2e-cli
+        run: |
+          env GOOS=darwin GOARCH=amd64 go build -o "e2e/cli/scan_languages/tmp-horusec" ./horusec-cli/cmd/horusec/main.go
+          make test-e2e-cli
   e2e-cli-windows:
     name: e2e-cli-windows
     runs-on: windows-latest
@@ -48,7 +52,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make test-e2e-cli
+        run: |
+          env GOOS=windows GOARCH=amd64 go build -o "e2e/cli/scan_languages/tmp-horusec" ./horusec-cli/cmd/horusec/main.go
+          make test-e2e-cli
   e2e-server-horusec:
     name: e2e-server-horusec
     runs-on: ubuntu-latest

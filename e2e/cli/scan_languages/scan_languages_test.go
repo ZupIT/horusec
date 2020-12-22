@@ -27,21 +27,46 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
 )
 
-const S = string(os.PathSeparator)
-
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("." + S + "analysis")
-	_ = os.RemoveAll("." + S + "tmp")
-	code := m.Run()
-	_ = os.RemoveAll("." + S + "analysis")
-	_ = os.RemoveAll("." + S + "tmp")
-	os.Exit(code)
+	currentPath, _ := os.Getwd()
+	horusecPath := path.Join(currentPath, "tmp-horusec")
+	_ = os.RemoveAll(path.Join(currentPath, "analysis"))
+	_ = os.RemoveAll(path.Join(currentPath, "tmp"))
+	if _, err := os.Stat(horusecPath); os.IsNotExist(err) {
+		fmt.Println("tmp-horusec binary not found. Building Binary to linux_x64...")
+		cmdArguments := []string{
+			"build",
+			fmt.Sprintf("-o=%s", horusecPath),
+			path.Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
+		}
+		cmd := exec.Command("go", cmdArguments...)
+		cmd.Env = os.Environ()
+		cmd.Env = append(cmd.Env, "GOOS=linux")
+		cmd.Env = append(cmd.Env, "GOARCH=amd64")
+		if output, err := cmd.CombinedOutput(); err != nil {
+			fmt.Println(err.Error())
+			fmt.Println(string(output))
+			os.Exit(1)
+		} else {
+			code := m.Run()
+			_ = os.RemoveAll(path.Join(currentPath, "analysis"))
+			_ = os.RemoveAll(path.Join(currentPath, "tmp"))
+			os.Exit(code)
+		}
+	} else {
+		code := m.Run()
+		_ = os.RemoveAll(path.Join(currentPath, "analysis"))
+		_ = os.RemoveAll(path.Join(currentPath, "tmp"))
+		os.Exit(code)
+	}
+
 }
 
 func TestHorusecCLILanguages(t *testing.T) {
@@ -50,17 +75,17 @@ func TestHorusecCLILanguages(t *testing.T) {
 	}
 	var wg sync.WaitGroup
 	go RunGolangTest(t, &wg)
-	go RunCsharpTest(t, &wg)
-	go RunRubyTest(t, &wg)
-	go RunPythonBanditTest(t, &wg)
-	go RunPythonSafetyTest(t, &wg)
-	go RunJavaTest(t, &wg)
-	go RunKotlinTest(t, &wg)
-	go RunJavascriptNpmTest(t, &wg)
-	go RunJavascriptYarnTest(t, &wg)
-	go RunGitTest(t, &wg)
-	go RunHclTest(t, &wg)
-	wg.Add(11)
+	//go RunCsharpTest(t, &wg)
+	//go RunRubyTest(t, &wg)
+	//go RunPythonBanditTest(t, &wg)
+	//go RunPythonSafetyTest(t, &wg)
+	//go RunJavaTest(t, &wg)
+	//go RunKotlinTest(t, &wg)
+	//go RunJavascriptNpmTest(t, &wg)
+	//go RunJavascriptYarnTest(t, &wg)
+	//go RunGitTest(t, &wg)
+	//go RunHclTest(t, &wg)
+	wg.Add(1)
 	wg.Wait()
 }
 
@@ -143,13 +168,15 @@ func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 }
 
 func runHorusecCLIUsingZip(t *testing.T, zipName string, othersFlags ...map[string]string) string {
-	assert.NoError(t, os.MkdirAll("." + S + "tmp", 0750))
+	currentPath, _ := os.Getwd()
+	horusecPath := path.Join(currentPath, "tmp-horusec")
+	assert.NoError(t, os.MkdirAll(path.Join(currentPath, "tmp"), 0750))
 	fakeAnalysisID := uuid.New().String()
-	fileOutput := fmt.Sprintf("." +S+"tmp"+S+"horusec-analysis-%s.json", fakeAnalysisID)
-	destPath := "analysis"+ S + fakeAnalysisID
+	fileOutput := path.Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
+	destPath := path.Join("analysis", fakeAnalysisID)
 	destPath, err := filepath.Abs(destPath)
 	assert.NoError(t, err)
-	srcPath := ".."+S+".."+S+".."+S+"development-kit"+S+"pkg"+S+"utils"+S+"test"+S+"zips"+S+"" + zipName + S + zipName + ".zip"
+	srcPath := path.Join("..", "..", "..", "development-kit", "pkg", "utils", "test", "zips", zipName, zipName+".zip")
 	assert.NoError(t, zip.NewZip().UnZip(srcPath, destPath))
 	flags := map[string]string{
 		"-p": strings.TrimSpace(destPath),
@@ -162,15 +189,13 @@ func runHorusecCLIUsingZip(t *testing.T, zipName string, othersFlags ...map[stri
 		}
 	}
 	cmdArguments := []string{
-		"run",
-		".."+S+".."+S+".."+S+"horusec-cli"+S+"cmd"+S+"horusec"+S+"main.go",
 		"start",
 	}
 	for flag, value := range flags {
 		cmdArguments = append(cmdArguments, fmt.Sprintf("%s=%s", flag, value))
 	}
 	logger.LogInfo(fmt.Sprintf("Running command: go %s", strings.Join(cmdArguments, " ")))
-	cmd := exec.Command("go", cmdArguments...)
+	cmd := exec.Command(horusecPath, cmdArguments...)
 	_ = cmd.Run()
 
 	return fileOutput
