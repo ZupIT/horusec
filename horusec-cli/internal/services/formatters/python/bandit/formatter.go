@@ -15,19 +15,19 @@
 package bandit
 
 import (
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/python"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/bandit/entities"
 )
 
 type Formatter struct {
@@ -41,36 +41,35 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Bandit) {
+	if f.ToolIsToIgnore(tools.Bandit) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Bandit.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startBanditAnalysis(projectSubPath)
-	f.LogAnalysisError(err, tools.Bandit, projectSubPath)
-	f.SetLanguageIsFinished()
+
+	f.SetAnalysisError(f.startBandit(projectSubPath), tools.Bandit, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startBanditAnalysis(projectSubPath string) error {
+func (f *Formatter) startBandit(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Bandit)
 
-	output, err := f.ExecuteContainer(f.getAnalysisData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
 	f.parseOutput(output)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit)
 	return nil
 }
 
-func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Bandit),
 		Language: languages.Python,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) {
@@ -88,19 +87,17 @@ func (f *Formatter) parseOutput(output string) {
 	f.setBanditOutPutInHorusecAnalysis(banditOutput.Results)
 }
 
-func (f *Formatter) parseOutputToBanditOutput(output string) (banditOutput python.BanditOutput, err error) {
+func (f *Formatter) parseOutputToBanditOutput(output string) (banditOutput entities.BanditOutput, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &banditOutput)
 	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Bandit, output), err, logger.ErrorLevel)
 	return banditOutput, err
 }
 
-func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []python.BanditResult) {
+func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []entities.Result) {
 	totalInformation := 0
 	for index := range issues {
 		if f.notSkipVulnerabilityBecauseIsInformation(issues, index) {
-			vulnerability := f.setupVulnerabilitiesSeveritiesBandit(issues, index)
-			f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-				horusec.AnalysisVulnerabilities{Vulnerability: *vulnerability})
+			f.AddNewVulnerabilityIntoAnalysis(f.setupVulnerabilitiesSeveritiesBandit(issues, index))
 		} else {
 			totalInformation++
 		}
@@ -113,7 +110,7 @@ func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []python.BanditResul
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
-	issues []python.BanditResult, index int) *horusec.Vulnerability {
+	issues []entities.Result, index int) *horusec.Vulnerability {
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverity()
 	vulnerabilitySeverity.Severity = issues[index].IssueSeverity
 	vulnerabilitySeverity.Details = issues[index].IssueText
@@ -121,23 +118,8 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
 	vulnerabilitySeverity.Line = strconv.Itoa(issues[index].LineNumber)
 	vulnerabilitySeverity.Confidence = issues[index].IssueConfidence
 	vulnerabilitySeverity.File = issues[index].GetFile()
-
-	// Set vulnerabilitySeverity.VulnHash value
-	vulnerabilitySeverity = vulnhash.Bind(vulnerabilitySeverity)
-
-	return f.setCommitAuthor(vulnerabilitySeverity)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	vulnerabilitySeverity = hash.Bind(vulnerabilitySeverity)
+	return f.SetCommitAuthor(vulnerabilitySeverity)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -148,7 +130,7 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) notSkipVulnerabilityBecauseIsInformation(issues []python.BanditResult, index int) bool {
+func (f *Formatter) notSkipVulnerabilityBecauseIsInformation(issues []entities.Result, index int) bool {
 	skipAssertDetected := "Use of assert detected. " +
 		"The enclosed code will be removed when compiling to optimized byte code."
 	details := issues[index].IssueText

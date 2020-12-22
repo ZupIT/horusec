@@ -95,6 +95,12 @@ type IConfig interface {
 	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
 	SetToolsConfig(toolsConfig interface{})
 
+	GetDisableDocker() bool
+	SetDisableDocker(disableDocker bool)
+
+	GetCustomRulesPath() string
+	SetCustomRulesPath(customRulesPath string)
+
 	IsEmptyRepositoryAuthorization() bool
 	ToBytes(isMarshalIndent bool) (bytes []byte)
 	NormalizeConfigs() IConfig

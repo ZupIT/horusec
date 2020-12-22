@@ -15,17 +15,18 @@
 package gosec
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/golang"
+	"strconv"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"strconv"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec/entities"
 )
 
 type Formatter struct {
@@ -39,26 +40,25 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.GoSec) {
+	if f.ToolIsToIgnore(tools.GoSec) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GoSec.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startGoLangGoSecAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.GoSec, projectSubPath)
+
+	f.SetAnalysisError(f.startGoSec(projectSubPath), tools.GoSec, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GoSec)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startGoLangGoSecAnalysis(projectSubPath string) error {
+func (f *Formatter) startGoSec(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GoSec)
 
-	output, err := f.ExecuteContainer(f.getAnalysisData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
 	f.processOutput(output)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GoSec)
 	return nil
 }
 
@@ -77,21 +77,21 @@ func (f *Formatter) processOutput(output string) {
 	f.setGoSecOutPutInHorusecAnalysis(golangOutput)
 }
 
-func (f *Formatter) parseOutputToGoOutput(output string) (golangOutput golang.Output, err error) {
+func (f *Formatter) parseOutputToGoOutput(output string) (golangOutput entities.Output, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &golangOutput)
 	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GoSec, output), err, logger.ErrorLevel)
 	return golangOutput, err
 }
 
-func (f *Formatter) setGoSecOutPutInHorusecAnalysis(golangOutput golang.Output) {
+func (f *Formatter) setGoSecOutPutInHorusecAnalysis(golangOutput entities.Output) {
 	for _, value := range golangOutput.Issues {
 		issue := value
 		vulnerability := f.setupVulnerabilitiesSeveritiesGoSec(&issue)
-		f.addVulnerabilityBySeverityGoSec(vulnerability)
+		f.AddNewVulnerabilityIntoAnalysis(vulnerability)
 	}
 }
 
-func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *horusec.Vulnerability {
+func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *entities.Issue) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = issue.Severity
 	vulnerability.Details = issue.Details
@@ -100,28 +100,13 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGoSec(issue *golang.Issue) *ho
 	vulnerability.Column = issue.Column
 	vulnerability.Confidence = issue.Confidence
 	vulnerability.File = f.RemoveSrcFolderFromPath(issue.File)
-
-	// Set vulnerabilitySeverity.VulnHash value
-	vulnerability = vulnhash.Bind(vulnerability)
-
-	return f.setCommitAuthor(vulnerability)
+	vulnerability = hash.Bind(vulnerability)
+	return f.SetCommitAuthor(vulnerability)
 }
 
 func (f *Formatter) getCode(code, column string) string {
 	columnNumber, _ := strconv.Atoi(column)
 	return f.GetCodeWithMaxCharacters(code, columnNumber)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -131,18 +116,11 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) addVulnerabilityBySeverityGoSec(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-		horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
-}
-
-func (f *Formatter) getAnalysisData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GoSec),
 		Language: languages.Go,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
 }

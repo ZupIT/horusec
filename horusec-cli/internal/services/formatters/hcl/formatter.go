@@ -17,18 +17,18 @@ package hcl
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/hcl"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl/entities"
 )
 
 type Formatter struct {
@@ -42,86 +42,63 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.TfSec) {
+	if f.ToolIsToIgnore(tools.TfSec) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.TfSec.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startTfSec(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.TfSec, projectSubPath)
+
+	f.SetAnalysisError(f.startTfSec(projectSubPath), tools.TfSec, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.TfSec)
+	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startTfSec(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.TfSec)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.TfSec)
 	return f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.TfSec].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.TfSec].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var vulnerabilities *hcl.Vulnerabilities
+	var vulnerabilities *entities.Vulnerabilities
 
 	if err := json.Unmarshal([]byte(output), &vulnerabilities); err != nil {
 		if !strings.Contains(output, "panic") {
-			f.SetAnalysisError(fmt.Errorf("{HORUSEC_CLI} Error %s", output))
+			return fmt.Errorf("{HORUSEC_CLI} Error %s", output)
 		}
 
 		return err
 	}
 
-	f.appendResults(vulnerabilities)
+	for index := range vulnerabilities.Results {
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(index, vulnerabilities.Results))
+	}
+
 	return nil
 }
 
-func (f *Formatter) appendResults(hclVulnerabilities *hcl.Vulnerabilities) {
-	for _, result := range hclVulnerabilities.Results {
-		hclResult := result
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *f.setVulnerabilityData(&hclResult),
-			})
-	}
-}
-
-func (f *Formatter) setVulnerabilityData(result *hcl.Result) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
 	vulnerability.Severity = severity.High
-	vulnerability.Details = result.GetDetails()
-	vulnerability.Line = result.GetStartLine()
-	vulnerability.Code = f.GetCodeWithMaxCharacters(result.GetCode(), 0)
-	vulnerability.File = f.RemoveSrcFolderFromPath(result.GetFilename())
-
-	// Set vulnerabilitySeverity.VulnHash value
-	vulnerability = vulnhash.Bind(vulnerability)
-
-	return f.setCommitAuthor(vulnerability)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	vulnerability.Details = results[index].GetDetails()
+	vulnerability.Line = results[index].GetStartLine()
+	vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].GetCode(), 0)
+	vulnerability.File = f.RemoveSrcFolderFromPath(results[index].GetFilename())
+	vulnerability = hash.Bind(vulnerability)
+	return f.SetCommitAuthor(vulnerability)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {

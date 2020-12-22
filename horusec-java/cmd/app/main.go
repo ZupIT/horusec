@@ -21,8 +21,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd/run"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd/version"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-java/internal/controllers"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ func init() {
 }
 
 func main() {
-	controller := analysis.NewAnalysis(configs)
+	controller := controllers.NewAnalysis(configs)
 	rootCmd.AddCommand(run.NewRunCommand(configs, controller).CreateCobraCmd())
 	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
 

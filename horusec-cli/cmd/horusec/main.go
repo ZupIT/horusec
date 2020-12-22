@@ -19,7 +19,6 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/version"
 	"github.com/ZupIT/horusec/horusec-cli/config"
-	"github.com/ZupIT/horusec/horusec-cli/internal/controllers/requirements"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -52,7 +51,6 @@ func init() {
 }
 
 func main() {
-	requirements.NewRequirements().ValidateDocker()
 	ExecuteCobra()
 }
 

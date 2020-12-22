@@ -20,6 +20,8 @@
   "horusecCliRiskAcceptHashes": "hash3, hash4",
   "horusecCliToolsToIgnore": "GoSec",
   "horusecCliContainerBindProjectPath": "test",
+  "horusecCliDisableDocker": true,
+  "horusecCliCustomRulesPath": "test",
   "horusecCliHeaders": {
     "X-Headers": "some-other-value"
   },

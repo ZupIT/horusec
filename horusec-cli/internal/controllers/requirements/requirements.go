@@ -25,12 +25,17 @@ import (
 
 var ErrRequirements = errors.New("check the requirements for run and try again")
 
+type IRequirements interface {
+	ValidateDocker()
+	ValidateGit()
+}
+
 type Requirements struct {
 	gitRequirements    *git.RequirementGit
 	dockerRequirements *docker.RequirementDocker
 }
 
-func NewRequirements() *Requirements {
+func NewRequirements() IRequirements {
 	return &Requirements{
 		gitRequirements:    git.NewRequirementGit(),
 		dockerRequirements: docker.NewRequirementDocker(),
