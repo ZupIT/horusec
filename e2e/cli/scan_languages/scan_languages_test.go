@@ -179,7 +179,7 @@ func runHorusecCLIUsingZip(t *testing.T, zipName string, othersFlags ...map[stri
 	srcPath := path.Join("..", "..", "..", "development-kit", "pkg", "utils", "test", "zips", zipName, zipName+".zip")
 	assert.NoError(t, zip.NewZip().UnZip(srcPath, destPath))
 	flags := map[string]string{
-		"-p": strings.TrimSpace(destPath),
+		"-p": strings.TrimSpace(path.Join(currentPath, "..", "..", "..", "development-kit","pkg","engines","examples","leaks-hardcodedpass")),
 		"-o": strings.TrimSpace("json"),
 		"-O": strings.TrimSpace(fileOutput),
 	}
