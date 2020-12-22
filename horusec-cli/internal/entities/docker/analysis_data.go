@@ -16,6 +16,7 @@ package docker
 
 import (
 	"fmt"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
@@ -29,10 +30,12 @@ func (a *AnalysisData) IsInvalid() bool {
 	return a.ImagePath == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageName, imageTag string) {
+func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageName, imageTag string) *AnalysisData {
 	if imagePathInConfig != "" {
 		a.ImagePath = imagePathInConfig
 	} else {
 		a.ImagePath = fmt.Sprintf("docker.io/%s:%s", imageName, imageTag)
 	}
+
+	return a
 }

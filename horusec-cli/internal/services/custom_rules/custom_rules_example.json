@@ -1,0 +1,14 @@
+[
+  {
+    "ID": "01755d83-d974-4839-7304-6b611b319638",
+    "Name": "test",
+    "Description": "test",
+    "Severity": "INFO",
+    "Confidence": "LOW",
+    "Type": "Regular",
+    "Tool": "HorusecCsharp",
+    "Expressions": [
+      "test"
+    ]
+  }
+]

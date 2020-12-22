@@ -15,9 +15,11 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus" // nolint
 	"log"
+
+	"github.com/sirupsen/logrus" // nolint
 )
 
 const (
@@ -153,4 +155,11 @@ func LogTraceWithLevel(msg string, level logrus.Level, args ...interface{}) {
 
 func LogStringAsError(msg string) {
 	logrus.Error(msg)
+}
+
+func LogDebugJSON(message string, content interface{}) {
+	contentBytes, err := json.Marshal(content)
+	if err == nil {
+		LogTraceWithLevel(message, DebugLevel, string(contentBytes))
+	}
 }

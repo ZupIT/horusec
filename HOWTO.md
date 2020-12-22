@@ -9,7 +9,6 @@ To add a new analyse tool into horusec-cli you should follow the step-by-step ex
 
 #### 1 - Create a new CLI by copying some one of the existed one and rename it to **horusec-{name-of-the-cli}**.
 
-
 e.g.:
 
 [horusec-java](/horusec-java)
@@ -23,10 +22,46 @@ e.g.:
 
 e.g.:
 
-[examples](/development-kit/pkg/engines/examples)
+[examples](/development-kit/pkg/engines/csharp)
+
+#### 3 - Update CLI Controller Importing Rules.
 
 
-#### 3 - Update your CLI to use the rules that you create and update the CLI configuration.
+```go
+type IAnalysis interface {
+    StartAnalysis() error
+}
+
+type Analysis struct {
+    configs      *config.Config
+    serviceRules csharp.Interface // Change the import to get your respective rules
+}
+
+func NewAnalysis(configs *config.Config) IAnalysis {
+return &Analysis{
+        configs:      configs,
+        serviceRules: csharp.NewRules(), // Change the import to get your respective rules
+    }
+}
+
+func (a *Analysis) StartAnalysis() error {
+    textUnit, err := a.serviceRules.GetTextUnitByRulesExt(a.configs.GetProjectPath())
+    if err != nil {
+        return err
+    }
+    
+    return engine.RunOutputInJSON(textUnit, a.getAllRules(), a.configs.GetOutputFilePath())
+}
+
+func (a *Analysis) getAllRules() []engine.Rule {
+    allRules := a.serviceRules.GetAllRules()
+    logger.LogDebugJSON("All rules selected are: ", allRules)
+    return allRules
+}
+
+```
+
+#### 4 - Update your CLI to use the rules that you create and update the CLI configuration.
 
 e.g.: Replace the curle braces in the code with your new cli definitions.
 
@@ -50,7 +85,7 @@ var rootCmd = &cobra.Command{
 	Use:   "horusec-{THE-NAME-OF-YOUR-CLI}",
 	Short: "Horusec-{THE-NAME-OF-YOUR-CLI} CLI",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.LogPrint("Horusec Java Command Line Interface")
+		logger.LogPrint("Horusec {THE-NAME-OF-YOUR-CLI} Command Line Interface")
 		return cmd.Help()
 	},
 	Example: `horusec-{THE-NAME-OF-YOUR-CLI} run`,
@@ -78,14 +113,12 @@ func main() {
 
 ```
 
-
-#### 4 - Update the dockerfile following the example
+#### 5 - Update the dockerfile following the example
 
 e.g.: [horusec-java dockerfile](/horusec-java/deployments/Dockerfile)
 
 
-#### 5 - Create a new formatter into horusec-cli following this [doc](/horusec-cli/README.md)
-
+#### 6 - Create a new formatter into horusec-cli following this [doc](/horusec-cli/README.md)
 
 ## Adding Security Tool
  
@@ -265,3 +298,66 @@ Now add the new tool or language to the interface array according to what was ad
 And it's ready. Now horusec is inte.grated with the new tool and generating unified reports.
 
 Feel free to send us a pull request and collaborate with the project. We will love it!
+
+## Adding Custom Rules
+At Horusec you have the possibility to add rules dynamically that will be executed on our engines.
+
+#### 1 - Horusec Custom Rules Json
+To do this it is necessary to create a json file containing the following pattern:
+
+ ```horusec-custom-rules.json
+[
+   {
+      "ID": "0d6c505a-4986-4771-91db-ec4f4ebface7",
+      "Name": "Vulnerability name",
+      "Description": "Description of the vulnerability",
+      "Severity": "Vulnerability severity",
+      "Confidence": "Confidence of the vulnerability",
+      "Type": "Regex type",
+      "Tool": "HorusecCsharp",
+      "Expressions": [
+         "Regex to respective vulnerability"
+      ]
+   },
+   {
+      "ID": "837c504d-38b4-4ea6-987b-d91e92ac86a2",
+      "Name": "Cookie Without HttpOnly Flag",
+      "Description": "It is recommended to specify the HttpOnly flag to new cookie. For more information access: (https://security-code-scan.github.io/#SCS0009) or (https://cwe.mitre.org/data/definitions/1004.html).",
+      "Severity": "LOW",
+      "Confidence": "LOW",
+      "Type": "OrMatch",
+      "Tool": "HorusecCsharp",
+      "Expressions": [
+         "httpOnlyCookies\s*=\s*['|"]false['|"]",
+         "(new\sHttpCookie\(.*\))(.*|\n)*(\.HttpOnly\s*=\s*false)",
+         "(new\sHttpCookie)(([^H]|H[^t]|Ht[^t]|Htt[^p]|Http[^O]|HttpO[^n]|HttpOn[^l]|HttpOnl[^y])*)(})"
+      ]
+   }
+]
+```
+
+#### 2 - Json Explanation
+
+| Field           | Description                                                                                                                                          |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| ID              | Random UUID that will be used to identify the vulnerability, your rules should not duplicate this id.                                                |
+| Name            | String with the name of the vulnerability.                                                                                                           |
+| Description     | String with the description of the vulnerability.                                                                                                    |
+| Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                            |
+| Confidence      | String with the confidence of the vulnerability report with the possible values: (LOW, MEDIUM, HIGH).                                                |
+| Type            | String with the regex type with the possible values: (Regular, OrMatch, AndMatch).                                                                   |
+| Tool            | String with the regex type with the possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |
+| Expressions     | Array of string containing all the regex that will detect the vulnerability.                                                                         |
+
+#### 3 - Regex Types
+
+| Type            | Description                                                                                                                                          |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| OrMatch         | If any regex in the array matches this vulnerability will be reported. Regexes need to be in the context of the same vulnerability.                  |
+| Regular         | If any regex in the array matches this vulnerability will be reported. Regexes don't need to be related.                                             |
+| AndMatch        | In this type all regexes must match for the vulnerability to be reported.                                                                            |
+
+#### 4 - Custom Rules Flag
+To use the rules you created use the `-c` flag passing the path to the json file.
+
+`horusec start -c="{path to your horusec custom rules json file}"`

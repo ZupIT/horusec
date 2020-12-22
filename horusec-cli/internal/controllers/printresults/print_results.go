@@ -238,7 +238,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *horusecE
 	fmt.Println(fmt.Sprintf("Column: %s", vulnerability.Column))
 	fmt.Println(fmt.Sprintf("SecurityTool: %s", vulnerability.SecurityTool))
 	fmt.Println(fmt.Sprintf("Confidence: %s", vulnerability.Confidence))
-	fmt.Println(fmt.Sprintf("File: %s/%s", pr.getProjectPath(), vulnerability.File))
+	fmt.Println(fmt.Sprintf("File: %s", pr.getProjectPath(vulnerability.File)))
 	fmt.Println(fmt.Sprintf("Code: %s", vulnerability.Code))
 	fmt.Println(fmt.Sprintf("Details: %s", vulnerability.Details))
 	fmt.Println(fmt.Sprintf("Type: %s", vulnerability.Type))
@@ -314,10 +314,14 @@ func (pr *PrintResults) logSeparator(isToShow bool) {
 	}
 }
 
-func (pr *PrintResults) getProjectPath() string {
-	if pr.configs.GetContainerBindProjectPath() != "" {
-		return pr.configs.GetContainerBindProjectPath()
+func (pr *PrintResults) getProjectPath(path string) string {
+	if strings.Contains(path, pr.configs.GetProjectPath()) {
+		return path
 	}
 
-	return pr.configs.GetProjectPath()
+	if pr.configs.GetContainerBindProjectPath() != "" {
+		return fmt.Sprintf("%s/%s", pr.configs.GetContainerBindProjectPath(), path)
+	}
+
+	return fmt.Sprintf("%s/%s", pr.configs.GetProjectPath(), path)
 }

@@ -16,18 +16,18 @@ package brakeman
 
 import (
 	"encoding/json"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/ruby"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/brakeman/entities"
 )
 
 type Formatter struct {
@@ -41,25 +41,24 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Brakeman) {
+	if f.ToolIsToIgnore(tools.Brakeman) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Brakeman.ToString(), logger.DebugLevel)
 		return
 	}
-	err := f.startBrakemanAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.Brakeman, projectSubPath)
+
+	f.SetAnalysisError(f.startBrakeman(projectSubPath), tools.Brakeman, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startBrakemanAnalysis(projectSubPath string) error {
+func (f *Formatter) startBrakeman(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman)
 	return f.parseOutput(output)
 }
 
@@ -67,29 +66,31 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 	if containerOutput == "" {
 		return nil
 	}
-	outputs, err := f.newContainerOutputFromString(containerOutput)
+
+	brakemanOutput, err := f.newContainerOutputFromString(containerOutput)
 	if err != nil {
 		return err
 	}
-	for _, warning := range outputs.Warnings {
+
+	for _, warning := range brakemanOutput.Warnings {
 		value := warning
-		f.setAnalysisResults(f.setVulnerabilityData(&value))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&value))
 	}
+
 	return nil
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (output ruby.Output, err error) {
+func (f *Formatter) newContainerOutputFromString(containerOutput string) (output entities.Output, err error) {
 	if f.isNotFoundRailsProject(containerOutput) {
-		f.SetAnalysisError(errorsEnums.ErrNotFoundRailsProject)
-		return ruby.Output{}, errorsEnums.ErrNotFoundRailsProject
+		return entities.Output{}, errorsEnums.ErrNotFoundRailsProject
 	}
+
 	err = json.Unmarshal([]byte(containerOutput), &output)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput),
-		err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err, logger.ErrorLevel)
 	return output, err
 }
 
-func (f *Formatter) setVulnerabilityData(output *ruby.Warning) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilityData(output *entities.Warning) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
 	data.Confidence = output.GetSeverity().ToString()
@@ -97,23 +98,8 @@ func (f *Formatter) setVulnerabilityData(output *ruby.Warning) *horusec.Vulnerab
 	data.Line = output.GetLine()
 	data.File = output.File
 	data.Code = f.GetCodeWithMaxCharacters(output.Code, 0)
-
-	// Set data.VulnHash value
-	data = vulnhash.Bind(data)
-
-	return f.setCommitAuthor(data)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	data = hash.Bind(data)
+	return f.SetCommitAuthor(data)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -123,20 +109,13 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) setAnalysisResults(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-		horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
-}
-
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Brakeman),
 		Language: languages.Ruby,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {
