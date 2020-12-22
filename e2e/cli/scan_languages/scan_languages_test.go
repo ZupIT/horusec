@@ -32,16 +32,25 @@ import (
 	"testing"
 )
 
+func Join(elem ...string) string {
+	for i, e := range elem {
+		if e != "" {
+			return path.Clean(strings.Join(elem[i:], string(os.PathSeparator)))
+		}
+	}
+	return ""
+}
+
 func TestMain(m *testing.M) {
 	currentPath, _ := os.Getwd()
-	_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
-	horusecPath := path.Join(currentPath, "tmp-horusec")
+	_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
+	horusecPath := Join(currentPath, "tmp-horusec")
 	if _, err := os.Stat(horusecPath); os.IsNotExist(err) {
 		fmt.Println("tmp-horusec binary not found. Building Binary to linux_x64...")
 		cmdArguments := []string{
 			"build",
 			fmt.Sprintf("-o=%s", horusecPath),
-			path.Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
+			Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
 		}
 		cmd := exec.Command("go", cmdArguments...)
 		cmd.Env = os.Environ()
@@ -53,12 +62,12 @@ func TestMain(m *testing.M) {
 			os.Exit(1)
 		} else {
 			code := m.Run()
-			_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
+			_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
 			os.Exit(code)
 		}
 	} else {
 		code := m.Run()
-		_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
+		_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
 		os.Exit(code)
 	}
 
@@ -164,11 +173,11 @@ func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
 	currentPath, _ := os.Getwd()
-	horusecPath := path.Join(currentPath, "tmp-horusec")
-	assert.NoError(t, os.MkdirAll(path.Join(currentPath, "tmp"), 0750))
+	horusecPath := Join(currentPath, "tmp-horusec")
+	assert.NoError(t, os.MkdirAll(Join(currentPath, "tmp"), 0750))
 	fakeAnalysisID := uuid.New().String()
-	fileOutput := path.Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
-	srcPath := path.Join("..", "..", "..", "examples", language, exampleName)
+	fileOutput := Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
+	srcPath := Join("..", "..", "..", "examples", language, exampleName)
 	flags := map[string]string{
 		"-p": strings.TrimSpace(srcPath),
 		"-o": strings.TrimSpace("json"),
