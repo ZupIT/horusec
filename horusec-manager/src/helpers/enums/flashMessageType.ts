@@ -17,4 +17,5 @@
 export enum flashMessageType {
   SUCCESS = 'success',
   ERROR = 'error',
+  WARNING = 'warning',
 }

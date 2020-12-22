@@ -19,4 +19,5 @@ export interface FilterValues {
   finalDate: Date;
   repositoryID?: string;
   companyID?: string;
+  type: 'workspace' | 'repository';
 }

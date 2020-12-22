@@ -28,7 +28,7 @@ const TotalDevelopers: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState(null);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     if (filters) {
