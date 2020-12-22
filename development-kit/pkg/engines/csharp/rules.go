@@ -36,16 +36,16 @@ func NewRules() Interface {
 }
 
 func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for index := range allRulesCsharpAnd() {
-		rules = append(rules, allRulesCsharpAnd()[index])
+	for _, rule := range allRulesCsharpAnd() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesCsharpOr() {
-		rules = append(rules, allRulesCsharpOr()[index])
+	for _, rule := range allRulesCsharpOr() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesCsharpRegular() {
-		rules = append(rules, allRulesCsharpRegular()[index])
+	for _, rule := range allRulesCsharpRegular() {
+		rules = append(rules, rule)
 	}
 
 	return rules

@@ -34,16 +34,16 @@ func NewRules() Interface {
 }
 
 func (r *Rules) GetAllRules(rules []engine.Rule) []engine.Rule {
-	for index := range allRulesJvmAnd() {
-		rules = append(rules, allRulesJvmAnd()[index])
+	for _, rule := range allRulesJvmAnd() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesJvmOr() {
-		rules = append(rules, allRulesJvmOr()[index])
+	for _, rule := range allRulesJvmOr() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesJvmRegular() {
-		rules = append(rules, allRulesJvmRegular()[index])
+	for _, rule := range allRulesJvmRegular() {
+		rules = append(rules, rule)
 	}
 
 	return rules

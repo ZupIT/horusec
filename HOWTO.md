@@ -9,7 +9,6 @@ To add a new analyse tool into horusec-cli you should follow the step-by-step ex
 
 #### 1 - Create a new CLI by copying some one of the existed one and rename it to **horusec-{name-of-the-cli}**.
 
-
 e.g.:
 
 [horusec-java](/horusec-java)
@@ -23,10 +22,46 @@ e.g.:
 
 e.g.:
 
-[examples](/development-kit/pkg/engines/examples)
+[examples](/development-kit/pkg/engines/csharp)
+
+#### 3 - Update CLI Controller Importing Rules.
 
 
-#### 3 - Update your CLI to use the rules that you create and update the CLI configuration.
+```go
+type IAnalysis interface {
+    StartAnalysis() error
+}
+
+type Analysis struct {
+    configs      *config.Config
+    serviceRules csharp.Interface // Change the import to get your respective rules
+}
+
+func NewAnalysis(configs *config.Config) IAnalysis {
+return &Analysis{
+        configs:      configs,
+        serviceRules: csharp.NewRules(), // Change the import to get your respective rules
+    }
+}
+
+func (a *Analysis) StartAnalysis() error {
+    textUnit, err := a.serviceRules.GetTextUnitByRulesExt(a.configs.GetProjectPath())
+    if err != nil {
+        return err
+    }
+    
+    return engine.RunOutputInJSON(textUnit, a.getAllRules(), a.configs.GetOutputFilePath())
+}
+
+func (a *Analysis) getAllRules() []engine.Rule {
+    allRules := a.serviceRules.GetAllRules()
+    logger.LogDebugJSON("All rules selected are: ", allRules)
+    return allRules
+}
+
+```
+
+#### 4 - Update your CLI to use the rules that you create and update the CLI configuration.
 
 e.g.: Replace the curle braces in the code with your new cli definitions.
 
@@ -50,7 +85,7 @@ var rootCmd = &cobra.Command{
 	Use:   "horusec-{THE-NAME-OF-YOUR-CLI}",
 	Short: "Horusec-{THE-NAME-OF-YOUR-CLI} CLI",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.LogPrint("Horusec Java Command Line Interface")
+		logger.LogPrint("Horusec {THE-NAME-OF-YOUR-CLI} Command Line Interface")
 		return cmd.Help()
 	},
 	Example: `horusec-{THE-NAME-OF-YOUR-CLI} run`,
@@ -78,14 +113,12 @@ func main() {
 
 ```
 
-
-#### 4 - Update the dockerfile following the example
+#### 5 - Update the dockerfile following the example
 
 e.g.: [horusec-java dockerfile](/horusec-java/deployments/Dockerfile)
 
 
-#### 5 - Create a new formatter into horusec-cli following this [doc](/horusec-cli/README.md)
-
+#### 6 - Create a new formatter into horusec-cli following this [doc](/horusec-cli/README.md)
 
 ## Adding Security Tool
  

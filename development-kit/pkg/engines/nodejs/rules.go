@@ -41,16 +41,16 @@ func (r *Rules) GetAllRules() (rules []engine.Rule) {
 }
 
 func (r *Rules) addRules(rules []engine.Rule) []engine.Rule {
-	for index := range allRulesNodeJSAnd() {
-		rules = append(rules, allRulesNodeJSAnd()[index])
+	for _, rule := range allRulesNodeJSAnd() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesNodeJSOr() {
-		rules = append(rules, allRulesNodeJSOr()[index])
+	for _, rule := range allRulesNodeJSOr() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesNodeJSRegular() {
-		rules = append(rules, allRulesNodeJSRegular()[index])
+	for _, rule := range allRulesNodeJSRegular() {
+		rules = append(rules, rule)
 	}
 
 	return rules

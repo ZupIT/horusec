@@ -39,8 +39,8 @@ func (r *Rules) GetAllRules() (rules []engine.Rule) {
 }
 
 func (r *Rules) addLeaksRules(rules []engine.Rule) []engine.Rule {
-	for index := range allRulesLeaksRegular() {
-		rules = append(rules, allRulesLeaksRegular()[index])
+	for _, rule := range allRulesLeaksRegular() {
+		rules = append(rules, rule)
 	}
 
 	return rules

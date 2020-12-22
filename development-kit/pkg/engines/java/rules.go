@@ -47,16 +47,16 @@ func (r *Rules) GetAllRules() (rules []engine.Rule) {
 }
 
 func (r *Rules) addJavaRules(rules []engine.Rule) []engine.Rule {
-	for index := range allRulesJavaAnd() {
-		rules = append(rules, allRulesJavaAnd()[index])
+	for _, rule := range allRulesJavaAnd() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesJavaOr() {
-		rules = append(rules, allRulesJavaOr()[index])
+	for _, rule := range allRulesJavaOr() {
+		rules = append(rules, rule)
 	}
 
-	for index := range allRulesJavaRegular() {
-		rules = append(rules, allRulesJavaRegular()[index])
+	for _, rule := range allRulesJavaRegular() {
+		rules = append(rules, rule)
 	}
 
 	return rules
