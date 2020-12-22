@@ -20,22 +20,49 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
 )
 
+func getSourceFolderFromWindows(path string) string {
+	// C:/Users/usr/Documents/Horusec/charlescd/.horusec/ID
+	partitionLower := strings.ToLower(path[0:1])
+	pathSplit := strings.Split(path, ":")
+	pathSplit[0] = partitionLower
+	path = strings.Join(pathSplit, ":")
+	// c:/Users/usr/Documents/Horusec/project/.horusec/ID
+	path = strings.ReplaceAll(path, ":", "")
+	// c/Users/usr/Documents/Horusec/project/.horusec/ID
+	path = "/" + path
+	// /c/Users/usr/Documents/Horusec/project/.horusec/ID
+	path = strings.ReplaceAll(path, "\\", "/")
+	// /c/Users/usr/Documents/Horusec/project/.horusec/ID
+	path = strings.ReplaceAll(path, "/", "//")
+	// //c//Users//usr//Documents//Horusec//project//.horusec//ID
+	return path
+}
+
 func Join(elem ...string) string {
 	for i, e := range elem {
 		if e != "" {
-			return path.Clean(strings.Join(elem[i:], string(os.PathSeparator)))
+			p := file.ReplacePathSeparator(strings.Join(elem[i:], string(os.PathSeparator)))
+			switch runtime.GOOS {
+			case "linux":
+				return p
+			case "darwin":
+				return p
+			case "windows":
+				return getSourceFolderFromWindows(strings.ReplaceAll(p, "\\", "/"))
+			}
 		}
 	}
 	return ""
