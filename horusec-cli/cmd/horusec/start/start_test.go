@@ -37,11 +37,11 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("analysis")
+	_ = os.RemoveAll("examples")
 
 	code := m.Run()
 
-	_ = os.RemoveAll("analysis")
+	_ = os.RemoveAll("examples")
 	os.Exit(code)
 }
 
@@ -428,7 +428,7 @@ func TestStartCommand_Execute(t *testing.T) {
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
 		srcZip := "../../../../development-kit/pkg/utils/test/zips/gitleaks/gitleaks.zip"
-		dstZip := "./analysis/" + uuid.New().String()
+		dstZip := "./examples/" + uuid.New().String()
 		err := zip.NewZip().UnZip(srcZip, dstZip)
 		assert.NoError(t, err)
 		promptMock := &prompt.Mock{}
@@ -472,7 +472,7 @@ func TestStartCommand_Execute(t *testing.T) {
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
 		srcZip := "../../../../development-kit/pkg/utils/test/zips/gitleaks/gitleaks.zip"
-		dstZip := "./analysis/" + uuid.New().String()
+		dstZip := "./examples/" + uuid.New().String()
 		err := zip.NewZip().UnZip(srcZip, dstZip)
 		assert.NoError(t, err)
 		promptMock := &prompt.Mock{}
