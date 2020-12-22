@@ -185,9 +185,12 @@ func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, ot
 	for flag, value := range flags {
 		cmdArguments = append(cmdArguments, fmt.Sprintf("%s=%s", flag, value))
 	}
-	logger.LogInfo(fmt.Sprintf("Running command: go %s", strings.Join(cmdArguments, " ")))
-	cmd := exec.Command(horusecPath, cmdArguments...)
-	_ = cmd.Run()
+	logger.LogInfo(fmt.Sprintf("Running command: %s %s", horusecPath, strings.Join(cmdArguments, " ")))
+	output, err := exec.Command(horusecPath, cmdArguments...).CombinedOutput()
+	if err != nil {
+		fmt.Println("ERROR ON RUN COMMAND: ", err.Error())
+		fmt.Println("Output: ", string(output))
+	}
 
 	return fileOutput
 }
