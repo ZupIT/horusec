@@ -20,64 +20,28 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"runtime"
+	"path"
 	"strings"
 	"sync"
 	"testing"
 )
 
-func getSourceFolderFromWindows(path string) string {
-	// C:/Users/usr/Documents/Horusec/charlescd/.horusec/ID
-	partitionLower := strings.ToLower(path[0:1])
-	pathSplit := strings.Split(path, ":")
-	pathSplit[0] = partitionLower
-	path = strings.Join(pathSplit, ":")
-	// c:/Users/usr/Documents/Horusec/project/.horusec/ID
-	path = strings.ReplaceAll(path, ":", "")
-	// c/Users/usr/Documents/Horusec/project/.horusec/ID
-	path = "/" + path
-	// /c/Users/usr/Documents/Horusec/project/.horusec/ID
-	path = strings.ReplaceAll(path, "\\", "/")
-	// /c/Users/usr/Documents/Horusec/project/.horusec/ID
-	path = strings.ReplaceAll(path, "/", "//")
-	// //c//Users//usr//Documents//Horusec//project//.horusec//ID
-	return path
-}
-
-func Join(elem ...string) string {
-	for i, e := range elem {
-		if e != "" {
-			p := file.ReplacePathSeparator(strings.Join(elem[i:], string(os.PathSeparator)))
-			switch runtime.GOOS {
-			case "linux":
-				return p
-			case "darwin":
-				return p
-			case "windows":
-				return getSourceFolderFromWindows(strings.ReplaceAll(p, "\\", "/"))
-			}
-		}
-	}
-	return ""
-}
-
 func TestMain(m *testing.M) {
 	currentPath, _ := os.Getwd()
-	_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
-	horusecPath := Join(currentPath, "tmp-horusec")
+	_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
+	horusecPath := path.Join(currentPath, "tmp-horusec")
 	if _, err := os.Stat(horusecPath); os.IsNotExist(err) {
 		fmt.Println("tmp-horusec binary not found. Building Binary to linux_x64...")
 		cmdArguments := []string{
 			"build",
 			fmt.Sprintf("-o=%s", horusecPath),
-			Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
+			path.Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
 		}
 		cmd := exec.Command("go", cmdArguments...)
 		cmd.Env = os.Environ()
@@ -89,12 +53,12 @@ func TestMain(m *testing.M) {
 			os.Exit(1)
 		} else {
 			code := m.Run()
-			_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
+			_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
 			os.Exit(code)
 		}
 	} else {
 		code := m.Run()
-		_ = os.RemoveAll(Join(currentPath, "tmp", "*"))
+		_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
 		os.Exit(code)
 	}
 
@@ -106,17 +70,17 @@ func TestHorusecCLILanguages(t *testing.T) {
 	}
 	var wg sync.WaitGroup
 	go RunGolangTest(t, &wg)
-	//go RunCsharpTest(t, &wg)
-	//go RunRubyTest(t, &wg)
-	//go RunPythonBanditTest(t, &wg)
-	//go RunPythonSafetyTest(t, &wg)
-	//go RunJavaTest(t, &wg)
-	//go RunKotlinTest(t, &wg)
-	//go RunJavascriptNpmTest(t, &wg)
-	//go RunJavascriptYarnTest(t, &wg)
-	//go RunGitTest(t, &wg)
-	//go RunHclTest(t, &wg)
-	wg.Add(1)
+	go RunCsharpTest(t, &wg)
+	go RunRubyTest(t, &wg)
+	go RunPythonBanditTest(t, &wg)
+	go RunPythonSafetyTest(t, &wg)
+	go RunJavaTest(t, &wg)
+	go RunKotlinTest(t, &wg)
+	go RunJavascriptNpmTest(t, &wg)
+	go RunJavascriptYarnTest(t, &wg)
+	go RunGitTest(t, &wg)
+	go RunHclTest(t, &wg)
+	wg.Add(11)
 	wg.Wait()
 }
 
@@ -200,11 +164,11 @@ func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
 	currentPath, _ := os.Getwd()
-	horusecPath := Join(currentPath, "tmp-horusec")
-	assert.NoError(t, os.MkdirAll(Join(currentPath, "tmp"), 0750))
+	horusecPath := path.Join(currentPath, "tmp-horusec")
+	assert.NoError(t, os.MkdirAll(path.Join(currentPath, "tmp"), 0750))
 	fakeAnalysisID := uuid.New().String()
-	fileOutput := Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
-	srcPath := Join("..", "..", "..", "examples", language, exampleName)
+	fileOutput := path.Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
+	srcPath := path.Join("..", "..", "..", "examples", language, exampleName)
 	flags := map[string]string{
 		"-p": strings.TrimSpace(srcPath),
 		"-o": strings.TrimSpace("json"),
