@@ -78,9 +78,9 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunKotlinTest(t, &wg)
 	go RunJavascriptNpmTest(t, &wg)
 	go RunJavascriptYarnTest(t, &wg)
-	go RunGitTest(t, &wg)
+	//go RunGitTest(t, &wg)
 	go RunHclTest(t, &wg)
-	wg.Add(11)
+	wg.Add(10)
 	wg.Wait()
 }
 
