@@ -15,5 +15,5 @@ deployments/certs
 .horusec/
 horusec-analysis-*.json
 e2e/**analysis
-horusec-cli/cmd/horusec/start/analysis/
+horusec-cli/cmd/horusec/start/examples/
 vendor

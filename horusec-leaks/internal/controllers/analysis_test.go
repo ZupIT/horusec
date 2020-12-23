@@ -67,7 +67,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 1, len(data))
+		assert.Equal(t, 3, len(data))
 	})
 
 	t.Run("should return success when read analysis and return empty vulnerabilities", func(t *testing.T) {
