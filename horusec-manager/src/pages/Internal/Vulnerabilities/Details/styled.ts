@@ -84,6 +84,14 @@ const ItemValue = styled.span`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   margin-right: 30px;
+
+  a {
+    color: ${({ theme }) => theme.colors.text.link};
+
+    :hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export default {
