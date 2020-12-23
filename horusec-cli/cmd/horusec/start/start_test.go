@@ -429,7 +429,7 @@ func TestStartCommand_Execute(t *testing.T) {
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
 		srcProject := "../../../../examples/leaks/example1"
-		dstProject := "./examples/"+uuid.New().String()
+		dstProject := "./examples/" + uuid.New().String()
 		assert.NoError(t, CopyLib.Copy(srcProject, dstProject))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
@@ -472,7 +472,7 @@ func TestStartCommand_Execute(t *testing.T) {
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
 		srcProject := "../../../../examples/leaks/example1"
-		dstProject := "./examples/"+uuid.New().String()
+		dstProject := "./examples/" + uuid.New().String()
 		assert.NoError(t, CopyLib.Copy(srcProject, dstProject))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
