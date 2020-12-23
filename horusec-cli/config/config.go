@@ -309,7 +309,11 @@ func (c *Config) SetEnableCommitAuthor(isEnable bool) {
 }
 
 func (c *Config) GetRepositoryName() string {
-	return valueordefault.GetStringValueOrDefault(c.repositoryName, "")
+	if repositoryName := valueordefault.GetStringValueOrDefault(c.repositoryName, ""); repositoryName != "" {
+		return repositoryName
+	}
+
+	return filepath.Base(c.GetProjectPath())
 }
 
 func (c *Config) SetRepositoryName(repositoryName string) {

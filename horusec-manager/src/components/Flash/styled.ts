@@ -18,7 +18,7 @@ import styled, { css } from 'styled-components';
 
 interface FlashWrapperProps {
   isVisible: boolean;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning';
 }
 
 const Wrapper = styled.div<FlashWrapperProps>`
@@ -40,13 +40,9 @@ const Wrapper = styled.div<FlashWrapperProps>`
     `};
 
   ${({ type }) =>
-    type === 'success'
-      ? css`
-          background-color: ${({ theme }) => theme.colors.flashMessage.success};
-        `
-      : css`
-          background-color: ${({ theme }) => theme.colors.flashMessage.error};
-        `};
+    css`
+      background-color: ${({ theme }) => theme.colors.flashMessage[type]};
+    `};
 `;
 
 const Text = styled.span`
