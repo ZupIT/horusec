@@ -55,7 +55,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./leaks-tmp2.output.json")
-		configs.SetProjectPath("../../../examples/python/example1")
+		configs.SetProjectPath("../../../examples/leaks/example2")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
@@ -67,7 +67,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 3, len(data))
+		assert.Equal(t, 1, len(data))
 	})
 
 	t.Run("should return success when read analysis and return empty vulnerabilities", func(t *testing.T) {
