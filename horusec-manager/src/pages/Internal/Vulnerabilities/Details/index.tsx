@@ -18,6 +18,7 @@ import React from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
+import Linkify from 'react-linkify';
 
 interface Props {
   isOpen: boolean;
@@ -113,7 +114,9 @@ const VulnerabilityDetails: React.FC<Props> = ({
           <Styled.ItemTitle>
             {t('VULNERABILITIES_SCREEN.DETAILS.DETAILS')}
           </Styled.ItemTitle>
-          <Styled.ItemValue>{vulnerability.details}</Styled.ItemValue>
+          <Linkify>
+            <Styled.ItemValue>{vulnerability.details}</Styled.ItemValue>
+          </Linkify>
         </Styled.Row>
       </Styled.Wrapper>
     </Styled.Background>
