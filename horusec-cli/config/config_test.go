@@ -52,7 +52,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, false, configs.GetCertInsecureSkipVerify())
 		assert.Equal(t, "", configs.GetCertPath())
 		assert.Equal(t, false, configs.GetEnableCommitAuthor())
-		assert.Equal(t, "", configs.GetRepositoryName())
+		assert.Equal(t, "config", configs.GetRepositoryName())
 		assert.Equal(t, 0, len(configs.GetRiskAcceptHashes()))
 		assert.Equal(t, 0, len(configs.GetFalsePositiveHashes()))
 		assert.Equal(t, 0, len(configs.GetHeaders()))
