@@ -60,7 +60,7 @@ function InternalRoutes() {
         <PrivateRoute
           path={`${path}/dashboard/workspace`}
           exact
-          component={() => <Dashboard type="company" />}
+          component={() => <Dashboard type="workspace" />}
         />
 
         <PrivateRoute

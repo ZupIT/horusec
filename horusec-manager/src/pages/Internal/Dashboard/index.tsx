@@ -27,9 +27,8 @@ import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
-
 interface Props {
-  type: 'company' | 'repository';
+  type: 'workspace' | 'repository';
 }
 
 const Dashboard: React.FC<Props> = ({ type }) => {
@@ -42,7 +41,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       <Styled.Row>
         <TotalDevelopers filters={filters} />
 
-        {type === 'company' ? <TotalRepositories filters={filters} /> : null}
+        {type === 'workspace' ? <TotalRepositories filters={filters} /> : null}
 
         <AllVulnerabilities filters={filters} />
       </Styled.Row>
@@ -50,7 +49,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       <Styled.Row>
         <VulnerabilitiesByDeveloper filters={filters} />
 
-        {type === 'company' ? (
+        {type === 'workspace' ? (
           <VulnerabilitiesByRepository filters={filters} />
         ) : null}
       </Styled.Row>

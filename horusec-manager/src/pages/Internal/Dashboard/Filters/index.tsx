@@ -22,14 +22,16 @@ import { FilterValues } from 'helpers/interfaces/FilterValues';
 import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 interface FilterProps {
   onApply: (values: FilterValues) => void;
-  type: 'company' | 'repository';
+  type: 'workspace' | 'repository';
 }
 
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
+  const { showWarningFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
 
   const yesterday = new Date();
@@ -42,6 +44,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     finalDate: new Date(),
     repositoryID: null,
     companyID: null,
+    type,
   });
 
   useEffect(() => {
@@ -50,15 +53,18 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         const repositories: Repository[] = result.data.content;
         setRepositories(repositories);
 
-        setFilters({
-          ...filters,
-          repositoryID: repositories[0]?.repositoryID,
-        });
-
-        onApply({
-          ...filters,
-          repositoryID: repositories[0]?.repositoryID,
-        });
+        if (repositories.length > 0) {
+          setFilters({
+            ...filters,
+            repositoryID: repositories[0]?.repositoryID,
+          });
+          onApply({
+            ...filters,
+            repositoryID: repositories[0]?.repositoryID,
+          });
+        } else {
+          showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
+        }
       });
     };
 
@@ -66,7 +72,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       if (type === 'repository') {
         fetchRepositories();
       } else if (filters) {
-        onApply({ ...filters, companyID: currentWorkspace.companyID });
+        onApply({
+          ...filters,
+          companyID: currentWorkspace.companyID,
+        });
       }
     }
 

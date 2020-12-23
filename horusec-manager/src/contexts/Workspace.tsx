@@ -20,6 +20,7 @@ import { Workspace } from 'helpers/interfaces/Workspace';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { useHistory } from 'react-router-dom';
 import { roles } from 'helpers/enums/roles';
+import { isLogged } from 'helpers/localStorage/tokens';
 
 interface WorkspaceCtx {
   currentWorkspace: Workspace;
@@ -77,7 +78,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   useEffect(() => {
-    fetchAll(true);
+    if (isLogged()) fetchAll(true);
 
     // eslint-disable-next-line
   }, []);
