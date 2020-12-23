@@ -1,8 +1,6 @@
 name: HorusecNodeJsPipeline
 
 on:
-  push:
-    branches: [ "master", "develop" ]
   pull_request:
     branches: [ "**" ]
 
@@ -39,8 +37,8 @@ jobs:
         run: |
           go clean -testcache
           go test -v ./horusec-nodejs/... -timeout=2m -parallel=1 -failfast -short
-#      - name: coverage
-#        run: make coverage-horusec-nodejs
+      - name: coverage
+        run: make coverage-horusec-nodejs
       - name: build
         run: go build -o "./tmp/bin/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
 

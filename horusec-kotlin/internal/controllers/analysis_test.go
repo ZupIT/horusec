@@ -46,7 +46,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 6, len(data))
+		assert.Equal(t, 5, len(data))
 	})
 
 	t.Run("should return error when create file", func(t *testing.T) {
