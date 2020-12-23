@@ -34,7 +34,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./java-tmp.output.json")
-		configs.SetProjectPath(".../../../examples/java/example1")
+		configs.SetProjectPath("../../../examples/java/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
