@@ -34,7 +34,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./kotlin-tmp.output.json")
-		configs.SetProjectPath("../utils/examples/kotlin-hardcodedpass")
+		configs.SetProjectPath(".../../../examples/kotlin/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)

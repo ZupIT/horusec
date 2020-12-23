@@ -34,7 +34,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./kubernetes-tmp.output.json")
-		configs.SetProjectPath("../utils/examples/kubernetes-yaml")
+		configs.SetProjectPath(".../../../examples/yaml/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)

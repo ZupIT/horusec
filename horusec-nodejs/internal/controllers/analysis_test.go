@@ -34,7 +34,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./nodejs-tmp.output.json")
-		configs.SetProjectPath("../utils/examples/nodejs-generic-vuln")
+		configs.SetProjectPath(".../../../examples/javascript/example3")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
