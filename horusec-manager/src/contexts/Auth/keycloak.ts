@@ -20,7 +20,7 @@ const login = () => keycloakInstance.login();
 
 const logout = () => {
   return new Promise((resolve) => {
-    resolve();
+    resolve(true);
 
     keycloakInstance.logout();
   });

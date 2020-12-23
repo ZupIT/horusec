@@ -22,19 +22,16 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
-	"github.com/spf13/cobra"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-
-	"github.com/iancoleman/strcase"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/google/uuid"
+	"github.com/iancoleman/strcase"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -75,6 +72,8 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetRiskAcceptHashes(c.extractFlagValueStringSlice(cmd, "risk-accept", c.GetRiskAcceptHashes()))
 	c.SetToolsToIgnore(c.extractFlagValueStringSlice(cmd, "tools-ignore", c.GetToolsToIgnore()))
 	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
+	c.SetDisableDocker(c.extractFlagValueBool(cmd, "disable-docker", c.GetDisableDocker()))
+	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
 	return c
 }
 
@@ -107,6 +106,8 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
+	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
+	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
 	return c
 }
 
@@ -134,6 +135,8 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetToolsToIgnore(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvToolsToIgnore, c.toolsToIgnore)))
 	c.SetHeaders(env.GetEnvOrDefaultInterface(EnvHeaders, c.headers))
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
+	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
+	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
 	return c
 }
 
@@ -470,6 +473,8 @@ func (c *Config) toMap() map[string]interface{} {
 		"headers":                         c.headers,
 		"toolsConfig":                     c.toolsConfig,
 		"workDir":                         c.workDir,
+		"disableDocker":                   c.disableDocker,
+		"customRulesPath":                 c.customRulesPath,
 	}
 }
 
@@ -537,4 +542,20 @@ func (c *Config) replaceCommaToSpaceSliceString(input []string) (response []stri
 		response = append(response, newItem)
 	}
 	return response
+}
+
+func (c *Config) GetDisableDocker() bool {
+	return c.disableDocker
+}
+
+func (c *Config) SetDisableDocker(disableDocker bool) {
+	c.disableDocker = disableDocker
+}
+
+func (c *Config) GetCustomRulesPath() string {
+	return c.customRulesPath
+}
+
+func (c *Config) SetCustomRulesPath(customRulesPath string) {
+	c.customRulesPath = customRulesPath
 }

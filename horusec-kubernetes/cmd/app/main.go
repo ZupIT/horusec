@@ -15,7 +15,6 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/kubernetes/analysis"
 	"os"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd"
@@ -23,6 +22,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd/version"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-kubernetes/internal/controllers"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ func init() {
 }
 
 func main() {
-	controller := analysis.NewAnalysis(configs)
+	controller := controllers.NewAnalysis(configs)
 	rootCmd.AddCommand(run.NewRunCommand(configs, controller).CreateCobraCmd())
 	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
 

@@ -17,6 +17,7 @@
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
 import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
+import Select from 'components/Select';
 
 interface RouterItemProps {
   isActive: boolean;
@@ -28,7 +29,8 @@ interface SubMenuProps {
 
 const SideMenu = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
-  max-width: 145px;
+  min-width: 165px;
+  max-width: 165px;
   display: flex;
   flex-direction: column;
   z-index: 2;
@@ -51,7 +53,9 @@ const Logo = styled.img`
   height: 22px;
 `;
 
-const RoutesList = styled.ul``;
+const RoutesList = styled.ul`
+  margin-top: 20px;
+`;
 
 const SubRoutesList = styled(RoutesList)`
   margin-top: 50px;
@@ -126,6 +130,19 @@ const Option = styled(Icon)`
   margin: 0 0 20px 15px;
 `;
 
+const SelectWrapper = styled.div`
+  margin-left: 17px;
+`;
+
+const SelectWorkspace = styled(Select)`
+  border: none !important;
+  max-width: 140px;
+
+  div.options-list {
+    width: 200px !important;
+  }
+`;
+
 export default {
   SideMenu,
   Logo,
@@ -138,4 +155,6 @@ export default {
   SubRoutesList,
   SubRouteItem,
   Option,
+  SelectWorkspace,
+  SelectWrapper,
 };

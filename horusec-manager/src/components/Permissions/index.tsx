@@ -98,7 +98,7 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
           </>
         ) : null}
 
-        <Styled.Subtitle>{t(`PERMISSIONS.USER`)}</Styled.Subtitle>
+        <Styled.Subtitle>{t(`PERMISSIONS.MEMBER`)}</Styled.Subtitle>
 
         <Styled.List>
           {renderRulesOfPermissions().user.map((rule, index) => (

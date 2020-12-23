@@ -68,32 +68,44 @@
     "OLD_PASS": "Antiga senha"
   },
 
-  "COMPANY_SCREEN": {
-    "SELECT_ORGANIZATION": "Selecione uma organização",
-    "ADD_ORGANIZATION": "Adicione uma organização",
-    "NO_ORGANIZATIONS": "Nenhuma organização foi encontrada",
-    "YES": "Sim",
-    "CONFIRM_DELETE_ORGANIZATION": "Deseja realmente deletar a organização ",
-    "EDIT": "Editar",
-    "REMOVE": "Excluir",
-    "TYPE_ORGANIZATION_NAME": "Digite o nome da organização abaixo:",
-    "ORGANIZATION_NAME": "Nome da organização",
-    "INVALID_ORGANIZATION_NAME": "Nome da organização inválido.",
+  "WORKSPACES_SCREEN": {
+    "SEARCH": "Pesquisar Workspace",
+    "ADD": "Adicionar Workspace",
+    "EDIT_WORKSPACE": "Editar Workspace",
     "CANCEL": "Cancelar",
     "SAVE": "Salvar",
-    "EDIT_ORGANIZATION_NAME": "Edite o nome da organização",
+    "TITLE": "Gerenciamento de Workspaces",
+    "TABLE": {
+      "NAME": "Nome",
+      "DESCRIPTION": "Descrição",
+      "DATE": "Data de criação",
+      "ACTION": "Ação",
+      "REMOVE": "Deletar",
+      "EDIT": "Editar",
+      "USERS": "Usuários do Workspace",
+      "TOKENS": "Tokens"
+    },
+    "DESCRIPTION": "Descrição",
+    "ACTION": "Ação",
+    "CONFIRM_DELETE": "Deseja realmente deletar este workspace? Essa ação não poderá ser desfeita.",
+    "REMOVE_SUCCESS": "Workspace deletado com sucesso!",
+    "YES": "Sim",
+    "ADMIN_EMAIL": "E-mail do administrador",
+    "EDIT": "Editar",
+    "REMOVE": "Excluir",
+    "TYPE_WORKSPACE_NAME": "Digite o nome do workspace abaixo:",
+    "WORKSPACE_NAME": "Nome do Workspace",
+    "INVALID_WORKSPACE_NAME": "Nome do workspace inválido.",
+    "EDIT_WORKSPACE_NAME": "Edite o nome do workspace",
     "TOKENS": "Tokens",
     "TOKEN": "Token",
     "ADD_TOKEN": "Adicionar Token",
-    "DESCRIPTION": "Descrição",
     "EXPIRES": "Expira em:",
-    "ACTION": "Ação",
-    "NO_TOKENS":"Não há tokens registrados para esta organização.",
+    "NO_TOKENS":"Não há tokens registrados para este workspace.",
     "DELETE": "Deletar",
     "CONFIRM_DELETE_TOKEN":"Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
-    "CREATE_SUCCESS": "Organização criada com sucesso!",
-    "UPDATE_SUCCESS": "Organização editada com sucesso!",
-    "REMOVE_SUCCESS": "Organização removida com sucesso!",
+    "CREATE_SUCCESS": "Workspace criado com sucesso!",
+    "UPDATE_SUCCESS": "Workspace editado com sucesso!",
     "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
     "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
     "TOKEN_INFO":"Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
@@ -103,11 +115,40 @@
     "INVALID_DESCRIPTION": "Descrição inválida",
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
-    "USER": "Usuário:",
+    "MEMBER": "Membro:",
     "GROUP_NAME": "Nome do grupo",
-    "ADMIN_EMAIL": "E-mail do administrador",
     "EMAIL": "E-mail",
-    "INVALID_EMAIL_ADMIN": "E-mail Inválido!"
+    "INVALID_EMAIL_ADMIN": "E-mail Inválido!",
+    "USERS": {
+      "TITLE": "Usuários do Workspace",
+      "SEARCH": "Pesquisar por email",
+      "INVITE": "Convidar usuário",
+      "EDIT_USER": "Editar usuário",
+      "EDIT_SUBTITLE": "Edite o usuário abaixo:",
+      "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
+      "EMAIL": "Email",
+      "INVALID_EMAIL": "Email inválido",
+      "CONFIRM_DELETE": "Deseja realmente remover este usuário do workspace?",
+      "YES": "Sim",
+      "SAVE": "Salvar",
+      "TABLE": {
+        "EMPTY": "Não há usuarios correspondentes para este workspace",
+        "USER": "Usuário",
+        "EMAIL": "Email",
+        "PERMISSION": "Permissão",
+        "ACTION": "Ação",
+        "DELETE": "Deletar",
+        "EDIT": "Editar",
+        "ROLE": {
+          "ADMIN": "Administrador",
+          "SUPERVISOR": "Supervisor",
+          "MEMBER": "Membro"
+        }
+      },
+      "REMOVE_SUCCESS": "Usuário removido com sucesso!",
+      "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
+      "EDIT_SUCCESS": "Usuário editado com sucesso!"
+    }
   },
 
   "DASHBOARD_SCREEN": {
@@ -142,7 +183,7 @@
     "NAME": "Nome",
     "DESCRIPTION": "Descrição",
     "ACTION": "Ação",
-    "NO_REPOSITORIES": "Não há repositórios correspondentes, para esta organização.",
+    "NO_REPOSITORIES": "Não há repositórios correspondentes, para este workspace.",
     "DELETE": "Deletar",
     "EDIT": "Editar",
     "INVITE": "Convidar",
@@ -197,7 +238,7 @@
 
   "PERMISSIONS": {
     "ADMIN": "Administrador",
-    "USER": "Usuário",
+    "MEMBER": "Membro",
     "SUPERVISOR": "Supervisor",
     "TITLE": "Permissões",
     "REPOSITORY": {
@@ -220,37 +261,6 @@
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
-  },
-
-  "USERS_SCREEN": {
-    "TITLE": "Usuários",
-    "SEARCH": "Pesquisar por email",
-    "INVITE": "Convidar usuário",
-    "EDIT_USER": "Editar usuário",
-    "EDIT_SUBTITLE": "Edite o usuário abaixo:",
-    "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
-    "EMAIL": "Email",
-    "INVALID_EMAIL": "Email inválido",
-    "CONFIRM_DELETE": "Deseja realmente deletar este usuário? Essa ação não poderá ser desfeita.",
-    "YES": "Sim",
-    "SAVE": "Salvar",
-    "TABLE": {
-      "EMPTY": "Não há usuarios correspondentes para esta organização",
-      "USER": "Usuário",
-      "EMAIL": "Email",
-      "PERMISSION": "Permissão",
-      "ACTION": "Ação",
-      "DELETE": "Deletar",
-      "EDIT": "Editar",
-      "ROLE": {
-        "ADMIN": "Administrador",
-        "SUPERVISOR": "Supervisor",
-        "MEMBER": "Usuário"
-      }
-    },
-    "REMOVE_SUCCESS": "Usuário removido com sucesso!",
-    "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
-    "EDIT_SUCCESS": "Usuário editado com sucesso!"
   },
 
   "VULNERABILITIES_SCREEN": {
@@ -358,13 +368,12 @@
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
-    "ORGANIZATION": "Organização",
+    "WORKSPACE": "Workspace",
     "REPOSITORY": "Repositório",
-    "ORGANIZATION_USERS": "Usuários da organização",
-    "BACK_ORGANIZATION": "Voltar para organizações",
     "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
-    "LOGOUT": "Sair"
+    "LOGOUT": "Sair",
+    "MANAGE_WORKSPACES": "Gerenciar Workspaces"
   },
 
   "API_ERRORS": {
@@ -374,7 +383,7 @@
     "INVALID_RECOVERY_CODE": "Código de recuperação inválido.",
     "EMAIL_IN_USE": "O email informado já esta em uso.",
     "NO_RECORDS": "Não há registros correspondentes para os dados informados.",
-    "ALREADY_IN_COMPANY": "Este usuário já faz parte desta organização.",
+    "ALREADY_IN_COMPANY": "Este usuário já faz parte deste workspace.",
     "PRIVILEGES": "Você não tem permissões suficientes para realizar esta ação.",
     "REPO_NAME_IN_USE": "Nome do repositório já em uso.",
     "USERNAME_IN_USE": "Nome de usuário já em uso",
@@ -385,5 +394,9 @@
     "ERROR": "Erro 404.",
     "MESSAGE": "Não conseguimos encontrar a página que você está procurando.",
     "BACK": "Voltar para a home"
+  },
+  "NEW_WORKSPACE_SCREEN": {
+    "MESSAGE": "Adicione um novo Workspace para começar a usar o Horusec.",
+    "ACTION": "Adicionar workspace"
   }
 }

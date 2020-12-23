@@ -38,19 +38,21 @@ type IStart interface {
 }
 
 type Start struct {
-	useCases           cli.Interface
-	configs            config.IConfig
-	analyserController analyser.Interface
-	startPrompt        prompt.Interface
-	globalCmd          *cobra.Command
+	useCases               cli.Interface
+	configs                config.IConfig
+	analyserController     analyser.Interface
+	startPrompt            prompt.Interface
+	globalCmd              *cobra.Command
+	requirementsController requirements.IRequirements
 }
 
 func NewStartCommand(configs config.IConfig) IStart {
 	return &Start{
-		configs:     configs,
-		globalCmd:   &cobra.Command{},
-		useCases:    cli.NewCLIUseCases(),
-		startPrompt: prompt.NewPrompt(),
+		configs:                configs,
+		globalCmd:              &cobra.Command{},
+		useCases:               cli.NewCLIUseCases(),
+		startPrompt:            prompt.NewPrompt(),
+		requirementsController: requirements.NewRequirements(),
 	}
 }
 
@@ -111,6 +113,11 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
 	_ = startCmd.PersistentFlags().
 		StringP("container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(), "Used to pass project path in host when running horusec cli inside a container.")
+	_ = startCmd.PersistentFlags().
+		StringP("custom-rules-path", "c", s.configs.GetContainerBindProjectPath(), "Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
+	_ = startCmd.PersistentFlags().
+		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
+
 	return startCmd
 }
 
@@ -156,12 +163,22 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 		_ = cmd.Help()
 		return err
 	}
+
 	s.configs.NormalizeConfigs()
-	if s.configs.GetEnableGitHistoryAnalysis() {
-		requirements.NewRequirements().ValidateGit()
-	}
+	s.validateRequirements()
+
 	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs+string(s.configs.ToBytes(true)), logger.DebugLevel)
 	return nil
+}
+
+func (s *Start) validateRequirements() {
+	if s.configs.GetEnableGitHistoryAnalysis() {
+		s.requirementsController.ValidateGit()
+	}
+
+	if !s.configs.GetDisableDocker() {
+		s.requirementsController.ValidateDocker()
+	}
 }
 
 func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
