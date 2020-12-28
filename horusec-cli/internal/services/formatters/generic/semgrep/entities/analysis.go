@@ -16,5 +16,4 @@ package entities
 
 type Analysis struct {
 	Results []Result `json:"results"`
-	Errors  []string `json:"errors"`
 }
