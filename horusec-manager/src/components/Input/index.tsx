@@ -106,7 +106,9 @@ const Input: React.FC<InputProps> = ({
         ) : null}
       </Styled.Wrapper>
 
-      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
+      <Styled.Error id={`${name}-error`} isInvalid={isInvalid}>
+        {invalidMessage}
+      </Styled.Error>
     </Styled.Container>
   );
 };

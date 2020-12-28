@@ -54,6 +54,7 @@ const Icon = React.forwardRef(
     return (
       <Styled.Icon
         ref={iRef}
+        id={`icon-${name}`}
         data-testid={`icon-${name}`}
         className={className}
         color={isActive ? 'light' : color}
