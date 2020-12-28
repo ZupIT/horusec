@@ -16,7 +16,6 @@ package docker
 
 import (
 	"fmt"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
