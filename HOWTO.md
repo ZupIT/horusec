@@ -131,7 +131,7 @@ To do this, follow the steps below:
 Here at horusec we use the docker to run the analysis tools, avoiding configuration and environment problems.
 So all tools used have their respective docker images.
  
- 
+
 This image must have the desired tool installed.
 We recommend that the output of this container be as clean as possible, or a json with the vulnerabilities found.
  
@@ -194,7 +194,44 @@ An example can be found by following the following path:
  ------hcl
  -------fomatter.go
 ```
- 
+
+If it is a cli using the engine you can just import without the need for a docker image.
+An example can be found by following the following path:
+
+```
+ -horusec
+ --horusec-cli
+ ---internal
+ ----services
+ -----fomatters
+ -----interface.go
+ ------csharp
+ -------fomatter.go
+```
+
+You just need to import the rules and perform the analysis as shown in the example below:
+
+```
+func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
+	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
+	if err != nil {
+		return nil, err
+	}
+
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecCsharp)...)
+	return engine.Run(textUnit, allRules), nil
+}
+```
+
+The rule examples can be found in the following path:
+
+```
+ -horusec
+ --development-kit
+ ---pkg
+ ----engines
+```
+
 #### 3 - Updating Enums
 
 You will also need to add the new one to the tool name in the tool's enum. 
