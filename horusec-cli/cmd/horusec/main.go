@@ -51,10 +51,6 @@ func init() {
 }
 
 func main() {
-	ExecuteCobra()
-}
-
-func ExecuteCobra() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	} else {
