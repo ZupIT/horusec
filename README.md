@@ -27,53 +27,9 @@
  
 
 ## What is Horusec?
-Horusec is a security tool that centralizes many security test into one result.
-Currently, performance analysis consists of:
-* Python
-    * [Bandit][Bandit]
-    * [Safety][Safety]
-    * [Semgrep][Semgrep]
-* Ruby
-    * [Brakeman][Brakeman]
-* Javascript/Typescript
-    * [Npm Audit][NpmAudit]
-    * [Yarn Audit][YarnAudit]
-    * [Semgrep][Semgrep]
-    * [HorusecNodeJS][HorusecNodeJS]
-    * [EsLint][EsLint]
-* GoLang
-    * [Gosec][Gosec]
-    * [Semgrep][Semgrep]
-* C#
-    * [SecuriyCodeScan][SecuriyCodeScan]
-    * [HorusecCSharp][HorusecCSharp]
-* Java
-    * [HorusecJava][HorusecJava]
-    * [Semgrep][Semgrep]
-* Kotlin
-    * [HorusecKotlin][HorusecKotlin]
-* Kubernetes
-    * [HorusecKubernetes][HorusecKubernetes]
-* Terraform
-    * [Tfsec][Tfsec]
-* Leaks
-    * [HorusecLeaks][HorusecLeaks]
-* Leaks(optional search in git history)
-    * [GitLeaks][Gitleaks]
-* PHP
-    * [Semgrep][Semgrep]
-    * [PHPCS][PHPCS]
-* C/C++
-    * [Semgrep][Semgrep]
-    * [Flawfinder][Flawfinder]
-* HTML
-    * [Semgrep][Semgrep]
-* JSON
-    * [Semgrep][Semgrep]
+Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. See in our [DOCUMENTATION](https://docs.horusec.io/v/v1-eng/) the complete list of tools and languages that we perform analysis
     
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
-
-### For more details see our [DOCUMENTATION](https://zup-products.gitbook.io/horusec)
 
 ## Project roadmap
 
@@ -169,23 +125,4 @@ We have a few channels for contact, feel free to reach out to us at:
 
 This project exists thanks to all the [contributors]((https://github.com/ZupIT/horusec/graphs/contributors)). You rock!   ❤️🚀
 
-[Bandit]: https://github.com/PyCQA/bandit
-[Safety]: https://github.com/pyupio/safety
-[Brakeman]: https://github.com/presidentbeef/brakeman
-[Gosec]: https://github.com/securego/gosec
-[NpmAudit]: https://docs.npmjs.com/cli/audit
-[YarnAudit]: https://yarnpkg.com/lang/en/docs/cli/audit/
-[Gitleaks]: https://github.com/zricethezav/gitleaks
-[HorusecKotlin]: horusec-kotlin
-[HorusecJava]: horusec-java
-[HorusecLeaks]: horusec-leaks
-[HorusecKubernetes]: horusec-kubernetes
-[HorusecCSharp]: horusec-csharp
-[HorusecNodeJS]: horusec-nodejs
-[FindSec]: https://find-sec-bugs.github.io
-[Tfsec]: https://github.com/liamg/tfsec
-[SecuriyCodeScan]: https://security-code-scan.github.io/
 [Semgrep]: https://github.com/returntocorp/semgrep
-[EsLint]: https://github.com/eslint/eslint
-[Flawfinder]: https://github.com/david-a-wheeler/flawfinder
-[PHPCS]: https://github.com/FloeDesignTechnologies/phpcs-security-audit
