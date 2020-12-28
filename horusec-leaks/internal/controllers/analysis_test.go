@@ -32,11 +32,11 @@ func TestNewAnalysis(t *testing.T) {
 }
 
 func TestAnalysis_StartAnalysis(t *testing.T) {
-	t.Run("should return success when read all example analysis and return 17 vulnerabilities", func(t *testing.T) {
+	t.Run("should return success when read all example analysis and return 6 vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./leaks-tmp1.output.json")
-		configs.SetProjectPath("../utils/examples")
+		configs.SetProjectPath("../../../examples/leaks/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
@@ -48,14 +48,14 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 14)
+		assert.Equal(t, 6, len(data))
 	})
 
-	t.Run("should return success when read analysis and return two vulnerabilities", func(t *testing.T) {
+	t.Run("should return success when read analysis and return one vulnerabilities", func(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./leaks-tmp2.output.json")
-		configs.SetProjectPath("../utils/examples/leaks-hardcodedpass")
+		configs.SetProjectPath("../../../examples/leaks/example2")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
@@ -67,7 +67,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 2)
+		assert.Equal(t, 1, len(data))
 	})
 
 	t.Run("should return success when read analysis and return empty vulnerabilities", func(t *testing.T) {
@@ -85,7 +85,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, len(data), 0)
+		assert.Equal(t, 0, len(data))
 	})
 
 	t.Run("should return error when create file", func(t *testing.T) {
@@ -111,7 +111,7 @@ func TestAnalysis_StartRegularAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./leaks-tmp4.output.json")
-		configs.SetProjectPath("../utils/examples/leaks-hardcodedpass")
+		configs.SetProjectPath("../../../examples/go/example2")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
@@ -131,14 +131,14 @@ func TestAnalysis_StartRegularAnalysis(t *testing.T) {
 			}
 		}
 
-		assert.Equal(t, vulnCounter, 1)
+		assert.Equal(t, 1, vulnCounter)
 	})
 
 	t.Run("Should return a vulnerability from WPConfig", func(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./leaks-tmp5.output.json")
-		configs.SetProjectPath("../utils/examples/leaks-php")
+		configs.SetProjectPath("../../../examples/php/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)

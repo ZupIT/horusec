@@ -1,0 +1,22 @@
+{
+  "name": "horus",
+  "version": "1.0.0",
+  "description": "Intentionally Vulnerable horus test branch",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZupIT/horus.git"
+  },
+  "author": "horus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZupIT/horus"
+  },
+  "homepage": "https://github.com/ZupIT/horus#readme",
+  "dependencies": {
+    "express": "^4.0.0"
+  }
+}

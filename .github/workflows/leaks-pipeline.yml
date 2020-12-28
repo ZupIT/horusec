@@ -1,8 +1,6 @@
 name: HorusecLeaksPipeline
 
 on:
-  push:
-    branches: [ "master", "develop" ]
   pull_request:
     branches: [ "**" ]
 
@@ -39,6 +37,8 @@ jobs:
         run: |
           go clean -testcache
           go test -v ./horusec-leaks/... -timeout=2m -parallel=1 -failfast -short
+      - name: coverage
+        run: make coverage-horusec-leaks
       - name: build
         run: go build -o "./tmp/bin/horusec-leaks" ./horusec-leaks/cmd/app/main.go
 

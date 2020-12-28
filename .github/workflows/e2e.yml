@@ -1,8 +1,6 @@
 name: e2e
 
 on:
-  push:
-    branches: [ "master", "develop" ]
   pull_request:
     branches: [ "**" ]
 

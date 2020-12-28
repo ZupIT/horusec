@@ -34,7 +34,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		configs := config.NewConfig()
 
 		configs.SetOutputFilePath("./java-tmp.output.json")
-		configs.SetProjectPath("../utils/examples/java-hardcodedpass")
+		configs.SetProjectPath("../../../examples/java/example1")
 
 		err := NewAnalysis(configs).StartAnalysis()
 		assert.NoError(t, err)
@@ -46,7 +46,7 @@ func TestAnalysis_StartAnalysis(t *testing.T) {
 		_ = json.Unmarshal(fileBytes, &data)
 
 		assert.NoError(t, os.RemoveAll(configs.GetOutputFilePath()))
-		assert.Equal(t, 5, len(data))
+		assert.Equal(t, 3, len(data))
 	})
 
 	t.Run("should return error when create file", func(t *testing.T) {

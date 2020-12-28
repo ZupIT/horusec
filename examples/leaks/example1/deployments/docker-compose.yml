@@ -1,0 +1,92 @@
+version: '3'
+services:
+
+    dockerapi:
+        privileged: true
+        image: docker:stable-dind
+        container_name: horus_Docker_API
+        command: "dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2376"
+        ports:
+          - "2376:2376"
+        volumes:
+            - docker_vol:/var/lib/docker
+            - ../deployments/daemon.json:/etc/docker/daemon.json:ro
+            - ../deployments/certs/:/data/certs/
+        networks:
+            - horus_net
+
+    api:
+        container_name: horus_API
+        environment:
+            GOPATH: /go/
+            # required envs
+            HORUS_DATABASE_DB_ADDR: mongodb
+            HORUS_DATABASE_DB_NAME: horusDB
+            HORUS_DATABASE_DB_USERNAME: horusUser
+            HORUS_DATABASE_DB_PASSWORD: horusPassword
+            HORUS_API_DEFAULT_USERNAME: horusUser
+            HORUS_API_DEFAULT_PASSWORD: horusPassword
+            HORUS_API_DEFAULT_ITERATIONS: 100000
+            HORUS_API_DEFAULT_KEY_LENGTH: 512
+            HORUS_API_ALLOW_ORIGIN_CORS: "*"
+            HORUS_API_DEFAULT_HASH_FUNCTION: SHA512
+            HORUS_DOCKERAPI_ADDR: dockerapi
+            HORUS_DOCKERAPI_CERT_FILE: /go/src/github.com/ZupIT/horus/cert.pem
+            HORUS_DOCKERAPI_CERT_KEY: /go/src/github.com/ZupIT/horus/key.pem
+            HORUS_DOCKERAPI_CERT_PATH: /go/src/github.com/ZupIT/horus/
+            HORUS_DOCKERAPI_TLS_VERIFY: 1
+            # optional envs
+            HORUS_DOCKERAPI_PORT: 2376
+            HORUS_LOGGING_GRAYLOG_APP_NAME: horus   
+        build:
+            context: ../
+            dockerfile: deployments/dockerfiles/api.Dockerfile
+        command: "go run api/server.go"
+        volumes:
+            - docker_vol:/var/lib/docker
+            - ../deployments/certs/client-horusapi-cert.pem:/go/src/github.com/ZupIT/horus/cert.pem:ro
+            - ../deployments/certs/client-horusapi-key.pem:/go/src/github.com/ZupIT/horus/key.pem:ro
+            - ../deployments/certs/ca.pem:/go/src/github.com/ZupIT/horus/ca.pem:ro
+        ports:
+          - "8888:8888"
+        networks:
+            - horus_net
+        depends_on:
+            - mongodb
+            - dockerapi
+        external_links:
+            - dockerapi:dockerapi
+
+    mongodb:
+        container_name: horus_MongoDB
+        environment:
+            DATABASE: horusDB
+            DATABASE_USER: horusUser
+            DATABASE_PASS: horusPassword
+        build:
+            context: ../
+            dockerfile: deployments/dockerfiles/db.Dockerfile
+        ports:
+          - "27017:27017"
+          - "27018:27018"
+        volumes:
+            - mongo_vol:/data/db
+        networks:
+            - horus_net
+
+    fe:
+        container_name: horus_Dashboard
+        image: "horus/dashboard:latest"
+        environment:
+            REACT_APP_HORUS_FE_API_ADDRESS: "http://127.0.0.1:8888"
+        ports:
+          - "8080:80"
+        networks:
+            - horus_net
+    
+networks:
+    horus_net:
+
+volumes:
+    docker_vol:
+    mongo_vol:

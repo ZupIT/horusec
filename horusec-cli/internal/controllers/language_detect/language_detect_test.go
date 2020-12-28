@@ -15,13 +15,11 @@
 package languagedetect
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	analysisUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/zip"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/google/uuid"
 	CopyLib "github.com/otiai10/copy"
@@ -29,29 +27,12 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll(sourcePathBase)
+	_ = os.RemoveAll("./examples")
 
 	code := m.Run()
 
-	_ = os.RemoveAll(sourcePathBase)
-	_ = os.RemoveAll(".horusec")
-	_ = os.RemoveAll(".gitignore")
+	_ = os.RemoveAll("./examples")
 	os.Exit(code)
-}
-
-const (
-	zipPath        = "../../../../development-kit/pkg/utils/test/zips"
-	sourcePathBase = "./tmp-analysis"
-)
-
-func getSourcePath(analysisID uuid.UUID) string {
-	return fmt.Sprintf("%s/%s", sourcePathBase, analysisID.String())
-}
-
-func unZipToTmp(toolName string, analysisID uuid.UUID) error {
-	zipFilePath := fmt.Sprintf("%s/%s/%s.zip", zipPath, toolName, toolName)
-	sourcePath := getSourcePath(analysisID)
-	return zip.NewZip().UnZip(zipFilePath, sourcePath)
 }
 
 func TestNewLanguageDetect(t *testing.T) {
@@ -70,7 +51,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should ignore files of the type images", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		srcPath := sourcePathBase + "/" + uuid.New().String()
+		srcPath := "./examples/" + uuid.New().String()
 
 		err := CopyLib.Copy("../../../../assets", srcPath)
 		assert.NoError(t, err)
@@ -88,66 +69,49 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should ignore additional folder setup in configs", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "go-gosec"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should ignore additional specific file name setup in configs", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "go-gosec"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 	t.Run("Should run language detect and return GO and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "go-gosec"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "gitleaks"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/leaks/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Generic)
@@ -156,31 +120,37 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should run language detect and return JAVA and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "java-spotbug"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/java/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Java)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "javascript-npm"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/javascript/example1")
+
+		assert.Contains(t, langs, languages.Leaks)
+		assert.Contains(t, langs, languages.Javascript)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Len(t, langs, 3)
+	})
+
+	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
+		configs := &config.Config{}
+		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
+		controller := NewLanguageDetect(configs, analysis.ID)
+
+		langs, _ := controller.LanguageDetect("../../../../examples/javascript/example2")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)
@@ -189,54 +159,25 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, 4)
 	})
 
-	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
+	t.Run("Should run language detect and return KOTLIN and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "javascript-yarn"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/kotlin/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
-		assert.Contains(t, langs, languages.Javascript)
+		assert.Contains(t, langs, languages.Kotlin)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 
-	//t.Run("Should run language detect and return KOTLIN and GITLEAKS", func(t *testing.T) {
-	//	configs := config.NewHorusecConfig()
-	//	analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-	//	analysisName := "kotlin-spotbug"
-	//
-	//	assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-	//
-	//	controller := NewLanguageDetect(configs, analysis.ID)
-	//
-	//	monitor, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
-	//
-	//	for lang, value := range monitor {
-	//		if lang == languages.Kotlin || lang == languages.Leaks {
-	//			assert.Equal(t, 1, value)
-	//		} else {
-	//			assert.Equal(t, 0, value)
-	//		}
-	//	}
-	//})
-
-	t.Run("Should run language detect and return DOTNET and GITLEAKS", func(t *testing.T) {
+	t.Run("Should run language detect and return CSHARP and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "csharp"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/csharp/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.CSharp)
@@ -247,13 +188,9 @@ func TestNewLanguageDetect(t *testing.T) {
 	t.Run("Should run language detect and return PYTHON and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "python-bandit"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/python/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
@@ -261,34 +198,26 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, 3)
 	})
 
-	t.Run("Should run language detect and return PYTHON and GITLEAKS", func(t *testing.T) {
+	t.Run("Should run language detect and return PYTHON safety and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "python-safety"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/python/example2")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Contains(t, langs, languages.Yaml)
-		assert.Len(t, langs, 4)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return RUBY and GITLEAKS", func(t *testing.T) {
 		configs := &config.Config{}
 		analysis := analysisUseCases.NewAnalysisUseCases().NewAnalysisRunning()
-		analysisName := "ruby-brakeman"
-
-		assert.NoError(t, unZipToTmp(analysisName, analysis.ID))
-
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect(getSourcePath(analysis.ID))
+		langs, _ := controller.LanguageDetect("../../../../examples/ruby/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Ruby)
