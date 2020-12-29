@@ -69,3 +69,19 @@ func TestStartAnalysis(t *testing.T) {
 		})
 	})
 }
+
+func Test(t *testing.T) {
+	service := &formatters.Mock{}
+
+	service.On("LogDebugWithReplace")
+	service.On("SetToolFinishedAnalysis")
+	service.On("SetAnalysisError")
+	service.On("ToolIsToIgnore").Return(false)
+	service.On("GetProjectPathWithWorkdir").Return("/home/wilian/Projects/gitlabhq")
+	service.On("ParseFindingsToVulnerabilities").Return(nil)
+	service.On("GetCustomRulesByTool").Return([]engine.Rule{})
+
+	assert.NotPanics(t, func() {
+		NewFormatter(service).StartAnalysis("")
+	})
+}
