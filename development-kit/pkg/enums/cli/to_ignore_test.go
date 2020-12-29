@@ -15,18 +15,19 @@
 package cli
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetDefaultFoldersToIgnore(t *testing.T) {
-	t.Run("should success get 7 default files to ignore", func(t *testing.T) {
-		assert.Equal(t, len(GetDefaultFoldersToIgnore()), 9)
+	t.Run("should success get 10 default files to ignore", func(t *testing.T) {
+		assert.Equal(t, len(GetDefaultFoldersToIgnore()), 10)
 	})
 }
 
 func TestGetDefaultExtensionsToIgnore(t *testing.T) {
-	t.Run("should success get 32 extensions to ignore", func(t *testing.T) {
-		assert.Len(t, GetDefaultExtensionsToIgnore(), 32)
+	t.Run("should success get 33 extensions to ignore", func(t *testing.T) {
+		assert.Len(t, GetDefaultExtensionsToIgnore(), 33)
 	})
 }
