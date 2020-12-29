@@ -159,8 +159,11 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 			return true
 		}
 	}
-
-	return s.config.GetToolsConfig()[tool].IsToIgnore
+	if s.config.GetToolsConfig()[tool].IsToIgnore {
+		s.SetToolFinishedAnalysis()
+		return true
+	}
+	return false
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {
