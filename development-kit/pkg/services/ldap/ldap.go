@@ -249,7 +249,7 @@ func (s *Service) newSearchRequestByGroupFilter(username string) *ldap.SearchReq
 		nil,
 	)
 
-	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest)
+	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
 	return ldapSearchRequest
 }
 
