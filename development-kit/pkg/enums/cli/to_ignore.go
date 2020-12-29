@@ -16,7 +16,7 @@ package cli
 
 func GetDefaultFoldersToIgnore() []string {
 	return []string{"/.horusec/", "/.idea/", "/.vscode/", "/tmp/", "/bin/", "/node_modules/", "/vendor/",
-		"go.mod", "go.sum"}
+		"go.mod", "go.sum", "/.git/"}
 }
 
 func GetDefaultExtensionsToIgnore() []string {
@@ -24,5 +24,6 @@ func GetDefaultExtensionsToIgnore() []string {
 		".jpg", ".png", ".gif", ".webp", ".tiff", ".psd", ".raw", ".bmp", ".heif", ".indd",
 		".jpeg", ".svg", ".ai", ".eps", ".pdf", ".webm", ".mpg", ".mp2", ".mpeg", ".mpe",
 		".mp4", ".m4p", ".m4v", ".avi", ".wmv", ".mov", ".qt", ".flv", ".swf", ".avchd", ".mpv", ".ogg",
+		".ico",
 	}
 }
