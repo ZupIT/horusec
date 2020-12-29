@@ -75,3 +75,16 @@ jobs:
         uses: actions/checkout@v2
       - name: e2e
         run: make test-e2e-messages
+  e2e-manager:
+    name: e2e-manager
+    runs-on: ubuntu-16.04
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Up manager
+        run: make compose-e2e-manager
+      - name: e2e
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: horusec-manager
