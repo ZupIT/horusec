@@ -74,6 +74,7 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
 	c.SetDisableDocker(c.extractFlagValueBool(cmd, "disable-docker", c.GetDisableDocker()))
 	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
+	c.SetEnableInformationSeverity(c.extractFlagValueBool(cmd, "information-severity", c.GetEnableInformationSeverity()))
 	return c
 }
 
@@ -108,6 +109,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
 	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
 	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
+	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
 	return c
 }
 
@@ -137,6 +139,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
 	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
 	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
+	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	return c
 }
 
@@ -475,6 +478,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"workDir":                         c.workDir,
 		"disableDocker":                   c.disableDocker,
 		"customRulesPath":                 c.customRulesPath,
+		"enableInformationSeverity":       c.enableInformationSeverity,
 	}
 }
 
@@ -558,4 +562,12 @@ func (c *Config) GetCustomRulesPath() string {
 
 func (c *Config) SetCustomRulesPath(customRulesPath string) {
 	c.customRulesPath = customRulesPath
+}
+
+func (c *Config) GetEnableInformationSeverity() bool {
+	return c.enableInformationSeverity
+}
+
+func (c *Config) SetEnableInformationSeverity(enableInformationSeverity bool) {
+	c.enableInformationSeverity = enableInformationSeverity
 }

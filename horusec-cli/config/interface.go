@@ -98,6 +98,9 @@ type IConfig interface {
 	GetDisableDocker() bool
 	SetDisableDocker(disableDocker bool)
 
+	GetEnableInformationSeverity() bool
+	SetEnableInformationSeverity(enableInformationSeverity bool)
+
 	GetCustomRulesPath() string
 	SetCustomRulesPath(customRulesPath string)
 

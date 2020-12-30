@@ -161,43 +161,148 @@ All flags configurations can also be performed through a file called horusec-con
 The configuration file receive an object with the content follow:
 ```json
 {
-      "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
-      "horusecCliTimeoutInSecondsRequest": 300,
-      "horusecCliTimeoutInSecondsAnalysis": 600,
-      "horusecCliMonitorRetryInSeconds": 15,
-      "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
-      "horusecCliPrintOutputType": "text",
-      "horusecCliJsonOutputFilepath": "",
-      "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-      "horusecCliFilesOrPathsToIgnore": "",
-      "horusecCliReturnErrorIfFoundVulnerability": false,
-      "horusecCliProjectPath": "",
-      "horusecCliFilterPath": "",
-      "horusecCliEnableGitHistoryAnalysis": false,
-      "horusecCliCertPath": "",
-      "horusecCliCertInsecureSkipVerify":  false,
-      "horusecCliEnableCommitAuthor": false,
-      "horusecCliRepositoryName": "",
-      "horusecCliFalsePositiveHashes": "",
-      "horusecCliRiskAcceptHashes": "",
-      "horusecCliContainerBindProjectPath": "",
-      "horusecCliDisableDocker": false,
-      "horusecCliCustomRulesPath": "",
-      "horusecCliWorkDir": {
-	        "go":         [],
-	        "csharp":     [],
-	        "ruby":       [],
-	        "python":     [],
-	        "java" :      [],
-	        "kotlin":     [],
-	        "javaScript": [],
-	        "leaks":      [],
-            "generic":    [],
-            "php":        [],
-            "c":          [],
-            "yaml":       [],
-                "hlc":        []    
-      }
+  "horusecCliHorusecApiUri":"http://0.0.0.0:8000",
+  "horusecCliTimeoutInSecondsRequest":300,
+  "horusecCliTimeoutInSecondsAnalysis":600,
+  "horusecCliMonitorRetryInSeconds":15,
+  "horusecCliRepositoryAuthorization":"00000000-0000-0000-0000-000000000000",
+  "horusecCliPrintOutputType":"text",
+  "horusecCliJsonOutputFilepath":"",
+  "horusecCliTypesOfVulnerabilitiesToIgnore":"",
+  "horusecCliFilesOrPathsToIgnore":"",
+  "horusecCliReturnErrorIfFoundVulnerability":false,
+  "horusecCliProjectPath":"",
+  "horusecCliFilterPath":"",
+  "horusecCliEnableGitHistoryAnalysis":false,
+  "horusecCliCertPath":"",
+  "horusecCliCertInsecureSkipVerify":false,
+  "horusecCliEnableCommitAuthor":false,
+  "horusecCliRepositoryName":"",
+  "horusecCliFalsePositiveHashes":"",
+  "horusecCliRiskAcceptHashes":"",
+  "horusecCliContainerBindProjectPath":"",
+  "horusecCliWorkDir":{
+    "go":[
+
+    ],
+    "csharp":[
+
+    ],
+    "ruby":[
+
+    ],
+    "python":[
+
+    ],
+    "java":[
+
+    ],
+    "kotlin":[
+
+    ],
+    "javaScript":[
+
+    ],
+    "leaks":[
+
+    ],
+    "generic":[
+
+    ],
+    "php":[
+
+    ],
+    "c":[
+
+    ],
+    "yaml":[
+
+    ],
+    "hlc":[
+
+    ]
+  },
+  "horusecCliToolsConfig":{
+    "Bandit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Brakeman":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Eslint":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Flawfinder":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "GitLeaks":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "GoSec":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecCsharp":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecJava":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecKotlin":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecKubernetes":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecLeaks":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecNodeJS":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "NpmAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "PhpCS":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Safety":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "SecurityCodeScan":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Semgrep":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "TfSec":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "YarnAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    }
+  },
+  "horusecCliHeaders":{
+
+  }
 }
 ```
 
@@ -230,6 +335,7 @@ export HORUSEC_CLI_RISK_ACCEPT_HASHES=""
 export HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH=""
 export HORUSEC_CLI_DISABLE_DOCKER="false"
 export HORUSEC_CLI_CUSTOM_RULES_PATH=""
+export HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY=""
 ```
 
 ### Using Flags
@@ -264,6 +370,7 @@ All available flags are:
 | HORUSEC_CLI_FALSE_POSITIVE_HASHES               | horusecCliFalsePositiveHashes              | false-positive              | F             |                                         | Used to ignore vulnerability on analysis and setup with type `False positive`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_RISK_ACCEPT_HASHES                  | horusecCliRiskAcceptHashes                 | risk-accept                 | R             |                                         | Used to ignore vulnerability on analysis and setup with type `Risk accept`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_CUSTOM_RULES_PATH                   | horusecCliCustomRulesPath                  | custom-rules-path           | c             |                                         | Used to pass the path to the horusec custom rules file. Example: -c="./horusec/horusec-custom-rules.json". |
+| HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY         | horusecCliEnableInformationSeverity        | information-severity        | I             | false                                   | Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Ex.: `I="true"`|
 | HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH         | EnvContainerBindProjectPath                | container-bind-project-path | P             |                                         | Used to pass project path in host when running horusec cli inside a container |
 | HORUSEC_CLI_HEADERS                             | horusecCliHeaders                          | headers                     |               |                                         | Used to send dynamic headers on dispatch http request to horusec api service |
 |                                                 | horusecCliWorkDir                          |                             |               |                                         | This setting tells to horusec the right directory to run a specific language. |
