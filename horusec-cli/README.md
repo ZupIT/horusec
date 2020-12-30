@@ -161,44 +161,148 @@ All flags configurations can also be performed through a file called horusec-con
 The configuration file receive an object with the content follow:
 ```json
 {
-      "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
-      "horusecCliTimeoutInSecondsRequest": 300,
-      "horusecCliTimeoutInSecondsAnalysis": 600,
-      "horusecCliMonitorRetryInSeconds": 15,
-      "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
-      "horusecCliPrintOutputType": "text",
-      "horusecCliJsonOutputFilepath": "",
-      "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-      "horusecCliFilesOrPathsToIgnore": "",
-      "horusecCliReturnErrorIfFoundVulnerability": false,
-      "horusecCliProjectPath": "",
-      "horusecCliFilterPath": "",
-      "horusecCliEnableGitHistoryAnalysis": false,
-      "horusecCliCertPath": "",
-      "horusecCliCertInsecureSkipVerify":  false,
-      "horusecCliEnableCommitAuthor": false,
-      "horusecCliRepositoryName": "",
-      "horusecCliFalsePositiveHashes": "",
-      "horusecCliRiskAcceptHashes": "",
-      "horusecCliContainerBindProjectPath": "",
-      "horusecCliDisableDocker": false,
-      "horusecCliCustomRulesPath": "",
-      "horusecCliEnableInformationSeverity": false,
-      "horusecCliWorkDir": {
-	        "go":         [],
-	        "csharp":     [],
-	        "ruby":       [],
-	        "python":     [],
-	        "java" :      [],
-	        "kotlin":     [],
-	        "javaScript": [],
-	        "leaks":      [],
-            "generic":    [],
-            "php":        [],
-            "c":          [],
-            "yaml":       [],
-                "hlc":        []    
-      }
+  "horusecCliHorusecApiUri":"http://0.0.0.0:8000",
+  "horusecCliTimeoutInSecondsRequest":300,
+  "horusecCliTimeoutInSecondsAnalysis":600,
+  "horusecCliMonitorRetryInSeconds":15,
+  "horusecCliRepositoryAuthorization":"00000000-0000-0000-0000-000000000000",
+  "horusecCliPrintOutputType":"text",
+  "horusecCliJsonOutputFilepath":"",
+  "horusecCliTypesOfVulnerabilitiesToIgnore":"",
+  "horusecCliFilesOrPathsToIgnore":"",
+  "horusecCliReturnErrorIfFoundVulnerability":false,
+  "horusecCliProjectPath":"",
+  "horusecCliFilterPath":"",
+  "horusecCliEnableGitHistoryAnalysis":false,
+  "horusecCliCertPath":"",
+  "horusecCliCertInsecureSkipVerify":false,
+  "horusecCliEnableCommitAuthor":false,
+  "horusecCliRepositoryName":"",
+  "horusecCliFalsePositiveHashes":"",
+  "horusecCliRiskAcceptHashes":"",
+  "horusecCliContainerBindProjectPath":"",
+  "horusecCliWorkDir":{
+    "go":[
+
+    ],
+    "csharp":[
+
+    ],
+    "ruby":[
+
+    ],
+    "python":[
+
+    ],
+    "java":[
+
+    ],
+    "kotlin":[
+
+    ],
+    "javaScript":[
+
+    ],
+    "leaks":[
+
+    ],
+    "generic":[
+
+    ],
+    "php":[
+
+    ],
+    "c":[
+
+    ],
+    "yaml":[
+
+    ],
+    "hlc":[
+
+    ]
+  },
+  "horusecCliToolsConfig":{
+    "Bandit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Brakeman":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Eslint":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Flawfinder":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "GitLeaks":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "GoSec":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecCsharp":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecJava":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecKotlin":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecKubernetes":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecLeaks":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "HorusecNodeJS":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "NpmAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "PhpCS":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Safety":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "SecurityCodeScan":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Semgrep":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "TfSec":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "YarnAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    }
+  },
+  "horusecCliHeaders":{
+
+  }
 }
 ```
 
