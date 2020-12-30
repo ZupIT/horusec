@@ -167,6 +167,10 @@ const (
 	// By default is empty
 	// Validation: It is mandatory to be a valida path and contains file name
 	EnvCustomRulesPath = "HORUSEC_CLI_CUSTOM_RULES_PATH"
+	// Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives.
+	// By default is false
+	// Validation: It is mandatory to be in "false", "true"
+	EnvEnableInformationSeverity = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
 )
 
 type Config struct {
@@ -194,6 +198,7 @@ type Config struct {
 	certInsecureSkipVerify          bool
 	enableCommitAuthor              bool
 	disableDocker                   bool
+	enableInformationSeverity       bool
 	severitiesToIgnore              []string
 	filesOrPathsToIgnore            []string
 	falsePositiveHashes             []string

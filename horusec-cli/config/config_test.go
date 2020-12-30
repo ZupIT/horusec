@@ -62,6 +62,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 0, len(configs.GetToolsConfig()))
 		assert.Equal(t, false, configs.GetDisableDocker())
 		assert.Equal(t, "", configs.GetCustomRulesPath())
+		assert.Equal(t, false, configs.GetEnableInformationSeverity())
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		currentPath, _ := os.Getwd()
@@ -93,6 +94,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetToolsConfig(map[tools.Tool]toolsconfig.ToolConfig{tools.Eslint: {ImagePath: "docker.io/company/eslint:latest", IsToIgnore: true}})
 		configs.SetDisableDocker(true)
 		configs.SetCustomRulesPath("test")
+		configs.SetEnableInformationSeverity(true)
 
 		assert.NotEqual(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.NotEqual(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
@@ -121,6 +123,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, toolsconfig.ToolConfig{}, configs.GetToolsConfig()[tools.Eslint])
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 	})
 	t.Run("Should return horusec config using old viper file", func(t *testing.T) {
 		viper.Reset()
@@ -155,6 +158,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 			ImagePath:  "docker.io/company/gosec:latest",
@@ -193,6 +197,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 			ImagePath:  "docker.io/company/gosec:latest",
@@ -230,6 +235,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"hash1", "hash2"}, configs.GetFalsePositiveHashes())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 			ImagePath:  "docker.io/company/gosec:latest",
@@ -258,6 +264,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "./my-path"))
 		assert.NoError(t, os.Setenv(EnvDisableDocker, "true"))
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
+		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
@@ -284,6 +291,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "./my-path", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 	})
 	t.Run("Should return horusec config using viper file and override by environment and override by flags", func(t *testing.T) {
 		viper.Reset()
@@ -318,6 +326,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"hash1", "hash2"}, configs.GetFalsePositiveHashes())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 			ImagePath:  "docker.io/company/gosec:latest",
@@ -346,6 +355,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "./my-path"))
 		assert.NoError(t, os.Setenv(EnvDisableDocker, "true"))
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
+		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
@@ -372,6 +382,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "./my-path", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		cobraCmd := &cobra.Command{
 			Use:     "start",
 			Short:   "Start horusec-cli",
@@ -425,6 +436,7 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliToolsConfig", configs.toLowerCamel(EnvToolsConfig))
 		assert.Equal(t, "horusecCliDisableDocker", configs.toLowerCamel(EnvDisableDocker))
 		assert.Equal(t, "horusecCliCustomRulesPath", configs.toLowerCamel(EnvCustomRulesPath))
+		assert.Equal(t, "horusecCliEnableInformationSeverity", configs.toLowerCamel(EnvEnableInformationSeverity))
 	})
 }
 

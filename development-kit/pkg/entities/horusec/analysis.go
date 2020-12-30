@@ -252,3 +252,15 @@ func (a *Analysis) ParseResponseBytesToAnalysis(body []byte) (analysis *Analysis
 	}
 	return analysis, json.Unmarshal(body, &analysis)
 }
+
+func (a *Analysis) RemoveInfoVulnerabilities() {
+	var vulnerabilities []AnalysisVulnerabilities
+
+	for index := range a.AnalysisVulnerabilities {
+		if a.AnalysisVulnerabilities[index].Vulnerability.Severity != severity.Info {
+			vulnerabilities = append(vulnerabilities, a.AnalysisVulnerabilities[index])
+		}
+	}
+
+	a.AnalysisVulnerabilities = vulnerabilities
+}
