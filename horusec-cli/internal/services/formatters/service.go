@@ -159,8 +159,11 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 			return true
 		}
 	}
-
-	return s.config.GetToolsConfig()[tool].IsToIgnore
+	if s.config.GetToolsConfig()[tool].IsToIgnore {
+		s.SetToolFinishedAnalysis()
+		return true
+	}
+	return false
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {
@@ -235,7 +238,7 @@ func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, 
 		Line:         strconv.Itoa(findings[index].SourceLocation.Line),
 		Column:       strconv.Itoa(findings[index].SourceLocation.Column),
 		Confidence:   findings[index].Confidence,
-		File:         s.RemoveSrcFolderFromPath(s.removeHorusecFolder(findings[index].SourceLocation.Filename)),
+		File:         s.removeHorusecFolder(findings[index].SourceLocation.Filename),
 		Code:         s.GetCodeWithMaxCharacters(findings[index].CodeSample, findings[index].SourceLocation.Column),
 		Details:      findings[index].Name + "\n" + findings[index].Description,
 		SecurityTool: tool,
