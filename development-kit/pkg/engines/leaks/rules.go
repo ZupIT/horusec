@@ -47,7 +47,7 @@ func (r *Rules) addLeaksRules(rules []engine.Rule) []engine.Rule {
 }
 
 func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 1000, r.getExtensions())
+	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
 	units := r.parseTextUnitsToUnits(textUnits)
 	logger.LogDebugJSON("Texts Units selected are: ", units)
 	return units, err

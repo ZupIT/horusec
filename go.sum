@@ -58,6 +58,7 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdko
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
+github.com/ZupIT/horusec v1.4.2/go.mod h1:0c927VemkLRu5snhsfu/qt7yb7CZB4dPYVOjHGmnEU0=
 github.com/ZupIT/horusec-engine v0.2.7 h1:1LNxKhMYK4OJd//awCEjyBUVi1iDX5fnKUaI5ax5GXU=
 github.com/ZupIT/horusec-engine v0.2.7/go.mod h1:YUvzG1NJ5BXQ/vKJv2i4KbiwF2z5vHwcCVvjtf4fIkE=
 github.com/ZupIT/horusec-engine v0.2.8 h1:czuebVH1u2eOn1xztO2ng304Ci0N/vwZnuxnjHH+qNE=
@@ -68,6 +69,8 @@ github.com/ZupIT/horusec-engine v0.2.9-0.20201229183339-de7db6a7b2fa h1:Kmsm6sxZ
 github.com/ZupIT/horusec-engine v0.2.9-0.20201229183339-de7db6a7b2fa/go.mod h1:FzXVfrHbn9M+U4xVbx6O80ok+e+vgFGd4Gvyfoly1PA=
 github.com/ZupIT/horusec-engine v0.2.9 h1:9kLyZ67+tdVpGbfkC4/NYjl3h0aHAbTCeAdMsJvDUpE=
 github.com/ZupIT/horusec-engine v0.2.9/go.mod h1:FzXVfrHbn9M+U4xVbx6O80ok+e+vgFGd4Gvyfoly1PA=
+github.com/ZupIT/horusec-engine v0.2.10-0.20201230111823-1982382f9430 h1:ejebDYmQeLhQkV4HNz0zQ6zPHlxZhpmxrPUzmxHLj84=
+github.com/ZupIT/horusec-engine v0.2.10-0.20201230111823-1982382f9430/go.mod h1:DzWhLavXcxKY8BzC8ELi2W6L8M+RXILCJU1+HZfzRss=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
@@ -890,6 +893,8 @@ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201106081118-db71ae66460a h1:ALUFBKlIyeY7y5ZgPJmblk/vKz+zBQSnNiPkt41sgeg=
 golang.org/x/sys v0.0.0-20201106081118-db71ae66460a/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20201223074533-0d417f636930 h1:vRgIt+nup/B/BwIS0g2oC0haq0iqbV3ZA+u6+0TlNCo=
+golang.org/x/sys v0.0.0-20201223074533-0d417f636930/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

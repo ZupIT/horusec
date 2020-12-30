@@ -15,6 +15,7 @@
 package main
 
 import (
+	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/version"
@@ -47,6 +48,7 @@ func init() {
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	cobra.OnInitialize(func() {
 		startCmd.SetGlobalCmd(rootCmd)
+		engine.SetLogLevel(configs.GetLogLevel())
 	})
 }
 
