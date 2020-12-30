@@ -123,11 +123,10 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 }
 
 func (s *Start) setConfig(startCmd *cobra.Command) {
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd)
-	s.configs = s.configs.NewConfigsFromViper()
-	s.configs = s.configs.NewConfigsFromEnvironments()
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd)
-	s.configs.NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd).NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromViper().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromEnvironments().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd).NormalizeConfigs()
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
