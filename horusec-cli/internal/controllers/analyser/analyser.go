@@ -116,7 +116,9 @@ func (a *Analyser) removeTrashByInterruptProcess() {
 func (a *Analyser) removeHorusecFolder() {
 	err := os.RemoveAll(a.config.GetProjectPath() + file.ReplacePathSeparator("/.horusec"))
 	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err, logger.ErrorLevel)
-	a.dockerSDK.DeleteContainersFromAPI()
+	if !a.config.GetDisableDocker() {
+		a.dockerSDK.DeleteContainersFromAPI()
+	}
 }
 
 func (a *Analyser) runAnalysis() (totalVulns int, err error) {
