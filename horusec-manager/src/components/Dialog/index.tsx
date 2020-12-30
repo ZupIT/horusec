@@ -68,7 +68,7 @@ const Dialog: React.FC<DialogProps> = ({
       {visibility ? (
         <Styled.Background>
           <Styled.Wrapper width={width}>
-            <Styled.Message>{message}</Styled.Message>
+            <Styled.Message id="dialog">{message}</Styled.Message>
 
             <Styled.Content>{children}</Styled.Content>
 

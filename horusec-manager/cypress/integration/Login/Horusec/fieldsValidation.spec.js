@@ -1,3 +1,5 @@
+import { LOGIN_SCREEN } from '../../../../src/config/i18n/enUS.json';
+
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Validation the field of login form.', () => {
   beforeEach(() => {
@@ -14,7 +16,7 @@ describe('Validation the field of login form.', () => {
 
   it('Check if show error message of invalid email.', () => {
     cy.get('#email').click().type('invalidemail@');
-    cy.get('#email-error').should('contain.text', 'Invalid e-mail');
+    cy.get('#email-error').should('contain.text', LOGIN_SCREEN.INVALID_EMAIL);
   });
 
   it('Turn visible password.', () => {
@@ -26,7 +28,7 @@ describe('Validation the field of login form.', () => {
 
   it('Check if show error message of empty password', () => {
     cy.get('#password').click().type('test').clear().blur();
-    cy.get('#password-error').should('contain.text', 'Enter password');
+    cy.get('#password-error').should('contain.text', LOGIN_SCREEN.INVALID_PASS);
   });
 
   it('Check if submit button is disabled.', () => {

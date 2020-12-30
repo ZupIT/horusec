@@ -133,6 +133,7 @@ function PasswordForm() {
           }
           text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
           type="submit"
+          id="register"
           isLoading={isLoading}
           rounded
         />
