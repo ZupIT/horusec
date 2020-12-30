@@ -21,7 +21,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/nodejs/and"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/nodejs/or"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/nodejs/regular"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Interface interface {
@@ -59,7 +58,6 @@ func (r *Rules) addRules(rules []engine.Rule) []engine.Rule {
 func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
 	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
 	units := r.parseTextUnitsToUnits(textUnits)
-	logger.LogDebugJSON("Texts Units selected are: ", units)
 	return units, err
 }
 
