@@ -17,10 +17,12 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
+	"time"
+
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"gopkg.in/ldap.v2"
-	"time"
 )
 
 type ILDAPService interface {
@@ -239,13 +241,16 @@ func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
 }
 
 func (s *Service) newSearchRequestByGroupFilter(username string) *ldap.SearchRequest {
-	return ldap.NewSearchRequest(
+	ldapSearchRequest := ldap.NewSearchRequest(
 		s.Base,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf(s.GroupFilter, username),
 		[]string{"cn"},
 		nil,
 	)
+
+	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
+	return ldapSearchRequest
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {

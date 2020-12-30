@@ -16,9 +16,12 @@ package ldap
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
@@ -101,8 +104,9 @@ func (s *Service) getUserGroups(username string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
 		return s.client.GetGroupsOfUser(username)
 	}
-	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
 
+	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
+	logger.LogInfo("{getUserGroups} found ldap groups -> ", userGroups)
 	if err != nil {
 		return []string{}, err
 	}
