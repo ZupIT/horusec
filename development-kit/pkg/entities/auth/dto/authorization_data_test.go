@@ -15,12 +15,13 @@
 package dto
 
 import (
+	"testing"
+
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestAuthorizationDataValidate(t *testing.T) {
@@ -31,7 +32,7 @@ func TestAuthorizationDataValidate(t *testing.T) {
 			Password:    "safePassword!123",
 			Username:    "test",
 			IsConfirmed: false,
-		}, map[string]string{"role": "admin"})
+		}, nil)
 
 		authorizationData := &AuthorizationData{
 			Token: token,

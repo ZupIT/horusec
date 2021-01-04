@@ -17,18 +17,18 @@ package auth
 import (
 	"encoding/json"
 	"errors"
-	"github.com/Nerzal/gocloak/v7"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/Nerzal/gocloak/v7"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewCredentialsFromReadCloser(t *testing.T) {
@@ -125,27 +125,6 @@ func TestToCreateAccountFromKeycloakResponse(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, useCases.ToCreateAccountFromKeycloakResponse(account))
-	})
-}
-
-func TestMapRepositoriesRoles(t *testing.T) {
-	t.Run("should map a accountRepository role with the", func(t *testing.T) {
-		repositoryID := uuid.New()
-		accountRepositories := &[]roles.AccountRepository{{
-			RepositoryID: repositoryID,
-			Role:         "admin",
-		}}
-
-		useCases := NewAuthUseCases()
-		mappedRoles := useCases.MapRepositoriesRoles(accountRepositories)
-		assert.NotEmpty(t, mappedRoles)
-		assert.Equal(t, mappedRoles[repositoryID.String()], "admin")
-	})
-
-	t.Run("should return empty map when nil repository", func(t *testing.T) {
-		useCases := NewAuthUseCases()
-		mappedRoles := useCases.MapRepositoriesRoles(nil)
-		assert.Empty(t, mappedRoles)
 	})
 }
 

@@ -141,33 +141,6 @@ func TestGetAccountIDByJWTToken(t *testing.T) {
 	})
 }
 
-func TestGetPermissionsByJWTTOken(t *testing.T) {
-	t.Run("should get permissions map", func(t *testing.T) {
-		token, _, _ := CreateToken(&authEntities.Account{
-			AccountID: uuid.New(),
-			Email:     "test@test.com",
-			Username:  "test",
-		}, map[string]string{
-			"test": "admin",
-		})
-		token = fmt.Sprintf("Bearer %s", token)
-		permissions, err := GetRepositoryPermissionsByJWTTOken(token)
-
-		assert.NoError(t, err)
-		assert.NotEmpty(t, permissions)
-
-	})
-
-	t.Run("should return an error when jwt is not valid", func(t *testing.T) {
-		token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QiLCJ1c2VybmFtZSI6InRlc3QiLCJzdWIiOiJ0" +
-			"ZXN0In0.TMmUwiXEHkgtEX3Fxudu_GP1f9ZmRnkJfzlSuKaaH-o"
-		permissions, err := GetRepositoryPermissionsByJWTTOken(token)
-
-		assert.Error(t, err)
-		assert.Nil(t, permissions)
-	})
-}
-
 func TestCreateRefreshToken(t *testing.T) {
 	t.Run("should success create refresh token", func(t *testing.T) {
 		refreshToken := CreateRefreshToken()

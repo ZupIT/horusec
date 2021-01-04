@@ -16,9 +16,10 @@ package account
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"time"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
@@ -51,7 +52,6 @@ type IAccount interface {
 	ChangePassword(accountID uuid.UUID, password string) error
 	RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error)
 	Logout(accountID uuid.UUID) error
-	createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error)
 	VerifyAlreadyInUse(validateUnique *dto.ValidateUnique) error
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountIDByEmail(email string) (uuid.UUID, error)
@@ -199,7 +199,7 @@ func (a *Account) VerifyResetPasswordCode(data *dto.ResetCodeData) (string, erro
 
 	_ = a.cacheRepository.Del(data.Email)
 
-	token, _, err := a.createTokenWithAccountPermissions(account)
+	token, _, err := jwt.CreateToken(account, nil)
 	return token, err
 }
 
@@ -279,7 +279,7 @@ func (a *Account) decodeAndValidateTokens(accountID, accessToken string) error {
 }
 
 func (a *Account) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
-	accessToken, expiresAt, _ := a.createTokenWithAccountPermissions(account)
+	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 	refreshToken := jwt.CreateRefreshToken()
 	err := a.cacheRepository.Set(
 		&entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}, time.Hour*2)
@@ -297,11 +297,6 @@ func (a *Account) Logout(accountID uuid.UUID) error {
 	}
 
 	return a.cacheRepository.Del(account.AccountID.String())
-}
-
-func (a *Account) createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error) {
-	accountRepository, _ := a.accountRepositoryRepo.GetOfAccount(account.AccountID)
-	return jwt.CreateToken(account, a.authUseCases.MapRepositoriesRoles(&accountRepository))
 }
 
 func (a *Account) getURLToResetPassword(email, code string) string {
