@@ -54,17 +54,17 @@ func (r *Run) CreateCobraCmd() *cobra.Command {
 
 func (r *Run) runECobraCmd(cmd *cobra.Command, _ []string) error {
 	if err := r.useCases.ValidateConfigs(r.configs); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err
 	}
 	r.configs = r.useCases.NormalizeConfigs(r.configs)
-	logger.LogDebugWithLevel("Configs validated success: ", logger.DebugLevel, r.configs)
+	logger.LogDebugWithLevel(messages.MsgDebugConfigWasValidated, r.configs)
 	err := r.controller.StartAnalysis()
 	if err != nil {
-		logger.LogErrorWithLevel("Analysis finished with err: ", err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorAnalysisFinished, err)
 	} else {
-		logger.LogDebugWithLevel("Analysis finished with success!", logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugAnalysisFinished)
 	}
 	return err
 }

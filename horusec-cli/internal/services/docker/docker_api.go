@@ -83,14 +83,14 @@ func (d *API) pullNewImage(imagePath string) error {
 func (d *API) downloadImage(imagePath string) error {
 	reader, err := d.dockerClient.ImagePull(d.ctx, imagePath, dockerTypes.ImagePullOptions{})
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		return err
 	}
 
 	readResult, err := ioutil.ReadAll(reader)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err, logger.ErrorLevel)
-		logger.LogDebugWithLevel(string(readResult), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
+		logger.LogDebugWithLevel(string(readResult))
 		return err
 	}
 
@@ -104,7 +104,7 @@ func (d *API) checkImageNotExists(imagePath string) (bool, error) {
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerListImages, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerListImages, err)
 		return false, err
 	}
 
@@ -146,19 +146,19 @@ func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput
 func (d *API) removeContainer(containerID string) {
 	err := d.dockerClient.ContainerRemove(d.ctx,
 		containerID, dockerTypes.ContainerRemoveOptions{Force: true})
-	logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 }
 
 func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
 	config, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
 	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, d.getImageID())
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err)
 		return "", err
 	}
 
 	if err = d.dockerClient.ContainerStart(d.ctx, response.ID, dockerTypes.ContainerStartOptions{}); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerStartContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerStartContainer, err)
 		return "", err
 	}
 
@@ -228,7 +228,6 @@ func (d *API) getContainerHostConfig() *dockerContainer.HostConfig {
 func (d *API) loggerAPIStatus(message, imageNameWithTag string) {
 	logger.LogDebugWithLevel(
 		message,
-		logger.DebugLevel,
 		map[string]interface{}{
 			"image":      imageNameWithTag,
 			"analysisId": d.analysisID.String(),
@@ -239,7 +238,6 @@ func (d *API) loggerAPIStatus(message, imageNameWithTag string) {
 func (d *API) loggerAPIStatusWithContainerID(message, imageNameWithTag, containerID string) {
 	logger.LogDebugWithLevel(
 		message,
-		logger.DebugLevel,
 		map[string]interface{}{
 			"image":       imageNameWithTag,
 			"containerId": containerID,
@@ -251,7 +249,7 @@ func (d *API) loggerAPIStatusWithContainerID(message, imageNameWithTag, containe
 func (d *API) DeleteContainersFromAPI() {
 	containers, err := d.listContainersByAnalysisID()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerListAllContainers, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerListAllContainers, err)
 		return
 	}
 
@@ -259,7 +257,7 @@ func (d *API) DeleteContainersFromAPI() {
 		err = d.dockerClient.ContainerRemove(d.ctx, containers[index].ID,
 			dockerTypes.ContainerRemoveOptions{Force: true})
 
-		logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 	}
 }
 

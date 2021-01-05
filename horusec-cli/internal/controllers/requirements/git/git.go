@@ -74,7 +74,7 @@ func (r *RequirementGit) validateIfGitIsSupported() error {
 func (r *RequirementGit) execGitVersion() (string, error) {
 	responseBytes, err := exec.Command("git", "--version").CombinedOutput()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirements, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirements, err)
 		return "", err
 	}
 	return strings.ToLower(string(responseBytes)), nil
@@ -86,10 +86,10 @@ func (r *RequirementGit) validateIfGitIsRunningInMinVersion(response string) err
 		return err
 	}
 	if version < MinVersionGitAccept {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion)
 		return errorsEnums.ErrGitLowerVersion
 	} else if version == MinVersionGitAccept && subversion < MinSubVersionGitAccept {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion)
 		return errorsEnums.ErrGitLowerVersion
 	}
 	return nil

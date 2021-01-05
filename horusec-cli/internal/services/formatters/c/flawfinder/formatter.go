@@ -39,7 +39,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Flawfinder) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Flawfinder.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Flawfinder.ToString())
 		return
 	}
 

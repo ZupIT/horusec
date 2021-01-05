@@ -54,7 +54,7 @@ func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language
 	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err)
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func (ld *LanguageDetect) getLanguages(directory string) (languagesFound []strin
 	if filesToSkip > 0 {
 		print("\n")
 		msg := strings.ReplaceAll(messages.MsgWarnTotalFolderOrFileWasIgnored, "{{0}}", strconv.Itoa(filesToSkip))
-		logger.LogWarnWithLevel(msg, logger.WarnLevel)
+		logger.LogWarnWithLevel(msg)
 	}
 	return ld.uniqueLanguages(languagesFound), err
 }
@@ -95,12 +95,12 @@ func (ld *LanguageDetect) execWalkToGetLanguagesAndReturnIfSkip(
 	path string, info os.FileInfo) (languagesFound []string, skip bool) {
 	skip = ld.filesAndFoldersToIgnore(path)
 	if skip {
-		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, logger.WarnLevel, path)
+		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, path)
 	}
 	if !info.IsDir() && !skip {
 		newLanguages := enry.GetLanguages(path, nil)
 		logger.LogTraceWithLevel(messages.MsgTraceLanguageFound,
-			logger.TraceLevel, map[string][]string{path: newLanguages})
+			map[string][]string{path: newLanguages})
 		languagesFound = append(languagesFound, newLanguages...)
 	}
 	return languagesFound, skip
@@ -171,10 +171,10 @@ func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 	folderDstName := file.ReplacePathSeparator(fmt.Sprintf("%s/.horusec/%s", directory, ld.analysisID.String()))
 	err := copyUtil.Copy(directory, folderDstName, ld.filesAndFoldersToIgnore)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
 	} else {
 		fmt.Print("\n")
-		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, logger.WarnLevel, folderDstName)
+		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, folderDstName)
 		fmt.Print("\n")
 	}
 	return err

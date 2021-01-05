@@ -148,7 +148,7 @@ func (s *Start) runE(cmd *cobra.Command, _ []string) error {
 
 func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err)
 		return 0, err
 	}
 	if err := s.configsValidations(cmd); err != nil {
@@ -159,7 +159,7 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 
 func (s *Start) configsValidations(cmd *cobra.Command) error {
 	if err := s.useCases.ValidateConfigs(s.configs); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err
 	}
@@ -167,7 +167,7 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 	s.configs.NormalizeConfigs()
 	s.validateRequirements()
 
-	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs+string(s.configs.ToBytes(true)), logger.DebugLevel)
+	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.ToBytes(true)))
 	return nil
 }
 
@@ -216,8 +216,7 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 
 func (s *Start) validateReplyOfAsk(response string) error {
 	if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "n") {
-		logger.LogErrorWithLevel("Your response was: '"+response+"' Please type Y or N",
-			errors.New("reply invalid"), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorReplayWrong+response, errors.New("reply invalid"))
 		return s.askIfRunInDirectorySelected(true)
 	}
 	if strings.EqualFold(response, "n") {
