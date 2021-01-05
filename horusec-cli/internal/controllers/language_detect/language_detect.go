@@ -16,6 +16,7 @@ package languagedetect
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/toignore"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -23,7 +24,6 @@ import (
 
 	"github.com/go-enry/go-enry/v2"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	copyUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/copy"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
@@ -139,7 +139,7 @@ func (ld *LanguageDetect) filesAndFoldersToIgnore(path string) bool {
 }
 
 func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
-	for _, value := range cli.GetDefaultFoldersToIgnore() {
+	for _, value := range toignore.GetDefaultFoldersToIgnore() {
 		if strings.Contains(path, file.ReplacePathSeparator(value)) {
 			return true
 		}
@@ -159,7 +159,7 @@ func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
 
 func (ld *LanguageDetect) checkFileExtensionInvalid(path string) bool {
 	extensionFound := filepath.Ext(path)
-	for _, value := range cli.GetDefaultExtensionsToIgnore() {
+	for _, value := range toignore.GetDefaultExtensionsToIgnore() {
 		if strings.EqualFold(value, extensionFound) {
 			return true
 		}

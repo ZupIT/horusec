@@ -18,13 +18,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/sonarqube"
@@ -80,9 +80,9 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
-	case pr.configs.GetPrintOutputType() == string(cli.JSON):
+	case pr.configs.GetPrintOutputType() == string(outputtype.JSON):
 		return pr.runPrintResultsJSON()
-	case pr.configs.GetPrintOutputType() == string(cli.SonarQube):
+	case pr.configs.GetPrintOutputType() == string(outputtype.SonarQube):
 		return pr.runPrintResultsSonarQube()
 	default:
 		return pr.runPrintResultsText()
