@@ -16,9 +16,10 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
@@ -101,7 +102,9 @@ func (t *Token) GetTable() string {
 }
 
 func (t *Token) setHashValue() {
-	t.Value = crypto.HashToken(t.key.String())
+	value, err := hash.GenerateSHA256(t.key.String())
+	logger.LogError("Error on generate hash value", err)
+	t.Value = value
 }
 
 func (t *Token) setSuffixValue() {
