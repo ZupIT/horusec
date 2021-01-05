@@ -21,10 +21,10 @@ import (
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"   // [swagger-import]
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]

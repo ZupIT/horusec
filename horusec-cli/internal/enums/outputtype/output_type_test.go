@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package outputtype
 
-type OutputType string
-
-const (
-	Text      OutputType = "text"
-	JSON      OutputType = "json"
-	SonarQube OutputType = "sonarqube"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-func (o OutputType) ToString() string {
-	return string(o)
+func TestToString(t *testing.T) {
+	t.Run("Should success parse to string", func(t *testing.T) {
+		assert.Equal(t, "json", JSON.ToString())
+	})
 }

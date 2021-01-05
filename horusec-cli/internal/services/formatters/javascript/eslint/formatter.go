@@ -43,7 +43,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Eslint) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Eslint.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Eslint.ToString())
 		return
 	}
 
@@ -77,7 +77,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 func (f *Formatter) processOutput(output string) {
 	if output == "" {
 		logger.LogDebugWithLevel(
-			messages.MsgDebugOutputEmpty, logger.DebugLevel, map[string]interface{}{"tool": tools.Eslint.ToString()})
+			messages.MsgDebugOutputEmpty, map[string]interface{}{"tool": tools.Eslint.ToString()})
 		return
 	}
 
@@ -91,7 +91,7 @@ func (f *Formatter) processOutput(output string) {
 
 func (f *Formatter) parseOutput(output string) (eslintOutput *[]entities.Output, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &eslintOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Eslint, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Eslint, output), err)
 	return eslintOutput, err
 }
 

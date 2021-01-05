@@ -146,7 +146,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 func (c *Config) GetDefaultConfigFilePath() string {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGetCurrentPath, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorGetCurrentPath, err)
 	}
 	return path.Join(currentDir, "horusec-config.json")
 }
@@ -269,7 +269,7 @@ func (c *Config) GetWorkDir() *workdir.WorkDir {
 
 func (c *Config) SetWorkDir(input interface{}) {
 	if c.netCoreKeyIsDeprecated(input) {
-		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated)
 	}
 	if input != nil {
 		c.workDir = c.workDir.ParseInterfaceToStruct(input)
@@ -345,7 +345,7 @@ func (c *Config) GetToolsToIgnore() (output []string) {
 
 func (c *Config) SetToolsToIgnore(toolsToIgnore []string) {
 	if len(toolsToIgnore) > 0 {
-		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated)
 	}
 	c.toolsToIgnore = c.factoryParseInputToSliceString(toolsToIgnore)
 }
@@ -356,7 +356,7 @@ func (c *Config) GetHeaders() (headers map[string]string) {
 
 func (c *Config) SetHeaders(headers interface{}) {
 	output, err := utilsJson.ConvertInterfaceToMapString(headers)
-	logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.PanicLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorSetHeadersOnConfig, err)
 	c.headers = output
 }
 
@@ -393,7 +393,7 @@ func (c *Config) IsEmptyRepositoryAuthorization() bool {
 func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue string) string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetString(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -402,7 +402,7 @@ func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue s
 func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultValue int64) int64 {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetInt64(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -411,7 +411,7 @@ func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultV
 func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultValue bool) bool {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetBool(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -420,7 +420,7 @@ func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultVa
 func (c *Config) extractFlagValueStringSlice(cmd *cobra.Command, name string, defaultValue []string) []string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetStringSlice(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -430,20 +430,20 @@ func (c *Config) extractFlagValueStringToString(
 	cmd *cobra.Command, name string, defaultValue map[string]string) map[string]string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetStringToString(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
 }
 
 func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
-	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath+c.GetConfigFilePath(), logger.DebugLevel)
+	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath + c.GetConfigFilePath())
 	if _, err := os.Stat(c.GetConfigFilePath()); os.IsNotExist(err) {
-		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath, logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath)
 		return false
 	}
 	viper.SetConfigFile(c.GetConfigFilePath())
-	logger.LogPanicWithLevel(messages.MsgPanicGetConfigFilePath, viper.ReadInConfig(), logger.PanicLevel)
+	logger.LogPanicWithLevel(messages.MsgPanicGetConfigFilePath, viper.ReadInConfig())
 	return true
 }
 

@@ -18,7 +18,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/kotlin"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Analysis struct {
@@ -43,7 +42,5 @@ func (a *Analysis) StartAnalysis() error {
 }
 
 func (a *Analysis) getAllRules() []engine.Rule {
-	allRules := a.serviceRules.GetAllRules()
-	logger.LogDebugJSON("All rules selected are: ", allRules)
-	return allRules
+	return a.serviceRules.GetAllRules()
 }

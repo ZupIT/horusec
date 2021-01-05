@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-func GenerateSHA1(i ...string) (string, error) {
+func GenerateSHA256(i ...string) (string, error) {
 	j := strings.Join(i, "")
 	b := []byte(j)
 

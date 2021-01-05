@@ -28,9 +28,9 @@ import (
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	companyUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
+	companyUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/company"
 	"github.com/google/uuid"
 )
 

@@ -63,12 +63,12 @@ func ParseInterfaceToMapToolsConfig(input interface{}) (output map[tools.Tool]To
 	outputStruct := ToolsConfigsStruct{}
 	bytes, err := json.Marshal(input)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
 		return outputStruct.ToMap()
 	}
 	err = json.Unmarshal(bytes, &outputStruct)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
 		return outputStruct.ToMap()
 	}
 	return outputStruct.ToMap()

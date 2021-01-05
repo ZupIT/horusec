@@ -70,11 +70,11 @@ func (w *WorkDir) ParseInterfaceToStruct(toParse interface{}) *WorkDir {
 	}
 	bytes, err := json.Marshal(toParse)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err)
 		return w
 	}
 	if err = json.Unmarshal(bytes, &w); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err)
 	}
 	return w.setEmptyOrSliceEmptyInNilContent()
 }

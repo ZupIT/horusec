@@ -42,7 +42,7 @@ type Interface interface {
 func NewDockerClient() Interface {
 	dockerClient, err := docker.NewEnvClient()
 	if err != nil {
-		logger.LogPanicWithLevel(messages.MsgPanicNotConnectDocker, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicNotConnectDocker, err)
 	}
 
 	return dockerClient

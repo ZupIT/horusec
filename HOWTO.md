@@ -54,9 +54,7 @@ func (a *Analysis) StartAnalysis() error {
 }
 
 func (a *Analysis) getAllRules() []engine.Rule {
-    allRules := a.serviceRules.GetAllRules()
-    logger.LogDebugJSON("All rules selected are: ", allRules)
-    return allRules
+    return a.serviceRules.GetAllRules()
 }
 
 ```
