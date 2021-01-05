@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	DefaultSecretJWT = "horusec-secret"
+	DefaultSecretJWT           = "horusec-secret"
 	WarningDefaultJWTSecretKey = "{JWT-INSECURE} horusec JWT secret key is the default one, for security " +
 		"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
 )
