@@ -72,7 +72,7 @@ func NewLDAPClient() ILDAPService {
 		UserFilter:           env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", ""),
 		GroupFilter:          env.GetEnvOrDefault("HORUSEC_LDAP_GROUPFILTER", ""),
 		GroupFilterAttribute: env.GetEnvOrDefault("HORUSEC_LDAP_GROUPFILTER_ATTRIBUTE", ""),
-		Attributes:           []string{"uid", "mail", "givenName"}, // has to be dinamic
+		Attributes:           []string{"uid", "mail", "givenName"},
 	}
 }
 
@@ -140,13 +140,7 @@ func (s *Service) Close() {
 }
 
 func (s *Service) Authenticate(username, password string) (bool, map[string]string, error) {
-	err := s.Connect()
-	if err != nil {
-		return false, nil, err
-	}
-
-	err = s.bindByEnvVars()
-	if err != nil {
+	if err := s.ConnectAndBind(); err != nil {
 		return false, nil, err
 	}
 
@@ -192,7 +186,7 @@ func (s *Service) searchUserByUsername(username string) (*ldap.SearchResult, err
 }
 
 func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequest {
-	attributes := append(s.Attributes, "dn")
+	attributes := append(s.Attributes, "dn", s.GroupFilterAttribute)
 
 	return ldap.NewSearchRequest(
 		s.Base,
@@ -225,12 +219,16 @@ func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string 
 	return user
 }
 
-func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
+func (s *Service) ConnectAndBind() error {
 	if err := s.Connect(); err != nil {
-		return nil, err
+		return err
 	}
 
-	if err := s.bindByEnvVars(); err != nil {
+	return s.bindByEnvVars()
+}
+
+func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
+	if err := s.ConnectAndBind(); err != nil {
 		return nil, err
 	}
 
