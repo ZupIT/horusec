@@ -28,9 +28,9 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 
-	repositoriesUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
+	repositoriesUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
