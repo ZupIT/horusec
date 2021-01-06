@@ -12,7 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package warnings
+package outputtype
 
-const WarningDefaultJWTSecretKey = "{JWT-INSECURE} horusec JWT secret key is the default one, for security " +
-	"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
+type OutputType string
+
+const (
+	Text      OutputType = "text"
+	JSON      OutputType = "json"
+	SonarQube OutputType = "sonarqube"
+)
+
+func (o OutputType) ToString() string {
+	return string(o)
+}

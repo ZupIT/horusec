@@ -90,7 +90,7 @@ func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
 	if projectSubPath != "" {
-		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, logger.DebugLevel, tool.ToString(), projectSubPath)
+		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, tool.ToString(), projectSubPath)
 		return strings.ReplaceAll(cmd, "{{WORK_DIR}}", fmt.Sprintf("cd %s", projectSubPath))
 	}
 
@@ -99,7 +99,7 @@ func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) s
 
 func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool) {
 	logger.LogDebugWithLevel(strings.ReplaceAll(msg, "{{0}}", tool.ToString()),
-		logger.DebugLevel, s.analysis.GetIDString())
+		s.analysis.GetIDString())
 }
 
 func (s *Service) GetAnalysisID() string {
@@ -119,7 +119,7 @@ func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath st
 		}
 
 		msg = strings.ReplaceAll(msg, "| output -> {{2}}", "")
-		logger.LogDebugWithLevel(fmt.Sprintf("%s - %s", msg, err), logger.ErrorLevel)
+		logger.LogDebugWithLevel(fmt.Sprintf("%s - %s", msg, err))
 	}
 }
 

@@ -43,7 +43,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.SecurityCodeScan) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.SecurityCodeScan.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.SecurityCodeScan.ToString())
 		return
 	}
 
@@ -94,7 +94,7 @@ func (f *Formatter) splitSCSContainerOutput(output string) []string {
 
 func (f *Formatter) parseStringToStruct(output string) (scsResult entities.ScsResult, err error) {
 	err = json.Unmarshal([]byte(output), &scsResult)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err)
 	return scsResult, err
 }
 
@@ -133,7 +133,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 func (f *Formatter) verifyIsCsProjError(output string, err error) error {
 	if strings.Contains(output, "Could not find any project in") {
 		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound, logger.ErrorLevel)
+		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound)
 		return errorsEnums.ErrCsProjNotFound
 	}
 

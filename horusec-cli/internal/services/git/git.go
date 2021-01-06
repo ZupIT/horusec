@@ -92,7 +92,7 @@ func (s *Service) executeCMD(line, filePath string) ([]byte, error) {
 	response, err := cmd.Output()
 	if err != nil {
 		logger.LogErrorWithLevel(
-			messages.MsgErrorGitCommitAuthorsExecute, err, logger.ErrorLevel,
+			messages.MsgErrorGitCommitAuthorsExecute, err,
 			map[string]interface{}{"line_and_path": lineAndPath})
 	}
 	return response, err
@@ -102,7 +102,7 @@ func (s *Service) parseOutputToStruct(output []byte) (commitAuthor horusec.Commi
 	outputFormatted := s.getCleanOutput(output)
 	if err := json.Unmarshal([]byte(outputFormatted), &commitAuthor); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorGitCommitAuthorsParseOutput+outputFormatted,
-			err, logger.ErrorLevel)
+			err)
 		return s.getCommitAuthorNotFound()
 	}
 	return commitAuthor

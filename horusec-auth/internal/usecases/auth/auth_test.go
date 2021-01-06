@@ -31,6 +31,12 @@ import (
 	"time"
 )
 
+func TestNewAccountUpdateFromReadCloser(t *testing.T) {
+	useCases := NewAuthUseCases()
+	_, err := useCases.NewAccountUpdateFromReadCloser(ioutil.NopCloser(strings.NewReader("wrong content")))
+	assert.Error(t, err)
+}
+
 func TestNewCredentialsFromReadCloser(t *testing.T) {
 	t.Run("should success parse read closer to credentials", func(t *testing.T) {
 		bytes, _ := json.Marshal(&dto.Credentials{

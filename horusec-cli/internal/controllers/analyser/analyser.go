@@ -115,7 +115,7 @@ func (a *Analyser) removeTrashByInterruptProcess() {
 
 func (a *Analyser) removeHorusecFolder() {
 	err := os.RemoveAll(a.config.GetProjectPath() + file.ReplacePathSeparator("/.horusec"))
-	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err)
 	if !a.config.GetDisableDocker() {
 		a.dockerSDK.DeleteContainersFromAPI()
 	}
@@ -183,7 +183,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 
 	if !a.monitor.IsFinished() && !a.config.GetIsTimeout() {
 		logger.LogInfoWithLevel(
-			fmt.Sprintf(messages.MsgInfoMonitorTimeoutIn+strconv.Itoa(int(monitor))+"s"), logger.InfoLevel)
+			fmt.Sprintf(messages.MsgInfoMonitorTimeoutIn + strconv.Itoa(int(monitor)) + "s"))
 		time.Sleep(time.Duration(a.config.GetMonitorRetryInSeconds()) * time.Second)
 		a.runMonitorTimeout(monitor - a.config.GetMonitorRetryInSeconds())
 	}
@@ -219,7 +219,7 @@ func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {
 	go horusecleaks.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 
 	if a.config.GetEnableGitHistoryAnalysis() {
-		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
 		a.monitor.AddProcess(1)
 		go gitleaks.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	}
@@ -299,7 +299,7 @@ func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {
 func (a *Analyser) logProjectSubPath(language languages.Language, subPath string) {
 	if subPath != "" {
 		msg := fmt.Sprintf("Running %s in subpath: %s", language.ToString(), subPath)
-		logger.LogDebugWithLevel(msg, logger.DebugLevel)
+		logger.LogDebugWithLevel(msg)
 	}
 }
 
@@ -313,7 +313,7 @@ func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
 			}
 		}
 		if !existing {
-			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis+hash, logger.WarnLevel)
+			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis + hash)
 		}
 	}
 }

@@ -42,7 +42,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Brakeman) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Brakeman.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Brakeman.ToString())
 		return
 	}
 
@@ -86,7 +86,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	}
 
 	err = json.Unmarshal([]byte(containerOutput), &output)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err)
 	return output, err
 }
 

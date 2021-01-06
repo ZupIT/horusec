@@ -16,6 +16,7 @@ package middlewares
 
 import (
 	"context"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
 	"net/http"
 	"time"
 
@@ -25,7 +26,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/crypto"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 )
 
@@ -81,7 +81,7 @@ func (t *TokenAuthz) getTokenHashFromAuthorizationHeader(r *http.Request) (strin
 		return "", errors.ErrorUnauthorized
 	}
 
-	return crypto.HashToken(tokenStr), nil
+	return hash.GenerateSHA256(tokenStr)
 }
 
 func (t *TokenAuthz) getContextAndValidateIsValidToken(

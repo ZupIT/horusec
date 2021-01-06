@@ -20,7 +20,7 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/dashboard"
-	dashboardUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/dashboard"
+	dashboardUseCases "github.com/ZupIT/horusec/horusec-analytic/internal/usecases/dashboard"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	"github.com/stretchr/testify/assert"

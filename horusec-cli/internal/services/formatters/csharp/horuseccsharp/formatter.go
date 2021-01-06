@@ -38,7 +38,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.HorusecCsharp) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecCsharp.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecCsharp.ToString())
 		return
 	}
 

@@ -74,66 +74,66 @@ func TestSetLogLevel(t *testing.T) {
 func TestLogPanicWithLevel(t *testing.T) {
 	SetLogLevel(PanicLevel.String())
 	t.Run("should panic with error", func(t *testing.T) {
-		assert.Panics(t, func() { LogPanicWithLevel("test", errors.New("test"), PanicLevel) })
+		assert.Panics(t, func() { LogPanicWithLevel("test", errors.New("test")) })
 	})
 
 	t.Run("should panic with args", func(t *testing.T) {
-		assert.Panics(t, func() { LogPanicWithLevel("test", errors.New("test"), PanicLevel, map[string]interface{}{}) })
+		assert.Panics(t, func() { LogPanicWithLevel("test", errors.New("test"), map[string]interface{}{}) })
 	})
 }
 
 func TestLogErrorWithLevel(t *testing.T) {
 	SetLogLevel(ErrorLevel.String())
 	t.Run("should not panic", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogErrorWithLevel("test", errors.New("test"), ErrorLevel) })
+		assert.NotPanics(t, func() { LogErrorWithLevel("test", errors.New("test")) })
 	})
 
 	t.Run("should not panic when log with args", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogErrorWithLevel("test", errors.New("test"), ErrorLevel, map[string]interface{}{}) })
+		assert.NotPanics(t, func() { LogErrorWithLevel("test", errors.New("test"), map[string]interface{}{}) })
 	})
 }
 
 func TestLogWarnWithLevel(t *testing.T) {
 	SetLogLevel(WarnLevel.String())
 	t.Run("should not panic", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogWarnWithLevel("test", WarnLevel) })
+		assert.NotPanics(t, func() { LogWarnWithLevel("test") })
 	})
 
 	t.Run("should not panic when log with args", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogWarnWithLevel("test", WarnLevel, map[string]interface{}{}) })
+		assert.NotPanics(t, func() { LogWarnWithLevel("test", map[string]interface{}{}) })
 	})
 }
 
 func TestLogInfoWithLevel(t *testing.T) {
 	SetLogLevel(InfoLevel.String())
 	t.Run("should not panic", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogInfoWithLevel("test", InfoLevel) })
+		assert.NotPanics(t, func() { LogInfoWithLevel("test") })
 	})
 
 	t.Run("should not panic when log with args", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogInfoWithLevel("test", InfoLevel, map[string]interface{}{}) })
+		assert.NotPanics(t, func() { LogInfoWithLevel("test", map[string]interface{}{}) })
 	})
 }
 
 func TestLogDebugWithLevel(t *testing.T) {
 	SetLogLevel(DebugLevel.String())
 	t.Run("should not panic", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogDebugWithLevel("test", DebugLevel) })
+		assert.NotPanics(t, func() { LogDebugWithLevel("test") })
 	})
 
 	t.Run("should not panic when log with args", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogDebugWithLevel("test", DebugLevel, map[string]interface{}{}) })
+		assert.NotPanics(t, func() { LogDebugWithLevel("test", map[string]interface{}{}) })
 	})
 }
 
 func TestLogTraceWithLevel(t *testing.T) {
 	SetLogLevel(TraceLevel.String())
 	t.Run("should not trace", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogTraceWithLevel("test", TraceLevel) })
+		assert.NotPanics(t, func() { LogTraceWithLevel("test") })
 	})
 
 	t.Run("should not panic when log with args", func(t *testing.T) {
-		assert.NotPanics(t, func() { LogTraceWithLevel("test", TraceLevel, map[string]interface{}{}) })
+		assert.NotPanics(t, func() { LogTraceWithLevel("test", map[string]interface{}{}) })
 	})
 }
 

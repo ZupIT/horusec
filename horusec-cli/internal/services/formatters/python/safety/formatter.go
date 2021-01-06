@@ -48,7 +48,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Safety) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Safety.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Safety.ToString())
 		return
 	}
 
@@ -81,7 +81,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 
 func (f *Formatter) parseOutput(output string) {
 	if output == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.Safety.ToString()})
 		return
 	}
@@ -98,7 +98,7 @@ func (f *Formatter) parseOutput(output string) {
 
 func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entities.SafetyOutput, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &safetyOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err)
 	return safetyOutput, err
 }
 
@@ -144,7 +144,7 @@ func (f *Formatter) getVulnerabilityLineByName(line, file string) string {
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close(), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close())
 	}()
 	scanner := bufio.NewScanner(fileOpened)
 	return f.getLine(line, scanner)

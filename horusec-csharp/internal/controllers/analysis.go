@@ -4,7 +4,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type IAnalysis interface {
@@ -34,6 +33,5 @@ func (a *Analysis) StartAnalysis() error {
 
 func (a *Analysis) getAllRules() []engine.Rule {
 	allRules := a.serviceRules.GetAllRules()
-	logger.LogDebugJSON("All rules selected are: ", allRules)
 	return allRules
 }
