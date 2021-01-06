@@ -22,7 +22,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/warnings"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	jwtMiddleware "github.com/auth0/go-jwt-middleware"
