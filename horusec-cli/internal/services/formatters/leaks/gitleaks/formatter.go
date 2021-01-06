@@ -44,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.GitLeaks) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GitLeaks.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.GitLeaks.ToString())
 		return
 	}
 
@@ -66,7 +66,7 @@ func (f *Formatter) startGitLeaks(projectSubPath string) error {
 
 func (f *Formatter) formatOutputGitLeaks(output string) error {
 	if output == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
 		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
 		return nil
@@ -84,7 +84,7 @@ func (f *Formatter) formatOutputGitLeaks(output string) error {
 func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error) {
 	var issues []entities.Issue
 	err := jsonUtils.ConvertStringToOutput(output, &issues)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err)
 	return issues, err
 }
 

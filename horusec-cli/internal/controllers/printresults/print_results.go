@@ -18,13 +18,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/sonarqube"
@@ -72,7 +72,7 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
 	if pr.configs.GetIsTimeout() {
-		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs, logger.ErrorLevel)
+		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs)
 	}
 
 	return pr.totalVulns, nil
@@ -80,9 +80,9 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
-	case pr.configs.GetPrintOutputType() == string(cli.JSON):
+	case pr.configs.GetPrintOutputType() == string(outputtype.JSON):
 		return pr.runPrintResultsJSON()
-	case pr.configs.GetPrintOutputType() == string(cli.SonarQube):
+	case pr.configs.GetPrintOutputType() == string(outputtype.SonarQube):
 		return pr.runPrintResultsSonarQube()
 	default:
 		return pr.runPrintResultsText()
@@ -109,7 +109,7 @@ func (pr *PrintResults) runPrintResultsText() error {
 func (pr *PrintResults) runPrintResultsJSON() error {
 	bytesToWrite, err := json.MarshalIndent(pr.analysis, "", "  ")
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 		return err
 	}
 	return pr.parseFilePathToAbsAndCreateOutputJSON(bytesToWrite)
@@ -132,7 +132,7 @@ func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
 func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *horusecEntities.Vulnerability) {
 	if vuln.Severity.ToString() != "" && !pr.isTypeVulnToSkip(vuln) {
 		if !pr.isIgnoredVulnerability(vuln.Severity.ToString()) {
-			logger.LogDebugWithLevel("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "+vuln.VulnHash, logger.DebugLevel)
+			logger.LogDebugWithLevel(messages.MsgDebugVulnHashToFix + vuln.VulnHash)
 			if logger.CurrentLevel >= logger.DebugLevel {
 				fmt.Println("")
 			}
@@ -160,18 +160,18 @@ func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore
 }
 
 func (pr *PrintResults) saveSonarQubeFormatResults() error {
-	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSonarQubeFile, logger.InfoLevel)
+	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSonarQubeFile)
 	report := pr.sonarqubeService.ConvertVulnerabilityDataToSonarQube()
 	bytesToWrite, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 		return err
 	}
 	return pr.parseFilePathToAbsAndCreateOutputJSON(bytesToWrite)
 }
 
 func (pr *PrintResults) returnDefaultErrOutputJSON(err error) error {
-	logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 	return ErrOutputJSON
 }
 
@@ -183,7 +183,7 @@ func (pr *PrintResults) parseFilePathToAbsAndCreateOutputJSON(bytesToWrite []byt
 	if _, err := os.Create(completePath); err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
-	logger.LogInfoWithLevel(messages.MsgInfoStartWriteFile+completePath, logger.InfoLevel)
+	logger.LogInfoWithLevel(messages.MsgInfoStartWriteFile + completePath)
 	return pr.openJSONFileAndWriteBytes(bytesToWrite, completePath)
 }
 
@@ -268,7 +268,7 @@ func (pr *PrintResults) printCommitAuthor(vulnerability *horusecEntities.Vulnera
 func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
 	if pr.configs.IsEmptyRepositoryAuthorization() {
 		fmt.Print("\n")
-		logger.LogWarnWithLevel(messages.MsgWarnAuthorizationNotFound, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnAuthorizationNotFound)
 		fmt.Print("\n")
 	}
 }
@@ -276,7 +276,7 @@ func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
 func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 	if pr.analysis.HasErrors() {
 		pr.logSeparator(true)
-		logger.LogWarnWithLevel(messages.MsgErrorFoundErrorsInAnalysis, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgErrorFoundErrorsInAnalysis)
 		fmt.Print("\n")
 
 		for _, errorMessage := range strings.SplitAfter(pr.analysis.Errors, ";") {
@@ -290,7 +290,7 @@ func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 func (pr *PrintResults) printErrors(errorMessage string) {
 	if strings.Contains(errorMessage, messages.MsgErrorPacketJSONNotFound) ||
 		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) {
-		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""), logger.WarnLevel)
+		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""))
 		return
 	}
 
@@ -299,12 +299,12 @@ func (pr *PrintResults) printErrors(errorMessage string) {
 
 func (pr *PrintResults) printResponseAnalysis() {
 	if pr.totalVulns > 0 {
-		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgAnalysisFoundVulns, pr.totalVulns), logger.WarnLevel)
+		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgAnalysisFoundVulns, pr.totalVulns))
 		fmt.Print("\n")
 		return
 	}
 
-	logger.LogWarnWithLevel(messages.MsgAnalysisFinishedWithoutVulns, logger.WarnLevel)
+	logger.LogWarnWithLevel(messages.MsgAnalysisFinishedWithoutVulns)
 	fmt.Print("\n")
 }
 

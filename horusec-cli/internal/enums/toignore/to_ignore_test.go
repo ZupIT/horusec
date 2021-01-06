@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package toignore
 
-func GetDefaultFoldersToIgnore() []string {
-	return []string{"/.horusec/", "/.idea/", "/.vscode/", "/tmp/", "/bin/", "/node_modules/", "/vendor/",
-		"go.mod", "go.sum", "/.git/"}
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestGetDefaultFoldersToIgnore(t *testing.T) {
+	t.Run("should success get 10 default files to ignore", func(t *testing.T) {
+		assert.Equal(t, len(GetDefaultFoldersToIgnore()), 10)
+	})
 }
 
-func GetDefaultExtensionsToIgnore() []string {
-	return []string{
-		".jpg", ".png", ".gif", ".webp", ".tiff", ".psd", ".raw", ".bmp", ".heif", ".indd",
-		".jpeg", ".svg", ".ai", ".eps", ".pdf", ".webm", ".mpg", ".mp2", ".mpeg", ".mpe",
-		".mp4", ".m4p", ".m4v", ".avi", ".wmv", ".mov", ".qt", ".flv", ".swf", ".avchd", ".mpv", ".ogg",
-		".ico",
-	}
+func TestGetDefaultExtensionsToIgnore(t *testing.T) {
+	t.Run("should success get 33 extensions to ignore", func(t *testing.T) {
+		assert.Len(t, GetDefaultExtensionsToIgnore(), 33)
+	})
 }

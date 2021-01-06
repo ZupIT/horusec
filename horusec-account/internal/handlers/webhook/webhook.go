@@ -21,9 +21,9 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	webhookUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/webhook"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	webhookController "github.com/ZupIT/horusec/horusec-account/internal/controller/webhook"
+	webhookUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/webhook"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	netHTTP "net/http"

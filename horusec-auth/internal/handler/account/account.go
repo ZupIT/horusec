@@ -23,12 +23,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 

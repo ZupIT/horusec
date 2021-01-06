@@ -29,9 +29,9 @@ import (
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	"github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
+	"github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 )

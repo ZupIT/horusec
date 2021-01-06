@@ -23,6 +23,7 @@ import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface FilterProps {
   onApply: (values: FilterValues) => void;
@@ -34,18 +35,61 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { showWarningFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
 
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
+  const fixedRanges = [
+    {
+      label: t('DASHBOARD_SCREEN.CUSTOM_RANGE'),
+      value: 'customRange',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.TODAY'),
+      value: 'today',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.LAST_WEEK'),
+      value: 'lastWeek',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.LAST_MONTH'),
+      value: 'lastMonth',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.BEGINNING'),
+      value: 'beginning',
+    },
+  ];
+
+  const today = new Date();
+  const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
+  const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
+  const beginning = new Date(2019, 0, 1, 0, 0, 0, 0);
 
   const [repositories, setRepositories] = useState<any[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
 
   const [filters, setFilters] = useState<FilterValues>({
-    initialDate: yesterday,
-    finalDate: new Date(),
+    initialDate: lastWeek,
+    finalDate: today,
     repositoryID: null,
     companyID: null,
     type,
   });
+
+  const handleSelectedPeriod = (item: { label: string; value: string }) => {
+    setSelectedPeriod(item);
+
+    const getRangeOfPeriod: ObjectLiteral = {
+      customRange: [today, today],
+      today: [today, today],
+      lastWeek: [lastWeek, today],
+      lastMonth: [lastMonth, today],
+      beginning: [beginning, today],
+    };
+    setFilters({
+      ...filters,
+      initialDate: getRangeOfPeriod[item.value][0],
+      finalDate: getRangeOfPeriod[item.value][1],
+    });
+  };
 
   useEffect(() => {
     const fetchRepositories = () => {
@@ -84,24 +128,40 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
   return (
     <Styled.Container>
-      <Styled.CalendarWrapper>
-        <Calendar
-          initialDate={filters.initialDate}
-          title={t('DASHBOARD_SCREEN.START_DATE')}
-          onChangeValue={(date: Date) =>
-            setFilters({ ...filters, initialDate: date })
-          }
+      <Styled.Wrapper>
+        <Select
+          keyLabel="label"
+          optionsHeight="160px"
+          width="200px"
+          initialValue={selectedPeriod}
+          options={fixedRanges}
+          title={t('DASHBOARD_SCREEN.PERIOD')}
+          onChangeValue={(item) => handleSelectedPeriod(item)}
         />
-      </Styled.CalendarWrapper>
+      </Styled.Wrapper>
 
-      <Styled.CalendarWrapper>
-        <Calendar
-          title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-          onChangeValue={(date: Date) =>
-            setFilters({ ...filters, finalDate: date })
-          }
-        />
-      </Styled.CalendarWrapper>
+      {selectedPeriod?.value === fixedRanges[0].value ? (
+        <>
+          <Styled.CalendarWrapper>
+            <Calendar
+              initialDate={filters.initialDate}
+              title={t('DASHBOARD_SCREEN.START_DATE')}
+              onChangeValue={(date: Date) =>
+                setFilters({ ...filters, initialDate: date })
+              }
+            />
+          </Styled.CalendarWrapper>
+
+          <Styled.CalendarWrapper>
+            <Calendar
+              title={t('DASHBOARD_SCREEN.FINAL_DATE')}
+              onChangeValue={(date: Date) =>
+                setFilters({ ...filters, finalDate: date })
+              }
+            />
+          </Styled.CalendarWrapper>
+        </>
+      ) : null}
 
       {type === 'repository' ? (
         <Select

@@ -29,8 +29,8 @@ import (
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
 )
 

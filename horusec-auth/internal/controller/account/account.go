@@ -36,9 +36,9 @@ import (
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
 )
 

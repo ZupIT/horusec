@@ -25,9 +25,9 @@ import (
 	"testing"
 
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	authController "github.com/ZupIT/horusec/horusec-auth/internal/controller/auth"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -17,11 +17,11 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
@@ -132,7 +132,8 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.ICo
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		if config.GetPrintOutputType() == cli.JSON.ToString() || config.GetPrintOutputType() == cli.SonarQube.ToString() {
+		if config.GetPrintOutputType() == outputtype.JSON.ToString() ||
+			config.GetPrintOutputType() == outputtype.SonarQube.ToString() {
 			if err := au.validateJSONOutputFilePath(config); err != nil {
 				return err
 			}
@@ -159,9 +160,9 @@ func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig) error {
 
 func (au *UseCases) validationOutputTypes() validation.InRule {
 	return validation.In(
-		cli.JSON.ToString(),
-		cli.SonarQube.ToString(),
-		cli.Text.ToString(),
+		outputtype.JSON.ToString(),
+		outputtype.SonarQube.ToString(),
+		outputtype.Text.ToString(),
 	)
 }
 

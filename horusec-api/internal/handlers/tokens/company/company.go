@@ -22,8 +22,8 @@ import (
 
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/api" // [swagger-import]
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	tokenUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/tokens"
 	tokensController "github.com/ZupIT/horusec/horusec-api/internal/controllers/tokens/company"
+	tokenUseCases "github.com/ZupIT/horusec/horusec-api/internal/usecases/tokens"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 )

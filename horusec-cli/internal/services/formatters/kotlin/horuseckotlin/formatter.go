@@ -38,7 +38,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.HorusecKotlin) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecKotlin.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecKotlin.ToString())
 		return
 	}
 

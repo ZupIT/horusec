@@ -30,7 +30,11 @@ import (
 	"github.com/google/uuid"
 )
 
-const DefaultSecretJWT = "horusec-secret"
+const (
+	DefaultSecretJWT           = "horusec-secret"
+	WarningDefaultJWTSecretKey = "{JWT-INSECURE} horusec JWT secret key is the default one, for security " +
+		"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
+)
 
 func CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(time.Hour * time.Duration(1))
@@ -88,7 +92,7 @@ func GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 func getHorusecJWTKey() []byte {
 	secretKey := env.GetEnvOrDefault("HORUSEC_JWT_SECRET_KEY", DefaultSecretJWT)
 	if secretKey == DefaultSecretJWT {
-		logger.LogInfo(warnings.WarningDefaultJWTSecretKey)
+		logger.LogInfo(WarningDefaultJWTSecretKey)
 	}
 
 	return []byte(secretKey)
