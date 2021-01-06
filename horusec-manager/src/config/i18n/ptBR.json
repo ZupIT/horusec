@@ -154,6 +154,12 @@
   "DASHBOARD_SCREEN": {
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
+    "PERIOD": "Período",
+    "CUSTOM_RANGE": "Período personalizado",
+    "TODAY": "Hoje",
+    "LAST_WEEK": "Últimos 7 dias",
+    "LAST_MONTH": "Últimos 30 dias",
+    "BEGINNING": "Desde o ínicio",
     "APPLY": "Aplicar",
     "TOTAL_DEVELOPERS": "Total de desenvolvedores",
     "TOTAL_REPOSITORIES": "Total de repositórios",
