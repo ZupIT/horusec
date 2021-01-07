@@ -15,6 +15,8 @@
 package horusec
 
 import (
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
@@ -30,7 +32,6 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/internal/services"
 	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Service struct {
@@ -79,7 +80,7 @@ func (s *Service) login(loginData *dto.LoginData) (*dto.LoginResponse, error) {
 }
 
 func (s *Service) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
-	accessToken, expiresAt, _ := s.createTokenWithAccountPermissions(account)
+	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
 	refreshToken := jwt.CreateRefreshToken()
 	err := s.cacheRepository.Set(
 		&entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}, time.Hour*2)
@@ -88,11 +89,6 @@ func (s *Service) setLoginResponse(account *authEntities.Account) (*dto.LoginRes
 	}
 
 	return s.authUseCases.ToLoginResponse(account, accessToken, refreshToken, expiresAt), nil
-}
-
-func (s *Service) createTokenWithAccountPermissions(account *authEntities.Account) (string, time.Time, error) {
-	accountRepository, _ := s.accountRepositoryRepo.GetOfAccount(account.AccountID)
-	return jwt.CreateToken(account, s.authUseCases.MapRepositoriesRoles(&accountRepository))
 }
 
 func (s *Service) IsAuthorized(authorizationData *dto.AuthorizationData) (bool, error) {

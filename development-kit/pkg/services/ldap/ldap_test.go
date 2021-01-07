@@ -17,14 +17,14 @@ package ldap
 import (
 	"crypto/tls"
 	"errors"
-	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
-	"github.com/stretchr/testify/mock"
-	"gopkg.in/ldap.v2"
 	"testing"
 	"time"
 
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
+	"github.com/go-ldap/ldap/v3"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 type MockLdapConn struct {

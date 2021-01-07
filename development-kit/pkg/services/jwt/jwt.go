@@ -16,18 +16,17 @@ package jwt
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/google/uuid"
-
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	jwtMiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 )
 
 const (
@@ -36,12 +35,12 @@ const (
 		"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
 )
 
-func CreateToken(account *authEntities.Account, permissions map[string]string) (string, time.Time, error) {
+func CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(time.Hour * time.Duration(1))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &dto.ClaimsJWT{
-		Email:            account.Email,
-		Username:         account.Username,
-		RepositoriesRole: permissions,
+		Email:       account.Email,
+		Username:    account.Username,
+		Permissions: permissions,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			IssuedAt:  time.Now().Unix(),
@@ -87,15 +86,6 @@ func GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 	}
 
 	return uuid.Parse(claims.Subject)
-}
-
-func GetRepositoryPermissionsByJWTTOken(token string) (map[string]string, error) {
-	claims, err := DecodeToken(verifyIfContainsBearer(token))
-	if err != nil {
-		return nil, err
-	}
-
-	return claims.RepositoriesRole, nil
 }
 
 func getHorusecJWTKey() []byte {
