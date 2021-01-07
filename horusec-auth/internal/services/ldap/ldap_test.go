@@ -16,9 +16,10 @@ package ldap
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"testing"
 	"time"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
@@ -245,7 +246,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"admin"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -285,7 +286,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -325,7 +326,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"developer"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -365,7 +366,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -405,7 +406,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"developer"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -445,7 +446,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -485,7 +486,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"supervisor"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -525,7 +526,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -565,7 +566,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"admin"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -605,7 +606,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -640,7 +641,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -675,7 +676,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -734,7 +735,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,

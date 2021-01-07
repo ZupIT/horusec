@@ -335,10 +335,12 @@ And it's ready. Now horusec is inte.grated with the new tool and generating unif
 Feel free to send us a pull request and collaborate with the project. We will love it!
 
 ## Adding Custom Rules
-At Horusec you have the possibility to add rules dynamically that will be executed on our engines.
+
+With Horusec you are able to dynamically add rules that will be executed on our engines.
 
 #### 1 - Horusec Custom Rules Json
-To do this it is necessary to create a json file containing the following pattern:
+
+In order to run custom Json rules in Horusec you'll have to create a .json having this code pattern below:
 
  ```horusec-custom-rules.json
 [
@@ -371,28 +373,32 @@ To do this it is necessary to create a json file containing the following patter
 ]
 ```
 
-#### 2 - Json Explanation
+#### 2 - Explanation of Json attributes
 
-| Field           | Description                                                                                                                                          |
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| ID              | Random UUID that will be used to identify the vulnerability, your rules should not duplicate this id.                                                |
-| Name            | String with the name of the vulnerability.                                                                                                           |
-| Description     | String with the description of the vulnerability.                                                                                                    |
-| Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                            |
-| Confidence      | String with the confidence of the vulnerability report with the possible values: (LOW, MEDIUM, HIGH).                                                |
-| Type            | String with the regex type with the possible values: (Regular, OrMatch, AndMatch).                                                                   |
-| Tool            | String with the regex type with the possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |
-| Expressions     | Array of string containing all the regex that will detect the vulnerability.                                                                         |
+Check the following table to get to know more about each field.
+
+| Field           | Description                                                                                                                                                                            |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| ID              | Random UUID that will be used to identify the vulnerability, your rules should not duplicate this id.                                                                                  |
+| Name            | String with the name of the vulnerability.                                                                                                                                             |
+| Description     | String with the description of the vulnerability.                                                                                                                                      |
+| Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                                                              |
+| Confidence      | String with the confidence of the vulnerability report with the possible values: (LOW, MEDIUM, HIGH).                                                                                  |
+| Type            | String with the regex type containing these possible values: (Regular, OrMatch, AndMatch).                                                                                             |
+| Tool            | String with the tool where the rules is going to run containing these possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |
+| Expressions     | Array of string containing all the regex that will detect the vulnerability.                                                                                                           |
 
 #### 3 - Regex Types
 
-| Type            | Description                                                                                                                                          |
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| OrMatch         | If any regex in the array matches this vulnerability will be reported. Regexes need to be in the context of the same vulnerability.                  |
-| Regular         | If any regex in the array matches this vulnerability will be reported. Regexes don't need to be related.                                             |
-| AndMatch        | In this type all regexes must match for the vulnerability to be reported.                                                                            |
+Our engine works with three types of regex.
+
+| Type            | Description                                                                                                                                                                                                                                                     |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| OrMatch         | These are more comprehensive rules, which may have more than one pattern to manifest, hence the name, since our engine will perform the logical OR operation for each of the registered RegExps.                                                                |
+| Regular         | It is very similar to OrMatch, but the idea is that it contains multiple ways to detect the same pattern.                                                                                                                                                       |  
+| AndMatch        | These are rules that need the file to manifest multiple patterns to be considered something to be reported, therefore, the engine performs the logical operation in each of the registered RegExps to ensure that all conditions have been met.                 |                                                          |
 
 #### 4 - Custom Rules Flag
-To use the rules you created use the `-c` flag passing the path to the json file.
+To start using the rules you've created, apply the -c flag so you can pass the path to your .json file.
 
 `horusec start -c="{path to your horusec custom rules json file}"`

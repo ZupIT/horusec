@@ -26,7 +26,6 @@ import (
 	"github.com/Nerzal/gocloak/v7"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
@@ -43,7 +42,6 @@ type IUseCases interface {
 		account *authEntities.Account, accessToken, refreshToken string, expiresAt time.Time) *dto.LoginResponse
 	ToCreateAccountFromKeycloakResponse(account *authEntities.Account) *dto.CreateAccountFromKeycloakResponse
 	ValidateLogin(account *authEntities.Account, loginData *dto.LoginData) error
-	MapRepositoriesRoles(accountRepositories *[]roles.AccountRepository) map[string]string
 	CheckCreateAccountErrorType(err error) error
 	NewAccountFromKeyCloakUserInfo(userInfo *gocloak.UserInfo) *authEntities.Account
 	GenerateResetPasswordCode() string
@@ -124,19 +122,6 @@ func (u *UseCases) ValidateLogin(account *authEntities.Account, loginData *dto.L
 	}
 
 	return account.IsAccountConfirmed()
-}
-
-func (u *UseCases) MapRepositoriesRoles(accountRepositories *[]roles.AccountRepository) map[string]string {
-	m := make(map[string]string)
-	if accountRepositories == nil {
-		return m
-	}
-
-	for _, accountRepository := range *accountRepositories {
-		m[accountRepository.RepositoryID.String()] = fmt.Sprint(accountRepository.Role)
-	}
-
-	return m
 }
 
 func (u *UseCases) CheckCreateAccountErrorType(err error) error {

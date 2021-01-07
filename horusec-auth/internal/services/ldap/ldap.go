@@ -70,12 +70,11 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 		return nil, err
 	}
 
-	return s.setLDAPAuthResponse(account), nil
+	return s.setLDAPAuthResponse(account)
 }
 
 func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
 	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
-
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
@@ -90,7 +89,7 @@ func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
 
 func (s *Service) isApplicationAdmin(username string) bool {
 	applicationAdminGroups, _ := s.getApplicationAdminAuthzGroupsName()
-	userGroups, _ := s.getUserGroups(username)
+	userGroups, _ := s.getUserGroupsInLdap(username)
 
 	isApplicationAdmin, err := s.checkIsAuthorized(applicationAdminGroups, userGroups)
 	if err != nil {
@@ -100,7 +99,7 @@ func (s *Service) isApplicationAdmin(username string) bool {
 	return isApplicationAdmin
 }
 
-func (s *Service) getUserGroups(username string) ([]string, error) {
+func (s *Service) getUserGroupsInLdap(username string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
 		return s.client.GetGroupsOfUser(username)
 	}
@@ -122,16 +121,20 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 	return errors.ErrorUnauthorized
 }
 
-func (s *Service) setLDAPAuthResponse(account *authEntities.Account) *dto.LdapAuthResponse {
-	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
+func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapAuthResponse, error) {
+	userGroups, err := s.getUserGroupsInLdap(account.Username)
+	if err != nil {
+		return nil, err
+	}
 
+	accessToken, expiresAt, _ := jwt.CreateToken(account, userGroups)
 	return &dto.LdapAuthResponse{
 		AccessToken:        accessToken,
 		ExpiresAt:          expiresAt,
 		Username:           account.Username,
 		Email:              account.Email,
 		IsApplicationAdmin: s.isApplicationAdmin(account.Username),
-	}
+	}, nil
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
@@ -263,7 +266,7 @@ func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 		return nil, err
 	}
 
-	return s.getUserGroups(token.Username)
+	return token.Permissions, nil
 }
 
 func (s *Service) contains(groups []string, userGroup string) bool {
