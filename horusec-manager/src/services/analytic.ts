@@ -20,10 +20,13 @@ import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
 
 const getTotalDevelopers = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -37,10 +40,13 @@ const getTotalDevelopers = (filters: FilterValues) => {
 };
 
 const getTotalRepositories = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -54,10 +60,13 @@ const getTotalRepositories = (filters: FilterValues) => {
 };
 
 const getAllVulnerabilities = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -71,10 +80,13 @@ const getAllVulnerabilities = (filters: FilterValues) => {
 };
 
 const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -88,10 +100,13 @@ const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
 };
 
 const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -105,10 +120,13 @@ const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
 };
 
 const getVulnerabilitiesByRepository = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -122,10 +140,13 @@ const getVulnerabilitiesByRepository = (filters: FilterValues) => {
 };
 
 const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
-  let path = 'companies';
-  let ID = filters.companyID;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;
   }
@@ -143,11 +164,15 @@ const getVulnerabilitiesDetails = (
   page: number,
   size: number
 ) => {
-  let filter = `companyID: "${filters.companyID}"`;
-  let path = 'companies';
-  let ID = filters.companyID;
+  let filter;
+  let path;
+  let ID;
 
-  if (filters.repositoryID) {
+  if (filters.type === 'workspace') {
+    filter = `companyID: "${filters.companyID}"`;
+    path = 'companies';
+    ID = filters.companyID;
+  } else {
     filter = `repositoryID: "${filters.repositoryID}"`;
     path = `companies/${filters.companyID}/repositories`;
     ID = filters.repositoryID;

@@ -23,7 +23,7 @@ import (
 func TestGenerateSHA1(t *testing.T) {
 	t.Run("Should generate a hash string from another string", func(t *testing.T) {
 		s := "my test string"
-		h, _ := GenerateSHA1(s)
+		h, _ := GenerateSHA256(s)
 
 		assert.NotEmpty(t, h)
 	})
@@ -31,14 +31,14 @@ func TestGenerateSHA1(t *testing.T) {
 	t.Run("Should generate a hash string from many string", func(t *testing.T) {
 		s := "project"
 		s1 := "code"
-		h, _ := GenerateSHA1(s, s1)
+		h, _ := GenerateSHA256(s, s1)
 
 		assert.NotEmpty(t, h)
 	})
 
 	t.Run("Should generate the same output for the same input", func(t *testing.T) {
-		h, _ := GenerateSHA1("code")
-		h1, _ := GenerateSHA1("code")
+		h, _ := GenerateSHA256("code")
+		h1, _ := GenerateSHA256("code")
 
 		assert.Equal(t, h, h1)
 	})

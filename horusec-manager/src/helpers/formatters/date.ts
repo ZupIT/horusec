@@ -27,7 +27,7 @@ const formatInitialAndFinalDate = (initial: Date, final: Date) => {
 const formatToHumanDate = (date: string) => {
   const { dateFormat } = getCurrentLanguage();
 
-  return format(new Date(date), dateFormat);
+  return format(new Date(date).setHours(24), dateFormat);
 };
 
 export { formatInitialAndFinalDate, formatToHumanDate };

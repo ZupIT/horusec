@@ -1,3 +1,18 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//nolint
 package config
 
 import (
@@ -144,6 +159,18 @@ const (
 	// Used to pass project path in host when running horusec cli inside a container
 	// By default is empty
 	EnvContainerBindProjectPath = "HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH"
+	// Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs.
+	// By default is false
+	// Validation: It is mandatory to be in "false", "true"
+	EnvDisableDocker = "HORUSEC_CLI_DISABLE_DOCKER"
+	// Used to pass the path to the horusec custom rules file. Example: -c="./horusec/horusec-custom-rules.json".
+	// By default is empty
+	// Validation: It is mandatory to be a valida path and contains file name
+	EnvCustomRulesPath = "HORUSEC_CLI_CUSTOM_RULES_PATH"
+	// Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives.
+	// By default is false
+	// Validation: It is mandatory to be in "false", "true"
+	EnvEnableInformationSeverity = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
 )
 
 type Config struct {
@@ -160,6 +187,7 @@ type Config struct {
 	printOutputType                 string
 	jsonOutputFilePath              string
 	projectPath                     string
+	customRulesPath                 string
 	containerBindProjectPath        string
 	timeoutInSecondsRequest         int64
 	timeoutInSecondsAnalysis        int64
@@ -169,6 +197,8 @@ type Config struct {
 	enableGitHistoryAnalysis        bool
 	certInsecureSkipVerify          bool
 	enableCommitAuthor              bool
+	disableDocker                   bool
+	enableInformationSeverity       bool
 	severitiesToIgnore              []string
 	filesOrPathsToIgnore            []string
 	falsePositiveHashes             []string

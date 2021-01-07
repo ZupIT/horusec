@@ -13,13 +13,13 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 91 "./development-kit"
+	deployments/scripts/coverage.sh 88 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-api"
 coverage-horusec-cli:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 90 "./horusec-cli"
+	deployments/scripts/coverage.sh 89 "./horusec-cli"
 coverage-horusec-messages:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-messages"
@@ -35,7 +35,24 @@ coverage-horusec-auth:
 coverage-horusec-webhook:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-webhook"
-
+coverage-horusec-kotlin:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-kotlin"
+coverage-horusec-java:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-java"
+coverage-horusec-leaks:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-leaks"
+coverage-horusec-csharp:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-csharp"
+coverage-horusec-kubernetes:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-kubernetes"
+coverage-horusec-nodejs:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-nodejs"
 # Check lint of project setup on file .golangci.yml
 lint:
     ifeq ($(wildcard $(GOCILINT)), $(GOCILINT))

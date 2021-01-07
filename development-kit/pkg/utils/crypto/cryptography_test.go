@@ -39,10 +39,3 @@ func TestCheckPasswordHash(t *testing.T) {
 		assert.False(t, result)
 	})
 }
-
-func TestHashToken(t *testing.T) {
-	t.Run("Should success return a hash of token with no errors", func(t *testing.T) {
-		hash := HashToken("test")
-		assert.NotEmpty(t, hash)
-	})
-}

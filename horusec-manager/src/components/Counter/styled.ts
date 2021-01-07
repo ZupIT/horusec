@@ -26,6 +26,14 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
+const EmptyText = styled.span`
+  color: ${({ theme }) => theme.colors.dataTable.column.text};
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  text-align: center;
+  display: block;
+  line-height: 170px;
+`;
+
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.text.secundary};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
@@ -51,4 +59,4 @@ const Count = styled.h5`
   display: block;
 `;
 
-export default { Wrapper, Title, Count, Container };
+export default { Wrapper, Title, Count, Container, EmptyText };

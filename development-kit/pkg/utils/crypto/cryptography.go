@@ -15,9 +15,6 @@
 package crypto
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,12 +26,4 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
-}
-
-func HashToken(token string) string {
-	hasher := sha256.New()
-	_, _ = hasher.Write([]byte(token))
-	sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-
-	return sha
 }

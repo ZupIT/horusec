@@ -15,19 +15,20 @@
 package spotbugs
 
 import (
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/java"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/spotbugs/entities"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	xmlUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/xml"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
@@ -55,13 +56,13 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.SpotBugs) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.SpotBugs.ToString(), logger.DebugLevel)
+	if f.ToolIsToIgnore(tools.SpotBugs) || f.IsDockerDisabled() {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.SpotBugs.ToString())
 		return
 	}
 	err := f.startSpotbugsAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.SpotBugs, projectSubPath)
+	f.SetToolFinishedAnalysis()
+	f.SetAnalysisError(err, tools.SpotBugs, projectSubPath)
 }
 
 func (f *Formatter) startSpotbugsAnalysis(projectSubPath string) error {
@@ -69,12 +70,10 @@ func (f *Formatter) startSpotbugsAnalysis(projectSubPath string) error {
 
 	output, err := f.ExecuteContainer(f.getImageTagCmd(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
 	if err := f.verifyOutputErrors(output); err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
@@ -83,9 +82,9 @@ func (f *Formatter) startSpotbugsAnalysis(projectSubPath string) error {
 }
 
 func (f *Formatter) formatOutput(outputXML string) error {
-	javaOutput := java.SpotBugsOutput{}
+	javaOutput := entities.SpotBugsOutput{}
 	if outputXML == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.SpotBugs.ToString()})
 		f.setOutputInHorusecAnalysis(&javaOutput)
 		return nil
@@ -99,19 +98,18 @@ func (f *Formatter) formatOutput(outputXML string) error {
 }
 
 func (f *Formatter) convertOutputAndValidate(
-	outputXML string, javaOutput *java.SpotBugsOutput) (java.SpotBugsOutput, error) {
-	if err := xmlUtils.ConvertXMLToOutput([]byte(outputXML), javaOutput); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SpotBugs, outputXML), err, logger.ErrorLevel)
+	outputXML string, javaOutput *entities.SpotBugsOutput) (entities.SpotBugsOutput, error) {
+	if err := xml.Unmarshal([]byte(outputXML), javaOutput); err != nil {
+		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SpotBugs, outputXML), err)
 		return *javaOutput, err
 	}
 	if err := f.validateErrors(javaOutput); err != nil {
-		f.SetAnalysisError(err)
 		return *javaOutput, err
 	}
 	return *javaOutput, nil
 }
 
-func (f *Formatter) validateErrors(javaOutput *java.SpotBugsOutput) error {
+func (f *Formatter) validateErrors(javaOutput *entities.SpotBugsOutput) error {
 	numOfErrors, numOfMissingClasses, err := f.getNumErrorsNumMissingClasses(javaOutput)
 	if err != nil {
 		return err
@@ -124,7 +122,7 @@ func (f *Formatter) validateErrors(javaOutput *java.SpotBugsOutput) error {
 	return nil
 }
 
-func (f *Formatter) getNumErrorsNumMissingClasses(javaOutput *java.SpotBugsOutput) (int, int, error) {
+func (f *Formatter) getNumErrorsNumMissingClasses(javaOutput *entities.SpotBugsOutput) (int, int, error) {
 	numOfErrors, err := strconv.Atoi(javaOutput.Errors.Errors)
 	if err != nil {
 		return 0, 0, err
@@ -136,7 +134,7 @@ func (f *Formatter) getNumErrorsNumMissingClasses(javaOutput *java.SpotBugsOutpu
 	return numOfErrors, numOfMissingClasses, nil
 }
 
-func (f *Formatter) setOutputInHorusecAnalysis(javaOutput *java.SpotBugsOutput) {
+func (f *Formatter) setOutputInHorusecAnalysis(javaOutput *entities.SpotBugsOutput) {
 	for indexSpotBugsIssue := range javaOutput.SpotBugsIssue {
 		for indexSourceLine := range javaOutput.SpotBugsIssue[indexSpotBugsIssue].SourceLine {
 			vulnerability := f.setupVulnerabilitiesSeverities(javaOutput, indexSpotBugsIssue, indexSourceLine)
@@ -151,7 +149,7 @@ func (f *Formatter) setOutputInHorusecAnalysis(javaOutput *java.SpotBugsOutput) 
 }
 
 func (f *Formatter) setupVulnerabilitiesSeverities(
-	javaOutput *java.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) (
+	javaOutput *entities.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) (
 	vulnerabilitySeverity horusec.Vulnerability) {
 	vulnerabilitySeverity.Severity = f.parseSpotbugsRankToSeverity(javaOutput, indexSpotBugsIssue)
 	vulnerabilitySeverity.Details = javaOutput.SpotBugsIssue[indexSpotBugsIssue].Type
@@ -165,7 +163,8 @@ func (f *Formatter) setupVulnerabilitiesSeverities(
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) parseSpotbugsPriorityToConfidence(javaOutput *java.SpotBugsOutput, indexSpotBugsIssue int) string {
+func (f *Formatter) parseSpotbugsPriorityToConfidence(javaOutput *entities.SpotBugsOutput,
+	indexSpotBugsIssue int) string {
 	switch javaOutput.SpotBugsIssue[indexSpotBugsIssue].Priority {
 	case confidenceHigh:
 		return "HIGH"
@@ -177,7 +176,7 @@ func (f *Formatter) parseSpotbugsPriorityToConfidence(javaOutput *java.SpotBugsO
 }
 
 func (f *Formatter) parseSpotbugsRankToSeverity(
-	javaOutput *java.SpotBugsOutput, indexSpotBugsIssue int) severity.Severity {
+	javaOutput *entities.SpotBugsOutput, indexSpotBugsIssue int) severity.Severity {
 	rank, _ := strconv.Atoi(javaOutput.SpotBugsIssue[indexSpotBugsIssue].Rank)
 	switch {
 	case rank <= highMaxSeverityValue:
@@ -190,17 +189,17 @@ func (f *Formatter) parseSpotbugsRankToSeverity(
 }
 
 func (f *Formatter) getVulnerabilitiesSeveritiesLine(
-	javaOutput *java.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
+	javaOutput *entities.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
 	return javaOutput.SpotBugsIssue[indexSpotBugsIssue].SourceLine[indexSourceLine].Start
 }
 
 func (f *Formatter) getVulnerabilitiesSeveritiesFile(
-	javaOutput *java.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
+	javaOutput *entities.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
 	return javaOutput.SpotBugsIssue[indexSpotBugsIssue].SourceLine[indexSourceLine].SourcePath
 }
 
 func (f *Formatter) getVulnerabilitiesSeveritiesCode(
-	javaOutput *java.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
+	javaOutput *entities.SpotBugsOutput, indexSpotBugsIssue, indexSourceLine int) string {
 	startLine := javaOutput.SpotBugsIssue[indexSpotBugsIssue].SourceLine[indexSourceLine].Start
 	endLine := javaOutput.SpotBugsIssue[indexSpotBugsIssue].SourceLine[indexSourceLine].End
 	return fmt.Sprintf("Code beetween Line %s and Line %s.", startLine, endLine)

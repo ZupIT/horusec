@@ -52,3 +52,23 @@ func TestConvertStringToOutput(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+
+func TestConvertInterfaceToString(t *testing.T) {
+	t.Run("should success parse interface to string", func(t *testing.T) {
+		analysis := horusecEntities.Analysis{}
+
+		result, err := ConvertInterfaceToString(analysis)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, result)
+	})
+}
+
+func TestConvertInterfaceToMapString(t *testing.T) {
+	t.Run("should success parse interface to map string", func(t *testing.T) {
+		analysis := horusecEntities.Analysis{}
+
+		result, err := ConvertInterfaceToMapString(analysis)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, result)
+	})
+}

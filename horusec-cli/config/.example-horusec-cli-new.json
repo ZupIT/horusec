@@ -14,8 +14,11 @@
   "horusecCliFilterPath": "./tmp",
   "horusecCliEnableGitHistoryAnalysis": true,
   "horusecCliCertInsecureSkipVerify": true,
+  "horusecCliEnableInformationSeverity": true,
   "horusecCliWorkDir": {},
   "horusecCliRepositoryName": "horus",
+  "horusecCliDisableDocker": true,
+  "horusecCliCustomRulesPath": "test",
   "horusecCliFalsePositiveHashes": [
     "hash1",
     "hash2"

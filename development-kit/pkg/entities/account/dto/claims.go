@@ -21,9 +21,9 @@ import (
 )
 
 type ClaimsJWT struct {
-	Email            string            `json:"email"`
-	Username         string            `json:"username"`
-	RepositoriesRole map[string]string `json:"permissions"`
+	Email       string   `json:"email"`
+	Username    string   `json:"username"`
+	Permissions []string `json:"permissions"`
 	jwt.StandardClaims
 }
 

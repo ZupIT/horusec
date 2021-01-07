@@ -15,124 +15,55 @@
 package horusecjava
 
 import (
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
-	"strconv"
-
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/engines/java"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	jsonUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 )
 
 type Formatter struct {
 	formatters.IService
+	java.Interface
 }
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
 		service,
+		java.NewRules(),
 	}
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.HorusecJava) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecJava.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecJava.ToString())
 		return
 	}
-	err := f.startHorusecJavaAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.HorusecJava, projectSubPath)
+
+	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecJava, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecJava)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startHorusecJavaAnalysis(projectSubPath string) error {
+func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecJava)
 
-	output, err := f.ExecuteContainer(f.getImageTagCmd(projectSubPath))
-	if err != nil {
-		f.SetAnalysisError(err)
-		return err
-	}
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecJava)
-	return f.formatOutput(output)
-}
-
-func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.HorusecJava),
-		Language: languages.Java,
-	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.HorusecJava].ImagePath, ImageName, ImageTag)
-	return ad
-}
-
-func (f *Formatter) formatOutput(output string) error {
-	var reportOutput []engine.Finding
-	if output == "" || output == "null" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
-			map[string]interface{}{"tool": tools.HorusecJava.ToString()})
-
-		return f.setOutputInHorusecAnalysis(reportOutput)
-	}
-	javaOutput, err := f.convertOutputAndValidate(output, &reportOutput)
+	findings, err := f.execEngineAnalysis(projectSubPath)
 	if err != nil {
 		return err
 	}
-	return f.setOutputInHorusecAnalysis(javaOutput)
+
+	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecJava, languages.Java)
 }
 
-func (f *Formatter) convertOutputAndValidate(
-	output string, reportOutput *[]engine.Finding) ([]engine.Finding, error) {
-	if err := jsonUtils.ConvertStringToOutput(output, reportOutput); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.HorusecJava, output), err, logger.ErrorLevel)
-		return *reportOutput, err
+func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
+	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
+	if err != nil {
+		return nil, err
 	}
-	return *reportOutput, nil
-}
 
-func (f *Formatter) setOutputInHorusecAnalysis(reportOutput []engine.Finding) error {
-	for index := range reportOutput {
-		vulnerability := f.setupVulnerabilitiesSeverities(reportOutput, index)
-		vulnerability = f.setupCommitAuthorInVulnerability(vulnerability)
-
-		// Set vulnerabilitySeverity.VulnHash value
-		vulnerability = vulnhash.Bind(vulnerability)
-
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *vulnerability,
-			})
-	}
-	return nil
-}
-
-func (f *Formatter) setupVulnerabilitiesSeverities(
-	reportOutput []engine.Finding, index int) (
-	vulnerabilitySeverity *horusec.Vulnerability) {
-	line := strconv.Itoa(reportOutput[index].SourceLocation.Line)
-	return &horusec.Vulnerability{
-		Line:         line,
-		Column:       strconv.Itoa(reportOutput[index].SourceLocation.Column),
-		Confidence:   reportOutput[index].Confidence,
-		File:         f.RemoveSrcFolderFromPath(reportOutput[index].SourceLocation.Filename),
-		Code:         f.GetCodeWithMaxCharacters(reportOutput[index].CodeSample, reportOutput[index].SourceLocation.Column),
-		Details:      reportOutput[index].Name + "\n" + reportOutput[index].Description,
-		SecurityTool: tools.HorusecJava,
-		Language:     languages.Java,
-		Severity:     severity.ParseStringToSeverity(reportOutput[index].Severity),
-	}
-}
-func (f *Formatter) setupCommitAuthorInVulnerability(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitMessage = commitAuthor.Message
-	vulnerability.CommitDate = commitAuthor.Date
-	return vulnerability
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecJava)...)
+	return engine.Run(textUnit, allRules), nil
 }

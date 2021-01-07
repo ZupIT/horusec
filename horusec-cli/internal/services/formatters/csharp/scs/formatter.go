@@ -16,19 +16,19 @@ package scs
 
 import (
 	"encoding/json"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/dotnet"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs/entities"
 )
 
 type Formatter struct {
@@ -42,37 +42,40 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.SecurityCodeScan) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.SecurityCodeScan.ToString(), logger.DebugLevel)
+	if f.ToolIsToIgnore(tools.SecurityCodeScan) || f.IsDockerDisabled() {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.SecurityCodeScan.ToString())
 		return
 	}
-	err := f.startSecurityCodeScanAnalysis(projectSubPath)
-	f.SetLanguageIsFinished()
-	f.LogAnalysisError(err, tools.SecurityCodeScan, projectSubPath)
+
+	f.SetAnalysisError(f.startSecurityCodeScan(projectSubPath), tools.SecurityCodeScan, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startSecurityCodeScanAnalysis(projectSubPath string) error {
+func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
-	if err = f.verifyIsCsProjError(output, err); err != nil {
-		f.SetAnalysisError(err)
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
+	if err != nil {
 		return err
 	}
 
+	if errCsproj := f.verifyIsCsProjError(output, err); errCsproj != nil {
+		return errCsproj
+	}
+
 	f.parseOutput(output)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan)
 	return nil
 }
 
-func (f *Formatter) parseOutput(containerOutput string) {
-	for _, value := range f.newContainerOutputFromString(containerOutput) {
-		f.appendVulnerabilities(f.setVulnerabilitySeverityData(value))
+func (f *Formatter) parseOutput(output string) {
+	for _, scsResult := range f.newScsResultArrayFromOutput(output) {
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(scsResult))
 	}
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (outputs []dotnet.Output) {
-	for _, output := range f.splitSCSContainerOutput(containerOutput) {
+func (f *Formatter) newScsResultArrayFromOutput(dockerOutput string) (outputs []entities.ScsResult) {
+	for _, output := range f.splitSCSContainerOutput(dockerOutput) {
 		if output == "" {
 			continue
 		}
@@ -89,71 +92,48 @@ func (f *Formatter) splitSCSContainerOutput(output string) []string {
 	return strings.SplitAfter(output, "}")
 }
 
-func (f *Formatter) parseStringToStruct(output string) (containerOutput dotnet.Output, err error) {
-	err = json.Unmarshal([]byte(output), &containerOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err, logger.ErrorLevel)
-	return containerOutput, err
+func (f *Formatter) parseStringToStruct(output string) (scsResult entities.ScsResult, err error) {
+	err = json.Unmarshal([]byte(output), &scsResult)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err)
+	return scsResult, err
 }
 
-func (f *Formatter) removeDuplicatedOutputs(outputs []dotnet.Output) []dotnet.Output {
-	return outputs[0 : len(outputs)/2]
+func (f *Formatter) removeDuplicatedOutputs(scsResults []entities.ScsResult) []entities.ScsResult {
+	return scsResults[0 : len(scsResults)/2]
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(output dotnet.Output) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilitySeverityData(scsResult entities.ScsResult) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = output.GetSeverity()
-	data.Details = f.removeCsprojPathFromDetails(output.IssueText)
-	data.Line = output.GetLine()
-	data.Column = output.GetColumn()
-	data.File = f.GetFilepathFromFilename(output.GetFilename())
-
-	// Set data.VulnHash value
-	data = vulnhash.Bind(data)
-
-	return f.setCommitAuthor(data)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	data.Severity = scsResult.GetSeverity()
+	data.Details = f.removeCsprojPathFromDetails(scsResult.IssueText)
+	data.Line = scsResult.GetLine()
+	data.Column = scsResult.GetColumn()
+	data.File = f.GetFilepathFromFilename(scsResult.GetFilename())
+	data = hash.Bind(data)
+	return f.SetCommitAuthor(data)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.SecurityCodeScan
 	vulnerabilitySeverity.Language = languages.CSharp
-
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) appendVulnerabilities(vulnerability *horusec.Vulnerability) {
-	f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-		horusec.AnalysisVulnerabilities{
-			Vulnerability: *vulnerability,
-		})
-}
-
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd,
-			fileUtil.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
+		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) verifyIsCsProjError(output string, err error) error {
 	if strings.Contains(output, "Could not find any project in") {
 		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound, logger.ErrorLevel)
+		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound)
 		return errorsEnums.ErrCsProjNotFound
 	}
 

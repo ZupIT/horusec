@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
@@ -22,17 +22,19 @@ import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
-import {
-  isAdminOfCompany,
-  userRoleInCurrentCompany,
-  clearCurrentCompany,
-} from 'helpers/localStorage/currentCompany';
 import ReactTooltip from 'react-tooltip';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
+  const {
+    currentWorkspace,
+    allWorkspaces,
+    handleSetCurrentWorkspace,
+  } = useWorkspace();
   const { t } = useTranslation();
   const { authType, disabledBroker } = getCurrentConfig();
 
@@ -48,9 +50,9 @@ const SideMenu: React.FC = () => {
       roles: ['admin', 'member'],
       subRoutes: [
         {
-          name: t('SIDE_MENU.ORGANIZATION'),
+          name: t('SIDE_MENU.WORKSPACE'),
           icon: 'grid',
-          path: '/home/dashboard/organization',
+          path: '/home/dashboard/workspace',
           type: 'subRoute',
           roles: ['admin'],
         },
@@ -78,13 +80,6 @@ const SideMenu: React.FC = () => {
       roles: ['admin', 'member'],
     },
     {
-      name: t('SIDE_MENU.ORGANIZATION_USERS'),
-      icon: 'users',
-      path: '/home/organization-users',
-      type: 'route',
-      roles: ['admin'],
-    },
-    {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
       path: '/home/webhooks',
@@ -93,16 +88,6 @@ const SideMenu: React.FC = () => {
       rule: () => !disabledBroker,
     },
   ];
-
-  useEffect(() => {
-    setSelectedRoute(routes[0]);
-
-    isAdminOfCompany()
-      ? setSelectedSubRoute(routes[0].subRoutes[0])
-      : setSelectedSubRoute(routes[0].subRoutes[1]);
-
-    // eslint-disable-next-line
-  }, []);
 
   const handleSelectedRoute = (route: InternalRoute) => {
     if (route.type === 'route') {
@@ -119,7 +104,7 @@ const SideMenu: React.FC = () => {
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
-    if (route.roles.includes(userRoleInCurrentCompany())) {
+    if (route.roles.includes(currentWorkspace?.role)) {
       if (!route?.rule || (route?.rule && route?.rule())) {
         return (
           <Styled.RouteItem
@@ -136,11 +121,6 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  const backToOrganization = () => {
-    clearCurrentCompany();
-    history.replace('/organization');
-  };
-
   const goToSettings = () => {
     history.replace('/home/settings');
     setSelectedRoute(null);
@@ -151,7 +131,7 @@ const SideMenu: React.FC = () => {
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
   const renderSubRoute = (subRoute: InternalRoute, index: number) => {
-    if (subRoute.roles.includes(userRoleInCurrentCompany())) {
+    if (subRoute.roles.includes(currentWorkspace?.role)) {
       return (
         <Styled.SubRouteItem
           key={index}
@@ -166,11 +146,34 @@ const SideMenu: React.FC = () => {
     }
   };
 
+  const handleSelectedWorkspace = (workspace: Workspace) => {
+    handleSetCurrentWorkspace(workspace);
+    history.replace('/home/dashboard');
+    setSelectedRoute(null);
+    setSelectedSubRoute(null);
+  };
+
   return (
     <>
       <Styled.SideMenu>
         <Styled.WrapperLogoRoutes>
           <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+
+          {allWorkspaces && allWorkspaces.length > 0 ? (
+            <Styled.SelectWrapper>
+              <Styled.SelectWorkspace
+                selectText="Selecione"
+                options={allWorkspaces}
+                initialValue={currentWorkspace}
+                onChangeValue={(value) => handleSelectedWorkspace(value)}
+                keyLabel="name"
+                title="WORKSPACE"
+                optionsHeight={`${allWorkspaces.length * 32 + 45}px`}
+                fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
+                onClickFixedItem={() => history.push('/home/workspaces')}
+              />
+            </Styled.SelectWrapper>
+          ) : null}
 
           <Styled.RoutesList>
             {routes.map((route, index) => renderRoute(route, index))}
@@ -187,14 +190,6 @@ const SideMenu: React.FC = () => {
               onClick={goToSettings}
             />
           ) : null}
-
-          <Styled.Option
-            dataFor="side-options"
-            dataTip={t('SIDE_MENU.BACK_ORGANIZATION')}
-            name="grid"
-            size="15"
-            onClick={backToOrganization}
-          />
 
           <Helper />
 

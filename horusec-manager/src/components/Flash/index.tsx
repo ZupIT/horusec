@@ -21,7 +21,7 @@ import { Icon } from 'components';
 interface Props {
   isVisible: boolean;
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning';
 }
 
 const Flash: React.FC<Props> = ({ isVisible, message, type }) => {

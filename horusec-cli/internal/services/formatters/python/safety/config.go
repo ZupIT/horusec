@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// nolint
 package safety
 
 const (
 	ImageName = "horuszup/safety"
 	ImageTag  = "v1.0.0"
-	// nolint
-	ImageCmd = `
+	ImageCmd  = `
 		{{WORK_DIR}}
       touch /tmp/warning-ANALYSISID
 	  touch /tmp/output-ANALYSISID.json

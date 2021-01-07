@@ -19,12 +19,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/analyser/javascript/yarn"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit/entities"
+
+	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -47,31 +49,30 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.YarnAudit) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.YarnAudit.ToString(), logger.DebugLevel)
+	if f.ToolIsToIgnore(tools.YarnAudit) || f.IsDockerDisabled() {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.YarnAudit.ToString())
 		return
 	}
-	err := f.startYarnAuditAnalysis(projectSubPath)
-	f.LogAnalysisError(err, tools.YarnAudit, projectSubPath)
-	f.SetLanguageIsFinished()
+
+	f.SetAnalysisError(f.startYarnAudit(projectSubPath), tools.YarnAudit, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit)
+	f.SetToolFinishedAnalysis()
 }
 
-func (f *Formatter) startYarnAuditAnalysis(projectSubPath string) error {
+func (f *Formatter) startYarnAudit(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.YarnAudit)
 
-	output, err := f.ExecuteContainer(f.getConfigDataYarn(projectSubPath))
+	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		f.SetAnalysisError(err)
 		return err
 	}
 
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit)
 	return f.parseOutput(output)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {
-	if f.VerifyErrors(containerOutput) {
-		return nil
+	if err := f.VerifyErrors(containerOutput); err != nil {
+		return err
 	}
 
 	output, err := f.newContainerOutputFromString(containerOutput)
@@ -83,40 +84,29 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 	return nil
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *yarn.Output, err error) {
+func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *entities.Output, err error) {
 	if containerOutput == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.YarnAudit.ToString()})
-		return &yarn.Output{}, nil
+		return &entities.Output{}, nil
 	}
+
 	if err = json.Unmarshal([]byte(containerOutput), &output); err != nil {
 		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.YarnAudit, containerOutput),
-			err, logger.ErrorLevel)
+			err)
 	}
 
 	return output, err
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(output *yarn.Issue) *horusec.Vulnerability {
+func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
 	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
 	data = vulnhash.Bind(data)
-	return f.setCommitAuthor(data)
-}
-
-func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability) *horusec.Vulnerability {
-	commitAuthor := f.GetCommitAuthor(vulnerability.Line, vulnerability.File)
-
-	vulnerability.CommitAuthor = commitAuthor.Author
-	vulnerability.CommitHash = commitAuthor.CommitHash
-	vulnerability.CommitDate = commitAuthor.Date
-	vulnerability.CommitEmail = commitAuthor.Email
-	vulnerability.CommitMessage = commitAuthor.Message
-
-	return vulnerability
+	return f.SetCommitAuthor(data)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
@@ -135,36 +125,22 @@ func (f *Formatter) IsRunningError(containerOutput string) bool {
 	return strings.Contains(containerOutput, "ERROR_RUNNING_YARN_AUDIT")
 }
 
-func (f *Formatter) setNotFoundError() {
-	f.SetAnalysisError(errors.New(messages.MsgErrorYarnLockNotFound))
-}
-
-func (f *Formatter) setRunningError(containerOutput string) {
-	f.SetAnalysisError(errors.New(messages.MsgErrorYarnProcess + containerOutput))
-}
-
-func (f *Formatter) VerifyErrors(containerOutput string) bool {
+func (f *Formatter) VerifyErrors(containerOutput string) error {
 	if f.IsNotFoundError(containerOutput) {
-		f.setNotFoundError()
-		return true
+		return errors.New(messages.MsgErrorYarnLockNotFound)
 	}
 
 	if f.IsRunningError(containerOutput) {
-		f.setRunningError(containerOutput)
-		return true
+		return errors.New(messages.MsgErrorYarnProcess + containerOutput)
 	}
 
-	return false
+	return nil
 }
 
-func (f *Formatter) processOutput(output *yarn.Output) {
+func (f *Formatter) processOutput(output *entities.Output) {
 	for _, advisory := range output.Advisories {
-		value := advisory
-		vulnerability := f.setVulnerabilitySeverityData(&value)
-		f.GetAnalysis().AnalysisVulnerabilities = append(f.GetAnalysis().AnalysisVulnerabilities,
-			horusec.AnalysisVulnerabilities{
-				Vulnerability: *vulnerability,
-			})
+		advisoryPointer := advisory
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer))
 	}
 }
 
@@ -176,8 +152,9 @@ func (f *Formatter) getVulnerabilityLineByName(module, version, file string) str
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close(), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
 	}()
+
 	scanner := bufio.NewScanner(fileExisting)
 	return f.getLine(module, version, scanner)
 }
@@ -193,13 +170,13 @@ func (f *Formatter) getLine(module, version string, scanner *bufio.Scanner) stri
 	return ""
 }
 
-func (f *Formatter) validateIfExistNameInScannerText(
-	scannerText, module, version string) bool {
+func (f *Formatter) validateIfExistNameInScannerText(scannerText, module, version string) bool {
 	for _, name := range f.mapPossibleExistingNames(module, version) {
 		if strings.Contains(strings.ToLower(scannerText), name) {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -211,24 +188,28 @@ func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
 	}
 }
 
-func (f *Formatter) getConfigDataYarn(projectSubPath string) *dockerEntities.AnalysisData {
-	ad := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.getConfigCMD(projectSubPath),
 		Language: languages.Javascript,
 	}
-	ad.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath, npmaudit.ImageName, npmaudit.ImageTag)
-	return ad
+
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath,
+		npmaudit.ImageName, npmaudit.ImageTag)
 }
 
 func (f *Formatter) getConfigCMD(projectSubPath string) string {
 	projectPath := f.GetConfigProjectPath()
+
 	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
 	if newProjectSubPath != "" {
 		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.YarnAudit)
 	}
+
 	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
 	if newProjectSubPath != "" {
 		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.YarnAudit)
 	}
+
 	return f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.YarnAudit)
 }

@@ -38,19 +38,21 @@ type IStart interface {
 }
 
 type Start struct {
-	useCases           cli.Interface
-	configs            config.IConfig
-	analyserController analyser.Interface
-	startPrompt        prompt.Interface
-	globalCmd          *cobra.Command
+	useCases               cli.Interface
+	configs                config.IConfig
+	analyserController     analyser.Interface
+	startPrompt            prompt.Interface
+	globalCmd              *cobra.Command
+	requirementsController requirements.IRequirements
 }
 
 func NewStartCommand(configs config.IConfig) IStart {
 	return &Start{
-		configs:     configs,
-		globalCmd:   &cobra.Command{},
-		useCases:    cli.NewCLIUseCases(),
-		startPrompt: prompt.NewPrompt(),
+		configs:                configs,
+		globalCmd:              &cobra.Command{},
+		useCases:               cli.NewCLIUseCases(),
+		startPrompt:            prompt.NewPrompt(),
+		requirementsController: requirements.NewRequirements(),
 	}
 }
 
@@ -111,15 +113,20 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecNodeJS,HorusecKubernetes,Eslint,PhpCS,Flawfinder. Example: -T=\"GoSec, Brakeman\"")
 	_ = startCmd.PersistentFlags().
 		StringP("container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(), "Used to pass project path in host when running horusec cli inside a container.")
+	_ = startCmd.PersistentFlags().
+		StringP("custom-rules-path", "c", s.configs.GetContainerBindProjectPath(), "Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
+	_ = startCmd.PersistentFlags().
+		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
+	_ = startCmd.PersistentFlags().
+		BoolP("information-severity", "I", s.configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
 	return startCmd
 }
 
 func (s *Start) setConfig(startCmd *cobra.Command) {
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd)
-	s.configs = s.configs.NewConfigsFromViper()
-	s.configs = s.configs.NewConfigsFromEnvironments()
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd)
-	s.configs.NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd).NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromViper().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromEnvironments().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd).NormalizeConfigs()
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
@@ -141,7 +148,7 @@ func (s *Start) runE(cmd *cobra.Command, _ []string) error {
 
 func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err)
 		return 0, err
 	}
 	if err := s.configsValidations(cmd); err != nil {
@@ -152,16 +159,26 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 
 func (s *Start) configsValidations(cmd *cobra.Command) error {
 	if err := s.useCases.ValidateConfigs(s.configs); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err
 	}
+
 	s.configs.NormalizeConfigs()
-	if s.configs.GetEnableGitHistoryAnalysis() {
-		requirements.NewRequirements().ValidateGit()
-	}
-	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs+string(s.configs.ToBytes(true)), logger.DebugLevel)
+	s.validateRequirements()
+
+	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.ToBytes(true)))
 	return nil
+}
+
+func (s *Start) validateRequirements() {
+	if s.configs.GetEnableGitHistoryAnalysis() {
+		s.requirementsController.ValidateGit()
+	}
+
+	if !s.configs.GetDisableDocker() {
+		s.requirementsController.ValidateDocker()
+	}
 }
 
 func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
@@ -199,8 +216,7 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 
 func (s *Start) validateReplyOfAsk(response string) error {
 	if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "n") {
-		logger.LogErrorWithLevel("Your response was: '"+response+"' Please type Y or N",
-			errors.New("reply invalid"), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorReplayWrong+response, errors.New("reply invalid"))
 		return s.askIfRunInDirectorySelected(true)
 	}
 	if strings.EqualFold(response, "n") {

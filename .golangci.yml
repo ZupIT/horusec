@@ -90,6 +90,7 @@ linters:
 run:
   skip-dirs:
     - vendor/
+    - examples/
     - tmp
     - e2e/
   skip-files:
@@ -98,9 +99,9 @@ run:
 
 issues:
   exclude-rules:
-    - path: horusec-api/internal/handlers/analysis
-      linters:
+    - linters:
         - lll
+      source: "^// "
 
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration

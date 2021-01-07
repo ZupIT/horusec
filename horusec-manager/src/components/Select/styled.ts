@@ -43,7 +43,7 @@ const Wrapper = styled.div<WrapperProps>`
 const Title = styled.span`
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   color: ${({ theme }) => theme.colors.select.title};
-  margin-bottom: 7px;
+  margin-bottom: 10px;
 `;
 
 const Container = styled.div<WrapperProps>`
@@ -87,13 +87,13 @@ const Select = styled.div`
 const OptionsList = styled.div<OptionsListProps>`
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.5);
   position: absolute;
-  top: 25px;
+  top: 28px;
   left: 0;
   background-color: ${({ theme }) => theme.colors.select.background};
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   width: ${({ width }) => (width ? width : '100%')};
-  overflow-y: scroll;
+  overflow-y: auto;
   transition: all 0.5s;
   height: 0;
   z-index: 5;
@@ -136,6 +136,13 @@ const OptionItem = styled.div<OptionItem>`
   }
 `;
 
+const FixedOptionItem = styled(OptionItem)`
+  width: 100%;
+  margin-top: 15px;
+  color: ${({ theme }) => theme.colors.select.highlight};
+  text-decoration: underline;
+`;
+
 const CurrentValue = styled.div`
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.select.text};
@@ -151,4 +158,5 @@ export default {
   Wrapper,
   Title,
   Container,
+  FixedOptionItem,
 };

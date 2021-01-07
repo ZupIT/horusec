@@ -17,6 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { Flash } from 'components';
 import { flashMessageType } from 'helpers/enums/flashMessageType';
+
 interface FlashMessageProps {
   children: JSX.Element;
 }
@@ -24,8 +25,9 @@ interface FlashMessageProps {
 interface FlashContext {
   isVisible: boolean;
   message: string;
-  showErrorFlash(message: string): void;
-  showSuccessFlash(message: string): void;
+  showErrorFlash(message: string, timeOut?: number): void;
+  showSuccessFlash(message: string, timeOut?: number): void;
+  showWarningFlash(message: string, timeOut?: number): void;
 }
 
 const FlashMessageContext = React.createContext<FlashContext>({
@@ -33,12 +35,14 @@ const FlashMessageContext = React.createContext<FlashContext>({
   message: '',
   showErrorFlash: (message: string) => message,
   showSuccessFlash: (message: string) => message,
+  showWarningFlash: (message: string) => message,
 });
 
 const FlashMessageProvider = ({ children }: FlashMessageProps) => {
   const [isVisible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [type, setType] = useState(flashMessageType.SUCCESS);
+  const [time, setTime] = useState(3200);
 
   useEffect(() => {
     if (message) {
@@ -49,23 +53,39 @@ const FlashMessageProvider = ({ children }: FlashMessageProps) => {
         setTimeout(() => {
           setMessage('');
         }, 500);
-      }, 3200);
+      }, time);
     }
+
+    // eslint-disable-next-line
   }, [message]);
 
-  const showSuccessFlash = (message: string) => {
+  const showSuccessFlash = (message: string, timeOut?: number) => {
+    setTime(timeOut || time);
     setType(flashMessageType.SUCCESS);
     setMessage(message);
   };
 
-  const showErrorFlash = (message: string) => {
+  const showErrorFlash = (message: string, timeOut?: number) => {
+    setTime(timeOut || time);
     setType(flashMessageType.ERROR);
+    setMessage(message);
+  };
+
+  const showWarningFlash = (message: string, timeOut?: number) => {
+    setTime(timeOut || time);
+    setType(flashMessageType.WARNING);
     setMessage(message);
   };
 
   return (
     <FlashMessageContext.Provider
-      value={{ isVisible, message, showSuccessFlash, showErrorFlash }}
+      value={{
+        isVisible,
+        message,
+        showSuccessFlash,
+        showErrorFlash,
+        showWarningFlash,
+      }}
     >
       {children}
 

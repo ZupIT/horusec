@@ -25,12 +25,17 @@ import (
 
 var ErrRequirements = errors.New("check the requirements for run and try again")
 
+type IRequirements interface {
+	ValidateDocker()
+	ValidateGit()
+}
+
 type Requirements struct {
 	gitRequirements    *git.RequirementGit
 	dockerRequirements *docker.RequirementDocker
 }
 
-func NewRequirements() *Requirements {
+func NewRequirements() IRequirements {
 	return &Requirements{
 		gitRequirements:    git.NewRequirementGit(),
 		dockerRequirements: docker.NewRequirementDocker(),
@@ -40,13 +45,13 @@ func NewRequirements() *Requirements {
 func (r *Requirements) ValidateDocker() {
 	err := r.dockerRequirements.ValidateDocker()
 	if err != nil {
-		logger.LogPanicWithLevel(messages.MsgPanicDockerRequirementsToRunHorusec, ErrRequirements, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicDockerRequirementsToRunHorusec, ErrRequirements)
 	}
 }
 
 func (r *Requirements) ValidateGit() {
 	err := r.gitRequirements.ValidateGit()
 	if err != nil {
-		logger.LogPanicWithLevel(messages.MsgPanicGitRequirementsToRunHorusec, ErrRequirements, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGitRequirementsToRunHorusec, ErrRequirements)
 	}
 }

@@ -37,7 +37,9 @@ type Handler struct {
 	useCases           usecasesAnalysis.Interface
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
+func NewHandler(
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
+	broker brokerLib.IBroker, config app.IAppConfig) httpUtil.Interface {
 	return &Handler{
 		useCases:           usecasesAnalysis.NewAnalysisUseCases(),
 		analysisController: analysis.NewAnalysisController(postgresRead, postgresWrite, broker, config),

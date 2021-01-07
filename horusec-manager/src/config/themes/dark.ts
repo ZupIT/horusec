@@ -85,12 +85,14 @@ export default {
       border: '#FFFFFF',
       hover: '#444447',
       darkBackground: '#343436',
+      highlight: '#F7901E',
     },
 
     flashMessage: {
       text: '#F5F5FB',
       error: '#FF453A',
       success: '#10AA80',
+      warning: '#5C6BC0',
     },
 
     dialog: {

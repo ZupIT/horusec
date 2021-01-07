@@ -16,13 +16,14 @@ package semgrep
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestParseOutput(t *testing.T) {
@@ -128,12 +129,13 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
 	})
+
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
+		config.SetToolsToIgnore([]string{"semgrep"})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)

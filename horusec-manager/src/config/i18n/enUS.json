@@ -68,33 +68,45 @@
     "OLD_PASS": "Old Password"
   },
 
-  "COMPANY_SCREEN": {
-    "SELECT_ORGANIZATION": "Select an organization",
-    "ADD_ORGANIZATION": "Add an organization",
-    "NO_ORGANIZATIONS": "No organization was found",
-    "YES": "Sim",
-    "CONFIRM_DELETE_ORGANIZATION": "Do you really want to delete the organization ",
-    "EDIT": "Edit",
-    "REMOVE": "Delete",
-    "TYPE_ORGANIZATION_NAME": "Enter the name of the organization below:",
-    "ORGANIZATION_NAME": "Organization name",
-    "INVALID_ORGANIZATION_NAME": "Invalid organization name.",
+  "WORKSPACES_SCREEN": {
+    "SEARCH": "Search Workspace",
+    "ADD": "Add Workspace",
+    "EDIT_WORKSPACE": "Edit Workspace",
     "CANCEL": "Cancel",
     "SAVE": "Save",
-    "EDIT_ORGANIZATION_NAME": "Edit the organization name",
+    "TITLE": "Workspace management",
+    "TABLE": {
+      "NAME": "Name",
+      "DESCRIPTION": "Description",
+      "DATE": "Creation date",
+      "ACTION": "Action",
+      "REMOVE": "Delete",
+      "EDIT": "Edit",
+      "USERS": "Workspace users",
+      "TOKENS": "Tokens"
+    },
+    "DESCRIPTION": "Description",
+    "ACTION": "Action",
+    "CONFIRM_DELETE": "Do you really want to delete this workspace? This action cannot be undone.",
+    "REMOVE_SUCCESS": "Workspace deleted successfully!",
+    "YES": "Yes",
+    "ADMIN_EMAIL": "Administrator e-mail",
+    "EDIT": "Edit",
+    "REMOVE": "Delete",
+    "TYPE_WORKSPACE_NAME": "Enter the name of the workspace below:",
+    "WORKSPACE_NAME": "Workspace name",
+    "INVALID_WORKSPACE_NAME": "Invalid workspace name.",
+    "EDIT_WORKSPACE_NAME": "Edit the workspace name",
     "TOKENS": "Tokens",
     "TOKEN": "Token",
     "ADD_TOKEN": "Add Token",
-    "DESCRIPTION": "Description",
     "EXPIRES": "Expires in:",
-    "ACTION": "Action",
-    "NO_TOKENS":"There are no registered tokens for this organization.",
+    "NO_TOKENS":"There are no registered tokens for this workspace.",
     "DELETE": "Delete",
     "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
     "TOKEN_SUCCESS": "Token created successfully!",
-    "CREATE_SUCCESS": "Organization successfully created!",
-    "UPDATE_SUCCESS": "Organization edited successfully!",
-    "REMOVE_SUCCESS": "Organization removed successfully!",
+    "CREATE_SUCCESS": "Workspace successfully created!",
+    "UPDATE_SUCCESS": "Workspace edited successfully!",
     "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
     "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "CONFIRM":"Ok, I got it.",
@@ -103,16 +115,51 @@
     "INVALID_DESCRIPTION": "Invalid description",
     "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
     "ADMIN": "Administrator:",
-    "USER": "User:",
+    "MEMBER": "Member:",
     "GROUP_NAME": "Group Name",
-    "ADMIN_EMAIL": "Administrator e-mail",
     "EMAIL": "E-mail",
-    "INVALID_EMAIL_ADMIN": "Invalid email."
+    "INVALID_EMAIL_ADMIN": "Invalid email.",
+    "USERS": {
+      "TITLE": "Users of Workspace",
+      "SEARCH": "Search by e-mail",
+      "INVITE": "Invite User",
+      "EDIT_USER": "Edit User",
+      "EDIT_SUBTITLE": "Edit the user below:",
+      "INVITE_SUBTITLE": "Invite a new user below:",
+      "EMAIL": "E-mail",
+      "INVALID_EMAIL": "Invalid e-mail",
+      "CONFIRM_DELETE": "Do you really want remove this user of workspace?",
+      "YES": "Yes",
+      "SAVE": "Save",
+      "TABLE": {
+        "EMPTY": "There are no matching users for this workspace",
+        "USER": "User",
+        "EMAIL": "E-mail",
+        "PERMISSION": "Permission",
+        "ACTION": "Action",
+        "DELETE": "Delete",
+        "EDIT": "Edit",
+        "ROLE": {
+          "ADMIN": "Administrator",
+          "SUPERVISOR": "Supervisor",
+          "MEMBER": "Member"
+        }
+      },
+      "REMOVE_SUCCESS": "User removed successfully!",
+      "INVITE_SUCCESS": "User added successfully!",
+      "EDIT_SUCCESS": "User edited successfully!"
+    }
   },
 
   "DASHBOARD_SCREEN": {
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
+    "PERIOD": "Period",
+    "CUSTOM_RANGE": "Custom range",
+    "TODAY": "Today",
+    "LAST_WEEK": "Last 7 days",
+    "LAST_MONTH": "Last 30 days",
+    "BEGINNING": "From the beginning",
     "APPLY": "Apply",
     "TOTAL_DEVELOPERS": "Total developers",
     "TOTAL_REPOSITORIES": "Total repositories",
@@ -142,7 +189,7 @@
     "NAME": "Name",
     "DESCRIPTION": "Description",
     "ACTION": "Action",
-    "NO_REPOSITORIES": "There are no corresponding repositories for this organization.",
+    "NO_REPOSITORIES": "There are no corresponding repositories for this workspace.",
     "DELETE": "Delete",
     "EDIT": "Edit",
     "INVITE": "Invite",
@@ -197,7 +244,7 @@
 
   "PERMISSIONS": {
     "ADMIN": "Administrator",
-    "USER": "User",
+    "MEMBER": "Member",
     "SUPERVISOR": "Supervisor",
     "TITLE": "Permissions",
     "REPOSITORY": {
@@ -221,38 +268,6 @@
       }
     }
   },
-
-  "USERS_SCREEN": {
-    "TITLE": "Users",
-    "SEARCH": "Search by e-mail",
-    "INVITE": "Invite User",
-    "EDIT_USER": "Edit User",
-    "EDIT_SUBTITLE": "Edit the user below:",
-    "INVITE_SUBTITLE": "Invite a new user below:",
-    "EMAIL": "E-mail",
-    "INVALID_EMAIL": "Invalid e-mail",
-    "CONFIRM_DELETE": "Do you really want to delete this user? This action cannot be undone.",
-    "YES": "Yes",
-    "SAVE": "Save",
-    "TABLE": {
-      "EMPTY": "There are no matching users for this organization",
-      "USER": "User",
-      "EMAIL": "E-mail",
-      "PERMISSION": "Permission",
-      "ACTION": "Action",
-      "DELETE": "Delete",
-      "EDIT": "Edit",
-      "ROLE": {
-        "ADMIN": "Administrator",
-        "SUPERVISOR": "Supervisor",
-        "MEMBER": "User"
-      }
-    },
-    "REMOVE_SUCCESS": "User removed successfully!",
-    "INVITE_SUCCESS": "User added successfully!",
-    "EDIT_SUCCESS": "User edited successfully!"
-  },
-
   "VULNERABILITIES_SCREEN": {
     "SEARCH": "Search for hash Vulnerability",
     "TITLE": "Vulnerabilities",
@@ -268,7 +283,7 @@
       "DETAILS": "Details",
       "SEVERITY": "Severity",
       "STATUS": "Status",
-      "DESCRIPTION": "Descrição"
+      "DESCRIPTION": "Description"
     },
     "STATUS": {
       "VULNERABILITY": "Vulnerability",
@@ -358,13 +373,12 @@
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilities",
     "REPOSITORIES": "Repositories",
-    "ORGANIZATION": "Organization",
+    "WORKSPACE": "Workspace",
     "REPOSITORY": "Repository",
-    "ORGANIZATION_USERS": "Organization users",
-    "BACK_ORGANIZATION": "Back to organizations",
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "MANAGE_WORKSPACES": "Manage Workspaces"
   },
 
   "API_ERRORS": {
@@ -374,16 +388,21 @@
     "INVALID_RECOVERY_CODE": "Invalid recovery code.",
     "EMAIL_IN_USE": "The informed e-mail is already in use.",
     "NO_RECORDS": "There are no corresponding records for the reported data.",
-    "ALREADY_IN_COMPANY": "This user is already part of this organization.",
+    "ALREADY_IN_COMPANY": "This user is already part of this workspace.",
     "PRIVILEGES": "You do not have sufficient permissions to perform this action.",
     "REPO_NAME_IN_USE": "Repository name already in use.",
     "USERNAME_IN_USE": "Username already in use.",
-    "SAME_PASSWORD": "The new password cannot be the same as the current one."
+    "SAME_PASSWORD": "The new password cannot be the same as the current one.",
+    "EMPTY_REPOSITORY": "Please select a repository to view the data."
   },
 
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",
     "MESSAGE": "We could not find the page you are looking for.",
     "BACK": "Back to home"
+  },
+  "NEW_WORKSPACE_SCREEN": {
+    "MESSAGE": "Add a new Workspace to start using Horusec.",
+    "ACTION": "Add workspace"
   }
 }

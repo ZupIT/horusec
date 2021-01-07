@@ -29,7 +29,7 @@ const login = (params: LoginParams) => {
 
         setCurrentUser(userData);
         setTokens(accessToken, refreshToken, expiresAt);
-        resolve();
+        resolve(result);
       })
       .catch((err) => reject(err));
   });

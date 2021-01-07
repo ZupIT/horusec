@@ -17,29 +17,32 @@ package start
 import (
 	"bytes"
 	"errors"
-	"github.com/spf13/cobra"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/google/uuid"
+	CopyLib "github.com/otiai10/copy"
 	"io/ioutil"
 	"os"
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/zip"
+	"github.com/ZupIT/horusec/horusec-cli/internal/controllers/requirements"
+	"github.com/spf13/cobra"
+
 	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/controllers/analyser"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/ZupIT/horusec/horusec-cli/internal/usecases/cli"
 	"github.com/ZupIT/horusec/horusec-cli/internal/utils/prompt"
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("analysis")
+	_ = os.RemoveAll("./examples")
 
 	code := m.Run()
 
-	_ = os.RemoveAll("analysis")
+	_ = os.RemoveAll("./examples")
 	os.Exit(code)
 }
 
@@ -69,12 +72,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			globalCmd:          globalCmd,
-			analyserController: analyserControllerMock,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			globalCmd:              globalCmd,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -101,12 +108,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -134,12 +145,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -163,12 +178,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -192,12 +211,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -222,12 +245,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -253,12 +280,17 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateGit")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -283,12 +315,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		analyserControllerMock := &analyser.Mock{}
 		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: analyserControllerMock,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     analyserControllerMock,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -310,12 +346,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: nil,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     nil,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -352,12 +392,16 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: nil,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     nil,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -384,10 +428,9 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, os.RemoveAll("./tmp-sonarqube.json"))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
-		srcZip := "../../../../development-kit/pkg/utils/test/zips/gitleaks/gitleaks.zip"
-		dstZip := "./analysis/" + uuid.New().String()
-		err := zip.NewZip().UnZip(srcZip, dstZip)
-		assert.NoError(t, err)
+		srcProject := "../../../../examples/leaks/example1"
+		dstProject := "./examples/" + uuid.New().String()
+		assert.NoError(t, CopyLib.Copy(srcProject, dstProject))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
@@ -398,17 +441,21 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: nil,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     nil,
+			requirementsController: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", dstZip, "-s", "HIGH"})
+		cobraCmd.SetArgs([]string{"-p", dstProject, "-s", "HIGH"})
 
 		assert.NoError(t, cobraCmd.Execute())
 		outputBytes, err := ioutil.ReadAll(stdoutMock)
@@ -421,13 +468,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		promptMock.AssertNotCalled(t, "Ask")
-		assert.NoError(t, os.RemoveAll(dstZip))
+		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
-		srcZip := "../../../../development-kit/pkg/utils/test/zips/gitleaks/gitleaks.zip"
-		dstZip := "./analysis/" + uuid.New().String()
-		err := zip.NewZip().UnZip(srcZip, dstZip)
-		assert.NoError(t, err)
+		srcProject := "../../../../examples/leaks/example1"
+		dstProject := "./examples/" + uuid.New().String()
+		assert.NoError(t, CopyLib.Copy(srcProject, dstProject))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
@@ -438,17 +484,22 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
 
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
 		cmd := &Start{
-			globalCmd:          globalCmd,
-			useCases:           cli.NewCLIUseCases(),
-			configs:            configs,
-			startPrompt:        promptMock,
-			analyserController: nil,
+			globalCmd:              globalCmd,
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			analyserController:     nil,
+			requirementsController: requirementsMock,
 		}
+		logger.SetLogLevel(logger.DebugLevel.String())
 
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", dstZip})
+		cobraCmd.SetArgs([]string{"-p", dstProject})
 
 		assert.NoError(t, cobraCmd.Execute())
 		outputBytes, err := ioutil.ReadAll(stdoutMock)
@@ -461,6 +512,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "[HORUSEC] 6 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		promptMock.AssertNotCalled(t, "Ask")
-		assert.NoError(t, os.RemoveAll(dstZip))
+		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 }

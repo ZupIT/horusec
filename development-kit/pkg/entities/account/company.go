@@ -64,6 +64,16 @@ func (c *Company) SetUpdateData() *Company {
 	return c
 }
 
+func (c *Company) MapToUpdate() map[string]interface{} {
+	return map[string]interface{}{
+		"name":         c.Name,
+		"description":  c.Description,
+		"authz_member": c.AuthzMember,
+		"authz_admin":  c.AuthzAdmin,
+		"updated_at":   c.UpdatedAt,
+	}
+}
+
 func (c *Company) GetTable() string {
 	return "companies"
 }

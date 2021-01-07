@@ -16,6 +16,9 @@ package horusec
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccount "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
@@ -30,13 +33,11 @@ import (
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func generateToken() string {
@@ -45,7 +46,7 @@ func generateToken() string {
 		Email:     "test@test.com",
 		Password:  "test",
 		Username:  "test",
-	}, map[string]string{})
+	}, nil)
 
 	return token
 }
