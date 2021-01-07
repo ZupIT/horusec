@@ -5,7 +5,7 @@
   "dependencies": {
     "@react-keycloak/web": "^3.0.0",
     "apexcharts": "^3.20.2",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "date-fns": "^2.16.1",
     "i18next": "^19.7.0",
     "keycloak-js": "^10.0.2",
@@ -18,14 +18,14 @@
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.4.1",
     "react-i18next": "^11.7.0",
+    "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "^5.2.0",
     "react-svg": "^11.0.35",
     "react-tooltip": "^4.2.10",
     "react-use-clipboard": "1.0.1",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.1.1",
-    "systemjs-webpack-interop": "^2.1.2",
-    "react-linkify": "^1.0.0-alpha"
+    "systemjs-webpack-interop": "^2.1.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
