@@ -21,8 +21,8 @@ import (
 	analysisRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/analysis"
 	dashboardEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/dashboard"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	dashboardUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/dashboard"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	dashboardUseCases "github.com/ZupIT/horusec/horusec-analytic/internal/usecases/dashboard"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )

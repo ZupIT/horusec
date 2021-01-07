@@ -23,7 +23,7 @@ import (
 )
 
 func Bind(vuln *horusec.Vulnerability) *horusec.Vulnerability {
-	vulnHash, _ := hash.GenerateSHA1(
+	vulnHash, _ := hash.GenerateSHA256(
 		toOneLine(vuln.Code),
 		vuln.Line,
 		vuln.Details,

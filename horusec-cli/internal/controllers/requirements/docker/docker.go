@@ -77,7 +77,7 @@ func (r *RequirementDocker) execDockerVersion() (string, error) {
 	responseBytes, err := exec.Command("docker", "-v").CombinedOutput()
 	if err != nil {
 		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckRequirements+"output: ", errors.New(string(responseBytes)), logger.ErrorLevel)
+			messages.MsgErrorWhenCheckRequirements+"output: ", errors.New(string(responseBytes)))
 		return "", err
 	}
 	return strings.ToLower(string(responseBytes)), nil
@@ -87,7 +87,7 @@ func (r *RequirementDocker) checkIfDockerIsRunning() error {
 	responseBytes, err := exec.Command("docker", "ps").CombinedOutput()
 	if err != nil {
 		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckDockerRunnnig+"output: ", errors.New(string(responseBytes)), logger.ErrorLevel)
+			messages.MsgErrorWhenCheckDockerRunnnig+"output: ", errors.New(string(responseBytes)))
 	}
 	return err
 }
@@ -95,7 +95,7 @@ func (r *RequirementDocker) checkIfDockerIsRunning() error {
 func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response string) error {
 	version, subversion, err := r.extractDockerVersionFromString(response)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
 	}
 

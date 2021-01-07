@@ -41,7 +41,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.GoSec) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GoSec.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.GoSec.ToString())
 		return
 	}
 
@@ -65,7 +65,7 @@ func (f *Formatter) startGoSec(projectSubPath string) error {
 func (f *Formatter) processOutput(output string) {
 	if output == "" {
 		logger.LogDebugWithLevel(
-			messages.MsgDebugOutputEmpty, logger.DebugLevel, map[string]interface{}{"tool": tools.GoSec.ToString()})
+			messages.MsgDebugOutputEmpty, map[string]interface{}{"tool": tools.GoSec.ToString()})
 		return
 	}
 
@@ -79,7 +79,7 @@ func (f *Formatter) processOutput(output string) {
 
 func (f *Formatter) parseOutputToGoOutput(output string) (golangOutput entities.Output, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &golangOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GoSec, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GoSec, output), err)
 	return golangOutput, err
 }
 

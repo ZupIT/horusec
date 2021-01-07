@@ -58,8 +58,6 @@ type IUseCases interface {
 	NewAccountUpdateFromReadCloser(body io.ReadCloser) (*authEntities.Account, error)
 }
 
-const DefaultRegexPasswordValidation = ""
-
 type UseCases struct {
 }
 

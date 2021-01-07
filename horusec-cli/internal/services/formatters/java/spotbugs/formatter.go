@@ -57,7 +57,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.SpotBugs) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.SpotBugs.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.SpotBugs.ToString())
 		return
 	}
 	err := f.startSpotbugsAnalysis(projectSubPath)
@@ -84,7 +84,7 @@ func (f *Formatter) startSpotbugsAnalysis(projectSubPath string) error {
 func (f *Formatter) formatOutput(outputXML string) error {
 	javaOutput := entities.SpotBugsOutput{}
 	if outputXML == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.SpotBugs.ToString()})
 		f.setOutputInHorusecAnalysis(&javaOutput)
 		return nil
@@ -100,7 +100,7 @@ func (f *Formatter) formatOutput(outputXML string) error {
 func (f *Formatter) convertOutputAndValidate(
 	outputXML string, javaOutput *entities.SpotBugsOutput) (entities.SpotBugsOutput, error) {
 	if err := xml.Unmarshal([]byte(outputXML), javaOutput); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SpotBugs, outputXML), err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SpotBugs, outputXML), err)
 		return *javaOutput, err
 	}
 	if err := f.validateErrors(javaOutput); err != nil {

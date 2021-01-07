@@ -25,12 +25,14 @@ interface CalendarProps {
   onChangeValue: (date: Date) => void;
   initialDate?: Date;
   title: string;
+  disabled?: boolean;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
   onChangeValue,
   initialDate,
   title,
+  disabled,
 }) => {
   const [currentDate, setCurrentDate] = useState(null);
   const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
@@ -57,6 +59,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
       <Styled.Container>
         <Styled.DatePicker
+          disabled={disabled}
           selected={currentDate}
           onChange={(date: Date) => handleSelectedDate(date)}
           dateFormat={dateFormat}

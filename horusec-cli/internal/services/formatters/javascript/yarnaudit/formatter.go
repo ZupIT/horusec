@@ -50,7 +50,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.YarnAudit) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.YarnAudit.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.YarnAudit.ToString())
 		return
 	}
 
@@ -86,14 +86,14 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 
 func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *entities.Output, err error) {
 	if containerOutput == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.YarnAudit.ToString()})
 		return &entities.Output{}, nil
 	}
 
 	if err = json.Unmarshal([]byte(containerOutput), &output); err != nil {
 		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.YarnAudit, containerOutput),
-			err, logger.ErrorLevel)
+			err)
 	}
 
 	return output, err
@@ -152,7 +152,7 @@ func (f *Formatter) getVulnerabilityLineByName(module, version, file string) str
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close(), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
 	}()
 
 	scanner := bufio.NewScanner(fileExisting)

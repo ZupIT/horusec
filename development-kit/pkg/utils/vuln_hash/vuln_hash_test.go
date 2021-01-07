@@ -34,7 +34,7 @@ func TestBind(t *testing.T) {
 	})
 
 	t.Run("should generate the hash from Code and File attrs", func(t *testing.T) {
-		expected, _ := hash.GenerateSHA1("test", "test.go")
+		expected, _ := hash.GenerateSHA256("test", "test.go")
 		vuln := &horusec.Vulnerability{
 			Code: "test",
 			File: "test.go",

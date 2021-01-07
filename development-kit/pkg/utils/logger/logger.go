@@ -92,8 +92,8 @@ func SetLogLevel(level string) {
 	CurrentLevel = logLevel
 }
 
-func LogPanicWithLevel(msg string, err error, level logrus.Level, args ...map[string]interface{}) {
-	if logrus.IsLevelEnabled(level) && err != nil {
+func LogPanicWithLevel(msg string, err error, args ...map[string]interface{}) {
+	if logrus.IsLevelEnabled(PanicLevel) && err != nil {
 		if len(args) > 0 {
 			logrus.WithFields(args[0]).WithError(err).Panic(msg)
 		}
@@ -102,8 +102,8 @@ func LogPanicWithLevel(msg string, err error, level logrus.Level, args ...map[st
 	}
 }
 
-func LogErrorWithLevel(msg string, err error, level logrus.Level, args ...map[string]interface{}) {
-	if logrus.IsLevelEnabled(level) && err != nil {
+func LogErrorWithLevel(msg string, err error, args ...map[string]interface{}) {
+	if logrus.IsLevelEnabled(ErrorLevel) && err != nil {
 		if len(args) > 0 {
 			logrus.WithFields(args[0]).WithError(err).Error(msg)
 			return
@@ -113,8 +113,8 @@ func LogErrorWithLevel(msg string, err error, level logrus.Level, args ...map[st
 	}
 }
 
-func LogWarnWithLevel(msg string, level logrus.Level, args ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
+func LogWarnWithLevel(msg string, args ...interface{}) {
+	if logrus.IsLevelEnabled(WarnLevel) {
 		if args != nil {
 			logrus.Warn(msg, args)
 		} else {
@@ -123,8 +123,8 @@ func LogWarnWithLevel(msg string, level logrus.Level, args ...interface{}) {
 	}
 }
 
-func LogInfoWithLevel(msg string, level logrus.Level, args ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
+func LogInfoWithLevel(msg string, args ...interface{}) {
+	if logrus.IsLevelEnabled(InfoLevel) {
 		if args != nil {
 			logrus.Info(msg, args)
 		} else {
@@ -133,8 +133,8 @@ func LogInfoWithLevel(msg string, level logrus.Level, args ...interface{}) {
 	}
 }
 
-func LogDebugWithLevel(msg string, level logrus.Level, args ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
+func LogDebugWithLevel(msg string, args ...interface{}) {
+	if logrus.IsLevelEnabled(DebugLevel) {
 		if args != nil {
 			logrus.Debug(msg, args)
 		} else {
@@ -143,8 +143,8 @@ func LogDebugWithLevel(msg string, level logrus.Level, args ...interface{}) {
 	}
 }
 
-func LogTraceWithLevel(msg string, level logrus.Level, args ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
+func LogTraceWithLevel(msg string, args ...interface{}) {
+	if logrus.IsLevelEnabled(TraceLevel) {
 		if args != nil {
 			logrus.Trace(msg, args)
 		} else {
@@ -160,6 +160,8 @@ func LogStringAsError(msg string) {
 func LogDebugJSON(message string, content interface{}) {
 	contentBytes, err := json.Marshal(content)
 	if err == nil {
-		LogTraceWithLevel(message, DebugLevel, string(contentBytes))
+		LogDebugWithLevel(message, string(contentBytes))
+	} else {
+		LogDebugWithLevel(message, fmt.Sprintf("%v", content))
 	}
 }

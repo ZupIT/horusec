@@ -40,7 +40,8 @@ const (
 	// Fired when occurs of ignore folder or file to send horusec analysis
 	MsgDebugFolderOrFileIgnored = "{HORUSEC_CLI} The file ou folder was ignored to send analysis:"
 	// Fired when configs already validate and before start analysis
-	MsgDebugShowConfigs = "{HORUSEC_CLI} The current configuration for this analysis are:"
-	MsgDebugShowWorkdir = "{HORUSEC_CLI} The workdir setup for run in path:"
-	MsgDebugToolIgnored = "{HORUSEC_CLI} The tool was ignored for run in this analysis: "
+	MsgDebugShowConfigs   = "{HORUSEC_CLI} The current configuration for this analysis are:"
+	MsgDebugShowWorkdir   = "{HORUSEC_CLI} The workdir setup for run in path:"
+	MsgDebugToolIgnored   = "{HORUSEC_CLI} The tool was ignored for run in this analysis: "
+	MsgDebugVulnHashToFix = "{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "
 )

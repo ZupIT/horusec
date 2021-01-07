@@ -20,5 +20,6 @@ const (
 	// USED IN USE CASES: Fired when the output file path is invalid
 	MsgErrorOutputFilePathNotValid = "output file path is invalid: "
 	// Fired when user-provided settings are invalid
-	MsgErrorInvalidConfigs = "Errors on validate configuration: "
+	MsgErrorInvalidConfigs   = "Errors on validate configuration: "
+	MsgErrorAnalysisFinished = "Analysis finished with error: "
 )
