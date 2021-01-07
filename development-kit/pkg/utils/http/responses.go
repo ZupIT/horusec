@@ -109,7 +109,6 @@ func setResponseWriter(w http.ResponseWriter, response *httpEntities.Response) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(response.GetStatusCode())
 	_ = json.NewEncoder(w).Encode(response)
-	logger.LogInfo(response.ToString(), nil)
 }
 
 func getErrorMessage(err error) string {

@@ -32,3 +32,4 @@ v1-6-2-alpha-2
 v1-6-2-alpha-3
 v1-6-2-alpha-4
 v1-6-2-alpha-5
+v1-7-0
