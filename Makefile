@@ -213,6 +213,12 @@ build-install-nodejs-cli:
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
 	horusec-nodejs version
 
+build-install-dart-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-dart" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-dart" ./horusec-dart/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-dart"
+	horusec-dart version
+
 # ========================================================================================= #
 
 # HELM_SERVICE_NAME="horusec-account" make helm-upgrade
