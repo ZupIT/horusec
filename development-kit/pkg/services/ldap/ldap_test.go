@@ -97,7 +97,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -117,7 +116,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -138,7 +136,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -157,8 +154,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapMock.On("Search").Return(&ldap.SearchResult{}, nil)
 
 		service := Service{
-			Attributes: []string{"test"},
-			Conn:       ldapMock,
+			Conn: ldapMock,
 		}
 
 		isValid, data, err := service.Authenticate("test", "test")
@@ -178,7 +174,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -201,7 +196,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -223,7 +217,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -272,7 +265,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -291,7 +283,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -309,7 +300,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
