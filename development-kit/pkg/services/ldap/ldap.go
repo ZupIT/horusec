@@ -17,7 +17,6 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
-	"strings"
 	"time"
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -207,7 +206,7 @@ func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string 
 	user := map[string]string{}
 
 	for _, attr := range []string{"sAMAccountName", "uid", "mail"} {
-		user[attr] = searchResult.Entries[0].GetAttributeValue(strings.ToLower(attr))
+		user[attr] = searchResult.Entries[0].GetAttributeValue(attr)
 	}
 
 	return user
