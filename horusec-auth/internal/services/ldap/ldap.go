@@ -139,7 +139,6 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapA
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
 	account, err := s.accountRepo.GetByUsername(data["sAMAccountName"])
-
 	if account == nil || err != nil {
 		account = &authEntities.Account{
 			Email:    s.pickOne(data, "mail", "uid"),
