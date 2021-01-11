@@ -52,6 +52,7 @@ func SupportedLanguages() []Language {
 	return []Language{
 		Go,
 		CSharp,
+		Dart,
 		Ruby,
 		Python,
 		Java,
@@ -72,6 +73,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Go.ToString():         Go,
 		Leaks.ToString():      Leaks,
 		CSharp.ToString():     CSharp,
+		Dart.ToString():       Dart,
 		Ruby.ToString():       Ruby,
 		Python.ToString():     Python,
 		Java.ToString():       Java,
