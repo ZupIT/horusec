@@ -53,6 +53,9 @@ coverage-horusec-kubernetes:
 coverage-horusec-nodejs:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-nodejs"
+coverage-horusec-dart:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-dart"
 # Check lint of project setup on file .golangci.yml
 lint:
     ifeq ($(wildcard $(GOCILINT)), $(GOCILINT))
