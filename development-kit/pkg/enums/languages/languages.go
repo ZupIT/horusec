@@ -21,6 +21,7 @@ type Language string
 const (
 	Go         Language = "Go"
 	CSharp     Language = "C#"
+	Dart       Language = "Dart"
 	Ruby       Language = "Ruby"
 	Python     Language = "Python"
 	Java       Language = "Java"
