@@ -53,6 +53,7 @@ type Service struct {
 	SkipTLS            bool
 	ClientCertificates []tls.Certificate
 	Conn               ILdapClient
+	UserFilter         string
 }
 
 func NewLDAPClient() ILDAPService {
@@ -65,6 +66,7 @@ func NewLDAPClient() ILDAPService {
 		UseSSL:             env.GetEnvOrDefaultBool("HORUSEC_LDAP_USESSL", false),
 		SkipTLS:            env.GetEnvOrDefaultBool("HORUSEC_LDAP_SKIP_TLS", true),
 		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
+		UserFilter:         env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", "(sAMAccountName=%s)"),
 	}
 }
 
@@ -185,7 +187,7 @@ func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequ
 	return ldap.NewSearchRequest(
 		s.Base,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf("(sAMAccountName=%s)", username),
+		fmt.Sprintf(s.UserFilter, username),
 		[]string{"sAMAccountName", "uid", "mail", "memberOf"},
 		nil,
 	)
