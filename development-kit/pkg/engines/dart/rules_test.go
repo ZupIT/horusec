@@ -32,8 +32,8 @@ func TestRules_GetAllRules(t *testing.T) {
 			totalRegexes += len(textRule.Expressions)
 		}
 
-		//assert.Greater(t, len(rules), 0)
-		//assert.Greater(t, totalRegexes, 0)
+		assert.Greater(t, len(rules), 0)
+		assert.Greater(t, totalRegexes, 0)
 	})
 }
 func TestRulesEnum(t *testing.T) {
@@ -42,7 +42,7 @@ func TestRulesEnum(t *testing.T) {
 	totalRules = append(totalRules, allRulesDartAnd()...)
 	totalRules = append(totalRules, allRulesDartOr()...)
 	totalRules = append(totalRules, allRulesDartRegular()...)
-	lenExpectedTotalRules := 0
+	lenExpectedTotalRules := 7
 
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in dart", func(t *testing.T) {
 		encountered := map[string]bool{}

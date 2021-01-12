@@ -14,3 +14,30 @@
 
 //nolint:lll multiple regex is not possible broken lines
 package or
+
+import (
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+	"regexp"
+)
+
+func NewDartOrNoUseConnectionWithoutSSL() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "3897bea8-4c4b-4ada-b5c3-614c93c6b05e",
+			Name:        "No use connection without SSL",
+			Description: "Insecure Implementation of SSL. Trusting all the certificates or accepting self signed certificates is a critical Security Hole. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.bindSecure\(\n?('|")http:\/\/`),
+			regexp.MustCompile(`\.parse\(\n?('|")http:\/\/`),
+			regexp.MustCompile(`(.parse\(('|")|.bindSecure\(('|"))(([^h]|h[^t]|ht[^t]|htt[^p])*)(\))`),
+		},
+	}
+}
+
