@@ -184,28 +184,6 @@ func TestAuthenticate(t *testing.T) {
 		assert.Nil(t, data)
 	})
 
-	t.Run("should return when binding by env after user bind", func(t *testing.T) {
-		ldapMock := &MockLdapConn{}
-
-		ldapMock.On("Bind").Once().Return(nil)
-		ldapMock.On("Bind").Once().Return(nil)
-		ldapMock.On("Bind").Return(errors.New("test"))
-		ldapMock.On("Search").Return(&ldap.SearchResult{Entries: []*ldap.Entry{{DN: "test",
-			Attributes: []*ldap.EntryAttribute{{Name: "test", Values: []string{"test"}}}}}}, nil)
-
-		service := Service{
-			BindDN:       "test",
-			BindPassword: "test",
-			Conn:         ldapMock,
-		}
-
-		isValid, data, err := service.Authenticate("test", "test")
-
-		assert.Error(t, err)
-		assert.False(t, isValid)
-		assert.Nil(t, data)
-	})
-
 	t.Run("should return when binding with user data", func(t *testing.T) {
 		ldapMock := &MockLdapConn{}
 
@@ -268,7 +246,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test")
+		groups, err := service.GetGroupsOfUser("test", "test")
 
 		assert.NotEmpty(t, groups)
 		assert.NoError(t, err)
@@ -286,7 +264,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test")
+		groups, err := service.GetGroupsOfUser("test", "test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)
@@ -303,7 +281,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test")
+		groups, err := service.GetGroupsOfUser("test", "test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)
@@ -312,7 +290,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 	t.Run("should return error while connecting", func(t *testing.T) {
 		service := Service{}
 
-		groups, err := service.GetGroupsOfUser("test")
+		groups, err := service.GetGroupsOfUser("test", "test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)

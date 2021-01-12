@@ -70,7 +70,7 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 		return nil, err
 	}
 
-	return s.setLDAPAuthResponse(account)
+	return s.setLDAPAuthResponse(account, data["dn"])
 }
 
 func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
@@ -87,10 +87,8 @@ func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
 	return s.checkIsAuthorized(userGroups, authzGroups)
 }
 
-func (s *Service) isApplicationAdmin(username string) bool {
+func (s *Service) isApplicationAdmin(userGroups []string) bool {
 	applicationAdminGroups, _ := s.getApplicationAdminAuthzGroupsName()
-	userGroups, _ := s.getUserGroupsInLdap(username)
-
 	isApplicationAdmin, err := s.checkIsAuthorized(applicationAdminGroups, userGroups)
 	if err != nil {
 		return false
@@ -99,9 +97,9 @@ func (s *Service) isApplicationAdmin(username string) bool {
 	return isApplicationAdmin
 }
 
-func (s *Service) getUserGroupsInLdap(username string) ([]string, error) {
+func (s *Service) getUserGroupsInLdap(username, userDN string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
-		return s.client.GetGroupsOfUser(username)
+		return s.client.GetGroupsOfUser(username, userDN)
 	}
 
 	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
@@ -121,8 +119,8 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 	return errors.ErrorUnauthorized
 }
 
-func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapAuthResponse, error) {
-	userGroups, err := s.getUserGroupsInLdap(account.Username)
+func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN string) (*dto.LdapAuthResponse, error) {
+	userGroups, err := s.getUserGroupsInLdap(account.Username, userDN)
 	if err != nil {
 		return nil, err
 	}
@@ -133,20 +131,19 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapA
 		ExpiresAt:          expiresAt,
 		Username:           account.Username,
 		Email:              account.Email,
-		IsApplicationAdmin: s.isApplicationAdmin(account.Username),
+		IsApplicationAdmin: s.isApplicationAdmin(userGroups),
 	}, nil
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
-	account, err := s.accountRepo.GetByUsername(data["sAMAccountName"])
+	account, err := s.accountRepo.GetByUsername(s.pickOne(data, "sAMAccountName", "uid"))
 	if account == nil || err != nil {
 		account = &authEntities.Account{
 			Email:    s.pickOne(data, "mail", "uid"),
 			Username: s.pickOne(data, "sAMAccountName", "uid"),
 		}
 
-		err = s.accountRepo.Create(account.SetAccountData())
-		if err != nil {
+		if err := s.accountRepo.Create(account.SetAccountData()); err != nil {
 			return nil, err
 		}
 	}

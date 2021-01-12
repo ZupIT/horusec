@@ -17,6 +17,7 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
+	"strings"
 	"time"
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -28,7 +29,7 @@ type ILDAPService interface {
 	Connect() error
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
-	GetGroupsOfUser(username string) ([]string, error)
+	GetGroupsOfUser(username, userDN string) ([]string, error)
 }
 
 type ILdapClient interface {
@@ -203,16 +204,20 @@ func (s *Service) validateSearchResult(searchResult *ldap.SearchResult) error {
 }
 
 func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string {
-	user := map[string]string{}
+	user := map[string]string{"dn": s.getDNBySearchResult(searchResult)}
 
 	for _, attr := range []string{"sAMAccountName", "uid", "mail"} {
-		user[attr] = searchResult.Entries[0].GetAttributeValue(attr)
+		if value := searchResult.Entries[0].GetAttributeValue(attr); value != "" {
+			user[attr] = value
+		} else {
+			user[attr] = searchResult.Entries[0].GetAttributeValue(strings.ToLower(attr))
+		}
 	}
 
 	return user
 }
 
-func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
+func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
 	if err := s.connectAndBind(); err != nil {
 		return nil, err
 	}
@@ -222,9 +227,43 @@ func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
 		return nil, err
 	}
 
-	return s.getGroupsBySearchResult(searchResult), nil
+	groups := s.getGroupsBySearchResult(searchResult)
+	if len(groups) == 0 {
+		return s.getGroupsByDN(userDN)
+	}
+
+	return groups, nil
+}
+
+func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
+	searchResult, err := s.Conn.Search(s.newSearchRequestByGroupMember(userDN))
+	if err != nil {
+		return nil, err
+	}
+
+	return s.getGroupsNames(searchResult), nil
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
 	return searchResult.Entries[0].GetAttributeValues("memberOf")
+}
+
+func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchRequest {
+	return ldap.NewSearchRequest(
+		s.Base,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(member=%s)", userDN),
+		[]string{"cn"},
+		nil,
+	)
+}
+
+func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
+	var groups []string
+
+	for _, entry := range searchResult.Entries {
+		groups = append(groups, entry.GetAttributeValue("cn"))
+	}
+
+	return groups
 }
