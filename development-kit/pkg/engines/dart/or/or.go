@@ -40,4 +40,3 @@ func NewDartOrNoUseConnectionWithoutSSL() text.TextRule {
 		},
 	}
 }
-
