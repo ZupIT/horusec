@@ -89,7 +89,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
         formatDataValues(result.data?.content?.data?.analysis);
         const totalItems = result?.data?.content?.data?.totalItems;
 
-        let totalPages = totalItems ? Math.round(totalItems / pageSize) : 1;
+        let totalPages = totalItems ? Math.ceil(totalItems / pageSize) : 1;
 
         if (totalPages <= 0) {
           totalPages = 1;
