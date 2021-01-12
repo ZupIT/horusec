@@ -68,6 +68,7 @@ func SupportedLanguages() []Language {
 	}
 }
 
+// nolint:funlen method is necessary more 15 lines
 func (l Language) MapEnableLanguages() map[string]Language {
 	return map[string]Language{
 		Go.ToString():         Go,
