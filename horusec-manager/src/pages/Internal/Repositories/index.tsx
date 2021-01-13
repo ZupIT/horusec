@@ -28,12 +28,15 @@ import InviteToRepository from './Invite';
 import Tokens from './Tokens';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
   const { currentWorkspace, isAdminOfWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
+  const { authType } = getCurrentConfig();
 
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
@@ -172,16 +175,18 @@ const Repositories: React.FC = () => {
                           onClick={() => setRepoToDelete(repo)}
                         />
 
-                        <Button
-                          outline
-                          rounded
-                          opaque
-                          text={t('REPOSITORIES_SCREEN.INVITE')}
-                          width={90}
-                          height={30}
-                          icon="users"
-                          onClick={() => setRepoToInvite(repo)}
-                        />
+                        {authType !== authTypes.LDAP ? (
+                          <Button
+                            outline
+                            rounded
+                            opaque
+                            text={t('REPOSITORIES_SCREEN.INVITE')}
+                            width={90}
+                            height={30}
+                            icon="users"
+                            onClick={() => setRepoToInvite(repo)}
+                          />
+                        ) : null}
                       </>
                     ) : null}
 
