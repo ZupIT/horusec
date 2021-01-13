@@ -136,10 +136,11 @@ func NewDartRegularSQLInjection() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)(var|rawQuery|rawDelete|rawUpdate|rawInsert|query).*(=|\()(\n|.)*(SELECT|UPDATE|DELETE|INSERT)(.|\n)*((\$(\{)?)|(\+))+`),
+			regexp.MustCompile(`(?i)(rawQuery|rawDelete|rawUpdate|rawInsert|query).*\(\s*.*(SELECT|UPDATE|DELETE|INSERT).*((\$(\{)?)|(\+))+`),
 		},
 	}
 }
+
 func NewDartRegularNoUseNSTemporaryDirectory() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{

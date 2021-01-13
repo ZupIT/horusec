@@ -69,6 +69,7 @@ func TestHorusecCLILanguages(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	var wg sync.WaitGroup
+	go RunGitTest(t, &wg)
 	go RunGolangTest(t, &wg)
 	go RunCsharpTest(t, &wg)
 	go RunRubyTest(t, &wg)
@@ -78,9 +79,11 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunKotlinTest(t, &wg)
 	go RunJavascriptNpmTest(t, &wg)
 	go RunJavascriptYarnTest(t, &wg)
-	//go RunGitTest(t, &wg)
 	go RunHclTest(t, &wg)
-	wg.Add(10)
+	go RunDartTest(t, &wg)
+	go RunPHPTest(t, &wg)
+	go RunYAMLTest(t, &wg)
+	wg.Add(14)
 	wg.Wait()
 }
 
@@ -160,6 +163,27 @@ func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 	fileOutput := runHorusecCLIUsingExampleDir(t, "hcl", "example1")
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
 	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in hcl is not expected")
+}
+
+func RunPHPTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "php", "example1")
+	analysis := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
+}
+
+func RunYAMLTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "yaml", "example1")
+	analysis := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
+}
+
+func RunDartTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "dart", "example1")
+	analysis := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in dart is not expected")
 }
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
