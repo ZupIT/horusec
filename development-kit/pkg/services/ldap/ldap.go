@@ -247,7 +247,11 @@ func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
-	return searchResult.Entries[0].GetAttributeValues("memberOf")
+	if value := searchResult.Entries[0].GetAttributeValues("memberOf"); len(value) > 0 {
+		return value
+	} else {
+		return searchResult.Entries[0].GetAttributeValues("memberof")
+	}
 }
 
 func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchRequest {

@@ -267,7 +267,7 @@ func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 
 func (s *Service) contains(groups []string, userGroup string) bool {
 	for _, group := range groups {
-		if group == userGroup {
+		if strings.TrimSpace(group) == userGroup {
 			return true
 		}
 	}
