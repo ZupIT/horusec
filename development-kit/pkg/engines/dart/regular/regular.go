@@ -92,3 +92,66 @@ func NewDartRegularNoUseSelfSignedCertificate() text.TextRule {
 		},
 	}
 }
+
+func NewDartRegularNoUseBiometricsTypeAndroid() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "bf7dd90d-389a-40a2-a9b6-25c798dba6f5",
+			Name:        "No use biometrics types face or fingerprint for login in account",
+			Description: "If the mobile app uses a feature like TouchID, it suffers from insecure authentication. For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-mobile-top-10/2016-risks/m4-insecure-authentication) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`authenticateWithBiometrics`),
+		},
+	}
+}
+
+func NewDartRegularNoListClipboardChanges() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "87e333a1-3a6c-4263-9784-a6b40bd638e4",
+			Name:        "No List changes on the clipboard",
+			Description: "The application allows you to list the changes on the Clipboard. Some malware also lists changes to the Clipboard.",
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Clipboard\.getData|StreamController.*broadcast\(`),
+		},
+	}
+}
+
+func NewDartRegularSQLInjection() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b6c606f3-61d2-4aac-9053-79841b6af5d6",
+			Name:        "SQL Injection",
+			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Alternatively to prepare statements, each parameter can be escaped manually. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)(var|rawQuery|rawDelete|rawUpdate|rawInsert|query).*(=|\()(\n|.)*(SELECT|UPDATE|DELETE|INSERT)(.|\n)*((\$(\{)?)|(\+))+`),
+		},
+	}
+}
+func NewDartRegularNoUseNSTemporaryDirectory() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b0924392-9957-45c7-a86f-4945ae996b63",
+			Name:        "No use NSTemporaryDirectory",
+			Description: "User use in \"NSTemporaryDirectory ()\" is unreliable, it can result in vulnerabilities in the directory. For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.",
+			Severity:    severity.Info.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`NSTemporaryDirectory\(\),`),
+		},
+	}
+}

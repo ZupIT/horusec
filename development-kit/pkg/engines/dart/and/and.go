@@ -56,3 +56,20 @@ func NewDartAndNoSendSensitiveInformation() text.TextRule {
 		},
 	}
 }
+
+func NewDartAndNoUseBiometricsTypeIOS() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "daf0df2f-9b5a-4fe3-b2a9-9a8a80337426",
+			Name:        "No use biometrics types face or fingerprint for login in account",
+			Description: "If the mobile app uses a feature like TouchID, it suffers from insecure authentication. For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-mobile-top-10/2016-risks/m4-insecure-authentication) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`getAvailableBiometrics`),
+			regexp.MustCompile(`(contains\(BiometricType\.face\))|(contains\(BiometricType\.fingerprint\))`),
+		},
+	}
+}

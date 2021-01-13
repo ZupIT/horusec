@@ -40,3 +40,20 @@ func NewDartOrNoUseConnectionWithoutSSL() text.TextRule {
 		},
 	}
 }
+
+func NewDartOrSendSMS() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "859e6499-7fe8-4595-afe7-698750f94f4b",
+			Name:        "Send SMS",
+			Description: "Send SMS. For more information checkout the OWASP-M3 (https://owasp.org/www-project-mobile-top-10/2016-risks/m3-insecure-communication) advisory",
+			Severity:    severity.Low.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`flutter_sms\.dart`),
+			regexp.MustCompile(`sendSMS`),
+		},
+	}
+}
