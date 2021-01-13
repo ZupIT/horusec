@@ -17,11 +17,11 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
+	"strings"
 	"time"
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -29,7 +29,7 @@ type ILDAPService interface {
 	Connect() error
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
-	GetGroupsOfUser(username string) ([]string, error)
+	GetGroupsOfUser(username, userDN string) ([]string, error)
 }
 
 type ILdapClient interface {
@@ -42,37 +42,31 @@ type ILdapClient interface {
 }
 
 type Service struct {
-	Attributes           []string
-	Base                 string
-	BindDN               string
-	BindPassword         string
-	GroupFilter          string
-	GroupFilterAttribute string
-	Host                 string
-	ServerName           string
-	UserFilter           string
-	Conn                 ILdapClient
-	Port                 int
-	InsecureSkipVerify   bool
-	UseSSL               bool
-	SkipTLS              bool
-	ClientCertificates   []tls.Certificate
+	Host               string
+	Port               int
+	Base               string
+	BindDN             string
+	BindPassword       string
+	ServerName         string
+	InsecureSkipVerify bool
+	UseSSL             bool
+	SkipTLS            bool
+	ClientCertificates []tls.Certificate
+	Conn               ILdapClient
+	UserFilter         string
 }
 
 func NewLDAPClient() ILDAPService {
 	return &Service{
-		Base:                 env.GetEnvOrDefault("HORUSEC_LDAP_BASE", ""),
-		Host:                 env.GetEnvOrDefault("HORUSEC_LDAP_HOST", ""),
-		Port:                 env.GetEnvOrDefaultInt("HORUSEC_LDAP_PORT", 389),
-		UseSSL:               env.GetEnvOrDefaultBool("HORUSEC_LDAP_USESSL", false),
-		SkipTLS:              env.GetEnvOrDefaultBool("HORUSEC_LDAP_SKIP_TLS", true),
-		InsecureSkipVerify:   env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
-		BindDN:               env.GetEnvOrDefault("HORUSEC_LDAP_BINDDN", ""),
-		BindPassword:         env.GetEnvOrDefault("HORUSEC_LDAP_BINDPASSWORD", ""),
-		UserFilter:           env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", ""),
-		GroupFilter:          env.GetEnvOrDefault("HORUSEC_LDAP_GROUPFILTER", ""),
-		GroupFilterAttribute: env.GetEnvOrDefault("HORUSEC_LDAP_GROUPFILTER_ATTRIBUTE", ""),
-		Attributes:           []string{"uid", "mail", "givenName"},
+		Host:               env.GetEnvOrDefault("HORUSEC_LDAP_HOST", ""),
+		Port:               env.GetEnvOrDefaultInt("HORUSEC_LDAP_PORT", 389),
+		Base:               env.GetEnvOrDefault("HORUSEC_LDAP_BASE", ""),
+		BindDN:             env.GetEnvOrDefault("HORUSEC_LDAP_BINDDN", ""),
+		BindPassword:       env.GetEnvOrDefault("HORUSEC_LDAP_BINDPASSWORD", ""),
+		UseSSL:             env.GetEnvOrDefaultBool("HORUSEC_LDAP_USESSL", false),
+		SkipTLS:            env.GetEnvOrDefaultBool("HORUSEC_LDAP_SKIP_TLS", true),
+		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
+		UserFilter:         env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", "(sAMAccountName=%s)"),
 	}
 }
 
@@ -139,8 +133,16 @@ func (s *Service) Close() {
 	}
 }
 
+func (s *Service) connectAndBind() error {
+	if err := s.Connect(); err != nil {
+		return err
+	}
+
+	return s.bindByEnvVars()
+}
+
 func (s *Service) Authenticate(username, password string) (bool, map[string]string, error) {
-	if err := s.ConnectAndBind(); err != nil {
+	if err := s.connectAndBind(); err != nil {
 		return false, nil, err
 	}
 
@@ -154,10 +156,6 @@ func (s *Service) searchAndCreateUser(username, password string) (bool, map[stri
 	}
 
 	if err := s.Conn.Bind(s.getDNBySearchResult(searchResult), password); err != nil {
-		return false, nil, err
-	}
-
-	if err := s.bindByEnvVars(); err != nil {
 		return false, nil, err
 	}
 
@@ -186,13 +184,11 @@ func (s *Service) searchUserByUsername(username string) (*ldap.SearchResult, err
 }
 
 func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequest {
-	attributes := append(s.Attributes, "dn", s.GroupFilterAttribute)
-
 	return ldap.NewSearchRequest(
 		s.Base,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf(s.UserFilter, username),
-		attributes,
+		[]string{"sAMAccountName", "uid", "mail", "memberOf"},
 		nil,
 	)
 }
@@ -210,76 +206,64 @@ func (s *Service) validateSearchResult(searchResult *ldap.SearchResult) error {
 }
 
 func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string {
-	user := map[string]string{}
+	user := map[string]string{"dn": s.getDNBySearchResult(searchResult)}
 
-	for _, attr := range s.Attributes {
-		user[attr] = searchResult.Entries[0].GetAttributeValue(attr)
+	for _, attr := range []string{"sAMAccountName", "uid", "mail"} {
+		if value := searchResult.Entries[0].GetAttributeValue(attr); value != "" {
+			user[attr] = value
+		} else {
+			user[attr] = searchResult.Entries[0].GetAttributeValue(strings.ToLower(attr))
+		}
 	}
 
 	return user
 }
 
-func (s *Service) ConnectAndBind() error {
-	if err := s.Connect(); err != nil {
-		return err
-	}
-
-	return s.bindByEnvVars()
-}
-
-func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
-	if err := s.ConnectAndBind(); err != nil {
+func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
+	if err := s.connectAndBind(); err != nil {
 		return nil, err
 	}
 
-	filterAttribute, err := s.getGroupSearchFilterAttributes(username)
+	searchResult, err := s.Conn.Search(s.newSearchRequestByUserFilter(username))
 	if err != nil {
 		return nil, err
 	}
 
-	searchResult, err := s.Conn.Search(s.newSearchRequestByGroupFilter(filterAttribute))
+	groups := s.getGroupsBySearchResult(searchResult)
+	if len(groups) == 0 {
+		return s.getGroupsByDN(userDN)
+	}
+
+	return groups, nil
+}
+
+func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
+	searchResult, err := s.Conn.Search(s.newSearchRequestByGroupMember(userDN))
 	if err != nil {
 		return nil, err
 	}
 
-	return s.getGroupsBySearchResult(searchResult), nil
-}
-
-func (s *Service) getGroupSearchFilterAttributes(username string) (filterAttribute string, err error) {
-	if s.GroupFilterAttribute == "" {
-		return username, nil
-	}
-
-	searchResult, err := s.searchUserByUsername(username)
-	if err != nil {
-		return "", err
-	}
-
-	return s.getGroupFilterAttributeByEntries(searchResult), nil
-}
-
-func (s *Service) getGroupFilterAttributeByEntries(searchResult *ldap.SearchResult) (filterAttribute string) {
-	for _, entry := range searchResult.Entries {
-		filterAttribute = entry.GetAttributeValue(s.GroupFilterAttribute)
-	}
-
-	return filterAttribute
-}
-
-func (s *Service) newSearchRequestByGroupFilter(filterAttribute string) *ldap.SearchRequest {
-	ldapSearchRequest := ldap.NewSearchRequest(
-		s.Base,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf(s.GroupFilter, filterAttribute),
-		[]string{"cn"},
-		nil,
-	)
-
-	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
-	return ldapSearchRequest
+	return s.getGroupsNames(searchResult), nil
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
+	if value := searchResult.Entries[0].GetAttributeValues("memberOf"); len(value) > 0 {
+		return value
+	}
+	return searchResult.Entries[0].GetAttributeValues("memberof")
+}
+
+func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchRequest {
+	return ldap.NewSearchRequest(
+		s.Base,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(member=%s)", userDN),
+		[]string{"cn"},
+		nil,
+	)
+}
+
+func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
 	var groups []string
 
 	for _, entry := range searchResult.Entries {
