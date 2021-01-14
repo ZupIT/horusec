@@ -17,23 +17,17 @@
 import React from 'react';
 import Styled from './styled';
 import useAuth from 'helpers/hooks/useAuth';
-import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 
 const Logout: React.FC = () => {
-  const history = useHistory();
   const { logout } = useAuth();
   const { t } = useTranslation();
-
-  const handleLogout = () => {
-    logout().then(() => history.replace('/auth'));
-  };
 
   return (
     <>
       <Styled.LogoutIcon
-        onClick={() => handleLogout()}
+        onClick={logout}
         size="16px"
         name="logout"
         dataFor="logout"
