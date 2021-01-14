@@ -73,3 +73,21 @@ func NewDartAndNoUseBiometricsTypeIOS() text.TextRule {
 		},
 	}
 }
+
+func NewDartAndXmlReaderExternalEntityExpansion() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "b648e2be-9286-43d7-9c76-0474970351cb",
+			Name:        "Xml Reader External Entity Expansion",
+			Description: "XML External Entity (XXE) vulnerabilities occur when applications process untrusted XML data without disabling external entities and DTD processing. Processing untrusted XML data with a vulnerable parser can allow attackers to extract data from the server, perform denial of service attacks, and in some cases gain remote code execution. The XmlReaderSettings and XmlTextReader classes are vulnerable to XXE attacks when setting the DtdProcessing property to DtdProcessing.Parse or the ProhibitDtd property to false. To prevent XmlReader XXE attacks, avoid using the deprecated ProhibitDtd property. Set the DtdProcessing property to DtdProcessing.Prohibit. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+			Severity:    severity.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`new File\(`),
+			regexp.MustCompile(`XmlDocument\.parse\(`),
+			regexp.MustCompile(`readAsStringSync\(`),
+		},
+	}
+}

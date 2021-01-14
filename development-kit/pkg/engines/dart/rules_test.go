@@ -42,7 +42,7 @@ func TestRulesEnum(t *testing.T) {
 	totalRules = append(totalRules, allRulesDartAnd()...)
 	totalRules = append(totalRules, allRulesDartOr()...)
 	totalRules = append(totalRules, allRulesDartRegular()...)
-	lenExpectedTotalRules := 13
+	lenExpectedTotalRules := 17
 
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in dart", func(t *testing.T) {
 		encountered := map[string]bool{}

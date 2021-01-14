@@ -60,6 +60,9 @@ func allRulesDartRegular() []text.TextRule {
 		regular.NewDartRegularNoListClipboardChanges(),
 		regular.NewDartRegularSQLInjection(),
 		regular.NewDartRegularNoUseNSTemporaryDirectory(),
+		regular.NewDartRegularNoUseCipherMode(),
+		regular.NewDartRegularCorsAllowOriginWildCard(),
+		regular.NewDartRegularUsingShellInterpreterWhenExecutingOSCommand(),
 	}
 }
 
@@ -68,6 +71,7 @@ func allRulesDartAnd() []text.TextRule {
 		and.NewDartAndUsageLocalDataWithoutCryptography(),
 		and.NewDartAndNoSendSensitiveInformation(),
 		and.NewDartAndNoUseBiometricsTypeIOS(),
+		and.NewDartAndXmlReaderExternalEntityExpansion(),
 	}
 }
 

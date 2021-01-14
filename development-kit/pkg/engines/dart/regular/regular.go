@@ -156,3 +156,54 @@ func NewDartRegularNoUseNSTemporaryDirectory() text.TextRule {
 		},
 	}
 }
+
+func NewDartRegularNoUseCipherMode() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6abd99e3-0698-4eca-a11b-59269ff9ab5f",
+			Name:        "No Use Cipher mode",
+			Description: "This mode is not recommended because it opens the door to various security exploits. If the plain text to be encrypted contains substantial repetitions, it is possible that the cipher text will be broken one block at a time. You can also use block analysis to determine the encryption key. In addition, an active opponent can replace and exchange individual blocks without detection, which allows the blocks to be saved and inserted into the stream at other points without detection. ECB and OFB mode will produce the same result for identical blocks. The use of AES in CBC mode with an HMAC is recommended, ensuring integrity and confidentiality. https://docs.microsoft.com/en-us/visualstudio/code-quality/ca5358?view=vs-2019. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)AesMode\.ECB`),
+			regexp.MustCompile(`(?i)AesMode\.OFB`),
+			regexp.MustCompile(`(?i)AesMode\.CTS`),
+			regexp.MustCompile(`(?i)AesMode\.CFB`),
+		},
+	}
+}
+
+func NewDartRegularCorsAllowOriginWildCard() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "f0935a93-2ad0-4953-80fd-48205065c1b7",
+			Name:        "Cors Allow Origin Wild Card",
+			Description: "Cross-Origin Resource Sharing (CORS) allows a service to disable the browser’s Same-origin policy, which prevents scripts on an attacker-controlled domain from accessing resources and data hosted on a different domain. The CORS Access-Control-Allow-Origin HTTP header specifies the domain with permission to invoke a cross-origin service and view the response data. Configuring the Access-Control-Allow-Origin header with a wildcard (*) can allow code running on an attacker-controlled domain to view responses containing sensitive data. For more information checkout the CWE-942 (https://cwe.mitre.org/data/definitions/942.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Access-Control-Allow-Origin.*\*`),
+		},
+	}
+}
+
+func NewDartRegularUsingShellInterpreterWhenExecutingOSCommand() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "50cb4744-421c-4804-89db-858dece86e92",
+			Name:        "Using shell interpreter when executing OS commands",
+			Description: "Arbitrary OS command injection vulnerabilities are more likely when a shell is spawned rather than a new process, indeed shell meta-chars can be used (when parameters are user-controlled for instance) to inject OS commands. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`Process\.run`),
+		},
+	}
+}
