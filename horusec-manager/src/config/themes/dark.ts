@@ -135,6 +135,7 @@ export default {
       YAML: '#72a250',
       UNKNOWN: '#7f8c8d',
       GIT: '#e84f33',
+      DART: '#39b1ed',
     },
 
     dataTable: {
