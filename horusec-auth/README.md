@@ -56,6 +56,7 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_LDAP_BINDPASSWORD           |                                                                   | This environment get ldap password entity admin | 
 | HORUSEC_LDAP_USERFILTER             |                                                                   | This environment get ldap user filter | 
 | HORUSEC_LDAP_GROUPFILTER            |                                                                   | This environment get ldap group filter | 
+| HORUSEC_LDAP_GROUPFILTER_ATTRIBUTE  |                                                                   | This environment get ldap group filter attribute used to make the comparison |
 | HORUSEC_LDAP_ADMIN_GROUP            |                                                                   | This environment get ldap admin group names | 
 | HORUSEC_GRPC_PORT                   | 8007                                                              | This environment get grpc port                               | 
 | HORUSEC_GRPC_USE_CERTS              | false                                                             | This environment get if use of certificates is active or not |

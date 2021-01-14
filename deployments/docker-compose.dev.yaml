@@ -16,19 +16,9 @@ version: '3'
 services:
 #  ldap-service:
 #    container_name: ldap-service
-#    image: osixia/openldap:1.1.8
+#    image: dwimberger/ldap-ad-it
 #    ports:
-#      - "389:389"
-#      - "636:636"
-#  ldap-admin:
-#    container_name: ldap-admin
-#    image: osixia/phpldapadmin:0.9.0
-#    ports:
-#      - "6443:443"
-#    depends_on:
-#      - "ldap-service"
-#    environment:
-#      PHPLDAPADMIN_LDAP_HOSTS: ldap-service
+#      - "10389:10389"
 #  postgresql_keycloak:
 #    container_name: postgresql_keycloak
 #    image: postgres:12
@@ -124,16 +114,15 @@ services:
       HORUSEC_KEYCLOAK_CLIENT_ID: "account"
       HORUSEC_KEYCLOAK_CLIENT_SECRET: "00000000-0000-0000-0000-000000000000" # Get secret inside of keycloak server
       HORUSEC_KEYCLOAK_REALM: "master"
-      HORUSEC_LDAP_BASE: "dc=example,dc=org"
+      HORUSEC_LDAP_BASE: "dc=wimpi,dc=net"
       HORUSEC_LDAP_HOST: "127.0.0.1"
-      HORUSEC_LDAP_PORT: "389"
+      HORUSEC_LDAP_PORT: "10389"
       HORUSEC_LDAP_USESSL: "false"
       HORUSEC_LDAP_SKIP_TLS: "true"
       HORUSEC_LDAP_INSECURE_SKIP_VERIFY: "true"
-      HORUSEC_LDAP_BINDDN: "cn=admin,dc=example,dc=org"
-      HORUSEC_LDAP_BINDPASSWORD: "admin"
-      HORUSEC_LDAP_USERFILTER: "(uid=%s)"
-      HORUSEC_LDAP_GROUPFILTER: "(memberUid=%s)"
+      HORUSEC_LDAP_BINDDN: "uid=admin,ou=system"
+      HORUSEC_LDAP_BINDPASSWORD: "secret"
+      HORUSEC_LDAP_USERFILTER: "(sAMAccountName=%s)"
       HORUSEC_LDAP_ADMIN_GROUP: "admin"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"

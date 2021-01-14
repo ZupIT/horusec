@@ -129,7 +129,7 @@ const Vulnerabilities: React.FC = () => {
         setVulnerabilities(result.data?.content?.data);
         const totalItems = result?.data?.content?.totalItems;
 
-        let totalPages = totalItems ? Math.round(totalItems / pag.pageSize) : 1;
+        let totalPages = totalItems ? Math.ceil(totalItems / pag.pageSize) : 1;
 
         if (totalPages <= 0) {
           totalPages = 1;
