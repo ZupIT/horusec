@@ -152,7 +152,7 @@ func NewDartRegularNoUseNSTemporaryDirectory() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`NSTemporaryDirectory\(\),`),
+			regexp.MustCompile(`NSTemporaryDirectory\(\)`),
 		},
 	}
 }
