@@ -55,9 +55,12 @@ const handleSetKeyclockData = async (
 ) => {
   const currentAccessToken = getAccessToken();
 
+  setTokens(accessToken, refreshToken);
+
   if (accessToken && accessToken !== currentAccessToken) {
     accountService.createAccountFromKeycloak(accessToken).then((result) => {
       const userData = result?.data?.content;
+
       setCurrentUser(userData);
 
       if (window.location.pathname === '/auth') {
@@ -65,8 +68,6 @@ const handleSetKeyclockData = async (
       }
     });
   }
-
-  setTokens(accessToken, refreshToken);
 };
 
 const clearTokens = () => {

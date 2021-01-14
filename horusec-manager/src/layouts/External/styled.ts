@@ -53,9 +53,14 @@ const Logo = styled.img`
   width: 266px;
 
   position: absolute;
-  top: 30%;
+  top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  @media (max-width: 768px) {
+    width: 220px;
+    top: 20%;
+  }
 `;
 
 const Footer = styled.footer`
