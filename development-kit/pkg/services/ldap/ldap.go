@@ -17,6 +17,7 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -29,7 +30,7 @@ type ILDAPService interface {
 	Connect() error
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
-	GetGroupsOfUser(username, userDN string) ([]string, error)
+	GetGroupsOfUser(username string) ([]string, error)
 }
 
 type ILdapClient interface {
@@ -188,7 +189,7 @@ func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequ
 		s.Base,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf(s.UserFilter, username),
-		[]string{"sAMAccountName", "uid", "mail", "memberOf"},
+		[]string{"sAMAccountName", "mail", "memberOf"},
 		nil,
 	)
 }
@@ -206,9 +207,9 @@ func (s *Service) validateSearchResult(searchResult *ldap.SearchResult) error {
 }
 
 func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string {
-	user := map[string]string{"dn": s.getDNBySearchResult(searchResult)}
+	user := map[string]string{}
 
-	for _, attr := range []string{"sAMAccountName", "uid", "mail"} {
+	for _, attr := range []string{"sAMAccountName", "mail"} {
 		if value := searchResult.Entries[0].GetAttributeValue(attr); value != "" {
 			user[attr] = value
 		} else {
@@ -219,7 +220,7 @@ func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string 
 	return user
 }
 
-func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
+func (s *Service) GetGroupsOfUser(username string) ([]string, error) {
 	if err := s.connectAndBind(); err != nil {
 		return nil, err
 	}
@@ -230,7 +231,7 @@ func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
 	}
 
 	groups := s.getGroupsBySearchResult(searchResult)
-	return groups, nil
+	return s.splitByWhitespaces(groups), nil
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
@@ -239,4 +240,34 @@ func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []str
 	}
 
 	return searchResult.Entries[0].GetAttributeValues("memberof")
+}
+
+func (s *Service) splitByWhitespaces(groups []string) []string {
+	if len(groups) > 1 {
+		return groups
+	}
+
+	var updatedGroups []string
+
+	for _, value := range groups {
+		for _, groupDN := range strings.Split(value, " ") {
+			updatedGroups = append(updatedGroups, s.getGroupNameByRegex(groupDN))
+		}
+	}
+
+	return updatedGroups
+}
+
+func (s *Service) getGroupNameByRegex(groupDN string) string {
+	const regex = "(CN=|cn=)([^,]+)"
+
+	regexCompile, err := regexp.Compile(regex)
+	if err != nil {
+		print(err)
+	}
+
+	groupCN := regexCompile.FindString(groupDN)
+	groupCN = strings.ReplaceAll(groupCN, "CN=", "")
+	groupCN = strings.ReplaceAll(groupCN, "cn=", "")
+	return groupCN
 }
