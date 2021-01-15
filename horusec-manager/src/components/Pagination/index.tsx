@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
@@ -38,6 +38,10 @@ const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
       onChange({ ...pagination, currentPage });
     }
   };
+
+  useEffect(() => {
+    console.log(pagination);
+  }, [pagination]);
 
   return (
     <Styled.Wrapper>

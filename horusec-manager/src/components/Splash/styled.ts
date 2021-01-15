@@ -53,10 +53,18 @@ const Logo = styled.img<Props>`
 
   transition: top ease 1.5s;
 
+  @media (max-width: 768px) {
+    width: 220px;
+  }
+
   ${({ isVisible }) =>
     !isVisible &&
     css`
-      top: 30%;
+      top: 25%;
+
+      @media (max-width: 768px) {
+        top: 20%;
+      }
     `};
 `;
 

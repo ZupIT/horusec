@@ -87,17 +87,22 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
   };
 
   const logout = (): Promise<void> => {
-    return new Promise((resolve) => {
-      getAuthenticator()
-        .logout()
-        .catch((err: any) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          clearLocalStorage();
-          resolve();
-        });
-    });
+    const authenticator = getAuthenticator();
+
+    if (authenticator) {
+      return new Promise((resolve) => {
+        getAuthenticator()
+          .logout()
+          .finally(() => {
+            resolve();
+            clearLocalStorage();
+            window.location.replace('/auth');
+          });
+      });
+    } else {
+      clearLocalStorage();
+      window.location.replace('/auth');
+    }
   };
 
   useEffect(() => {

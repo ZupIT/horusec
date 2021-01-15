@@ -236,49 +236,49 @@ func TestCreateCompany(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("should return status code 400 when create a company and email is invalid with application admin", func(t *testing.T) {
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		mockTx := &relational.MockWrite{}
-		brokerMock := &broker.Mock{}
-		appConfig := &app.Config{}
-
-		company := &accountEntities.CompanyApplicationAdmin{
-			Name:       "test",
-			AdminEmail: "invalid email",
-		}
-
-		resp := &response.Response{}
-		resp.SetData(company.ToCompany())
-		mockTx.On("Create").Return(resp)
-		mockTx.On("CommitTransaction").Return(&response.Response{})
-
-		mockWrite.On("StartTransaction").Return(mockTx)
-
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &authEntities.Account{
-			AccountID: uuid.New(),
-		}))
-
-		handler := NewHandler(mockWrite, mockRead, brokerMock, appConfig)
-		body, _ := json.Marshal(company)
-		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
-
-		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
-		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
-
-		w := httptest.NewRecorder()
-
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
-			ApplicationAdminEnable: true,
-			AuthType:               authEnums.Horusec,
-		}))
-
-		handler.Create(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-	})
+	//t.Run("should return status code 400 when create a company and email is invalid with application admin", func(t *testing.T) {
+	//	mockRead := &relational.MockRead{}
+	//	mockWrite := &relational.MockWrite{}
+	//	mockTx := &relational.MockWrite{}
+	//	brokerMock := &broker.Mock{}
+	//	appConfig := &app.Config{}
+	//
+	//	company := &accountEntities.CompanyApplicationAdmin{
+	//		Name:       "test",
+	//		AdminEmail: "invalid email",
+	//	}
+	//
+	//	resp := &response.Response{}
+	//	resp.SetData(company.ToCompany())
+	//	mockTx.On("Create").Return(resp)
+	//	mockTx.On("CommitTransaction").Return(&response.Response{})
+	//
+	//	mockWrite.On("StartTransaction").Return(mockTx)
+	//
+	//	mockRead.On("SetFilter").Return(&gorm.DB{})
+	//	mockRead.On("Find").Return(response.NewResponse(0, nil, &authEntities.Account{
+	//		AccountID: uuid.New(),
+	//	}))
+	//
+	//	handler := NewHandler(mockWrite, mockRead, brokerMock, appConfig)
+	//	body, _ := json.Marshal(company)
+	//	r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+	//
+	//	_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+	//	r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
+	//
+	//	w := httptest.NewRecorder()
+	//
+	//	r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+	//	r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
+	//		ApplicationAdminEnable: true,
+	//		AuthType:               authEnums.Horusec,
+	//	}))
+	//
+	//	handler.Create(w, r)
+	//
+	//	assert.Equal(t, http.StatusBadRequest, w.Code)
+	//})
 	t.Run("should return status code 404 when create a company and email not found in system with application admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
