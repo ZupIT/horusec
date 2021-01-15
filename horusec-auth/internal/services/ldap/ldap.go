@@ -74,17 +74,17 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 }
 
 func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
-	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
+	tokenGroups, err := s.getUserGroupsByJWT(authzData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	authzGroups, err := s.getAuthzGroupsName(authzData)
+	horusecGroups, err := s.getAuthzGroupsName(authzData)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups, authzGroups)
+	return s.checkIsAuthorized(tokenGroups, horusecGroups)
 }
 
 func (s *Service) isApplicationAdmin(userGroups []string) bool {
@@ -97,12 +97,12 @@ func (s *Service) isApplicationAdmin(userGroups []string) bool {
 	return isApplicationAdmin
 }
 
-func (s *Service) getUserGroupsInLdap(username, userDN string) ([]string, error) {
+func (s *Service) getUserGroupsInLdap(userDN string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
-		return s.client.GetGroupsOfUser(username, userDN)
+		return s.client.GetGroupsOfUser(userDN)
 	}
 
-	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
+	userGroups, err, _ := s.memo.Memoize(userDN, memoizedGetUserGroups)
 	logger.LogInfo("{getUserGroups} found ldap groups -> ", userGroups)
 	if err != nil {
 		return []string{}, err
@@ -120,7 +120,7 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 }
 
 func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN string) (*dto.LdapAuthResponse, error) {
-	userGroups, err := s.getUserGroupsInLdap(account.Username, userDN)
+	userGroups, err := s.getUserGroupsInLdap(userDN)
 	if err != nil {
 		return nil, err
 	}
@@ -136,11 +136,11 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN stri
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
-	account, err := s.accountRepo.GetByUsername(s.pickOne(data, "sAMAccountName", "uid"))
+	account, err := s.accountRepo.GetByUsername(data["sAMAccountName"])
 	if account == nil || err != nil {
 		account = &authEntities.Account{
-			Email:    s.pickOne(data, "mail", "uid"),
-			Username: s.pickOne(data, "sAMAccountName", "uid"),
+			Email:    s.pickOne(data, "mail", "sAMAccountName"),
+			Username: data["sAMAccountName"],
 		}
 
 		if err := s.accountRepo.Create(account.SetAccountData()); err != nil {
@@ -188,9 +188,9 @@ func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *dto.Authoriza
 	return append(repositoryAuthz, companyAuthzAdmin...), nil
 }
 
-func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
-	for _, userGroup := range userGroups {
-		if s.contains(groups, userGroup) {
+func (s *Service) checkIsAuthorized(tokenGroups, horusecGroups []string) (bool, error) {
+	for _, tokenGroup := range tokenGroups {
+		if s.contains(horusecGroups, tokenGroup) {
 			return true, nil
 		}
 	}
@@ -265,9 +265,9 @@ func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 	return token.Permissions, nil
 }
 
-func (s *Service) contains(groups []string, userGroup string) bool {
-	for _, group := range groups {
-		if strings.TrimSpace(group) == userGroup {
+func (s *Service) contains(horusecGroups []string, tokenGroup string) bool {
+	for _, horusecGroup := range horusecGroups {
+		if strings.TrimSpace(horusecGroup) == tokenGroup {
 			return true
 		}
 	}

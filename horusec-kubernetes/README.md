@@ -66,7 +66,7 @@ When you run analysis you receive this example of output
 To add new rules it is necessary to understand the structure of this CLI. When we start the CLI we use a base called [cli_standard](/development-kit/pkg/cli_standard) its goal is to have the initial commands and call the controller to the CLI in this example is the package [analysis](/development-kit/pkg/engines/kubernetes/analysis), this package will call its [rules](/development-kit/pkg/engines/kubernetes/analysis) which in turn triggers all the rules that it considers necessary for this CLI.
 ### Rules
 The rules added in horusec-kubernetes are grouped in two places in this project which are::
-* Rules specific to [yaml files](/development-kit/pkg/enums/engine/advisories/kubernetes)
+* Rules specific to [yaml files](/ development-kit/pkg/engines/kubernetes)
 
 All rules follow a flow subdivided between the types:
 * `And`
@@ -77,7 +77,7 @@ All rules follow a flow subdivided between the types:
     * The purpose of these rules would be `if any rules exist in the analyzed file and have exactly what is expected, it will be charged`  
 
 ### Example adding more rules in kubernetes cli
-To exemplify the process of how to add a new rule is quite simple. First you must create a new constructor with a very descriptive name in the file you want and started with the text `NewKubernetes + TypeRule + Name` example `NewKubernetesAndCapabilitySystemAdmin`, this new constructor will return a [text.TextRule](https://github.com/ZupIT/horusec-engine/text), then you will return it and add the new constructor to the list of rules that will be executed in the file [kubernetes.yaml](/development-kit/pkg/enums/engine/advisories/kubernetes/kubernetes.yaml).
+To exemplify the process of how to add a new rule is quite simple. First you must create a new constructor with a very descriptive name in the file you want and started with the text `NewKubernetes + TypeRule + Name` example `NewKubernetesAndCapabilitySystemAdmin`, this new constructor will return a [text.TextRule](https://github.com/ZupIT/horusec-engine/text), then you will return it and add the new constructor to the list of rules that will be executed in the file [kubernetes.yaml](/ development-kit/pkg/engines/kubernetes/kubernetes.yaml).
 
 In this builder's content add:
 ```text
@@ -126,4 +126,4 @@ func AllRulesKubernetesAnd() []text.TextRule {
 ...
 ```
 
-Finally check if all tests have passed and if possible add a unit test within [kubernetes_test.go](/development-kit/pkg/enums/engine/advisories/kubernetes/kubernetes_test.go) exemplifying the scenario that this new rule would apply.
+Finally check if all tests have passed and if possible add a unit test within [kubernetes_test.go](/ development-kit/pkg/engines/kubernetes/kubernetes_test.go) exemplifying the scenario that this new rule would apply.
