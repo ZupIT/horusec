@@ -34,6 +34,7 @@ const (
 	TfSec             Tool = "TfSec"
 	Semgrep           Tool = "Semgrep"
 	HorusecCsharp     Tool = "HorusecCsharp"
+	HorusecDart       Tool = "HorusecDart"
 	HorusecKubernetes Tool = "HorusecKubernetes"
 	Eslint            Tool = "Eslint"
 	HorusecNodejs     Tool = "HorusecNodeJS"

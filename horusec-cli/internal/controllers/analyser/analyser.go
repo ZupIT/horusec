@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	hrousecdart "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dart/horusecdart"
 	"log"
 	"os"
 	"os/signal"
@@ -205,6 +206,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Yaml:       a.detectVulnerabilityYaml,
 		languages.C:          a.detectVulnerabilityC,
 		languages.PHP:        a.detectVulnerabilityPHP,
+		languages.Dart:       a.detectVulnerabilityDart,
 	}
 }
 
@@ -282,6 +284,11 @@ func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go hrousecdart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {

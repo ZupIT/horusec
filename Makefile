@@ -13,7 +13,7 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 88 "./development-kit"
+	deployments/scripts/coverage.sh 87 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-api"
@@ -53,6 +53,9 @@ coverage-horusec-kubernetes:
 coverage-horusec-nodejs:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-nodejs"
+coverage-horusec-dart:
+	chmod +x deployments/scripts/coverage.sh
+	deployments/scripts/coverage.sh 99 "./horusec-dart"
 # Check lint of project setup on file .golangci.yml
 lint:
     ifeq ($(wildcard $(GOCILINT)), $(GOCILINT))
@@ -212,6 +215,12 @@ build-install-nodejs-cli:
 	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
 	horusec-nodejs version
+
+build-install-dart-cli:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-dart" &> /dev/null
+	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-dart" ./horusec-dart/cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-dart"
+	horusec-dart version
 
 # ========================================================================================= #
 

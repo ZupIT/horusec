@@ -22,7 +22,6 @@ import (
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -262,9 +261,6 @@ func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchReque
 		[]string{"cn"},
 		nil,
 	)
-
-	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
-	return ldapSearchRequest
 }
 
 func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
