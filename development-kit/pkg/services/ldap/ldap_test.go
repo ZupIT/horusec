@@ -246,7 +246,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test", "test")
+		groups, err := service.GetGroupsOfUser("test")
 
 		assert.NotEmpty(t, groups)
 		assert.NoError(t, err)
@@ -264,7 +264,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test", "test")
+		groups, err := service.GetGroupsOfUser("test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)
@@ -281,7 +281,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 			Conn:         ldapMock,
 		}
 
-		groups, err := service.GetGroupsOfUser("test", "test")
+		groups, err := service.GetGroupsOfUser("test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)
@@ -290,7 +290,7 @@ func TestGetGroupsOfUser(t *testing.T) {
 	t.Run("should return error while connecting", func(t *testing.T) {
 		service := Service{}
 
-		groups, err := service.GetGroupsOfUser("test", "test")
+		groups, err := service.GetGroupsOfUser("test")
 
 		assert.Nil(t, groups)
 		assert.Error(t, err)
