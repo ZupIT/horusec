@@ -28,7 +28,7 @@ func (m *Mock) Authenticate(username, password string) (bool, map[string]string,
 	return args.Bool(0), args.Get(1).(map[string]string), mockUtils.ReturnNilOrError(args, 2)
 }
 
-func (m *Mock) GetGroupsOfUser(username, userDN string) ([]string, error) {
+func (m *Mock) GetGroupsOfUser(userDN string) ([]string, error) {
 	args := m.MethodCalled("GetGroupsOfUser")
 	return args.Get(0).([]string), mockUtils.ReturnNilOrError(args, 1)
 }

@@ -97,12 +97,12 @@ func (s *Service) isApplicationAdmin(userGroups []string) bool {
 	return isApplicationAdmin
 }
 
-func (s *Service) getUserGroupsInLdap(username, userDN string) ([]string, error) {
+func (s *Service) getUserGroupsInLdap(userDN string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
-		return s.client.GetGroupsOfUser(username, userDN)
+		return s.client.GetGroupsOfUser(userDN)
 	}
 
-	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
+	userGroups, err, _ := s.memo.Memoize(userDN, memoizedGetUserGroups)
 	logger.LogInfo("{getUserGroups} found ldap groups -> ", userGroups)
 	if err != nil {
 		return []string{}, err
@@ -120,7 +120,7 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 }
 
 func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN string) (*dto.LdapAuthResponse, error) {
-	userGroups, err := s.getUserGroupsInLdap(account.Username, userDN)
+	userGroups, err := s.getUserGroupsInLdap(userDN)
 	if err != nil {
 		return nil, err
 	}
@@ -136,11 +136,11 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN stri
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
-	account, err := s.accountRepo.GetByUsername(s.pickOne(data, "sAMAccountName", "uid"))
+	account, err := s.accountRepo.GetByUsername(data["sAMAccountName"])
 	if account == nil || err != nil {
 		account = &authEntities.Account{
-			Email:    s.pickOne(data, "mail", "uid"),
-			Username: s.pickOne(data, "sAMAccountName", "uid"),
+			Email:    s.pickOne(data, "mail", "sAMAccountName"),
+			Username: data["sAMAccountName"],
 		}
 
 		if err := s.accountRepo.Create(account.SetAccountData()); err != nil {

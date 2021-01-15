@@ -22,7 +22,6 @@ import (
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -30,7 +29,7 @@ type ILDAPService interface {
 	Connect() error
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
-	GetGroupsOfUser(username, userDN string) ([]string, error)
+	GetGroupsOfUser(userDN string) ([]string, error)
 }
 
 type ILdapClient interface {
@@ -189,7 +188,7 @@ func (s *Service) newSearchRequestByUserFilter(username string) *ldap.SearchRequ
 		s.Base,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf(s.UserFilter, username),
-		[]string{"sAMAccountName", "uid", "mail", "memberOf"},
+		[]string{"sAMAccountName", "mail"},
 		nil,
 	)
 }
@@ -209,7 +208,7 @@ func (s *Service) validateSearchResult(searchResult *ldap.SearchResult) error {
 func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string {
 	user := map[string]string{"dn": s.getDNBySearchResult(searchResult)}
 
-	for _, attr := range []string{"sAMAccountName", "uid", "mail"} {
+	for _, attr := range []string{"sAMAccountName", "mail"} {
 		if value := searchResult.Entries[0].GetAttributeValue(attr); value != "" {
 			user[attr] = value
 		} else {
@@ -220,22 +219,12 @@ func (s *Service) createUser(searchResult *ldap.SearchResult) map[string]string 
 	return user
 }
 
-func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
+func (s *Service) GetGroupsOfUser(userDN string) ([]string, error) {
 	if err := s.connectAndBind(); err != nil {
 		return nil, err
 	}
 
-	searchResult, err := s.Conn.Search(s.newSearchRequestByUserFilter(username))
-	if err != nil {
-		return nil, err
-	}
-
-	groups := s.getGroupsBySearchResult(searchResult)
-	if len(groups) == 0 {
-		return s.getGroupsByDN(userDN)
-	}
-
-	return groups, nil
+	return s.getGroupsByDN(userDN)
 }
 
 func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
@@ -247,13 +236,6 @@ func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
 	return s.getGroupsNames(searchResult), nil
 }
 
-func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
-	if value := searchResult.Entries[0].GetAttributeValues("memberOf"); len(value) > 0 {
-		return value
-	}
-	return searchResult.Entries[0].GetAttributeValues("memberof")
-}
-
 func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchRequest {
 	return ldap.NewSearchRequest(
 		s.Base,
@@ -262,9 +244,6 @@ func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchReque
 		[]string{"cn"},
 		nil,
 	)
-
-	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
-	return ldapSearchRequest
 }
 
 func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
