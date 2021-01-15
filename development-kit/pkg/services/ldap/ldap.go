@@ -22,7 +22,6 @@ import (
 
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -231,48 +230,13 @@ func (s *Service) GetGroupsOfUser(username, userDN string) ([]string, error) {
 	}
 
 	groups := s.getGroupsBySearchResult(searchResult)
-	if len(groups) == 0 {
-		return s.getGroupsByDN(userDN)
-	}
-
 	return groups, nil
-}
-
-func (s *Service) getGroupsByDN(userDN string) ([]string, error) {
-	searchResult, err := s.Conn.Search(s.newSearchRequestByGroupMember(userDN))
-	if err != nil {
-		return nil, err
-	}
-
-	return s.getGroupsNames(searchResult), nil
 }
 
 func (s *Service) getGroupsBySearchResult(searchResult *ldap.SearchResult) []string {
 	if value := searchResult.Entries[0].GetAttributeValues("memberOf"); len(value) > 0 {
 		return value
 	}
+
 	return searchResult.Entries[0].GetAttributeValues("memberof")
-}
-
-func (s *Service) newSearchRequestByGroupMember(userDN string) *ldap.SearchRequest {
-	return ldap.NewSearchRequest(
-		s.Base,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf("(member=%s)", userDN),
-		[]string{"cn"},
-		nil,
-	)
-
-	logger.LogInfo("{newSearchRequestByGroupFilter} ldap search request -> ", ldapSearchRequest.Filter)
-	return ldapSearchRequest
-}
-
-func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
-	var groups []string
-
-	for _, entry := range searchResult.Entries {
-		groups = append(groups, entry.GetAttributeValue("cn"))
-	}
-
-	return groups
 }
