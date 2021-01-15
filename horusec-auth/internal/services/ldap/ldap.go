@@ -74,17 +74,17 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 }
 
 func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
-	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
+	tokenGroups, err := s.getUserGroupsByJWT(authzData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	authzGroups, err := s.getAuthzGroupsName(authzData)
+	horusecGroups, err := s.getAuthzGroupsName(authzData)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups, authzGroups)
+	return s.checkIsAuthorized(tokenGroups, horusecGroups)
 }
 
 func (s *Service) isApplicationAdmin(userGroups []string) bool {
@@ -188,9 +188,9 @@ func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *dto.Authoriza
 	return append(repositoryAuthz, companyAuthzAdmin...), nil
 }
 
-func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
-	for _, userGroup := range userGroups {
-		if s.contains(groups, userGroup) {
+func (s *Service) checkIsAuthorized(tokenGroups, horusecGroups []string) (bool, error) {
+	for _, tokenGroup := range tokenGroups {
+		if s.contains(horusecGroups, tokenGroup) {
 			return true, nil
 		}
 	}
@@ -265,9 +265,9 @@ func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 	return token.Permissions, nil
 }
 
-func (s *Service) contains(groups []string, userGroup string) bool {
-	for _, group := range groups {
-		if strings.TrimSpace(group) == userGroup {
+func (s *Service) contains(horusecGroups []string, tokenGroup string) bool {
+	for _, horusecGroup := range horusecGroups {
+		if strings.TrimSpace(horusecGroup) == tokenGroup {
 			return true
 		}
 	}
