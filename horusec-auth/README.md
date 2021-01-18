@@ -46,18 +46,16 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_KEYCLOAK_CLIENT_SECRET      |                                                                   | This environment get keycloak client secret                  | 
 | HORUSEC_KEYCLOAK_REALM              |                                                                   | This environment get keycloak realm                          |
 | HORUSEC_KEYCLOAK_OTP                |                                                                   | This environment get keycloak otp(one-time password)         | 
-| HORUSEC_LDAP_BASE                   |                                                                   | This environment get ldap base | 
 | HORUSEC_LDAP_HOST                   |                                                                   | This environment get ldap host | 
-| HORUSEC_LDAP_PORT                   | 389                                                               | This environment get ldap port | 
-| HORUSEC_LDAP_USESSL                 | false                                                             | This environment check ldap use ssl | 
-| HORUSEC_LDAP_SKIP_TLS               | true                                                              | This environment check ldap skip tls | 
-| HORUSEC_LDAP_INSECURE_SKIP_VERIFY   | true                                                              | This environment check ldap insecure skip verify | 
+| HORUSEC_LDAP_PORT                   | 389                                                               | This environment get ldap port |
+| HORUSEC_LDAP_BASE                   |                                                                   | This environment get ldap base | 
 | HORUSEC_LDAP_BINDDN                 |                                                                   | This environment get ldap entity admin | 
 | HORUSEC_LDAP_BINDPASSWORD           |                                                                   | This environment get ldap password entity admin | 
 | HORUSEC_LDAP_USERFILTER             |                                                                   | This environment get ldap user filter | 
-| HORUSEC_LDAP_GROUPFILTER            |                                                                   | This environment get ldap group filter | 
-| HORUSEC_LDAP_GROUPFILTER_ATTRIBUTE  |                                                                   | This environment get ldap group filter attribute used to make the comparison |
-| HORUSEC_LDAP_ADMIN_GROUP            |                                                                   | This environment get ldap admin group names | 
+| HORUSEC_LDAP_ADMIN_GROUP            |                                                                   | This environment get ldap admin group names |
+| HORUSEC_LDAP_USESSL                 | false                                                             | This environment check ldap use ssl | 
+| HORUSEC_LDAP_SKIP_TLS               | true                                                              | This environment check ldap skip tls | 
+| HORUSEC_LDAP_INSECURE_SKIP_VERIFY   | true                                                              | This environment check ldap insecure skip verify |
 | HORUSEC_GRPC_PORT                   | 8007                                                              | This environment get grpc port                               | 
 | HORUSEC_GRPC_USE_CERTS              | false                                                             | This environment get if use of certificates is active or not |
 | HORUSEC_GRPC_CERT_PATH              |                                                                   | This environment get grpc certificate path                   | 
