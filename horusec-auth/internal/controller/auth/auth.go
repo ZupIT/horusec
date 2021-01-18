@@ -17,7 +17,9 @@ package auth
 import (
 	"context"
 	"fmt"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	accountDTO "github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
@@ -37,7 +39,7 @@ type IController interface {
 	AuthByType(credentials *dto.Credentials) (interface{}, error)
 	IsAuthorized(_ context.Context, data *authGrpc.IsAuthorizedData) (*authGrpc.IsAuthorizedResponse, error)
 	GetAuthConfig(_ context.Context, data *authGrpc.GetAuthConfigData) (*authGrpc.GetAuthConfigResponse, error)
-	GetAccountID(_ context.Context, data *authGrpc.GetAccountIDData) (*authGrpc.GetAccountIDResponse, error)
+	GetAccountID(_ context.Context, data *authGrpc.GetAccountData) (*authGrpc.GetAccountDataResponse, error)
 }
 
 type Controller struct {
@@ -132,7 +134,7 @@ func (c *Controller) getAuthorizationType() authEnums.AuthorizationType {
 }
 
 func (c *Controller) GetAccountID(_ context.Context,
-	data *authGrpc.GetAccountIDData) (*authGrpc.GetAccountIDResponse, error) {
+	data *authGrpc.GetAccountData) (*authGrpc.GetAccountDataResponse, error) {
 	c.logGrpcRequest("GetAccountID")
 	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
@@ -140,20 +142,33 @@ func (c *Controller) GetAccountID(_ context.Context,
 	case authEnums.Keycloak:
 		return c.setGetAccountIDResponse(c.keycloak.GetAccountIDByJWTToken(data.Token))
 	case authEnums.Ldap:
-		return c.setGetAccountIDResponse(jwt.GetAccountIDByJWTToken(data.Token))
+		return c.setGetAccountIDResponseLdap(jwt.DecodeToken(data.Token))
 	}
 
 	return c.setGetAccountIDResponse(uuid.Nil, errors.ErrorUnauthorized)
 }
 
-func (c *Controller) setGetAccountIDResponse(accountID uuid.UUID, err error) (*authGrpc.GetAccountIDResponse, error) {
+func (c *Controller) setGetAccountIDResponse(accountID uuid.UUID, err error) (*authGrpc.GetAccountDataResponse, error) {
 	if err != nil {
 		logger.LogError(errors.ErrorFailedToGetAccountID, err)
-		return &authGrpc.GetAccountIDResponse{}, err
+		return &authGrpc.GetAccountDataResponse{}, err
 	}
 
-	return &authGrpc.GetAccountIDResponse{
+	return &authGrpc.GetAccountDataResponse{
 		AccountID: accountID.String(),
+	}, nil
+}
+
+func (c *Controller) setGetAccountIDResponseLdap(claimsJTW *accountDTO.ClaimsJWT,
+	err error) (*authGrpc.GetAccountDataResponse, error) {
+	if err != nil {
+		logger.LogError(errors.ErrorFailedToGetAccountID, err)
+		return &authGrpc.GetAccountDataResponse{}, err
+	}
+
+	return &authGrpc.GetAccountDataResponse{
+		AccountID:   claimsJTW.Subject,
+		Permissions: claimsJTW.Permissions,
 	}, nil
 }
 

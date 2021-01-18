@@ -16,12 +16,13 @@ package companies
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	"testing"
-	"time"
 
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 
@@ -49,7 +50,7 @@ func TestMock(t *testing.T) {
 		_, _ = mock.Create(uuid.New(), &accountEntities.Company{})
 		_, _ = mock.Update(uuid.New(), &accountEntities.Company{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
-		_, _ = mock.List(uuid.New())
+		_, _ = mock.List(uuid.New(), []string{}, "")
 		_ = mock.UpdateAccountCompany(&roles.AccountCompany{})
 		_ = mock.InviteUser(&dto.InviteUser{})
 		_ = mock.Delete(uuid.New())
@@ -266,7 +267,7 @@ func TestList(t *testing.T) {
 			repoCompany: companyRepoMock,
 		}
 
-		repositories, err := controller.List(uuid.New())
+		repositories, err := controller.List(uuid.New(), []string{}, "")
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
 	})

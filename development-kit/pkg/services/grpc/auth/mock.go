@@ -16,6 +16,7 @@ package auth
 
 import (
 	"context"
+
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
@@ -32,9 +33,9 @@ func (m *Mock) IsAuthorized(
 }
 
 func (m *Mock) GetAccountID(
-	ctx context.Context, in *GetAccountIDData, opts ...grpc.CallOption) (*GetAccountIDResponse, error) {
+	ctx context.Context, in *GetAccountData, opts ...grpc.CallOption) (*GetAccountDataResponse, error) {
 	args := m.MethodCalled("GetAccountID")
-	return args.Get(0).(*GetAccountIDResponse), mockUtils.ReturnNilOrError(args, 1)
+	return args.Get(0).(*GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
 func (m *Mock) GetAuthConfig(

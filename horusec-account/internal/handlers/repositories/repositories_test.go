@@ -744,7 +744,7 @@ func TestList(t *testing.T) {
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -794,7 +794,7 @@ func TestList(t *testing.T) {
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})

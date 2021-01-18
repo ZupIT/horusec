@@ -25,6 +25,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
@@ -38,7 +39,7 @@ type IController interface {
 	Create(accountID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
 	Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
 	Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error)
-	List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
+	List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error)
 	UpdateAccountCompany(role *roles.AccountCompany) error
 	InviteUser(inviteUser *dto.InviteUser) error
 	Delete(companyID uuid.UUID) error
@@ -110,7 +111,11 @@ func (c *Controller) Get(companyID, accountID uuid.UUID) (*accountEntities.Compa
 	return company.ToCompanyResponse(accountCompany.Role), nil
 }
 
-func (c *Controller) List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+func (c *Controller) List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap {
+		return c.repoCompany.GetAllOfAccountLdap(permissions)
+	}
+
 	return c.repoCompany.GetAllOfAccount(accountID)
 }
 
@@ -181,5 +186,6 @@ func (c *Controller) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
+
 	return account.AccountID, nil
 }

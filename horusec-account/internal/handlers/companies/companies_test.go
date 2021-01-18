@@ -81,7 +81,7 @@ func TestCreateCompany(t *testing.T) {
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
 		w := httptest.NewRecorder()
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 			ApplicationAdminEnable: false,
 			AuthType:               authEnums.Horusec,
@@ -124,7 +124,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 			ApplicationAdminEnable: true,
 			AuthType:               authEnums.Horusec,
@@ -168,7 +168,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, "wrong content"))
 
 		handler.Create(w, r)
@@ -257,7 +257,7 @@ func TestCreateCompany(t *testing.T) {
 	//
 	//	mockRead.On("SetFilter").Return(&gorm.DB{})
 	//	mockRead.On("Find").Return(response.NewResponse(0, nil, &authEntities.Account{
-	//		AccountID: uuid.New(),
+	//		AccountData: uuid.New(),
 	//	}))
 	//
 	//	handler := NewHandler(mockWrite, mockRead, brokerMock, appConfig)
@@ -269,7 +269,7 @@ func TestCreateCompany(t *testing.T) {
 	//
 	//	w := httptest.NewRecorder()
 	//
-	//	r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+	//	r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 	//	r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 	//		ApplicationAdminEnable: true,
 	//		AuthType:               authEnums.Horusec,
@@ -310,7 +310,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 			ApplicationAdminEnable: true,
 			AuthType:               authEnums.Horusec,
@@ -350,7 +350,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 			ApplicationAdminEnable: true,
 			AuthType:               authEnums.Horusec,
@@ -385,7 +385,7 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String()))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String()))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.ConfigAuth, authEntities.ConfigAuth{
 			ApplicationAdminEnable: false,
 			AuthType:               authEnums.Horusec,
@@ -512,7 +512,7 @@ func TestList(t *testing.T) {
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -547,7 +547,7 @@ func TestList(t *testing.T) {
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

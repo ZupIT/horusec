@@ -16,20 +16,19 @@ package repositories
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	netHttp "net/http"
-
-	"github.com/ZupIT/horusec/horusec-account/config/app"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
 	"github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 	"github.com/go-chi/chi"
@@ -68,7 +67,7 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
 	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
 	if err != nil {
 		h.checkCreateRepositoryErrors(w, err)
@@ -157,7 +156,7 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
 	repository, err := h.controller.Get(repositoryID, accountID)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
@@ -216,7 +215,7 @@ func (h *Handler) getCompanyIDAndAccountIDToList(r *netHttp.Request) (uuid.UUID,
 	if err != nil || companyID == uuid.Nil {
 		return uuid.Nil, uuid.Nil, errorsEnum.ErrorInvalidCompanyID
 	}
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
 	return companyID, accountID, err
 }
 

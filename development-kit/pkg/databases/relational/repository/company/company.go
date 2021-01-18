@@ -16,10 +16,10 @@ package company
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/google/uuid"
 )
 
@@ -30,6 +30,7 @@ type ICompanyRepository interface {
 	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
+	GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error)
 }
 
 type Repository struct {
@@ -124,4 +125,20 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 
 	response := r.databaseRead.RawSQL(query, accounts)
 	return accounts, response.GetError()
+}
+
+func (r *Repository) GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	companies := &[]accountEntities.CompanyResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select(
+			"comp.company_id, comp.name, comp.description, comp.authz_admin, comp.authz_member,"+
+				" comp.created_at, comp.updated_at",
+		).
+		Table("companies AS comp").
+		Where("comp.authz_admin IN (?) OR comp.authz_member IN (?)", permissions, permissions).
+		Find(&companies)
+
+	return companies, query.Error
 }
