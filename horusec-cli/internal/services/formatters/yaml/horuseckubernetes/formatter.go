@@ -65,5 +65,5 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 	}
 
 	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecKubernetes)...)
-	return engine.Run(textUnit, allRules), nil
+	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, 200), nil
 }
