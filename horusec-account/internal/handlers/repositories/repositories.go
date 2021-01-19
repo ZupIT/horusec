@@ -15,6 +15,7 @@
 package repositories
 
 import (
+	"encoding/json"
 	netHttp "net/http"
 
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
@@ -68,8 +69,8 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := h.getAccountID(r)
-	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
+	accountID, permissions := h.getAccountData(r)
+	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID), permissions)
 	if err != nil {
 		h.checkCreateRepositoryErrors(w, err)
 		return
@@ -79,7 +80,7 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 }
 
 func (h *Handler) checkCreateRepositoryErrors(w netHttp.ResponseWriter, err error) {
-	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse {
+	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse || err == errorsEnum.ErrorInvalidLdapGroup {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
@@ -157,7 +158,7 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := h.getAccountID(r)
+	accountID, _ := h.getAccountData(r)
 	repository, err := h.controller.Get(repositoryID, accountID)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
@@ -429,7 +430,13 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	return removeUser.SetAccountAndRepositoryID(accountID, repositoryID), nil
 }
 
-func (h *Handler) getAccountID(r *netHttp.Request) (uuid.UUID, error) {
-	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
-	return uuid.Parse(accountData.AccountID)
+func (h *Handler) getAccountData(r *netHttp.Request) (uuid.UUID, []string) {
+	response := &authGrpc.GetAccountDataResponse{}
+
+	accountData := r.Context().Value(authEnums.AccountData)
+	bytes, _ := json.Marshal(accountData)
+	_ = json.Unmarshal(bytes, &response)
+	accountID, _ := uuid.Parse(response.AccountID)
+
+	return accountID, response.Permissions
 }

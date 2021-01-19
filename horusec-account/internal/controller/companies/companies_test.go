@@ -46,7 +46,7 @@ func TestMock(t *testing.T) {
 		mock.On("Delete").Return(nil)
 		mock.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
 		mock.On("RemoveUser").Return(nil)
-		_, _ = mock.Create(uuid.New(), &accountEntities.Company{})
+		_, _ = mock.Create(uuid.New(), &accountEntities.Company{}, []string{})
 		_, _ = mock.Update(uuid.New(), &accountEntities.Company{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
 		_, _ = mock.List(uuid.New(), []string{})
@@ -88,7 +88,7 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockTx)
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 		assert.NoError(t, err)
 		assert.NotNil(t, newCompany)
 		mockTx.AssertCalled(t, "CommitTransaction")
@@ -118,7 +118,7 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockTx)
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 
 		assert.Error(t, err, "test")
 		assert.Nil(t, newCompany)
@@ -141,7 +141,7 @@ func TestCreateCompany(t *testing.T) {
 			Name: "test",
 		}
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 
 		assert.Error(t, err, "test")
 		assert.Nil(t, newCompany)

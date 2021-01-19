@@ -49,7 +49,7 @@ func TestMock(t *testing.T) {
 		mock.On("Delete").Return(nil)
 		mock.On("GetAllAccountsInRepository").Return(&[]roles.AccountRole{}, nil)
 		mock.On("RemoveUser").Return(nil)
-		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{})
+		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		_, _ = mock.Update(uuid.New(), &accountEntities.Repository{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
 		_, _ = mock.List(uuid.New(), uuid.New(), []string{})
@@ -79,7 +79,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.NoError(t, err)
 	})
 
@@ -100,7 +100,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -124,7 +124,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -155,7 +155,7 @@ func TestCreate(t *testing.T) {
 			AuthzAdmin:      "",
 			AuthzMember:     "",
 			AuthzSupervisor: "",
-		})
+		}, []string{})
 		assert.NoError(t, err)
 		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
 		assert.Equal(t, createdRepo.AuthzMember, "member")

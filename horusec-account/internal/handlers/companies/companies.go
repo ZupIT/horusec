@@ -15,6 +15,7 @@
 package companies
 
 import (
+	"encoding/json"
 	netHttp "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -65,22 +66,31 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 // @Router /api/companies [post]
 // @Security ApiKeyAuth
 func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
-	company, accountID, err := h.factoryGetCreateData(w, r)
+	company, accountID, permissions, err := h.factoryGetCreateData(w, r)
 	if err != nil {
 		return
 	}
 
-	newRepo, err := h.companyController.Create(accountID, company)
+	newRepo, err := h.companyController.Create(accountID, company, permissions)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkCreateErrors(err, w)
 		return
 	}
 
 	httpUtil.StatusCreated(w, newRepo)
 }
 
+func (h *Handler) checkCreateErrors(err error, w netHttp.ResponseWriter) {
+	if err == errorsEnum.ErrorInvalidLdapGroup {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
 func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter,
-	r *netHttp.Request) (*account.Company, uuid.UUID, error) {
+	r *netHttp.Request) (*account.Company, uuid.UUID, []string, error) {
 	if h.appConfig.IsApplicationAdminEnable() {
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
@@ -89,36 +99,37 @@ func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter,
 }
 
 func (h *Handler) getCreateDataDefault(w netHttp.ResponseWriter, r *netHttp.Request) (
-	*account.Company, uuid.UUID, error) {
+	*account.Company, uuid.UUID, []string, error) {
 	company, err := h.companyUseCases.NewCompanyFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
-	accountID, err := h.getAccountID(r)
+	accountData, err := h.getAccountData(r)
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
-	return company, accountID, nil
+	accountID, _ := uuid.Parse(accountData.AccountID)
+	return company, accountID, accountData.Permissions, nil
 }
 
 func (h *Handler) getCreateDataApplicationAdmin(
-	w netHttp.ResponseWriter, r *netHttp.Request) (*account.Company, uuid.UUID, error) {
+	w netHttp.ResponseWriter, r *netHttp.Request) (*account.Company, uuid.UUID, []string, error) {
 	company, err := h.companyUseCases.NewCompanyApplicationAdminFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
 	accountID, err := h.getAccountIDByEmail(w, company.AdminEmail)
 	if err != nil {
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
-	return company.ToCompany(), accountID, nil
+	return company.ToCompany(), accountID, nil, nil
 }
 
 func (h *Handler) getAccountIDByEmail(w netHttp.ResponseWriter, email string) (uuid.UUID, error) {
@@ -176,7 +187,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Security ApiKeyAuth
 func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
-	accountID, _ := h.getAccountID(r)
+	accountData, _ := h.getAccountData(r)
+	accountID, _ := uuid.Parse(accountData.AccountID)
 	if company, err := h.companyController.Get(companyID, accountID); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
@@ -427,7 +439,8 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	return removeUser.SetAccountAndCompanyID(accountID, companyID), nil
 }
 
-func (h *Handler) getAccountID(r *netHttp.Request) (uuid.UUID, error) {
-	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
-	return uuid.Parse(accountData.AccountID)
+func (h *Handler) getAccountData(r *netHttp.Request) (response *authGrpc.GetAccountDataResponse, err error) {
+	accountData := r.Context().Value(authEnums.AccountData)
+	bytes, _ := json.Marshal(accountData)
+	return response, json.Unmarshal(bytes, &response)
 }

@@ -152,7 +152,7 @@ func TestCreateCompany(t *testing.T) {
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+"123")
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: "test", Permissions: []string{}}))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, "test"))
 		w := httptest.NewRecorder()
 
 		handler.Create(w, r)

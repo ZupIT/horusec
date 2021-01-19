@@ -16,8 +16,10 @@ package company
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io"
+	"strings"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 )
@@ -26,6 +28,7 @@ type ICompany interface {
 	NewAccountCompanyFromReadCLoser(body io.ReadCloser) (accountCompany *roles.AccountCompany, err error)
 	NewCompanyFromReadCloser(body io.ReadCloser) (company *accountEntities.Company, err error)
 	NewCompanyApplicationAdminFromReadCloser(body io.ReadCloser) (*accountEntities.CompanyApplicationAdmin, error)
+	IsInvalidLdapGroup(companyAdminAuthz string, permissions []string) bool
 }
 
 type Company struct {
@@ -65,4 +68,22 @@ func (c *Company) NewCompanyFromReadCloser(body io.ReadCloser) (company *account
 	}
 
 	return company, company.Validate()
+}
+
+func (c *Company) IsInvalidLdapGroup(companyAdminAuthz string, permissions []string) bool {
+	companyGroups := strings.Split(companyAdminAuthz, ",")
+
+	for _, companyGroup := range companyGroups {
+		if companyGroup == "" {
+			continue
+		}
+
+		for _, permission := range permissions {
+			if companyGroup == permission {
+				return false
+			}
+		}
+	}
+
+	return true
 }

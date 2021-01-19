@@ -27,7 +27,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Company, permissions []string) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }

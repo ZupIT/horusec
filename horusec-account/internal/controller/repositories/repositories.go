@@ -37,7 +37,8 @@ import (
 )
 
 type IController interface {
-	Create(accountID uuid.UUID, data *accountEntities.Repository) (*accountEntities.Repository, error)
+	Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository,
+		permissions []string) (*accountEntities.Repository, error)
 	Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error)
 	Get(repositoryID, accountID uuid.UUID) (*accountEntities.RepositoryResponse, error)
 	List(accountID uuid.UUID, companyID uuid.UUID,
@@ -79,8 +80,18 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 	}
 }
 
-func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository) (
-	*accountEntities.Repository, error) {
+func (c *Controller) Create(accountID uuid.UUID, repository *accountEntities.Repository,
+	permissions []string) (*accountEntities.Repository, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap &&
+		c.repositoriesUseCases.IsInvalidLdapGroup(repository.AuthzAdmin, permissions) {
+		return nil, errors.ErrorInvalidLdapGroup
+	}
+
+	return c.createRepositoryWithTransaction(accountID, repository)
+}
+
+func (c *Controller) createRepositoryWithTransaction(accountID uuid.UUID,
+	repositoryEntity *accountEntities.Repository) (*accountEntities.Repository, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	repositoryEntity = c.setAuthzGroups(repositoryEntity)
 

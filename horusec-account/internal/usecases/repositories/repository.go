@@ -16,9 +16,11 @@ package repositories
 
 import (
 	"encoding/json"
+	"io"
+	"strings"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	"io"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 )
@@ -27,6 +29,7 @@ type IRepository interface {
 	NewRepositoryFromReadCloser(body io.ReadCloser) (repository *accountEntities.Repository, err error)
 	NewAccountRepositoryFromReadCloser(body io.ReadCloser) (accountRepository *roles.AccountRepository, err error)
 	NewInviteUserFromReadCloser(body io.ReadCloser) (inviteUser *dto.InviteUser, err error)
+	IsInvalidLdapGroup(repositoryAdminAuthz string, permissions []string) bool
 }
 
 type Repository struct {
@@ -67,4 +70,22 @@ func (r *Repository) NewInviteUserFromReadCloser(body io.ReadCloser) (
 	}
 
 	return inviteUser, inviteUser.Validate()
+}
+
+func (r *Repository) IsInvalidLdapGroup(repositoryAdminAuthz string, permissions []string) bool {
+	repositoryGroups := strings.Split(repositoryAdminAuthz, ",")
+
+	for _, repositoryGroup := range repositoryGroups {
+		if repositoryGroup == "" {
+			continue
+		}
+
+		for _, permission := range permissions {
+			if repositoryGroup == permission {
+				return false
+			}
+		}
+	}
+
+	return true
 }
