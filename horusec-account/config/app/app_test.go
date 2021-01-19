@@ -15,28 +15,80 @@
 package app
 
 import (
-	"os"
+	"errors"
 	"testing"
 
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
 )
 
 func TestSetupApp(t *testing.T) {
-	t.Run("should successfully create an application configuration struct", func(t *testing.T) {
-		appConfig := SetupApp()
-		assert.NotNil(t, appConfig)
+	t.Run("should return panic when trying setup without mock", func(t *testing.T) {
+		assert.Panics(t, func() {
+			_ = SetupApp(&grpc.ClientConn{})
+		})
+	})
+
+	t.Run("should success get auth config", func(t *testing.T) {
+		authGrpcMock := &authGrpc.Mock{}
+		authGrpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{DisabledBroker: true}, nil)
+
+		config := &Config{
+			grpcCon: authGrpcMock,
+		}
+
+		assert.NotNil(t, config.getAuthConfig())
+	})
+
+	t.Run("should panic when return error getting config", func(t *testing.T) {
+		authGrpcMock := &authGrpc.Mock{}
+		authGrpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{}, errors.New("test"))
+
+		config := &Config{
+			grpcCon: authGrpcMock,
+		}
+
+		assert.Panics(t, func() {
+			_ = config.getAuthConfig()
+		})
 	})
 }
 
-func TestIsEmailConfirmationRequired(t *testing.T) {
-	t.Run("should return false as default value", func(t *testing.T) {
-		appConfig := SetupApp()
-		assert.False(t, appConfig.IsDisabledBroker())
-	})
+func TestIsDisabledBroker(t *testing.T) {
+	t.Run("should success get disabled broken attribute", func(t *testing.T) {
+		appConfig := &Config{
+			ConfigAuth: authEntities.ConfigAuth{
+				DisabledBroker: true,
+			},
+		}
 
-	t.Run("should return false when env is setting it as false", func(t *testing.T) {
-		_ = os.Setenv(DisabledBrokerEnv, "true")
-		appConfig := SetupApp()
 		assert.True(t, appConfig.IsDisabledBroker())
+	})
+}
+
+func TestIsApplicationAdminEnable(t *testing.T) {
+	t.Run("should success get application admin attribute", func(t *testing.T) {
+		appConfig := &Config{
+			ConfigAuth: authEntities.ConfigAuth{
+				ApplicationAdminEnable: true,
+			},
+		}
+
+		assert.True(t, appConfig.IsApplicationAdminEnable())
+	})
+}
+
+func TestGetAuthType(t *testing.T) {
+	t.Run("should success get auth type ldap", func(t *testing.T) {
+		appConfig := &Config{
+			ConfigAuth: authEntities.ConfigAuth{
+				AuthType: authEnums.Ldap,
+			},
+		}
+
+		assert.Equal(t, authEnums.Ldap, appConfig.GetAuthType())
 	})
 }

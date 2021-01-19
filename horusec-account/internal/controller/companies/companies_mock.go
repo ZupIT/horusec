@@ -18,7 +18,6 @@ import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
@@ -43,7 +42,7 @@ func (m *Mock) Get(_, _ uuid.UUID) (*accountEntities.CompanyResponse, error) {
 	return args.Get(0).(*accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) List(_ uuid.UUID, _ []string, _ authEnums.AuthorizationType) (*[]accountEntities.CompanyResponse, error) {
+func (m *Mock) List(_ uuid.UUID, _ []string) (*[]accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
