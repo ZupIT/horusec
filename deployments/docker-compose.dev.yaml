@@ -139,6 +139,7 @@ services:
     depends_on:
       - "rabbit"
       - "postgresql"
+      - "horusec-auth"
     restart: always
     container_name: horusec-account
     network_mode: "host"
