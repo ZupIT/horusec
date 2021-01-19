@@ -37,4 +37,4 @@ var ErrorRepositoryNameAlreadyInUse = errors.New("{ACCOUNT} repository name alre
 var ErrorInvalidKeycloakToken = errors.New("{ACCOUNT} keycloak token without email or username")
 var ErrorUserLoggedIsNotApplicationAdmin = errors.New("{ACCOUNT} user logged is not application admin")
 var ErrorInvalidUpdateAccountData = errors.New("{ACCOUNT} the data to update account is not valid")
-var ErrorInvalidLdapGroup = errors.New("{ACCOUNT} ldap group is not a valid one for this user")
+var ErrorInvalidLdapGroup = errors.New("{ACCOUNT} admin ldap group should be a valid one for this user")
