@@ -19,16 +19,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
@@ -103,7 +100,6 @@ func (s *Service) getUserGroupsInLdap(userDN string) ([]string, error) {
 	}
 
 	userGroups, err, _ := s.memo.Memoize(userDN, memoizedGetUserGroups)
-	logger.LogInfo("{getUserGroups} found ldap groups -> ", userGroups)
 	if err != nil {
 		return []string{}, err
 	}
