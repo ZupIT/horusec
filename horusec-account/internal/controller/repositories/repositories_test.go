@@ -16,23 +16,21 @@ package repositories
 
 import (
 	"errors"
+	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	"testing"
-
-	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-
-	"github.com/ZupIT/horusec/horusec-account/config/app"
-
-	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +52,7 @@ func TestMock(t *testing.T) {
 		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{})
 		_, _ = mock.Update(uuid.New(), &accountEntities.Repository{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
-		_, _ = mock.List(uuid.New(), uuid.New())
+		_, _ = mock.List(uuid.New(), uuid.New(), []string{})
 		_ = mock.CreateAccountRepository(&roles.AccountRepository{})
 		_ = mock.UpdateAccountRepository(uuid.New(), &roles.AccountRepository{})
 		_ = mock.InviteUser(&dto.InviteUser{})
@@ -329,7 +327,7 @@ func TestList(t *testing.T) {
 	t.Run("should successfully retrieve repositories list with user member", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		brokerMock := &broker.Mock{}
 		repositoryMock := &repositoryRepo.Mock{}
@@ -347,14 +345,15 @@ func TestList(t *testing.T) {
 			repositoriesUseCases:     nil,
 		}
 
-		repositories, err := controller.List(uuid.New(), uuid.New())
+		repositories, err := controller.List(uuid.New(), uuid.New(), []string{})
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
 	})
+
 	t.Run("should return error in repositories list", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		brokerMock := &broker.Mock{}
 		repositoryMock := &repositoryRepo.Mock{}
@@ -372,8 +371,35 @@ func TestList(t *testing.T) {
 			repositoriesUseCases:     nil,
 		}
 
-		_, err := controller.List(uuid.New(), uuid.New())
+		_, err := controller.List(uuid.New(), uuid.New(), []string{})
 		assert.Error(t, err)
+	})
+
+	t.Run("should success get repositories by ldap", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		brokerMock := &broker.Mock{}
+		repositoryMock := &repositoryRepo.Mock{}
+
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		repositoryMock.On("ListAllInCompanyByLdap").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
+
+		controller := &Controller{
+			databaseWrite:            mockWrite,
+			databaseRead:             mockRead,
+			repository:               repositoryMock,
+			accountRepositoryRepo:    nil,
+			accountRepository:        nil,
+			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			broker:                   brokerMock,
+			appConfig:                &app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}},
+			repositoriesUseCases:     nil,
+		}
+
+		repositories, err := controller.List(uuid.New(), uuid.New(), []string{})
+		assert.NoError(t, err)
+		assert.NotNil(t, repositories)
 	})
 }
 
@@ -480,7 +506,9 @@ func TestInviteUser(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Create").Return(respRepository)
 
-		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{DisabledBroker: true})
+		appConfig := &app.Config{ConfigAuth: authEntities.ConfigAuth{DisabledBroker: true}}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, appConfig)
 
 		err := controller.InviteUser(inviteUser)
 		assert.NoError(t, err)

@@ -16,11 +16,12 @@ package repository
 
 import (
 	"errors"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"os"
 	"testing"
 	"time"
+
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
@@ -265,5 +266,46 @@ func TestGetAllAccountsInRepository(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+	})
+}
+
+func TestListAllInCompanyByLdap(t *testing.T) {
+	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+	_ = os.Setenv(config.EnvRelationalLogMode, "false")
+
+	databaseWrite := adapter.NewRepositoryWrite()
+	databaseRead := adapter.NewRepositoryRead()
+
+	company := &accountEntities.Company{
+		CompanyID:   uuid.New(),
+		Name:        "test",
+		Description: "test",
+		CreatedAt:   time.Now(),
+	}
+
+	repository := &accountEntities.Repository{
+		RepositoryID: uuid.New(),
+		CompanyID:    company.CompanyID,
+		Name:         "test",
+		CreatedAt:    time.Now(),
+		AuthzAdmin:   "test",
+	}
+
+	databaseWrite.SetLogMode(true)
+	databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+
+	resp := databaseWrite.Create(company, company.GetTable())
+	assert.NoError(t, resp.GetError())
+	resp = databaseWrite.Create(repository, repository.GetTable())
+
+	t.Run("should get repositories from account relation", func(t *testing.T) {
+		repositoryRepo := NewRepository(databaseRead, databaseWrite)
+
+		retrievedRepositories, err := repositoryRepo.ListAllInCompanyByLdap(company.CompanyID, []string{"test"})
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, retrievedRepositories)
 	})
 }

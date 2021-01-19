@@ -79,7 +79,8 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 	httpUtil.StatusCreated(w, newRepo)
 }
 
-func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter, r *netHttp.Request) (*account.Company, uuid.UUID, error) {
+func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter,
+	r *netHttp.Request) (*account.Company, uuid.UUID, error) {
 	if h.appConfig.IsApplicationAdminEnable() {
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
@@ -210,12 +211,13 @@ func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
 func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, []string, error) {
 	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
 
-	if accountID, err := uuid.Parse(accountData.AccountID); err != nil {
+	accountID, err := uuid.Parse(accountData.AccountID)
+	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
 		return uuid.Nil, nil, err
-	} else {
-		return accountID, accountData.Permissions, nil
 	}
+
+	return accountID, accountData.Permissions, nil
 }
 
 // @Tags Companies

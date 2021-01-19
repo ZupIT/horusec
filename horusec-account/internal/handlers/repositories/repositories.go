@@ -216,12 +216,13 @@ func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (
 	}
 
 	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
-	if accountID, err := uuid.Parse(accountData.AccountID); err != nil {
+	accountID, err := uuid.Parse(accountData.AccountID)
+	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
 		return uuid.Nil, uuid.Nil, nil, err
-	} else {
-		return accountID, companyID, accountData.Permissions, nil
 	}
+
+	return accountID, companyID, accountData.Permissions, nil
 }
 
 // @Tags Repositories
