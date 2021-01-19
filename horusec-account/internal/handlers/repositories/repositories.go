@@ -15,8 +15,9 @@
 package repositories
 
 import (
-	"fmt"
 	netHttp "net/http"
+
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
@@ -67,7 +68,7 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
+	accountID, _ := h.getAccountID(r)
 	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
 	if err != nil {
 		h.checkCreateRepositoryErrors(w, err)
@@ -156,7 +157,7 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
+	accountID, _ := h.getAccountID(r)
 	repository, err := h.controller.Get(repositoryID, accountID)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
@@ -193,30 +194,34 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 // @Router /api/companies/{companyID}/repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
-	companyID, accountID, err := h.getCompanyIDAndAccountIDToList(r)
+	accountID, companyID, permissions, err := h.getRequestData(w, r)
 	if err != nil {
-		if err == errorsEnum.ErrorInvalidCompanyID {
-			httpUtil.StatusBadRequest(w, err)
-		} else {
-			httpUtil.StatusUnauthorized(w, err)
-		}
 		return
 	}
-	repositoryList, err := h.controller.List(accountID, companyID)
+
+	repositoryList, err := h.controller.List(accountID, companyID, permissions)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
+
 	httpUtil.StatusOK(w, repositoryList)
 }
 
-func (h *Handler) getCompanyIDAndAccountIDToList(r *netHttp.Request) (uuid.UUID, uuid.UUID, error) {
+func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, uuid.UUID, []string, error) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
 	if err != nil || companyID == uuid.Nil {
-		return uuid.Nil, uuid.Nil, errorsEnum.ErrorInvalidCompanyID
+		httpUtil.StatusBadRequest(w, errorsEnum.ErrorInvalidCompanyID)
+		return uuid.Nil, uuid.Nil, []string{}, errorsEnum.ErrorInvalidCompanyID
 	}
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
-	return companyID, accountID, err
+
+	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
+	if accountID, err := uuid.Parse(accountData.AccountID); err != nil {
+		httpUtil.StatusUnauthorized(w, err)
+		return uuid.Nil, uuid.Nil, nil, err
+	} else {
+		return accountID, companyID, accountData.Permissions, nil
+	}
 }
 
 // @Tags Repositories
@@ -421,4 +426,9 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	}
 
 	return removeUser.SetAccountAndRepositoryID(accountID, repositoryID), nil
+}
+
+func (h *Handler) getAccountID(r *netHttp.Request) (uuid.UUID, error) {
+	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
+	return uuid.Parse(accountData.AccountID)
 }

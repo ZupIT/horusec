@@ -133,8 +133,8 @@ func (r *Repository) GetAllOfAccountLdap(permissions []string) (*[]accountEntiti
 	query := r.databaseRead.
 		GetConnection().
 		Select(
-			"comp.company_id, comp.name, comp.description, comp.authz_admin, comp.authz_member,"+
-				" comp.created_at, comp.updated_at",
+			"comp.company_id, comp.name, comp.description, 'admin' AS role, "+
+				"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
 		).
 		Table("companies AS comp").
 		Where("comp.authz_admin IN (?) OR comp.authz_member IN (?)", permissions, permissions).

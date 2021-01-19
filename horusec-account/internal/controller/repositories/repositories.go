@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
@@ -39,7 +40,8 @@ type IController interface {
 	Create(accountID uuid.UUID, data *accountEntities.Repository) (*accountEntities.Repository, error)
 	Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error)
 	Get(repositoryID, accountID uuid.UUID) (*accountEntities.RepositoryResponse, error)
-	List(accountID uuid.UUID, companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error)
+	List(accountID uuid.UUID, companyID uuid.UUID,
+		permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error)
 	CreateAccountRepository(accountRepository *roles.AccountRepository) error
 	UpdateAccountRepository(companyID uuid.UUID, accountRepository *roles.AccountRepository) error
 	InviteUser(inviteUser *dto.InviteUser) error
@@ -114,8 +116,12 @@ func (c *Controller) Get(repositoryID, accountID uuid.UUID) (*accountEntities.Re
 	return response.ToRepositoryResponse(accountRepository.Role), nil
 }
 
-func (c *Controller) List(accountID,
-	companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error) {
+func (c *Controller) List(accountID, companyID uuid.UUID,
+	permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap {
+		return c.repository.ListAllInCompanyByLdap(companyID, permissions)
+	}
+
 	return c.repository.List(accountID, companyID)
 }
 

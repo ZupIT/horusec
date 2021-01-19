@@ -15,7 +15,6 @@
 package companies
 
 import (
-	"fmt"
 	netHttp "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -96,8 +95,7 @@ func (h *Handler) getCreateDataDefault(w netHttp.ResponseWriter, r *netHttp.Requ
 		return nil, uuid.Nil, err
 	}
 
-	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
-	accountID, err := uuid.Parse(accountData.AccountID)
+	accountID, err := h.getAccountID(r)
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
 		return nil, uuid.Nil, err
@@ -113,10 +111,12 @@ func (h *Handler) getCreateDataApplicationAdmin(
 		httpUtil.StatusBadRequest(w, err)
 		return nil, uuid.Nil, err
 	}
+
 	accountID, err := h.getAccountIDByEmail(w, company.AdminEmail)
 	if err != nil {
 		return nil, uuid.Nil, err
 	}
+
 	return company.ToCompany(), accountID, nil
 }
 
@@ -128,8 +128,10 @@ func (h *Handler) getAccountIDByEmail(w netHttp.ResponseWriter, email string) (u
 		} else {
 			httpUtil.StatusInternalServerError(w, err)
 		}
+
 		return uuid.Nil, err
 	}
+
 	return accountID, nil
 }
 
@@ -173,7 +175,7 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Security ApiKeyAuth
 func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountData)))
+	accountID, _ := h.getAccountID(r)
 	if company, err := h.companyController.Get(companyID, accountID); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
@@ -205,8 +207,7 @@ func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
 	}
 }
 
-func (h *Handler) getRequestData(
-	w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, []string, error) {
+func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, []string, error) {
 	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
 
 	if accountID, err := uuid.Parse(accountData.AccountID); err != nil {
@@ -422,4 +423,9 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	}
 
 	return removeUser.SetAccountAndCompanyID(accountID, companyID), nil
+}
+
+func (h *Handler) getAccountID(r *netHttp.Request) (uuid.UUID, error) {
+	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
+	return uuid.Parse(accountData.AccountID)
 }

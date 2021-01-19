@@ -16,10 +16,10 @@ package repository
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
@@ -34,6 +34,7 @@ type IRepository interface {
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
 	GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error)
+	ListAllInCompanyByLdap(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error)
 }
 
 type Repository struct {
@@ -167,4 +168,20 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 
 	response := r.databaseRead.RawSQL(query, accounts)
 	return accounts, response.GetError()
+}
+
+func (r *Repository) ListAllInCompanyByLdap(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND (repo.authz_admin IN (?) OR repo.authz_supervisor IN (?) "+
+			"OR repo.authz_member IN (?))", companyID, permissions, permissions, permissions).
+		Find(&repositories)
+
+	return repositories, query.Error
 }
