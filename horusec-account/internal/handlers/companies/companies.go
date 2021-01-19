@@ -167,7 +167,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	if company, err := h.companyController.Update(companyID, data); err != nil {
+	accountData, _ := h.getAccountData(r)
+	if company, err := h.companyController.Update(companyID, data, accountData.Permissions); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
 		httpUtil.StatusOK(w, company)

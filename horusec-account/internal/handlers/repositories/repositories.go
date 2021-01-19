@@ -119,7 +119,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	response, err := h.controller.Update(repositoryID, repository)
+	_, permissions := h.getAccountData(r)
+	response, err := h.controller.Update(repositoryID, repository, permissions)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
 		return
@@ -174,11 +175,15 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 		return
 	}
 
+	if err == errorsEnum.ErrorInvalidLdapGroup {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
 	if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryID {
 		httpUtil.StatusConflict(w, errorsEnum.ErrorUserAlreadyInThisRepository)
 		return
 	}
-
 	httpUtil.StatusInternalServerError(w, err)
 }
 

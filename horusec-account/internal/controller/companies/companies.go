@@ -38,7 +38,7 @@ import (
 
 type IController interface {
 	Create(accountID uuid.UUID, data *accountEntities.Company, permissions []string) (*accountEntities.Company, error)
-	Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
+	Update(companyID uuid.UUID, data *accountEntities.Company, permissions []string) (*accountEntities.Company, error)
 	Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error)
 	List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error)
 	UpdateAccountCompany(role *roles.AccountCompany) error
@@ -105,8 +105,12 @@ func (c *Controller) createCompanyWithTransaction(accountID uuid.UUID,
 	return newCompany, nil
 }
 
-func (c *Controller) Update(
-	companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (c *Controller) Update(companyID uuid.UUID,
+	data *accountEntities.Company, permissions []string) (*accountEntities.Company, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap && c.companyUseCases.IsInvalidLdapGroup(data.AuthzAdmin, permissions) {
+		return nil, errorsEnums.ErrorInvalidLdapGroup
+	}
+
 	return c.repoCompany.Update(companyID, data)
 }
 

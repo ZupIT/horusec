@@ -39,7 +39,8 @@ import (
 type IController interface {
 	Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository,
 		permissions []string) (*accountEntities.Repository, error)
-	Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error)
+	Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository,
+		permissions []string) (*accountEntities.Repository, error)
 	Get(repositoryID, accountID uuid.UUID) (*accountEntities.RepositoryResponse, error)
 	List(accountID uuid.UUID, companyID uuid.UUID,
 		permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error)
@@ -108,8 +109,13 @@ func (c *Controller) createRepositoryWithTransaction(accountID uuid.UUID,
 	return repositoryEntity, nil
 }
 
-func (c *Controller) Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository) (
-	*accountEntities.Repository, error) {
+func (c *Controller) Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository,
+	permissions []string) (*accountEntities.Repository, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap &&
+		c.repositoriesUseCases.IsInvalidLdapGroup(repositoryEntity.AuthzAdmin, permissions) {
+		return nil, errors.ErrorInvalidLdapGroup
+	}
+
 	return c.repository.Update(repositoryID, repositoryEntity)
 }
 

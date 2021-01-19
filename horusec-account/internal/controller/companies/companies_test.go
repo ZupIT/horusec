@@ -47,7 +47,7 @@ func TestMock(t *testing.T) {
 		mock.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
 		mock.On("RemoveUser").Return(nil)
 		_, _ = mock.Create(uuid.New(), &accountEntities.Company{}, []string{})
-		_, _ = mock.Update(uuid.New(), &accountEntities.Company{})
+		_, _ = mock.Update(uuid.New(), &accountEntities.Company{}, []string{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
 		_, _ = mock.List(uuid.New(), []string{})
 		_ = mock.UpdateAccountCompany(&roles.AccountCompany{})
@@ -166,7 +166,7 @@ func TestUpdateCompany(t *testing.T) {
 		r.SetData(company)
 		mockWrite.On("Update").Return(r)
 
-		updatedCompany, err := controller.Update(uuid.New(), company)
+		updatedCompany, err := controller.Update(uuid.New(), company, []string{})
 
 		assert.NotNil(t, updatedCompany)
 		assert.NoError(t, err)

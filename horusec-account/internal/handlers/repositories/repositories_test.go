@@ -236,6 +236,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 
@@ -260,6 +261,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 
@@ -284,6 +286,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 

@@ -32,7 +32,7 @@ func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Repository, _ []string) (*
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Repository) (*accountEntities.Repository, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Repository, _ []string) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }

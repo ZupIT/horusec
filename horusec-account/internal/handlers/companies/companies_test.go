@@ -347,6 +347,9 @@ func TestUpdateCompany(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPatch, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
 
+		appConfig := &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, appConfig))
+
 		handler.Update(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -367,6 +370,9 @@ func TestUpdateCompany(t *testing.T) {
 		body, _ := json.Marshal(company)
 		r, _ := http.NewRequest(http.MethodPatch, "api/companies/123", bytes.NewReader(body))
 		w := httptest.NewRecorder()
+
+		appConfig := &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, appConfig))
 
 		handler.Update(w, r)
 
