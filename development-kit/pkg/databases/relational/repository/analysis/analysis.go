@@ -375,6 +375,15 @@ func (ar *Repository) getSubQueryByVulnerability(companyID, repositoryID uuid.UU
 
 func (ar *Repository) setWhereFilter(query *gorm.DB, companyID, repositoryID uuid.UUID, initialDate,
 	finalDate time.Time) *gorm.DB {
+
+	if (initialDate == time.Time{} && finalDate == time.Time{}) {
+		if companyID != uuid.Nil {
+			return query.Where("company_id = ?", companyID)
+		}
+
+		return query.Where("repository_id = ?", repositoryID)
+	}
+
 	if companyID != uuid.Nil {
 		return query.Where("finished_at BETWEEN ? AND ? AND company_id = ?",
 			initialDate, finalDate, companyID)

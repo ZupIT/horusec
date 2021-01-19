@@ -517,7 +517,11 @@ func getDateRangeFromRequestQuery(r *netHTTP.Request) (*time.Time, *time.Time, e
 
 func getDateFromRequestQuery(r *netHTTP.Request, queryStrKey string) (time.Time, error) {
 	date := r.URL.Query().Get(queryStrKey)
-	return time.Parse("2006-01-02T15:04:05Z", date)
+	if date != "" {
+		return time.Parse("2006-01-02T15:04:05Z", date)
+	}
+
+	return time.Time{}, nil
 }
 
 func (h *Handler) getPaginationPage(r *netHTTP.Request) (page int) {
