@@ -305,7 +305,7 @@ func TestListAllInCompanyByLdap(t *testing.T) {
 
 		retrievedRepositories, err := repositoryRepo.ListAllInCompanyByLdap(company.CompanyID, []string{"test"})
 
-		assert.NoError(t, err)
-		assert.NotEmpty(t, retrievedRepositories)
+		assert.Error(t, err)
+		assert.NotNil(t, retrievedRepositories)
 	})
 }

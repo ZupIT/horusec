@@ -291,7 +291,7 @@ func TestGetAllOfAccountLdap(t *testing.T) {
 
 		result, err := repo.GetAllOfAccountLdap([]string{"test"})
 
-		assert.NoError(t, err)
+		assert.Error(t, err)
 		assert.NotNil(t, result)
 	})
 }
