@@ -394,7 +394,8 @@
     "REPO_NAME_IN_USE": "Nome do repositório já em uso.",
     "USERNAME_IN_USE": "Nome de usuário já em uso",
     "SAME_PASSWORD": "A nova senha não pode ser igual a atual.",
-    "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados."
+    "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados.",
+    "LDAP_GROUP": "O grupo de usuário deve ser válido para este usuário."
   },
 
   "NOT_FOUND_SCREEN": {

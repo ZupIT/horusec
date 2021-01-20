@@ -137,10 +137,8 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 }
 
 func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
-	a.analysis = a.analysis.SetAnalysisFinishedData().SetupIDInAnalysisContents().SortVulnerabilitiesByCriticality().
-		SetDefaultVulnerabilityType().SortVulnerabilitiesByType()
-
-	a.verifyIfInfoIsEnableAndSendAnalysis()
+	a.formatAnalysisToPrintAndSendToAPI()
+	a.horusecAPIService.SendAnalysis(a.analysis)
 	analysisSaved := a.horusecAPIService.GetAnalysis(a.analysis.ID)
 	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
 		a.analysis = analysisSaved
@@ -150,12 +148,17 @@ func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	return a.printController.StartPrintResults()
 }
 
-func (a *Analyser) verifyIfInfoIsEnableAndSendAnalysis() {
+func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
+	a.analysis = a.analysis.
+		SetAnalysisFinishedData().
+		SetupIDInAnalysisContents().
+		SortVulnerabilitiesByCriticality().
+		SetDefaultVulnerabilityType().
+		SortVulnerabilitiesByType()
 	if !a.config.GetEnableInformationSeverity() {
-		a.analysis.RemoveInfoVulnerabilities()
+		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
+		a.analysis = a.analysis.RemoveInfoVulnerabilities()
 	}
-
-	a.horusecAPIService.SendAnalysis(a.analysis)
 }
 
 func (a *Analyser) setMonitor(monitor *horusec.Monitor) {

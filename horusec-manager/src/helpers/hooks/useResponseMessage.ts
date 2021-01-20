@@ -49,6 +49,9 @@ const useResponseMessage = () => {
       'already exists webhook to repository selected': t(
         'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
       ),
+      '{ACCOUNT} admin ldap group should be a valid one for this user': t(
+        'API_ERRORS.LDAP_GROUP'
+      ),
       '{ACCOUNT} password is not valid': t('API_ERRORS.SAME_PASSWORD'),
       generic: t('API_ERRORS.GENERIC_ERROR'),
     };
