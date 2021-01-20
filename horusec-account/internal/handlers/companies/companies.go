@@ -15,16 +15,18 @@
 package companies
 
 import (
-	"fmt"
+	"encoding/json"
+	netHttp "net/http"
+
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
@@ -32,13 +34,13 @@ import (
 	"github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	netHttp "net/http"
 )
 
 type Handler struct {
 	companyController  companiesController.IController
 	repositoryUseCases repositories.IRepository
 	companyUseCases    companyUseCases.ICompany
+	appConfig          app.IAppConfig
 }
 
 func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead, broker brokerLib.IBroker,
@@ -47,6 +49,7 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 		companyController:  companiesController.NewController(databaseWrite, databaseRead, broker, appConfig),
 		repositoryUseCases: repositories.NewRepositoryUseCases(),
 		companyUseCases:    companyUseCases.NewCompanyUseCases(),
+		appConfig:          appConfig,
 	}
 }
 
@@ -63,62 +66,70 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 // @Router /api/companies [post]
 // @Security ApiKeyAuth
 func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
-	company, accountID, err := h.factoryGetCreateData(w, r)
+	company, accountID, permissions, err := h.factoryGetCreateData(w, r)
 	if err != nil {
 		return
 	}
 
-	newRepo, err := h.companyController.Create(accountID, company)
+	newRepo, err := h.companyController.Create(accountID, company, permissions)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkCreateErrors(err, w)
 		return
 	}
 
 	httpUtil.StatusCreated(w, newRepo)
 }
 
-func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter, r *netHttp.Request) (
-	*account.Company, uuid.UUID, error) {
-	configAuth, err := auth.ParseInterfaceToConfigAuth(r.Context().Value(authEnums.ConfigAuth))
-	if err != nil {
-		httpUtil.StatusForbidden(w, err)
-		return nil, uuid.Nil, err
+func (h *Handler) checkCreateErrors(err error, w netHttp.ResponseWriter) {
+	if err == errorsEnum.ErrorInvalidLdapGroup {
+		httpUtil.StatusBadRequest(w, err)
+		return
 	}
-	if configAuth.ApplicationAdminEnable {
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+func (h *Handler) factoryGetCreateData(w netHttp.ResponseWriter,
+	r *netHttp.Request) (*account.Company, uuid.UUID, []string, error) {
+	if h.appConfig.IsApplicationAdminEnable() {
 		return h.getCreateDataApplicationAdmin(w, r)
 	}
+
 	return h.getCreateDataDefault(w, r)
 }
 
 func (h *Handler) getCreateDataDefault(w netHttp.ResponseWriter, r *netHttp.Request) (
-	*account.Company, uuid.UUID, error) {
+	*account.Company, uuid.UUID, []string, error) {
 	company, err := h.companyUseCases.NewCompanyFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountData, err := h.getAccountData(r)
 	if err != nil {
 		httpUtil.StatusUnauthorized(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
 
-	return company, accountID, nil
+	accountID, _ := uuid.Parse(accountData.AccountID)
+	return company, accountID, accountData.Permissions, nil
 }
 
 func (h *Handler) getCreateDataApplicationAdmin(
-	w netHttp.ResponseWriter, r *netHttp.Request) (*account.Company, uuid.UUID, error) {
+	w netHttp.ResponseWriter, r *netHttp.Request) (*account.Company, uuid.UUID, []string, error) {
 	company, err := h.companyUseCases.NewCompanyApplicationAdminFromReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
+
 	accountID, err := h.getAccountIDByEmail(w, company.AdminEmail)
 	if err != nil {
-		return nil, uuid.Nil, err
+		return nil, uuid.Nil, nil, err
 	}
-	return company.ToCompany(), accountID, nil
+
+	return company.ToCompany(), accountID, nil, nil
 }
 
 func (h *Handler) getAccountIDByEmail(w netHttp.ResponseWriter, email string) (uuid.UUID, error) {
@@ -129,8 +140,10 @@ func (h *Handler) getAccountIDByEmail(w netHttp.ResponseWriter, email string) (u
 		} else {
 			httpUtil.StatusInternalServerError(w, err)
 		}
+
 		return uuid.Nil, err
 	}
+
 	return accountID, nil
 }
 
@@ -154,7 +167,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	if company, err := h.companyController.Update(companyID, data); err != nil {
+	accountData, _ := h.getAccountData(r)
+	if company, err := h.companyController.Update(companyID, data, accountData.Permissions); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
 		httpUtil.StatusOK(w, company)
@@ -174,7 +188,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Security ApiKeyAuth
 func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountData, _ := h.getAccountData(r)
+	accountID, _ := uuid.Parse(accountData.AccountID)
 	if company, err := h.companyController.Get(companyID, accountID); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
@@ -194,17 +209,28 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Router /api/companies [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, permissions, err := h.getRequestData(w, r)
 	if err != nil {
-		httpUtil.StatusUnauthorized(w, err)
 		return
 	}
 
-	if companies, err := h.companyController.List(accountID); err != nil {
+	if companies, err := h.companyController.List(accountID, permissions); err != nil {
 		httpUtil.StatusBadRequest(w, err)
 	} else {
 		httpUtil.StatusOK(w, companies)
 	}
+}
+
+func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, []string, error) {
+	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
+
+	accountID, err := uuid.Parse(accountData.AccountID)
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, err)
+		return uuid.Nil, nil, err
+	}
+
+	return accountID, accountData.Permissions, nil
 }
 
 // @Tags Companies
@@ -412,4 +438,10 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	}
 
 	return removeUser.SetAccountAndCompanyID(accountID, companyID), nil
+}
+
+func (h *Handler) getAccountData(r *netHttp.Request) (response *authGrpc.GetAccountDataResponse, err error) {
+	accountData := r.Context().Value(authEnums.AccountData)
+	bytes, _ := json.Marshal(accountData)
+	return response, json.Unmarshal(bytes, &response)
 }

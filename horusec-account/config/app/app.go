@@ -15,27 +15,56 @@
 package app
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-)
+	"context"
 
-const (
-	DisabledBrokerEnv = "HORUSEC_DISABLED_BROKER"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"google.golang.org/grpc"
 )
 
 type Config struct {
-	DisabledBroker bool
+	auth.ConfigAuth
+	grpcCon authGrpc.AuthServiceClient
+	context context.Context
 }
 
 type IAppConfig interface {
 	IsDisabledBroker() bool
+	IsApplicationAdminEnable() bool
+	GetAuthType() authEnums.AuthorizationType
 }
 
-func SetupApp() IAppConfig {
-	return &Config{
-		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
+func SetupApp(grpcCon grpc.ClientConnInterface) IAppConfig {
+	appConfig := &Config{
+		grpcCon: authGrpc.NewAuthServiceClient(grpcCon),
+		context: context.Background(),
 	}
+
+	return appConfig.getAuthConfig()
 }
 
-func (a *Config) IsDisabledBroker() bool {
-	return a.DisabledBroker
+func (c *Config) getAuthConfig() IAppConfig {
+	response, err := c.grpcCon.GetAuthConfig(c.context, &authGrpc.GetAuthConfigData{})
+	if err != nil {
+		logger.LogPanic("failed to setup app config, while getting auth config", err)
+	}
+
+	c.AuthType = authEnums.AuthorizationType(response.AuthType)
+	c.DisabledBroker = response.DisabledBroker
+	c.ApplicationAdminEnable = response.ApplicationAdminEnable
+	return c
+}
+
+func (c *Config) IsDisabledBroker() bool {
+	return c.DisabledBroker
+}
+
+func (c *Config) IsApplicationAdminEnable() bool {
+	return c.ApplicationAdminEnable
+}
+
+func (c *Config) GetAuthType() authEnums.AuthorizationType {
+	return c.AuthType
 }

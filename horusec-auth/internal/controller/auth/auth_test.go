@@ -16,9 +16,10 @@ package auth
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"os"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -252,7 +253,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response.GetAccountID())
@@ -279,7 +280,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloak:            keycloakMock,
 		}
 
-		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response.GetAccountID())
@@ -302,7 +303,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: token})
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response.GetAccountID())
@@ -317,7 +318,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			keycloakAuthService: mockService,
 		}
 
-		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountIDData{Token: "test"})
+		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: "test"})
 
 		assert.Error(t, err)
 		assert.Empty(t, response.GetAccountID())

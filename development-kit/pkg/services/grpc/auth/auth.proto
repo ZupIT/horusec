@@ -6,7 +6,7 @@ option go_package = "development-kit/pkg/services/grpc/auth";
 
 service AuthService {
   rpc IsAuthorized (IsAuthorizedData) returns (IsAuthorizedResponse) {}
-  rpc GetAccountID (GetAccountIDData) returns (GetAccountIDResponse) {}
+  rpc GetAccountID (GetAccountData) returns (GetAccountDataResponse) {}
   rpc GetAuthConfig (GetAuthConfigData) returns (GetAuthConfigResponse) {}
 }
 
@@ -21,12 +21,13 @@ message IsAuthorizedResponse {
   bool isAuthorized = 1;
 }
 
-message GetAccountIDData {
+message GetAccountData {
   string token = 1;
 }
 
-message GetAccountIDResponse {
+message GetAccountDataResponse {
   string accountID = 1;
+  repeated string permissions = 2;
 }
 
 message GetAuthConfigData {}

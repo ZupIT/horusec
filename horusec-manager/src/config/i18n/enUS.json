@@ -393,7 +393,8 @@
     "REPO_NAME_IN_USE": "Repository name already in use.",
     "USERNAME_IN_USE": "Username already in use.",
     "SAME_PASSWORD": "The new password cannot be the same as the current one.",
-    "EMPTY_REPOSITORY": "Please select a repository to view the data."
+    "EMPTY_REPOSITORY": "Please select a repository to view the data.",
+    "LDAP_GROUP": "The user group must be valid for this user."
   },
 
   "NOT_FOUND_SCREEN": {
