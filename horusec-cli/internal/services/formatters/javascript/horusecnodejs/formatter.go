@@ -17,6 +17,7 @@ package horusecnodejs
 import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/nodejs"
+	engineenums "github.com/ZupIT/horusec/development-kit/pkg/enums/engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -65,5 +66,5 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 	}
 
 	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecNodejs)...)
-	return engine.Run(textUnit, allRules), nil
+	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engineenums.DefaultMaxUnitsPerAnalysis), nil
 }
