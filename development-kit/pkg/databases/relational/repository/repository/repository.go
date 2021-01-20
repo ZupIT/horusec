@@ -173,15 +173,29 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 func (r *Repository) ListAllInCompanyByLdap(companyID uuid.UUID,
 	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
+	filter := r.repositoryFilterByLdapPermissions(permissions)
 
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
 			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
-		Where("repo.company_id = ? AND (repo.authz_admin IN (?) OR repo.authz_supervisor IN (?) "+
-			"OR repo.authz_member IN (?))", companyID, permissions, permissions, permissions).
+		Where(fmt.Sprintf("repo.company_id = ? AND (repo.authz_admin SIMILAR TO %s OR repo.authz_supervisor"+
+			" SIMILAR TO %s OR repo.authz_member SIMILAR TO %s)", filter, filter, filter), companyID.String()).
 		Find(&repositories)
 
 	return repositories, query.Error
+}
+
+func (r *Repository) repositoryFilterByLdapPermissions(permissions []string) (result string) {
+	for _, permission := range permissions {
+		if result == "" {
+			result = permission
+			continue
+		}
+
+		result = fmt.Sprintf("%s|%s", result, permission)
+	}
+
+	return "'%(" + result + ")%'"
 }

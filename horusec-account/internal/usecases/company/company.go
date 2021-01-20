@@ -79,7 +79,7 @@ func (c *Company) IsInvalidLdapGroup(companyAdminAuthz string, permissions []str
 		}
 
 		for _, permission := range permissions {
-			if companyGroup == permission {
+			if strings.TrimSpace(companyGroup) == permission {
 				return false
 			}
 		}

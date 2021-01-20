@@ -81,7 +81,7 @@ func (r *Repository) IsInvalidLdapGroup(repositoryAdminAuthz string, permissions
 		}
 
 		for _, permission := range permissions {
-			if repositoryGroup == permission {
+			if strings.TrimSpace(repositoryGroup) == permission {
 				return false
 			}
 		}
