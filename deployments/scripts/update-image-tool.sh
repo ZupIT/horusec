@@ -25,6 +25,7 @@
 TOOL_NAME=$1
 UPDATE_TYPE=$2
 IS_TO_UPDATE_LATEST=$3
+IS_TO_UPDATE_CONFIG_FILE="true"
 CURRENT_FOLDER=$(pwd)
 DIRECTORY_SEMVER=""
 DIRECTORY_CONFIG=""
@@ -83,15 +84,15 @@ getDirectoryAndImageNameByToolName () {
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/spotbugs";;
         "horusec-kotlin")
             IMAGE_NAME="horuszup/horusec-kotlin"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/kotlin/horuseckotlin/config.go"
+            IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-kotlin";;
         "horusec-java")
             IMAGE_NAME="horuszup/horusec-java"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/java/horusecjava/config.go"
+            IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-java";;
         "horusec-csharp")
             IMAGE_NAME="horuszup/horusec-csharp"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/csharp/horuseccsharp/config.go"
+            IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-csharp";;
         "horusec-leaks")
             IMAGE_NAME="horuszup/horusec-leaks"
@@ -111,12 +112,16 @@ getDirectoryAndImageNameByToolName () {
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/flawfinder";;
         "horusec-nodejs")
             IMAGE_NAME="horuszup/horusec-nodejs"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/javascript/horusecnodejs/config.go"
+            IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-nodejs";;
         "horusec-kubernetes")
             IMAGE_NAME="horuszup/horusec-kubernetes"
-            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/yaml/horuseckubernetes/config.go"
+            IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-kubernetes";;
+        "horusec-dart")
+            IMAGE_NAME="horuszup/horusec-dart"
+            IS_TO_UPDATE_CONFIG_FILE="false"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-dart";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
             echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes, phpcs, flawfinder"
@@ -196,7 +201,7 @@ updateImage () {
     updateVersionInConfigFile
     updateVersionInCliVersionFile
 
-    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs"  || "$TOOL_NAME" == "horusec-kubernetes" ]]
+    if [[ "$TOOL_NAME" == "horusec-leaks" || "$TOOL_NAME" == "horusec-kotlin" || "$TOOL_NAME" == "horusec-java" || "$TOOL_NAME" == "horusec-csharp" || "$TOOL_NAME" == "horusec-nodejs"  || "$TOOL_NAME" == "horusec-kubernetes" || "$TOOL_NAME" == "horusec-dart" ]]
     then
         DIRECTORY_SEMVER="$DIRECTORY_SEMVER/deployments"
     fi
@@ -214,8 +219,11 @@ updateImage () {
 }
 
 updateVersionInConfigFile () {
-    sed -i -e "s/$ACTUAL_RELEASE_IN_CONFIG/$NEW_RELEASE/g" $DIRECTORY_CONFIG
-    make fmt
+    if [[ "$IS_TO_UPDATE_CONFIG_FILE" == "true" ]]
+    then
+        sed -i -e "s/$ACTUAL_RELEASE_IN_CONFIG/$NEW_RELEASE/g" $DIRECTORY_CONFIG
+        make fmt
+    fi
 }
 
 updateVersionInCliVersionFile () {
@@ -226,8 +234,11 @@ updateVersionInCliVersionFile () {
 }
 
 rollbackVersionInConfigFile () {
-    sed -i -e "s/$NEW_RELEASE/$ACTUAL_RELEASE_IN_CONFIG/g" $DIRECTORY_CONFIG
-    make fmt
+    if [[ "$IS_TO_UPDATE_CONFIG_FILE" == "true" ]]
+    then
+        sed -i -e "s/$NEW_RELEASE/$ACTUAL_RELEASE_IN_CONFIG/g" $DIRECTORY_CONFIG
+        make fmt
+    fi
 }
 
 rollbackVersionInCliVersionFile () {
