@@ -25,7 +25,7 @@ coverage-horusec-messages:
 	deployments/scripts/coverage.sh 98 "./horusec-messages"
 coverage-horusec-account:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 98 "./horusec-account"
+	deployments/scripts/coverage.sh 97 "./horusec-account"
 coverage-horusec-analytic:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-analytic"

@@ -16,11 +16,12 @@ package repositories
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
@@ -104,5 +105,23 @@ func TestNewInviteUserFromReadCloser(t *testing.T) {
 		_, err := useCases.NewInviteUserFromReadCloser(readCloser)
 
 		assert.Error(t, err)
+	})
+}
+
+func TestIsInvalidLdapGroup(t *testing.T) {
+	t.Run("should return true when invalid group", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		result := useCases.IsInvalidLdapGroup("group1, group2", []string{"test1", "test2"})
+
+		assert.True(t, result)
+	})
+
+	t.Run("should return false when valid group", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		result := useCases.IsInvalidLdapGroup("group1, group2", []string{"test1", "group1"})
+
+		assert.False(t, result)
 	})
 }

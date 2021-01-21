@@ -41,7 +41,7 @@ func TestIsMember(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -88,7 +88,7 @@ func TestIsCompanyAdmin(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -135,7 +135,7 @@ func TestIsRepositoryMember(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -182,7 +182,7 @@ func TestIsRepositorySupervisor(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -229,7 +229,7 @@ func TestIsRepositoryAdmin(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -274,7 +274,7 @@ func TestSetContextAccountID(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 		grpcMock := &authGrpc.Mock{}
 
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -296,7 +296,7 @@ func TestSetContextAccountID(t *testing.T) {
 		httpMock := &httpClient.Mock{}
 		grpcMock := &authGrpc.Mock{}
 
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, errors.New("test"))
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{
 			httpUtil:   httpMock,
@@ -321,7 +321,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, nil)
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{AuthType: authEnums.Horusec.ToString(), ApplicationAdminEnable: true}, nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -345,7 +345,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{AuthType: authEnums.Horusec.ToString(), ApplicationAdminEnable: true}, nil)
 
 		middleware := HorusAuthzMiddleware{
@@ -369,7 +369,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		grpcMock := &authGrpc.Mock{}
 
 		grpcMock.On("IsAuthorized").Return(&authGrpc.IsAuthorizedResponse{IsAuthorized: true}, errors.New("test"))
-		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountIDResponse{AccountID: uuid.New().String()}, nil)
+		grpcMock.On("GetAccountID").Return(&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String()}, nil)
 		grpcMock.On("GetAuthConfig").Return(&authGrpc.GetAuthConfigResponse{}, errors.New("test"))
 
 		middleware := HorusAuthzMiddleware{

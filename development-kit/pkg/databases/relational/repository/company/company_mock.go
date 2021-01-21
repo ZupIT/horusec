@@ -56,3 +56,8 @@ func (m *Mock) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRol
 	args := m.MethodCalled("GetAllAccountsInCompany")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	args := m.MethodCalled("GetAllOfAccountLdap")
+	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
+}
