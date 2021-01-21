@@ -174,6 +174,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecJava,
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
+		tools.HorusecDart,
 		tools.Semgrep,
 		tools.HorusecCsharp,
 		tools.HorusecNodejs,
@@ -189,6 +190,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
 		languages.CSharp,
+		languages.Dart,
 		languages.Ruby,
 		languages.Python,
 		languages.Java,

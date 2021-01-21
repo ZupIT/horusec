@@ -15,21 +15,22 @@
 package repositories
 
 import (
-	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	"encoding/json"
 	netHttp "net/http"
 
-	"github.com/ZupIT/horusec/horusec-account/config/app"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/account" // [swagger-import]
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
 	"github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 	"github.com/go-chi/chi"
@@ -68,8 +69,8 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
-	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID))
+	accountID, permissions := h.getAccountData(r)
+	response, err := h.controller.Create(accountID, repository.SetCreateData(companyID), permissions)
 	if err != nil {
 		h.checkCreateRepositoryErrors(w, err)
 		return
@@ -79,7 +80,7 @@ func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 }
 
 func (h *Handler) checkCreateRepositoryErrors(w netHttp.ResponseWriter, err error) {
-	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse {
+	if err == errorsEnum.ErrorRepositoryNameAlreadyInUse || err == errorsEnum.ErrorInvalidLdapGroup {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
@@ -118,7 +119,8 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	response, err := h.controller.Update(repositoryID, repository)
+	_, permissions := h.getAccountData(r)
+	response, err := h.controller.Update(repositoryID, repository, permissions)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
 		return
@@ -157,7 +159,7 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 		return
 	}
 
-	accountID, _ := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
+	accountID, _ := h.getAccountData(r)
 	repository, err := h.controller.Get(repositoryID, accountID)
 	if err != nil {
 		h.checkDefaultErrors(err, w)
@@ -173,11 +175,15 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 		return
 	}
 
+	if err == errorsEnum.ErrorInvalidLdapGroup {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
 	if err.Error() == errorsEnum.ErrorAlreadyExistingRepositoryID {
 		httpUtil.StatusConflict(w, errorsEnum.ErrorUserAlreadyInThisRepository)
 		return
 	}
-
 	httpUtil.StatusInternalServerError(w, err)
 }
 
@@ -194,30 +200,35 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 // @Router /api/companies/{companyID}/repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
-	companyID, accountID, err := h.getCompanyIDAndAccountIDToList(r)
+	accountID, companyID, permissions, err := h.getRequestData(w, r)
 	if err != nil {
-		if err == errorsEnum.ErrorInvalidCompanyID {
-			httpUtil.StatusBadRequest(w, err)
-		} else {
-			httpUtil.StatusUnauthorized(w, err)
-		}
 		return
 	}
-	repositoryList, err := h.controller.List(accountID, companyID)
+
+	repositoryList, err := h.controller.List(accountID, companyID, permissions)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
+
 	httpUtil.StatusOK(w, repositoryList)
 }
 
-func (h *Handler) getCompanyIDAndAccountIDToList(r *netHttp.Request) (uuid.UUID, uuid.UUID, error) {
+func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (uuid.UUID, uuid.UUID, []string, error) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
 	if err != nil || companyID == uuid.Nil {
-		return uuid.Nil, uuid.Nil, errorsEnum.ErrorInvalidCompanyID
+		httpUtil.StatusBadRequest(w, errorsEnum.ErrorInvalidCompanyID)
+		return uuid.Nil, uuid.Nil, []string{}, errorsEnum.ErrorInvalidCompanyID
 	}
-	accountID, err := uuid.Parse(fmt.Sprintf("%v", r.Context().Value(authEnums.AccountID)))
-	return companyID, accountID, err
+
+	accountData := r.Context().Value(authEnums.AccountData).(*authGrpc.GetAccountDataResponse)
+	accountID, err := uuid.Parse(accountData.AccountID)
+	if err != nil {
+		httpUtil.StatusUnauthorized(w, err)
+		return uuid.Nil, uuid.Nil, nil, err
+	}
+
+	return accountID, companyID, accountData.Permissions, nil
 }
 
 // @Tags Repositories
@@ -422,4 +433,15 @@ func (h *Handler) getRemoveUserRequestData(r *netHttp.Request) (*dto.RemoveUser,
 	}
 
 	return removeUser.SetAccountAndRepositoryID(accountID, repositoryID), nil
+}
+
+func (h *Handler) getAccountData(r *netHttp.Request) (uuid.UUID, []string) {
+	response := &authGrpc.GetAccountDataResponse{}
+
+	accountData := r.Context().Value(authEnums.AccountData)
+	bytes, _ := json.Marshal(accountData)
+	_ = json.Unmarshal(bytes, &response)
+	accountID, _ := uuid.Parse(response.AccountID)
+
+	return accountID, response.Permissions
 }

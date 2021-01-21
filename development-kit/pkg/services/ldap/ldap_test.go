@@ -97,7 +97,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -117,7 +116,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -138,7 +136,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -157,8 +154,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapMock.On("Search").Return(&ldap.SearchResult{}, nil)
 
 		service := Service{
-			Attributes: []string{"test"},
-			Conn:       ldapMock,
+			Conn: ldapMock,
 		}
 
 		isValid, data, err := service.Authenticate("test", "test")
@@ -178,30 +174,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
-			Conn:         ldapMock,
-		}
-
-		isValid, data, err := service.Authenticate("test", "test")
-
-		assert.Error(t, err)
-		assert.False(t, isValid)
-		assert.Nil(t, data)
-	})
-
-	t.Run("should return when binding by env after user bind", func(t *testing.T) {
-		ldapMock := &MockLdapConn{}
-
-		ldapMock.On("Bind").Once().Return(nil)
-		ldapMock.On("Bind").Once().Return(nil)
-		ldapMock.On("Bind").Return(errors.New("test"))
-		ldapMock.On("Search").Return(&ldap.SearchResult{Entries: []*ldap.Entry{{DN: "test",
-			Attributes: []*ldap.EntryAttribute{{Name: "test", Values: []string{"test"}}}}}}, nil)
-
-		service := Service{
-			BindDN:       "test",
-			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -223,7 +195,6 @@ func TestAuthenticate(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -272,7 +243,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -291,7 +261,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 
@@ -309,7 +278,6 @@ func TestGetGroupsOfUser(t *testing.T) {
 		service := Service{
 			BindDN:       "test",
 			BindPassword: "test",
-			Attributes:   []string{"test"},
 			Conn:         ldapMock,
 		}
 

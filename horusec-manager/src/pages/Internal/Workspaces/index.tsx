@@ -25,6 +25,8 @@ import { formatToHumanDate } from 'helpers/formatters/date';
 import companyService from 'services/company';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 import HandleWorkspace from './Handle';
 import Tokens from './Tokens';
@@ -35,6 +37,7 @@ const Workspaces: React.FC = () => {
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
   const { allWorkspaces, fetchAllWorkspaces } = useWorkspace();
+  const { authType } = getCurrentConfig();
 
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
@@ -154,16 +157,18 @@ const Workspaces: React.FC = () => {
                         onClick={() => setWorkspaceToDelete(workspace)}
                       />
 
-                      <Button
-                        outline
-                        rounded
-                        opaque
-                        text={t('WORKSPACES_SCREEN.TABLE.USERS')}
-                        width={200}
-                        height={30}
-                        icon="grid"
-                        onClick={() => setWorkspaceToManagerUsers(workspace)}
-                      />
+                      {authType !== authTypes.LDAP ? (
+                        <Button
+                          outline
+                          rounded
+                          opaque
+                          text={t('WORKSPACES_SCREEN.TABLE.USERS')}
+                          width={200}
+                          height={30}
+                          icon="grid"
+                          onClick={() => setWorkspaceToManagerUsers(workspace)}
+                        />
+                      ) : null}
 
                       <Button
                         outline

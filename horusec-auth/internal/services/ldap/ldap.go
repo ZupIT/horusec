@@ -19,16 +19,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache"
 	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
@@ -70,27 +67,25 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 		return nil, err
 	}
 
-	return s.setLDAPAuthResponse(account)
+	return s.setLDAPAuthResponse(account, data["dn"])
 }
 
 func (s *Service) IsAuthorized(authzData *dto.AuthorizationData) (bool, error) {
-	userGroups, err := s.getUserGroupsByJWT(authzData.Token)
+	tokenGroups, err := s.getUserGroupsByJWT(authzData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	authzGroups, err := s.getAuthzGroupsName(authzData)
+	horusecGroups, err := s.getAuthzGroupsName(authzData)
 	if err != nil {
 		return false, errors.ErrorUnauthorized
 	}
 
-	return s.checkIsAuthorized(userGroups, authzGroups)
+	return s.checkIsAuthorized(tokenGroups, horusecGroups)
 }
 
-func (s *Service) isApplicationAdmin(username string) bool {
+func (s *Service) isApplicationAdmin(userGroups []string) bool {
 	applicationAdminGroups, _ := s.getApplicationAdminAuthzGroupsName()
-	userGroups, _ := s.getUserGroupsInLdap(username)
-
 	isApplicationAdmin, err := s.checkIsAuthorized(applicationAdminGroups, userGroups)
 	if err != nil {
 		return false
@@ -99,13 +94,12 @@ func (s *Service) isApplicationAdmin(username string) bool {
 	return isApplicationAdmin
 }
 
-func (s *Service) getUserGroupsInLdap(username string) ([]string, error) {
+func (s *Service) getUserGroupsInLdap(userDN string) ([]string, error) {
 	memoizedGetUserGroups := func() (interface{}, error) {
-		return s.client.GetGroupsOfUser(username)
+		return s.client.GetGroupsOfUser(userDN)
 	}
 
-	userGroups, err, _ := s.memo.Memoize(username, memoizedGetUserGroups)
-	logger.LogInfo("{getUserGroups} found ldap groups -> ", userGroups)
+	userGroups, err, _ := s.memo.Memoize(userDN, memoizedGetUserGroups)
 	if err != nil {
 		return []string{}, err
 	}
@@ -121,8 +115,8 @@ func (s *Service) verifyAuthenticateErrors(err error) error {
 	return errors.ErrorUnauthorized
 }
 
-func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapAuthResponse, error) {
-	userGroups, err := s.getUserGroupsInLdap(account.Username)
+func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN string) (*dto.LdapAuthResponse, error) {
+	userGroups, err := s.getUserGroupsInLdap(userDN)
 	if err != nil {
 		return nil, err
 	}
@@ -133,21 +127,19 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account) (*dto.LdapA
 		ExpiresAt:          expiresAt,
 		Username:           account.Username,
 		Email:              account.Email,
-		IsApplicationAdmin: s.isApplicationAdmin(account.Username),
+		IsApplicationAdmin: s.isApplicationAdmin(userGroups),
 	}, nil
 }
 
 func (s *Service) getAccountAndCreateIfNotExist(data map[string]string) (*authEntities.Account, error) {
-	account, err := s.accountRepo.GetByEmail(data["mail"])
-
+	account, err := s.accountRepo.GetByUsername(data["sAMAccountName"])
 	if account == nil || err != nil {
 		account = &authEntities.Account{
-			Email:    s.pickOne(data, "mail", "uid"),
-			Username: s.pickOne(data, "givenName", "uid"),
+			Email:    s.pickOne(data, "mail", "sAMAccountName"),
+			Username: data["sAMAccountName"],
 		}
 
-		err = s.accountRepo.Create(account.SetAccountData())
-		if err != nil {
+		if err := s.accountRepo.Create(account.SetAccountData()); err != nil {
 			return nil, err
 		}
 	}
@@ -192,9 +184,9 @@ func (s *Service) handleGetAuthzGroupsNameForRepository(authzData *dto.Authoriza
 	return append(repositoryAuthz, companyAuthzAdmin...), nil
 }
 
-func (s *Service) checkIsAuthorized(userGroups, groups []string) (bool, error) {
-	for _, userGroup := range userGroups {
-		if s.contains(groups, userGroup) {
+func (s *Service) checkIsAuthorized(tokenGroups, horusecGroups []string) (bool, error) {
+	for _, tokenGroup := range tokenGroups {
+		if s.contains(horusecGroups, tokenGroup) {
 			return true, nil
 		}
 	}
@@ -269,9 +261,9 @@ func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
 	return token.Permissions, nil
 }
 
-func (s *Service) contains(groups []string, userGroup string) bool {
-	for _, group := range groups {
-		if group == userGroup {
+func (s *Service) contains(horusecGroups []string, tokenGroup string) bool {
+	for _, horusecGroup := range horusecGroups {
+		if strings.TrimSpace(horusecGroup) == tokenGroup {
 			return true
 		}
 	}

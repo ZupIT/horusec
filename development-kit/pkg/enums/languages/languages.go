@@ -21,6 +21,7 @@ type Language string
 const (
 	Go         Language = "Go"
 	CSharp     Language = "C#"
+	Dart       Language = "Dart"
 	Ruby       Language = "Ruby"
 	Python     Language = "Python"
 	Java       Language = "Java"
@@ -51,6 +52,7 @@ func SupportedLanguages() []Language {
 	return []Language{
 		Go,
 		CSharp,
+		Dart,
 		Ruby,
 		Python,
 		Java,
@@ -66,11 +68,13 @@ func SupportedLanguages() []Language {
 	}
 }
 
+// nolint:funlen method is necessary more 15 lines
 func (l Language) MapEnableLanguages() map[string]Language {
 	return map[string]Language{
 		Go.ToString():         Go,
 		Leaks.ToString():      Leaks,
 		CSharp.ToString():     CSharp,
+		Dart.ToString():       Dart,
 		Ruby.ToString():       Ruby,
 		Python.ToString():     Python,
 		Java.ToString():       Java,

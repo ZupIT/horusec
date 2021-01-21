@@ -16,18 +16,17 @@ package middlewares
 
 import (
 	"context"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"net/http"
 
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
-	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
-	"google.golang.org/grpc"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	httpClient "github.com/ZupIT/horusec/development-kit/pkg/utils/http-request/client"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/go-chi/chi"
+	"google.golang.org/grpc"
 )
 
 type IHorusAuthzMiddleware interface {
@@ -63,7 +62,7 @@ func (h *HorusAuthzMiddleware) SetContextAccountID(next http.Handler) http.Handl
 // nolint
 func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r, configAuth, err := h.getConfigAuthAndSetInContext(r)
+		configAuth, err := h.getConfigAuth()
 		if err != nil {
 			logger.LogError(errors.SomethingWentWrongInGrpcRequest, err)
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
@@ -79,15 +78,6 @@ func (h *HorusAuthzMiddleware) IsApplicationAdmin(next http.Handler) http.Handle
 		}
 		h.setContextAndReturn(next, w, r)
 	})
-}
-
-func (h *HorusAuthzMiddleware) getConfigAuthAndSetInContext(r *http.Request) (
-	*http.Request, authEntities.ConfigAuth, error) {
-	configAuth, err := h.getConfigAuth()
-	if err != nil {
-		return r, authEntities.ConfigAuth{}, errors.ErrorUnauthorized
-	}
-	return h.setConfigAuthInContextAndReturnRequest(r, configAuth), configAuth, nil
 }
 
 func (h *HorusAuthzMiddleware) IsCompanyMember(next http.Handler) http.Handler {
@@ -176,8 +166,8 @@ func (h *HorusAuthzMiddleware) setAuthorizedData(r *http.Request,
 	}
 }
 
-func (h *HorusAuthzMiddleware) setGetAccountIDData(token string) *authGrpc.GetAccountIDData {
-	return &authGrpc.GetAccountIDData{
+func (h *HorusAuthzMiddleware) setGetAccountIDData(token string) *authGrpc.GetAccountData {
+	return &authGrpc.GetAccountData{
 		Token: token,
 	}
 }
@@ -188,7 +178,7 @@ func (h *HorusAuthzMiddleware) setAccountIDInContext(r *http.Request, token stri
 		return nil, err
 	}
 
-	return context.WithValue(r.Context(), authEnums.AccountID, response.AccountID), nil
+	return context.WithValue(r.Context(), authEnums.AccountData, response), nil
 }
 
 func (h *HorusAuthzMiddleware) getConfigAuth() (authEntities.ConfigAuth, error) {
@@ -200,11 +190,6 @@ func (h *HorusAuthzMiddleware) getConfigAuth() (authEntities.ConfigAuth, error) 
 	return authEntities.ConfigAuth{
 		ApplicationAdminEnable: response.GetApplicationAdminEnable(),
 		AuthType:               authEnums.AuthorizationType(response.GetAuthType()),
+		DisabledBroker:         response.DisabledBroker,
 	}, nil
-}
-
-func (h *HorusAuthzMiddleware) setConfigAuthInContextAndReturnRequest(
-	r *http.Request, configAuth authEntities.ConfigAuth) *http.Request {
-	ctx := context.WithValue(r.Context(), authEnums.ConfigAuth, configAuth)
-	return r.WithContext(ctx)
 }

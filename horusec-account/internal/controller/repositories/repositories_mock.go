@@ -27,52 +27,52 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(accountID uuid.UUID, data *accountEntities.Repository) (*accountEntities.Repository, error) {
+func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Repository, _ []string) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Repository, _ []string) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Get(repositoryID, accountID uuid.UUID) (*accountEntities.RepositoryResponse, error) {
+func (m *Mock) Get(_, _ uuid.UUID) (*accountEntities.RepositoryResponse, error) {
 	args := m.MethodCalled("Get")
 	return args.Get(0).(*accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) List(accountID uuid.UUID, companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error) {
+func (m *Mock) List(_ uuid.UUID, _ uuid.UUID, _ []string) (repositories *[]accountEntities.RepositoryResponse, err error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) CreateAccountRepository(accountRepository *roles.AccountRepository) error {
+func (m *Mock) CreateAccountRepository(_ *roles.AccountRepository) error {
 	args := m.MethodCalled("CreateAccountRepository")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) UpdateAccountRepository(companyID uuid.UUID, accountRepository *roles.AccountRepository) error {
+func (m *Mock) UpdateAccountRepository(_ uuid.UUID, _ *roles.AccountRepository) error {
 	args := m.MethodCalled("UpdateAccountRepository")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) InviteUser(inviteUser *dto.InviteUser) error {
+func (m *Mock) InviteUser(_ *dto.InviteUser) error {
 	args := m.MethodCalled("InviteUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) Delete(repositoryID uuid.UUID) error {
+func (m *Mock) Delete(_ uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error) {
+func (m *Mock) GetAllAccountsInRepository(_ uuid.UUID) (*[]roles.AccountRole, error) {
 	args := m.MethodCalled("GetAllAccountsInRepository")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) RemoveUser(removeUser *dto.RemoveUser) error {
+func (m *Mock) RemoveUser(_ *dto.RemoveUser) error {
 	args := m.MethodCalled("RemoveUser")
 	return mockUtils.ReturnNilOrError(args, 0)
 }

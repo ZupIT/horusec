@@ -210,15 +210,14 @@ func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound
 }
 
 func (ld *LanguageDetect) updateExistingLanguages(lang string, existingLanguages []string) []string {
-	if ld.isTypescriptOrJavascriptLang(lang) {
+	switch {
+	case ld.isTypescriptOrJavascriptLang(lang):
 		return append(existingLanguages, languages.Javascript.ToString())
-	}
-
-	if ld.isCPlusPLusOrCLang(lang) {
+	case ld.isCPlusPLusOrCLang(lang):
 		return append(existingLanguages, languages.C.ToString())
+	default:
+		return append(existingLanguages, lang)
 	}
-
-	return append(existingLanguages, lang)
 }
 
 func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {

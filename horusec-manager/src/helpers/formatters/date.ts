@@ -18,10 +18,14 @@ import { getCurrentLanguage } from 'helpers/localStorage/currentLanguage';
 import { format } from 'date-fns';
 
 const formatInitialAndFinalDate = (initial: Date, final: Date) => {
-  const initialDate = format(initial, `yyyy-MM-dd'T00:00:00Z'`);
-  const finalDate = format(final, `yyyy-MM-dd'T23:59:59Z'`);
+  if (initial && final) {
+    const initialDate = format(initial, `yyyy-MM-dd'T00:00:00Z'`);
+    const finalDate = format(final, `yyyy-MM-dd'T23:59:59Z'`);
 
-  return { initialDate, finalDate };
+    return { initialDate, finalDate };
+  }
+
+  return { initialDate: null, finalDate: null };
 };
 
 const formatToHumanDate = (date: string) => {

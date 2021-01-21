@@ -64,7 +64,7 @@ const handleSetKeyclockData = async (
       setCurrentUser(userData);
 
       if (window.location.pathname === '/auth') {
-        window.location.replace('/home');
+        window.location.replace('/');
       }
     });
   }

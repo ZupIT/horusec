@@ -143,7 +143,7 @@ func TestGetCompanyTotalDevelopers(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyTotalDevelopers(w, r)
@@ -196,7 +196,7 @@ func TestGetRepositoryTotalDevelopers(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryTotalDevelopers(w, r)
@@ -249,7 +249,7 @@ func TestGetCompanyTotalRepositories(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyTotalRepositories(w, r)
@@ -302,7 +302,7 @@ func TestGetRepositoryTotalRepositories(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryTotalRepositories(w, r)
@@ -355,7 +355,7 @@ func TestGetCompanyVulnByDeveloper(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyVulnByDeveloper(w, r)
@@ -408,7 +408,7 @@ func TestGetRepositoryVulnByDeveloper(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryVulnByDeveloper(w, r)
@@ -461,7 +461,7 @@ func TestGetCompanyVulnByLanguage(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyVulnByLanguage(w, r)
@@ -514,7 +514,7 @@ func TestGetRepositoryVulnByLanguage(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryVulnByLanguage(w, r)
@@ -567,7 +567,7 @@ func TestGetCompanyVulnByRepository(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyVulnByRepository(w, r)
@@ -620,7 +620,7 @@ func TestGetRepositoryVulnByRepository(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryVulnByRepository(w, r)
@@ -673,7 +673,7 @@ func TestGetCompanyVulnByTime(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyVulnByTime(w, r)
@@ -726,7 +726,7 @@ func TestGetRepositoryVulnByTime(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryVulnByTime(w, r)
@@ -779,7 +779,7 @@ func TestGetCompanyVulnBySeverity(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetCompanyVulnBySeverity(w, r)
@@ -832,7 +832,7 @@ func TestGetRepositoryVulnBySeverity(t *testing.T) {
 
 		handler := Handler{controller: controllerMock}
 
-		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?initialDate=2006-01-02T15:04:05Z", nil)
+		r, _ := http.NewRequest(http.MethodGet, "api/dashboard?finalDate=null;initialDate=null", nil)
 		w := httptest.NewRecorder()
 
 		handler.GetRepositoryVulnBySeverity(w, r)
