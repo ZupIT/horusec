@@ -26,13 +26,14 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	customrules "github.com/ZupIT/horusec/horusec-cli/internal/services/custom_rules"
+	customRules "github.com/ZupIT/horusec/horusec-cli/internal/services/custom_rules"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/git"
 )
@@ -43,7 +44,7 @@ type Service struct {
 	gitService         git.IService
 	monitor            *horusec.Monitor
 	config             cliConfig.IConfig
-	customRulesService customrules.IService
+	customRulesService customRules.IService
 }
 
 func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
@@ -54,7 +55,7 @@ func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interf
 		gitService:         git.NewGitService(config),
 		monitor:            monitor,
 		config:             config,
-		customRulesService: customrules.NewCustomRulesService(config),
+		customRulesService: customRules.NewCustomRulesService(config),
 	}
 }
 
@@ -263,4 +264,20 @@ func (s *Service) IsDockerDisabled() bool {
 
 func (s *Service) GetCustomRulesByTool(tool tools.Tool) []engine.Rule {
 	return s.customRulesService.GetCustomRulesByTool(tool)
+}
+
+func (s *Service) GetConfigCMDYarnOrNpmAudit(projectSubPath, imageCmd string, tool tools.Tool) string {
+	projectPath := s.GetConfigProjectPath()
+
+	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
+	if newProjectSubPath != "" {
+		return s.AddWorkDirInCmd(imageCmd, newProjectSubPath, tool)
+	}
+
+	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
+	if newProjectSubPath != "" {
+		return s.AddWorkDirInCmd(imageCmd, newProjectSubPath, tool)
+	}
+
+	return s.AddWorkDirInCmd(imageCmd, projectSubPath, tool)
 }

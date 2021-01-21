@@ -50,4 +50,5 @@ type IService interface {
 	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
 	IsDockerDisabled() bool
 	GetCustomRulesByTool(tool tools.Tool) []engine.Rule
+	GetConfigCMDYarnOrNpmAudit(projectSubPath, imageCmd string, tool tools.Tool) string
 }
