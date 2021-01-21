@@ -27,13 +27,13 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "horusec-nodejs",
-	Short: "Horusec-nodejs CLI",
+	Use:   "horusec-dart",
+	Short: "Horusec-dart CLI",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger.LogPrint("Horusec Node JS Command Line Interface")
 		return cmd.Help()
 	},
-	Example: `horusec-nodejs run`,
+	Example: `horusec-dart run`,
 }
 
 var configs *config.Config

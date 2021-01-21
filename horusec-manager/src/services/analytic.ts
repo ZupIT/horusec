@@ -167,6 +167,7 @@ const getVulnerabilitiesDetails = (
   let filter;
   let path;
   let ID;
+  let period = '';
 
   if (filters.type === 'workspace') {
     filter = `companyID: "${filters.companyID}"`;
@@ -183,9 +184,13 @@ const getVulnerabilitiesDetails = (
     filters.finalDate
   );
 
+  if (initialDate && finalDate) {
+    period = `, initialDate: "${initialDate}", finalDate: "${finalDate}"`;
+  }
+
   const query = `{
-    totalItems(${filter}, initialDate: "${initialDate}", finalDate: "${finalDate}")
-    analysis (${filter}, initialDate: "${initialDate}", finalDate: "${finalDate}"){
+    totalItems(${filter} ${period})
+    analysis (${filter} ${period}){
       repositoryName
       companyName
       vulnerability {

@@ -37,6 +37,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
   const fixedRanges = [
     {
+      label: t('DASHBOARD_SCREEN.BEGINNING'),
+      value: 'beginning',
+    },
+    {
       label: t('DASHBOARD_SCREEN.CUSTOM_RANGE'),
       value: 'customRange',
     },
@@ -52,23 +56,18 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       label: t('DASHBOARD_SCREEN.LAST_MONTH'),
       value: 'lastMonth',
     },
-    {
-      label: t('DASHBOARD_SCREEN.BEGINNING'),
-      value: 'beginning',
-    },
   ];
 
   const today = new Date();
   const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
-  const beginning = new Date(2019, 0, 1, 0, 0, 0, 0);
 
   const [repositories, setRepositories] = useState<any[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
 
   const [filters, setFilters] = useState<FilterValues>({
-    initialDate: lastWeek,
-    finalDate: today,
+    initialDate: null,
+    finalDate: null,
     repositoryID: null,
     companyID: null,
     type,
@@ -82,7 +81,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       today: [today, today],
       lastWeek: [lastWeek, today],
       lastMonth: [lastMonth, today],
-      beginning: [beginning, today],
+      beginning: [null, null],
     };
     setFilters({
       ...filters,
@@ -140,7 +139,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         />
       </Styled.Wrapper>
 
-      {selectedPeriod?.value === fixedRanges[0].value ? (
+      {selectedPeriod?.value === fixedRanges[1].value ? (
         <>
           <Styled.CalendarWrapper>
             <Calendar
