@@ -67,12 +67,10 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 	if containerOutput == "" {
 		return nil
 	}
-
 	shellCheckOutput, err := f.newContainerOutputFromString(containerOutput)
 	if err != nil {
 		return err
 	}
-
 	for _, fixes := range shellCheckOutput {
 		value := fixes
 		if !f.isIgnoredFix(value.Message) {
