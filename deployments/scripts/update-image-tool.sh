@@ -166,7 +166,7 @@ setActualRelease() {
     alpha=$(grep -P '.*ImageTag.*alpha' "$DIRECTORY_CONFIG")
     rc=$(grep -P '.*ImageTag.*rc' "$DIRECTORY_CONFIG")
 
-    cd $DIRECTORY_SEMVER
+    cd $DIRECTORY_SEMVER || echo "Directory not exist!"; exit
     if [ "$alpha" != "" ]
     then
         ACTUAL_RELEASE_IN_CONFIG=$(semver get alpha)
@@ -176,7 +176,7 @@ setActualRelease() {
     else
         ACTUAL_RELEASE_IN_CONFIG=$(semver get release)
     fi
-    cd $CURRENT_FOLDER
+    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
 }
 
 setNewRelease() {
@@ -194,13 +194,13 @@ setNewRelease() {
 updateImage () {
     setActualRelease
 
-    cd $DIRECTORY_SEMVER
+    cd "$DIRECTORY_SEMVER" || echo "Directory not exist!"; exit
 
     resetAlphaRcToMaster
 
     setNewRelease
 
-    cd $CURRENT_FOLDER
+    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
 
     updateVersionInConfigFile
     updateVersionInCliVersionFile
