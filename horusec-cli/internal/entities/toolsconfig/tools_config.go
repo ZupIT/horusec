@@ -32,6 +32,8 @@ type ToolsConfigsStruct struct {
 	HorusecNodejs     ToolConfig `json:"horusecnodejs"`
 	Flawfinder        ToolConfig `json:"flawfinder"`
 	PhpCS             ToolConfig `json:"phpcs"`
+	HorusecDart       ToolConfig `json:"horusecdart"`
+	ShellCheck        ToolConfig `json:"shellcheck"`
 }
 
 //nolint:funlen parse struct is necessary > 15 lines
@@ -56,6 +58,8 @@ func (t *ToolsConfigsStruct) ToMap() map[tools.Tool]ToolConfig {
 		tools.HorusecNodejs:     t.HorusecNodejs,
 		tools.Flawfinder:        t.Flawfinder,
 		tools.PhpCS:             t.PhpCS,
+		tools.HorusecDart:       t.HorusecDart,
+		tools.ShellCheck:        t.ShellCheck,
 	}
 }
 

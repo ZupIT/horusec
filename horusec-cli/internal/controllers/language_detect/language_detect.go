@@ -215,6 +215,8 @@ func (ld *LanguageDetect) updateExistingLanguages(lang string, existingLanguages
 		return append(existingLanguages, languages.Javascript.ToString())
 	case ld.isCPlusPLusOrCLang(lang):
 		return append(existingLanguages, languages.C.ToString())
+	case ld.isBatFileOrShellFile(lang):
+		return append(existingLanguages, languages.Shell.ToString())
 	default:
 		return append(existingLanguages, lang)
 	}
@@ -230,4 +232,9 @@ func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
 func (ld *LanguageDetect) isCPlusPLusOrCLang(lang string) bool {
 	return strings.EqualFold(lang, "C++") ||
 		strings.EqualFold(lang, "C")
+}
+
+func (ld *LanguageDetect) isBatFileOrShellFile(lang string) bool {
+	return strings.EqualFold(lang, "Batchfile") ||
+		strings.EqualFold(lang, "Shell")
 }

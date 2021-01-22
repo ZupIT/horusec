@@ -17,6 +17,7 @@ package analyser
 import (
 	"fmt"
 	hrousecdart "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dart/horusecdart"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/shell/shellcheck"
 	"log"
 	"os"
 	"os/signal"
@@ -156,7 +157,6 @@ func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
 		SetDefaultVulnerabilityType().
 		SortVulnerabilitiesByType()
 	if !a.config.GetEnableInformationSeverity() {
-		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
 		a.analysis = a.analysis.RemoveInfoVulnerabilities()
 	}
 }
@@ -210,6 +210,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.C:          a.detectVulnerabilityC,
 		languages.PHP:        a.detectVulnerabilityPHP,
 		languages.Dart:       a.detectVulnerabilityDart,
+		languages.Shell:      a.detectVulnerabilityShell,
 	}
 }
 
@@ -292,6 +293,11 @@ func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
 	a.monitor.AddProcess(1)
 	go hrousecdart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {

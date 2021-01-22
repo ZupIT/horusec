@@ -274,6 +274,9 @@ func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
 }
 
 func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
+	if !pr.configs.GetEnableInformationSeverity() {
+		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
+	}
 	if pr.analysis.HasErrors() {
 		pr.logSeparator(true)
 		logger.LogWarnWithLevel(messages.MsgErrorFoundErrorsInAnalysis)
