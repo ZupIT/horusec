@@ -40,6 +40,7 @@ const (
 	HorusecNodejs     Tool = "HorusecNodeJS"
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"
+	MixAudit          Tool = "MixAudit"
 )
 
 func (t Tool) ToString() string {

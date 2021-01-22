@@ -35,6 +35,7 @@ const (
 	HTML       Language = "HTML"
 	Generic    Language = "Generic"
 	Yaml       Language = "YAML"
+	Elixir     Language = "Elixir"
 	Unknown    Language = "Unknown"
 )
 
@@ -64,6 +65,7 @@ func SupportedLanguages() []Language {
 		Yaml,
 		C,
 		PHP,
+		Elixir,
 		Unknown,
 	}
 }
@@ -85,6 +87,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Yaml.ToString():       Yaml,
 		C.ToString():          C,
 		PHP.ToString():        PHP,
+		Elixir.ToString():     Elixir,
 	}
 }
 
