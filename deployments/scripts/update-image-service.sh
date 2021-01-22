@@ -102,7 +102,7 @@ validateIsToUpdateLatest () {
 }
 
 updateVersion () {
-    cd $DIRECTORY
+    cd $DIRECTORY || echo "Directory not exist!"; exit
 
     resetAlphaRcToMaster
 

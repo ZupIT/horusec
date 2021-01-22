@@ -43,7 +43,7 @@ generateBinaries () {
     chmod +x ./deployments/scripts/install-semver.sh
     ./deployments/scripts/install-semver.sh
 
-    cd ./horusec-cli
+    cd ./horusec-cli || echo "Directory not exist!"; exit
 
     resetAlphaRcToMaster
 
