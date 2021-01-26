@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP TABLE IF EXISTS horusec_config CASCADE;
+
+COMMIT;

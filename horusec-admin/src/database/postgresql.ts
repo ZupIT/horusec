@@ -7,7 +7,10 @@ export class Database {
 
   constructor() {
     this.config = new Config().getConfig();
-    this.db = new Sequelize(this.config.dbUri);
+    this.db = new Sequelize(this.config.URI, {
+      logQueryParameters: this.config.LogMode,
+      logging: this.config.LogMode,
+    });
     this.checkHealth();
   }
 
