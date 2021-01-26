@@ -94,18 +94,18 @@ const removeUserInCompany = (companyId: string, accountId: string) => {
 };
 
 const getAllTokens = (companyId: string) => {
-  return http.get(`${SERVICE_API}/account/companies/${companyId}/tokens`);
+  return http.get(`${SERVICE_API}/api/companies/${companyId}/tokens`);
 };
 
 const createToken = (companyId: string, description: string) => {
-  return http.post(`${SERVICE_API}/account/companies/${companyId}/tokens`, {
+  return http.post(`${SERVICE_API}/api/companies/${companyId}/tokens`, {
     description,
   });
 };
 
 const removeToken = (companyId: string, tokenId: string) => {
   return http.delete(
-    `${SERVICE_API}/account/companies/${companyId}/tokens/${tokenId}`
+    `${SERVICE_API}/api/companies/${companyId}/tokens/${tokenId}`
   );
 };
 

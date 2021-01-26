@@ -64,7 +64,7 @@ const remove = (companyId: string, repositoryId: string) => {
 
 const getAllTokens = (companyId: string, repositoryId: string) => {
   return defaultHTTP.get(
-    `${SERVICE_API}/account/companies/${companyId}/repositories/${repositoryId}/tokens`
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`
   );
 };
 
@@ -74,7 +74,7 @@ const createToken = (
   description: string
 ) => {
   return defaultHTTP.post(
-    `${SERVICE_API}/account/companies/${companyId}/repositories/${repositoryId}/tokens`,
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
       description,
     }
@@ -87,7 +87,7 @@ const removeToken = (
   tokenId: string
 ) => {
   return defaultHTTP.delete(
-    `${SERVICE_API}/account/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
@@ -141,7 +141,7 @@ const getAllVulnerabilities = (
   pagination: PaginationInfo
 ) => {
   return defaultHTTP.get(
-    `${SERVICE_API}/account/companies/${filters.companyID}/repositories/${filters.repositoryID}/management`,
+    `${SERVICE_API}/api/companies/${filters.companyID}/repositories/${filters.repositoryID}/management`,
     {
       params: {
         page: pagination.currentPage,
@@ -161,7 +161,7 @@ const updateVulnerabilityType = (
   type: string
 ) => {
   return defaultHTTP.put(
-    `${SERVICE_API}/account/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
     {
       type,
     }
