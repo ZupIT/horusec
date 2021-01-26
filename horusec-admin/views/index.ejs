@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horusec Admin</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+  <link href="/style.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <form action="/" method="POST">
+        <div class="col-12">
+          <h4>KEYCLOAK_HOST</h4>
+          <input type="text" class="form-control" name="KEYCLOAK_HOST" placeholder="set KEYCLOAK_HOST" />
+        </div>
+
+        <button type="submit" class="btn btn-md btn-default">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    function moveTask(event, id) {
+      const { name } = event.target;
+
+      fetch("http://localhost:8080/moveTaskDone", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          id
+        })
+      }).then(response => response.json()).then(status => {
+        console.log(status);
+        window.location.reload()
+
+      }).catch(err => console.log(err))
+    }
+  </script>
+</body>
+
+</html>
