@@ -259,7 +259,7 @@ func GenerateRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID 
 	fmt.Println("Running test for GenerateRepositoryToken")
 	req, _ := http.NewRequest(
 		http.MethodPost,
-		"http://127.0.0.1:8000/account/companies/"+companyID+"/repositories/"+repositoryID+"/tokens",
+		"http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens",
 		bytes.NewReader(token.ToBytes()),
 	)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
@@ -277,7 +277,7 @@ func GenerateRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID 
 
 func ReadAllRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID string) string {
 	fmt.Println("Running test for ReadAllRepositoryToken")
-	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/account/companies/"+companyID+"/repositories/"+repositoryID+"/tokens", nil)
+	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens", nil)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -293,7 +293,7 @@ func ReadAllRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID s
 
 func RevokeRepositoryToken(t *testing.T, bearerToken, companyID, repositoryID, tokenID string) {
 	fmt.Println("Running test for RevokeRepositoryToken")
-	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8000/account/companies/"+companyID+"/repositories/"+repositoryID+"/tokens/"+tokenID, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8000/api/companies/"+companyID+"/repositories/"+repositoryID+"/tokens/"+tokenID, nil)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
