@@ -182,6 +182,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecKubernetes,
 		tools.Flawfinder,
 		tools.PhpCS,
+		tools.ShellCheck,
 	}
 }
 
@@ -204,6 +205,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.HTML,
 		languages.Generic,
 		languages.Yaml,
+		languages.Shell,
 		languages.Unknown,
 	}
 }

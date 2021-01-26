@@ -12,16 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd ./horusec-messages
+FROM golang:1.14-alpine
 
-semver up release
+RUN apk add --no-cache shellcheck
 
-latestVersion=$(semver get release)
-
-cd ..
-
-docker build -t horuszup/horusec-messages:latest -f ./horusec-messages/deployments/Dockerfile .
-docker push horuszup/horusec-messages:latest
-
-docker build -t horuszup/horusec-messages:$latestVersion -f ./horusec-messages/deployments/Dockerfile .
-docker push horuszup/horusec-messages:$latestVersion
+CMD ["/bin/sh"]

@@ -42,6 +42,7 @@ const (
 	PhpCS             Tool = "PhpCS"
 	MixAudit          Tool = "MixAudit"
 	Sobelow           Tool = "Sobelow"
+	ShellCheck        Tool = "ShellCheck"
 )
 
 func (t Tool) ToString() string {

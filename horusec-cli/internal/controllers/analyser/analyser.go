@@ -57,6 +57,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/bandit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/safety"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/brakeman"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/shell/shellcheck"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/horusec-cli/internal/services/horusapi"
 	"github.com/google/uuid"
@@ -154,7 +155,6 @@ func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
 		SetDefaultVulnerabilityType().
 		SortVulnerabilitiesByType()
 	if !a.config.GetEnableInformationSeverity() {
-		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
 		a.analysis = a.analysis.RemoveInfoVulnerabilities()
 	}
 }
@@ -209,6 +209,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.PHP:        a.detectVulnerabilityPHP,
 		languages.Dart:       a.detectVulnerabilityDart,
 		languages.Elixir:     a.detectVulnerabilityElixir,
+		languages.Shell:      a.detectVulnerabilityShell,
 	}
 }
 
@@ -297,6 +298,11 @@ func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
 	a.monitor.AddProcess(2)
 	go mixaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go sobelow.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {
