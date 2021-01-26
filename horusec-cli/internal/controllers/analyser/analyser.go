@@ -41,6 +41,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs"
 	horusecDart "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dart/horusecdart"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/mixaudit"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/sobelow"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
@@ -293,8 +294,9 @@ func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go mixaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go sobelow.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {

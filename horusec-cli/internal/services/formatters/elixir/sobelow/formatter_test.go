@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mixaudit
+package sobelow
 
 import (
 	"errors"
@@ -27,7 +27,16 @@ import (
 )
 
 func getOutputString() string {
-	return `{"pass":false,"vulnerabilities":[{"advisory":{"cve":"2019-15160","description":"The SweetXml (aka sweet_xml) package through 0.6.6 for Erlang and Elixir allows attackers to cause a denial of service (resource consumption) via an XML entity expansion attack with an inline DTD.\n","disclosure_date":"2019-08-19","id":"fb810971-a5c6-4268-9bd7-d931f72a87ec","package":"sweet_xml","patched_versions":[],"title":"Inline DTD allows XML bomb attack\n","unaffected_versions":[],"url":"https://github.com/kbrw/sweet_xml/issues/71"},"dependency":{"lockfile":"/src/mix.lock","package":"sweet_xml","version":"0.6.6"}}]}`
+	return `
+
+
+		[31m[+][0m Config.CSP: Missing Content-Security-Policy - lib/built_with_elixir_web/router.ex:9
+		[31m[+][0m Config.Secrets: Hardcoded Secret - config/travis.exs:24
+		[31m[+][0m Config.HTTPS: HTTPS Not Enabled - config/prod.exs:0
+		[32m[+][0m XSS.Raw: XSS - lib/built_with_elixir_web/templates/layout/app.html.eex:17
+		test
+
+`
 }
 
 func TestStartCFlawfinder(t *testing.T) {
@@ -47,7 +56,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		formatter.StartAnalysis("")
 
 		assert.NotEmpty(t, analysis)
-		assert.Len(t, analysis.AnalysisVulnerabilities, 1)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 5)
 	})
 
 	t.Run("should return error when invalid output", func(t *testing.T) {
@@ -89,7 +98,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"MixAudit"})
+		config.SetToolsToIgnore([]string{"Sobelow"})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)

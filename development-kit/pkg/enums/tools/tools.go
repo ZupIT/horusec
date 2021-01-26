@@ -41,6 +41,7 @@ const (
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"
 	MixAudit          Tool = "MixAudit"
+	Sobelow           Tool = "Sobelow"
 )
 
 func (t Tool) ToString() string {
