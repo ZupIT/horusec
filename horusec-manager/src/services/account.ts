@@ -52,9 +52,12 @@ const deleteAccount = () => {
 };
 
 const createAccountFromKeycloak = (accessToken: string) => {
-  return http.post(`${SERVICE_AUTH}/auth/account/create-account-from-keycloak`, {
-    accessToken,
-  });
+  return http.post(
+    `${SERVICE_AUTH}/auth/account/create-account-from-keycloak`,
+    {
+      accessToken,
+    }
+  );
 };
 
 const sendCode = (email: string) => {

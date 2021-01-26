@@ -212,9 +212,12 @@ const getVulnerabilitiesDetails = (
     }
   }`;
 
-  return http.get(`${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/details`, {
-    params: { query, page, size },
-  });
+  return http.get(
+    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/details`,
+    {
+      params: { query, page, size },
+    }
+  );
 };
 
 export default {
