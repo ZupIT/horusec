@@ -111,7 +111,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -127,7 +127,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -147,7 +147,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -168,7 +168,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -192,7 +192,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -217,7 +217,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -242,7 +242,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetFullImagePath("", ImageName, ImageTag)
+		ad.SetFullImagePath("", dockerEntities.DefaultRepository, ImageName, ImageTag)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.NoError(t, err)
