@@ -19,11 +19,11 @@ import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 
 const getAll = () => {
-  return http.get(`${SERVICE_ACCOUNT}/api/companies`);
+  return http.get(`${SERVICE_ACCOUNT}/account/companies`);
 };
 
 const getOne = (companyId: string) => {
-  return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
+  return http.get(`${SERVICE_ACCOUNT}/account/companies/${companyId}`);
 };
 
 const create = (
@@ -32,7 +32,7 @@ const create = (
   adminEmail?: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies`, {
+  return http.post(`${SERVICE_ACCOUNT}/account/companies`, {
     name,
     description,
     adminEmail,
@@ -47,7 +47,7 @@ const update = (
   adminEmail?: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return http.patch(`${SERVICE_ACCOUNT}/api/companies/${companyId}`, {
+  return http.patch(`${SERVICE_ACCOUNT}/account/companies/${companyId}`, {
     name,
     adminEmail,
     description,
@@ -56,11 +56,11 @@ const update = (
 };
 
 const remove = (companyId: string) => {
-  return http.delete(`${SERVICE_ACCOUNT}/api/companies/${companyId}`);
+  return http.delete(`${SERVICE_ACCOUNT}/account/companies/${companyId}`);
 };
 
 const getUsersInCompany = (companyId: string) => {
-  return http.get(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`);
+  return http.get(`${SERVICE_ACCOUNT}/account/companies/${companyId}/roles`);
 };
 
 const createUserInCompany = (
@@ -68,7 +68,7 @@ const createUserInCompany = (
   email: string,
   role: string
 ) => {
-  return http.post(`${SERVICE_ACCOUNT}/api/companies/${companyId}/roles`, {
+  return http.post(`${SERVICE_ACCOUNT}/account/companies/${companyId}/roles`, {
     email,
     role,
   });
@@ -80,7 +80,7 @@ const editUserInCompany = (
   role: string
 ) => {
   return http.patch(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`,
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/roles/${accountId}`,
     {
       role,
     }
@@ -89,23 +89,23 @@ const editUserInCompany = (
 
 const removeUserInCompany = (companyId: string, accountId: string) => {
   return http.delete(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/roles/${accountId}`
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/roles/${accountId}`
   );
 };
 
 const getAllTokens = (companyId: string) => {
-  return http.get(`${SERVICE_API}/api/companies/${companyId}/tokens`);
+  return http.get(`${SERVICE_API}/account/companies/${companyId}/tokens`);
 };
 
 const createToken = (companyId: string, description: string) => {
-  return http.post(`${SERVICE_API}/api/companies/${companyId}/tokens`, {
+  return http.post(`${SERVICE_API}/account/companies/${companyId}/tokens`, {
     description,
   });
 };
 
 const removeToken = (companyId: string, tokenId: string) => {
   return http.delete(
-    `${SERVICE_API}/api/companies/${companyId}/tokens/${tokenId}`
+    `${SERVICE_API}/account/companies/${companyId}/tokens/${tokenId}`
   );
 };
 
