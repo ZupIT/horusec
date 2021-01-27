@@ -56,7 +56,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		formatter.StartAnalysis("")
 
 		assert.NotEmpty(t, analysis)
-		assert.Len(t, analysis.AnalysisVulnerabilities, 5)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
 
 	t.Run("should return error when invalid output", func(t *testing.T) {
