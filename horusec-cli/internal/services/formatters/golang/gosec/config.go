@@ -14,9 +14,12 @@
 
 package gosec
 
+import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+
 const (
-	ImageName = "horuszup/gosec"
-	ImageTag  = "v1.0.0"
+	ImageRepository = docker.DefaultRepository
+	ImageName       = "horuszup/gosec"
+	ImageTag        = "v1.0.0"
 	//nolint
 	ImageCmd = `
 		{{WORK_DIR}}

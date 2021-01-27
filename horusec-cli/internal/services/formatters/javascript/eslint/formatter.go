@@ -71,7 +71,8 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Eslint].ImagePath, ImageName, ImageTag)
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.Eslint].ImagePath, ImageRepository, ImageName, ImageTag)
 }
 
 func (f *Formatter) processOutput(output string) {
