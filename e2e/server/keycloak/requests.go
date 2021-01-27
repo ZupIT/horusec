@@ -264,7 +264,7 @@ func GetAllRolesFromClientID(t *testing.T, bearerToken, clientID string) []map[s
 
 func CreateUserFromKeycloakInHorusec(t *testing.T, token *authDto.KeycloakToken) {
 	fmt.Println("Running test for CreateUserFromKeycloakInHorusec")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/auth/account/create-account-from-keycloak", bytes.NewReader(token.ToBytes()))
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
 	assert.NoError(t, err, "CreateUserFromKeycloakInHorusec error send request")

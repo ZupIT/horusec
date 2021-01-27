@@ -27,13 +27,13 @@ import { getAccessToken, getRefreshToken } from 'helpers/localStorage/tokens';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
 const login = (params: LoginParams) => {
-  return http.post(`${SERVICE_AUTH}/api/auth/authenticate`, params);
+  return http.post(`${SERVICE_AUTH}/auth/auth/authenticate`, params);
 };
 
-const logout = () => http.post(`${SERVICE_AUTH}/api/account/logout`);
+const logout = () => http.post(`${SERVICE_AUTH}/auth/account/logout`);
 
 const createAccount = (username: string, password: string, email: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/create-account`, {
+  return http.post(`${SERVICE_AUTH}/auth/account/create-account`, {
     username,
     email,
     password,
@@ -41,35 +41,38 @@ const createAccount = (username: string, password: string, email: string) => {
 };
 
 const update = (username: string, email: string) => {
-  return http.patch(`${SERVICE_AUTH}/api/account/update`, {
+  return http.patch(`${SERVICE_AUTH}/auth/account/update`, {
     username,
     email,
   });
 };
 
 const deleteAccount = () => {
-  return http.delete(`${SERVICE_AUTH}/api/account/delete`);
+  return http.delete(`${SERVICE_AUTH}/auth/account/delete`);
 };
 
 const createAccountFromKeycloak = (accessToken: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/create-account-from-keycloak`, {
-    accessToken,
-  });
+  return http.post(
+    `${SERVICE_AUTH}/auth/account/create-account-from-keycloak`,
+    {
+      accessToken,
+    }
+  );
 };
 
 const sendCode = (email: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/send-code`, { email });
+  return http.post(`${SERVICE_AUTH}/auth/account/send-code`, { email });
 };
 
 const validateCode = (email: string, code: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/validate-code`, {
+  return http.post(`${SERVICE_AUTH}/auth/account/validate-code`, {
     email,
     code,
   });
 };
 
 const changePassword = (token: string, password: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
+  return http.post(`${SERVICE_AUTH}/auth/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
       'X-Horusec-Authorization': `Bearer ${token}`,
@@ -78,7 +81,7 @@ const changePassword = (token: string, password: string) => {
 };
 
 const updatePassword = (password: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/change-password`, password, {
+  return http.post(`${SERVICE_AUTH}/auth/account/change-password`, password, {
     headers: {
       'Content-Type': 'text/plain',
     },
@@ -86,7 +89,7 @@ const updatePassword = (password: string) => {
 };
 
 const verifyUniqueUsernameEmail = (email: string, username: string) => {
-  return http.post(`${SERVICE_AUTH}/api/account/verify-already-used`, {
+  return http.post(`${SERVICE_AUTH}/auth/account/verify-already-used`, {
     email,
     username,
   });
@@ -104,7 +107,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
   if (refreshToken) {
     return new Promise((resolve, reject) => {
       axios
-        .post(`${SERVICE_AUTH}/api/account/renew-token`, refreshToken, {
+        .post(`${SERVICE_AUTH}/auth/account/renew-token`, refreshToken, {
           headers: {
             'X-Horusec-Authorization': `Bearer ${accessToken}`,
             'Content-type': 'text/plain',
@@ -130,7 +133,7 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
 };
 
 const getHorusecConfig = () => {
-  return axios.get(`${SERVICE_AUTH}/api/auth/config`);
+  return axios.get(`${SERVICE_AUTH}/auth/auth/config`);
 };
 
 export default {
