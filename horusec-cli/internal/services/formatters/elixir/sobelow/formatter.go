@@ -89,7 +89,9 @@ func (f *Formatter) parseOutput(output string) error {
 			continue
 		}
 
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(f.setOutputData(value)))
+		if data := f.setOutputData(value); data != nil {
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(data))
+		}
 	}
 
 	return nil
@@ -101,7 +103,7 @@ func (f *Formatter) setOutputData(output string) *entities.Output {
 	indexTrace := strings.LastIndex(output, "-")
 
 	if indexFirstColon == -1 || indexLastColon == -1 || indexTrace == -1 {
-		return &entities.Output{}
+		return nil
 	}
 
 	return &entities.Output{
