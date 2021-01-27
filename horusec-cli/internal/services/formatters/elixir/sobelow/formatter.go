@@ -15,6 +15,7 @@
 package sobelow
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -39,6 +40,11 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 	}
 }
 
+const NotAPhoenixApplication = "this does not appear to be a Phoenix application. if this is an Umbrella application," +
+	" each application should be scanned separately"
+
+var ErrorNotAPhoenixApplication = errors.New(NotAPhoenixApplication)
+
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Sobelow) || f.IsDockerDisabled() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Sobelow.ToString())
@@ -56,6 +62,10 @@ func (f *Formatter) startSobelow(projectSubPath string) error {
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
 		return err
+	}
+
+	if strings.Contains(output, NotAPhoenixApplication) {
+		return ErrorNotAPhoenixApplication
 	}
 
 	return f.parseOutput(output)
