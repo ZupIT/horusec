@@ -31,7 +31,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: deploy
-        env:
+        with:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
@@ -57,5 +57,4 @@ jobs:
           author_email: "horus@zup.com.br"
           ref: "merge/update-versioning-file"
           message: "[skip ci] update versioning file"
-        env:
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
