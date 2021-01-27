@@ -15,7 +15,7 @@
 package routes
 
 const (
-	HealthHandler     = "/api/health"
-	CompanyHandler    = "/api/dashboard/companies"
-	RepositoryHandler = "/api/dashboard/companies/{companyID}/repositories"
+	HealthHandler     = "/analytic/health"
+	CompanyHandler    = "/analytic/dashboard/companies"
+	RepositoryHandler = "/analytic/dashboard/companies/{companyID}/repositories"
 )
