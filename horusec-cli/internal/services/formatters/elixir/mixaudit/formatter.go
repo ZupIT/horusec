@@ -67,7 +67,8 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Language: languages.Elixir,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.MixAudit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.MixAudit].ImagePath,
+		ImageRepository, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {
