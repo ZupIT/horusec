@@ -109,26 +109,6 @@
 
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script>
-    function moveTask(event, id) {
-      const { name } = event.target;
-
-      fetch("http://localhost:8080/moveTaskDone", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name,
-          id
-        })
-      }).then(response => response.json()).then(status => {
-        console.log(status);
-        window.location.reload()
-
-      }).catch(err => console.log(err))
-    }
-  </script>
 </body>
 
 </html>
