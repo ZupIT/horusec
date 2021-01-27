@@ -14,10 +14,13 @@
 
 package eslint
 
+import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+
 const (
-	ImageName = "horuszup/eslint"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+	ImageRepository = docker.DefaultRepository
+	ImageName       = "horuszup/eslint"
+	ImageTag        = "v1.0.0"
+	ImageCmd        = `
 		{{WORK_DIR}}
 		eslint \
 			--no-eslintrc \

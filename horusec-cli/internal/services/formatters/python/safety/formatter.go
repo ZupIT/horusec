@@ -76,7 +76,8 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Python,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.Safety].ImagePath, ImageRepository, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) {
