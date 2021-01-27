@@ -74,7 +74,7 @@ func ValidateAccount(t *testing.T, accountID string) {
 	fmt.Println("Running test for ValidateAccount")
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://127.0.0.1:8006/account/account/validate/"+accountID,
+		"http://127.0.0.1:8006/auth/account/validate/"+accountID,
 		nil)
 	res, err := client.NewHTTPClient(15).DoRequest(req, &tls.Config{})
 	if err != nil {
