@@ -19,8 +19,10 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
 import { isLogged } from 'helpers/localStorage/tokens';
 
+const MANAGER_PATH = (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '/'
+
 const Routes = () => (
-  <BrowserRouter basename={isMicrofrontend() ? '/horusec' : '/'}>
+  <BrowserRouter basename={isMicrofrontend() ? '/horusec' : MANAGER_PATH}>
     <Suspense fallback="">
       <Switch>
         <Route exact path="/">
