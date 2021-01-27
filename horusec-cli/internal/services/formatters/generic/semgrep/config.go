@@ -14,9 +14,12 @@
 
 package semgrep
 
+import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+
 const (
-	ImageName = "horuszup/horusec-semgrep"
-	ImageTag  = "v1.0.0"
+	ImageRepository = docker.DefaultRepository
+	ImageName       = "horuszup/horusec-semgrep"
+	ImageTag        = "v1.0.0"
 	// nolint
 	ImageCmd = `
 	    {{WORK_DIR}}

@@ -19,6 +19,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
+const DefaultRepository = "docker.io"
+
 type AnalysisData struct {
 	ImagePath string
 	CMD       string
@@ -29,12 +31,15 @@ func (a *AnalysisData) IsInvalid() bool {
 	return a.ImagePath == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageName, imageTag string) *AnalysisData {
+func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageRepository, imageName, imageTag string) *AnalysisData {
 	if imagePathInConfig != "" {
 		a.ImagePath = imagePathInConfig
-	} else {
-		a.ImagePath = fmt.Sprintf("docker.io/%s:%s", imageName, imageTag)
+		return a
 	}
-
+	if imageRepository == "" {
+		a.ImagePath = fmt.Sprintf("%s:%s", imageName, imageTag)
+		return a
+	}
+	a.ImagePath = fmt.Sprintf("%s/%s:%s", imageRepository, imageName, imageTag)
 	return a
 }

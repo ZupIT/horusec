@@ -15,10 +15,13 @@
 // nolint
 package safety
 
+import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+
 const (
-	ImageName = "horuszup/safety"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+	ImageRepository = docker.DefaultRepository
+	ImageName       = "horuszup/safety"
+	ImageTag        = "v1.0.0"
+	ImageCmd        = `
 		{{WORK_DIR}}
       touch /tmp/warning-ANALYSISID
 	  touch /tmp/output-ANALYSISID.json

@@ -65,7 +65,8 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Language: languages.C,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageRepository, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(output string) error {
