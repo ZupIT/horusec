@@ -194,8 +194,8 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.NpmAudit].ImagePath,
-		npmaudit.ImageName, npmaudit.ImageTag)
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.NpmAudit].ImagePath, npmaudit.ImageRepository, npmaudit.ImageName, npmaudit.ImageTag)
 }
 
 func (f *Formatter) getConfigCMD(projectSubPath string) string {
