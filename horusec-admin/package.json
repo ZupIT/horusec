@@ -1,14 +1,13 @@
 {
   "name": "horusec-admin",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && nodemon -e js,ejs,ts,tsx,json dist/app.js",
+    "start": "npm run build && nodemon -e js,ejs,ts,tsx,json dist/app.js",
+    "serve": "npm run build && node dist/app.js",
     "lint": "npx tslint --project tsconfig.json",
     "lint-fix": "npx tslint --project tsconfig.json --fix",
-    "serve": "npx tsc && node dist/app.js"
+    "build": "npx tsc"
   },
   "author": "ZupIT",
   "license": "ISC",

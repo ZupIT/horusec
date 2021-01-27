@@ -129,6 +129,8 @@ compose-up:
 
 compose-development-kit:
 	$(DOCKER_COMPOSE) -f development-kit/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-horusec-admin:
+	$(DOCKER_COMPOSE) -f horusec-admin/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-api:
 	$(DOCKER_COMPOSE) -f horusec-api/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-messages:
