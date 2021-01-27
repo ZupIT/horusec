@@ -2,8 +2,9 @@ import { Sequelize } from "sequelize";
 import { Config, IConfig } from "../config/config";
 
 export class Database {
-  config: IConfig;
-  db: Sequelize;
+  private config: IConfig;
+
+  private db: Sequelize;
 
   constructor() {
     this.config = new Config().getConfig();
