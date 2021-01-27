@@ -115,7 +115,8 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Brakeman].ImagePath, ImageName, ImageTag)
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.Brakeman].ImagePath, ImageRepository, ImageName, ImageTag)
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {

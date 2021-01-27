@@ -15,7 +15,7 @@
 package routes
 
 const (
-	HealthHandler  = "/api/health"
-	WebhookHandler = "/api/webhook"
-	CompanyHandler = "/api/companies"
+	HealthHandler  = "/account/health"
+	WebhookHandler = "/account/webhook"
+	CompanyHandler = "/account/companies"
 )

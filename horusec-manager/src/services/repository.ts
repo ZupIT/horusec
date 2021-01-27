@@ -23,7 +23,7 @@ import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
 const getAll = (companyId: string) => {
   return defaultHTTP.get(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`
   );
 };
 
@@ -34,7 +34,7 @@ const create = (
   ldapGroups?: LDAPGroups
 ) => {
   return defaultHTTP.post(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`,
     {
       name,
       description,
@@ -51,14 +51,14 @@ const update = (
   ldapGroups?: LDAPGroups
 ) => {
   return defaultHTTP.patch(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`,
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`,
     { name, description, ...ldapGroups }
   );
 };
 
 const remove = (companyId: string, repositoryId: string) => {
   return defaultHTTP.delete(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`
   );
 };
 
@@ -93,7 +93,7 @@ const removeToken = (
 
 const getUsersInRepository = (companyId: string, repositoryId: string) => {
   return defaultHTTP.get(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`
   );
 };
 
@@ -104,7 +104,7 @@ const includeUser = (
   role: string
 ) => {
   return defaultHTTP.post(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`,
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`,
     {
       email,
       role,
@@ -118,7 +118,7 @@ const removeUser = (
   accountId: string
 ) => {
   return defaultHTTP.delete(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
 
@@ -129,7 +129,7 @@ const updateUserRole = (
   role: string
 ) => {
   return defaultHTTP.patch(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,
     }

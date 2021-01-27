@@ -40,14 +40,21 @@ func TestGetContainerImageNameWithTag(t *testing.T) {
 		data := &AnalysisData{
 			CMD: "test",
 		}
-		data.SetFullImagePath("other-host.io/t/test:latest", "t", "v1.0.0")
+		data.SetFullImagePath("other-host.io/t/test:latest", DefaultRepository, "t", "v1.0.0")
 		assert.Equal(t, "other-host.io/t/test:latest", data.ImagePath)
 	})
 	t.Run("Should success set image path default", func(t *testing.T) {
 		data := &AnalysisData{
 			CMD: "test",
 		}
-		data.SetFullImagePath("", "t", "v1.0.0")
+		data.SetFullImagePath("", DefaultRepository, "t", "v1.0.0")
 		assert.NotEmpty(t, "docker.io/t:v1.0.0", data.ImagePath)
+	})
+	t.Run("Should success not set repository by set image path default", func(t *testing.T) {
+		data := &AnalysisData{
+			CMD: "test",
+		}
+		data.SetFullImagePath("", "", "t", "v1.0.0")
+		assert.NotEmpty(t, "t:v1.0.0", data.ImagePath)
 	})
 }
