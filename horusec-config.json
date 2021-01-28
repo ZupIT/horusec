@@ -31,7 +31,8 @@
     "**/horusec-lp/public/**",
     "**/deployments/docker-compose*",
     "**/horusec-cli/cmd/horusec/start/analysis/*",
-    "**/horusec-manager/src/helpers/localStorage/**"
+    "**/horusec-manager/src/helpers/localStorage/**",
+    "**/horusec-admin/dist/**"
   ],
   "horusecCliFalsePositiveHashes": [
     "99e36829b18748d93f80f14cba796cbb3c73efda25b0e304cb6fef89add6fd79",
@@ -59,7 +60,6 @@
     "030a29317e606d5b5d08c80c3c0a4c27e15fdcad8f50a60a75d2217af1f24958",
     "1890b852003f7149987dcff358a53973edd2fc3efb141abf05c7bd0d78c7dc69",
     "4294bf00b848d82c4e012f45e0747996eb75109e089a626af930580a7a179ea4",
-    "e6902ebde4abc4ed1d3e213dff7418a752c0a273772800cbe5465a4cdd28c0d6",
     "fa41e0534388707279458969d1dcdb58ff932357660e8855d2bb4170fdbcb391",
     "f67f19aace611771e15ec9fc0628be038b8e2e21d5d63b17cf9f1757cb07a9d9",
     "22c038f8475faf4c67cf54b6a7fa63cc1880ccd4ec409bb1cb7583c8d122f883",
