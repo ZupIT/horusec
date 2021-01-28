@@ -22,7 +22,6 @@ RUN ls
 
 RUN npm install
 RUN npm run build
-RUN npm run lint
 
 FROM nginx:1.18.0-alpine
 
