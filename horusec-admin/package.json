@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build && nodemon -e js,ejs,ts,tsx,json dist/app.js",
-    "serve": "npm run build && node dist/app.js",
+    "start": "npx tsc && node dist/app.js",
     "lint": "npx tslint --project tsconfig.json",
     "lint-fix": "npx tslint --project tsconfig.json --fix",
     "build": "npx tsc"
@@ -18,6 +17,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "crypto": "^1.0.1",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "pg": "^8.5.1",
