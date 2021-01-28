@@ -103,7 +103,7 @@ func (f *Formatter) setOutputData(output string) *entities.Output {
 	indexLastColon := strings.LastIndex(output, ":")
 	indexTrace := strings.LastIndex(output, "-")
 
-	if indexFirstColon == -1 || indexLastColon == -1 || indexTrace == -1 {
+	if !strings.Contains(output, "[+]\u001B[0m") {
 		return nil
 	}
 
