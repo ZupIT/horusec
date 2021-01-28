@@ -18,12 +18,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Setup External Dependences
-        run: |
-          make compose-horusec-admin
-          cd horusec-admin
+        run: make compose-horusec-admin
       - name: Install
-        run: npm install
+        run: cd horusec-admin && npm install
       - name: Lint
-        run: npm run lint
+        run: cd horusec-admin && npm run lint
       - name: build
-        run: npm run build
+        run: cd horusec-admin && npm run build
