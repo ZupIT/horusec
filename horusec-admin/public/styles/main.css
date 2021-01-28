@@ -1,0 +1,76 @@
+@import './reset.css';
+
+:root {
+  --dark: #1C1C1E;
+  --darkSecundary: #3c3c3d;
+  --primary: #EF4123;
+  --secundary: #F7941E;
+  --disabled: #2C2C2E;
+  --text: #F2F2F9;
+  --textSecundary: #b4b4b4;
+  --success: #10AA80;
+  --error: #FF453A;
+  --info: #5C6BC0;
+}
+
+body {
+  background-color: var(--dark);
+  height: 100vh;
+}
+
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+button,
+input,
+label,
+input::placeholder,
+ul li {
+  font-family: 'Lato', sans-serif;
+  color: var(--text);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  border: none;
+  outline: none;
+  background: none;
+  border-bottom: 1px solid var(--text);
+  width: 250px;
+  margin: 20px 0;
+}
+
+input::placeholder {
+  color: var(--textSecundary);
+}
+
+button {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secundary) 100%);
+  color: var(--text);
+  border-radius: 18px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  width: 250px;
+  height: 35px;
+  margin: 20px 0;
+}
+
+button:hover:not(:disabled) {
+  transform: scale(1.03);
+}
+
+button:disabled {
+  cursor: default;
+  background: var(--disabled);
+}

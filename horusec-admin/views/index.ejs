@@ -3,112 +3,48 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Horusec Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1C1C1E" />
+  <meta name="description" content="HORUSEC - Admin" />
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
-  <link href="/style.css" rel="stylesheet" />
+  <title>HORUSEC - Admin</title>
+
+  <link rel="icon" type="image/x-icon" href="/images/favicon.svg">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;400;700&display=swap" rel="stylesheet">
+
+  <link href="/styles/auth.css" rel="stylesheet" />
 </head>
 
 <body>
-  <div class="container">
-    <div class="row">
-      <form action="/" method="POST">
-        <div class="col-12">
-          * Only fields that are filled in will be updated. Empty fields will be ignored.
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_AUTH_TYPE</h4>
-          <input type="text" class="form-control" name="horusec_auth_type" placeholder="set HORUSEC_AUTH_TYPE" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_DISABLED_BROKER</h4>
-          <input type="text" class="form-control" name="horusec_disabled_broker" placeholder="set HORUSEC_DISABLED_BROKER" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_JWT_SECRET_KEY</h4>
-          <input type="text" class="form-control" name="horusec_jwt_secret_key" placeholder="set HORUSEC_JWT_SECRET_KEY" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_KEYCLOAK_BASE_PATH</h4>
-          <input type="text" class="form-control" name="horusec_keycloak_base_path" placeholder="set HORUSEC_KEYCLOAK_BASE_PATH" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_KEYCLOAK_CLIENT_ID</h4>
-          <input type="text" class="form-control" name="horusec_keycloak_client_id" placeholder="set HORUSEC_KEYCLOAK_CLIENT_ID" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_KEYCLOAK_CLIENT_SECRET</h4>
-          <input type="text" class="form-control" name="horusec_keycloak_client_secret" placeholder="set HORUSEC_KEYCLOAK_CLIENT_SECRET" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_KEYCLOAK_REALM</h4>
-          <input type="text" class="form-control" name="horusec_keycloak_realm" placeholder="set HORUSEC_KEYCLOAK_REALM" />
-        </div>
-        <div class="col-12">
-          <h4>REACT_APP_KEYCLOAK_CLIENT_ID</h4>
-          <input type="text" class="form-control" name="react_app_keycloak_client_id" placeholder="set REACT_APP_KEYCLOAK_CLIENT_ID" />
-        </div>
-        <div class="col-12">
-          <h4>REACT_APP_KEYCLOAK_REALM</h4>
-          <input type="text" class="form-control" name="react_app_keycloak_realm" placeholder="set REACT_APP_KEYCLOAK_REALM" />
-        </div>
-        <div class="col-12">
-          <h4>REACT_APP_KEYCLOAK_BASE_PATH</h4>
-          <input type="text" class="form-control" name="react_app_keycloak_base_path" placeholder="set REACT_APP_KEYCLOAK_BASE_PATH" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_BASE</h4>
-          <input type="text" class="form-control" name="horusec_ldap_base" placeholder="set HORUSEC_LDAP_BASE" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_HOST</h4>
-          <input type="text" class="form-control" name="horusec_ldap_host" placeholder="set HORUSEC_LDAP_HOST" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_PORT</h4>
-          <input type="text" class="form-control" name="horusec_ldap_port" placeholder="set HORUSEC_LDAP_PORT" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_USESSL</h4>
-          <input type="text" class="form-control" name="horusec_ldap_usessl" placeholder="set HORUSEC_LDAP_USESSL" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_SKIP_TLS</h4>
-          <input type="text" class="form-control" name="horusec_ldap_skip_tls" placeholder="set HORUSEC_LDAP_SKIP_TLS" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_INSECURE_SKIP_VERIFY</h4>
-          <input type="text" class="form-control" name="horusec_ldap_insecure_skip_verify" placeholder="set HORUSEC_LDAP_INSECURE_SKIP_VERIFY" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_BINDDN</h4>
-          <input type="text" class="form-control" name="horusec_ldap_binddn" placeholder="set HORUSEC_LDAP_BINDDN" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_BINDPASSWORD</h4>
-          <input type="text" class="form-control" name="horusec_ldap_bindpassword" placeholder="set HORUSEC_LDAP_BINDPASSWORD" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_USERFILTER</h4>
-          <input type="text" class="form-control" name="horusec_ldap_userfilter" placeholder="set HORUSEC_LDAP_USERFILTER" />
-        </div>
-        <div class="col-12">
-          <h4>HORUSEC_LDAP_ADMIN_GROUP</h4>
-          <input type="text" class="form-control" name="horusec_ldap_admin_group" placeholder="set HORUSEC_LDAP_ADMIN_GROUP" />
-        </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-lg btn-default" style="margin: 20px auto; display: block;">Save</button>
-        </div>
+  <section class="container">
+    <img class="logo" src="/images/logo.svg" alt="Horusec Logo">
+
+    <div class="auth-wrapper">
+      <h3>Your access token will be displayed in the <span>horusec-admin</span> service logs.</h3>
+
+      <form action="">
+        <input type="text" id="accessToken" placeholder="Access Token" onkeyup="verifyValue()">
+
+        <button disabled id="submit" type="submit">SUBMIT</button>
       </form>
+
     </div>
-  </div>
 
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-  <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </section>
 </body>
+
+<script type="text/javascript">
+  function verifyValue() {
+    const accessTokenInput = document.getElementById('accessToken');
+    const submitButton = document.getElementById('submit');
+
+    if (accessTokenInput.value.length > 0) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+</script>
 
 </html>

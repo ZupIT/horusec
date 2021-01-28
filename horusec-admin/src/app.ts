@@ -4,7 +4,6 @@ import { Config, IConfig } from "./config/config";
 import { Database } from "./database/postgresql";
 import { HorusecConfigModel, IModelInterface } from "./models/horusec-config";
 
-
 const config: IConfig = new Config().getConfig();
 const db: Sequelize = new Database().getConnection();
 const model: IModelInterface = new HorusecConfigModel(db).model;
@@ -18,6 +17,22 @@ app.use(express.static("public"));
 
 app.get("/", (_, res) => {
   return res.render("index");
+});
+
+app.get("/home", (_, res) => {
+  return res.render("home");
+});
+
+app.get("/config/general", (_, res) => {
+  return res.render("config-general");
+});
+
+app.get("/config/auth", (_, res) => {
+  return res.render("config-auth");
+});
+
+app.get("/config/manager", (_, res) => {
+  return res.render("config-manager");
 });
 
 app.post("/", (req, res) => {
