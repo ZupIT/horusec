@@ -14,10 +14,13 @@
 
 package brakeman
 
+import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+
 const (
-	ImageName = "horuszup/brakeman"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+	ImageRepository = docker.DefaultRepository
+	ImageName       = "horuszup/brakeman"
+	ImageTag        = "v1.0.0"
+	ImageCmd        = `
 		{{WORK_DIR}}
 		brakeman -q -o results-ANALYSISID.json .
 		jq -j -M -c . results-ANALYSISID.json

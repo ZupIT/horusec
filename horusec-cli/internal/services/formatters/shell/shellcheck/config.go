@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package gitleaks
+package shellcheck
 
 import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 
 const (
 	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/gitleaks"
-	ImageTag        = "v1.0.2"
-	// nolint
-	ImageCmd = `
+	ImageName       = "horuszup/shellcheck"
+	ImageTag        = "v1.0.0"
+	ImageCmd        = `
 		{{WORK_DIR}}
-        touch /tmp/results-ANALYSISID.json
-        gitleaks --config="/rules/rules.toml" --owner-path=. --verbose --pretty --report="/tmp/results-ANALYSISID.json" &> /tmp/errorGitleaks-ANALYSISID
-        if [ $? -eq 2 ]; then
-            echo 'ERROR_RUNNING_GITLEAKS'
-            cat /tmp/errorGitleaks-ANALYSISID
-        else
-            jq -j -M -c . /tmp/results-ANALYSISID.json
-        fi
-		chmod -R 777 .
+		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
+		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')
+		shellcheck --format=json $shell_files $bat_files
   `
 )

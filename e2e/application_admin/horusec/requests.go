@@ -30,7 +30,7 @@ import (
 
 func CreateAccount(t *testing.T, account *authEntities.Account) {
 	fmt.Println("Running test for CreateAccount")
-	createAccountResp, err := http.Post("http://127.0.0.1:8006/api/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
+	createAccountResp, err := http.Post("http://127.0.0.1:8006/auth/account/create-account", "text/json", bytes.NewReader(account.ToBytes()))
 	assert.NoError(t, err, "create account error mount request")
 	assert.Equal(t, http.StatusCreated, createAccountResp.StatusCode, "create account error send request")
 
@@ -43,7 +43,7 @@ func CreateAccount(t *testing.T, account *authEntities.Account) {
 func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 	fmt.Println("Running test for Login")
 	loginResp, err := http.Post(
-		"http://127.0.0.1:8006/api/auth/authenticate",
+		"http://127.0.0.1:8006/auth/auth/authenticate",
 		"text/json",
 		bytes.NewReader(credentials.ToBytes()),
 	)
@@ -58,7 +58,7 @@ func Login(t *testing.T, credentials *authDto.Credentials) map[string]string {
 
 func Logout(t *testing.T, bearerToken string) {
 	fmt.Println("Running test for Logout")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/api/account/logout", nil)
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8006/auth/account/logout", nil)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -73,7 +73,7 @@ func Logout(t *testing.T, bearerToken string) {
 func CreateCompanyApplicationAdmin(t *testing.T, bearerToken string, company *accountentities.CompanyApplicationAdmin) (CompanyID string) {
 	companyBytes, _ := json.Marshal(company)
 	fmt.Println("Running test for CreateCompany")
-	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/api/companies", bytes.NewReader(companyBytes))
+	req, _ := http.NewRequest(http.MethodPost, "http://127.0.0.1:8003/account/companies", bytes.NewReader(companyBytes))
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	createCompanyResp, err := httpClient.Do(req)
@@ -88,7 +88,7 @@ func CreateCompanyApplicationAdmin(t *testing.T, bearerToken string, company *ac
 
 func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *accountentities.Company) {
 	fmt.Println("Running test for UpdateCompany")
-	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/api/companies/"+companyID, bytes.NewReader(company.ToBytes()))
+	req, _ := http.NewRequest(http.MethodPatch, "http://127.0.0.1:8003/account/companies/"+companyID, bytes.NewReader(company.ToBytes()))
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -102,7 +102,7 @@ func UpdateCompany(t *testing.T, bearerToken string, companyID string, company *
 
 func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) string {
 	fmt.Println("Running test for ReadAllCompanies")
-	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8003/api/companies", nil)
+	req, _ := http.NewRequest(http.MethodGet, "http://127.0.0.1:8003/account/companies", nil)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)
@@ -120,7 +120,7 @@ func ReadAllCompanies(t *testing.T, bearerToken string, isCheckBodyEmpty bool) s
 
 func DeleteCompany(t *testing.T, bearerToken, companyID string) {
 	fmt.Println("Running test for DeleteCompany")
-	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8003/api/companies/"+companyID, nil)
+	req, _ := http.NewRequest(http.MethodDelete, "http://127.0.0.1:8003/account/companies/"+companyID, nil)
 	req.Header.Add("X-Horusec-Authorization", bearerToken)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(req)

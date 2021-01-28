@@ -136,6 +136,8 @@ export default {
       UNKNOWN: '#7f8c8d',
       GIT: '#e84f33',
       DART: '#39b1ed',
+      SHELL: '#000000',
+      ELIXIR: '#4a255d',
     },
 
     dataTable: {

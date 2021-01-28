@@ -13,19 +13,19 @@ Horusec is an open source tool that performs static code analysis to identify se
 
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
-## Project roadmap
+## Project roadmap 2021
 
 We started the project to aggregate within our company, but as the search grew more and more we chose to apply good practices and open it up for everyone to collaborate with this incredible project.
 
 In order to achieve our goals, we separated in some delivery phases:
 
-- **Phase 0:** Analyze vulnerabilities locally and send results to the application to manage them in an analytical way and find points for improvement in the project
-- **Phase 1:** SAST analysis of the Kotlin language (Q3)
-- **Phase 2:** New visual identity (Q3)
-- **Phase 3:** Ability to indicate a vulnerability as a false positive or accepted risk (Q3)
-- **Phase 4:** MVP of the SAST analysis engine (Q4 / 2021)
-- **Phase 5:** Integration with vulnerability management tools (Archery) (Q4 / 2021)
-- **Phase 6:** Plugins in IDE's - Developing in your project and in real time to be able to see if there are any security flaws is very important for the developer. Saving a long time in code review. (Q4 / 2021)
+- **Phase 0:** Support for all horusec-cli features into [horusec-vscode](https://github.com/ZupIT/horusec-vscode-plugin) (Q1)
+- **Phase 1:** Support for the Theia(VsCode Web) (Q1)
+- **Phase 2:** Support to Flutter, Dart, Bash, Shell, Elixir, Cloujure e Scala in analysis (Q1)
+- **Phase 3:** New service to manager vulnerabilities founds (Q2)
+- **Phase 4:** Dependency analysis for all supported languages (Q3)
+- **Phase 5:** SAST with MVP Semantic Analysis (Q4)
+- **Phase 6:** DAST with MVP symbolic analysis (Q4)
 
 ## Getting started
 

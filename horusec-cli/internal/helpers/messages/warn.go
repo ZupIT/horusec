@@ -36,6 +36,6 @@ const (
 	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the " +
 		"list of vulnerabilities pointed out by Horusec: "
 	MsgWarnInfoVulnerabilitiesDisabled = "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis, " +
-		"to see info vulnerabilities add option \"enableInformationSeverity\"=\"true\". " +
+		"to see info vulnerabilities add option \"--information-severity=true\". " +
 		"For more details use (horusec start --help) command."
 )
