@@ -13,7 +13,7 @@ export class AppRoutes {
     this.auth.setAccessToken(this.accessToken);
   }
 
-  public start(app: Express): void {
+  public start(app: Express): Express {
     app.get(
       "/",
       (_, res: Response) => res.render("index"),
@@ -24,5 +24,7 @@ export class AppRoutes {
       (req, res, next) => this.auth.checkAuthValidation(req, res, next),
       (req, res) => this.horusecController.setHorusecConfig(req, res),
     );
+
+    return app;
   }
 }

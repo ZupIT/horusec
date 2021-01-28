@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize/types";
+import { Sequelize } from "sequelize";
 import { HorusecConfigModel, IModelInterface } from "../models/horusec-config";
 import { Request, Response } from "express-serve-static-core";
 

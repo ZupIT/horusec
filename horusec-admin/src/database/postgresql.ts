@@ -2,12 +2,11 @@ import { Sequelize } from "sequelize";
 import { Config, IConfig } from "../config/config";
 
 export class Database {
-  private config: IConfig;
-
   private db: Sequelize;
 
-  constructor() {
-    this.config = new Config().getConfig();
+  constructor(
+    public config: IConfig,
+  ) {
     this.db = new Sequelize(this.config.URI, {
       logQueryParameters: this.config.LogMode,
       logging: this.config.LogMode,

@@ -3,7 +3,7 @@ import { DataTypes, Model, ModelCtor, Sequelize } from "sequelize";
 export interface IModelInterface extends ModelCtor<Model> {}
 
 export class HorusecConfigModel {
-  private tableName = "horusec_config";
+  public tableName = "horusec_config";
   public model: IModelInterface;
 
   constructor(private _db: Sequelize) {
