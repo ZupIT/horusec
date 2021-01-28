@@ -21,8 +21,6 @@ app.use(express.static("public"));
 app = routes.start(app);
 
 app.listen(config.Port, () => console.warn(`
-  app is running on http://localhost:${config.Port}
-  Your Access token is: ${accessToken}
+    app is running on http://localhost:${config.Port}
+    Your Access token is: ${accessToken}
 `));
-
-export default app;

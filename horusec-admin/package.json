@@ -4,7 +4,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "start": "npx tsc && node dist/app.js",
+    "start": "npx tsc && node dist/src/app.js",
     "lint": "npx tslint --project tsconfig.json",
     "lint-fix": "npx tslint --project tsconfig.json --fix",
     "build": "npx tsc"
