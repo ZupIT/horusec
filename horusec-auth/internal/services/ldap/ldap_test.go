@@ -231,7 +231,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		company := &accountEntities.Company{
 			CompanyID:  uuid.New(),
-			AuthzAdmin: "admin",
+			AuthzAdmin: []string{"admin"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(company))
@@ -271,7 +271,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		company := &accountEntities.Company{
 			CompanyID:  uuid.New(),
-			AuthzAdmin: "admin",
+			AuthzAdmin: []string{"admin"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(company))
@@ -311,7 +311,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		company := &accountEntities.Company{
 			CompanyID:   uuid.New(),
-			AuthzMember: "developer",
+			AuthzMember: []string{"developer"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(company))
@@ -351,7 +351,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		company := &accountEntities.Company{
 			CompanyID:  uuid.New(),
-			AuthzAdmin: "developer",
+			AuthzAdmin: []string{"developer"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(company))
@@ -391,7 +391,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID: uuid.New(),
-			AuthzMember:  "developer",
+			AuthzMember:  []string{"developer"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))
@@ -431,7 +431,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID: uuid.New(),
-			AuthzAdmin:   "developer",
+			AuthzAdmin:   []string{"developer"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))
@@ -471,7 +471,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID:    uuid.New(),
-			AuthzSupervisor: "supervisor",
+			AuthzSupervisor: []string{"supervisor"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))
@@ -511,7 +511,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID:    uuid.New(),
-			AuthzSupervisor: "supervisor",
+			AuthzSupervisor: []string{"supervisor"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))
@@ -551,7 +551,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID: uuid.New(),
-			AuthzAdmin:   "admin",
+			AuthzAdmin:   []string{"admin"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))
@@ -591,7 +591,7 @@ func TestIsAuthorized(t *testing.T) {
 		resp := response.Response{}
 		repository := &accountEntities.Repository{
 			RepositoryID:    uuid.New(),
-			AuthzSupervisor: "admin",
+			AuthzSupervisor: []string{"admin"},
 		}
 
 		databaseRead.On("Find").Return(resp.SetData(repository))

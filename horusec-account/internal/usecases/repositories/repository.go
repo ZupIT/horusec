@@ -72,7 +72,7 @@ func (r *Repository) NewInviteUserFromReadCloser(body io.ReadCloser) (
 	return inviteUser, inviteUser.Validate()
 }
 
-func (r *Repository) IsInvalidLdapGroup(repositoryGroups []string, permissions []string) bool {
+func (r *Repository) IsInvalidLdapGroup(repositoryGroups, permissions []string) bool {
 	for _, repositoryGroup := range repositoryGroups {
 		if repositoryGroup == "" {
 			continue

@@ -70,7 +70,7 @@ func (c *Company) NewCompanyFromReadCloser(body io.ReadCloser) (company *account
 	return company, company.Validate()
 }
 
-func (c *Company) IsInvalidLdapGroup(companyGroups []string, permissions []string) bool {
+func (c *Company) IsInvalidLdapGroup(companyGroups, permissions []string) bool {
 	for _, companyGroup := range companyGroups {
 		if companyGroup == "" {
 			continue

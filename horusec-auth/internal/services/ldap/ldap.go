@@ -222,16 +222,16 @@ func (s *Service) getApplicationAdminAuthzGroupsName() ([]string, error) {
 	return []string{applicationAdminGroup}, nil
 }
 
-func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin []string, role authEnums.HorusecRoles) (groups []string) {
+func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin []string,
+	role authEnums.HorusecRoles) (groups []string) {
+	groups = admin
+
 	switch role {
 	case authEnums.RepositoryMember, authEnums.CompanyMember:
-		groups = append(append(member, supervisor...), admin...)
+		groups = append(groups, append(member, supervisor...)...)
 
 	case authEnums.RepositorySupervisor:
-		groups = append(supervisor, admin...)
-
-	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
-		groups = admin
+		groups = append(groups, supervisor...)
 	}
 
 	return groups

@@ -21,16 +21,17 @@ import (
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type Company struct {
-	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	AuthzMember []string  `json:"authzMember"`
-	AuthzAdmin  []string  `json:"authzAdmin"`
-	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
-	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
+	CompanyID   uuid.UUID      `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	AuthzMember pq.StringArray `json:"authzMember"`
+	AuthzAdmin  pq.StringArray `json:"authzAdmin"`
+	CreatedAt   time.Time      `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt   time.Time      `json:"updatedAt" swaggerignore:"true"`
 }
 
 type CompanyResponse struct {

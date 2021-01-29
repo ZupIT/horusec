@@ -140,7 +140,7 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("CommitTransaction").Return(resp)
 
 		respFindCompany := &response.Response{}
-		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: "admin", AuthzMember: "member"})
+		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: []string{"admin"}, AuthzMember: []string{"member"}})
 		mockRead.On("Find").Once().Return(respFindCompany)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
@@ -152,9 +152,9 @@ func TestCreate(t *testing.T) {
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
 		createdRepo, err := controller.Create(uuid.New(), &accountEntities.Repository{
-			AuthzAdmin:      "",
-			AuthzMember:     "",
-			AuthzSupervisor: "",
+			AuthzAdmin:      []string{},
+			AuthzMember:     []string{},
+			AuthzSupervisor: []string{},
 		}, []string{})
 		assert.NoError(t, err)
 		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
