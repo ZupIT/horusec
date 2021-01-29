@@ -277,7 +277,7 @@ func TestGetAllOfAccountLdap(t *testing.T) {
 		Name:        "test",
 		Description: "test",
 		CreatedAt:   time.Now(),
-		AuthzAdmin:  "test",
+		AuthzAdmin:  []string{"test"},
 	}
 
 	databaseWrite.SetLogMode(true)

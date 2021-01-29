@@ -21,6 +21,7 @@ import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type ICompanyRepository interface {
@@ -129,30 +130,16 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 
 func (r *Repository) GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error) {
 	companies := &[]accountEntities.CompanyResponse{}
-	filter := r.companyFilterByLdapPermissions(permissions)
 
 	query := r.databaseRead.
 		GetConnection().
 		Select(
-			"comp.company_id, comp.name, comp.description, 'admin' AS role, " +
+			"comp.company_id, comp.name, comp.description, 'admin' AS role, "+
 				"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
 		).
 		Table("companies AS comp").
-		Where(fmt.Sprintf("comp.authz_admin SIMILAR TO %s OR comp.authz_member SIMILAR TO %s", filter, filter)).
+		Where("$1 && comp.authz_admin OR $1 && comp.authz_member", pq.Array(permissions)).
 		Find(&companies)
 
 	return companies, query.Error
-}
-
-func (r *Repository) companyFilterByLdapPermissions(permissions []string) (result string) {
-	for _, permission := range permissions {
-		if result == "" {
-			result = permission
-			continue
-		}
-
-		result = fmt.Sprintf("%s|%s", result, permission)
-	}
-
-	return "'%(" + result + ")%'"
 }

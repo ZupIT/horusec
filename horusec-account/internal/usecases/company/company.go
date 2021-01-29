@@ -28,7 +28,7 @@ type ICompany interface {
 	NewAccountCompanyFromReadCLoser(body io.ReadCloser) (accountCompany *roles.AccountCompany, err error)
 	NewCompanyFromReadCloser(body io.ReadCloser) (company *accountEntities.Company, err error)
 	NewCompanyApplicationAdminFromReadCloser(body io.ReadCloser) (*accountEntities.CompanyApplicationAdmin, error)
-	IsInvalidLdapGroup(companyAdminAuthz string, permissions []string) bool
+	IsInvalidLdapGroup(companyGroups []string, permissions []string) bool
 }
 
 type Company struct {
@@ -70,9 +70,7 @@ func (c *Company) NewCompanyFromReadCloser(body io.ReadCloser) (company *account
 	return company, company.Validate()
 }
 
-func (c *Company) IsInvalidLdapGroup(companyAdminAuthz string, permissions []string) bool {
-	companyGroups := strings.Split(companyAdminAuthz, ",")
-
+func (c *Company) IsInvalidLdapGroup(companyGroups []string, permissions []string) bool {
 	for _, companyGroup := range companyGroups {
 		if companyGroup == "" {
 			continue

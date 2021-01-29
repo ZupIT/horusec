@@ -19,7 +19,6 @@ import (
 	"time"
 
 	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
@@ -28,8 +27,8 @@ type Company struct {
 	CompanyID   uuid.UUID `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	AuthzMember string    `json:"authzMember"`
-	AuthzAdmin  string    `json:"authzAdmin"`
+	AuthzMember []string  `json:"authzMember"`
+	AuthzAdmin  []string  `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
@@ -39,8 +38,8 @@ type CompanyResponse struct {
 	Name        string         `json:"name"`
 	Role        rolesEnum.Role `json:"role"`
 	Description string         `json:"description"`
-	AuthzMember string         `json:"authzMember"`
-	AuthzAdmin  string         `json:"authzAdmin"`
+	AuthzMember []string       `json:"authzMember"`
+	AuthzAdmin  []string       `json:"authzAdmin"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 }
@@ -91,16 +90,16 @@ func (c *Company) ToCompanyResponse(role rolesEnum.Role) *CompanyResponse {
 	}
 }
 
-func (c *Company) GetAuthzMember() string {
+func (c *Company) GetAuthzMember() []string {
 	return c.AuthzMember
 }
 
-func (c *Company) GetAuthzAdmin() string {
+func (c *Company) GetAuthzAdmin() []string {
 	return c.AuthzAdmin
 }
 
-func (c *Company) GetAuthzSupervisor() string {
-	return ""
+func (c *Company) GetAuthzSupervisor() []string {
+	return []string{}
 }
 
 func (c *Company) ToBytes() []byte {

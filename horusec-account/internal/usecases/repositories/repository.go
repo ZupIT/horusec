@@ -29,7 +29,7 @@ type IRepository interface {
 	NewRepositoryFromReadCloser(body io.ReadCloser) (repository *accountEntities.Repository, err error)
 	NewAccountRepositoryFromReadCloser(body io.ReadCloser) (accountRepository *roles.AccountRepository, err error)
 	NewInviteUserFromReadCloser(body io.ReadCloser) (inviteUser *dto.InviteUser, err error)
-	IsInvalidLdapGroup(repositoryAdminAuthz string, permissions []string) bool
+	IsInvalidLdapGroup(repositoryGroups []string, permissions []string) bool
 }
 
 type Repository struct {
@@ -72,9 +72,7 @@ func (r *Repository) NewInviteUserFromReadCloser(body io.ReadCloser) (
 	return inviteUser, inviteUser.Validate()
 }
 
-func (r *Repository) IsInvalidLdapGroup(repositoryAdminAuthz string, permissions []string) bool {
-	repositoryGroups := strings.Split(repositoryAdminAuthz, ",")
-
+func (r *Repository) IsInvalidLdapGroup(repositoryGroups []string, permissions []string) bool {
 	for _, repositoryGroup := range repositoryGroups {
 		if repositoryGroup == "" {
 			continue

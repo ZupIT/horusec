@@ -15,7 +15,6 @@
 package ldap
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -223,33 +222,19 @@ func (s *Service) getApplicationAdminAuthzGroupsName() ([]string, error) {
 	return []string{applicationAdminGroup}, nil
 }
 
-func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin string, role authEnums.HorusecRoles) []string {
-	var groupsName string
-
+func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin []string, role authEnums.HorusecRoles) (groups []string) {
 	switch role {
 	case authEnums.RepositoryMember, authEnums.CompanyMember:
-		groupsName = fmt.Sprintf("%s,%s,%s", member, supervisor, admin)
+		groups = append(append(member, supervisor...), admin...)
 
 	case authEnums.RepositorySupervisor:
-		groupsName = fmt.Sprintf("%s,%s", supervisor, admin)
+		groups = append(supervisor, admin...)
 
 	case authEnums.CompanyAdmin, authEnums.RepositoryAdmin:
-		groupsName = admin
+		groups = admin
 	}
 
-	return s.removeEmptyGroupsName(strings.Split(groupsName, ","))
-}
-
-func (s *Service) removeEmptyGroupsName(groupsName []string) []string {
-	var updatedGroups []string
-
-	for _, group := range groupsName {
-		if group != "" {
-			updatedGroups = append(updatedGroups, group)
-		}
-	}
-
-	return updatedGroups
+	return groups
 }
 
 func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {

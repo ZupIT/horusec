@@ -289,7 +289,7 @@ func TestListAllInCompanyByLdap(t *testing.T) {
 		CompanyID:    company.CompanyID,
 		Name:         "test",
 		CreatedAt:    time.Now(),
-		AuthzAdmin:   "test",
+		AuthzAdmin:   []string{"test"},
 	}
 
 	databaseWrite.SetLogMode(true)

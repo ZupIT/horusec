@@ -34,7 +34,7 @@ require (
 	github.com/kofalt/go-memoize v0.0.0-20200917044458-9b55a8d73e1c
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
-	github.com/lib/pq v1.8.0 // indirect
+	github.com/lib/pq v1.8.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.4
 	github.com/mailru/easyjson v0.7.6 // indirect
