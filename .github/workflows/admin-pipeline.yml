@@ -23,5 +23,9 @@ jobs:
         run: cd horusec-admin && npm install
       - name: Lint
         run: cd horusec-admin && npm run lint
+      - name: Test
+        run: cd horusec-admin && npm run test
+      - name: Coverage
+        run: cd horusec-admin && npm run coverage
       - name: build
         run: cd horusec-admin && npm run build

@@ -15,7 +15,8 @@ export class AuthMiddleware {
 
         this.totalRetry++;
         if (this.totalRetry >= 3) {
-            console.error("Total attempts reached, the application will be restarted for security.");
+            console.error("Total attempts reached, " +
+                "the application will be restarted for security.");
             process.exit(1);
         }
 
