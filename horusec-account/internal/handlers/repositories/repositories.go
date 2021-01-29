@@ -60,7 +60,7 @@ func NewRepositoryHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.Int
 // @Success 201 {object} http.Response{content=string} "CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories [post]
+// @Router /account/companies/{companyID}/repositories [post]
 // @Security ApiKeyAuth
 func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, repository, err := h.getCreateRequestData(r)
@@ -110,7 +110,7 @@ func (h *Handler) getCreateRequestData(r *netHttp.Request) (uuid.UUID, *accountE
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID} [patch]
+// @Router /account/companies/{companyID}/repositories/{repositoryID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, repository, err := h.getUpdateRequestData(r)
@@ -150,7 +150,7 @@ func (h *Handler) getUpdateRequestData(r *netHttp.Request) (uuid.UUID, *accountE
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID} [get]
+// @Router /account/companies/{companyID}/repositories/{repositoryID} [get]
 // @Security ApiKeyAuth
 func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -197,7 +197,7 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories [get]
+// @Router /account/companies/{companyID}/repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
 	accountID, companyID, permissions, err := h.getRequestData(w, r)
@@ -241,7 +241,7 @@ func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID} [delete]
+// @Router /account/companies/{companyID}/repositories/{repositoryID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Delete(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -271,7 +271,7 @@ func (h *Handler) Delete(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [patch]
+// @Router /account/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) UpdateAccountRepository(w netHttp.ResponseWriter, r *netHttp.Request) {
 	accountRepository, err := h.getAccountRepositoryRequestData(r)
@@ -326,7 +326,7 @@ func (h *Handler) getAccountRepositoryRequestID(
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 409 {object} http.Response{content=string} "CONFLICT"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID}/roles [post]
+// @Router /account/companies/{companyID}/repositories/{repositoryID}/roles [post]
 // @Security ApiKeyAuth
 func (h *Handler) InviteUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	inviteUser, err := h.getInviteUserRequestData(r)
@@ -372,7 +372,7 @@ func (h *Handler) getInviteUserRequestData(r *netHttp.Request) (*dto.InviteUser,
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID}/roles [get]
+// @Router /account/companies/{companyID}/repositories/{repositoryID}/roles [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetAccounts(w netHttp.ResponseWriter, r *netHttp.Request) {
 	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -402,7 +402,7 @@ func (h *Handler) GetAccounts(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [delete]
+// @Router /account/companies/{companyID}/repositories/{repositoryID}/roles/{accountID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) RemoveUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	removeUser, err := h.getRemoveUserRequestData(r)
