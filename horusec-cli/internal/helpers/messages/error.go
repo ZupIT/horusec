@@ -37,7 +37,7 @@ const (
 	// Fired when git is running in lower version
 	MsgErrorWhenGitIsLowerVersion = "{HORUSEC_CLI} Your git version is below of: "
 	// Fired when an unexpected error occurs when asking if the project directory is correct
-	MsgErrorWhenAskDirToRun = "{HORUSEC_CLI} Error when ask if can run prompt question"
+	MsgErrorWhenAskDirToRun = "{HORUSEC_CLI} Error when ask if can run prompt question."
 	// Fired when user-provided settings are invalid
 	MsgErrorInvalidConfigs = "{HORUSEC_CLI} Errors on validate configuration: "
 	// Fired when an unexpected error occurs when try remove analysis folder
