@@ -305,7 +305,7 @@ func TestList(t *testing.T) {
 			},
 		}
 
-		companyRepoMock.On("GetAllOfAccountLdap").Return(companyResponse, nil)
+		companyRepoMock.On("ListByLdapPermissions").Return(companyResponse, nil)
 
 		appConfig := &app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}}
 

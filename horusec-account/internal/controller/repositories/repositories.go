@@ -136,7 +136,7 @@ func (c *Controller) Get(repositoryID, accountID uuid.UUID) (*accountEntities.Re
 func (c *Controller) List(accountID, companyID uuid.UUID,
 	permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error) {
 	if c.appConfig.GetAuthType() == authEnums.Ldap {
-		return c.repository.ListAllInCompanyByLdap(companyID, permissions)
+		return c.repository.ListByLdapPermissions(companyID, permissions)
 	}
 
 	return c.repository.List(accountID, companyID)

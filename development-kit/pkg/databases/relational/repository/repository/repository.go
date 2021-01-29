@@ -17,6 +17,8 @@ package repository
 import (
 	"fmt"
 
+	"github.com/lib/pq"
+
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
@@ -34,7 +36,7 @@ type IRepository interface {
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
 	GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error)
-	ListAllInCompanyByLdap(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error)
+	ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error)
 }
 
 type Repository struct {
@@ -170,32 +172,102 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 	return accounts, response.GetError()
 }
 
-func (r *Repository) ListAllInCompanyByLdap(companyID uuid.UUID,
+func (r *Repository) ListByLdapPermissions(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+	adminRepositories, err := r.listByLdapPermissionsWhenAdmin(companyID, permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	supervisorRepositories, err := r.listByLdapPermissionsWhenSupervisor(companyID, permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	memberRepositories, err := r.listByLdapPermissionsWhenMember(companyID, permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.removeDuplicatedRepositoriesByRolePriority(*adminRepositories,
+		*supervisorRepositories, *memberRepositories), nil
+}
+
+func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID,
 	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
-	filter := r.repositoryFilterByLdapPermissions(permissions)
 
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
 			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
-		Where(fmt.Sprintf("repo.company_id = ? AND (repo.authz_admin SIMILAR TO %s OR repo.authz_supervisor"+
-			" SIMILAR TO %s OR repo.authz_member SIMILAR TO %s)", filter, filter, filter), companyID.String()).
+		Where("repo.company_id = ? AND $2 && repo.authz_admin", companyID, pq.Array(permissions)).
 		Find(&repositories)
 
 	return repositories, query.Error
 }
 
-func (r *Repository) repositoryFilterByLdapPermissions(permissions []string) (result string) {
-	for _, permission := range permissions {
-		if result == "" {
-			result = permission
+func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND $2 && repo.authz_supervisor", companyID, pq.Array(permissions)).
+		Find(&repositories)
+
+	return repositories, query.Error
+}
+
+func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND $2 && repo.authz_member", companyID, pq.Array(permissions)).
+		Find(&repositories)
+
+	return repositories, query.Error
+}
+
+//TODO use subqueries to get this data, verify type gorm text[] notation instead of pqStringArray,
+func (r *Repository) removeDuplicatedRepositoriesByRolePriority(adminRepositories, supervisorRepositories,
+	memberRepositories []accountEntities.RepositoryResponse) *[]accountEntities.RepositoryResponse {
+	repositories := adminRepositories
+
+	for index := range supervisorRepositories {
+		if r.containsWorkspace(repositories, supervisorRepositories[index].CompanyID) {
 			continue
 		}
 
-		result = fmt.Sprintf("%s|%s", result, permission)
+		repositories = append(repositories, supervisorRepositories[index])
 	}
 
-	return "'%(" + result + ")%'"
+	for index := range memberRepositories {
+		if r.containsWorkspace(repositories, memberRepositories[index].CompanyID) {
+			continue
+		}
+
+		repositories = append(repositories, memberRepositories[index])
+	}
+
+	return &repositories
+}
+
+func (r *Repository) containsWorkspace(workspaces []accountEntities.RepositoryResponse, workspaceUUID uuid.UUID) bool {
+	for index := range workspaces {
+		if workspaces[index].CompanyID == workspaceUUID {
+			return true
+		}
+	}
+
+	return false
 }

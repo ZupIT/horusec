@@ -303,7 +303,7 @@ func TestListAllInCompanyByLdap(t *testing.T) {
 	t.Run("should get repositories from account relation", func(t *testing.T) {
 		repositoryRepo := NewRepository(databaseRead, databaseWrite)
 
-		retrievedRepositories, err := repositoryRepo.ListAllInCompanyByLdap(company.CompanyID, []string{"test"})
+		retrievedRepositories, err := repositoryRepo.ListByLdapPermissions(company.CompanyID, []string{"test"})
 
 		assert.Error(t, err)
 		assert.NotNil(t, retrievedRepositories)

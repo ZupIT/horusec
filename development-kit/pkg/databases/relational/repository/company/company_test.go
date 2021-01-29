@@ -289,7 +289,7 @@ func TestGetAllOfAccountLdap(t *testing.T) {
 	t.Run("should get companies from account relation", func(t *testing.T) {
 		repo := NewCompanyRepository(databaseRead, databaseWrite)
 
-		result, err := repo.GetAllOfAccountLdap([]string{"test"})
+		result, err := repo.ListByLdapPermissions([]string{"test"})
 
 		assert.Error(t, err)
 		assert.NotNil(t, result)

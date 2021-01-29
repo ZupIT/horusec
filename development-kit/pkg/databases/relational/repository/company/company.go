@@ -31,7 +31,7 @@ type ICompanyRepository interface {
 	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
-	GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error)
+	ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error)
 }
 
 type Repository struct {
@@ -128,29 +128,27 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 	return accounts, response.GetError()
 }
 
-func (r *Repository) GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error) {
-	workspacesAdmin, err := r.getAllOfAccountLdapAdmin(permissions)
+func (r *Repository) ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	workspacesAdmin, err := r.listByLdapPermissionsWhenAdmin(permissions)
 	if err != nil {
 		return nil, err
 	}
 
-	workspacesMember, err := r.getAllOfAccountLdapMember(permissions)
+	workspacesMember, err := r.listByLdapPermissionsWhenMember(permissions)
 	if err != nil {
 		return nil, err
 	}
 
-	return r.removeDuplicated(*workspacesAdmin, *workspacesMember), nil
+	return r.removeDuplicatedWorkspacesByRolePriority(*workspacesAdmin, *workspacesMember), nil
 }
 
-func (r *Repository) getAllOfAccountLdapAdmin(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+func (r *Repository) listByLdapPermissionsWhenAdmin(permissions []string) (*[]accountEntities.CompanyResponse, error) {
 	workspaces := &[]accountEntities.CompanyResponse{}
 
 	query := r.databaseRead.
 		GetConnection().
-		Select(
-			"comp.company_id, comp.name, comp.description, 'admin' AS role, "+
-				"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
-		).
+		Select("comp.company_id, comp.name, comp.description, 'admin' AS role, "+
+			"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at").
 		Table("companies AS comp").
 		Where("$1 && comp.authz_admin", pq.Array(permissions)).
 		Find(&workspaces)
@@ -158,15 +156,13 @@ func (r *Repository) getAllOfAccountLdapAdmin(permissions []string) (*[]accountE
 	return workspaces, query.Error
 }
 
-func (r *Repository) getAllOfAccountLdapMember(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+func (r *Repository) listByLdapPermissionsWhenMember(permissions []string) (*[]accountEntities.CompanyResponse, error) {
 	workspaces := &[]accountEntities.CompanyResponse{}
 
 	query := r.databaseRead.
 		GetConnection().
-		Select(
-			"comp.company_id, comp.name, comp.description, 'member' AS role, "+
-				"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
-		).
+		Select("comp.company_id, comp.name, comp.description, 'member' AS role, "+
+			"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at").
 		Table("companies AS comp").
 		Where("$1 && comp.authz_member", pq.Array(permissions)).
 		Find(&workspaces)
@@ -174,25 +170,24 @@ func (r *Repository) getAllOfAccountLdapMember(permissions []string) (*[]account
 	return workspaces, query.Error
 }
 
-func (r *Repository) removeDuplicated(workspacesAdmin,
+func (r *Repository) removeDuplicatedWorkspacesByRolePriority(workspacesAdmin,
 	workspacesMember []accountEntities.CompanyResponse) *[]accountEntities.CompanyResponse {
-	groups := workspacesAdmin
+	workspaces := workspacesAdmin
 
 	for index := range workspacesMember {
-		if r.containsWorkspace(workspacesAdmin, workspacesMember[index].CompanyID) {
+		if r.containsWorkspace(workspaces, workspacesMember[index].CompanyID) {
 			continue
 		}
 
-		groups = append(groups, workspacesMember[index])
+		workspaces = append(workspaces, workspacesMember[index])
 	}
 
-	return &groups
+	return &workspaces
 }
 
-func (r *Repository) containsWorkspace(workspacesAdmin []accountEntities.CompanyResponse,
-	memberWorkspaceUUID uuid.UUID) bool {
-	for index := range workspacesAdmin {
-		if workspacesAdmin[index].CompanyID == memberWorkspaceUUID {
+func (r *Repository) containsWorkspace(workspaces []accountEntities.CompanyResponse, workspaceUUID uuid.UUID) bool {
+	for index := range workspaces {
+		if workspaces[index].CompanyID == workspaceUUID {
 			return true
 		}
 	}

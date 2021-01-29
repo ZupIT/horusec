@@ -383,7 +383,7 @@ func TestList(t *testing.T) {
 
 		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
-		repositoryMock.On("ListAllInCompanyByLdap").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
+		repositoryMock.On("ListByLdapPermissions").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
 
 		controller := &Controller{
 			databaseWrite:            mockWrite,

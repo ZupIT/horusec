@@ -43,9 +43,9 @@ type RepositoryResponse struct {
 	Name            string           `json:"name"`
 	Role            accountEnum.Role `json:"role"`
 	Description     string           `json:"description"`
-	AuthzMember     []string         `json:"authzMember"`
-	AuthzAdmin      []string         `json:"authzAdmin"`
-	AuthzSupervisor []string         `json:"authzSupervisor"`
+	AuthzMember     pq.StringArray   `json:"authzMember"`
+	AuthzAdmin      pq.StringArray   `json:"authzAdmin"`
+	AuthzSupervisor pq.StringArray   `json:"authzSupervisor"`
 	CreatedAt       time.Time        `json:"createdAt"`
 	UpdatedAt       time.Time        `json:"updatedAt"`
 }
