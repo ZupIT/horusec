@@ -39,8 +39,8 @@ type CompanyResponse struct {
 	Name        string         `json:"name"`
 	Role        rolesEnum.Role `json:"role"`
 	Description string         `json:"description"`
-	AuthzMember []string       `json:"authzMember"`
-	AuthzAdmin  []string       `json:"authzAdmin"`
+	AuthzMember pq.StringArray `json:"authzMember"`
+	AuthzAdmin  pq.StringArray `json:"authzAdmin"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 }
