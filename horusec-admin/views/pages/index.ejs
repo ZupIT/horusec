@@ -3,7 +3,7 @@
 
 <head>
     <%- include('../partials/head'); %>
-    <link href="/styles/auth.css" rel="stylesheet" />
+        <link href="/styles/auth.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -13,7 +13,7 @@
         <div class="auth-wrapper">
             <h3>Your access token will be displayed in the <span>horusec-admin</span> service logs.</h3>
 
-            <form action="/" method="POST">
+            <form onsubmit="event.preventDefault();teste()">
                 <input type="text" id="accessToken" placeholder="Access Token" onkeyup="verifyValue()">
 
                 <button disabled id="submit" type="submit">SUBMIT</button>
@@ -35,6 +35,26 @@
             submitButton.disabled = true;
         }
     };
+    function teste() {
+        try {
+            const accessToken = document.getElementById('accessToken').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/authentication', true);
+            xhr.setRequestHeader('authorization', accessToken)
+
+            xhr.send()
+
+            xhr.onreadystatechange = function (ev) {
+                if (ev.currentTarget.status === 204) {
+                    window.localStorage.setItem('@HORUSEC:ADMIN', accessToken)
+                    window.location.href = '/home'
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 </script>
 
 </html>

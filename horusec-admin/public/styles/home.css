@@ -1,14 +1,5 @@
 @import './main.css';
 
-section.container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 100%;
-    position: relative;
-}
-
 img.illustration {
     display: block;
     max-width: 800px;

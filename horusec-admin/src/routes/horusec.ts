@@ -17,7 +17,7 @@ export class AppRoutes {
         app.use("/", [
             Router().get("", (_, res: Response) => res.render("pages/index")),
 
-            Router().post("",
+            Router().post("/authentication",
                 (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
                 (req, res) => this.horusecController.setHorusecConfig(req, res)),
         ]);
