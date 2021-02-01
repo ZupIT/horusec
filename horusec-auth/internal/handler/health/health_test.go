@@ -15,10 +15,11 @@
 package health
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +29,7 @@ func TestNewHandler(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil)
 		assert.NotNil(t, handler)
 	})
 }
@@ -38,7 +39,7 @@ func TestOptions(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -56,7 +57,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("IsAvailable").Return(true)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -72,7 +73,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("IsAvailable").Return(false)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mockRead, mockWrite)
+		handler := NewHandler(mockRead, mockWrite, nil)
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 

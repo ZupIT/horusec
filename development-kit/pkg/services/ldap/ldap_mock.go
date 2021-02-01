@@ -41,3 +41,7 @@ func (m *Mock) Connect() error {
 func (m *Mock) Close() {
 	_ = m.MethodCalled("Close")
 }
+
+func (m *Mock) Check() error {
+	return mockUtils.ReturnNilOrError(args, 0)
+}

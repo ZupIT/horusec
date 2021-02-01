@@ -101,7 +101,8 @@ func (r *Router) RouterMetrics() *Router {
 	return r
 }
 
-func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
+func (r *Router) RouterHealth(p
+	ostgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
 	handler := health.NewHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
