@@ -18,6 +18,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/lib/pq"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
@@ -139,11 +141,6 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
 
-		respFindCompany := &response.Response{}
-		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: []string{"admin"}, AuthzMember: []string{"member"}})
-		mockRead.On("Find").Once().Return(respFindCompany)
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-
 		respFind := &response.Response{}
 		respFind.SetError(errorsEnums.ErrNotFoundRecords)
 		mockRead.On("Find").Return(respFind)
@@ -152,14 +149,15 @@ func TestCreate(t *testing.T) {
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
 		createdRepo, err := controller.Create(uuid.New(), &accountEntities.Repository{
-			AuthzAdmin:      []string{},
-			AuthzMember:     []string{},
-			AuthzSupervisor: []string{},
+			AuthzAdmin:      pq.StringArray{"admin"},
+			AuthzMember:     pq.StringArray{"member"},
+			AuthzSupervisor: pq.StringArray{"admin"},
 		}, []string{})
+
 		assert.NoError(t, err)
-		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
-		assert.Equal(t, createdRepo.AuthzMember, "member")
-		assert.Equal(t, createdRepo.AuthzSupervisor, "admin")
+		assert.Contains(t, createdRepo.AuthzAdmin, "admin")
+		assert.Contains(t, createdRepo.AuthzMember, "member")
+		assert.Contains(t, createdRepo.AuthzSupervisor, "admin")
 	})
 }
 
