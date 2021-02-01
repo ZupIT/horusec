@@ -128,69 +128,36 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 	return accounts, response.GetError()
 }
 
+//nolint
 func (r *Repository) ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error) {
-	workspacesAdmin, err := r.listByLdapPermissionsWhenAdmin(permissions)
-	if err != nil {
-		return nil, err
-	}
-
-	workspacesMember, err := r.listByLdapPermissionsWhenMember(permissions)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.removeDuplicatedWorkspacesByRolePriority(*workspacesAdmin, *workspacesMember), nil
-}
-
-func (r *Repository) listByLdapPermissionsWhenAdmin(permissions []string) (*[]accountEntities.CompanyResponse, error) {
 	workspaces := &[]accountEntities.CompanyResponse{}
 
-	query := r.databaseRead.
-		GetConnection().
-		Select("comp.company_id, comp.name, comp.description, 'admin' AS role, "+
-			"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at").
-		Table("companies AS comp").
-		Where("$1 && comp.authz_admin", pq.Array(permissions)).
-		Find(&workspaces)
+	query := fmt.Sprintf(`
+		SELECT *
+		FROM (
+			SELECT * FROM (%[1]s) AS admin
+			UNION ALL
+			SELECT * FROM (%[2]s) AS member
+			WHERE member.company_id NOT IN (SELECT company_id FROM (%[1]s) AS admin)
+		) AS workspace
+	`, r.listByLdapPermissionsWhenAdmin(), r.listByLdapPermissionsWhenMember())
 
-	return workspaces, query.Error
+	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&workspaces)
+	return workspaces, response.Error
 }
 
-func (r *Repository) listByLdapPermissionsWhenMember(permissions []string) (*[]accountEntities.CompanyResponse, error) {
-	workspaces := &[]accountEntities.CompanyResponse{}
-
-	query := r.databaseRead.
-		GetConnection().
-		Select("comp.company_id, comp.name, comp.description, 'member' AS role, "+
-			"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at").
-		Table("companies AS comp").
-		Where("$1 && comp.authz_member", pq.Array(permissions)).
-		Find(&workspaces)
-
-	return workspaces, query.Error
+func (r *Repository) listByLdapPermissionsWhenAdmin() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'admin' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_admin
+	`
 }
 
-func (r *Repository) removeDuplicatedWorkspacesByRolePriority(workspacesAdmin,
-	workspacesMember []accountEntities.CompanyResponse) *[]accountEntities.CompanyResponse {
-	workspaces := workspacesAdmin
-
-	for index := range workspacesMember {
-		if r.containsWorkspace(workspaces, workspacesMember[index].CompanyID) {
-			continue
-		}
-
-		workspaces = append(workspaces, workspacesMember[index])
-	}
-
-	return &workspaces
-}
-
-func (r *Repository) containsWorkspace(workspaces []accountEntities.CompanyResponse, workspaceUUID uuid.UUID) bool {
-	for index := range workspaces {
-		if workspaces[index].CompanyID == workspaceUUID {
-			return true
-		}
-	}
-
-	return false
+func (r *Repository) listByLdapPermissionsWhenMember() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'member' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_member
+	`
 }

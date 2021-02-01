@@ -172,102 +172,58 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 	return accounts, response.GetError()
 }
 
-func (r *Repository) ListByLdapPermissions(companyID uuid.UUID,
-	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
-	adminRepositories, err := r.listByLdapPermissionsWhenAdmin(companyID, permissions)
-	if err != nil {
-		return nil, err
-	}
-
-	supervisorRepositories, err := r.listByLdapPermissionsWhenSupervisor(companyID, permissions)
-	if err != nil {
-		return nil, err
-	}
-
-	memberRepositories, err := r.listByLdapPermissionsWhenMember(companyID, permissions)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.removeDuplicatedRepositoriesByRolePriority(*adminRepositories,
-		*supervisorRepositories, *memberRepositories), nil
-}
-
-func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID,
-	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+//nolint
+func (r *Repository) ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
 
-	query := r.databaseRead.
-		GetConnection().
-		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
-		Table("repositories AS repo").
-		Where("repo.company_id = ? AND $2 && repo.authz_admin", companyID, pq.Array(permissions)).
-		Find(&repositories)
+	query := fmt.Sprintf(`
+		SELECT *
+		FROM (
+			SELECT * FROM (%[1]s) AS admin
+			UNION ALL
+			(
+				SELECT * FROM (%[2]s) AS supervisor
+				WHERE supervisor.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
+				AND supervisor.repository_id NOT IN (SELECT repository_id FROM (%[3]s) AS member)
+				UNION ALL
+				SELECT * FROM (%[3]s) AS member
+				WHERE member.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
+				AND member.repository_id NOT IN (SELECT repository_id FROM (%[2]s) AS supervisor)
+			)
+		) AS repositories
+	`, r.listByLdapPermissionsWhenAdmin(companyID), r.listByLdapPermissionsWhenSupervisor(companyID),
+		r.listByLdapPermissionsWhenMember(companyID))
 
-	return repositories, query.Error
+	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&repositories)
+	return repositories, response.Error
 }
 
-func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID,
-	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
-	repositories := &[]accountEntities.RepositoryResponse{}
-
-	query := r.databaseRead.
-		GetConnection().
-		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
-		Table("repositories AS repo").
-		Where("repo.company_id = ? AND $2 && repo.authz_supervisor", companyID, pq.Array(permissions)).
-		Find(&repositories)
-
-	return repositories, query.Error
+//nolint
+func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_admin
+	`, companyID)
 }
 
-func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID,
-	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
-	repositories := &[]accountEntities.RepositoryResponse{}
-
-	query := r.databaseRead.
-		GetConnection().
-		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
-		Table("repositories AS repo").
-		Where("repo.company_id = ? AND $2 && repo.authz_member", companyID, pq.Array(permissions)).
-		Find(&repositories)
-
-	return repositories, query.Error
+//nolint
+func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_supervisor
+	`, companyID)
 }
 
-//TODO use subqueries to get this data, verify type gorm text[] notation instead of pqStringArray,
-func (r *Repository) removeDuplicatedRepositoriesByRolePriority(adminRepositories, supervisorRepositories,
-	memberRepositories []accountEntities.RepositoryResponse) *[]accountEntities.RepositoryResponse {
-	repositories := adminRepositories
-
-	for index := range supervisorRepositories {
-		if r.containsWorkspace(repositories, supervisorRepositories[index].CompanyID) {
-			continue
-		}
-
-		repositories = append(repositories, supervisorRepositories[index])
-	}
-
-	for index := range memberRepositories {
-		if r.containsWorkspace(repositories, memberRepositories[index].CompanyID) {
-			continue
-		}
-
-		repositories = append(repositories, memberRepositories[index])
-	}
-
-	return &repositories
-}
-
-func (r *Repository) containsWorkspace(workspaces []accountEntities.RepositoryResponse, workspaceUUID uuid.UUID) bool {
-	for index := range workspaces {
-		if workspaces[index].CompanyID == workspaceUUID {
-			return true
-		}
-	}
-
-	return false
+//nolint
+func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_member
+	`, companyID)
 }
