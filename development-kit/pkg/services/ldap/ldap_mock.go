@@ -43,5 +43,6 @@ func (m *Mock) Close() {
 }
 
 func (m *Mock) Check() error {
+	args := m.MethodCalled("Check")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
