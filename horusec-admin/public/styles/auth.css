@@ -1,33 +1,33 @@
 @import './main.css';
 
 section.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    }
 
 img.logo {
-  display: block;
-  width: 250px;
-  margin-bottom: 60px;
+    display: block;
+    width: 250px;
+    margin-bottom: 60px;
 }
 
 div.auth-wrapper {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  max-width: 250px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    max-width: 250px;
 }
 
 div.auth-wrapper h3 {
-  font-size: 16px;
-  line-height: 22px;
-  margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 22px;
+    margin-bottom: 20px;
 }
 
 div.auth-wrapper span {
-  background-color: var(--disabled);
-  padding: 1px 3px;
+    background-color: var(--disabled);
+    padding: 1px 3px;
 }

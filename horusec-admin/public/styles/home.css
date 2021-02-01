@@ -1,70 +1,62 @@
 @import './main.css';
 
 section.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
 }
 
 img.illustration {
-  display: block;
-  max-width: 800px;
-  width: 100%;
-  height: auto;
-}
-
-img.logo {
-  width: 180px;
-  display: block;
-  position: fixed;
-  top: 30px;
-  left: 30px;
+    display: block;
+    max-width: 800px;
+    width: 100%;
+    height: auto;
 }
 
 h1, h2 {
-  font-size: 24px;
-  margin-top: 10px;
+    font-size: 24px;
+    margin-top: 10px;
 }
 
 ul {
-  display: flex;
-  margin-bottom: 250px;
-  margin-top: 50px;
+    display: flex;
+    margin-bottom: 250px;
+    margin-top: 50px;
 }
 
 li {
-  background: var(--darkSecundary);
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-  margin-right: 30px;
-  width: 130px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-  cursor: pointer;
+    background: var(--darkSecundary);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-right: 30px;
+    width: 130px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    cursor: pointer;
 }
 
 li:hover {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 li a {
-  color: var(--text);
-  text-decoration: none;
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column-reverse;
+    color: var(--text);
+    text-decoration: none;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column-reverse;
 }
 
 li a img {
-  display: block;
-  width: 25px;
-  margin-bottom: 10px;
+    display: block;
+    width: 25px;
+    margin-bottom: 10px;
 }

@@ -2,17 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#1C1C1E" />
-    <meta name="description" content="HORUSEC - Admin" />
-
-    <title>HORUSEC - Admin</title>
-
-    <link rel="icon" type="image/x-icon" href="/images/favicon.svg">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;400;700&display=swap" rel="stylesheet">
-
+    <%- include('../partials/head'); %>
     <link href="/styles/auth.css" rel="stylesheet" />
 </head>
 
@@ -23,7 +13,7 @@
         <div class="auth-wrapper">
             <h3>Your access token will be displayed in the <span>horusec-admin</span> service logs.</h3>
 
-            <form action="">
+            <form action="/" method="POST">
                 <input type="text" id="accessToken" placeholder="Access Token" onkeyup="verifyValue()">
 
                 <button disabled id="submit" type="submit">SUBMIT</button>
@@ -44,7 +34,7 @@
         } else {
             submitButton.disabled = true;
         }
-    }
+    };
 </script>
 
 </html>

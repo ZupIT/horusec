@@ -1,21 +1,21 @@
 @import './reset.css';
 
 :root {
-  --dark: #1C1C1E;
-  --darkSecundary: #3c3c3d;
-  --primary: #EF4123;
-  --secundary: #F7941E;
-  --disabled: #2C2C2E;
-  --text: #F2F2F9;
-  --textSecundary: #b4b4b4;
-  --success: #10AA80;
-  --error: #FF453A;
-  --info: #5C6BC0;
+    --dark: #1C1C1E;
+    --darkSecundary: #3c3c3d;
+    --primary: #EF4123;
+    --secundary: #F7941E;
+    --disabled: #2C2C2E;
+    --text: #F2F2F9;
+    --textSecundary: #b4b4b4;
+    --success: #10AA80;
+    --error: #FF453A;
+    --info: #5C6BC0;
 }
 
 body {
-  background-color: var(--dark);
-  height: 100vh;
+    background-color: var(--dark);
+    height: 100vh;
 }
 
 span,
@@ -29,48 +29,60 @@ input,
 label,
 input::placeholder,
 ul li {
-  font-family: 'Lato', sans-serif;
-  color: var(--text);
+    font-family: 'Lato', sans-serif;
+    color: var(--text);
 }
 
 form {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 input {
-  border: none;
-  outline: none;
-  background: none;
-  border-bottom: 1px solid var(--text);
-  width: 250px;
-  margin: 20px 0;
+    border: none;
+    outline: none;
+    background: none;
+    border-bottom: 1px solid var(--text);
+    width: 250px;
+    margin: 20px 0;
 }
 
 input::placeholder {
-  color: var(--textSecundary);
+    color: var(--textSecundary);
 }
 
 button {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secundary) 100%);
-  color: var(--text);
-  border-radius: 18px;
-  box-sizing: border-box;
-  border: none;
-  outline: none;
-  font-size: 12px;
-  cursor: pointer;
-  text-align: center;
-  width: 250px;
-  height: 35px;
-  margin: 20px 0;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secundary) 100%);
+    color: var(--text);
+    border-radius: 18px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    width: 250px;
+    height: 35px;
+    margin: 20px 0;
 }
 
 button:hover:not(:disabled) {
-  transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 button:disabled {
-  cursor: default;
-  background: var(--disabled);
+    cursor: default;
+    background: var(--disabled);
+}
+
+div.logo-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 30px;
+}
+
+div.logo-container img.head-logo {
+    width: 180px;
+    display: block;
 }

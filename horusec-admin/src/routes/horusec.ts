@@ -15,7 +15,7 @@ export class AppRoutes {
 
     public start(app: Express): Express {
         app.use("/", [
-            Router().get("", (_, res: Response) => res.render("index")),
+            Router().get("", (_, res: Response) => res.render("pages/index")),
 
             Router().post("",
                 (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
@@ -23,15 +23,15 @@ export class AppRoutes {
         ]);
 
         app.use("/home", [
-            Router().get("", (_, res: Response) => res.render("home")),
+            Router().get("", (_, res: Response) => res.render("pages/home")),
         ]);
 
         app.use("/config", [
-            Router().get("/general", (_, res: Response) => res.render("config-general")),
+            Router().get("/general", (_, res: Response) => res.render("pages/config-general")),
 
-            Router().get("/auth", (_, res: Response) => res.render("config-auth")),
+            Router().get("/auth", (_, res: Response) => res.render("pages/config-auth")),
 
-            Router().get("/manager", (_, res: Response) => res.render("config-manager")),
+            Router().get("/manager", (_, res: Response) => res.render("pages/config-manager")),
         ]);
 
         return app;
