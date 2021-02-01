@@ -30,6 +30,7 @@ type ILDAPService interface {
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
 	GetGroupsOfUser(userDN string) ([]string, error)
+	Check() error
 }
 
 type ILdapClient interface {
@@ -68,6 +69,11 @@ func NewLDAPClient() ILDAPService {
 		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
 		UserFilter:         env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", "(sAMAccountName=%s)"),
 	}
+}
+
+func (s *Service) Check() error {
+	_, err := ldap.Dial("tcp", s.getLdapURL())
+	return err
 }
 
 func (s *Service) Connect() error {
