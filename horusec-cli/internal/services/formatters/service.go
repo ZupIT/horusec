@@ -84,7 +84,7 @@ func (s *Service) GetConfigProjectPath() string {
 	)
 }
 
-func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (s *Service) GetToolsConfig() toolsconfig.MapToolConfig {
 	return s.config.GetToolsConfig()
 }
 

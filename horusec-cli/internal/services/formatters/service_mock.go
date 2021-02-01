@@ -119,9 +119,9 @@ func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *horusec.Vulnerability) {
 	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
 }
 
-func (m *Mock) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (m *Mock) GetToolsConfig() toolsconfig.MapToolConfig {
 	args := m.MethodCalled("GetToolsConfig")
-	return args.Get(0).(map[tools.Tool]toolsconfig.ToolConfig)
+	return args.Get(0).(toolsconfig.MapToolConfig)
 }
 
 func (m *Mock) IsDockerDisabled() bool {

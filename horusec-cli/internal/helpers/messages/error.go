@@ -87,9 +87,11 @@ const (
 	MsgErrorYarnLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a yarn.lock file. " +
 		"If you use Yarn to handle your dependencies, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
-	MsgErrorYarnProcess        = "{HORUSEC_CLI} Error Yarn returned an error: "
-	MsgErrorDeferFileClose     = "{HORUSEC_CLI} Error defer file close: "
-	MsgErrorGetCurrentPath     = "{HORUSEC-CLI} Error on get current path"
-	MsgErrorSetHeadersOnConfig = "{HORUSEC-CLI} Error on set headers on configurations"
-	MsgErrorReplayWrong        = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
+	MsgErrorYarnProcess             = "{HORUSEC_CLI} Error Yarn returned an error: "
+	MsgErrorDeferFileClose          = "{HORUSEC_CLI} Error defer file close: "
+	MsgErrorGetCurrentPath          = "{HORUSEC-CLI} Error on get current path"
+	MsgErrorSetHeadersOnConfig      = "{HORUSEC-CLI} Error on set headers on configurations"
+	MsgErrorReplayWrong             = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
+	MsgErrorErrorOnCreateConfigFile = "{HORUSEC-CLI} Error on create config file: "
+	MsgErrorErrorOnReadConfigFile   = "{HORUSEC-CLI} Error on read config file on path: "
 )
