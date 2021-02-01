@@ -56,7 +56,7 @@ func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite 
 	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig *app.Config) *chi.Mux {
 	r.setMiddleware()
 	r.RouterAuth(postgresRead, postgresWrite, appConfig)
-	r.RouterHealth(postgresRead, postgresWrite)
+	r.RouterHealth(postgresRead, postgresWrite, appConfig)
 	r.RouterAccount(postgresRead, postgresWrite, broker, cache, appConfig)
 	return r.router
 }
@@ -101,8 +101,8 @@ func (r *Router) RouterMetrics() *Router {
 	return r
 }
 
-func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) *Router {
-	handler := health.NewHandler(postgresRead, postgresWrite)
+func (r *Router) RouterHealth(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
+	handler := health.NewHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
 		router.Options("/", handler.Options)
