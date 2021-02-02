@@ -20,14 +20,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type InitCommandI interface {
-	Handle() error
-	Execute(cmd *cobra.Command, args []string) error
-	Cmd() *cobra.Command
-	Init()
-}
-
-func NewInitCommand() InitCommandI {
+func NewInitCommand() ICommand {
 	cmd := &InitCommand{}
 	cmd.Init()
 	return cmd

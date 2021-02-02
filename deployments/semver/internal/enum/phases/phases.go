@@ -20,6 +20,15 @@ import (
 
 type Phase string
 
+const (
+	Alpha            Phase = "alpha"
+	Beta             Phase = "beta"
+	ReleaseCandidate Phase = "rc"
+	Release          Phase = "release"
+
+	Unknown Phase = ""
+)
+
 func (p Phase) String() string {
 	if p == Release {
 		return ""
@@ -31,21 +40,21 @@ func (p Phase) IsRelease() bool {
 	return p == Release
 }
 
-const (
-	Alpha            Phase = "alpha"
-	Beta             Phase = "beta"
-	ReleaseCandidate Phase = "rc"
-	Release          Phase = "release"
-
-	Unknown Phase = ""
-)
-
 func Values() []Phase {
 	return []Phase{
 		Alpha,
 		Beta,
 		ReleaseCandidate,
 		Release,
+	}
+}
+
+func ToList() []string {
+	return []string{
+		Alpha.String(),
+		Beta.String(),
+		ReleaseCandidate.String(),
+		Release.String(),
 	}
 }
 
@@ -63,14 +72,4 @@ func ValueOf(value string) Phase {
 
 func IsEqual(value, valid string) bool {
 	return strings.EqualFold(value, valid)
-}
-
-func IndexOf(value Phase) int {
-	for i, v := range Values() {
-		if v == value {
-			return i
-		}
-	}
-
-	return -1
 }

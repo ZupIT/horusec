@@ -22,21 +22,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-type UpVersionCommandI interface {
+type IUpCommand interface {
+	ICommand
 	Handle(release *entities.Version, phase string) error
-	Execute(cmd *cobra.Command, args []string) error
-	Cmd() *cobra.Command
-	Init()
 }
 
-func NewUpVersionCommand() UpVersionCommandI {
+type UpVersionCommand struct {
+	cmd *cobra.Command
+}
+
+func NewUpVersionCommand() IUpCommand {
 	cmd := &UpVersionCommand{}
 	cmd.Init()
 	return cmd
 }
 
-type UpVersionCommand struct {
-	cmd *cobra.Command
+func (u *UpVersionCommand) Cmd() *cobra.Command {
+	return u.cmd
 }
 
 //nolint
@@ -48,8 +50,8 @@ func (u *UpVersionCommand) Handle(release *entities.Version, phase string) error
 		viper.Set(phase, release.PatchNumber)
 	}
 
-	if phase == "release" && isAlreadyReleased() {
-		if isAlreadyReleased() {
+	if phase == "release" && u.isAlreadyReleased() {
+		if u.isAlreadyReleased() {
 			release.Patch++
 			viper.Set("release", release.String())
 		}
@@ -80,7 +82,7 @@ func (u *UpVersionCommand) Handle(release *entities.Version, phase string) error
 	return viper.WriteConfig()
 }
 
-func isAlreadyReleased() bool {
+func (u *UpVersionCommand) isAlreadyReleased() bool {
 	return viper.GetInt("alpha") == 0 && viper.GetInt("beta") == 0 && viper.GetInt("rc") == 0
 }
 
@@ -91,10 +93,6 @@ func (u *UpVersionCommand) Execute(cmd *cobra.Command, args []string) error {
 	}
 
 	return u.Handle(version, args[0])
-}
-
-func (u *UpVersionCommand) Cmd() *cobra.Command {
-	return u.cmd
 }
 
 func (u *UpVersionCommand) Init() {

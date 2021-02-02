@@ -22,14 +22,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type GetCommandI interface {
-	Handle(version *entities.Version, phase string) error
-	Execute(cmd *cobra.Command, args []string) error
-	Cmd() *cobra.Command
-	Init()
-}
-
-func NewGetCommand() GetCommandI {
+func NewGetCommand() ICommand {
 	cmd := &GetCommand{}
 	cmd.Init()
 	return cmd

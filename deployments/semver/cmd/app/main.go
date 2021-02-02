@@ -40,6 +40,7 @@ func init() {
 	rootCmd.AddCommand(commands.NewInitCommand().Cmd())
 	rootCmd.AddCommand(commands.NewUpVersionCommand().Cmd())
 	rootCmd.AddCommand(commands.NewGetCommand().Cmd())
+	rootCmd.AddCommand(commands.NewFilterAndUpCommand().Cmd())
 }
 
 func Execute() {
