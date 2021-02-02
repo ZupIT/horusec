@@ -16,13 +16,9 @@ package company
 
 import (
 	"errors"
-	"os"
 	"testing"
-	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
@@ -257,34 +253,34 @@ func TestGetAllAccountsInCompany(t *testing.T) {
 	})
 }
 
-func TestGetAllOfAccountLdap(t *testing.T) {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
+// func TestGetAllOfAccountLdap(t *testing.T) {
+// 	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+// 	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+// 	_ = os.Setenv(config.EnvRelationalLogMode, "false")
 
-	databaseWrite := adapter.NewRepositoryWrite()
-	databaseRead := adapter.NewRepositoryRead()
+// 	databaseWrite := adapter.NewRepositoryWrite()
+// 	databaseRead := adapter.NewRepositoryRead()
 
-	company := &accountEntities.Company{
-		CompanyID:   uuid.New(),
-		Name:        "test",
-		Description: "test",
-		CreatedAt:   time.Now(),
-		AuthzAdmin:  []string{"test"},
-	}
+// 	company := &accountEntities.Company{
+// 		CompanyID:   uuid.New(),
+// 		Name:        "test",
+// 		Description: "test",
+// 		CreatedAt:   time.Now(),
+// 		AuthzAdmin:  []string{"test"},
+// 	}
 
-	databaseWrite.SetLogMode(true)
-	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+// 	databaseWrite.SetLogMode(true)
+// 	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
 
-	resp := databaseWrite.Create(company, company.GetTable())
-	assert.NoError(t, resp.GetError())
+// 	resp := databaseWrite.Create(company, company.GetTable())
+// 	assert.NoError(t, resp.GetError())
 
-	t.Run("should get companies from account relation", func(t *testing.T) {
-		repo := NewCompanyRepository(databaseRead, databaseWrite)
+// 	t.Run("should get companies from account relation", func(t *testing.T) {
+// 		repo := NewCompanyRepository(databaseRead, databaseWrite)
 
-		result, err := repo.ListByLdapPermissions([]string{"test"})
+// 		result, err := repo.ListByLdapPermissions([]string{"test"})
 
-		assert.Error(t, err)
-		assert.NotNil(t, result)
-	})
-}
+// 		assert.Error(t, err)
+// 		assert.NotNil(t, result)
+// 	})
+// }
