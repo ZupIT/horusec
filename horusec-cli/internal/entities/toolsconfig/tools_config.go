@@ -7,6 +7,8 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 )
 
+type MapToolConfig map[tools.Tool]ToolConfig
+
 type ToolConfig struct {
 	IsToIgnore bool   `json:"istoignore"`
 	ImagePath  string `json:"imagepath"`
@@ -37,8 +39,8 @@ type ToolsConfigsStruct struct {
 }
 
 //nolint:funlen parse struct is necessary > 15 lines
-func (t *ToolsConfigsStruct) ToMap() map[tools.Tool]ToolConfig {
-	return map[tools.Tool]ToolConfig{
+func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
+	return MapToolConfig{
 		tools.GoSec:             t.GoSec,
 		tools.SecurityCodeScan:  t.SecurityCodeScan,
 		tools.Brakeman:          t.Brakeman,
@@ -63,7 +65,7 @@ func (t *ToolsConfigsStruct) ToMap() map[tools.Tool]ToolConfig {
 	}
 }
 
-func ParseInterfaceToMapToolsConfig(input interface{}) (output map[tools.Tool]ToolConfig) {
+func ParseInterfaceToMapToolsConfig(input interface{}) (output MapToolConfig) {
 	outputStruct := ToolsConfigsStruct{}
 	bytes, err := json.Marshal(input)
 	if err != nil {

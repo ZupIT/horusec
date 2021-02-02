@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
@@ -92,7 +91,7 @@ type IConfig interface {
 	GetIsTimeout() bool
 	SetIsTimeout(isTimeout bool)
 
-	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
+	GetToolsConfig() toolsconfig.MapToolConfig
 	SetToolsConfig(toolsConfig interface{})
 
 	GetDisableDocker() bool
@@ -106,5 +105,6 @@ type IConfig interface {
 
 	IsEmptyRepositoryAuthorization() bool
 	ToBytes(isMarshalIndent bool) (bytes []byte)
+	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
 }

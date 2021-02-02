@@ -15,6 +15,8 @@
 package messages
 
 const (
+	MsgInfoConfigAlreadyExist       = `{HORUSEC_CLI} Horusec configuration already exists on path: `
+	MsgInfoConfigFileCreatedSuccess = `{HORUSEC_CLI} Horusec created file of configuration with success on path: `
 	// Fired when is necessary show how to install docker
 	MsgInfoHowToInstallDocker = `{HORUSEC_CLI} If your docker is not installed check in docs of how to install in:
 		https://docs.docker.com/get-docker
