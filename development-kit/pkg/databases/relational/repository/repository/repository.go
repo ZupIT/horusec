@@ -184,7 +184,6 @@ func (r *Repository) ListByLdapPermissions(companyID uuid.UUID, permissions []st
 			(
 				SELECT * FROM (%[2]s) AS supervisor
 				WHERE supervisor.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
-				AND supervisor.repository_id NOT IN (SELECT repository_id FROM (%[3]s) AS member)
 				UNION ALL
 				SELECT * FROM (%[3]s) AS member
 				WHERE member.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
