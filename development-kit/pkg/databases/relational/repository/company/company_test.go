@@ -170,16 +170,12 @@ func TestGetCompanyByID(t *testing.T) {
 }
 
 func TestGetAllOfAccount(t *testing.T) {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
-
 	databaseWrite := adapter.NewRepositoryWrite()
 	databaseRead := adapter.NewRepositoryRead()
 
 	account := &authEntities.Account{
-		Email:     "test@test.com",
-		Username:  "test",
+		Email:     "test_email@test.com",
+		Username:  "test_username",
 		CreatedAt: time.Now(),
 		Password:  "test",
 		AccountID: uuid.New(),

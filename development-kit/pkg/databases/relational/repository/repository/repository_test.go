@@ -154,16 +154,12 @@ func TestUpdateRepository(t *testing.T) {
 }
 
 func TestList(t *testing.T) {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
-
 	databaseWrite := adapter.NewRepositoryWrite()
 	databaseRead := adapter.NewRepositoryRead()
 
 	account := &authEntities.Account{
-		Email:     "test@test.com",
-		Username:  "test",
+		Email:     "testlist@test.com",
+		Username:  "test_list",
 		CreatedAt: time.Now(),
 		Password:  "test",
 		AccountID: uuid.New(),
@@ -171,15 +167,15 @@ func TestList(t *testing.T) {
 
 	company := &accountEntities.Company{
 		CompanyID:   uuid.New(),
-		Name:        "test",
-		Description: "test",
+		Name:        "test_list",
+		Description: "test_list",
 		CreatedAt:   time.Now(),
 	}
 
 	repository := &accountEntities.Repository{
 		RepositoryID: uuid.New(),
 		CompanyID:    company.CompanyID,
-		Name:         "test",
+		Name:         "test_list",
 		CreatedAt:    time.Now(),
 	}
 
