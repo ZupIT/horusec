@@ -207,7 +207,11 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.GetProjectPath()),
 			"Y")
 		if err != nil {
-			return err
+			logger.LogWarnWithLevel(messages.MsgErrorWhenAskDirToRun+`
+Please use the command below informing the directory you want to run the analysis: 
+horusec start -p ./
+`, err.Error())
+			return nil
 		}
 		return s.validateReplyOfAsk(response)
 	}

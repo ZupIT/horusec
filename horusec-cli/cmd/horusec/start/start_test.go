@@ -165,7 +165,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		promptMock.AssertNotCalled(t, "Ask")
 	})
-	t.Run("Should execute command exec and return error because found error when ask", func(t *testing.T) {
+	t.Run("Should execute command exec and return error because found error when ask but run in current folder", func(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("", errors.New("some error"))
 
@@ -194,7 +194,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(stdoutMock)
 		cobraCmd.SetArgs([]string{"-e", "true"})
 
-		assert.Error(t, cobraCmd.Execute())
+		assert.NoError(t, cobraCmd.Execute())
 
 		promptMock.AssertCalled(t, "Ask")
 	})

@@ -51,7 +51,7 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_LDAP_BASE                   |                                                                   | This environment get ldap base | 
 | HORUSEC_LDAP_BINDDN                 |                                                                   | This environment get ldap entity admin | 
 | HORUSEC_LDAP_BINDPASSWORD           |                                                                   | This environment get ldap password entity admin | 
-| HORUSEC_LDAP_USERFILTER             |                                                                   | This environment get ldap user filter | 
+| HORUSEC_LDAP_USERFILTER             | (sAMAccountName=%s)                                               | This environment get ldap user filter | 
 | HORUSEC_LDAP_ADMIN_GROUP            |                                                                   | This environment get ldap admin group names |
 | HORUSEC_LDAP_USESSL                 | false                                                             | This environment check ldap use ssl | 
 | HORUSEC_LDAP_SKIP_TLS               | true                                                              | This environment check ldap skip tls | 
