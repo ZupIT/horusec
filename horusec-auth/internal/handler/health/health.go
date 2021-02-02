@@ -35,7 +35,8 @@ type Handler struct {
 	appConfig     *app.Config
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead,
+	postgresWrite relational.InterfaceWrite, appConfig *app.Config) httpUtil.Interface {
 	return &Handler{
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,
