@@ -1,0 +1,45 @@
+@import './main.css';
+
+h1 {
+    font-size: 1.8em;
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+h1 img {
+    width: 30px;
+    margin-right: 10px;
+}
+
+.divider {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--disabled);
+    border-radius: 5px;
+    width: 600px;
+    margin-top: 20px;
+}
+
+.divider label.key {
+    font-weight: bold;
+}
+
+.divider span.description {
+    color: var(--textSecundary);
+    margin-top: 10px;
+}
+
+.divider span.description a {
+    color: var(--primary);
+}
+
+.btns-wrapper {
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

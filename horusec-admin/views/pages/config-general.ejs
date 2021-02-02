@@ -9,8 +9,40 @@
 <body>
     <%- include('../partials/logo'); %>
 
-    <section class="container-general ">
-        <h1>General</h1>
+    <section class="container">
+        <form action="">
+            <h1>
+                <img src="/icons/settings.svg">
+                General
+            </h1>
+
+            <div class="divider">
+                <label class="key" for="">HORUSEC_JWT_SECRET_KEY</label>
+
+                <span class="description">Symmetric key for signing the JSON Web Token (JWT).</span>
+
+                <input name="horusec_jwt_secret_key" placeholder="A long and security string" type="text">
+            </div>
+
+            <div class="divider">
+                <label class="key" for="">HORUSEC_ENABLE_APPLICATION_ADMIN</label>
+
+                <span class="description">Use this option to enable/disable the use of application admin. <br> View more about in this section of the <a target="_blank" href="https://docs.horusec.io/v/v1-eng/tutorials/horusec-usage-options#enable-disable-application-admin">documentation</a>.</span>
+
+                <label class="switch">
+                    <input id="teste" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="btns-wrapper">
+                <button type="submit">SAVE</button>
+
+                <button class="outline">
+                    <a href="/home">BACK</a>
+                </button>
+            </div>
+        </form>
     </section>
 </body>
 

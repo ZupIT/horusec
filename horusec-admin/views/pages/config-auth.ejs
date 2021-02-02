@@ -9,10 +9,64 @@
 <body>
     <%- include('../partials/logo'); %>
 
-    <h1>Auth</h1>
+    <section class="container">
+        <form action="">
+            <h1>
+                <img src="/icons/unlocked.svg">
+                Authentication
+            </h1>
+
+            <div class="divider">
+                <label class="key" for="">HORUSEC_AUTH_TYPE</label>
+
+                <span class="description">Selected the provider of authentication:</span>
+                
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input id="horusec_auth_type" name="horusec_auth_type" value="horusec" type="radio" onchange="setAuthType('horusec')">
+                        <img src="/images/horusec.svg">
+                    </label>
+
+                    <label class="radio-item">
+                        <input name="horusec_auth_type" value="ldap" type="radio" onchange="setAuthType('keycloak')">
+                        <img src="/images/keycloak.svg">
+                    </label>
+
+                    <label class="radio-item">
+                        <input name="horusec_auth_type" value="keycloak" type="radio" onchange="setAuthType('ldap')">
+                        <img src="/images/ldap.svg">
+                    </label>
+                </div>
+            </div>
+
+            <div id="keycloak-form">
+                <h1>keycloak</h1>
+            </div>
+            <div id="ldap-form">
+                <h1>ldap</h1>
+            </div>
+
+            <div class="btns-wrapper">
+                <button type="submit">SAVE</button>
+
+                <button class="outline">
+                    <a href="/home">BACK</a>
+                </button>
+            </div>
+        </form>
+    </section>
 </body>
 
 <script type="text/javascript">
+function setAuthType(authType) {
+   document.getElementById('horusec_auth_type').value = authType
+
+   if (authType !== 'horusec') {
+        document.getElementById('keycloak-form').style.display = 'none'
+        document.getElementById('ldap-form').style.display = 'none'
+        document.getElementById(`${authType}-form`).style.display = 'block'
+   }
+}
 
 </script>
 
