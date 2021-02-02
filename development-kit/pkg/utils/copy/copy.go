@@ -39,6 +39,7 @@ func Copy(src, dst string, skip func(src string) bool) error {
 }
 
 func copyByType(src, dst, path string, info os.FileInfo) error {
+	logger.LogTraceWithLevel("Copying ", "src: "+src, "dst: "+dst, "path: "+path)
 	switch {
 	case info.IsDir():
 		return copyDir(src, dst, path)

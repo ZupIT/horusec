@@ -17,6 +17,7 @@ package main
 import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/generate"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/start"
 	"github.com/ZupIT/horusec/horusec-cli/cmd/horusec/version"
 	"github.com/ZupIT/horusec/horusec-cli/config"
@@ -42,12 +43,18 @@ horusec start -p="/home/user/projects/my-project"
 // nolint
 func init() {
 	startCmd := start.NewStartCommand(configs)
+	generateCmd := generate.NewGenerateCommand()
+
 	_ = rootCmd.PersistentFlags().String("log-level", configs.GetLogLevel(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
 	_ = rootCmd.PersistentFlags().String("config-file-path", configs.GetConfigFilePath(), "Path of the file horusec-config.json to setup content of horusec")
+
 	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
+	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
+
 	cobra.OnInitialize(func() {
 		startCmd.SetGlobalCmd(rootCmd)
+		generateCmd.SetGlobalCmd(rootCmd)
 		engine.SetLogLevel(configs.GetLogLevel())
 	})
 }

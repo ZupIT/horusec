@@ -18,6 +18,8 @@ sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"\"/window.REACT_APP_HO
 sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT=\"$REACT_APP_HORUSEC_ENDPOINT_ACCOUNT\"/g" "/var/www/index.html"
 sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"$REACT_APP_HORUSEC_ENDPOINT_AUTH\"/g" "/var/www/index.html"
 
+sed -i -e "s/window.REACT_APP_HORUSEC_MANAGER_PATH=\"\"/window.REACT_APP_HORUSEC_MANAGER_PATH=\"$REACT_APP_HORUSEC_MANAGER_PATH\"/g" "/var/www/index.html"
+
 sed -i -e "s/window.REACT_APP_KEYCLOAK_CLIENT_ID=\"\"/window.REACT_APP_KEYCLOAK_CLIENT_ID=\"$REACT_APP_KEYCLOAK_CLIENT_ID\"/g" "/var/www/index.html"
 sed -i -e "s/window.REACT_APP_KEYCLOAK_REALM=\"\"/window.REACT_APP_KEYCLOAK_REALM=\"$REACT_APP_KEYCLOAK_REALM\"/g" "/var/www/index.html"
 sed -i -e "s/window.REACT_APP_KEYCLOAK_BASE_PATH=\"\"/window.REACT_APP_KEYCLOAK_BASE_PATH=\"$REACT_APP_KEYCLOAK_BASE_PATH\"/g" "/var/www/index.html"

@@ -12,21 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:14.5.0-alpine AS builder
+FROM alpine:latest
 
-WORKDIR /usr/src/app
+RUN apk add elixir git
 
-COPY ./horusec-manager/ .
+RUN mix local.hex --force
+RUN mix local.rebar --force
+RUN mix escript.install hex mix_audit --force
+RUN mix archive.install hex sobelow --force
 
-RUN ls
-
-RUN npm install
-RUN npm run build
-
-FROM nginx:1.18.0-alpine
-
-COPY --from=builder /usr/src/app/build /var/www
-COPY ./horusec-manager/deployments/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./horusec-manager/deployments/scripts/run-nginx.sh /var/www/run-nginx.sh
-
-CMD ["sh", "/var/www/run-nginx.sh"]
+RUN mv ./root/.mix/escripts/mix_audit ./bin/
