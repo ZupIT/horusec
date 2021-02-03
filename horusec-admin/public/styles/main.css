@@ -71,7 +71,7 @@ button.outline {
     border: 1px solid var(--text);
 }
 
-button.outline a {
+button a {
     display: block;
     width: 100%;
     height: 100%;

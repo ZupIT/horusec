@@ -11,7 +11,7 @@ export class AuthMiddleware {
 
     public authTokenView(req: Request, res: Response, next: any): any {
         if (!req.headers.cookie) {
-            return res.status(401).send('USER NOT AUTHORIZED');
+            return res.render("pages/not-authorized");
         }
         if (req.headers.cookie.split("=")[1] === this.accessToken) {
             return next();
@@ -24,7 +24,7 @@ export class AuthMiddleware {
             process.exit(1);
         }
 
-        return res.status(401).send('USER NOT AUTHORIZED');
+        return res.render("pages/not-authorized");
     }
 
     public authTokenAPI(req: Request, res: Response, next: any): any {
@@ -39,6 +39,6 @@ export class AuthMiddleware {
             process.exit(1);
         }
 
-        return res.status(401).send('USER NOT AUTHORIZED');
+        return res.render("pages/not-authorized");
     }
 }

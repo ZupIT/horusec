@@ -1,0 +1,18 @@
+@import './main.css';
+
+body {
+    background-color: #1b1b1e;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin: 20px 0;
+}
+
+h2 {
+    font-size: 2em;
+}
+
+button {
+    margin-top: 80px;
+}
