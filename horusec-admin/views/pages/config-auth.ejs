@@ -16,10 +16,13 @@
                 Authentication
             </h1>
 
-            <div class="divider">
+            <div class="divider select-auth">
                 <label class="key" for="">HORUSEC_AUTH_TYPE</label>
 
-                <span class="description">Selected the provider of authentication:</span>
+                <span class="description">
+                    See the authentication section of the <a href="https://docs.horusec.io/v/v1-eng/tutorials/horusec-usage-options/authentication-types" target="_blank" rel="noopener noreferrer">documentation</a> for more details.
+                    <br>Selected the provider of authentication:
+                </span>
                 
                 <div class="radio-group">
                     <label class="radio-item">
@@ -39,11 +42,171 @@
                 </div>
             </div>
 
-            <div id="keycloak-form">
-                <h1>keycloak</h1>
+            <div id="keycloak-form" class="form-group">
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_KEYCLOAK_BASE_PATH</label>
+    
+                    <span class="description">What is the keycloak connection base.</span>
+    
+                    <input name="horusec_keycloak_base_path" placeholder="Example: http://127.0.0.1:8080" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_KEYCLOAK_CLIENT_ID</label>
+    
+                    <span class="description">What is the client_id that you use.</span>
+    
+                    <input name="horusec_keycloak_client_id" placeholder="Example: account" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_KEYCLOAK_CLIENT_SECRET</label>
+    
+                    <span class="description">What is secret  used to client_id.</span>
+    
+                    <input name="horusec_keycloak_client_secret" placeholder="00000000-0000-0000-0000-000000000000" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_KEYCLOAK_REALM</label>
+    
+                    <span class="description">What is the realm used.</span>
+    
+                    <input name="horusec_keycloak_realm" placeholder="Example: master" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_KEYCLOAK_CLIENT_ID</label>
+    
+                    <span class="description">What is the Keycloak connection base for the horusec manager.</span>
+    
+                    <input name="react_app_keycloak_client_id" placeholder="Example: http://127.0.0.1:8080" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_KEYCLOAK_REALM</label>
+    
+                    <span class="description">What is the client_id that you use for the horusec manager.</span>
+    
+                    <input name="react_app_keycloak_realm" placeholder="Example: account" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_KEYCLOAK_BASE_PATH</label>
+    
+                    <span class="description">What is the realm used for the horusec manager.</span>
+    
+                    <input name="react_app_keycloak_base_path" placeholder="Example: master" type="text">
+                </div>
             </div>
-            <div id="ldap-form">
-                <h1>ldap</h1>
+            <div id="ldap-form" class="form-group">
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_BASE</label>
+    
+                    <span class="description">LDAP connection base</span>
+    
+                    <input name="horusec_ldap_base" placeholder="dc=example,dc=org" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_HOST</label>
+    
+                    <span class="description">LDAP connection host</span>
+    
+                    <input name="horusec_ldap_host" placeholder="127.0.0.1" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_PORT</label>
+    
+                    <span class="description">LDAP connection host</span>
+    
+                    <input name="horusec_ldap_port" placeholder="389" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_USESSL</label>
+    
+                    <span class="description">Checks whether to use SSL</span>
+    
+                    <label class="switch">
+                        <input type="checkbox" name="horusec_ldap_usessl">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_SKIP_TLS</label>
+    
+                    <span class="description">Checks whether to skip TLS</span>
+    
+                    <label class="switch">
+                        <input type="checkbox" name="horusec_ldap_skip_tls">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_SKIP_TLS</label>
+    
+                    <span class="description">Checks whether to skip TLS</span>
+    
+                    <label class="switch">
+                        <input type="checkbox" name="horusec_ldap_skip_tls">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_INSECURE_SKIP_VERIFY</label>
+    
+                    <span class="description">Checks whether to skip insecurity check</span>
+    
+                    <label class="switch">
+                        <input type="checkbox" name="horusec_ldap_insecure_skip_verify">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_BINDDN</label>
+    
+                    <span class="description">Definition for Idap admin entity</span>
+    
+                    <input name="horusec_ldap_binddn" placeholder="cn=admin,dc=example,dc=org" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_BINDPASSWORD</label>
+    
+                    <span class="description">Definition for Idap admin entity</span>
+    
+                    <input name="horusec_ldap_bindpassword" placeholder="admin" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_USERFILTER</label>
+    
+                    <span class="description">What is the way of filter for users</span>
+    
+                    <input name="horusec_ldap_userfilter" placeholder="(uid=%s)" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_GROUPFILTER</label>
+    
+                    <span class="description">What is the group administrators name</span>
+    
+                    <input name="horusec_ldap_admin_group" placeholder="(memberUid=%s)" type="text">
+                </div>
+
+                <div class="divider">
+                    <label class="key" for="">HORUSEC_LDAP_ADMIN_GROUP</label>
+    
+                    <span class="description">What is the group administrators name</span>
+    
+                    <input name="horusec_ldap_admin_group" placeholder="admin" type="text">
+                </div>
             </div>
 
             <div class="btns-wrapper">
@@ -61,10 +224,11 @@
 function setAuthType(authType) {
    document.getElementById('horusec_auth_type').value = authType
 
+    document.getElementById('keycloak-form').style.display = 'none'
+    document.getElementById('ldap-form').style.display = 'none'
+
    if (authType !== 'horusec') {
-        document.getElementById('keycloak-form').style.display = 'none'
-        document.getElementById('ldap-form').style.display = 'none'
-        document.getElementById(`${authType}-form`).style.display = 'block'
+        document.getElementById(`${authType}-form`).style.display = 'flex'
    }
 }
 

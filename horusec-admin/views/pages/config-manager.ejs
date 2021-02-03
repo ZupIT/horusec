@@ -3,13 +3,70 @@
 
 <head>
     <%- include('../partials/head'); %>
-    <link href="/styles/config-manager.css" rel="stylesheet" />
+    <link href="/styles/config-general.css" rel="stylesheet" />
 </head>
 
 <body>
     <%- include('../partials/logo'); %>
 
-    <h1>Manager</h1>
+    <section class="container">
+        <form action="">
+            <h1>
+                <img src="/icons/pie.svg">
+                Manager
+            </h1>
+
+            <div class="form-group">
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_HORUSEC_ENDPOINT_API</label>
+    
+                    <span class="description">Endpoint to manager connect in the API service.</span>
+    
+                    <input name="react_app_horusec_endpoint_api" placeholder="http://127.0.0.1:8000" type="text">
+                </div>
+    
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_HORUSEC_ENDPOINT_ANALYTIC</label>
+    
+                    <span class="description">Endpoint to manager connect in the ANALYTIC service.</span>
+    
+                    <input name="react_app_horusec_endpoint_analytic" placeholder="http://127.0.0.1:8005" type="text">
+                </div>
+    
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_HORUSEC_ENDPOINT_ACCOUNT</label>
+    
+                    <span class="description">Endpoint to manager connect in the ACCOUNT service.</span>
+    
+                    <input name="react_app_horusec_endpoint_account" placeholder="http://127.0.0.1:8003" type="text">
+                </div>
+    
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_HORUSEC_ENDPOINT_AUTH</label>
+    
+                    <span class="description">Endpoint to manager connect in the AUTH service.</span>
+    
+                    <input name="react_app_horusec_endpoint_auth" placeholder="http://127.0.0.1:8006" type="text">
+                </div>
+    
+                <div class="divider">
+                    <label class="key" for="">REACT_APP_HORUSEC_MANAGER_PATH</label>
+    
+                    <span class="description">Public path of horusec manager.</span>
+    
+                    <input name="react_app_horusec_endpoint_auth" placeholder="/horusec" type="text">
+                </div>
+            </div>
+
+            <div class="btns-wrapper">
+                <button type="submit">SAVE</button>
+
+                <button class="outline">
+                    <a href="/view/home">BACK</a>
+                </button>
+            </div>
+        </form>
+    </section>
 </body>
 
 <script type="text/javascript">

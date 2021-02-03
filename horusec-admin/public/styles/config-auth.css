@@ -1,5 +1,9 @@
 @import './config.css';
 
+.select-auth {
+    width: 755px;
+}
+
 div.radio-group {
     margin: 20px 0;
     display: flex;
@@ -23,8 +27,6 @@ label.radio-item img {
     width: 120px;
 }
 
-
-input[type="radio"]:checked ~ label {
-  color: var(--primary);
-  border: 1px red solid;
+div.form-group {
+    display: none;
 }

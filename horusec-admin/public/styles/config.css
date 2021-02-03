@@ -43,3 +43,34 @@ h1 img {
     align-items: center;
     justify-content: space-between;
 }
+
+div.form-group {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 800px;
+    max-height: 300px;
+    justify-content: space-between;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #000;
+}
+
+div.form-group::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+div.form-group::-webkit-scrollbar-thumb{
+    border-radius: 2px;
+    background: #3A3A3C;
+}
+
+div.form-group::-webkit-scrollbar-track {
+    background-color: #1C1C1E;
+}
+
+div.form-group .divider {
+    width: 350px;
+}
