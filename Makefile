@@ -186,6 +186,9 @@ build-install-cli:
 	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
+build-install-cli-windows:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec.exe" &> /dev/null
+	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec.exe" ./horusec-cli/cmd/horusec/main.go
 
 build-install-leaks-cli:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null

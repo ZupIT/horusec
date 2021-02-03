@@ -21,7 +21,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -37,8 +36,13 @@ import (
 
 func NewConfig() IConfig {
 	return &Config{
-		workDir:     workdir.NewWorkDir(),
-		toolsConfig: toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		falsePositiveHashes: []string{},
+		riskAcceptHashes:    []string{},
+		severitiesToIgnore:  []string{},
+		toolsToIgnore:       []string{},
+		headers:             map[string]string{},
+		workDir:             workdir.NewWorkDir(),
+		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
 	}
 }
 
@@ -94,7 +98,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetFilesOrPathsToIgnore(viper.GetStringSlice(c.toLowerCamel(EnvFilesOrPathsToIgnore)))
 	c.SetReturnErrorIfFoundVulnerability(viper.GetBool(c.toLowerCamel(EnvReturnErrorIfFoundVulnerability)))
 	c.SetProjectPath(viper.GetString(c.toLowerCamel(EnvProjectPath)))
-	c.SetWorkDir(viper.Get(c.toLowerCamel(EnvWorkDirPath)))
+	c.SetWorkDir(viper.Get(c.toLowerCamel(EnvWorkDir)))
 	c.SetFilterPath(viper.GetString(c.toLowerCamel(EnvFilterPath)))
 	c.SetEnableGitHistoryAnalysis(viper.GetBool(c.toLowerCamel(EnvEnableGitHistoryAnalysis)))
 	c.SetCertInsecureSkipVerify(viper.GetBool(c.toLowerCamel(EnvCertInsecureSkipVerify)))
@@ -232,7 +236,7 @@ func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {
 }
 
 func (c *Config) GetFilesOrPathsToIgnore() []string {
-	return c.filesOrPathsToIgnore
+	return valueordefault.GetSliceStringValueOrDefault(c.filesOrPathsToIgnore, []string{"*tmp*", "**/.vscode/**"})
 }
 
 func (c *Config) SetFilesOrPathsToIgnore(filesOrPaths []string) {
@@ -376,10 +380,10 @@ func (c *Config) SetIsTimeout(isTimeout bool) {
 	c.isTimeout = isTimeout
 }
 
-func (c *Config) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (c *Config) GetToolsConfig() toolsconfig.MapToolConfig {
 	content := toolsconfig.ToolsConfigsStruct{}
 	return valueordefault.GetInterfaceValueOrDefault(
-		c.toolsConfig, content.ToMap()).(map[tools.Tool]toolsconfig.ToolConfig)
+		c.toolsConfig, content.ToMap()).(toolsconfig.MapToolConfig)
 }
 
 func (c *Config) SetToolsConfig(toolsConfig interface{}) {
@@ -492,6 +496,39 @@ func (c *Config) ToBytes(isMarshalIndent bool) (bytes []byte) {
 	return bytes
 }
 
+// nolint:funlen is necessary to return complety map
+func (c *Config) ToMapLowerCase() map[string]interface{} {
+	return map[string]interface{}{
+		c.toLowerCamel(EnvHorusecAPIUri):                   c.GetHorusecAPIUri(),
+		c.toLowerCamel(EnvTimeoutInSecondsRequest):         c.GetTimeoutInSecondsRequest(),
+		c.toLowerCamel(EnvTimeoutInSecondsAnalysis):        c.GetTimeoutInSecondsAnalysis(),
+		c.toLowerCamel(EnvMonitorRetryInSeconds):           c.GetMonitorRetryInSeconds(),
+		c.toLowerCamel(EnvRepositoryAuthorization):         c.GetRepositoryAuthorization(),
+		c.toLowerCamel(EnvPrintOutputType):                 c.GetPrintOutputType(),
+		c.toLowerCamel(EnvJSONOutputFilePath):              c.GetJSONOutputFilePath(),
+		c.toLowerCamel(EnvSeveritiesToIgnore):              c.GetSeveritiesToIgnore(),
+		c.toLowerCamel(EnvFilesOrPathsToIgnore):            c.GetFilesOrPathsToIgnore(),
+		c.toLowerCamel(EnvReturnErrorIfFoundVulnerability): c.GetReturnErrorIfFoundVulnerability(),
+		c.toLowerCamel(EnvProjectPath):                     c.GetProjectPath(),
+		c.toLowerCamel(EnvWorkDir):                         c.GetWorkDir(),
+		c.toLowerCamel(EnvFilterPath):                      c.GetFilterPath(),
+		c.toLowerCamel(EnvEnableGitHistoryAnalysis):        c.GetEnableGitHistoryAnalysis(),
+		c.toLowerCamel(EnvCertInsecureSkipVerify):          c.GetCertInsecureSkipVerify(),
+		c.toLowerCamel(EnvCertPath):                        c.GetCertPath(),
+		c.toLowerCamel(EnvEnableCommitAuthor):              c.GetEnableCommitAuthor(),
+		c.toLowerCamel(EnvRepositoryName):                  c.GetRepositoryName(),
+		c.toLowerCamel(EnvFalsePositiveHashes):             c.GetFalsePositiveHashes(),
+		c.toLowerCamel(EnvRiskAcceptHashes):                c.GetRiskAcceptHashes(),
+		c.toLowerCamel(EnvToolsToIgnore):                   c.GetToolsToIgnore(),
+		c.toLowerCamel(EnvHeaders):                         c.GetHeaders(),
+		c.toLowerCamel(EnvContainerBindProjectPath):        c.GetContainerBindProjectPath(),
+		c.toLowerCamel(EnvToolsConfig):                     c.GetToolsConfig(),
+		c.toLowerCamel(EnvDisableDocker):                   c.GetDisableDocker(),
+		c.toLowerCamel(EnvCustomRulesPath):                 c.GetCustomRulesPath(),
+		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
+	}
+}
+
 func (c *Config) NormalizeConfigs() IConfig {
 	if c.GetJSONOutputFilePath() != "" {
 		absJSONOutputFilePath, _ := filepath.Abs(c.GetJSONOutputFilePath())
@@ -530,7 +567,8 @@ func (c *Config) factoryParseInputToSliceString(input interface{}) []string {
 	return []string{}
 }
 
-func (c *Config) replaceCommaToSpaceString(input string) (response []string) {
+func (c *Config) replaceCommaToSpaceString(input string) []string {
+	response := []string{}
 	if input != "" {
 		for _, item := range strings.Split(strings.TrimSpace(input), ",") {
 			newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
@@ -540,7 +578,8 @@ func (c *Config) replaceCommaToSpaceString(input string) (response []string) {
 	return response
 }
 
-func (c *Config) replaceCommaToSpaceSliceString(input []string) (response []string) {
+func (c *Config) replaceCommaToSpaceSliceString(input []string) []string {
+	response := []string{}
 	for _, item := range input {
 		newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
 		response = append(response, newItem)

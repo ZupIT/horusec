@@ -16,7 +16,6 @@
 package config
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 )
@@ -114,7 +113,7 @@ const (
 	//   generic    []string
 	// }
 	// Validation: It is mandatory to be valid interface of workdir to proceed
-	EnvWorkDirPath = "HORUSEC_CLI_WORK_DIR"
+	EnvWorkDir = "HORUSEC_CLI_WORK_DIR"
 	// This setting is to setup the path to run analysis keep current path in your base.
 	// By default is empty
 	// Validation: if exists is required valid path
@@ -204,7 +203,7 @@ type Config struct {
 	falsePositiveHashes             []string
 	riskAcceptHashes                []string
 	toolsToIgnore                   []string
-	toolsConfig                     map[tools.Tool]toolsconfig.ToolConfig
+	toolsConfig                     toolsconfig.MapToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
 }
