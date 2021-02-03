@@ -21,6 +21,9 @@ export class AppRoutes {
     }
 
     public start(app: Express): Express {
+        app.use("**", [
+            Router().get("", (_, res) => res.render("pages/not-found")),
+        ]);
         app.use("/", [
             Router().get("", (_, res) => res.redirect("/view")),
         ]);
