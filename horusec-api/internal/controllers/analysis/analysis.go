@@ -15,6 +15,8 @@
 package analysis
 
 import (
+	"time"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	repositoryAnalysis "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/analysis"
 	repositoryCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
@@ -29,7 +31,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
 	"github.com/google/uuid"
-	"time"
 )
 
 type IController interface {
@@ -65,7 +66,7 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	if err != nil {
 		return uuid.Nil, err
 	}
-	repo, err := c.getRepository(analysisData)
+	repo, err := c.getRepository(analysisData, company)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -74,12 +75,12 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	return c.createAnalyzeAndVulnerabilities(analysis)
 }
 
-func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData) (
+func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (
 	repo *accountEntities.Repository, err error) {
 	if analysisData.RepositoryName != "" && analysisData.Analysis.RepositoryID == uuid.Nil {
 		repo, err = c.repoRepository.GetByName(analysisData.Analysis.CompanyID, analysisData.RepositoryName)
 		if err == errorsEnums.ErrNotFoundRecords {
-			return c.createRepository(analysisData)
+			return c.createRepository(analysisData, company)
 		}
 		return repo, err
 	}
@@ -96,12 +97,16 @@ func (c *Controller) setDefaultContentToCreate(analysis *horusecEntities.Analysi
 		SetupIDInAnalysisContents()
 }
 
-func (c *Controller) createRepository(analysisData *apiEntities.AnalysisData) (*accountEntities.Repository, error) {
+func (c *Controller) createRepository(
+	analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (*accountEntities.Repository, error) {
 	repo := &accountEntities.Repository{
-		RepositoryID: uuid.New(),
-		CompanyID:    analysisData.Analysis.CompanyID,
-		Name:         analysisData.RepositoryName,
-		CreatedAt:    time.Now(),
+		RepositoryID:    uuid.New(),
+		CompanyID:       analysisData.Analysis.CompanyID,
+		Name:            analysisData.RepositoryName,
+		CreatedAt:       time.Now(),
+		AuthzMember:     company.AuthzMember,
+		AuthzAdmin:      company.AuthzAdmin,
+		AuthzSupervisor: company.AuthzAdmin,
 	}
 
 	return repo, c.repoRepository.Create(repo, nil)
@@ -131,14 +136,14 @@ func (c *Controller) removeAnalysisVulnerabilityWithHashDuplicate(
 	newAnalysis := analysis.GetAnalysisWithoutAnalysisVulnerabilities()
 	for keyObservable := range analysis.AnalysisVulnerabilities {
 		observable := analysis.AnalysisVulnerabilities[keyObservable]
-		if !c.existsHashDuplicated(newAnalysis, &observable) {
+		if !c.existsDuplicatedHash(newAnalysis, &observable) {
 			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
 		}
 	}
 	return newAnalysis
 }
 
-func (c *Controller) existsHashDuplicated(
+func (c *Controller) existsDuplicatedHash(
 	newAnalysis *horusecEntities.Analysis, observable *horusecEntities.AnalysisVulnerabilities) bool {
 	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
 		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
