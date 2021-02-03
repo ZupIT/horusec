@@ -58,15 +58,8 @@ const HandleWorkspace: React.FC<Props> = ({
     isValid: false,
   });
 
-  const [adminGroup, setAdminGroup] = useState<Field>({
-    isValid: false,
-    value: currentWorkspace?.authzAdmin,
-  });
-
-  const [memberGroup, setMemberGroup] = useState<Field>({
-    isValid: false,
-    value: currentWorkspace?.authzMember,
-  });
+  const [adminGroup, setAdminGroup] = useState<string[]>([""]);
+  const [memberGroup, setMemberGroup] = useState<string[]>([""]);
 
   const [emailAdmin, setEmailAdmin] = useState<Field>({
     isValid: false,
@@ -76,14 +69,14 @@ const HandleWorkspace: React.FC<Props> = ({
   const setValues = (
     nameToset?: string,
     descToSet?: string,
-    adminToSet?: string,
-    memberToSet?: string
+    adminToSet?: string[],
+    memberToSet?: string[]
   ) => {
     setName({ value: nameToset, isValid: nameToset ? true : false });
     setDescription({ value: descToSet, isValid: false });
     setEmailAdmin({ value: currentUser?.email, isValid: false });
-    setAdminGroup({ value: adminToSet, isValid: false });
-    setMemberGroup({ value: memberToSet, isValid: false });
+    setAdminGroup(adminToSet);
+    setMemberGroup(memberToSet);
   };
 
   const clearInputs = () => {
@@ -93,8 +86,8 @@ const HandleWorkspace: React.FC<Props> = ({
   const handleCreate = () => {
     companyService
       .create(name.value, description.value, emailAdmin.value, {
-        authzAdmin: adminGroup.value,
-        authzMember: memberGroup.value,
+        authzAdmin: adminGroup,
+        authzMember: memberGroup,
       })
       .then(() => {
         onConfirm();
@@ -117,8 +110,8 @@ const HandleWorkspace: React.FC<Props> = ({
         description.value,
         emailAdmin.value,
         {
-          authzAdmin: adminGroup.value,
-          authzMember: memberGroup.value,
+          authzAdmin: admGrouinGroup,
+          authzMember: memberGroup,
         }
       )
       .then(() => {
@@ -205,7 +198,7 @@ const HandleWorkspace: React.FC<Props> = ({
           </Styled.Wrapper>
         ) : null}
 
-        {getCurrentConfig().authType === authTypes.LDAP ? (
+        {getCurrentConfig().authType === authTypes.LDAP || true ? (
           <>
             <Styled.SubTitle>
               {t('WORKSPACES_SCREEN.REFERENCE_GROUP')}
@@ -213,24 +206,51 @@ const HandleWorkspace: React.FC<Props> = ({
 
             <Styled.Wrapper>
               <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
+              {adminGroup.map((adminGroupItem, index) => (
+                <Styled.Wrapper key={index}>
+                  <Input
+                    name={`admin-group-${index}`}
+                    initialValue={adminGroupItem}
+                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                    onChangeValue={(field: Field) => setAdminGroup([...(adminGroup.splice(index, 1, field.value))])}
+                    validation={() => index !== 0 || adminGroupItem !== ""}
+                  />
 
-              <Input
-                name="adminGroup"
-                initialValue={adminGroup.value}
-                label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                onChangeValue={(field: Field) => setAdminGroup(field)}
-              />
+                  {adminGroupItem.length > 2 ? (
+                    <Styled.OptionIcon
+                      name="delete"
+                      size="20px"
+                      onClick={() => setAdminGroup([...adminGroup.slice(0, index), ...adminGroup.slice(index + 1)])}
+                    />
+                  ) : null}
+
+                </Styled.Wrapper>
+              ))}
             </Styled.Wrapper>
 
             <Styled.Wrapper>
               <Styled.Label>{t('WORKSPACES_SCREEN.MEMBER')}</Styled.Label>
 
-              <Input
-                name="memberGroup"
-                initialValue={memberGroup.value}
-                label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                onChangeValue={(field: Field) => setMemberGroup(field)}
-              />
+              {memberGroup.map((memberGroupItem, index) => (
+                <Styled.Wrapper key={index}>
+                  <Input
+                    name={`member-group-${index}`}
+                    initialValue={memberGroupItem}
+                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                    onChangeValue={(field: Field) => setMemberGroup([...(adminGroup.splice(index, 1, field.value))])}
+                    validation={() => index !== 0 || memberGroupItem !== ""}
+                  />
+
+                  {memberGroupItem.length > 2 ? (
+                    <Styled.OptionIcon
+                      name="delete"
+                      size="20px"
+                      onClick={() => setMemberGroup([...memberGroup.slice(0, index), ...memberGroup.slice(index + 1)])}
+                    />
+                  ) : null}
+
+                </Styled.Wrapper>
+              ))}
             </Styled.Wrapper>
           </>
         ) : null}

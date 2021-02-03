@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { Input } from 'components';
+import { Input, Icon } from 'components';
 
 const Title = styled.h1`
   font-weight: normal;
@@ -54,6 +54,10 @@ const Field = styled(Input)`
   margin: 20px 0 30px 0;
 `;
 
+const OptionIcon = styled(Icon)`
+  margin-right: 10px;
+`;
+
 export default {
   Title,
   SubTitle,
@@ -61,4 +65,5 @@ export default {
   Wrapper,
   Label,
   Field,
+  OptionIcon
 };
