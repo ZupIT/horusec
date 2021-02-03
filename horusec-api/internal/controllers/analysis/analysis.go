@@ -66,7 +66,7 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	if err != nil {
 		return uuid.Nil, err
 	}
-	repo, err := c.getRepository(analysisData, company)
+	repo, err := c.getRepositoryOrCreateIfNotExist(analysisData, company)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -75,7 +75,7 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	return c.createAnalyzeAndVulnerabilities(analysis)
 }
 
-func (c *Controller) getRepository(analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (
+func (c *Controller) getRepositoryOrCreateIfNotExist(analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (
 	repo *accountEntities.Repository, err error) {
 	if analysisData.RepositoryName != "" && analysisData.Analysis.RepositoryID == uuid.Nil {
 		repo, err = c.repoRepository.GetByName(analysisData.Analysis.CompanyID, analysisData.RepositoryName)
