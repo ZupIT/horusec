@@ -51,6 +51,8 @@
                 if (ev.currentTarget.status === 204) {
                     setCookie("horusec::access_token", accessToken)
                     window.location.href = '/view/home'
+                } else {
+                    window.location.href = '/view/not-authorized'
                 }
             }
         } catch (error) {

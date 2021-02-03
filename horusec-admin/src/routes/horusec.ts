@@ -28,6 +28,8 @@ export class AppRoutes {
         app.use("/view", [
             Router().get("",
                 (_, res) => res.render("pages/index")),
+            Router().get("/not-authorized",
+                (_, res) => res.render("pages/not-authorized")),
             Router().get("/home",
                 (req, res, next) => this.auth.authTokenView(req, res, next),
                 (_, res) => res.render("pages/home")),
