@@ -65,5 +65,5 @@ export default {
   Wrapper,
   Label,
   Field,
-  OptionIcon
+  OptionIcon,
 };

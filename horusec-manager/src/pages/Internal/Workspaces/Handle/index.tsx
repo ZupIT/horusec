@@ -58,8 +58,8 @@ const HandleWorkspace: React.FC<Props> = ({
     isValid: false,
   });
 
-  const [adminGroup, setAdminGroup] = useState<string[]>([""]);
-  const [memberGroup, setMemberGroup] = useState<string[]>([""]);
+  const [adminGroup, setAdminGroup] = useState<string[]>(['']);
+  const [memberGroup, setMemberGroup] = useState<string[]>(['']);
 
   const [emailAdmin, setEmailAdmin] = useState<Field>({
     isValid: false,
@@ -212,18 +212,26 @@ const HandleWorkspace: React.FC<Props> = ({
                     name={`admin-group-${index}`}
                     initialValue={adminGroupItem}
                     label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                    onChangeValue={(field: Field) => setAdminGroup([...(adminGroup.splice(index, 1, field.value))])}
-                    validation={() => index !== 0 || adminGroupItem !== ""}
+                    onChangeValue={(field: Field) =>
+                      setAdminGroup([
+                        ...adminGroup.splice(index, 1, field.value),
+                      ])
+                    }
+                    validation={() => index !== 0 || adminGroupItem !== ''}
                   />
 
                   {adminGroupItem.length > 2 ? (
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={() => setAdminGroup([...adminGroup.slice(0, index), ...adminGroup.slice(index + 1)])}
+                      onClick={() =>
+                        setAdminGroup([
+                          ...adminGroup.slice(0, index),
+                          ...adminGroup.slice(index + 1),
+                        ])
+                      }
                     />
                   ) : null}
-
                 </Styled.Wrapper>
               ))}
             </Styled.Wrapper>
@@ -237,18 +245,26 @@ const HandleWorkspace: React.FC<Props> = ({
                     name={`member-group-${index}`}
                     initialValue={memberGroupItem}
                     label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                    onChangeValue={(field: Field) => setMemberGroup([...(adminGroup.splice(index, 1, field.value))])}
-                    validation={() => index !== 0 || memberGroupItem !== ""}
+                    onChangeValue={(field: Field) =>
+                      setMemberGroup([
+                        ...adminGroup.splice(index, 1, field.value),
+                      ])
+                    }
+                    validation={() => index !== 0 || memberGroupItem !== ''}
                   />
 
                   {memberGroupItem.length > 2 ? (
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={() => setMemberGroup([...memberGroup.slice(0, index), ...memberGroup.slice(index + 1)])}
+                      onClick={() =>
+                        setMemberGroup([
+                          ...memberGroup.slice(0, index),
+                          ...memberGroup.slice(index + 1),
+                        ])
+                      }
                     />
                   ) : null}
-
                 </Styled.Wrapper>
               ))}
             </Styled.Wrapper>
