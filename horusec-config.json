@@ -23,6 +23,7 @@
     "**/e2e/**",
     "**/examples/**",
     "**/*.toml",
+    "**/*.test.ts",
     "**/*_test.go",
     "**/*_mock.go",
     "**/*README.md",
