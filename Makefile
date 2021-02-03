@@ -13,7 +13,7 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 87 "./development-kit"
+	deployments/scripts/coverage.sh 80 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-api"
@@ -179,6 +179,9 @@ build-install-cli:
 	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
+build-install-cli-windows:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec.exe" &> /dev/null
+	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec.exe" ./horusec-cli/cmd/horusec/main.go
 
 build-install-leaks-cli:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null

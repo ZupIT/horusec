@@ -124,4 +124,12 @@ func TestIsInvalidLdapGroup(t *testing.T) {
 
 		assert.False(t, result)
 	})
+
+	t.Run("should return true when empty groups", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		result := useCases.IsInvalidLdapGroup([]string{"", ""}, []string{"", ""})
+
+		assert.True(t, result)
+	})
 }

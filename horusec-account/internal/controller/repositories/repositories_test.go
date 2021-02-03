@@ -178,6 +178,23 @@ func TestUpdate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("should return error updating repository when ldap auth type", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Update").Return(resp)
+		mockRead.On("Find").Return(resp.SetData(&accountEntities.Repository{}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		controller := NewController(mockWrite, mockRead, brokerMock,
+			&app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}})
+
+		_, err := controller.Update(uuid.New(), &accountEntities.Repository{}, []string{})
+		assert.Error(t, err)
+	})
+
 	t.Run("should return error when something went wrong", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}

@@ -95,6 +95,31 @@ func TestCreateCompany(t *testing.T) {
 		mockTx.AssertNumberOfCalls(t, "Create", 2)
 	})
 
+	t.Run("should return error when creating company with invalid ldap groups", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		company := &accountEntities.Company{
+			Name: "test",
+		}
+
+		r := &response.Response{}
+		r.SetData(company)
+		mockTx.On("Create").Return(r)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{
+			ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap},
+		})
+
+		_, err := controller.Create(uuid.New(), company, []string{})
+		assert.Error(t, err)
+	})
+
 	t.Run("should fails to create a company and rollback the transaction", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
@@ -170,6 +195,27 @@ func TestUpdateCompany(t *testing.T) {
 
 		assert.NotNil(t, updatedCompany)
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when updating company with invalid ldap groups", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{
+			ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap},
+		})
+
+		company := &accountEntities.Company{
+			Name: "test",
+		}
+		r := &response.Response{}
+		r.SetData(company)
+		mockWrite.On("Update").Return(r)
+
+		_, err := controller.Update(uuid.New(), company, []string{})
+
+		assert.Error(t, err)
 	})
 }
 

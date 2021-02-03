@@ -40,6 +40,8 @@ const (
 	HorusecNodejs     Tool = "HorusecNodeJS"
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"
+	MixAudit          Tool = "MixAudit"
+	Sobelow           Tool = "Sobelow"
 	ShellCheck        Tool = "ShellCheck"
 )
 
