@@ -72,6 +72,10 @@ func NewLDAPClient() ILDAPService {
 }
 
 func (s *Service) Check() error {
+	if err := s.Connect(); err != nil {
+		return err
+	}
+
 	_, err := s.Conn.Search(ldap.NewSearchRequest(
 		s.Base,
 		ldap.ScopeBaseObject, ldap.NeverDerefAliases, 0, 0, false,
