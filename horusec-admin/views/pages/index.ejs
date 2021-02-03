@@ -13,7 +13,7 @@
         <div class="auth-wrapper">
             <h3>Your access token will be displayed in the <span>horusec-admin</span> service logs.</h3>
 
-            <form onsubmit="event.preventDefault();teste()">
+            <form onsubmit="event.preventDefault();sendAccessToken()">
                 <input type="text" id="accessToken" placeholder="Access Token" onkeyup="verifyValue()">
 
                 <button disabled id="submit" type="submit">SUBMIT</button>
@@ -35,12 +35,12 @@
             submitButton.disabled = true;
         }
     };
-    function teste() {
+    function sendAccessToken() {
         try {
             const accessToken = document.getElementById('accessToken').value;
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/authentication', true);
+            xhr.open('POST', '/api/auth', true);
             xhr.setRequestHeader('authorization', accessToken)
 
             xhr.send()
@@ -48,7 +48,7 @@
             xhr.onreadystatechange = function (ev) {
                 if (ev.currentTarget.status === 204) {
                     window.localStorage.setItem('@HORUSEC:ADMIN', accessToken)
-                    window.location.href = '/home'
+                    window.location.href = '/view/home'
                 }
             }
         } catch (error) {

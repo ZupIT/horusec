@@ -220,6 +220,9 @@ The configuration file receive an object with the content follow:
     ],
     "hlc":[
 
+    ],
+    "elixir":[
+
     ]
   },
   "horusecCliToolsConfig":{
@@ -296,6 +299,14 @@ The configuration file receive an object with the content follow:
       "imagePath":""
     },
     "YarnAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "MixAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "Sobelow":{
       "isToIgnore":false,
       "imagePath":""
     }
@@ -440,6 +451,7 @@ The interface of languages accepts is:
     php        []string
     c          []string
     yaml       []string
+    elixir     []string
 }
 ```
 

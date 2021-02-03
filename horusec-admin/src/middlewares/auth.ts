@@ -8,6 +8,10 @@ export class AuthMiddleware {
         this.accessToken = accessToken;
     }
 
+    public validateAccessTokenOnLocalStorage(req: Request, res: Response, next: any): any {
+        return next();
+    }
+
     public validateAccessTokenOnHeaders(req: Request, res: Response, next: any): any {
         if (req.headers.authorization === this.accessToken) {
             return next();
