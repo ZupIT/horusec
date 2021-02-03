@@ -7,30 +7,31 @@
 </head>
 
 <body>
+    <%- include('../partials/snackbar'); %>
     <%- include('../partials/logo'); %>
 
     <section class="container">
-        <form action="">
+        <form onsubmit="event.preventDefault();submitForm()" id="form">
             <h1>
                 <img src="/icons/settings.svg">
                 General
             </h1>
 
             <div class="divider">
-                <label class="key" for="">HORUSEC_JWT_SECRET_KEY</label>
+                <label class="key">HORUSEC_JWT_SECRET_KEY</label>
 
                 <span class="description">Symmetric key for signing the JSON Web Token (JWT).</span>
 
-                <input name="horusec_jwt_secret_key" placeholder="A long and security string" type="text">
+                <input id="horusec_jwt_secret_key" placeholder="A long and security string" type="text">
             </div>
 
             <div class="divider">
-                <label class="key" for="">HORUSEC_ENABLE_APPLICATION_ADMIN</label>
+                <label class="key">HORUSEC_ENABLE_APPLICATION_ADMIN</label>
 
                 <span class="description">Use this option to enable/disable the use of application admin. <br> View more about in this section of the <a target="_blank" href="https://docs.horusec.io/v/v1-eng/tutorials/horusec-usage-options#enable-disable-application-admin">documentation</a>.</span>
 
                 <label class="switch">
-                    <input id="teste" type="checkbox">
+                    <input id="horusec_enable_application_admin" value="false" type="checkbox" onchange="setCheckboxValue('horusec_enable_application_admin')">
                     <span class="slider round"></span>
                 </label>
             </div>
@@ -47,7 +48,41 @@
 </body>
 
 <script type="text/javascript">
+    function submitForm(e) {
+        try {
+            const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
+            const horusec_enable_application_admin = document.getElementById('horusec_enable_application_admin').value
 
+            // TODO: horusec_enable_application_admin
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('PATCH', '/api/config', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
+
+            xhr.send(JSON.stringify({ horusec_enable_application_admin, horusec_jwt_secret_key }))
+
+            xhr.onreadystatechange = function (ev) {
+                if (ev.currentTarget.status === 204) {
+                    showSnackBar('success')
+                } else {
+                    showSnackBar('error')
+                }
+            }
+
+        } catch (error) {
+            showSnackBar('error')
+        }
+    }
+    function setCheckboxValue(id) {
+        const value = document.getElementById(id).value
+
+        if (value === 'true') {
+            document.getElementById(id).value = false
+        } else {
+            document.getElementById(id).value = true
+        }
+    }
 </script>
 
 </html>

@@ -62,7 +62,7 @@ button {
     cursor: pointer;
     text-align: center;
     width: 250px;
-    height: 35px;
+    height: 40px;
     margin: 20px 0;
 }
 
@@ -167,4 +167,37 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+div.error-bar, div.success-bar {
+    width: 100%;
+    color: var(--text);
+    position: fixed;
+    z-index: 1;
+    padding: 10px;
+    text-transform: uppercase;
+    text-align: center;
+    bottom: -40px;
+    transition: all 1s ease;
+}
+
+
+.error-active, .success-active {
+    animation: showAndHidden 6s;
+}
+
+div.error-bar {
+    background-color: var(--error);
+}
+
+div.success-bar {
+    background-color: var(--success);
+}
+
+@keyframes showAndHidden {
+    0%   { bottom: -40px; }
+    25%   { bottom: 0px; }
+    50%   { bottom: 0px; }
+    75%   { bottom: 0px; }
+    100% { bottom: -40px; }
 }

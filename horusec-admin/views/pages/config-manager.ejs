@@ -22,7 +22,7 @@
 
                     <span class="description">Endpoint to manager connect in the API service.</span>
 
-                    <input name="react_app_horusec_endpoint_api" placeholder="http://127.0.0.1:8000" type="text">
+                    <input id="react_app_horusec_endpoint_api" placeholder="http://127.0.0.1:8000" type="text">
                 </div>
 
                 <div class="divider">
@@ -30,7 +30,7 @@
 
                     <span class="description">Endpoint to manager connect in the ANALYTIC service.</span>
 
-                    <input name="react_app_horusec_endpoint_analytic" placeholder="http://127.0.0.1:8005" type="text">
+                    <input id="react_app_horusec_endpoint_analytic" placeholder="http://127.0.0.1:8005" type="text">
                 </div>
 
                 <div class="divider">
@@ -38,7 +38,7 @@
 
                     <span class="description">Endpoint to manager connect in the ACCOUNT service.</span>
 
-                    <input name="react_app_horusec_endpoint_account" placeholder="http://127.0.0.1:8003" type="text">
+                    <input id="react_app_horusec_endpoint_account" placeholder="http://127.0.0.1:8003" type="text">
                 </div>
 
                 <div class="divider">
@@ -46,7 +46,7 @@
 
                     <span class="description">Endpoint to manager connect in the AUTH service.</span>
 
-                    <input name="react_app_horusec_endpoint_auth" placeholder="http://127.0.0.1:8006" type="text">
+                    <input id="react_app_horusec_endpoint_auth" placeholder="http://127.0.0.1:8006" type="text">
                 </div>
 
                 <div class="divider">
@@ -54,7 +54,7 @@
 
                     <span class="description">Public path of horusec manager.</span>
 
-                    <input name="react_app_horusec_endpoint_auth" placeholder="/horusec" type="text">
+                    <input id="react_app_horusec_manager_path" placeholder="/horusec" type="text">
                 </div>
             </div>
 
@@ -70,7 +70,41 @@
 </body>
 
 <script type="text/javascript">
+    function submitForm(e) {
+        try {
+            const react_app_horusec_endpoint_api = document.getElementById('react_app_horusec_endpoint_api').value
+            const react_app_horusec_endpoint_analytic = document.getElementById('react_app_horusec_endpoint_analytic').value
+            const react_app_horusec_endpoint_account = document.getElementById('react_app_horusec_endpoint_account').value
+            const react_app_horusec_endpoint_auth = document.getElementById('react_app_horusec_endpoint_auth').value
+            const react_app_horusec_manager_path = document.getElementById('react_app_horusec_manager_path').value
 
+            // TODO:
+            // react_app_horusec_endpoint_api
+            // react_app_horusec_endpoint_analytic
+            // react_app_horusec_endpoint_account
+            // react_app_horusec_endpoint_auth
+            // react_app_horusec_manager_path
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('PATCH', '/api/config', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
+
+            xhr.send(JSON.stringify({
+                react_app_horusec_endpoint_api,
+                react_app_horusec_endpoint_analytic,
+                react_app_horusec_endpoint_account,
+                react_app_horusec_endpoint_auth,
+                react_app_horusec_manager_path
+            }))
+
+            xhr.onreadystatechange = function (ev) {
+                console.log(ev.currentTarget)
+            }
+        } catch (error) {
+            showSnackBar('error')
+        }
+    }
 </script>
 
 </html>
