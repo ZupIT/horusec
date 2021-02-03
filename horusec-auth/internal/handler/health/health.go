@@ -18,13 +18,12 @@ import (
 	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
-	"github.com/ZupIT/horusec/horusec-auth/config/app"
-
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 )
 
 type Handler struct {
