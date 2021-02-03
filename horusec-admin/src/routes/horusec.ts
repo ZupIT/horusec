@@ -21,9 +21,6 @@ export class AppRoutes {
     }
 
     public start(app: Express): Express {
-        app.use("**", [
-            Router().get("", (_, res) => res.render("pages/not-found")),
-        ]);
         app.use("/", [
             Router().get("", (_, res) => res.redirect("/view")),
         ]);
@@ -53,7 +50,9 @@ export class AppRoutes {
                 (req, res, next) => this.auth.authTokenAPI(req, res, next),
                 (req, res) => this.horusecController.setHorusecConfig(req, res)),
         ]);
-
+        app.use("**", [
+            Router().get("", (_, res) => res.render("pages/not-found")),
+        ]);
         return app;
     }
 }
