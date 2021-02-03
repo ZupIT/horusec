@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { Config, IConfig } from "../config/config";
+import { IConfig } from "../config/config";
 
 export class Database {
     private db: Sequelize;

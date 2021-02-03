@@ -1,4 +1,3 @@
-
 function setCookie(cname, cvalue) {
     var d = new Date();
     d.setTime(d.getTime() + ((5*60)*1000));

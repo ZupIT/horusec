@@ -49,7 +49,7 @@
 
             xhr.onreadystatechange = function (ev) {
                 if (ev.currentTarget.status === 204) {
-                    setCookie("access_token", accessToken)
+                    setCookie("horusec::access_token", accessToken)
                     window.location.href = '/view/home'
                 }
             }

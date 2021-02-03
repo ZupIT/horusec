@@ -1,10 +1,7 @@
-import { Fn } from "sequelize/types/lib/utils";
 import { AuthMiddleware } from "../../src/middlewares/auth";
 
-const exit: any = (code?: number) => null;
-
-describe("Auth Middleware test", () => {
-    it("check if model exists into database instance", () => {
+describe("Test AuthTokenAPI", () => {
+    it("check if auth middleware api call next step when access token is valid", () => {
         const auth: AuthMiddleware = new AuthMiddleware();
         auth.setAccessToken("123");
 
@@ -17,7 +14,7 @@ describe("Auth Middleware test", () => {
         expect(next).toBeCalled();
     });
 
-    it("check if auth middleware return 401 when access token is not valid", () => {
+    it("check if auth middleware api return 401 when access token is not valid", () => {
         const auth: AuthMiddleware = new AuthMiddleware();
         auth.setAccessToken("123");
 
@@ -31,22 +28,48 @@ describe("Auth Middleware test", () => {
 
         expect(res.send).toBeCalled();
     });
+});
 
-    // it("check if middleware will kill service if try three or more times", (done) => {
-    //   const auth: AuthMiddleware = new AuthMiddleware();
-    //   auth.setAccessToken("123");
+describe("Test AuthTokenView", () => {
+    it("check if auth middleware view call next step when access token is valid", () => {
+        const auth: AuthMiddleware = new AuthMiddleware();
+        auth.setAccessToken("123");
 
-    //   const req: any = {headers: { authorization: "987"}};
-    //   const res: any = {};
-    //   res.send = jest.fn();
-    //   jest.setTimeout(3);
-    //   res.status = () => res;
-    //   const next: jest.Mock = jest.fn();
-    //   process.exit = exit;
-    //   const mockExit: any = jest.spyOn(process, "exit");
-    //   auth.checkAuthValidation(req, res, next);
-    //   auth.checkAuthValidation(req, res, next);
-    //   auth.checkAuthValidation(req, res, next);
-    //   expect(mockExit).toHaveBeenCalledWith(1);
-    // });
+        const req: any = { headers: { cookie: "horusec::access_token=123" } };
+        const res: any = {};
+        const next: jest.Mock = jest.fn();
+
+        auth.authTokenView(req, res, next);
+
+        expect(next).toBeCalled();
+    });
+
+    it("check if auth middleware view return 401 when access token is exists", () => {
+        const auth: AuthMiddleware = new AuthMiddleware();
+        auth.setAccessToken("123");
+
+        const req: any = { headers: {} };
+        const res: any = {};
+        res.send = jest.fn();
+        res.status = () => res;
+        const next: jest.Mock = jest.fn();
+
+        auth.authTokenView(req, res, next);
+
+        expect(res.send).toBeCalled();
+    });
+    it("check if auth middleware view return 401 when access token is not valid", () => {
+        const auth: AuthMiddleware = new AuthMiddleware();
+        auth.setAccessToken("123");
+
+        const req: any = { headers: { cookie: "horusec::access_token=987" } };
+        const res: any = {};
+        res.send = jest.fn();
+        res.status = () => res;
+        const next: jest.Mock = jest.fn();
+
+        auth.authTokenView(req, res, next);
+
+        expect(res.send).toBeCalled();
+    });
 });
