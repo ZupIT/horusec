@@ -1,12 +1,16 @@
 import { Request, Response } from "express-serve-static-core";
+import { TokenUtil } from "../utils/token";
 
 export class AuthMiddleware {
     private totalRetry = 0;
     private accessToken = "";
 
-    public setAccessToken(accessToken: string): void {
-        this.accessToken = accessToken;
-        console.warn(`[${(new Date()).toISOString()}] Your access token is: ${this.accessToken}`);
+    constructor(
+        public forceSetAccessToken: string = "",
+    ) {
+        this.setAccessToken(this.forceSetAccessToken);
+
+        setInterval(() => this.setAccessToken(), ((5 * 60) * 1000));
     }
 
     public authTokenView(req: Request, res: Response, next: any): any {
@@ -22,9 +26,9 @@ export class AuthMiddleware {
 
         this.totalRetry++;
         if (this.totalRetry >= 3) {
-            console.error("Total attempts reached, " +
-                "the application will be restarted for security.");
-            process.exit(1);
+            console.error("Total attempts reached, the application will be restarted for security.");
+            this.accessToken = new TokenUtil().generateToken();
+            this.totalRetry = 0;
         }
 
         return res.render("pages/not-authorized");
@@ -43,6 +47,15 @@ export class AuthMiddleware {
         }
 
         return res.render("pages/not-authorized");
+    }
+
+    private setAccessToken(forceSetAccessToken: string = ""): void {
+        if (forceSetAccessToken) {
+            this.accessToken = forceSetAccessToken;
+        } else {
+            this.accessToken = new TokenUtil().generateToken();
+            console.warn(`[${(new Date()).toISOString()}] Your access token is: ${this.accessToken}`);
+        }
     }
 
     private extractCookieValue(cname: string, cookies: string): string {
