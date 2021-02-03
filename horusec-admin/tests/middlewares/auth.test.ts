@@ -12,7 +12,7 @@ describe("Auth Middleware test", () => {
         const res: any = null;
         const next: jest.Mock = jest.fn();
 
-        auth.validateAccessTokenOnHeaders(req, res, next);
+        auth.authTokenAPI(req, res, next);
 
         expect(next).toBeCalled();
     });
@@ -27,7 +27,7 @@ describe("Auth Middleware test", () => {
         res.status = () => res;
         const next: jest.Mock = jest.fn();
 
-        auth.validateAccessTokenOnHeaders(req, res, next);
+        auth.authTokenAPI(req, res, next);
 
         expect(res.send).toBeCalled();
     });
