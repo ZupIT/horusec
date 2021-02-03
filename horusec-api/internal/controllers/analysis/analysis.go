@@ -75,7 +75,8 @@ func (c *Controller) SaveAnalysis(analysisData *apiEntities.AnalysisData) (uuid.
 	return c.createAnalyzeAndVulnerabilities(analysis)
 }
 
-func (c *Controller) getRepositoryOrCreateIfNotExist(analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (
+func (c *Controller) getRepositoryOrCreateIfNotExist(
+	analysisData *apiEntities.AnalysisData, company *accountEntities.Company) (
 	repo *accountEntities.Repository, err error) {
 	if analysisData.RepositoryName != "" && analysisData.Analysis.RepositoryID == uuid.Nil {
 		repo, err = c.repoRepository.GetByName(analysisData.Analysis.CompanyID, analysisData.RepositoryName)
@@ -136,14 +137,14 @@ func (c *Controller) removeAnalysisVulnerabilityWithHashDuplicate(
 	newAnalysis := analysis.GetAnalysisWithoutAnalysisVulnerabilities()
 	for keyObservable := range analysis.AnalysisVulnerabilities {
 		observable := analysis.AnalysisVulnerabilities[keyObservable]
-		if !c.existsDuplicatedHash(newAnalysis, &observable) {
+		if !c.hasDuplicatedHash(newAnalysis, &observable) {
 			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
 		}
 	}
 	return newAnalysis
 }
 
-func (c *Controller) existsDuplicatedHash(
+func (c *Controller) hasDuplicatedHash(
 	newAnalysis *horusecEntities.Analysis, observable *horusecEntities.AnalysisVulnerabilities) bool {
 	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
 		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
