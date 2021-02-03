@@ -57,7 +57,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if h.appConfig.GetAuthType() == auth.Ldap && h.ldap.Check() != nil {
+	if h.appConfig.GetAuthType() == auth.Ldap && !h.ldap.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorLdapConnError)
 		return
 	}

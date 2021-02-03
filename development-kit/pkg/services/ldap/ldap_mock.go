@@ -42,7 +42,7 @@ func (m *Mock) Close() {
 	_ = m.MethodCalled("Close")
 }
 
-func (m *Mock) Check() error {
-	args := m.MethodCalled("Check")
-	return mockUtils.ReturnNilOrError(args, 0)
+func (m *Mock) IsAvailable() bool {
+	args := m.MethodCalled("IsAvailable")
+	return args.Get(0).(bool)
 }

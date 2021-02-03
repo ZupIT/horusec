@@ -21,7 +21,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/stretchr/testify/assert"
@@ -60,7 +59,7 @@ func TestGet(t *testing.T) {
 
 		mockRead.On("IsAvailable").Return(true)
 		mockWrite.On("IsAvailable").Return(true)
-		mockLdap.On("Check").Return(nil)
+		mockLdap.On("IsAvailable").Return(true)
 
 		handler := Handler{
 			postgresRead:  mockRead,
@@ -96,7 +95,7 @@ func TestGet(t *testing.T) {
 	t.Run("should return 500 when something is wrong with ldap", func(t *testing.T) {
 		mockLdap := &ldap.Mock{}
 
-		mockLdap.On("Check").Return(errors.ErrorLdapConnError)
+		mockLdap.On("IsAvailable").Return(false)
 
 		handler := Handler{
 			ldap:      mockLdap,
