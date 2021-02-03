@@ -4,7 +4,6 @@ import { Config, IConfig } from "./config/config";
 import { Database } from "./database/postgresql";
 import { Express } from "express-serve-static-core";
 import { AppRoutes } from "./routes/horusec";
-import { TokenUtil } from "./utils/token";
 
 let app: Express = express();
 const config: IConfig = new Config().getConfig();

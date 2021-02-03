@@ -3,6 +3,7 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS "horusec_config"
 (
     "horusec_config_id"                 INTEGER,
+    "horusec_enable_application_admin"  VARCHAR(255),
     "horusec_auth_type"                 VARCHAR(255),
     "horusec_disabled_broker"           VARCHAR(255),
     "horusec_jwt_secret_key"            VARCHAR(255),

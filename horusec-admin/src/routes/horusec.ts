@@ -9,16 +9,7 @@ export class AppRoutes {
         public db: Sequelize,
         public horusecController: HorusecController = new HorusecController(db),
         public auth: AuthMiddleware = new AuthMiddleware(),
-    ) {
-        this.setAccessToken();
-
-        setInterval(() => this.setAccessToken(), ((5 * 60) * 1000));
-    }
-
-    setAccessToken(): void {
-        const accessToken: string = new TokenUtil().generateToken();
-        this.auth.setAccessToken(accessToken);
-    }
+    ) {}
 
     public start(app: Express): Express {
         app.use("/", [

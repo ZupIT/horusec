@@ -11,10 +11,9 @@ export class Database {
             logQueryParameters: this.config.LogMode,
             logging: this.config.LogMode,
         });
-        this.checkHealth();
     }
 
-    checkHealth(): Promise<void> {
+    public checkHealth(): Promise<void> {
         return this.db.authenticate()
             .catch((err) => {
                 console.error("Unable to connect to the database:", err);
@@ -22,7 +21,7 @@ export class Database {
             });
     }
 
-    getConnection(): Sequelize {
+    public getConnection(): Sequelize {
         return this.db;
     }
 }

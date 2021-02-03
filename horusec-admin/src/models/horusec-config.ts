@@ -13,6 +13,9 @@ export class HorusecConfigModel {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            horusec_enable_application_admin: {
+                type: DataTypes.STRING,
+            },
             horusec_auth_type: {
                 type: DataTypes.STRING,
             },
