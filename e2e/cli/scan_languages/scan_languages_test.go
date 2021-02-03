@@ -19,10 +19,6 @@ package scan_languages
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -30,6 +26,11 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
@@ -83,7 +84,8 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunDartTest(t, &wg)
 	go RunPHPTest(t, &wg)
 	go RunYAMLTest(t, &wg)
-	wg.Add(14)
+	go RunElixirTest(t, &wg)
+	wg.Add(15)
 	wg.Wait()
 }
 
@@ -184,6 +186,13 @@ func RunDartTest(t *testing.T, s *sync.WaitGroup) {
 	fileOutput := runHorusecCLIUsingExampleDir(t, "dart", "example1")
 	analysis := extractVulnerabilitiesFromOutput(fileOutput)
 	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in dart is not expected")
+}
+
+func RunElixirTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "elixir", "example1")
+	analysis := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1)
 }
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
