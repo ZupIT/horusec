@@ -6,13 +6,28 @@ export class AuthMiddleware {
 
     public setAccessToken(accessToken: string): void {
         this.accessToken = accessToken;
+        console.warn(`[${(new Date()).toISOString()}] Your access token is: ${this.accessToken}`)
     }
 
-    public validateAccessTokenOnLocalStorage(req: Request, res: Response, next: any): any {
-        return next();
+    public authTokenView(req: Request, res: Response, next: any): any {
+        if (!req.headers.cookie) {
+            return res.status(401).send('USER NOT AUTHORIZED');
+        }
+        if (req.headers.cookie.split("=")[1] === this.accessToken) {
+            return next();
+        }
+
+        this.totalRetry++;
+        if (this.totalRetry >= 3) {
+            console.error("Total attempts reached, " +
+                "the application will be restarted for security.");
+            process.exit(1);
+        }
+
+        return res.status(401).send('USER NOT AUTHORIZED');
     }
 
-    public validateAccessTokenOnHeaders(req: Request, res: Response, next: any): any {
+    public authTokenAPI(req: Request, res: Response, next: any): any {
         if (req.headers.authorization === this.accessToken) {
             return next();
         }
@@ -24,6 +39,6 @@ export class AuthMiddleware {
             process.exit(1);
         }
 
-        return res.status(401).send({ message: "User no authorized" });
+        return res.status(401).send('USER NOT AUTHORIZED');
     }
 }

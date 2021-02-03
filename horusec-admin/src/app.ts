@@ -9,9 +9,7 @@ import { TokenUtil } from "./utils/token";
 let app: Express = express();
 const config: IConfig = new Config().getConfig();
 const db: Sequelize = new Database(config).getConnection();
-const token: TokenUtil = new TokenUtil();
-const accessToken: string = token.generateToken();
-const routes: AppRoutes = new AppRoutes(db, accessToken);
+const routes: AppRoutes = new AppRoutes(db);
 
 app.use(urlencoded({ extended: true }));
 app.use(json());
@@ -20,7 +18,4 @@ app.use(express.static("public"));
 
 app = routes.start(app);
 
-app.listen(config.Port, () => console.warn(`
-    app is running on http://localhost:${config.Port}
-    Your Access token is: ${accessToken}
-`));
+app.listen(config.Port, () => console.warn(`app is running on http://localhost:${config.Port}`));

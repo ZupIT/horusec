@@ -3,44 +3,51 @@ import { Express, Response } from "express-serve-static-core";
 import { Sequelize } from "sequelize";
 import { AuthMiddleware } from "../middlewares/auth";
 import { Router } from "express";
+import { TokenUtil } from "../utils/token";
 export class AppRoutes {
     constructor(
         public db: Sequelize,
-        public accessToken: string,
         public horusecController: HorusecController = new HorusecController(db),
         public auth: AuthMiddleware = new AuthMiddleware(),
     ) {
-        this.auth.setAccessToken(this.accessToken);
+        this.setAccessToken()
+
+        setInterval(() => this.setAccessToken(), ((5 * 60) * 1000))
+    }
+
+    setAccessToken() {
+        const accessToken: string = new TokenUtil().generateToken()
+        this.auth.setAccessToken(accessToken);
     }
 
     public start(app: Express): Express {
         app.use("/", [
-            Router().get("", (_, res: Response) => res.redirect("/view"))
+            Router().get("", (_, res) => res.redirect("/view"))
         ])
 
         app.use("/view", [
             Router().get("",
-                (_, res: Response) => res.render("pages/index")),
+                (_, res) =>res.render("pages/index")),
             Router().get("/home",
-                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
-                (_, res: Response) => res.render("pages/home")),
+                (req, res, next) => this.auth.authTokenView(req, res, next),
+                (_, res) => res.render("pages/home")),
             Router().get("/config-general",
-                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
-                (_, res: Response) => res.render("pages/config-general")),
+                (req, res, next) => this.auth.authTokenView(req, res, next),
+                (_, res) => res.render("pages/config-general")),
             Router().get("/config-auth",
-                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
-                (_, res: Response) => res.render("pages/config-auth")),
+                (req, res, next) => this.auth.authTokenView(req, res, next),
+                (_, res) => res.render("pages/config-auth")),
             Router().get("/config-manager",
-                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
-                (_, res: Response) => res.render("pages/config-manager")),
+                (req, res, next) => this.auth.authTokenView(req, res, next),
+                (_, res) => res.render("pages/config-manager")),
         ]);
 
         app.use("/api", [
             Router().post("/auth",
-                (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
+                (req, res, next) => this.auth.authTokenAPI(req, res, next),
                 (_, res) => res.status(204).send()),
             Router().patch("/config",
-                (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
+                (req, res, next) => this.auth.authTokenAPI(req, res, next),
                 (req, res) => this.horusecController.setHorusecConfig(req, res)),
         ]);
 
