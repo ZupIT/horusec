@@ -85,7 +85,7 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunPHPTest(t, &wg)
 	go RunYAMLTest(t, &wg)
 	go RunElixirTest(t, &wg)
-	wg.Add(1)
+	wg.Add(15)
 	wg.Wait()
 }
 
