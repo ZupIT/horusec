@@ -6,14 +6,17 @@ export class AuthMiddleware {
 
     public setAccessToken(accessToken: string): void {
         this.accessToken = accessToken;
-        console.warn(`[${(new Date()).toISOString()}] Your access token is: ${this.accessToken}`)
+        console.warn(`[${(new Date()).toISOString()}] Your access token is: ${this.accessToken}`);
     }
 
     public authTokenView(req: Request, res: Response, next: any): any {
         if (!req.headers.cookie) {
             return res.render("pages/not-authorized");
         }
-        if (req.headers.cookie.split("=")[1] === this.accessToken) {
+
+        const currentToken: string = this.extractCookieValue("horusec::access_token", req.headers.cookie);
+
+        if (currentToken === this.accessToken) {
             return next();
         }
 
@@ -40,5 +43,22 @@ export class AuthMiddleware {
         }
 
         return res.render("pages/not-authorized");
+    }
+
+    private extractCookieValue(cname: string, cookies: string): string {
+        const name: string = cname + "=";
+        const decodedCookie: string = decodeURIComponent(cookies);
+        const ca: string[] = decodedCookie.split(";");
+        // tslint:disable-next-line: prefer-for-of
+        for (let i: any = 0; i < ca.length; i++) {
+          let c: string = ca[i];
+          while (c.charAt(0) === " ") {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
     }
 }

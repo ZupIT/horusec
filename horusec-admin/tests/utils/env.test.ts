@@ -1,6 +1,6 @@
 import { EnvUtil } from "../../src/utils/env";
 
-describe("Env Util Test", () => {
+describe("Test GetEnvOrDefault", () => {
     const utils: EnvUtil = new EnvUtil();
     it("check if environment exists and return your value", () => {
         process.env.HORUSEC_PORT = "3000";

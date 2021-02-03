@@ -1,6 +1,6 @@
 import { TokenUtil } from "../../src/utils/token";
 
-describe("Token Util Test", () => {
+describe("Test generateToken", () => {
     const token: TokenUtil = new TokenUtil();
     function hasDuplicates(array: string[]): boolean {
         const valuesSoFar: string[] = [];

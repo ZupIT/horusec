@@ -10,24 +10,24 @@ export class AppRoutes {
         public horusecController: HorusecController = new HorusecController(db),
         public auth: AuthMiddleware = new AuthMiddleware(),
     ) {
-        this.setAccessToken()
+        this.setAccessToken();
 
-        setInterval(() => this.setAccessToken(), ((5 * 60) * 1000))
+        setInterval(() => this.setAccessToken(), ((5 * 60) * 1000));
     }
 
-    setAccessToken() {
-        const accessToken: string = new TokenUtil().generateToken()
+    setAccessToken(): void {
+        const accessToken: string = new TokenUtil().generateToken();
         this.auth.setAccessToken(accessToken);
     }
 
     public start(app: Express): Express {
         app.use("/", [
-            Router().get("", (_, res) => res.redirect("/view"))
-        ])
+            Router().get("", (_, res) => res.redirect("/view")),
+        ]);
 
         app.use("/view", [
             Router().get("",
-                (_, res) =>res.render("pages/index")),
+                (_, res) => res.render("pages/index")),
             Router().get("/home",
                 (req, res, next) => this.auth.authTokenView(req, res, next),
                 (_, res) => res.render("pages/home")),
