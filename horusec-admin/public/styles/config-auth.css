@@ -1,5 +1,9 @@
 @import './config.css';
 
+.select-auth {
+    width: 700px;
+}
+
 div.radio-group {
     margin: 20px 0;
     display: flex;
@@ -23,8 +27,34 @@ label.radio-item img {
     width: 120px;
 }
 
-
-input[type="radio"]:checked ~ label {
-  color: var(--primary);
-  border: 1px red solid;
+div.form-gorup {
+    display: none;
+    flex-wrap: wrap;
+    max-width: 750px;
+    max-height: 300px;
+    justify-content: space-between;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #000;
 }
+
+div.form-gorup::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+div.form-gorup::-webkit-scrollbar-thumb{
+    border-radius: 2px;
+    background: #3A3A3C;
+}
+
+div.form-gorup::-webkit-scrollbar-track {
+    background-color: #1C1C1E;
+}
+
+div.form-gorup .divider {
+    width: 300px;
+}
+
