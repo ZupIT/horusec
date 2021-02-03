@@ -15,23 +15,33 @@ export class AppRoutes {
 
     public start(app: Express): Express {
         app.use("/", [
-            Router().get("", (_, res: Response) => res.render("pages/index")),
+            Router().get("", (_, res: Response) => res.redirect("/view"))
+        ])
 
-            Router().post("/authentication",
+        app.use("/view", [
+            Router().get("",
+                (_, res: Response) => res.render("pages/index")),
+            Router().get("/home",
+                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
+                (_, res: Response) => res.render("pages/home")),
+            Router().get("/config-general",
+                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
+                (_, res: Response) => res.render("pages/config-general")),
+            Router().get("/config-auth",
+                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
+                (_, res: Response) => res.render("pages/config-auth")),
+            Router().get("/config-manager",
+                (req, res, next) => this.auth.validateAccessTokenOnLocalStorage(req, res, next),
+                (_, res: Response) => res.render("pages/config-manager")),
+        ]);
+
+        app.use("/api", [
+            Router().post("/auth",
+                (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
+                (_, res) => res.status(204).send()),
+            Router().patch("/config",
                 (req, res, next) => this.auth.validateAccessTokenOnHeaders(req, res, next),
                 (req, res) => this.horusecController.setHorusecConfig(req, res)),
-        ]);
-
-        app.use("/home", [
-            Router().get("", (_, res: Response) => res.render("pages/home")),
-        ]);
-
-        app.use("/config", [
-            Router().get("/general", (_, res: Response) => res.render("pages/config-general")),
-
-            Router().get("/auth", (_, res: Response) => res.render("pages/config-auth")),
-
-            Router().get("/manager", (_, res: Response) => res.render("pages/config-manager")),
         ]);
 
         return app;
