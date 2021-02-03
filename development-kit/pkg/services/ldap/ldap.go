@@ -30,6 +30,7 @@ type ILDAPService interface {
 	Close()
 	Authenticate(username, password string) (bool, map[string]string, error)
 	GetGroupsOfUser(userDN string) ([]string, error)
+	IsAvailable() bool
 }
 
 type ILdapClient interface {
@@ -254,4 +255,23 @@ func (s *Service) getGroupsNames(searchResult *ldap.SearchResult) []string {
 	}
 
 	return groups
+}
+
+func (s *Service) IsAvailable() bool {
+	if err := s.Connect(); err != nil {
+		return false
+	}
+
+	_, err := s.Conn.Search(s.newSearchRequestHealthCheck())
+	return err == nil
+}
+
+func (s *Service) newSearchRequestHealthCheck() *ldap.SearchRequest {
+	return ldap.NewSearchRequest(
+		s.Base,
+		ldap.ScopeBaseObject, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(%s)", s.getLdapURL()),
+		[]string{},
+		nil,
+	)
 }

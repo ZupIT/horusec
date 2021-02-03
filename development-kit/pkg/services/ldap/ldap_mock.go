@@ -41,3 +41,8 @@ func (m *Mock) Connect() error {
 func (m *Mock) Close() {
 	_ = m.MethodCalled("Close")
 }
+
+func (m *Mock) IsAvailable() bool {
+	args := m.MethodCalled("IsAvailable")
+	return args.Get(0).(bool)
+}
