@@ -39,9 +39,13 @@ const Form = styled.form`
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   margin-top: 45px;
   width: 100%;
+`;
+
+const WrapperColumn = styled(Wrapper)`
+  flex-direction: column;
 `;
 
 const Label = styled.label`
@@ -66,4 +70,5 @@ export default {
   Label,
   Field,
   OptionIcon,
+  WrapperColumn,
 };

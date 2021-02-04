@@ -50,17 +50,17 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const [adminGroup, setAdminGroup] = useState<Field>({
     isValid: false,
-    value: currentWorkspace?.authzAdmin,
+    value: 'currentWorkspace?.authzAdmin',
   });
 
   const [supervisorGroup, setSupervisorGroup] = useState<Field>({
     isValid: false,
-    value: currentWorkspace?.authzAdmin,
+    value: 'currentWorkspace?.authzAdmin',
   });
 
   const [userGroup, setUserGroup] = useState<Field>({
     isValid: false,
-    value: currentWorkspace?.authzMember,
+    value: 'currentWorkspace?.authzMember',
   });
 
   const resetFields = () => {
@@ -75,9 +75,9 @@ const AddRepository: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
       repositoryService
         .create(currentWorkspace.companyID, name.value, description.value, {
-          authzAdmin: adminGroup.value,
-          authzMember: userGroup.value,
-          authzSupervisor: supervisorGroup.value,
+          authzAdmin: [adminGroup.value],
+          authzMember: [userGroup.value],
+          authzSupervisor: [supervisorGroup.value],
         })
         .then(() => {
           onConfirm();
