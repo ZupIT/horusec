@@ -8,11 +8,10 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        },
-        "license": {}
+        }
     },
     "paths": {
-        "/api/health": {
+        "/webhook/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
                 "consumes": [

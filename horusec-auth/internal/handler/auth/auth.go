@@ -15,10 +15,11 @@
 package auth
 
 import (
+	netHTTP "net/http"
+
 	authDTO "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -55,7 +56,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
-// @Router /api/auth/config [get]
+// @Router /auth/auth/config [get]
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
 		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
@@ -73,7 +74,7 @@ func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/auth/authenticate [post]
+// @Router /auth/auth/authenticate [post]
 func (h *Handler) AuthByType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	credentials, err := h.getCredentials(r)
 	if err != nil {

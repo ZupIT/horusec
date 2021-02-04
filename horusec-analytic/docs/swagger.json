@@ -8,11 +8,10 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        },
-        "license": {}
+        }
     },
     "paths": {
-        "/api/dashboard/companies/{companyID}/all-vulnerabilities": {
+        "/analytic/dashboard/companies/{companyID}/all-vulnerabilities": {
             "get": {
                 "security": [
                     {
@@ -64,7 +63,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/details": {
+        "/analytic/dashboard/companies/{companyID}/details": {
             "get": {
                 "security": [
                     {
@@ -119,7 +118,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities": {
             "get": {
                 "security": [
                     {
@@ -178,7 +177,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers": {
             "get": {
                 "security": [
                     {
@@ -237,7 +236,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories": {
             "get": {
                 "security": [
                     {
@@ -296,7 +295,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author": {
             "get": {
                 "security": [
                     {
@@ -355,7 +354,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language": {
             "get": {
                 "security": [
                     {
@@ -414,7 +413,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository": {
             "get": {
                 "security": [
                     {
@@ -473,7 +472,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time": {
+        "/analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time": {
             "get": {
                 "security": [
                     {
@@ -532,7 +531,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/total-developers": {
+        "/analytic/dashboard/companies/{companyID}/total-developers": {
             "get": {
                 "security": [
                     {
@@ -584,7 +583,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/total-repositories": {
+        "/analytic/dashboard/companies/{companyID}/total-repositories": {
             "get": {
                 "security": [
                     {
@@ -636,7 +635,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/vulnerabilities-by-author": {
+        "/analytic/dashboard/companies/{companyID}/vulnerabilities-by-author": {
             "get": {
                 "security": [
                     {
@@ -688,7 +687,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/vulnerabilities-by-language": {
+        "/analytic/dashboard/companies/{companyID}/vulnerabilities-by-language": {
             "get": {
                 "security": [
                     {
@@ -740,7 +739,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/vulnerabilities-by-repository": {
+        "/analytic/dashboard/companies/{companyID}/vulnerabilities-by-repository": {
             "get": {
                 "security": [
                     {
@@ -792,7 +791,7 @@
                 }
             }
         },
-        "/api/dashboard/companies/{companyID}/vulnerabilities-by-time": {
+        "/analytic/dashboard/companies/{companyID}/vulnerabilities-by-time": {
             "get": {
                 "security": [
                     {
@@ -844,7 +843,7 @@
                 }
             }
         },
-        "/api/health": {
+        "/analytic/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
                 "consumes": [

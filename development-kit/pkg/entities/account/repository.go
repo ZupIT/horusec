@@ -15,26 +15,26 @@
 package account
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"time"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type Repository struct {
-	RepositoryID    uuid.UUID `json:"repositoryID" gorm:"primary_key" swaggerignore:"true"`
-	CompanyID       uuid.UUID `json:"companyID" swaggerignore:"true"`
-	Name            string    `json:"name"`
-	Description     string    `json:"description"`
-	AuthzMember     string    `json:"authzMember"`
-	AuthzAdmin      string    `json:"authzAdmin"`
-	AuthzSupervisor string    `json:"authzSupervisor"`
-	CreatedAt       time.Time `json:"createdAt" swaggerignore:"true"`
-	UpdatedAt       time.Time `json:"updatedAt" swaggerignore:"true"`
+	RepositoryID    uuid.UUID      `json:"repositoryID" gorm:"primary_key" swaggerignore:"true"`
+	CompanyID       uuid.UUID      `json:"companyID" swaggerignore:"true"`
+	Name            string         `json:"name"`
+	Description     string         `json:"description"`
+	AuthzMember     pq.StringArray `json:"authzMember"`
+	AuthzAdmin      pq.StringArray `json:"authzAdmin"`
+	AuthzSupervisor pq.StringArray `json:"authzSupervisor"`
+	CreatedAt       time.Time      `json:"createdAt" swaggerignore:"true"`
+	UpdatedAt       time.Time      `json:"updatedAt" swaggerignore:"true"`
 }
 
 type RepositoryResponse struct {
@@ -43,9 +43,9 @@ type RepositoryResponse struct {
 	Name            string           `json:"name"`
 	Role            accountEnum.Role `json:"role"`
 	Description     string           `json:"description"`
-	AuthzMember     string           `json:"authzMember"`
-	AuthzAdmin      string           `json:"authzAdmin"`
-	AuthzSupervisor string           `json:"authzSupervisor"`
+	AuthzMember     pq.StringArray   `json:"authzMember"`
+	AuthzAdmin      pq.StringArray   `json:"authzAdmin"`
+	AuthzSupervisor pq.StringArray   `json:"authzSupervisor"`
 	CreatedAt       time.Time        `json:"createdAt"`
 	UpdatedAt       time.Time        `json:"updatedAt"`
 }
@@ -66,7 +66,7 @@ func (r *Repository) SetCreateData(companyID uuid.UUID) *Repository {
 }
 
 func (r *Repository) SetUpdateData(
-	name, description, authzAdmin, authzMember, authzSupervisor string) *Repository {
+	name, description string, authzAdmin, authzMember, authzSupervisor []string) *Repository {
 	r.UpdatedAt = time.Now()
 	r.Name = name
 	r.Description = description
@@ -106,14 +106,14 @@ func (r *Repository) ToRepositoryResponse(role accountEnum.Role) *RepositoryResp
 	}
 }
 
-func (r *Repository) GetAuthzMember() string {
+func (r *Repository) GetAuthzMember() []string {
 	return r.AuthzMember
 }
 
-func (r *Repository) GetAuthzAdmin() string {
+func (r *Repository) GetAuthzAdmin() []string {
 	return r.AuthzAdmin
 }
 
-func (r *Repository) GetAuthzSupervisor() string {
+func (r *Repository) GetAuthzSupervisor() []string {
 	return r.AuthzSupervisor
 }

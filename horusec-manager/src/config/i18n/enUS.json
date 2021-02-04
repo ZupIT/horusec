@@ -229,6 +229,7 @@
     "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
     "ADMIN": "Administrator:",
     "SUPERVISOR": "Supervisor:",
+    "MEMBER": "Member",
     "GROUP_NAME": "Group Name"
   },
 

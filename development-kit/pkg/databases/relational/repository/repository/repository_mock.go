@@ -67,7 +67,7 @@ func (m *Mock) GetAccountCompanyRole(_, _ uuid.UUID) (*roles.AccountCompany, err
 	return args.Get(0).(*roles.AccountCompany), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListAllInCompanyByLdap(_ uuid.UUID, _ []string) (*[]accountEntities.RepositoryResponse, error) {
-	args := m.MethodCalled("ListAllInCompanyByLdap")
+func (m *Mock) ListByLdapPermissions(_ uuid.UUID, _ []string) (*[]accountEntities.RepositoryResponse, error) {
+	args := m.MethodCalled("ListByLdapPermissions")
 	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }

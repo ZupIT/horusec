@@ -136,7 +136,7 @@ func (c *Controller) Get(repositoryID, accountID uuid.UUID) (*accountEntities.Re
 func (c *Controller) List(accountID, companyID uuid.UUID,
 	permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error) {
 	if c.appConfig.GetAuthType() == authEnums.Ldap {
-		return c.repository.ListAllInCompanyByLdap(companyID, permissions)
+		return c.repository.ListByLdapPermissions(companyID, permissions)
 	}
 
 	return c.repository.List(accountID, companyID)
@@ -217,9 +217,8 @@ func (c *Controller) RemoveUser(removeUser *dto.RemoveUser) error {
 }
 
 func (c *Controller) setAuthzGroups(repository *accountEntities.Repository) *accountEntities.Repository {
-	if repository.AuthzAdmin == "" || repository.AuthzMember == "" || repository.AuthzSupervisor == "" {
-		companyOfRepository, err := c.company.GetByID(repository.CompanyID)
-		if err == nil {
+	if len(repository.AuthzAdmin) == 0 || len(repository.AuthzMember) == 0 || len(repository.AuthzSupervisor) == 0 {
+		if companyOfRepository, err := c.company.GetByID(repository.CompanyID); err == nil {
 			repository.AuthzAdmin = c.replaceIfEmpty(repository.AuthzAdmin, companyOfRepository.AuthzAdmin)
 			repository.AuthzMember = c.replaceIfEmpty(repository.AuthzMember, companyOfRepository.AuthzMember)
 			repository.AuthzSupervisor = c.replaceIfEmpty(repository.AuthzSupervisor, companyOfRepository.AuthzAdmin)
@@ -229,8 +228,8 @@ func (c *Controller) setAuthzGroups(repository *accountEntities.Repository) *acc
 	return repository
 }
 
-func (c *Controller) replaceIfEmpty(val, toReplace string) string {
-	if val != "" {
+func (c *Controller) replaceIfEmpty(val, toReplace []string) []string {
+	if len(val) == 0 {
 		return val
 	}
 
