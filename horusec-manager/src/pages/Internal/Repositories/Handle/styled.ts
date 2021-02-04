@@ -15,41 +15,60 @@
  */
 
 import styled from 'styled-components';
-import { Input } from 'components';
+import { Input, Icon } from 'components';
+
+const Title = styled.h1`
+  font-weight: normal;
+  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
+  color: ${({ theme }) => theme.colors.text.primary};
+  align-self: flex-start;
+`;
 
 const SubTitle = styled.h3`
   font-weight: normal;
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.text.secundary};
+  align-self: flex-start;
+  margin-bottom: 25px;
   margin-top: 30px;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Field = styled(Input)`
-  margin: 20px 0 20px 0;
+  display: block;
 `;
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: flex-end;
-  margin-top: 30px;
+  align-items: flex-start;
+  margin-top: 20px;
   width: 100%;
+`;
+
+const WrapperColumn = styled(Wrapper)`
+  flex-direction: column;
 `;
 
 const Label = styled.label`
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.text.secundary};
-  width: 100px;
+  width: 150px;
+`;
+
+const Field = styled(Input)`
+  margin: 20px 0 30px 0;
+`;
+
+const OptionIcon = styled(Icon)`
+  margin-right: 10px;
 `;
 
 export default {
+  Title,
   SubTitle,
   Form,
-  Field,
   Wrapper,
   Label,
+  Field,
+  OptionIcon,
+  WrapperColumn,
 };
