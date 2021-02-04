@@ -15,6 +15,11 @@
 package env
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 	"os"
 	"testing"
 
@@ -111,5 +116,17 @@ func TestGetEnvOrDefaultInterface(t *testing.T) {
 	t.Run("should return default value", func(t *testing.T) {
 		_ = os.Setenv("TEST_ENV", "")
 		assert.Equal(t, "default", GetEnvOrDefaultInterface("TEST_ENV", "default"))
+	})
+}
+
+func TestGetEnvFromAdminDatabaseOrDefault(t *testing.T) {
+	t.Run("should success get env from database", func(t *testing.T) {
+		conn, err := gorm.Open("sqlite3", ":memory:")
+		assert.NoError(t, err)
+		mockRead := &relational.MockRead{}
+		mockRead.On("GetConnection").Return(conn)
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &admin.HorusecAdminConfig{HorusecEnableApplicationAdmin: "true"}))
+		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "horusec_enable_application_admin", "false").ToBool()
+		assert.True(t, r)
 	})
 }
