@@ -1,14 +1,14 @@
-import { Sequelize } from "sequelize";
-import { HorusecConfigModel, IModelInterface } from "../models/horusec-config";
+import { HorusecConfigModel, IModelInterface } from "../models/horusec_config_model";
 import { Request, Response } from "express-serve-static-core";
+import { Database } from "../database/postgresql_database";
 
 export class HorusecController {
-    model: IModelInterface;
+    horusecConfigModel: IModelInterface;
 
     constructor(
-        public db: Sequelize,
+        public db: Database,
     ) {
-        this.model = new HorusecConfigModel(db).model;
+        this.horusecConfigModel = new HorusecConfigModel(this.db.getConnection()).model;
     }
 
     public setHorusecConfig(req: Request, res: Response): any {
@@ -16,7 +16,7 @@ export class HorusecController {
             return res.status(400).send({ message: "Body is required" });
         }
 
-        console.log(req.body)
+        console.log(req.body);
 
         const configToUpdate: any = {
             horusec_config_id: 1,
@@ -28,10 +28,10 @@ export class HorusecController {
             }
         });
 
-        return this.model.upsert(configToUpdate)
+        return this.horusecConfigModel.upsert(configToUpdate)
             .then(() => res.status(204).send())
             .catch((err) => {
-                console.error(`Some happen when create content ${err}`);
+                console.error(`Some happen when upsert content ${err}`);
                 return res.status(500).send(err);
             });
     }

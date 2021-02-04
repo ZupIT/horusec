@@ -1,13 +1,15 @@
-import { HorusecController } from "../controllers/horusec";
-import { Express, Response } from "express-serve-static-core";
-import { Sequelize } from "sequelize";
-import { AuthMiddleware } from "../middlewares/auth";
+import { HorusecController } from "../controllers/horusec_controller";
+import { Express } from "express-serve-static-core";
+import { AuthMiddleware } from "../middlewares/auth_middleware";
 import { Router } from "express";
-import { TokenUtil } from "../utils/token";
+import { HealthController } from "../controllers/health_controller";
+import { Database } from "../database/postgresql_database";
+
 export class AppRoutes {
     constructor(
-        public db: Sequelize,
+        public db: Database,
         public horusecController: HorusecController = new HorusecController(db),
+        public healthController: HealthController = new HealthController(db),
         public auth: AuthMiddleware = new AuthMiddleware(),
     ) {}
 
@@ -36,6 +38,8 @@ export class AppRoutes {
         ]);
 
         app.use("/api", [
+            Router().get("/health",
+                (_, res) => this.healthController.checkHealth(_, res)),
             Router().post("/auth",
                 (req, res, next) => this.auth.authTokenAPI(req, res, next),
                 (_, res) => res.status(204).send()),

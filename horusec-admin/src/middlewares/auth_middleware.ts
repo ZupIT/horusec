@@ -1,14 +1,12 @@
 import { Request, Response } from "express-serve-static-core";
-import { TokenUtil } from "../utils/token";
+import { TokenUtil } from "../utils/token_util";
 
 export class AuthMiddleware {
     private totalRetry = 0;
     private accessToken = "";
 
-    constructor(
-        public forceSetAccessToken: string = "",
-    ) {
-        this.setAccessToken(this.forceSetAccessToken);
+    constructor() {
+        this.setAccessToken();
 
         setInterval(() => this.setAccessToken(), ((5 * 60) * 1000));
     }
@@ -41,9 +39,9 @@ export class AuthMiddleware {
 
         this.totalRetry++;
         if (this.totalRetry >= 3) {
-            console.error("Total attempts reached, " +
-                "the application will be restarted for security.");
-            process.exit(1);
+            console.error("Total attempts reached, the application will be restarted for security.");
+            this.accessToken = new TokenUtil().generateToken();
+            this.totalRetry = 0;
         }
 
         return res.render("pages/not-authorized");

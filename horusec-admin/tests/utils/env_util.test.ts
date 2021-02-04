@@ -1,4 +1,4 @@
-import { EnvUtil } from "../../src/utils/env";
+import { EnvUtil } from "../../src/utils/env_util";
 
 describe("Test GetEnvOrDefault", () => {
     const utils: EnvUtil = new EnvUtil();

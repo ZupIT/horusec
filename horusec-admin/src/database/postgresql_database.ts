@@ -7,6 +7,10 @@ export class Database {
     constructor(
         public config: IConfig,
     ) {
+        this.connect();
+    }
+
+    private connect(): void {
         this.db = new Sequelize(this.config.URI, {
             logQueryParameters: this.config.LogMode,
             logging: this.config.LogMode,
@@ -14,14 +18,13 @@ export class Database {
     }
 
     public checkHealth(): Promise<void> {
-        return this.db.authenticate()
-            .catch((err) => {
-                console.error("Unable to connect to the database:", err);
-                throw new Error(err);
-            });
+        return this.db.authenticate();
     }
 
     public getConnection(): Sequelize {
+        if (!this.db) {
+            this.connect();
+        }
         return this.db;
     }
 }
