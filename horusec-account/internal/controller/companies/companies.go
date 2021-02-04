@@ -130,7 +130,7 @@ func (c *Controller) Get(companyID, accountID uuid.UUID) (*accountEntities.Compa
 
 func (c *Controller) List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error) {
 	if c.appConfig.GetAuthType() == authEnums.Ldap {
-		return c.repoCompany.GetAllOfAccountLdap(permissions)
+		return c.repoCompany.ListByLdapPermissions(permissions)
 	}
 
 	return c.repoCompany.GetAllOfAccount(accountID)

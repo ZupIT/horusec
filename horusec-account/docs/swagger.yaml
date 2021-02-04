@@ -1,24 +1,14 @@
-# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 definitions:
   account.Company:
     properties:
       authzAdmin:
-        type: string
+        items:
+          type: string
+        type: array
       authzMember:
-        type: string
+        items:
+          type: string
+        type: array
       description:
         type: string
       name:
@@ -27,11 +17,17 @@ definitions:
   account.Repository:
     properties:
       authzAdmin:
-        type: string
+        items:
+          type: string
+        type: array
       authzMember:
-        type: string
+        items:
+          type: string
+        type: array
       authzSupervisor:
-        type: string
+        items:
+          type: string
+        type: array
       description:
         type: string
       name:
@@ -40,11 +36,17 @@ definitions:
   account.RepositoryResponse:
     properties:
       authzAdmin:
-        type: string
+        items:
+          type: string
+        type: array
       authzMember:
-        type: string
+        items:
+          type: string
+        type: array
       authzSupervisor:
-        type: string
+        items:
+          type: string
+        type: array
       companyID:
         type: string
       createdAt:
@@ -108,8 +110,7 @@ definitions:
       method:
         type: string
       repository:
-        $ref: '#/definitions/account.RepositoryResponse'
-        type: object
+        $ref: '#/definitions/account.Repository'
       repositoryID:
         type: string
       updatedAt:
@@ -138,11 +139,10 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
-  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
-  /api/companies:
+  /account/companies:
     get:
       consumes:
       - application/json
@@ -246,7 +246,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Companies
-  /api/companies/{companyID}:
+  /account/companies/{companyID}:
     delete:
       consumes:
       - application/json
@@ -388,7 +388,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Companies
-  /api/companies/{companyID}/repositories:
+  /account/companies/{companyID}/repositories:
     get:
       consumes:
       - application/json
@@ -494,7 +494,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repositories
-  /api/companies/{companyID}/repositories/{repositoryID}:
+  /account/companies/{companyID}/repositories/{repositoryID}:
     delete:
       consumes:
       - application/json
@@ -669,7 +669,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repositories
-  /api/companies/{companyID}/repositories/{repositoryID}/roles:
+  /account/companies/{companyID}/repositories/{repositoryID}/roles:
     get:
       consumes:
       - application/json
@@ -794,7 +794,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repositories
-  /api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID}:
+  /account/companies/{companyID}/repositories/{repositoryID}/roles/{accountID}:
     delete:
       consumes:
       - application/json
@@ -929,7 +929,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repositories
-  /api/companies/{companyID}/roles:
+  /account/companies/{companyID}/roles:
     get:
       consumes:
       - application/json
@@ -1044,7 +1044,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Companies
-  /api/companies/{companyID}/roles/{accountID}:
+  /account/companies/{companyID}/roles/{accountID}:
     delete:
       consumes:
       - application/json
@@ -1160,7 +1160,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Companies
-  /api/health:
+  /account/health:
     get:
       consumes:
       - application/json
@@ -1189,7 +1189,7 @@ paths:
               type: object
       tags:
       - Health
-  /api/webhook/{companyID}:
+  /account/webhook/{companyID}:
     get:
       consumes:
       - application/json
@@ -1255,7 +1255,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Webhooks
-  /api/webhook/{companyID}/{repositoryID}:
+  /account/webhook/{companyID}/{repositoryID}:
     post:
       consumes:
       - application/json
@@ -1319,7 +1319,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Webhooks
-  /api/webhook/{companyID}/{repositoryID}/{webhookID}:
+  /account/webhook/{companyID}/{repositoryID}/{webhookID}:
     delete:
       consumes:
       - application/json

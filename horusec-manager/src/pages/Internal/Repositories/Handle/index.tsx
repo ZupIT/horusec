@@ -21,27 +21,28 @@ import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
 import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
-import companyService from 'services/company';
+import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
-import { Workspace } from 'helpers/interfaces/Workspace';
+import { Repository } from 'helpers/interfaces/Repository';
 import { cloneDeep } from 'lodash';
+import useWorkspace from 'helpers/hooks/useWorkspace';
 
 interface Props {
   isVisible: boolean;
-  workspaceToEdit?: Workspace;
+  repositoryToEdit?: Repository;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
-const HandleWorkspace: React.FC<Props> = ({
+const HandleRepository: React.FC<Props> = ({
   isVisible,
   onCancel,
   onConfirm,
-  workspaceToEdit,
+  repositoryToEdit,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -49,6 +50,7 @@ const HandleWorkspace: React.FC<Props> = ({
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
   const { applicationAdminEnable } = getCurrentConfig();
+  const { currentWorkspace } = useWorkspace();
 
   const [isLoading, setLoading] = useState(false);
   const [name, setName] = useState<Field>({ value: '', isValid: false });
@@ -59,6 +61,7 @@ const HandleWorkspace: React.FC<Props> = ({
 
   const [adminGroup, setAdminGroup] = useState<string[]>(['']);
   const [memberGroup, setMemberGroup] = useState<string[]>(['']);
+  const [supervisorGroup, setSupervisorGroup] = useState<string[]>(['']);
 
   const [emailAdmin, setEmailAdmin] = useState<Field>({
     isValid: false,
@@ -69,7 +72,8 @@ const HandleWorkspace: React.FC<Props> = ({
     nameToset?: string,
     descToSet?: string,
     adminToSet?: string[],
-    memberToSet?: string[]
+    memberToSet?: string[],
+    supervisorToSet?: string[]
   ) => {
     setName({ value: nameToset, isValid: nameToset ? true : false });
     setDescription({ value: descToSet, isValid: false });
@@ -86,6 +90,12 @@ const HandleWorkspace: React.FC<Props> = ({
     } else {
       setMemberGroup(memberToSet);
     }
+
+    if (!supervisorToSet || supervisorToSet.length === 0) {
+      setSupervisorGroup(['']);
+    } else {
+      setSupervisorGroup(supervisorToSet);
+    }
   };
 
   const clearInputs = () => {
@@ -93,14 +103,15 @@ const HandleWorkspace: React.FC<Props> = ({
   };
 
   const handleCreate = () => {
-    companyService
-      .create(name.value, description.value, emailAdmin.value, {
+    repositoryService
+      .create(currentWorkspace.companyID, name.value, description.value, {
         authzAdmin: adminGroup,
         authzMember: memberGroup,
+        authzSupervisor: supervisorGroup,
       })
       .then(() => {
         onConfirm();
-        showSuccessFlash(t('WORKSPACES_SCREEN.CREATE_SUCCESS'));
+        showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_CREATE_REPO'));
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -112,20 +123,21 @@ const HandleWorkspace: React.FC<Props> = ({
   };
 
   const handleEdit = () => {
-    companyService
+    repositoryService
       .update(
-        workspaceToEdit.companyID,
+        repositoryToEdit.companyID,
+        repositoryToEdit.repositoryID,
         name.value,
         description.value,
-        emailAdmin.value,
         {
           authzAdmin: adminGroup,
           authzMember: memberGroup,
+          authzSupervisor: supervisorGroup,
         }
       )
       .then(() => {
         onConfirm();
-        showSuccessFlash(t('WORKSPACES_SCREEN.UPDATE_SUCCESS'));
+        showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -140,7 +152,7 @@ const HandleWorkspace: React.FC<Props> = ({
     if (name.isValid) {
       setLoading(true);
 
-      workspaceToEdit ? handleEdit() : handleCreate();
+      repositoryToEdit ? handleEdit() : handleCreate();
     }
   };
 
@@ -168,31 +180,44 @@ const HandleWorkspace: React.FC<Props> = ({
     setMemberGroup(memberGroupCopy);
   };
 
+  const handleRemoveSupervisorGroup = () => {
+    const supervisorGroupCopy = cloneDeep(supervisorGroup);
+    supervisorGroupCopy.pop();
+    setSupervisorGroup(supervisorGroupCopy);
+  };
+
+  const handleSetSupervisorGroup = (index: number, value: string) => {
+    const supervisorGroupCopy = cloneDeep(supervisorGroup);
+    supervisorGroupCopy[index] = value;
+    setSupervisorGroup(supervisorGroupCopy);
+  };
+
   useEffect(() => {
     setValues(
-      workspaceToEdit?.name,
-      workspaceToEdit?.description,
-      workspaceToEdit?.authzAdmin,
-      workspaceToEdit?.authzMember
+      repositoryToEdit?.name,
+      repositoryToEdit?.description,
+      repositoryToEdit?.authzAdmin,
+      repositoryToEdit?.authzMember,
+      repositoryToEdit?.authzSupervisor
     );
 
     // eslint-disable-next-line
-  }, [workspaceToEdit]);
+  }, [repositoryToEdit]);
 
   return (
     <Dialog
       isVisible={isVisible}
       message={
-        workspaceToEdit
-          ? t('WORKSPACES_SCREEN.EDIT_WORKSPACE')
-          : t('WORKSPACES_SCREEN.ADD')
+        repositoryToEdit
+          ? t('REPOSITORIES_SCREEN.EDIT_REPO')
+          : t('REPOSITORIES_SCREEN.CREATE_REPO')
       }
       onCancel={() => {
         clearInputs();
         onCancel();
       }}
       onConfirm={handleSubmit}
-      confirmText={t('WORKSPACES_SCREEN.SAVE')}
+      confirmText={t('REPOSITORIES_SCREEN.SAVE')}
       disableConfirm={!name.isValid}
       disabledColor={colors.button.disableInDark}
       loadingConfirm={isLoading}
@@ -202,17 +227,17 @@ const HandleWorkspace: React.FC<Props> = ({
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
           name="name"
-          label={t('WORKSPACES_SCREEN.TABLE.NAME')}
+          label={t('REPOSITORIES_SCREEN.NAME')}
           width="100%"
           onChangeValue={(field: Field) => setName(field)}
           validation={isEmptyString}
-          invalidMessage={t('WORKSPACES_SCREEN.INVALID_WORKSPACE_NAME')}
+          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_WORKSPACE_NAME')}
           initialValue={name.value}
         />
 
         <Styled.Field
           name="description"
-          label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
+          label={t('REPOSITORIES_SCREEN.DESCRIPTION')}
           width="100%"
           onChangeValue={(field: Field) => setDescription(field)}
           initialValue={description.value}
@@ -220,12 +245,12 @@ const HandleWorkspace: React.FC<Props> = ({
 
         {applicationAdminEnable ? (
           <Styled.Wrapper>
-            <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN_EMAIL')}</Styled.Label>
+            <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN_EMAIL')}</Styled.Label>
 
             <Input
               name="emailAdmin"
               initialValue={emailAdmin.value}
-              label={t('WORKSPACES_SCREEN.EMAIL')}
+              label={t('REPOSITORIES_SCREEN.EMAIL')}
               onChangeValue={(field: Field) => setEmailAdmin(field)}
             />
           </Styled.Wrapper>
@@ -234,17 +259,17 @@ const HandleWorkspace: React.FC<Props> = ({
         {getCurrentConfig().authType === authTypes.LDAP ? (
           <>
             <Styled.SubTitle>
-              {t('WORKSPACES_SCREEN.REFERENCE_GROUP')}
+              {t('REPOSITORIES_SCREEN.REFERENCE_GROUP')}
             </Styled.SubTitle>
 
             <Styled.WrapperColumn>
-              <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.ADMIN')}</Styled.Label>
               {adminGroup?.map((_, index) => (
                 <Styled.Wrapper key={index}>
                   <Input
                     name={`admin-group-${index}`}
                     initialValue={adminGroup[index]}
-                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                    label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
                       handleSetAdminGroup(index, field.value)
                     }
@@ -272,13 +297,13 @@ const HandleWorkspace: React.FC<Props> = ({
             </Styled.WrapperColumn>
 
             <Styled.WrapperColumn>
-              <Styled.Label>{t('WORKSPACES_SCREEN.MEMBER')}</Styled.Label>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.MEMBER')}</Styled.Label>
               {memberGroup?.map((_, index) => (
                 <Styled.Wrapper key={index}>
                   <Input
                     name={`admin-group-${index}`}
                     initialValue={memberGroup[index]}
-                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                    label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
                       handleSetMemberGroup(index, field.value)
                     }
@@ -304,6 +329,42 @@ const HandleWorkspace: React.FC<Props> = ({
                 </Styled.Wrapper>
               ))}
             </Styled.WrapperColumn>
+
+            <Styled.WrapperColumn>
+              <Styled.Label>{t('REPOSITORIES_SCREEN.SUPERVISOR')}</Styled.Label>
+              {supervisorGroup?.map((_, index) => (
+                <Styled.Wrapper key={index}>
+                  <Input
+                    name={`admin-group-${index}`}
+                    initialValue={supervisorGroup[index]}
+                    label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
+                    onChangeValue={(field: Field) =>
+                      handleSetSupervisorGroup(index, field.value)
+                    }
+                  />
+
+                  {index + 1 === supervisorGroup.length &&
+                  supervisorGroup.length !== 1 ? (
+                    <Styled.OptionIcon
+                      name="delete"
+                      size="20px"
+                      onClick={handleRemoveSupervisorGroup}
+                    />
+                  ) : null}
+
+                  {index + 1 === supervisorGroup.length &&
+                  supervisorGroup.length !== 5 ? (
+                    <Styled.OptionIcon
+                      name="plus"
+                      size="20px"
+                      onClick={() =>
+                        setSupervisorGroup([...supervisorGroup, ''])
+                      }
+                    />
+                  ) : null}
+                </Styled.Wrapper>
+              ))}
+            </Styled.WrapperColumn>
           </>
         ) : null}
       </Styled.Form>
@@ -311,4 +372,4 @@ const HandleWorkspace: React.FC<Props> = ({
   );
 };
 
-export default HandleWorkspace;
+export default HandleRepository;

@@ -63,7 +63,7 @@ func NewHandler(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceRead
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies [post]
+// @Router /account/companies [post]
 // @Security ApiKeyAuth
 func (h *Handler) Create(w netHttp.ResponseWriter, r *netHttp.Request) {
 	company, accountID, permissions, err := h.factoryGetCreateData(w, r)
@@ -157,7 +157,7 @@ func (h *Handler) getAccountIDByEmail(w netHttp.ResponseWriter, email string) (u
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID} [patch]
+// @Router /account/companies/{companyID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -184,7 +184,7 @@ func (h *Handler) Update(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID} [get]
+// @Router /account/companies/{companyID} [get]
 // @Security ApiKeyAuth
 func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -206,7 +206,7 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies [get]
+// @Router /account/companies [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w netHttp.ResponseWriter, r *netHttp.Request) {
 	accountID, permissions, err := h.getRequestData(w, r)
@@ -242,7 +242,7 @@ func (h *Handler) getRequestData(w netHttp.ResponseWriter, r *netHttp.Request) (
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID} [delete]
+// @Router /account/companies/{companyID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Delete(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -270,7 +270,7 @@ func (h *Handler) Delete(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/roles/{accountID} [patch]
+// @Router /account/companies/{companyID}/roles/{accountID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) UpdateAccountCompany(w netHttp.ResponseWriter, r *netHttp.Request) {
 	accountCompany, err := h.getUpdateAccountCompanyData(r)
@@ -323,7 +323,7 @@ func (h *Handler) setAccountCompanyIDs(
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 409 {object} http.Response{content=string} "CONFLICT"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/roles [post]
+// @Router /account/companies/{companyID}/roles [post]
 // @Security ApiKeyAuth
 func (h *Handler) InviteUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	inviteUser, err := h.getInviteUserRequestData(r)
@@ -378,7 +378,7 @@ func (h *Handler) checkDefaultErrors(err error, w netHttp.ResponseWriter) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/roles [get]
+// @Router /account/companies/{companyID}/roles [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetAccounts(w netHttp.ResponseWriter, r *netHttp.Request) {
 	companyID, err := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -407,7 +407,7 @@ func (h *Handler) GetAccounts(w netHttp.ResponseWriter, r *netHttp.Request) {
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 404 {object} http.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/companies/{companyID}/roles/{accountID} [delete]
+// @Router /account/companies/{companyID}/roles/{accountID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) RemoveUser(w netHttp.ResponseWriter, r *netHttp.Request) {
 	removeUser, err := h.getRemoveUserRequestData(r)
