@@ -19,8 +19,8 @@ export interface Workspace {
   name: string;
   description: string;
   role: string;
-  authzAdmin?: string;
-  authzMember?: string;
+  authzAdmin?: string[];
+  authzMember?: string[];
   createdAt?: string;
   updatedAt?: string;
 }

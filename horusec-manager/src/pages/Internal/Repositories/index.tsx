@@ -22,8 +22,7 @@ import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
-import AddRepository from './Add';
-import EditRepository from './Edit';
+import HandleRepository from './Handle';
 import InviteToRepository from './Invite';
 import Tokens from './Tokens';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -42,6 +41,7 @@ const Repositories: React.FC = () => {
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
 
   const [isLoading, setLoading] = useState(false);
+  const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
   const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
@@ -50,8 +50,6 @@ const Repositories: React.FC = () => {
   const [repoTodelete, setRepoToDelete] = useState<Repository>(null);
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
-
-  const [addRepoVisible, setAddRepoVisible] = useState(false);
 
   const fetchData = () => {
     setLoading(true);
@@ -98,6 +96,14 @@ const Repositories: React.FC = () => {
       });
   };
 
+  const setVisibleHandleModal = (
+    isVisible: boolean,
+    repository?: Repository
+  ) => {
+    sethandleRepositoryVisible(isVisible);
+    setRepoToEdit(repository || null);
+  };
+
   // eslint-disable-next-line
   useEffect(() => fetchData(), [currentWorkspace]);
 
@@ -115,7 +121,7 @@ const Repositories: React.FC = () => {
             rounded
             width={180}
             icon="plus"
-            onClick={() => setAddRepoVisible(true)}
+            onClick={() => setVisibleHandleModal(true)}
           />
         ) : null}
       </Styled.Options>
@@ -159,7 +165,7 @@ const Repositories: React.FC = () => {
                       width={90}
                       height={30}
                       icon="edit"
-                      onClick={() => setRepoToEdit(repo)}
+                      onClick={() => setVisibleHandleModal(true, repo)}
                     />
 
                     {isAdminOfWorkspace ? (
@@ -219,23 +225,14 @@ const Repositories: React.FC = () => {
         onConfirm={handleConfirmDeleteRepo}
       />
 
-      <AddRepository
-        isVisible={addRepoVisible}
-        onCancel={() => setAddRepoVisible(false)}
+      <HandleRepository
+        isVisible={handleRepositoryVisible}
+        repositoryToEdit={repoToEdit}
         onConfirm={() => {
-          setAddRepoVisible(false);
+          setVisibleHandleModal(false);
           fetchData();
         }}
-      />
-
-      <EditRepository
-        isVisible={!!repoToEdit}
-        onCancel={() => setRepoToEdit(null)}
-        repoToEdit={repoToEdit}
-        onConfirm={() => {
-          setRepoToEdit(null);
-          fetchData();
-        }}
+        onCancel={() => setVisibleHandleModal(false)}
       />
 
       <InviteToRepository

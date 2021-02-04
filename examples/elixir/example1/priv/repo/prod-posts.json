@@ -1,0 +1,245 @@
+[
+  {
+    "title": "Texto OCR",
+    "description": "A simple web app to extract text found in images. This project was created using Phoenix and Elixir.",
+    "author": "Edgar Pino",
+    "website_url": "https://image-to-text.edgardev.com/",
+    "github_url": "https://github.com/edgar971/image_to_text",
+    "image_url": "/images/projects/image-to-text_600x350.png",
+    "type": "website"
+  },
+  {
+    "title": "Meeseeks",
+    "description": "An Elixir library for parsing and extracting data from HTML and XML with CSS or XPath selectors.",
+    "author": "Mischov",
+    "website_url": "https://hexdocs.pm/meeseeks/Meeseeks.html",
+    "github_url": "https://github.com/mischov/meeseeks",
+    "image_url": "/images/projects/meeseeks.png",
+    "type": "library"
+  },
+  {
+    "title": "FunWithFlags",
+    "description": "FunWithFlags is an OTP application that provides a 2-level storage to save and retrieve feature flags, an Elixir API to toggle and query them, and a web dashboard as control panel. ",
+    "author": "Tommaso Pavese",
+    "website_url": "https://hexdocs.pm/fun_with_flags/FunWithFlags.html",
+    "github_url": "https://github.com/tompave/fun_with_flags",
+    "image_url": "/images/projects/fun-with-flags.png",
+    "type": "library"
+  },
+  {
+    "title": "RemoteRetro",
+    "description": "A real-time application for conducting Agile retrospectives with distributed teams.",
+    "author": "Travis Vander Hoop",
+    "website_url": "https://remoteretro.org/",
+    "github_url": "https://github.com/stride-nyc/remote_retro",
+    "image_url": "/images/projects/remote-retro.png",
+    "type": "website"
+  },
+  {
+    "title": "Credo",
+    "description": "A static code analysis tool for the Elixir language with a focus on code consistency and teaching.",
+    "author": "René Föhring",
+    "website_url": "http://credo-ci.org/",
+    "github_url": "https://github.com/rrrene/credo",
+    "image_url": "/images/projects/credo.png",
+    "type": "website"
+  },
+  {
+    "title": "Pickpocket",
+    "description": "Pickpocket helps Millennials and their loved ones repay student debt by taking a percentage of their spending and using it to pay down their student loans.",
+    "author": "Will Gilman",
+    "website_url": "https://pickpocket.me",
+    "github_url": null,
+    "image_url": "/images/projects/pickpocket.png",
+    "type": "website"
+  },
+  {
+    "title": "Sprint Poker",
+    "description": "Easiest tool for your team's regular weekly sprint planning sessions.",
+    "author": "Michał Kalbarczyk",
+    "website_url": "https://sprintpoker.io/",
+    "github_url": "https://github.com/elpassion/sprint-poker",
+    "image_url": "/images/projects/sprintpoker.png",
+    "type": "website"
+  },
+  {
+    "title": "ElixirFiddle",
+    "description": "Experiment and share Elixir code with others!",
+    "author": "KickinEspresso",
+    "website_url": "https://elixirfiddle.com/",
+    "github_url": null,
+    "image_url": "/images/projects/elixirfiddle.png",
+    "type": "website"
+  },
+  {
+    "title": "Talkery",
+    "description": "Talkery is a free platform for finding and staying up to date with the newest and greatest talks in the topics you’re interested in. It allows you to filter conference talks by topics (e.g. React, Rails, Rust) as well as conferences (e.g. GOTO 2017). It also allows you to follow these topics and get notified when new talks are released.",
+    "author": "Harrison Lucas",
+    "website_url": "https://talkery.io",
+    "github_url": null,
+    "image_url": "/images/projects/talkery.png",
+    "type": "website"
+  },
+  {
+    "title": "Alchemist Camp",
+    "author": "Alchemist Camp",
+    "description": "Alchemist Camp is a resource with several dozen free screencasts for learning Elixir and Phoenix. It's mostly longer-form, project based episodes.",
+    "website_url": "https://alchemist.camp  ",
+    "github_url": null,
+    "image_url": "/images/projects/alchemist.png",
+    "type": "website"
+  },
+  {
+    "title": "StatWatch",
+    "author": "Alchemist Camp",
+    "description": "StatWatch is a simple stat-tracking app that will record how many twitter followers, YouTube subscribers, YouTube views you have as well as the Alexa Rank of your site.",
+    "website_url": "https://statwatch.me",
+    "github_url": null,
+    "image_url": "/images/projects/statwatch.png",
+    "type": "website"
+  },
+  {
+    "title": "Compost Connect",
+    "author": "jnmandal",
+    "description": "Marketplace for composting",
+    "website_url": "https://www.compost-connect.com",
+    "github_url": null,
+    "image_url": "/images/projects/compost-connect.png",
+    "type": "website"
+  },
+  {
+    "title": "Code::Stats",
+    "author": "Nicd",
+    "description": "Free stats tracking service for programmers.",
+    "website_url": "https://codestats.net/",
+    "github_url": "https://gitlab.com/code-stats/code-stats",
+    "image_url": "/images/projects/codestats.png",
+    "type": "website"
+  },
+  {
+    "title": "Almost Dead .net",
+    "author": "alxndr",
+    "description": "Still a work in progress... Keeping track of setlists played by the band Joe Russo's Almost Dead.",
+    "website_url": "http://almost-dead.net",
+    "github_url": null,
+    "image_url": "/images/projects/almost-dead.png",
+    "type": "website"
+  },
+  {
+    "title": "Fryse",
+    "author": "Phillipp Ohlandt",
+    "description": "A Static Site Generator which aims to be generic and scriptable",
+    "website_url": null,
+    "github_url": "https://github.com/fryse/fryse",
+    "image_url": "/images/projects/fryse.png",
+    "type": "library"
+  },
+  {
+    "title": "Crypto Coin Prices",
+    "author": "Marcos B. L.",
+    "description": "Crypto Coin Prices provide tools, prices and tickers comparison directly from exchanges!",
+    "website_url": "https://cryptocoinprices.io/",
+    "github_url": null,
+    "image_url": "/images/projects/cryptocoinprices.png",
+    "type": "website"
+  },
+  {
+    "title": "Magnetissimo",
+    "author": "Sergio Tapia",
+    "description": "Scrapes torrent sites and serves results.",
+    "website_url": null,
+    "github_url": "https://github.com/sergiotapia/magnetissimo",
+    "image_url": "/images/projects/magnetissimo.png",
+    "type": "website"
+  },
+  {
+    "title": "ElixirCasts",
+    "author": "Alekx",
+    "description": "Elixir and Phoenix Screencasts.",
+    "website_url": "https://elixircasts.io",
+    "github_url": null,
+    "image_url": "/images/projects/elixircasts.png",
+    "type": "website"
+  },
+  {
+    "title": "Cooking With Link",
+    "author": "Geoffrey Lessel",
+    "description": "Search for and filter Zelda: Breath of the Wild cooking recipes.",
+    "website_url": "http://cookingwithlink.com",
+    "github_url": null,
+    "image_url": "/images/projects/cookingwithlink.png",
+    "type": "website"
+  },
+  {
+    "title": "ChatBroom",
+    "author": "Geoffrey Lessel",
+    "description": "A highly-temporal chat room service with no database and no memory of the past.",
+    "website_url": "https://chatbroom.com",
+    "github_url": null,
+    "image_url": "/images/projects/chatbroom.png",
+    "type": "website"
+  },
+  {
+    "title": "Smileys Pub",
+    "author": "Tyler Pierce",
+    "description": "Reddit-clone for-fun learning project.",
+    "website_url": "https://smileys.pub",
+    "github_url": "https://github.com/smileys-tavern/smileys_umbrella",
+    "image_url": "/images/projects/smileys.jpg",
+    "type": "website"
+  },
+  {
+    "title": "Verk",
+    "author": "Eduardo Gurgel",
+    "description": "Job processing system backed by Redis.",
+    "website_url": null,
+    "github_url": "https://github.com/edgurgel/verk",
+    "image_url": "/images/projects/verk.png",
+    "type": "library"
+  },
+  {
+    "title": "ExVenture",
+    "author": "Eric Oestrich",
+    "description": "A MUD (Multi-User Dungeon) server.",
+    "website_url": "https://exventure.org",
+    "github_url": "https://github.com/oestrich/ex_venture",
+    "image_url": "/images/projects/ex_venture.png",
+    "type": "website"
+  },
+  {
+    "title": "Oopsie",
+    "author": "Coletiv Studio",
+    "description": "Oopsie is a hassle-free, online ordering platform that connects neighbouring restaurants and diners.",
+    "website_url": "https://www.oopsie.hk",
+    "github_url": null,
+    "image_url": "/images/projects/oopsie.png",
+    "type": "website"
+  },
+  {
+    "title": "Syndicate App",
+    "author": "Jon L",
+    "description": "A tool to automate email arrival to your inbox. It acts as an intermediary between your actual inbox and anything that sends email. You can think of it as a mask for you personal email with a bit of automation on top.",
+    "website_url": "https://syndicateapp.site",
+    "github_url": null,
+    "image_url": "/images/projects/syndicateapp.png",
+    "type": "website"
+  },
+  {
+    "title": "GitMonitor",
+    "author": "AlexW",
+    "description": "Custom alerts for your Github repositories.",
+    "website_url": "https://gitmonitor.com/",
+    "github_url": null,
+    "image_url": "/images/projects/gitmonitor.png",
+    "type": "website"
+  },
+  {
+    "title": "Twitter Emoji Map",
+    "author": "Twitter Emoji Map",
+    "description": "Twitter Emoji Map built with Elixir's GenStage and Angular. A simple map that shows all geotagged tweets worldwide and in real-time that contain an emoji. It is really fast. Try for yourself by tweeting anything with an emoji and a location and see the tweet pop up on the map in milliseconds.",
+    "website_url": "http://emojimap.ospaarmann.com/",
+    "github_url": "https://github.com/ospaarmann/ex-emoji-map",
+    "image_url": "/images/projects/emojimap.png",
+    "type": "website"
+  }
+]

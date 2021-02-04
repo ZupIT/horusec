@@ -26,8 +26,8 @@ type CompanyApplicationAdmin struct {
 	Name        string    `json:"name"`
 	AdminEmail  string    `json:"adminEmail"`
 	Description string    `json:"description"`
-	AuthzMember string    `json:"authzMember"`
-	AuthzAdmin  string    `json:"authzAdmin"`
+	AuthzMember []string  `json:"authzMember"`
+	AuthzAdmin  []string  `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
