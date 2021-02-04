@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package brakeman
+package bundler
 
 import (
 	"errors"
@@ -136,7 +136,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsToIgnore([]string{"Brakeman"})
+		config.SetToolsToIgnore([]string{"BundlerAudit"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 
