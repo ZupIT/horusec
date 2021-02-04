@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1612451826470" clover="3.2.0">
+  <project timestamp="1612451826470" name="All files">
+    <metrics statements="93" coveredstatements="93" conditionals="28" coveredconditionals="28" methods="27" coveredmethods="26" elements="148" coveredelements="147" complexity="0" loc="93" ncloc="93" packages="6" files="8" classes="8"/>
+    <package name="config">
+      <metrics statements="11" coveredstatements="11" conditionals="3" coveredconditionals="3" methods="5" coveredmethods="5"/>
+      <file name="config.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/config/config.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="3" coveredconditionals="3" methods="5" coveredmethods="5"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="9" count="5" type="stmt"/>
+        <line num="15" count="19" type="cond" truecount="1" falsecount="0"/>
+        <line num="17" count="19" type="stmt"/>
+        <line num="18" count="19" type="stmt"/>
+        <line num="19" count="19" type="stmt"/>
+        <line num="23" count="19" type="stmt"/>
+        <line num="31" count="19" type="stmt"/>
+        <line num="35" count="19" type="stmt"/>
+        <line num="39" count="19" type="stmt"/>
+        <line num="40" count="19" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="controllers">
+      <metrics statements="20" coveredstatements="20" conditionals="4" coveredconditionals="4" methods="9" coveredmethods="9"/>
+      <file name="health_controller.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/controllers/health_controller.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+      </file>
+      <file name="horusec_controller.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/controllers/horusec_controller.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="9" count="5" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="15" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="26" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="database">
+      <metrics statements="9" coveredstatements="9" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+      <file name="postgresql_database.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/database/postgresql_database.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="8" count="12" type="stmt"/>
+        <line num="10" count="12" type="stmt"/>
+        <line num="14" count="13" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="25" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="28" count="7" type="stmt"/>
+      </file>
+    </package>
+    <package name="middlewares">
+      <metrics statements="39" coveredstatements="39" conditionals="15" coveredconditionals="15" methods="6" coveredmethods="5"/>
+      <file name="auth_middleware.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/middlewares/auth_middleware.ts">
+        <metrics statements="39" coveredstatements="39" conditionals="15" coveredconditionals="15" methods="6" coveredmethods="5"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="13" type="stmt"/>
+        <line num="6" count="13" type="stmt"/>
+        <line num="9" count="13" type="stmt"/>
+        <line num="11" count="13" type="stmt"/>
+        <line num="15" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="8" type="stmt"/>
+        <line num="21" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="25" count="6" type="stmt"/>
+        <line num="26" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="32" count="6" type="stmt"/>
+        <line num="36" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="40" count="4" type="stmt"/>
+        <line num="41" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="47" count="4" type="stmt"/>
+        <line num="51" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="11" type="stmt"/>
+        <line num="54" count="14" type="stmt"/>
+        <line num="55" count="14" type="stmt"/>
+        <line num="60" count="10" type="stmt"/>
+        <line num="61" count="10" type="stmt"/>
+        <line num="62" count="10" type="stmt"/>
+        <line num="64" count="10" type="stmt"/>
+        <line num="65" count="10" type="stmt"/>
+        <line num="66" count="10" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="70" count="6" type="stmt"/>
+        <line num="73" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="models">
+      <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <file name="horusec_config_model.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/models/horusec_config_model.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="7" type="stmt"/>
+        <line num="9" count="7" type="stmt"/>
+        <line num="10" count="7" type="stmt"/>
+        <line num="84" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+      <file name="env_util.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/utils/env_util.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="3" count="59" type="cond" truecount="2" falsecount="0"/>
+        <line num="4" count="23" type="stmt"/>
+        <line num="7" count="36" type="stmt"/>
+      </file>
+      <file name="token_util.ts" path="/home/wilian/go/src/github.com/ZupIT/horusec/horusec-admin/src/utils/token_util.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="5" count="1016" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
