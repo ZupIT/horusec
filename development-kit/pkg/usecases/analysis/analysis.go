@@ -183,6 +183,8 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.Flawfinder,
 		tools.PhpCS,
 		tools.ShellCheck,
+		tools.Sobelow,
+		tools.MixAudit,
 	}
 }
 
@@ -206,6 +208,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Generic,
 		languages.Yaml,
 		languages.Shell,
+		languages.Elixir,
 		languages.Unknown,
 	}
 }
