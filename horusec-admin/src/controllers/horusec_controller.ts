@@ -11,6 +11,17 @@ export class HorusecController {
         this.horusecConfigModel = new HorusecConfigModel(this.db.getConnection()).model;
     }
 
+    public getHorusecConfig(_: Request, res: Response): any {
+        return this.horusecConfigModel.findOne()
+            .then((result) => {
+                return res.status(200).send(result);
+            })
+            .catch((err) => {
+                console.error(`Some happen when get content ${err}`);
+                return res.status(500).send(err);
+            });
+    }
+
     public setHorusecConfig(req: Request, res: Response): any {
         if (!req.body) {
             return res.status(400).send({ message: "Body is required" });
