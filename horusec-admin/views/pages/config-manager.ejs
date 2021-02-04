@@ -7,10 +7,11 @@
 </head>
 
 <body>
+    <%- include('../partials/snackbar'); %>
     <%- include('../partials/logo'); %>
 
     <section class="container">
-        <form action="">
+        <form onsubmit="event.preventDefault();submitManagerForm()">
             <h1>
                 <img src="/icons/pie.svg">
                 Manager
@@ -70,7 +71,7 @@
 </body>
 
 <script type="text/javascript">
-    function submitForm(e) {
+    function submitManagerForm(e) {
         try {
             const react_app_horusec_endpoint_api = document.getElementById('react_app_horusec_endpoint_api').value
             const react_app_horusec_endpoint_analytic = document.getElementById('react_app_horusec_endpoint_analytic').value
@@ -99,7 +100,11 @@
             }))
 
             xhr.onreadystatechange = function (ev) {
-                console.log(ev.currentTarget)
+                if (ev.currentTarget.status === 204) {
+                    showSnackBar('success')
+                } else {
+                    showSnackBar('error')
+                }
             }
         } catch (error) {
             showSnackBar('error')

@@ -16,6 +16,8 @@ export class HorusecController {
             return res.status(400).send({ message: "Body is required" });
         }
 
+        console.log(req.body)
+
         const configToUpdate: any = {
             horusec_config_id: 1,
         };

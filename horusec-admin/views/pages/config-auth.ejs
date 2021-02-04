@@ -7,10 +7,11 @@
 </head>
 
 <body>
+    <%- include('../partials/snackbar'); %>
     <%- include('../partials/logo'); %>
 
     <section class="container">
-        <form action="">
+        <form onsubmit="event.preventDefault();submitAuthForm()">
             <h1>
                 <img src="/icons/unlocked.svg">
                 Authentication
@@ -231,7 +232,31 @@ function setAuthType(authType) {
         document.getElementById(`${authType}-form`).style.display = 'flex'
    }
 }
+function submitAuthForm() {
+    try {
+            const horusec_auth_type = document.getElementById('horusec_auth_type').value
 
+            const horusec_auth_type = document.getElementById('horusec_auth_type').value
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('PATCH', '/api/config', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
+
+            xhr.send(JSON.stringify({ horusec_auth_type }))
+
+            xhr.onreadystatechange = function (ev) {
+                if (ev.currentTarget.status === 204) {
+                    showSnackBar('success')
+                } else {
+                    showSnackBar('error')
+                }
+            }
+
+        } catch (error) {
+            showSnackBar('error')
+        }
+}
 </script>
 
 </html>

@@ -11,7 +11,7 @@
     <%- include('../partials/logo'); %>
 
     <section class="container">
-        <form onsubmit="event.preventDefault();submitForm()" id="form">
+        <form onsubmit="event.preventDefault();submitGeneralForm()" id="form">
             <h1>
                 <img src="/icons/settings.svg">
                 General
@@ -48,12 +48,10 @@
 </body>
 
 <script type="text/javascript">
-    function submitForm(e) {
+    function submitGeneralForm(e) {
         try {
             const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
             const horusec_enable_application_admin = document.getElementById('horusec_enable_application_admin').value
-
-            // TODO: horusec_enable_application_admin
 
             const xhr = new XMLHttpRequest();
             xhr.open('PATCH', '/api/config', true);
