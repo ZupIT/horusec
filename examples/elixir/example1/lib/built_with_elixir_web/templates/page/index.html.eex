@@ -1,0 +1,9 @@
+<div class="inner">
+	<header>
+		<h1>A place to discover projects built with
+			<br /> Elixir.
+		</h1>
+		<p>Elixir is an awesome dynamic, functional language designed for building scalable and maintainable applications. <a href="#submit-form" rel="noopener noreferrer">Submit your project now!</a></p>
+	</header>
+	<div id="app-root"></div>
+</div>
