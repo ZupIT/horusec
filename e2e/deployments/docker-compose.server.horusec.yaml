@@ -17,7 +17,7 @@ services:
   postgresql:
     container_name: postgresql
     image: postgres:12
-    network_mode: "bridge"
+    network_mode: "host"
     ports:
       - "5432:5432"
     environment:
@@ -39,7 +39,7 @@ services:
       - "postgresql"
     restart: always
     container_name: horusec-account
-    network_mode: "bridge"
+    network_mode: "host"
     ports:
       - "8003:8003"
     environment:
@@ -56,7 +56,7 @@ services:
       - "postgresql"
     restart: always
     container_name: horusec-auth
-    network_mode: "bridge"
+    network_mode: "host"
     ports:
       - "8006:8006"
       - "8007:8007"
@@ -76,7 +76,7 @@ services:
       - "postgresql"
     restart: always
     container_name: horusec-analytic
-    network_mode: "bridge"
+    network_mode: "host"
     ports:
       - "8005:8005"
     environment:
@@ -91,7 +91,7 @@ services:
       - "postgresql"
     restart: always
     container_name: horusec-api
-    network_mode: "bridge"
+    network_mode: "host"
     ports:
       - "8000:8000"
     environment:
