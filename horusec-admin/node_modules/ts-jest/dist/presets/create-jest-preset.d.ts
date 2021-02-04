@@ -1,7 +1,0 @@
-import type { Config } from '@jest/types';
-export declare type TsJestPresets = Pick<Config.InitialOptions, 'moduleFileExtensions' | 'transform' | 'testMatch'>;
-interface CreateJestPresetOptions {
-    allowJs?: boolean;
-}
-export declare function createJestPreset({ allowJs }?: CreateJestPresetOptions, from?: Config.InitialOptions): TsJestPresets;
-export {};
