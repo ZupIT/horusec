@@ -122,6 +122,10 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/horusec-dart"
             IS_TO_UPDATE_CONFIG_FILE="false"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/horusec-dart";;
+        "shellcheck")
+            IMAGE_NAME="horuszup/shellcheck"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/shell/shellcheck/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/shellcheck";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
             echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes, phpcs, flawfinder"
@@ -162,7 +166,7 @@ setActualRelease() {
     alpha=$(grep -P '.*ImageTag.*alpha' "$DIRECTORY_CONFIG")
     rc=$(grep -P '.*ImageTag.*rc' "$DIRECTORY_CONFIG")
 
-    cd $DIRECTORY_SEMVER
+    cd $DIRECTORY_SEMVER || echo "Directory not exist!"; exit
     if [ "$alpha" != "" ]
     then
         ACTUAL_RELEASE_IN_CONFIG=$(semver get alpha)
@@ -172,7 +176,7 @@ setActualRelease() {
     else
         ACTUAL_RELEASE_IN_CONFIG=$(semver get release)
     fi
-    cd $CURRENT_FOLDER
+    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
 }
 
 setNewRelease() {
@@ -190,13 +194,13 @@ setNewRelease() {
 updateImage () {
     setActualRelease
 
-    cd $DIRECTORY_SEMVER
+    cd "$DIRECTORY_SEMVER" || echo "Directory not exist!"; exit
 
     resetAlphaRcToMaster
 
     setNewRelease
 
-    cd $CURRENT_FOLDER
+    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
 
     updateVersionInConfigFile
     updateVersionInCliVersionFile

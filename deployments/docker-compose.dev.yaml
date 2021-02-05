@@ -77,8 +77,6 @@ services:
     restart: always
     container_name: horusec-messages
     network_mode: "host"
-    ports:
-      - "8004:8004"
     volumes:
       - ../:/usr/app
     environment:
@@ -102,9 +100,6 @@ services:
     restart: always
     container_name: horusec-auth
     network_mode: "host"
-    ports:
-      - "8006:8006"
-      - "8007:8007"
     volumes:
       - ../:/usr/app
     environment:
@@ -146,8 +141,6 @@ services:
     restart: always
     container_name: horusec-account
     network_mode: "host"
-    ports:
-      - "8003:8003"
     volumes:
       - ../:/usr/app
     environment:
@@ -169,8 +162,6 @@ services:
     restart: always
     container_name: horusec-analytic
     network_mode: "host"
-    ports:
-      - "8005:8005"
     volumes:
       - ../:/usr/app
     environment:
@@ -188,8 +179,6 @@ services:
     restart: always
     container_name: horusec-api
     network_mode: "host"
-    ports:
-      - "8000:8000"
     volumes:
       - ../:/usr/app
     environment:
@@ -212,8 +201,6 @@ services:
     restart: always
     container_name: horusec-webhook
     network_mode: "host"
-    ports:
-      - "8008:8008"
     volumes:
       - ../:/usr/app
     environment:

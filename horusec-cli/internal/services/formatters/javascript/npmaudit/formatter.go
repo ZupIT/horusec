@@ -26,7 +26,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -67,9 +66,19 @@ func (f *Formatter) startNpmAudit(projectSubPath string) error {
 	return f.parseOutput(output)
 }
 
+func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
+		CMD:      f.GetConfigCMDYarnOrNpmAudit(projectSubPath, ImageCmd, tools.NpmAudit),
+		Language: languages.Javascript,
+	}
+
+	return analysisData.SetFullImagePath(
+		f.GetToolsConfig()[tools.NpmAudit].ImagePath, ImageRepository, ImageName, ImageTag)
+}
+
 func (f *Formatter) parseOutput(containerOutput string) error {
-	if f.IsNotFoundError(containerOutput) {
-		return f.notFoundError()
+	if err := f.IsNotFoundError(containerOutput); err != nil {
+		return err
 	}
 
 	output, err := f.newContainerOutputFromString(containerOutput)
@@ -81,27 +90,40 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 	return nil
 }
 
+func (f *Formatter) IsNotFoundError(containerOutput string) error {
+	if strings.Contains(containerOutput, "ERROR_PACKAGE_LOCK_NOT_FOUND") {
+		return errors.New(messages.MsgErrorPacketJSONNotFound)
+	}
+
+	return nil
+}
+
 func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *entities.Output, err error) {
 	if containerOutput == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
-			map[string]interface{}{"tool": tools.NpmAudit.ToString()})
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, map[string]interface{}{"tool": tools.NpmAudit.ToString()})
 		return &entities.Output{}, nil
 	}
 
-	err = json.Unmarshal([]byte(containerOutput), &output)
-	if err != nil {
+	if err = json.Unmarshal([]byte(containerOutput), &output); err != nil {
 		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.NpmAudit, containerOutput), err)
 	}
 
 	return output, err
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue) (data *horusec.Vulnerability) {
+func (f *Formatter) processOutput(output *entities.Output) {
+	for _, advisory := range output.Advisories {
+		advisoryPointer := advisory
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer))
+	}
+}
+
+func (f *Formatter) setVulnerabilitySeverityData(issue *entities.Issue) (data *horusec.Vulnerability) {
 	data = f.getDefaultVulnerabilitySeverity()
-	data.Severity = output.GetSeverity()
-	data.Details = output.Overview
-	data.Code = output.ModuleName
-	data.Line = f.getVulnerabilityLineByName(fmt.Sprintf(`"version": "%s"`, output.GetVersion()), data.Code, data.File)
+	data.Severity = issue.GetSeverity()
+	data.Details = issue.Overview
+	data.Code = issue.ModuleName
+	data.Line = f.getVulnerabilityLineByName(f.getVersionText(issue.GetVersion()), data.Code, data.File)
 	data = hash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
@@ -114,24 +136,12 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	return vulnerabilitySeverity
 }
 
-func (f *Formatter) IsNotFoundError(containerOutput string) bool {
-	return strings.Contains(containerOutput, "ERROR_PACKAGE_LOCK_NOT_FOUND")
+func (f *Formatter) getVersionText(version string) string {
+	return fmt.Sprintf(`"version": "%s"`, version)
 }
 
-func (f *Formatter) notFoundError() error {
-	return errors.New(messages.MsgErrorPacketJSONNotFound)
-}
-
-func (f *Formatter) processOutput(output *entities.Output) {
-	for _, advisory := range output.Advisories {
-		advisoryPointer := advisory
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer))
-	}
-}
-
-func (f *Formatter) getVulnerabilityLineByName(line, module, file string) string {
-	path := fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), file)
-	fileExisting, err := os.Open(path)
+func (f *Formatter) getVulnerabilityLineByName(version, module, file string) string {
+	fileExisting, err := os.Open(fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), file))
 	if err != nil {
 		return ""
 	}
@@ -140,19 +150,20 @@ func (f *Formatter) getVulnerabilityLineByName(line, module, file string) string
 		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
 	}()
 
-	scanner := bufio.NewScanner(fileExisting)
-	return f.getLine(line, module, scanner)
+	return f.getLine(version, module, bufio.NewScanner(fileExisting))
 }
 
-func (f *Formatter) getLine(name, module string, scanner *bufio.Scanner) string {
+func (f *Formatter) getLine(version, module string, scanner *bufio.Scanner) string {
+	foundModule := false
 	line := 1
-	isFoundModule := false
 
 	for scanner.Scan() {
-		scannerText := scanner.Text()
-		if isModuleInScannerText(isFoundModule, module, scannerText) {
-			isFoundModule = true
-		} else if isFoundModule && strings.Contains(strings.ToLower(scannerText), strings.ToLower(name)) {
+		if f.isModuleInScannerText(module, scanner.Text()) {
+			foundModule = true
+			continue
+		}
+
+		if foundModule && strings.Contains(strings.ToLower(scanner.Text()), strings.ToLower(version)) {
 			return strconv.Itoa(line)
 		}
 		line++
@@ -160,33 +171,6 @@ func (f *Formatter) getLine(name, module string, scanner *bufio.Scanner) string 
 	return ""
 }
 
-func isModuleInScannerText(isFoundModule bool, module, scannerText string) bool {
-	packageModuleName := fmt.Sprintf(`"%s": {`, module)
-	return !isFoundModule && strings.Contains(strings.ToLower(scannerText), strings.ToLower(packageModuleName))
-}
-
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.getConfigCMD(projectSubPath),
-		Language: languages.Javascript,
-	}
-
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.NpmAudit].ImagePath, ImageRepository, ImageName, ImageTag)
-}
-
-func (f *Formatter) getConfigCMD(projectSubPath string) string {
-	projectPath := f.GetConfigProjectPath()
-
-	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
-	if newProjectSubPath != "" {
-		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.NpmAudit)
-	}
-
-	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
-	if newProjectSubPath != "" {
-		return f.AddWorkDirInCmd(ImageCmd, newProjectSubPath, tools.NpmAudit)
-	}
-
-	return f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.NpmAudit)
+func (f *Formatter) isModuleInScannerText(module, scannerText string) bool {
+	return strings.Contains(strings.ToLower(scannerText), strings.ToLower(fmt.Sprintf(`"%s": {`, module)))
 }

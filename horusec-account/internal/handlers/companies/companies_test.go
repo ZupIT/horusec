@@ -264,11 +264,44 @@ func TestCreateCompany(t *testing.T) {
 
 		w := httptest.NewRecorder()
 
-		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData,
+			&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
+
+	t.Run("should return status code 400 when ldap group error", func(t *testing.T) {
+		controllerMock := &companiesController.Mock{}
+
+		company := &accountEntities.Company{
+			Name: "test",
+		}
+
+		controllerMock.On("Create").Return(company, errorsEnum.ErrorInvalidLdapGroup)
+
+		handler := Handler{
+			companyController: controllerMock,
+			companyUseCases:   companyUseCases.NewCompanyUseCases(),
+			appConfig:         &app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}},
+		}
+
+		body, _ := json.Marshal(company)
+		r, _ := http.NewRequest(http.MethodPost, "api/companies", bytes.NewReader(body))
+
+		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "testscret123")
+		r.Header.Add("X-Horusec-Authorization", "Bearer "+getTestAuthorizationToken())
+
+		w := httptest.NewRecorder()
+
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData,
+			&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
 	t.Run("should return status code 500 when the body is'nt compatible with the entity", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}

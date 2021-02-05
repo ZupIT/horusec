@@ -16,7 +16,6 @@ package analyser
 
 import (
 	"fmt"
-	hrousecdart "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dart/horusecdart"
 	"log"
 	"os"
 	"os/signal"
@@ -24,18 +23,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs"
-
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
-
-	"github.com/google/uuid"
-
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/horusecjava"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/kotlin/horuseckotlin"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
@@ -49,19 +36,31 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs"
+	horusecDart "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/dart/horusecdart"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/mixaudit"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/sobelow"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/eslint"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/kotlin/horuseckotlin"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/horusecleaks"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/bandit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/safety"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/brakeman"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/shell/shellcheck"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/horusec-cli/internal/services/horusapi"
+	"github.com/google/uuid"
 )
 
 type Interface interface {
@@ -156,7 +155,6 @@ func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
 		SetDefaultVulnerabilityType().
 		SortVulnerabilitiesByType()
 	if !a.config.GetEnableInformationSeverity() {
-		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
 		a.analysis = a.analysis.RemoveInfoVulnerabilities()
 	}
 }
@@ -210,6 +208,8 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.C:          a.detectVulnerabilityC,
 		languages.PHP:        a.detectVulnerabilityPHP,
 		languages.Dart:       a.detectVulnerabilityDart,
+		languages.Elixir:     a.detectVulnerabilityElixir,
+		languages.Shell:      a.detectVulnerabilityShell,
 	}
 }
 
@@ -291,7 +291,18 @@ func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 
 func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
 	a.monitor.AddProcess(1)
-	go hrousecdart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horusecDart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
+	a.monitor.AddProcess(2)
+	go mixaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go sobelow.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {

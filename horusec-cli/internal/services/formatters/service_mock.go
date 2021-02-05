@@ -133,3 +133,8 @@ func (m *Mock) GetCustomRulesByTool(_ tools.Tool) []engine.Rule {
 	args := m.MethodCalled("GetCustomRulesByTool")
 	return args.Get(0).([]engine.Rule)
 }
+
+func (m *Mock) GetConfigCMDYarnOrNpmAudit(_, _ string, _ tools.Tool) string {
+	args := m.MethodCalled("GetConfigCMDYarnOrNpmAudit")
+	return args.Get(0).(string)
+}
