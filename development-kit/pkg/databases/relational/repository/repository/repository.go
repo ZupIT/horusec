@@ -125,7 +125,7 @@ func (r *Repository) listByRoles(accountID, companyID uuid.UUID) (*[]accountEnti
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, accountRepo.role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+			"repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_repository AS accountRepo ON accountRepo.repository_id = repo.repository_id"+
 			" AND accountRepo.account_id = ?", accountID).
@@ -141,7 +141,7 @@ func (r *Repository) listAllInCompany(accountID, companyID uuid.UUID) (*[]accoun
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+			"repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_company AS accountCompany ON accountCompany.company_id = repo.company_id "+
 			"AND accountCompany.account_id = ?", accountID).
