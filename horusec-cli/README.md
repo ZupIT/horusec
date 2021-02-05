@@ -140,6 +140,7 @@ The available commands to usage are:
 
 | Command | Description |
 |---------|-------------|
+| generate| This command create config file in current path or update if exists with new keys (not delete current keys) |
 | start   | This command start analysis with default values and in your current directory |
 | version | You see actual version running in your local machine |
 
@@ -221,6 +222,9 @@ The configuration file receive an object with the content follow:
     "hlc":[
 
     ],
+    "shell":[
+
+    ],
     "elixir":[
 
     ]
@@ -299,6 +303,10 @@ The configuration file receive an object with the content follow:
       "imagePath":""
     },
     "YarnAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "ShellCheck":{
       "isToIgnore":false,
       "imagePath":""
     },
