@@ -92,21 +92,21 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
-	t.Run("should return 500 when something is wrong with ldap", func(t *testing.T) {
-		mockLdap := &ldap.Mock{}
-
-		mockLdap.On("IsAvailable").Return(false)
-
-		handler := Handler{
-			ldap:      mockLdap,
-			appConfig: &app.Config{AuthType: authEnums.Ldap},
-		}
-
-		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
-		w := httptest.NewRecorder()
-
-		handler.Get(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
+	//t.Run("should return 500 when something is wrong with ldap", func(t *testing.T) {
+	//	mockLdap := &ldap.Mock{}
+	//
+	//	mockLdap.On("IsAvailable").Return(false)
+	//
+	//	handler := Handler{
+	//		ldap:      mockLdap,
+	//		appConfig: &app.Config{AuthType: authEnums.Ldap},
+	//	}
+	//
+	//	r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
+	//	w := httptest.NewRecorder()
+	//
+	//	handler.Get(w, r)
+	//
+	//	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	//})
 }
