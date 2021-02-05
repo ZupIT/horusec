@@ -48,39 +48,42 @@
 </body>
 
 <script type="text/javascript">
-    function submitGeneralForm(e) {
-        try {
-            const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
-            const horusec_enable_application_admin = document.getElementById('horusec_enable_application_admin').value
+window.onload = () => {
+    setCurrentValues()
+};
+function submitGeneralForm(e) {
+    try {
+        const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
+        const horusec_enable_application_admin = document.getElementById('horusec_enable_application_admin').value
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('PATCH', '/api/config', true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
+        const xhr = new XMLHttpRequest();
+        xhr.open('PATCH', '/api/config', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
 
-            xhr.send(JSON.stringify({ horusec_enable_application_admin, horusec_jwt_secret_key }))
+        xhr.send(JSON.stringify({ horusec_enable_application_admin, horusec_jwt_secret_key }))
 
-            xhr.onreadystatechange = function (ev) {
-                if (ev.currentTarget.status === 204) {
-                    showSnackBar('success')
-                } else {
-                    showSnackBar('error')
-                }
+        xhr.onreadystatechange = function (ev) {
+            if (ev.currentTarget.status === 204) {
+                showSnackBar('success')
+            } else {
+                showSnackBar('error')
             }
-
-        } catch (error) {
-            showSnackBar('error')
         }
-    }
-    function setCheckboxValue(id) {
-        const value = document.getElementById(id).value
 
-        if (value === 'true') {
-            document.getElementById(id).value = false
-        } else {
-            document.getElementById(id).value = true
-        }
+    } catch (error) {
+        showSnackBar('error')
     }
+}
+function setCheckboxValue(id) {
+    const value = document.getElementById(id).value
+
+    if (value === 'true') {
+        document.getElementById(id).value = false
+    } else {
+        document.getElementById(id).value = true
+    }
+}
 </script>
 
 </html>

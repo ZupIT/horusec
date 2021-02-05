@@ -71,45 +71,41 @@
 </body>
 
 <script type="text/javascript">
-    function submitManagerForm(e) {
-        try {
-            const react_app_horusec_endpoint_api = document.getElementById('react_app_horusec_endpoint_api').value
-            const react_app_horusec_endpoint_analytic = document.getElementById('react_app_horusec_endpoint_analytic').value
-            const react_app_horusec_endpoint_account = document.getElementById('react_app_horusec_endpoint_account').value
-            const react_app_horusec_endpoint_auth = document.getElementById('react_app_horusec_endpoint_auth').value
-            const react_app_horusec_manager_path = document.getElementById('react_app_horusec_manager_path').value
+window.onload = () => {
+    console.log(setCurrentValues())
+};
+function submitManagerForm(e) {
+    try {
+        const react_app_horusec_endpoint_api = document.getElementById('react_app_horusec_endpoint_api').value
+        const react_app_horusec_endpoint_analytic = document.getElementById('react_app_horusec_endpoint_analytic').value
+        const react_app_horusec_endpoint_account = document.getElementById('react_app_horusec_endpoint_account').value
+        const react_app_horusec_endpoint_auth = document.getElementById('react_app_horusec_endpoint_auth').value
+        const react_app_horusec_manager_path = document.getElementById('react_app_horusec_manager_path').value
 
-            // TODO:
-            // react_app_horusec_endpoint_api
-            // react_app_horusec_endpoint_analytic
-            // react_app_horusec_endpoint_account
-            // react_app_horusec_endpoint_auth
-            // react_app_horusec_manager_path
+        const xhr = new XMLHttpRequest();
+        xhr.open('PATCH', '/api/config', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('PATCH', '/api/config', true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
+        xhr.send(JSON.stringify({
+            react_app_horusec_endpoint_api,
+            react_app_horusec_endpoint_analytic,
+            react_app_horusec_endpoint_account,
+            react_app_horusec_endpoint_auth,
+            react_app_horusec_manager_path
+        }))
 
-            xhr.send(JSON.stringify({
-                react_app_horusec_endpoint_api,
-                react_app_horusec_endpoint_analytic,
-                react_app_horusec_endpoint_account,
-                react_app_horusec_endpoint_auth,
-                react_app_horusec_manager_path
-            }))
-
-            xhr.onreadystatechange = function (ev) {
-                if (ev.currentTarget.status === 204) {
-                    showSnackBar('success')
-                } else {
-                    showSnackBar('error')
-                }
+        xhr.onreadystatechange = function (ev) {
+            if (ev.currentTarget.status === 204) {
+                showSnackBar('success')
+            } else {
+                showSnackBar('error')
             }
-        } catch (error) {
-            showSnackBar('error')
         }
+    } catch (error) {
+        showSnackBar('error')
     }
+}
 </script>
 
 </html>
