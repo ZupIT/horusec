@@ -1,4 +1,4 @@
-import { TokenUtil } from "../../src/utils/token";
+import { TokenUtil } from "../../src/utils/token_util";
 
 describe("Test generateToken", () => {
     const token: TokenUtil = new TokenUtil();

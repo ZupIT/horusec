@@ -1,4 +1,4 @@
-import { EnvUtil } from "../utils/env";
+import { EnvUtil } from "../utils/env_util";
 
 export interface IConfig {
     Port: number;

@@ -81,8 +81,8 @@ export class HorusecConfigModel {
             tableName: this.tableName,
         });
 
-        if (this.model !== this._db.models.horusec_config) {
-            throw new Error("Model (HorusecConfig) wasn't configured correctly!");
+        if (this.model !== this._db.models[this.tableName]) {
+            throw new Error("Model (HorusecConfigModel) wasn't configured correctly!");
         }
     }
 }
