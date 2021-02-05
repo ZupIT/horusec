@@ -37,13 +37,7 @@ export class HorusecConfigModel {
             horusec_keycloak_realm: {
                 type: DataTypes.STRING,
             },
-            react_app_keycloak_client_id: {
-                type: DataTypes.STRING,
-            },
-            react_app_keycloak_realm: {
-                type: DataTypes.STRING,
-            },
-            react_app_keycloak_base_path: {
+            horusec_keycloak_otp: {
                 type: DataTypes.STRING,
             },
             horusec_ldap_base: {
@@ -74,6 +68,30 @@ export class HorusecConfigModel {
                 type: DataTypes.STRING,
             },
             horusec_ldap_admin_group: {
+                type: DataTypes.STRING,
+            },
+            react_app_keycloak_client_id: {
+                type: DataTypes.STRING,
+            },
+            react_app_keycloak_realm: {
+                type: DataTypes.STRING,
+            },
+            react_app_keycloak_base_path: {
+                type: DataTypes.STRING,
+            },
+            react_app_horusec_endpoint_api: {
+                type: DataTypes.STRING,
+            },
+            react_app_horusec_endpoint_analytic: {
+                type: DataTypes.STRING,
+            },
+            react_app_horusec_endpoint_account: {
+                type: DataTypes.STRING,
+            },
+            react_app_horusec_endpoint_auth: {
+                type: DataTypes.STRING,
+            },
+            react_app_horusec_manager_path: {
                 type: DataTypes.STRING,
             },
         }, {

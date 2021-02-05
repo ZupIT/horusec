@@ -24,15 +24,15 @@ func GetEnvFromAdminDatabaseOrDefault(databaseRead SQL.InterfaceRead, env, defau
 	response := databaseRead.Find(&entity, databaseRead.GetConnection(), entity.GetTable())
 	if err := response.GetError(); err != nil {
 		logger.LogError(fmt.Sprintf("Error on get env (%s) on database", env), err)
+		return &Env{value: GetEnvOrDefault(env, defaultValue)}
 	}
 	if data := response.GetData(); data == nil {
 		return &Env{value: GetEnvOrDefault(env, defaultValue)}
 	}
-	value := response.GetData().(*admin.HorusecAdminConfig).ToMap()[strings.ToLower(env)]
-	if value == "" {
-		return &Env{value: GetEnvOrDefault(env, defaultValue)}
+	if value := response.GetData().(*admin.HorusecAdminConfig).ToMap()[strings.ToLower(env)]; value != "" {
+		return &Env{value: value}
 	}
-	return &Env{value: value}
+	return &Env{value: GetEnvOrDefault(env, defaultValue)}
 }
 
 func (e *Env) ToString() string {
