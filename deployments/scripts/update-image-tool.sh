@@ -126,9 +126,17 @@ getDirectoryAndImageNameByToolName () {
             IMAGE_NAME="horuszup/shellcheck"
             DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/shell/shellcheck/config.go"
             DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/shellcheck";;
+        "sobelow")
+            IMAGE_NAME="horuszup/horusec-elixir"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/elixir/sobelow/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/elixir";;
+        "mixaudit")
+            IMAGE_NAME="horuszup/horusec-elixir"
+            DIRECTORY_CONFIG="$CURRENT_FOLDER/horusec-cli/internal/services/formatters/elixir/mixaudit/config.go"
+            DIRECTORY_SEMVER="$CURRENT_FOLDER/deployments/dockerfiles/elixir";;
         *)
             echo "Param Tool Name is invalid, please use the examples bellow allowed and try again!"
-            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-leaks, horusec-csharp, horusec-nodejs, horusec-kubernetes, phpcs, flawfinder"
+            echo "Params Tool Name allowed: bandit, brakeman, gitleaks, gosec, npmaudit, safety, securitycodescan, hcl, spotbugs, horusec-kotlin, horusec-java, horusec-csharp, horusec-leaks, eslint, phpcs, flawfinder, horusec-nodejs, horusec-kubernetes, horusec-dart, shellcheck, sobelow, mixaudit"
             exit 1;;
     esac
 }
@@ -166,7 +174,7 @@ setActualRelease() {
     alpha=$(grep -P '.*ImageTag.*alpha' "$DIRECTORY_CONFIG")
     rc=$(grep -P '.*ImageTag.*rc' "$DIRECTORY_CONFIG")
 
-    cd $DIRECTORY_SEMVER || echo "Directory not exist!"; exit
+    cd $DIRECTORY_SEMVER || echo "Directory not exist!"
     if [ "$alpha" != "" ]
     then
         ACTUAL_RELEASE_IN_CONFIG=$(semver get alpha)
@@ -176,7 +184,7 @@ setActualRelease() {
     else
         ACTUAL_RELEASE_IN_CONFIG=$(semver get release)
     fi
-    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
+    cd $CURRENT_FOLDER || echo "Directory not exist!"
 }
 
 setNewRelease() {
@@ -194,13 +202,13 @@ setNewRelease() {
 updateImage () {
     setActualRelease
 
-    cd "$DIRECTORY_SEMVER" || echo "Directory not exist!"; exit
+    cd "$DIRECTORY_SEMVER" || echo "Directory not exist!"
 
     resetAlphaRcToMaster
 
     setNewRelease
 
-    cd $CURRENT_FOLDER || echo "Directory not exist!"; exit
+    cd $CURRENT_FOLDER || echo "Directory not exist!"
 
     updateVersionInConfigFile
     updateVersionInCliVersionFile

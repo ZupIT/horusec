@@ -58,7 +58,7 @@ validateSwagger () {
 }
 
 updateDocs () {
-    cd $DIRECTORY || echo "Directory not exist!"; exit
+    cd $DIRECTORY || echo "Directory not exist!"
     swag init -g ./cmd/app/main.go
     cd ..
 }
