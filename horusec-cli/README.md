@@ -221,6 +221,9 @@ The configuration file receive an object with the content follow:
     "hlc":[
 
     ],
+    "shell":[
+
+    ],
     "elixir":[
 
     ]
@@ -299,6 +302,10 @@ The configuration file receive an object with the content follow:
       "imagePath":""
     },
     "YarnAudit":{
+      "isToIgnore":false,
+      "imagePath":""
+    },
+    "ShellCheck":{
       "isToIgnore":false,
       "imagePath":""
     },
