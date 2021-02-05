@@ -28,6 +28,8 @@ import defaultAuth from './default';
 import keycloakAuth from './keycloak';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
+const MANAGER_PATH = (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '';
+
 interface AuthProviderPops {
   children: JSX.Element;
 }
@@ -96,7 +98,7 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
           .finally(() => {
             resolve();
             clearLocalStorage();
-            window.location.replace('/auth');
+            window.location.replace(`${MANAGER_PATH}/auth`);
           });
       });
     } else {
