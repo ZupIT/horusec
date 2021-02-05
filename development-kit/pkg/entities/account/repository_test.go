@@ -52,7 +52,7 @@ func TestToAccountRepository(t *testing.T) {
 func TestSetUpdateData(t *testing.T) {
 	t.Run("should success set update data", func(t *testing.T) {
 		repository := &Repository{RepositoryID: uuid.New()}
-		repository.SetUpdateData("test", "test", "test", "test", "test")
+		repository.SetUpdateData("test", "test", []string{"test"}, []string{"test"}, []string{"test"})
 		assert.NotEmpty(t, repository)
 		assert.Equal(t, "test", repository.Name)
 		assert.Equal(t, "test", repository.Description)
@@ -81,7 +81,7 @@ func TestToRepositoryResponse(t *testing.T) {
 func TestGetAuthzMemberRepository(t *testing.T) {
 	t.Run("should success get authz member", func(t *testing.T) {
 		repository := &Repository{
-			AuthzMember: "test",
+			AuthzMember: []string{"test"},
 		}
 
 		assert.NotEmpty(t, repository.GetAuthzMember())
@@ -91,7 +91,7 @@ func TestGetAuthzMemberRepository(t *testing.T) {
 func TestGetAuthzSupervisorRepository(t *testing.T) {
 	t.Run("should success get authz supervisor", func(t *testing.T) {
 		repository := &Repository{
-			AuthzSupervisor: "test",
+			AuthzSupervisor: []string{"test"},
 		}
 
 		assert.NotEmpty(t, repository.GetAuthzSupervisor())
@@ -101,7 +101,7 @@ func TestGetAuthzSupervisorRepository(t *testing.T) {
 func TestGetAuthzAdminRepository(t *testing.T) {
 	t.Run("should success get authz admin", func(t *testing.T) {
 		repository := &Repository{
-			AuthzAdmin: "test",
+			AuthzAdmin: []string{"test"},
 		}
 
 		assert.NotEmpty(t, repository.GetAuthzAdmin())

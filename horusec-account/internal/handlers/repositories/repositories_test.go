@@ -370,6 +370,29 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
+	t.Run("should return bad request when ldap error", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorInvalidLdapGroup))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		r, _ := http.NewRequest(http.MethodPost, "api/repository", nil)
+		w := httptest.NewRecorder()
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData,
+			&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
 	t.Run("should return not found when no registry found", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}

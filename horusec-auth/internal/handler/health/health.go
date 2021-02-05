@@ -15,24 +15,32 @@
 package health
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	netHTTP "net/http"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	enumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-auth/config/app"
 )
 
 type Handler struct {
 	httpUtil.Interface
 	postgresRead  relational.InterfaceRead
 	postgresWrite relational.InterfaceWrite
+	ldap          ldapService.ILDAPService
+	appConfig     *app.Config
 }
 
-func NewHandler(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite) httpUtil.Interface {
+func NewHandler(postgresRead relational.InterfaceRead,
+	postgresWrite relational.InterfaceWrite, appConfig *app.Config) httpUtil.Interface {
 	return &Handler{
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,
+		appConfig:     appConfig,
+		ldap:          ldapService.NewLDAPClient(),
 	}
 }
 
@@ -47,10 +55,15 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Produce  json
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/health [get]
+// @Router /auth/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+	if h.appConfig.GetAuthType() == auth.Ldap && !h.ldap.IsAvailable() {
+		httpUtil.StatusInternalServerError(w, enumErrors.ErrorLdapConnError)
+		return
+	}
+
 	if !h.postgresRead.IsAvailable() || !h.postgresWrite.IsAvailable() {
-		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorDatabaseIsNotHealth)
+		httpUtil.StatusInternalServerError(w, enumErrors.ErrorDatabaseIsNotHealth)
 		return
 	}
 

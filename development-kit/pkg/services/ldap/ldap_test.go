@@ -296,3 +296,35 @@ func TestGetGroupsOfUser(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestCheck(t *testing.T) {
+	t.Run("should return no true when ldap is healthy", func(t *testing.T) {
+		ldapMock := &MockLdapConn{}
+
+		ldapMock.On("Search").Return(&ldap.SearchResult{}, nil)
+
+		service := Service{
+			Conn: ldapMock,
+		}
+
+		assert.True(t, service.IsAvailable())
+	})
+
+	t.Run("should return false when ldap is not healthy", func(t *testing.T) {
+		ldapMock := &MockLdapConn{}
+
+		ldapMock.On("Search").Return(&ldap.SearchResult{}, errors.New("test"))
+
+		service := Service{
+			Conn: ldapMock,
+		}
+
+		assert.False(t, service.IsAvailable())
+	})
+
+	t.Run("should return false when connecting to ldap return error", func(t *testing.T) {
+		service := Service{}
+
+		assert.False(t, service.IsAvailable())
+	})
+}
