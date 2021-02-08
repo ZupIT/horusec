@@ -14,13 +14,10 @@
 
 package hcl
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/tfsec"
-	ImageTag        = "v1.0.0"
-	ImageCmd        = `
+	ImageName = "horuszup/tfsec"
+	ImageTag  = "v1.0.0"
+	ImageCmd  = `
 			{{WORK_DIR}}
         	tfsec --format=json | grep -v "WARNING: skipped" > results.json
 			cat results.json

@@ -122,8 +122,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Leaks,
 	}
 
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageRepository, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) getDefaultSeverity() *horusec.Vulnerability {
