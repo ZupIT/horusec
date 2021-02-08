@@ -15,46 +15,78 @@
 package docker
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestIsValid(t *testing.T) {
-	t.Run("Should return false for valid data ", func(t *testing.T) {
+func TestIsInvalid(t *testing.T) {
+	t.Run("should return false when valid", func(t *testing.T) {
 		data := &AnalysisData{
-			ImagePath: "docker.io/test:latest",
-			CMD:       "test",
+			DefaultImage: "docker.io/test:latest",
+			CMD:          "test",
 		}
 
 		assert.False(t, data.IsInvalid())
 	})
 
-	t.Run("Should return true for invalid data ", func(t *testing.T) {
+	t.Run("should return true when invalid data", func(t *testing.T) {
 		data := &AnalysisData{}
 		assert.True(t, data.IsInvalid())
 	})
 }
 
-func TestGetContainerImageNameWithTag(t *testing.T) {
-	t.Run("Should success set image path in config path", func(t *testing.T) {
+func TestSetData(t *testing.T) {
+	t.Run("should success set data", func(t *testing.T) {
 		data := &AnalysisData{
 			CMD: "test",
 		}
-		data.SetFullImagePath("other-host.io/t/test:latest", DefaultRepository, "t", "v1.0.0")
-		assert.Equal(t, "other-host.io/t/test:latest", data.ImagePath)
+
+		assert.NotEmpty(t, data.SetData("other-host.io/t/test:latest", "t", "v1.0.0"))
 	})
-	t.Run("Should success set image path default", func(t *testing.T) {
+
+}
+
+func TestGetImageWithRegistry(t *testing.T) {
+	t.Run("should success get image with registry for custom image", func(t *testing.T) {
 		data := &AnalysisData{
-			CMD: "test",
+			CustomImage: "test/custom",
 		}
-		data.SetFullImagePath("", DefaultRepository, "t", "v1.0.0")
-		assert.NotEmpty(t, "docker.io/t:v1.0.0", data.ImagePath)
+
+		assert.Equal(t, "test/custom", data.GetImageWithRegistry())
 	})
-	t.Run("Should success not set repository by set image path default", func(t *testing.T) {
+
+	t.Run("should success get image with registry for custom image", func(t *testing.T) {
 		data := &AnalysisData{
-			CMD: "test",
+			DefaultImage: "test/default",
 		}
-		data.SetFullImagePath("", "", "t", "v1.0.0")
-		assert.NotEmpty(t, "t:v1.0.0", data.ImagePath)
+
+		assert.Equal(t, "test/default", data.GetImageWithRegistry())
+	})
+}
+
+func TestGetImageWithoutRegistry(t *testing.T) {
+	t.Run("should success get image without registry for custom image", func(t *testing.T) {
+		data := &AnalysisData{
+			CustomImage: "test/custom",
+		}
+
+		assert.Equal(t, "custom", data.GetImageWithoutRegistry())
+	})
+
+	t.Run("should success get image without registry for custom image", func(t *testing.T) {
+		data := &AnalysisData{
+			DefaultImage: "test/default",
+		}
+
+		assert.Equal(t, "default", data.GetImageWithoutRegistry())
+	})
+
+	t.Run("should return full image path when failed to get index", func(t *testing.T) {
+		data := &AnalysisData{
+			DefaultImage: "test",
+		}
+
+		assert.Equal(t, "test", data.GetImageWithoutRegistry())
 	})
 }

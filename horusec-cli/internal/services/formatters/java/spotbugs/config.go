@@ -14,12 +14,9 @@
 
 package spotbugs
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/spotbugs"
-	ImageTag        = "v1.0.1"
+	ImageName = "horuszup/spotbugs"
+	ImageTag  = "v1.0.1"
 	// nolint
 	ImageCmd = `
 		cd ../../../
