@@ -21,6 +21,6 @@ const (
 	ImageName       = "test"
 	ImageTag        = "latest"
 	ImageCmd        = `
-		bundle-audit check --format json
+		bundle-audit check
   `
 )

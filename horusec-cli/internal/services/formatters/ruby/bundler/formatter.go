@@ -15,12 +15,21 @@
 package bundler
 
 import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/bundler/entities"
 )
 
 type Formatter struct {
@@ -52,7 +61,7 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) error {
 		return err
 	}
 
-	return f.parseOutput(output)
+	return f.parseOutput(f.removeOutputEsc(output))
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -65,31 +74,78 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		f.GetToolsConfig()[tools.BundlerAudit].ImagePath, ImageRepository, ImageName, ImageTag)
 }
 
+func (f *Formatter) removeOutputEsc(output string) string {
+	output = strings.ReplaceAll(output, "\u001B[0m", "")
+	output = strings.ReplaceAll(output, "\u001B[31m", "")
+	output = strings.ReplaceAll(output, "\u001B[33m", "")
+	output = strings.ReplaceAll(output, "\u001B[1m", "")
+	return output
+}
+
 func (f *Formatter) parseOutput(output string) error {
-	//if containerOutput == "" {
-	//	return nil
-	//}
-	//
+	for _, outputSplit := range strings.Split(output, "Name:") {
+		f.setOutput(outputSplit)
+	}
 
 	return nil
 }
 
-//
-//func (f *Formatter) setVulnerabilityData(output *entities.Warning) *horusec.Vulnerability {
-//	data := f.getDefaultVulnerabilitySeverity()
-//	data.Severity = output.GetSeverity()
-//	data.Confidence = output.GetSeverity().ToString()
-//	data.Details = output.GetDetails()
-//	data.Line = output.GetLine()
-//	data.File = output.File
-//	data.Code = f.GetCodeWithMaxCharacters(output.Code, 0)
-//	data = hash.Bind(data)
-//	return f.SetCommitAuthor(data)
-//}
-//
-//func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
-//	vulnerabilitySeverity := &horusec.Vulnerability{}
-//	vulnerabilitySeverity.SecurityTool = tools.BundlerAudit
-//	vulnerabilitySeverity.Language = languages.Ruby
-//	return vulnerabilitySeverity
-//}
+func (f *Formatter) setOutput(outputSplit string) {
+	output := &entities.Output{}
+
+	for _, value := range strings.Split(outputSplit, "\r\n") {
+		if value == "" || value == "Vulnerabilities found!" {
+			continue
+		}
+
+		output.SetOutputData(output, value)
+	}
+
+	f.setVulnerabilityData(output)
+}
+
+func (f *Formatter) setVulnerabilityData(output *entities.Output) *horusec.Vulnerability {
+	data := f.getDefaultVulnerabilitySeverity()
+	data.Severity = output.GetSeverity()
+	data.Confidence = output.GetSeverity().ToString()
+	data.Details = output.GetDetails()
+	data.File = f.GetFilepathFromFilename("Gemfile.lock")
+	data.Code = f.GetCodeWithMaxCharacters(output.Name, 0)
+	data = hash.Bind(data)
+	data.Line = f.getVulnerabilityLineByName(data.Code, data.File)
+	return f.SetCommitAuthor(data)
+}
+
+func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
+	vulnerabilitySeverity := &horusec.Vulnerability{}
+	vulnerabilitySeverity.SecurityTool = tools.BundlerAudit
+	vulnerabilitySeverity.Language = languages.Ruby
+	return vulnerabilitySeverity
+}
+
+func (f *Formatter) getVulnerabilityLineByName(module, file string) string {
+	fileExisting, err := os.Open(fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), file))
+	if err != nil {
+		return ""
+	}
+
+	defer func() {
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
+	}()
+
+	return f.getLine(module, bufio.NewScanner(fileExisting))
+}
+
+func (f *Formatter) getLine(module string, scanner *bufio.Scanner) string {
+	line := 1
+
+	for scanner.Scan() {
+		if strings.Contains(strings.ToLower(scanner.Text()), strings.ToLower(module)) {
+			return strconv.Itoa(line)
+		}
+
+		line++
+	}
+
+	return ""
+}

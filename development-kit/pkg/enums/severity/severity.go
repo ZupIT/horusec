@@ -17,12 +17,14 @@ package severity
 type Severity string
 
 const (
-	NoSec  Severity = "NOSEC"
-	Info   Severity = "INFO"
-	Low    Severity = "LOW"
-	Medium Severity = "MEDIUM"
-	High   Severity = "HIGH"
-	Audit  Severity = "AUDIT"
+	NoSec    Severity = "NOSEC"
+	Info     Severity = "INFO"
+	Low      Severity = "LOW"
+	Medium   Severity = "MEDIUM"
+	High     Severity = "HIGH"
+	Audit    Severity = "AUDIT"
+	Unknown  Severity = "UNKNOWN"
+	Critical Severity = "CRITICAL"
 )
 
 func (s Severity) ToString() string {
