@@ -31,12 +31,12 @@
                 <span class="description">Use this option to enable/disable the use of application admin. <br> View more about in this section of the <a target="_blank" href="https://docs.horusec.io/v/v1-eng/tutorials/horusec-usage-options#enable-disable-application-admin">documentation</a>.</span>
 
                 <label class="switch">
-                    <input id="horusec_enable_application_admin" value="false" type="checkbox" onchange="setEnableApplicationAdmin()">
+                    <input id="horusec_enable_application_admin" value="false" type="checkbox" onchange="handleSwitchEnableApp()">
                     <span class="slider round"></span>
                 </label>
             </div>
 
-            <div class="divider" id="form-admin-data">
+            <div class="divider" id="horusec_application_admin_data">
                 <label class="key">HORUSEC_APPLICATION_ADMIN_DATA</label>
 
                 <span class="description">The information for authenticating the application administrator account.</span>
@@ -65,6 +65,7 @@
 window.onload = () => {
     setCurrentValues()
 };
+
 function submitGeneralForm(e) {
     try {
         const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
@@ -74,8 +75,6 @@ function submitGeneralForm(e) {
             email: document.getElementById('admin_data_email').value,
             password: document.getElementById('admin_data_password').value
         })
-
-        console.log(horusec_application_admin_data)
 
         const xhr = new XMLHttpRequest();
         xhr.open('PATCH', '/api/config', true);
@@ -96,24 +95,10 @@ function submitGeneralForm(e) {
         showSnackBar('error')
     }
 }
-function setEnableApplicationAdmin() {
-    const value = document.getElementById('horusec_enable_application_admin').value
-
-    if (value === 'true') {
-        document.getElementById('horusec_enable_application_admin').value = false
-        document.getElementById('form-admin-data').style.display = 'none'
-
-        document.getElementById('admin_data_username').required = false
-        document.getElementById('admin_data_email').required = false
-        document.getElementById('admin_data_password').required = false
-    } else {
-        document.getElementById('horusec_enable_application_admin').value = true
-        document.getElementById('form-admin-data').style.display = 'flex'
-
-        document.getElementById('admin_data_username').required = true
-        document.getElementById('admin_data_email').required = true
-        document.getElementById('admin_data_password').required = true
-    }
+function handleSwitchEnableApp() {
+    let currentValue = document.getElementById('horusec_enable_application_admin').value
+    const valueToSet = currentValue == 'true' ? 'false' : 'true'
+    setEnableApplicationAdmin(valueToSet)
 }
 </script>
 

@@ -23,6 +23,14 @@ function setCurrentValues() {
                     if (item[0] === 'horusec_auth_type') {
                         setAuthType(item[1], true)
                     }
+
+                    if (item[0] === 'horusec_enable_application_admin') {
+                        setEnableApplicationAdmin(item[1])
+                    }
+
+                    if (item[0] === 'horusec_application_admin_data') {
+                        setDataOfAdminApplication(item[1])
+                    }
                 }
             });
         }
@@ -42,3 +50,30 @@ function setAuthType(authType, setRadioOption) {
         document.getElementById(`auth-${authType}`).checked = true
     }
  }
+function setDataOfAdminApplication(data) {
+    try {
+        const appAdminData = JSON.parse(data)
+
+        const { email, password, username } = appAdminData
+
+        document.getElementById('admin_data_username').value = username
+        document.getElementById('admin_data_email').value = email
+        document.getElementById('admin_data_password').value = password
+    } catch (e) {
+        console.info('No admin data to set')
+    }
+}
+function setEnableApplicationAdmin(value) {
+    document.getElementById('horusec_enable_application_admin').value = value
+
+    document.getElementById('admin_data_username').required = value == 'true' ? true : false
+    document.getElementById('admin_data_email').required = value == 'true' ? true : false
+    document.getElementById('admin_data_password').required = value == 'true' ? true : false
+
+    if (value == 'false') {
+        document.getElementById('horusec_application_admin_data').style.display = 'none'
+    } else {
+        document.getElementById('horusec_application_admin_data').style.display = 'flex'
+
+    }
+}
