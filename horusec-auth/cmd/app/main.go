@@ -45,14 +45,14 @@ import (
 // nolint
 func main() {
 	var broker brokerLib.IBroker
+	postgresRead := adapter.NewRepositoryRead()
+	postgresWrite := adapter.NewRepositoryWrite()
 
-	appConfig := app.NewConfig()
+	appConfig := app.NewConfig(postgresRead)
 	if !appConfig.IsDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 
-	postgresRead := adapter.NewRepositoryRead()
-	postgresWrite := adapter.NewRepositoryWrite()
 	cacheRepository := cache.NewCacheRepository(postgresRead, postgresWrite)
 
 	adminConfig.CreateApplicationAdmin(appConfig, postgresRead, postgresWrite)

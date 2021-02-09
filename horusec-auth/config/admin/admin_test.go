@@ -3,6 +3,7 @@ package admin
 import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,8 @@ func TestCreateApplicationAdmin(t *testing.T) {
 	t.Run("Should not execute auto create default application admin", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
-		config := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, errors.New("test"), nil)
+		config := app.NewConfig(mockReadAdmin)
 		assert.NotPanics(t, func() {
 			CreateApplicationAdmin(config, mockRead, mockWrite)
 		})
@@ -22,7 +24,8 @@ func TestCreateApplicationAdmin(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockWrite.On("Create").Return(response.NewResponse(1, nil, nil))
-		config := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, errors.New("test"), nil)
+		config := app.NewConfig(mockReadAdmin)
 		config.EnableApplicationAdmin = true
 		assert.NotPanics(t, func() {
 			CreateApplicationAdmin(config, mockRead, mockWrite)
@@ -32,7 +35,8 @@ func TestCreateApplicationAdmin(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockWrite.On("Create").Return(response.NewResponse(1, nil, nil))
-		config := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, errors.New("test"), nil)
+		config := app.NewConfig(mockReadAdmin)
 		config.ApplicationAdminData = "some wrong content"
 		config.EnableApplicationAdmin = true
 		assert.Panics(t, func() {
@@ -43,7 +47,8 @@ func TestCreateApplicationAdmin(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockWrite.On("Create").Return(response.NewResponse(0, errors.New("pq: duplicate key value violates unique constraint \"accounts_email_key\""), nil))
-		config := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, errors.New("test"), nil)
+		config := app.NewConfig(mockReadAdmin)
 		config.EnableApplicationAdmin = true
 		assert.NotPanics(t, func() {
 			CreateApplicationAdmin(config, mockRead, mockWrite)
@@ -53,7 +58,8 @@ func TestCreateApplicationAdmin(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 		mockWrite.On("Create").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
-		config := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, errors.New("test"), nil)
+		config := app.NewConfig(mockReadAdmin)
 		config.EnableApplicationAdmin = true
 		assert.Panics(t, func() {
 			CreateApplicationAdmin(config, mockRead, mockWrite)

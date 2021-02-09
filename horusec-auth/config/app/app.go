@@ -16,17 +16,19 @@ package app
 
 import (
 	"encoding/json"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 )
 
 const (
-	EnvEnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
-	EnvApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
-	EnvAuthType                  = "HORUSEC_AUTH_TYPE"
-	EnvHorusecAPIURL             = "HORUSEC_API_URL"
-	DisabledBrokerEnv            = "HORUSEC_DISABLED_BROKER"
+	EnvEnableApplicationAdmin   = "HORUSEC_ENABLE_APPLICATION_ADMIN"
+	EnvApplicationAdminData     = "HORUSEC_APPLICATION_ADMIN_DATA"
+	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
+	EnvHorusecAPIURL            = "HORUSEC_API_URL"
+	EnvDisabledBroker           = "HORUSEC_DISABLED_BROKER"
+	DefaultApplicationAdminData = "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
 )
 
 type Config struct {
@@ -37,15 +39,18 @@ type Config struct {
 	DisabledBroker         bool
 }
 
-func NewConfig() *Config {
-	return &Config{
-		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
-		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
-		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
-		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
-			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
-		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
-	}
+func NewConfig(databaseRead SQL.InterfaceRead) *Config {
+	c := &Config{}
+	c.HorusecAPIURL = env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006")
+	c.AuthType = authEnums.AuthorizationType(
+		env.GetEnvFromAdminDatabaseOrDefault(databaseRead, EnvAuthType, authEnums.Horusec.ToString()).ToString())
+	c.EnableApplicationAdmin = env.GetEnvFromAdminDatabaseOrDefault(
+		databaseRead, EnvEnableApplicationAdmin, "false").ToBool()
+	c.ApplicationAdminData = env.GetEnvFromAdminDatabaseOrDefault(
+		databaseRead, EnvApplicationAdminData, DefaultApplicationAdminData).ToString()
+	c.DisabledBroker = env.GetEnvFromAdminDatabaseOrDefault(
+		databaseRead, EnvDisabledBroker, "false").ToBool()
+	return c
 }
 
 func (a *Config) GetEnableApplicationAdmin() bool {

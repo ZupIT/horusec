@@ -16,10 +16,7 @@ package env
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 	"os"
 	"testing"
@@ -122,66 +119,38 @@ func TestGetEnvOrDefaultInterface(t *testing.T) {
 
 func TestGetEnvFromAdminDatabaseOrDefault(t *testing.T) {
 	t.Run("should success get env from database of type boolean", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &admin.HorusecAdminConfig{HorusecEnableApplicationAdmin: "true"}))
+		mockRead := GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecEnableApplicationAdmin: "true"})
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_ENABLE_APPLICATION_ADMIN", "false").ToBool()
 		assert.True(t, r)
 	})
 	t.Run("should success get env from database of type string", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "keycloak"}))
+		mockRead := GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "keycloak"})
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_AUTH_TYPE", "horusec").ToString()
 		assert.Equal(t, r, "keycloak")
 	})
 	t.Run("should success get env from database of type int", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &admin.HorusecAdminConfig{HorusecLdapPort: "3000"}))
+		mockRead := GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecLdapPort: "3000"})
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_LDAP_PORT", "5000").ToInt()
 		assert.Equal(t, r, 3000)
 	})
 	t.Run("should success get env from database but if value is empty get value from environment", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &admin.HorusecAdminConfig{}))
+		mockRead := GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{})
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_ENABLE_APPLICATION_ADMIN", "true").ToBool()
 		assert.True(t, r)
 	})
 	t.Run("should return default content when database return nil value", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, nil))
+		mockRead := GlobalAdminReadMock(0, nil, nil)
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_ENABLE_APPLICATION_ADMIN", "false").ToBool()
 		assert.False(t, r)
 	})
 	t.Run("should return env content when database return nil value", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, nil, nil))
+		mockRead := GlobalAdminReadMock(0, nil, nil)
 		assert.NoError(t, os.Setenv("HORUSEC_ENABLE_APPLICATION_ADMIN", "true"))
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_ENABLE_APPLICATION_ADMIN", "false").ToBool()
 		assert.True(t, r)
 	})
 	t.Run("should error get env from database and return from env", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-		mockRead := &relational.MockRead{}
-		mockRead.On("GetConnection").Return(conn)
-		mockRead.On("Find").Return(response.NewResponse(0, errors.New("test"), nil))
+		mockRead := GlobalAdminReadMock(0, errors.New("test"), nil)
 		r := GetEnvFromAdminDatabaseOrDefault(mockRead, "HORUSEC_ENABLE_APPLICATION_ADMIN", "true").ToBool()
 		assert.True(t, r)
 	})
