@@ -14,13 +14,10 @@
 
 package shellcheck
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/shellcheck"
-	ImageTag        = "v1.0.0"
-	ImageCmd        = `
+	ImageName = "horuszup/shellcheck"
+	ImageTag  = "v1.0.0"
+	ImageCmd  = `
 		{{WORK_DIR}}
 		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
 		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')

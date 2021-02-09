@@ -127,8 +127,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.CSharp,
 	}
 
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageRepository, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) verifyIsCsProjError(output string, err error) error {
