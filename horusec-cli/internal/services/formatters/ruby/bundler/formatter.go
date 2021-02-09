@@ -61,7 +61,8 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) error {
 		return err
 	}
 
-	return f.parseOutput(f.removeOutputEsc(output))
+	f.parseOutput(f.removeOutputEsc(output))
+	return nil
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -82,12 +83,10 @@ func (f *Formatter) removeOutputEsc(output string) string {
 	return output
 }
 
-func (f *Formatter) parseOutput(output string) error {
+func (f *Formatter) parseOutput(output string) {
 	for _, outputSplit := range strings.Split(output, "Name:") {
 		f.setOutput(outputSplit)
 	}
-
-	return nil
 }
 
 func (f *Formatter) setOutput(outputSplit string) {
@@ -101,7 +100,7 @@ func (f *Formatter) setOutput(outputSplit string) {
 		output.SetOutputData(output, value)
 	}
 
-	f.setVulnerabilityData(output)
+	f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(output))
 }
 
 func (f *Formatter) setVulnerabilityData(output *entities.Output) *horusec.Vulnerability {
