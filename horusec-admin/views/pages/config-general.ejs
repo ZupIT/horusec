@@ -31,9 +31,23 @@
                 <span class="description">Use this option to enable/disable the use of application admin. <br> View more about in this section of the <a target="_blank" href="https://docs.horusec.io/v/v1-eng/tutorials/horusec-usage-options#enable-disable-application-admin">documentation</a>.</span>
 
                 <label class="switch">
-                    <input id="horusec_enable_application_admin" value="false" type="checkbox" onchange="setCheckboxValue('horusec_enable_application_admin')">
+                    <input id="horusec_enable_application_admin" value="false" type="checkbox" onchange="handleSwitchEnableApp()">
                     <span class="slider round"></span>
                 </label>
+            </div>
+
+            <div class="divider" id="horusec_application_admin_data">
+                <label class="key">HORUSEC_APPLICATION_ADMIN_DATA</label>
+
+                <span class="description">The information for authenticating the application administrator account.</span>
+
+                <div class="inputs-group">
+                    <input id="admin_data_username" placeholder="Username" type="text">
+
+                    <input id="admin_data_email" placeholder="Email" type="email">
+
+                    <input id="admin_data_password" placeholder="Password" type="password">
+                </div>
             </div>
 
             <div class="btns-wrapper">
@@ -51,17 +65,23 @@
 window.onload = () => {
     setCurrentValues()
 };
+
 function submitGeneralForm(e) {
     try {
         const horusec_jwt_secret_key = document.getElementById('horusec_jwt_secret_key').value
         const horusec_enable_application_admin = document.getElementById('horusec_enable_application_admin').value
+        const horusec_application_admin_data = JSON.stringify({
+            username: document.getElementById('admin_data_username').value,
+            email: document.getElementById('admin_data_email').value,
+            password: document.getElementById('admin_data_password').value
+        })
 
         const xhr = new XMLHttpRequest();
         xhr.open('PATCH', '/api/config', true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.setRequestHeader('authorization', getCookie('horusec::access_token'))
 
-        xhr.send(JSON.stringify({ horusec_enable_application_admin, horusec_jwt_secret_key }))
+        xhr.send(JSON.stringify({ horusec_enable_application_admin, horusec_jwt_secret_key, horusec_application_admin_data }))
 
         xhr.onreadystatechange = function (ev) {
             if (ev.currentTarget.status === 204) {
@@ -75,14 +95,10 @@ function submitGeneralForm(e) {
         showSnackBar('error')
     }
 }
-function setCheckboxValue(id) {
-    const value = document.getElementById(id).value
-
-    if (value === 'true') {
-        document.getElementById(id).value = false
-    } else {
-        document.getElementById(id).value = true
-    }
+function handleSwitchEnableApp() {
+    let currentValue = document.getElementById('horusec_enable_application_admin').value
+    const valueToSet = currentValue == 'true' ? 'false' : 'true'
+    setEnableApplicationAdmin(valueToSet)
 }
 </script>
 
