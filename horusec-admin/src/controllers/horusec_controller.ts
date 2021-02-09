@@ -11,9 +11,12 @@ export class HorusecController {
         this.horusecConfigModel = new HorusecConfigModel(this.db.getConnection()).model;
     }
 
-    public getHorusecConfig(_: Request, res: Response): any {
+    public getHorusecConfig(_: Request, res: Response): Promise<any> {
         return this.horusecConfigModel.findOne()
             .then((result) => {
+                if (result === null) {
+                    return res.status(200).send({});
+                }
                 return res.status(200).send(result);
             })
             .catch((err) => {

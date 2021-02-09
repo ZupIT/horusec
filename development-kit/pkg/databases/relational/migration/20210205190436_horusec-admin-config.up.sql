@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS "horusec_config"
     "horusec_enable_application_admin"  VARCHAR(255),
     "horusec_auth_type"                 VARCHAR(255),
     "horusec_disabled_broker"           VARCHAR(255),
+    "horusec_application_admin_data"    VARCHAR(510),
     "horusec_jwt_secret_key"            VARCHAR(255),
     "horusec_keycloak_base_path"        VARCHAR(255),
     "horusec_keycloak_client_id"        VARCHAR(255),
