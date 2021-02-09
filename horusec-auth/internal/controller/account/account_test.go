@@ -498,7 +498,7 @@ func TestRenewToken(t *testing.T) {
 		Username:  "test",
 	}
 
-	token, _, _ := jwt.CreateToken(account, nil)
+	token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 	t.Run("should success renew token", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
@@ -589,7 +589,7 @@ func TestRenewToken(t *testing.T) {
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
@@ -615,7 +615,7 @@ func TestRenewToken(t *testing.T) {
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
@@ -645,7 +645,7 @@ func TestRenewToken(t *testing.T) {
 		resp := &response.Response{}
 
 		account.AccountID = uuid.New()
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
@@ -1003,11 +1003,12 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
-
-		controller := Account{
+		controller := &Account{
 			appConfig: &app.Config{AuthType: authEnums.Horusec},
+			jwt:       jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
+
+		token, _, _ := controller.jwt.CreateToken(account, nil)
 
 		accountID, err := controller.GetAccountID(token)
 
@@ -1022,7 +1023,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		keycloakMock := &keycloakService.Mock{}
 		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
@@ -1045,11 +1046,12 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
-
 		controller := Account{
 			appConfig: &app.Config{AuthType: authEnums.Ldap},
+			jwt:       jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
+
+		token, _, _ := controller.jwt.CreateToken(account, nil)
 
 		accountID, err := controller.GetAccountID(token)
 

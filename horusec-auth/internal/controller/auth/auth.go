@@ -49,6 +49,7 @@ type Controller struct {
 	ldapAuthService     services.IAuthService
 	keycloak            keycloak.IService
 	appConfig           *app.Config
+	jwt                 jwt.IJWT
 }
 
 func NewAuthController(
@@ -59,6 +60,7 @@ func NewAuthController(
 		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
 		keycloak:            keycloak.NewKeycloakService(),
+		jwt:                 jwt.NewJWT(postgresRead),
 	}
 }
 
@@ -138,11 +140,11 @@ func (c *Controller) GetAccountID(_ context.Context,
 	c.logGrpcRequest("GetAccountID")
 	switch c.getAuthorizationType() {
 	case authEnums.Horusec:
-		return c.setGetAccountIDResponse(jwt.GetAccountIDByJWTToken(data.Token))
+		return c.setGetAccountIDResponse(c.jwt.GetAccountIDByJWTToken(data.Token))
 	case authEnums.Keycloak:
 		return c.setGetAccountIDResponse(c.keycloak.GetAccountIDByJWTToken(data.Token))
 	case authEnums.Ldap:
-		return c.setGetAccountIDResponseLdap(jwt.DecodeToken(data.Token))
+		return c.setGetAccountIDResponseLdap(c.jwt.DecodeToken(data.Token))
 	}
 
 	return c.setGetAccountIDResponse(uuid.Nil, errors.ErrorUnauthorized)

@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -53,7 +54,7 @@ func getTestAuthorizationToken() string {
 		Password:  "test123",
 		Username:  "test",
 	}
-	token, _, _ := jwt.CreateToken(account, nil)
+	token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 	return token
 }
 

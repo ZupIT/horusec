@@ -16,6 +16,7 @@ package jwt
 
 import (
 	"fmt"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"net/http"
 	"strings"
 	"time"
@@ -35,7 +36,25 @@ const (
 		"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
 )
 
-func CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error) {
+type JWT struct {
+	databaseRead SQL.InterfaceRead
+}
+
+type IJWT interface {
+	CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error)
+	DecodeToken(tokenString string) (*dto.ClaimsJWT, error)
+	AuthMiddleware(next http.Handler) http.Handler
+	GetAccountIDByJWTToken(token string) (uuid.UUID, error)
+	CreateRefreshToken() string
+}
+
+func NewJWT(databaseRead SQL.InterfaceRead) IJWT {
+	return &JWT{
+		databaseRead: databaseRead,
+	}
+}
+
+func (j *JWT) CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(time.Hour * time.Duration(1))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &dto.ClaimsJWT{
 		Email:       account.Email,
@@ -49,12 +68,12 @@ func CreateToken(account *authEntities.Account, permissions []string) (string, t
 		},
 	})
 
-	tokenSigned, err := token.SignedString(getHorusecJWTKey())
+	tokenSigned, err := token.SignedString(j.getHorusecJWTKey())
 	return tokenSigned, expiresAt, err
 }
 
-func DecodeToken(tokenString string) (*dto.ClaimsJWT, error) {
-	token, err := parseStringToToken(strings.ReplaceAll(tokenString, "Bearer ", ""))
+func (j *JWT) DecodeToken(tokenString string) (*dto.ClaimsJWT, error) {
+	token, err := j.parseStringToToken(strings.ReplaceAll(tokenString, "Bearer ", ""))
 	if err != nil {
 		return nil, err
 	}
@@ -62,16 +81,16 @@ func DecodeToken(tokenString string) (*dto.ClaimsJWT, error) {
 	return token.Claims.(*dto.ClaimsJWT), nil
 }
 
-func parseStringToToken(tokenString string) (*jwt.Token, error) {
+func (j *JWT) parseStringToToken(tokenString string) (*jwt.Token, error) {
 	return jwt.ParseWithClaims(tokenString, &dto.ClaimsJWT{}, func(token *jwt.Token) (interface{}, error) {
-		return getHorusecJWTKey(), nil
+		return j.getHorusecJWTKey(), nil
 	})
 }
 
-func AuthMiddleware(next http.Handler) http.Handler {
+func (j *JWT) AuthMiddleware(next http.Handler) http.Handler {
 	middleware := jwtMiddleware.New(jwtMiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return getHorusecJWTKey(), nil
+			return j.getHorusecJWTKey(), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 	})
@@ -79,8 +98,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return middleware.Handler(next)
 }
 
-func GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
-	claims, err := DecodeToken(verifyIfContainsBearer(token))
+func (j *JWT) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
+	claims, err := j.DecodeToken(j.verifyIfContainsBearer(token))
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -88,7 +107,7 @@ func GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 	return uuid.Parse(claims.Subject)
 }
 
-func getHorusecJWTKey() []byte {
+func (j *JWT) getHorusecJWTKey() []byte {
 	secretKey := env.GetEnvOrDefault("HORUSEC_JWT_SECRET_KEY", DefaultSecretJWT)
 	if secretKey == DefaultSecretJWT {
 		logger.LogInfo(WarningDefaultJWTSecretKey)
@@ -97,7 +116,7 @@ func getHorusecJWTKey() []byte {
 	return []byte(secretKey)
 }
 
-func verifyIfContainsBearer(token string) string {
+func (j *JWT) verifyIfContainsBearer(token string) string {
 	if strings.Contains(token, "Bearer") {
 		return token
 	}
@@ -105,7 +124,7 @@ func verifyIfContainsBearer(token string) string {
 	return fmt.Sprintf("Bearer %s", token)
 }
 
-func CreateRefreshToken() string {
+func (j *JWT) CreateRefreshToken() string {
 	refreshToken := fmt.Sprintf("%s%s", uuid.New(), uuid.New())
 	return strings.ReplaceAll(refreshToken, "-", "")
 }

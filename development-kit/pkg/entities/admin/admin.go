@@ -36,9 +36,9 @@ type HorusecAdminConfig struct {
 // nolint
 func (a *HorusecAdminConfig) ToMap() map[string]string {
 	return map[string]string{
-		"horusec_enable_application_admin":    a.HorusecEnableApplicationAdmin,
-		"horusec_auth_type":                   a.HorusecAuthType,
-		"horusec_disabled_broker":             a.HorusecDisabledBroker,
+		"horusec_enable_application_admin":    a.HorusecEnableApplicationAdmin, // DONE
+		"horusec_auth_type":                   a.HorusecAuthType,               // DONE
+		"horusec_disabled_broker":             a.HorusecDisabledBroker,         // DONE
 		"horusec_jwt_secret_key":              a.HorusecJwtSecretKey,
 		"horusec_application_admin_data":      a.HorusecJwtSecretKey,
 		"horusec_keycloak_base_path":          a.HorusecKeycloakBasePath,

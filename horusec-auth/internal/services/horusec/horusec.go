@@ -42,6 +42,7 @@ type Service struct {
 	cacheRepository       cache.Interface
 	authUseCases          authUseCases.IUseCases
 	accountRepositoryRepo repoAccountRepository.IAccountRepository
+	jwt                   jwt.IJWT
 }
 
 func NewHorusAuthService(
@@ -54,6 +55,7 @@ func NewHorusAuthService(
 		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(postgresRead, postgresWrite),
 		cacheRepository:       cache.NewCacheRepository(postgresRead, postgresWrite),
 		authUseCases:          authUseCases.NewAuthUseCases(),
+		jwt:                   jwt.NewJWT(postgresRead),
 	}
 }
 
@@ -80,8 +82,8 @@ func (s *Service) login(loginData *dto.LoginData) (*dto.LoginResponse, error) {
 }
 
 func (s *Service) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
-	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
-	refreshToken := jwt.CreateRefreshToken()
+	accessToken, expiresAt, _ := s.jwt.CreateToken(account, nil)
+	refreshToken := s.jwt.CreateRefreshToken()
 	err := s.cacheRepository.Set(
 		&entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}, time.Hour*2)
 	if err != nil {
@@ -107,7 +109,7 @@ func (s *Service) authorizeByRole() map[authEnums.HorusecRoles]func(*dto.Authori
 }
 
 func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedCompanyMember
 	}
@@ -120,7 +122,7 @@ func (s *Service) isCompanyMember(authorizationData *dto.AuthorizationData) (boo
 }
 
 func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedCompanyAdmin
 	}
@@ -133,7 +135,7 @@ func (s *Service) isCompanyAdmin(authorizationData *dto.AuthorizationData) (bool
 }
 
 func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedRepositoryMember
 	}
@@ -148,7 +150,7 @@ func (s *Service) isRepositoryMember(authorizationData *dto.AuthorizationData) (
 }
 
 func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedRepositorySupervisor
 	}
@@ -164,7 +166,7 @@ func (s *Service) isRepositorySupervisor(authorizationData *dto.AuthorizationDat
 }
 
 func (s *Service) isRepositoryAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedRepositoryAdmin
 	}
@@ -185,7 +187,7 @@ func (s *Service) isNotCompanyAdmin(authorizationData *dto.AuthorizationData, ac
 }
 
 func (s *Service) isApplicationAdmin(authorizationData *dto.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(authorizationData.Token)
+	accountID, err := s.jwt.GetAccountIDByJWTToken(authorizationData.Token)
 	if err != nil {
 		return false, errors.ErrorUnauthorizedApplicationAdmin
 	}

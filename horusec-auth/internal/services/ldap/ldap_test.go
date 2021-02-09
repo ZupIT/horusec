@@ -16,6 +16,7 @@ package ldap
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"testing"
 	"time"
 
@@ -65,6 +66,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -97,6 +99,7 @@ func TestAuthenticate(t *testing.T) {
 		databaseWrite.On("Create").Return(respCreate.SetData(user))
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -129,6 +132,7 @@ func TestAuthenticate(t *testing.T) {
 		databaseWrite.On("Create").Return(respCreate.SetError(errors.New("test")))
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -152,6 +156,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, nil)
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -175,6 +180,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("Authenticate").Return(false, map[string]string{}, errorsEnum.ErrorUserDoesNotExist)
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -198,6 +204,7 @@ func TestAuthenticate(t *testing.T) {
 		ldapClientServiceMock.On("Authenticate").Return(true, map[string]string{}, errors.New("test"))
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -238,6 +245,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -246,7 +254,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"admin"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"admin"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -278,6 +286,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -286,7 +295,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -318,6 +327,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -326,7 +336,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"developer"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"developer"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -358,6 +368,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -366,7 +377,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -398,6 +409,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -406,7 +418,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"developer"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"developer"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -438,6 +450,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -446,7 +459,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -478,6 +491,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -486,7 +500,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"supervisor"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"supervisor"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -518,6 +532,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -526,7 +541,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -558,6 +573,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -566,7 +582,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"admin"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"admin"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -598,6 +614,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -606,7 +623,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -633,6 +650,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -641,7 +659,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -668,6 +686,7 @@ func TestIsAuthorized(t *testing.T) {
 		databaseRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -676,7 +695,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,
@@ -697,6 +716,7 @@ func TestIsAuthorized(t *testing.T) {
 		ldapClientServiceMock := &ldapService.Mock{}
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -727,6 +747,7 @@ func TestIsAuthorized(t *testing.T) {
 		ldapClientServiceMock.On("GetGroupsOfUser").Return([]string{"test"}, nil)
 
 		service := &Service{
+			jwt:            jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			client:         ldapClientServiceMock,
 			accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 			companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
@@ -735,7 +756,7 @@ func TestIsAuthorized(t *testing.T) {
 			memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
 		}
 
-		token, _, _ := jwt.CreateToken(account, []string{"test"})
+		token, _, _ := service.jwt.CreateToken(account, []string{"test"})
 
 		credentials := dto.AuthorizationData{
 			Token:        token,

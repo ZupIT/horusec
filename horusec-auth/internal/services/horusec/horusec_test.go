@@ -16,6 +16,7 @@ package horusec
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"testing"
 	"time"
 
@@ -41,7 +42,7 @@ import (
 )
 
 func generateToken() string {
-	token, _, _ := jwt.CreateToken(&authEntities.Account{
+	token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(&authEntities.Account{
 		AccountID: uuid.New(),
 		Email:     "test@test.com",
 		Password:  "test",
@@ -97,6 +98,7 @@ func TestAuthenticate(t *testing.T) {
 			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
 			cacheRepository:       cacheRepositoryMock,
 			authUseCases:          authUseCases.NewAuthUseCases(),
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
 
 		credentials := &dto.Credentials{
@@ -227,6 +229,7 @@ func TestAuthenticate(t *testing.T) {
 			accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
 			cacheRepository:       cacheRepositoryMock,
 			authUseCases:          authUseCases.NewAuthUseCases(),
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
 
 		credentials := &dto.Credentials{
@@ -255,6 +258,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -285,6 +289,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -311,6 +316,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -333,6 +339,7 @@ func TestIsAuthorizedCompanyMember(t *testing.T) {
 		mockRead := &relational.MockRead{}
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -367,6 +374,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -397,6 +405,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -427,6 +436,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -449,6 +459,7 @@ func TestIsAuthorizedCompanyAdmin(t *testing.T) {
 		mockRead := &relational.MockRead{}
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -483,6 +494,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -513,6 +525,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -543,6 +556,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -569,6 +583,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -591,6 +606,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead := &relational.MockRead{}
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -625,6 +641,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -657,6 +674,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -687,6 +705,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -719,6 +738,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -751,6 +771,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -777,6 +798,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -803,6 +825,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -837,6 +860,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -869,6 +893,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -899,6 +924,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -929,6 +955,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -955,6 +982,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -981,6 +1009,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -1015,6 +1044,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:                   jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			repoAccountCompany:    repositoryAccountCompany.NewAccountCompanyRepository(mockRead, nil),
 			repoAccountRepository: repoAccountRepository.NewAccountRepositoryRepository(mockRead, nil),
 			repositoryRepo:        repositoryRepo.NewRepository(mockRead, nil),
@@ -1047,6 +1077,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:               jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1074,6 +1105,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:               jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1097,6 +1129,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:               jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 
@@ -1124,6 +1157,7 @@ func TestIsApplicationAdmin(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		service := Service{
+			jwt:               jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			accountRepository: repositoryAccount.NewAccountRepository(mockRead, nil),
 		}
 

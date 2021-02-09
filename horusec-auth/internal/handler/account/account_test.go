@@ -551,7 +551,7 @@ func TestResetPassword(t *testing.T) {
 			Password:  "Other@Pass123",
 		}
 		account.SetPasswordHash()
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -586,7 +586,7 @@ func TestResetPassword(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -616,7 +616,7 @@ func TestResetPassword(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
@@ -659,7 +659,7 @@ func TestRenewToken(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -693,7 +693,7 @@ func TestRenewToken(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Return(resp.SetData(account))
@@ -747,7 +747,7 @@ func TestRenewToken(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 
 		handler.RenewToken(w, r)
@@ -783,7 +783,7 @@ func TestLogout(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
@@ -807,7 +807,7 @@ func TestLogout(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
 
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
 		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
@@ -954,7 +954,7 @@ func TestDeleteAccount(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -983,7 +983,7 @@ func TestDeleteAccount(t *testing.T) {
 			Username:  "test",
 			Email:     "test@test.com",
 		}
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		resp := &response.Response{}
 		mockRead.On("Find").Once().Return(resp.SetData(account))
@@ -1029,7 +1029,7 @@ func TestUpdateAccount(t *testing.T) {
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
@@ -1071,7 +1071,7 @@ func TestUpdateAccount(t *testing.T) {
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockRead.On("Find").Return(response.NewResponse(0, errors.New("test"), nil))
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
@@ -1094,7 +1094,7 @@ func TestUpdateAccount(t *testing.T) {
 		mockRead.On("Find").Return(response.NewResponse(1, nil, account))
 
 		mockWrite.On("Update").Return(response.NewResponse(0, errors.New("test"), nil))
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)

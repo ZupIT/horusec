@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -55,7 +56,7 @@ func setAuthorizationHeader(r *http.Request) {
 		Username:  "test",
 	}
 
-	token, _, _ := jwt.CreateToken(account, nil)
+	token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 	r.Header.Add("X-Horusec-Authorization", token)
 }
 
@@ -775,7 +776,7 @@ func TestList(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
@@ -803,7 +804,7 @@ func TestList(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", "")
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
@@ -826,7 +827,7 @@ func TestList(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
-		token, _, _ := jwt.CreateToken(account, nil)
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))

@@ -15,6 +15,7 @@
 package dto
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"testing"
 
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
@@ -26,7 +27,7 @@ import (
 
 func TestAuthorizationDataValidate(t *testing.T) {
 	t.Run("should return no error when valid data", func(t *testing.T) {
-		token, _, _ := jwt.CreateToken(&authEntities.Account{
+		token, _, _ := jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)).CreateToken(&authEntities.Account{
 			AccountID:   uuid.New(),
 			Email:       "test@test.com",
 			Password:    "safePassword!123",

@@ -70,6 +70,7 @@ type Account struct {
 	appConfig             *app.Config
 	authUseCases          authUseCases.IUseCases
 	keycloak              keycloak.IService
+	jwt                   jwt.IJWT
 }
 
 func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
@@ -85,6 +86,7 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 		appConfig:             appConfig,
 		authUseCases:          authUseCases.NewAuthUseCases(),
 		keycloak:              keycloak.NewKeycloakService(),
+		jwt:                   jwt.NewJWT(databaseRead),
 	}
 }
 
@@ -199,7 +201,7 @@ func (a *Account) VerifyResetPasswordCode(data *dto.ResetCodeData) (string, erro
 
 	_ = a.cacheRepository.Del(data.Email)
 
-	token, _, err := jwt.CreateToken(account, nil)
+	token, _, err := a.jwt.CreateToken(account, nil)
 	return token, err
 }
 
@@ -237,7 +239,7 @@ func (a *Account) setNewPasswordInAccount(account *authEntities.Account, passwor
 }
 
 func (a *Account) RenewToken(refreshToken, accessToken string) (*dto.LoginResponse, error) {
-	accountID, _ := jwt.GetAccountIDByJWTToken(accessToken)
+	accountID, _ := a.jwt.GetAccountIDByJWTToken(accessToken)
 	account, err := a.accountRepository.GetByAccountID(accountID)
 	if err != nil {
 		return nil, err
@@ -266,7 +268,7 @@ func (a *Account) getAndValidateRefreshToken(refreshToken, accessToken string, a
 }
 
 func (a *Account) decodeAndValidateTokens(accountID, accessToken string) error {
-	token, err := jwt.DecodeToken(accessToken)
+	token, err := a.jwt.DecodeToken(accessToken)
 	if err != nil {
 		return err
 	}
@@ -279,8 +281,8 @@ func (a *Account) decodeAndValidateTokens(accountID, accessToken string) error {
 }
 
 func (a *Account) setLoginResponse(account *authEntities.Account) (*dto.LoginResponse, error) {
-	accessToken, expiresAt, _ := jwt.CreateToken(account, nil)
-	refreshToken := jwt.CreateRefreshToken()
+	accessToken, expiresAt, _ := a.jwt.CreateToken(account, nil)
+	refreshToken := a.jwt.CreateRefreshToken()
 	err := a.cacheRepository.Set(
 		&entityCache.Cache{Key: account.AccountID.String(), Value: []byte(refreshToken)}, time.Hour*2)
 	if err != nil {
@@ -339,11 +341,11 @@ func (a *Account) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 func (a *Account) GetAccountID(token string) (uuid.UUID, error) {
 	switch a.appConfig.GetAuthType() {
 	case authEnums.Horusec:
-		return jwt.GetAccountIDByJWTToken(token)
+		return a.jwt.GetAccountIDByJWTToken(token)
 	case authEnums.Keycloak:
 		return a.keycloak.GetAccountIDByJWTToken(token)
 	case authEnums.Ldap:
-		return jwt.GetAccountIDByJWTToken(token)
+		return a.jwt.GetAccountIDByJWTToken(token)
 	}
 
 	return uuid.Nil, errors.ErrorUnauthorized

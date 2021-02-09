@@ -16,6 +16,7 @@ package jwt
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -29,30 +30,34 @@ import (
 )
 
 func TestCreateToken(t *testing.T) {
+	mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+	j := NewJWT(mockReadAdmin)
 	t.Run("should success create a sign token with no errors", func(t *testing.T) {
 		account := &authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
 			AccountID: uuid.New(),
 		}
-		token, _, err := CreateToken(account, nil)
+		token, _, err := j.CreateToken(account, nil)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, token)
 	})
 }
 
 func TestDecodeToken(t *testing.T) {
+	mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+	j := NewJWT(mockReadAdmin)
 	t.Run("should success decode token", func(t *testing.T) {
 		account := &authEntities.Account{
 			Email:     "test@test.com",
 			Username:  "test",
 			AccountID: uuid.New(),
 		}
-		token, _, err := CreateToken(account, nil)
+		token, _, err := j.CreateToken(account, nil)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, token)
 
-		claims, err := DecodeToken(token)
+		claims, err := j.DecodeToken(token)
 		assert.NoError(t, err)
 		assert.NoError(t, claims.Valid())
 	})
@@ -63,24 +68,26 @@ func TestDecodeToken(t *testing.T) {
 			Username:  "test",
 			AccountID: uuid.New(),
 		}
-		token, _, err := CreateToken(account, nil)
+		token, _, err := j.CreateToken(account, nil)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, token)
 
 		_ = os.Setenv("HORUSEC_JWT_SECRET_KEY", "test")
-		_, err = DecodeToken(token)
+		_, err = j.DecodeToken(token)
 		assert.Error(t, err)
 		assert.Equal(t, "signature is invalid", err.Error())
 	})
 }
 
 func TestAuthMiddleware(t *testing.T) {
+	mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+	j := NewJWT(mockReadAdmin)
 	t.Run("should return 200 when valid token", func(t *testing.T) {
-		handler := AuthMiddleware(http.HandlerFunc(test.Handler))
+		handler := j.AuthMiddleware(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 
-		token, _, _ := CreateToken(&authEntities.Account{
+		token, _, _ := j.CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
@@ -92,7 +99,7 @@ func TestAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("should return 401 when invalid jwt token", func(t *testing.T) {
-		handler := AuthMiddleware(http.HandlerFunc(test.Handler))
+		handler := j.AuthMiddleware(http.HandlerFunc(test.Handler))
 
 		req, _ := http.NewRequest("GET", "http://test", nil)
 
@@ -106,27 +113,29 @@ func TestAuthMiddleware(t *testing.T) {
 }
 
 func TestGetAccountIDByJWTToken(t *testing.T) {
+	mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+	j := NewJWT(mockReadAdmin)
 	t.Run("should success return a account ID with no error", func(t *testing.T) {
-		token, _, _ := CreateToken(&authEntities.Account{
+		token, _, _ := j.CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
 		}, nil)
 
-		accountID, err := GetAccountIDByJWTToken(token)
+		accountID, err := j.GetAccountIDByJWTToken(token)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, accountID)
 	})
 
 	t.Run("should success return a account ID with bearer", func(t *testing.T) {
-		token, _, _ := CreateToken(&authEntities.Account{
+		token, _, _ := j.CreateToken(&authEntities.Account{
 			AccountID: uuid.New(),
 			Email:     "test@test.com",
 			Username:  "test",
 		}, nil)
 
 		token = fmt.Sprintf("Bearer %s", token)
-		accountID, err := GetAccountIDByJWTToken(token)
+		accountID, err := j.GetAccountIDByJWTToken(token)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, accountID)
 	})
@@ -135,15 +144,17 @@ func TestGetAccountIDByJWTToken(t *testing.T) {
 		token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QiLCJ1c2VybmFtZSI6InRlc3QiLCJzdWIiOiJ0" +
 			"ZXN0In0.TMmUwiXEHkgtEX3Fxudu_GP1f9ZmRnkJfzlSuKaaH-o"
 
-		accountID, err := GetAccountIDByJWTToken(token)
+		accountID, err := j.GetAccountIDByJWTToken(token)
 		assert.Error(t, err)
 		assert.Equal(t, uuid.Nil, accountID)
 	})
 }
 
 func TestCreateRefreshToken(t *testing.T) {
+	mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+	j := NewJWT(mockReadAdmin)
 	t.Run("should success create refresh token", func(t *testing.T) {
-		refreshToken := CreateRefreshToken()
+		refreshToken := j.CreateRefreshToken()
 		assert.NotEmpty(t, refreshToken)
 	})
 }

@@ -42,6 +42,7 @@ type Service struct {
 	repositoryRepo repositoryRepo.IRepository
 	cacheRepo      cache.Interface
 	memo           *memoize.Memoizer
+	jwt            jwt.IJWT
 }
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
@@ -52,6 +53,7 @@ func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.
 		repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),
 		cacheRepo:      cache.NewCacheRepository(databaseRead, databaseWrite),
 		memo:           memoize.NewMemoizer(90*time.Second, 1*time.Minute),
+		jwt:            jwt.NewJWT(databaseRead),
 	}
 }
 
@@ -120,7 +122,7 @@ func (s *Service) setLDAPAuthResponse(account *authEntities.Account, userDN stri
 		return nil, err
 	}
 
-	accessToken, expiresAt, _ := jwt.CreateToken(account, userGroups)
+	accessToken, expiresAt, _ := s.jwt.CreateToken(account, userGroups)
 	return &dto.LdapAuthResponse{
 		AccessToken:        accessToken,
 		ExpiresAt:          expiresAt,
@@ -238,7 +240,7 @@ func (s *Service) getEntityGroupsNameByRole(member, supervisor, admin []string,
 }
 
 func (s *Service) getUserGroupsByJWT(tokenStr string) ([]string, error) {
-	token, err := jwt.DecodeToken(tokenStr)
+	token, err := s.jwt.DecodeToken(tokenStr)
 	if err != nil {
 		return nil, err
 	}

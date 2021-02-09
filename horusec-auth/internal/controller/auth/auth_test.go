@@ -246,15 +246,16 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
-
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
 			appConfig:           &app.Config{AuthType: authEnums.Horusec},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
+			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
+
+		token, _, _ := controller.jwt.CreateToken(account, nil)
 
 		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
@@ -269,19 +270,20 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
-
 		keycloakMock := &keycloakService.Mock{}
 		mockService := &services.MockAuthService{}
 
 		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		controller := Controller{
+			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 			keycloak:            keycloakMock,
 		}
+
+		token, _, _ := controller.jwt.CreateToken(account, nil)
 
 		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
@@ -296,15 +298,16 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 			Username:  "test",
 		}
 
-		token, _, _ := jwt.CreateToken(account, nil)
-
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
+			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			appConfig:           &app.Config{AuthType: authEnums.Ldap},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
+
+		token, _, _ := controller.jwt.CreateToken(account, nil)
 
 		response, err := controller.GetAccountID(nil, &authGrpc.GetAccountData{Token: token})
 
@@ -316,6 +319,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
+			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 			appConfig:           &app.Config{AuthType: "test"},
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
