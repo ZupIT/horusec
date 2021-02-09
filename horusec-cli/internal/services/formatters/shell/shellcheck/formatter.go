@@ -16,9 +16,10 @@ package shellcheck
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
@@ -116,8 +117,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Shell,
 	}
 
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.ShellCheck].ImagePath, ImageRepository, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.ShellCheck].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) isIgnoredFix(message string) bool {

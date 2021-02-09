@@ -14,13 +14,10 @@
 
 package npmaudit
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/npmaudit"
-	ImageTag        = "v1.0.0"
-	ImageCmd        = `
+	ImageName = "horuszup/npmaudit"
+	ImageTag  = "v1.0.0"
+	ImageCmd  = `
 		{{WORK_DIR}}
       if [ -f package-lock.json ]; then
         npm audit --only=prod --json > /tmp/results-ANALYSISID.json 2> /tmp/errorNpmaudit-ANALYSISID

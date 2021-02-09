@@ -19,7 +19,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	enumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
@@ -57,11 +56,6 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /auth/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if h.appConfig.GetAuthType() == auth.Ldap && !h.ldap.IsAvailable() {
-		httpUtil.StatusInternalServerError(w, enumErrors.ErrorLdapConnError)
-		return
-	}
-
 	if !h.postgresRead.IsAvailable() || !h.postgresWrite.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, enumErrors.ErrorDatabaseIsNotHealth)
 		return

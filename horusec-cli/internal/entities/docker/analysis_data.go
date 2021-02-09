@@ -16,30 +16,52 @@ package docker
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
-const DefaultRepository = "docker.io"
+const DefaultRegistry = "docker.io"
 
 type AnalysisData struct {
-	ImagePath string
-	CMD       string
-	Language  languages.Language
+	CustomImage  string
+	DefaultImage string
+	CMD          string
+	Language     languages.Language
 }
 
 func (a *AnalysisData) IsInvalid() bool {
-	return a.ImagePath == "" || a.CMD == ""
+	return a.DefaultImage == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageRepository, imageName, imageTag string) *AnalysisData {
-	if imagePathInConfig != "" {
-		a.ImagePath = imagePathInConfig
-		return a
-	}
-	if imageRepository == "" {
-		a.ImagePath = fmt.Sprintf("%s:%s", imageName, imageTag)
-		return a
-	}
-	a.ImagePath = fmt.Sprintf("%s/%s:%s", imageRepository, imageName, imageTag)
+func (a *AnalysisData) SetData(customImage, imageName, imageTag string) *AnalysisData {
+	a.CustomImage = customImage
+	a.DefaultImage = fmt.Sprintf("%s/%s:%s", DefaultRegistry, imageName, imageTag)
+
 	return a
+}
+
+func (a *AnalysisData) GetImageWithRegistry() string {
+	if a.CustomImage != "" {
+		return a.CustomImage
+	}
+
+	return a.DefaultImage
+}
+
+func (a *AnalysisData) GetImageWithoutRegistry() string {
+	if a.CustomImage != "" {
+		return a.removeRegistry(a.CustomImage)
+	}
+
+	return a.removeRegistry(a.DefaultImage)
+}
+
+func (a *AnalysisData) removeRegistry(fullImagePath string) string {
+	index := strings.Index(fullImagePath, "/")
+	if index < 0 {
+		return fullImagePath
+	}
+
+	return fullImagePath[index+1:]
 }
