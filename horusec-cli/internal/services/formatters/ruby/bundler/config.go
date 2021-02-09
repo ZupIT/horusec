@@ -18,8 +18,8 @@ import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 
 const (
 	ImageRepository = docker.DefaultRepository
-	ImageName       = "test"
-	ImageTag        = "latest"
+	ImageName       = "horuszup/horusec-ruby"
+	ImageTag        = "1.0.1"
 	ImageCmd        = `
 		bundle-audit check
   `
