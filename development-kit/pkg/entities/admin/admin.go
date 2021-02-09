@@ -6,6 +6,7 @@ type HorusecAdminConfig struct {
 	HorusecEnableApplicationAdmin   string `json:"horusec_enable_application_admin" gorm:"column:horusec_enable_application_admin"`
 	HorusecAuthType                 string `json:"horusec_auth_type" gorm:"column:horusec_auth_type"`
 	HorusecDisabledBroker           string `json:"horusec_disabled_broker" gorm:"column:horusec_disabled_broker"`
+	HorusecApplicationAdminData     string `json:"horusec_application_admin_data" gorm:"column:horusec_application_admin_data"`
 	HorusecJwtSecretKey             string `json:"horusec_jwt_secret_key" gorm:"column:horusec_jwt_secret_key"`
 	HorusecKeycloakBasePath         string `json:"horusec_keycloak_base_path" gorm:"column:horusec_keycloak_base_path"`
 	HorusecKeycloakClientID         string `json:"horusec_keycloak_client_id" gorm:"column:horusec_keycloak_client_id"`
@@ -39,6 +40,7 @@ func (a *HorusecAdminConfig) ToMap() map[string]string {
 		"horusec_auth_type":                   a.HorusecAuthType,
 		"horusec_disabled_broker":             a.HorusecDisabledBroker,
 		"horusec_jwt_secret_key":              a.HorusecJwtSecretKey,
+		"horusec_application_admin_data":      a.HorusecJwtSecretKey,
 		"horusec_keycloak_base_path":          a.HorusecKeycloakBasePath,
 		"horusec_keycloak_client_id":          a.HorusecKeycloakClientID,
 		"horusec_keycloak_client_secret":      a.HorusecKeycloakClientSecret,

@@ -22,6 +22,9 @@ export class HorusecConfigModel {
             horusec_disabled_broker: {
                 type: DataTypes.STRING,
             },
+            horusec_application_admin_data: {
+                type: DataTypes.STRING,
+            },
             horusec_jwt_secret_key: {
                 type: DataTypes.STRING,
             },
