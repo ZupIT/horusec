@@ -1,1 +1,12 @@
 @import './config.css';
+
+div#form-admin-data {
+    display: none;
+}
+
+div.inputs-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
