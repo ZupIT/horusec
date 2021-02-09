@@ -15,13 +15,13 @@
 package main
 
 import (
+	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 	"log"
 	"net/http"
 
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
 	brokerConfig "github.com/ZupIT/horusec/horusec-api/config/broker"
-	"github.com/ZupIT/horusec/horusec-api/config/grpc"
 	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
@@ -43,19 +43,24 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name X-Horusec-Authorization
+// nolint
 func main() {
 	var broker brokerLib.IBroker
 
+	grpcCon := grpcConfig.SetupGrpcConnection()
+
 	postgresRead := adapter.NewRepositoryRead()
 	postgresWrite := adapter.NewRepositoryWrite()
-	appConfig := app.SetupApp()
-	if !appConfig.IsDisabledBroker() {
+
+	appConfig := app.SetupApp(grpcCon)
+
+	if !appConfig.GetDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 
 	server := serverUtil.NewServerConfig("8000", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).
-		GetRouter(postgresRead, postgresWrite, broker, appConfig, grpc.SetupGrpcConnection())
+		GetRouter(postgresRead, postgresWrite, broker, appConfig, grpcCon)
 
 	startService(server, chiRouter)
 }

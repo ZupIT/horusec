@@ -57,9 +57,8 @@ func TestGet(t *testing.T) {
 		postgresMockWrite := &relational.MockWrite{}
 		mockGrpcService := &health.MockHealthCheckClient{}
 
-		config := &app.Config{
-			DisabledBroker: false,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(false)
 
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
@@ -86,9 +85,8 @@ func TestGet(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 		mockGrpcService := &health.MockHealthCheckClient{}
-		config := &app.Config{
-			DisabledBroker: true,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(true)
 
 		postgresMockRead.On("IsAvailable").Return(true)
 		postgresMockWrite.On("IsAvailable").Return(true)
@@ -113,9 +111,8 @@ func TestGet(t *testing.T) {
 		postgresMockRead := &relational.MockRead{}
 		postgresMockWrite := &relational.MockWrite{}
 		brokerMock := &broker.Mock{}
-		config := &app.Config{
-			DisabledBroker: false,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(false)
 
 		brokerMock.On("IsAvailable").Return(false)
 		postgresMockRead.On("IsAvailable").Return(true)
@@ -143,9 +140,8 @@ func TestGet(t *testing.T) {
 		postgresMockWrite.On("IsAvailable").Return(true)
 		postgresMockRead.On("IsAvailable").Return(false)
 
-		config := &app.Config{
-			DisabledBroker: false,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(false)
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 
@@ -170,9 +166,8 @@ func TestGet(t *testing.T) {
 		postgresMockWrite.On("IsAvailable").Return(false)
 		postgresMockRead.On("IsAvailable").Return(true)
 
-		config := &app.Config{
-			DisabledBroker: false,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(false)
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 
@@ -195,9 +190,8 @@ func TestGet(t *testing.T) {
 		postgresMockWrite := &relational.MockWrite{}
 		mockGrpcService := &health.MockHealthCheckClient{}
 
-		config := &app.Config{
-			DisabledBroker: false,
-		}
+		config := &app.Config{}
+		config.SetDisabledBroker(false)
 
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)

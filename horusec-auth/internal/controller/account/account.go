@@ -117,7 +117,7 @@ func (a *Account) newAccountFromKeycloakToken(accessToken string) (*authEntities
 }
 
 func (a *Account) CreateAccount(account *authEntities.Account) error {
-	if a.appConfig.IsDisabledBroker() {
+	if a.appConfig.GetDisabledBroker() {
 		account = account.SetIsConfirmed()
 	}
 
@@ -138,7 +138,7 @@ func (a *Account) ValidateEmail(accountID uuid.UUID) error {
 }
 
 func (a *Account) sendValidateAccountEmail(account *authEntities.Account) error {
-	if a.appConfig.IsDisabledBroker() {
+	if a.appConfig.GetDisabledBroker() {
 		return nil
 	}
 
@@ -173,7 +173,7 @@ func (a *Account) SendResetPasswordCode(email string) error {
 }
 
 func (a *Account) sendResetPasswordEmail(email, username, code string) error {
-	if a.appConfig.IsDisabledBroker() {
+	if a.appConfig.GetDisabledBroker() {
 		return nil
 	}
 

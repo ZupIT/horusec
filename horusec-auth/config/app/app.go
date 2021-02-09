@@ -28,7 +28,8 @@ const (
 	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
 	EnvHorusecAPIURL            = "HORUSEC_API_URL"
 	EnvDisabledBroker           = "HORUSEC_DISABLED_BROKER"
-	DefaultApplicationAdminData = "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
+	DefaultApplicationAdminData = "{\"username\": \"horusec-admin\", " +
+		"\"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
 )
 
 type Config struct {
@@ -69,6 +70,6 @@ func (a *Config) GetHorusecAPIURL() string {
 	return a.HorusecAPIURL
 }
 
-func (a *Config) IsDisabledBroker() bool {
+func (a *Config) GetDisabledBroker() bool {
 	return a.DisabledBroker
 }

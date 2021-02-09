@@ -181,9 +181,8 @@ func TestDelete(t *testing.T) {
 
 func TestPost(t *testing.T) {
 	mockBroker := &broker.Mock{}
-	config := &app.Config{
-		DisabledBroker: false,
-	}
+	config := &app.Config{}
+	config.SetDisabledBroker(false)
 	mockBroker.On("Publish").Return(nil)
 	t.Run("Should return 201 when return success in create new analysis", func(t *testing.T) {
 		mockRead := &relational.MockRead{}

@@ -16,6 +16,7 @@ package account
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"os"
 	"testing"
 	"time"
@@ -77,7 +78,8 @@ func TestNewAccountController(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 	})
@@ -93,7 +95,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -116,7 +119,8 @@ func TestCreateAccount(t *testing.T) {
 		resp := &response.Response{}
 		mockWrite.On("Create").Return(resp.SetError(errors.New("test")))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -140,7 +144,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(
 			resp.SetError(errors.New("pq: duplicate key value violates unique constraint \"accounts_email_key\"")))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -164,7 +169,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(&response.Response{})
 
 		_ = os.Setenv("HORUSEC_DISABLED_BROKER", "true")
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
@@ -196,7 +202,8 @@ func TestValidateEmail(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -214,7 +221,8 @@ func TestValidateEmail(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -239,7 +247,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		cacheRepositoryMock.On("Set").Return(nil)
 		brokerMock.On("Publish").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -260,7 +269,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Set").Return(errors.New("test"))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -279,7 +289,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -307,7 +318,8 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		resp2 := &response.Response{}
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -330,7 +342,8 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -348,7 +361,8 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, errors.New("test"))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -366,7 +380,8 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("654321")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -395,7 +410,8 @@ func TestResetPassword(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -419,7 +435,8 @@ func TestResetPassword(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -444,7 +461,8 @@ func TestResetPassword(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -463,7 +481,8 @@ func TestResetPassword(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -499,7 +518,8 @@ func TestRenewToken(t *testing.T) {
 		resp2 := &response.Response{}
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -526,7 +546,8 @@ func TestRenewToken(t *testing.T) {
 		resp2 := &response.Response{}
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -548,7 +569,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -573,7 +595,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -598,7 +621,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -627,7 +651,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -655,7 +680,8 @@ func TestRenewToken(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Get").Return(&entityCache.Cache{Value: []byte("test")}, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -681,7 +707,8 @@ func TestLogout(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -700,7 +727,8 @@ func TestLogout(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -723,7 +751,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -745,7 +774,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -768,7 +798,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -791,7 +822,8 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Delete").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -810,7 +842,8 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -1048,7 +1081,8 @@ func TestGetAccountIDByEmail(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -1069,7 +1103,8 @@ func TestGetAccountIDByEmail(t *testing.T) {
 		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 
@@ -1098,7 +1133,8 @@ func TestUpdateAccount(t *testing.T) {
 
 		mockWrite.On("Update").Return(&response.Response{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		assert.NotNil(t, controller)
 

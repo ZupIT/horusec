@@ -17,7 +17,6 @@ package auth
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"math/rand"
 	"regexp"
@@ -26,9 +25,7 @@ import (
 	"github.com/Nerzal/gocloak/v7"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -37,7 +34,6 @@ import (
 type IUseCases interface {
 	NewCredentialsFromReadCloser(body io.ReadCloser) (*dto.Credentials, error)
 	NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*dto.AuthorizationData, error)
-	IsInvalidAuthType(authType authEnums.AuthorizationType) error
 	ToLoginResponse(
 		account *authEntities.Account, accessToken, refreshToken string, expiresAt time.Time) *dto.LoginResponse
 	ToCreateAccountFromKeycloakResponse(account *authEntities.Account) *dto.CreateAccountFromKeycloakResponse
@@ -83,15 +79,6 @@ func (u *UseCases) NewAuthorizationDataFromReadCloser(body io.ReadCloser) (*dto.
 	}
 
 	return authorizationData, authorizationData.Validate()
-}
-
-func (u *UseCases) IsInvalidAuthType(authType authEnums.AuthorizationType) error {
-	validType := env.GetEnvOrDefault("HORUSEC_AUTH_TYPE", authEnums.Horusec.ToString())
-	if authType.ToString() != validType {
-		return fmt.Errorf(errors.ErrorAuthTypeNotActive, validType)
-	}
-
-	return nil
 }
 
 func (u *UseCases) ToLoginResponse(account *authEntities.Account, accessToken, refreshToken string,

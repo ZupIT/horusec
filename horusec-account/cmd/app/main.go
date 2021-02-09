@@ -47,7 +47,7 @@ func main() {
 	grpcCon := grpcConfig.SetupGrpcConnection()
 
 	appConfig := app.SetupApp(grpcCon)
-	if !appConfig.IsDisabledBroker() {
+	if !appConfig.GetDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 

@@ -64,7 +64,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /account/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	if !h.appConfig.IsDisabledBroker() {
+	if !h.appConfig.GetDisabledBroker() {
 		if !h.broker.IsAvailable() {
 			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
 			return

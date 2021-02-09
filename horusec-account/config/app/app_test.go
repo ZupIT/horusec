@@ -65,7 +65,7 @@ func TestIsDisabledBroker(t *testing.T) {
 			},
 		}
 
-		assert.True(t, appConfig.IsDisabledBroker())
+		assert.True(t, appConfig.GetDisabledBroker())
 	})
 }
 

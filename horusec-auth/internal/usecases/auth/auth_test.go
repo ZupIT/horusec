@@ -81,26 +81,6 @@ func TestNewAuthorizationDataFromReadCloser(t *testing.T) {
 	})
 }
 
-func TestIsInvalidAuthType(t *testing.T) {
-	t.Run("should return true when invalid type", func(t *testing.T) {
-		useCases := NewAuthUseCases()
-		isInvalid := useCases.IsInvalidAuthType(authEnums.Keycloak)
-		assert.Error(t, isInvalid)
-
-		isInvalid = useCases.IsInvalidAuthType(authEnums.Ldap)
-		assert.Error(t, isInvalid)
-
-		isInvalid = useCases.IsInvalidAuthType("test")
-		assert.Error(t, isInvalid)
-	})
-
-	t.Run("should false when valid", func(t *testing.T) {
-		useCases := NewAuthUseCases()
-		isInvalid := useCases.IsInvalidAuthType(authEnums.Horusec)
-		assert.NoError(t, isInvalid)
-	})
-}
-
 func TestToLoginResponse(t *testing.T) {
 	t.Run("should success parse to login response", func(t *testing.T) {
 		useCases := NewAuthUseCases()

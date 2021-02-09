@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -173,7 +174,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
@@ -193,7 +195,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errors.New("test"))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
@@ -213,7 +216,8 @@ func TestCreateAccount(t *testing.T) {
 		mockWrite.On("Create").Return(&response.Response{})
 		brokerMock.On("Publish").Return(errorsEnum.ErrorEmailAlreadyInUse)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
@@ -230,7 +234,8 @@ func TestCreateAccount(t *testing.T) {
 		cacheRepositoryMock := &cache.Mock{}
 		account := &authEntities.Account{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
@@ -257,7 +262,8 @@ func TestValidateEmail(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -282,7 +288,8 @@ func TestValidateEmail(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Update").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -302,7 +309,8 @@ func TestValidateEmail(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/test", nil)
 		w := httptest.NewRecorder()
@@ -330,7 +338,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -356,7 +365,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -380,7 +390,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -399,7 +410,8 @@ func TestSendResetPasswordCode(t *testing.T) {
 		data := &dto.EmailData{Email: "test"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -434,7 +446,8 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -458,7 +471,8 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -488,7 +502,8 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -511,7 +526,8 @@ func TestValidateResetPasswordCode(t *testing.T) {
 		data := &dto.ResetCodeData{Email: "test", Code: "123456"}
 		dataBytes, _ := json.Marshal(data)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader(dataBytes))
 		w := httptest.NewRecorder()
@@ -548,7 +564,8 @@ func TestResetPassword(t *testing.T) {
 		mockRead.On("Find").Return(resp2.SetData(nil))
 		mockWrite.On("Update").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
@@ -577,7 +594,8 @@ func TestResetPassword(t *testing.T) {
 		mockWrite.On("Update").Return(resp.SetError(errors.New("test")))
 		passwordBytes, _ := json.Marshal("Ch@ng3m3")
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", bytes.NewReader(passwordBytes))
 		w := httptest.NewRecorder()
@@ -600,7 +618,8 @@ func TestResetPassword(t *testing.T) {
 		}
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -617,7 +636,8 @@ func TestResetPassword(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -651,7 +671,8 @@ func TestRenewToken(t *testing.T) {
 		resp2 := &response.Response{}
 		mockRead.On("Find").Return(resp2.SetData(nil))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
@@ -681,7 +702,8 @@ func TestRenewToken(t *testing.T) {
 		cacheRepositoryMock.On("Del").Return(nil)
 		cacheRepositoryMock.On("Set").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
@@ -698,7 +720,8 @@ func TestRenewToken(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", nil)
 		w := httptest.NewRecorder()
@@ -714,7 +737,8 @@ func TestRenewToken(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account", nil)
 		w := httptest.NewRecorder()
@@ -753,7 +777,8 @@ func TestLogout(t *testing.T) {
 		mockWrite.On("Update").Return(resp)
 		cacheRepositoryMock.On("Del").Return(nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -776,7 +801,8 @@ func TestLogout(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetError(errors.New("test")))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -795,7 +821,8 @@ func TestLogout(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -819,7 +846,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
 		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
@@ -845,7 +873,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
 		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
@@ -871,7 +900,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
 		validateUnique := &dto.ValidateUnique{Email: "test@test.com", Username: "test"}
@@ -897,7 +927,8 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 		mockRead.On("Find").Return(resp.SetData(account))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 
 		validateUnique := &dto.ValidateUnique{Email: "test", Username: "test"}
@@ -930,7 +961,8 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Delete").Return(resp)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -958,7 +990,8 @@ func TestDeleteAccount(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Delete").Return(resp.SetError(errors.New("test")))
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -975,7 +1008,8 @@ func TestDeleteAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		cacheRepositoryMock := &cache.Mock{}
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
 		r, _ := http.NewRequest(http.MethodPost, "api/account/", nil)
 		w := httptest.NewRecorder()
@@ -998,7 +1032,8 @@ func TestUpdateAccount(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		r.Header.Add("X-Horusec-Authorization", token)
@@ -1018,7 +1053,8 @@ func TestUpdateAccount(t *testing.T) {
 		account := &authEntities.Account{AccountID: uuid.New(), Email: "test@test.com", Username: "test"}
 		mockWrite.On("Update").Return(&response.Response{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		w := httptest.NewRecorder()
@@ -1038,7 +1074,8 @@ func TestUpdateAccount(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		mockWrite.On("Update").Return(&response.Response{})
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		r.Header.Add("X-Horusec-Authorization", token)
@@ -1059,7 +1096,8 @@ func TestUpdateAccount(t *testing.T) {
 		mockWrite.On("Update").Return(response.NewResponse(0, errors.New("test"), nil))
 		token, _, _ := jwt.CreateToken(account, nil)
 
-		appConfig := app.NewConfig()
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
 		handler := NewHandler(nil, mockRead, mockWrite, nil, appConfig)
 		r, _ := http.NewRequest(http.MethodPatch, "api/account/update", bytes.NewReader(account.ToBytes()))
 		r.Header.Add("X-Horusec-Authorization", token)

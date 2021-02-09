@@ -16,6 +16,7 @@ package auth
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"os"
 	"testing"
 
@@ -39,7 +40,9 @@ func TestNewAuthController(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		controller := NewAuthController(mockRead, mockWrite, app.NewConfig())
+		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
+		appConfig := app.NewConfig(mockReadAdmin)
+		controller := NewAuthController(mockRead, mockWrite, appConfig)
 
 		assert.NotNil(t, controller)
 	})

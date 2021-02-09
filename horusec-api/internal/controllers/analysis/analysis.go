@@ -156,7 +156,7 @@ func (c *Controller) hasDuplicatedHash(
 }
 
 func (c *Controller) publishToWebhook(analysis *horusecEntities.Analysis) error {
-	if !c.config.IsDisabledBroker() {
+	if !c.config.GetDisabledBroker() {
 		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysis.ToBytes())
 	}
 	return nil

@@ -49,7 +49,7 @@ func main() {
 	postgresWrite := adapter.NewRepositoryWrite()
 
 	appConfig := app.NewConfig(postgresRead)
-	if !appConfig.IsDisabledBroker() {
+	if !appConfig.GetDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 

@@ -31,7 +31,7 @@ type Config struct {
 }
 
 type IAppConfig interface {
-	IsDisabledBroker() bool
+	GetDisabledBroker() bool
 	IsApplicationAdminEnable() bool
 	GetAuthType() authEnums.AuthorizationType
 }
@@ -57,7 +57,7 @@ func (c *Config) getAuthConfig() IAppConfig {
 	return c
 }
 
-func (c *Config) IsDisabledBroker() bool {
+func (c *Config) GetDisabledBroker() bool {
 	return c.DisabledBroker
 }
 

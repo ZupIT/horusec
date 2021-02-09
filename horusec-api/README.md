@@ -40,14 +40,13 @@ To change variables environment to run your analysis also you set new values.
 | HORUSEC_DATABASE_SQL_DIALECT                  | postgresql://root:root@localhost:5432/horusec_db?sslmode=disable | This environment get dialect to connect on database POSTGRES |
 | HORUSEC_DATABASE_SQL_LOG_MODE                 | false                                                            | This environment get bool to enable logs on POSTGRES         |
 | HORUSEC_PORT                                  | 8000                                                             | This environment get the port that the service will start    |
-| HORUSEC_GRPC_AUTH_URL                         | localhost:8007                                                   | This environment get horusec url to mount horusec auth url   |
-| HORUSEC_GRPC_USE_CERTS                        | false                                                            | This environment get if use of certificates is active or not |
-| HORUSEC_GRPC_CERT_PATH                        |                                                                  | This environment get grpc certificate path                   | 
-| HORUSEC_DISABLED_BROKER                       | false                                                            | Disable broker dispatch in this service used to webhook dispatch | 
 | HORUSEC_BROKER_HOST                           | 127.0.0.1                                                        | This environment get host to connect on broker RABBIT        | 
 | HORUSEC_BROKER_PORT                           | 5672                                                             | This environment get port to connect on broker RABBIT        |
 | HORUSEC_BROKER_USERNAME                       | guest                                                            | This environment get username to connect on broker RABBIT    |
 | HORUSEC_BROKER_PASSWORD                       | guest                                                            | This environment get password to connect on broker RABBIT    |
+| HORUSEC_GRPC_AUTH_URL                         | localhost:8007                                                                             | This environment get horusec url to mount horusec auth url   |
+| HORUSEC_GRPC_USE_CERTS                        | false                                                                                      | This environment get if use of certificates is active or not |
+| HORUSEC_GRPC_CERT_PATH                        |                                                                                            | This environment get grpc certificate path                   | 
 
 ## Swagger
 To update swagger.json, you need run command into **root horusec-api folder**

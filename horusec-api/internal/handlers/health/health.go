@@ -69,7 +69,7 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 		return
 	}
 
-	if !h.config.IsDisabledBroker() {
+	if !h.config.GetDisabledBroker() {
 		if !h.broker.IsAvailable() {
 			httpUtil.StatusInternalServerError(w, errors.ErrorBrokerIsNotHealth)
 			return
