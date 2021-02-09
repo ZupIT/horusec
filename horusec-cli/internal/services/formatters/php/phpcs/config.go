@@ -14,12 +14,9 @@
 
 package phpcs
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/horusec-phpcs"
-	ImageTag        = "v1.0.0"
+	ImageName = "horuszup/horusec-phpcs"
+	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 		phpcs --report=json --standard=/vendor/pheromone/phpcs-security-audit/example_drupal7_ruleset.xml . > /tmp/result-ANALYSISID.json

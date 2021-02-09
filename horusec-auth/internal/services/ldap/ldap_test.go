@@ -58,6 +58,7 @@ func TestAuthenticate(t *testing.T) {
 
 		user := map[string]string{"username": "test", "email": "test@test.com"}
 		ldapClientServiceMock.On("Authenticate").Return(true, user, nil)
+		ldapClientServiceMock.On("Close")
 
 		resp := response.Response{}
 		databaseRead.On("Find").Return(resp.SetData(user))
@@ -89,6 +90,7 @@ func TestAuthenticate(t *testing.T) {
 
 		user := map[string]string{"givenName": "test", "mail": "test@test.com"}
 		ldapClientServiceMock.On("Authenticate").Return(true, user, nil)
+		ldapClientServiceMock.On("Close")
 
 		respFind := response.Response{}
 		respCreate := response.Response{}

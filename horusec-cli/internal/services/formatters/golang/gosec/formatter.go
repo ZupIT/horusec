@@ -122,6 +122,5 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Go,
 	}
 
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.GoSec].ImagePath, ImageRepository, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
 }

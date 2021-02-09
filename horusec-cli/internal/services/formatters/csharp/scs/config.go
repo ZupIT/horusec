@@ -14,12 +14,9 @@
 
 package scs
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/dotnet-core-3.1"
-	ImageTag        = "v1.0.0"
+	ImageName = "horuszup/dotnet-core-3.1"
+	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 		{{WORK_DIR}}
