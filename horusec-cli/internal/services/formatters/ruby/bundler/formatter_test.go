@@ -48,7 +48,7 @@ func TestParseOutput(t *testing.T) {
 			formatter.StartAnalysis("")
 		})
 
-		assert.Len(t, analysis.AnalysisVulnerabilities, 3)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 2)
 	})
 
 	t.Run("Should return error when parsing invalid output", func(t *testing.T) {
@@ -60,6 +60,42 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+	})
+
+	t.Run("Should return error when gem lock not found", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
+			Return("No such file or directory Errno::ENOENT", nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+	})
+
+	t.Run("Should return no vulnerabilities", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
+			Return("No vulnerabilities found", nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 

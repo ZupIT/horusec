@@ -93,12 +93,17 @@ func (f *Formatter) verifyGemLockError(output string) error {
 func (f *Formatter) removeOutputEsc(output string) string {
 	output = strings.ReplaceAll(output, "\u001B[0m", "")
 	output = strings.ReplaceAll(output, "\u001B[31m", "")
+	output = strings.ReplaceAll(output, "\u001B[32m", "")
 	output = strings.ReplaceAll(output, "\u001B[33m", "")
 	output = strings.ReplaceAll(output, "\u001B[1m", "")
 	return output
 }
 
 func (f *Formatter) parseOutput(output string) {
+	if strings.Contains(output, "No vulnerabilities found") {
+		return
+	}
+
 	for _, outputSplit := range strings.Split(output, "Name:") {
 		f.setOutput(outputSplit)
 	}
