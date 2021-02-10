@@ -109,3 +109,19 @@ func TestConfig_GetAuthType(t *testing.T) {
 		})
 	})
 }
+
+func TestMock(t *testing.T) {
+	m := &Mock{}
+	m.On("GetHorusecAPIURL").Return("http://myhost.com/api")
+	assert.NotEmpty(t, m.GetHorusecAPIURL())
+	m.On("GetEnableApplicationAdmin").Return(true)
+	assert.Equal(t, true, m.GetEnableApplicationAdmin())
+	m.On("GetDisabledBroker").Return(true)
+	assert.Equal(t, true, m.GetDisabledBroker())
+	m.On("GetApplicationAdminData").Return(&dto.CreateAccount{Email: "user@email.com"}, nil)
+	adminData, err := m.GetApplicationAdminData()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, adminData)
+	m.On("GetAuthType").Return(authEnums.Horusec)
+	assert.NotEmpty(t, m.GetAuthType())
+}
