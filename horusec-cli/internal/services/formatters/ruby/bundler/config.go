@@ -18,6 +18,7 @@ const (
 	ImageName = "horuszup/horusec-ruby"
 	ImageTag  = "1.0.1"
 	ImageCmd  = `
+		{{WORK_DIR}}
 		bundle-audit check
   `
 )

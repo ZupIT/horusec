@@ -21,12 +21,15 @@ import (
 	"strconv"
 	"strings"
 
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/bundler/entities"
@@ -61,17 +64,30 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) error {
 		return err
 	}
 
+	if errGemLock := f.verifyGemLockError(output); errGemLock != nil {
+		return errGemLock
+	}
+
 	f.parseOutput(f.removeOutputEsc(output))
 	return nil
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.BundlerAudit),
+		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "Gemfile.lock"), tools.SecurityCodeScan),
 		Language: languages.Ruby,
 	}
 
 	return analysisData.SetData(f.GetToolsConfig()[tools.BundlerAudit].ImagePath, ImageName, ImageTag)
+}
+
+func (f *Formatter) verifyGemLockError(output string) error {
+	if strings.Contains(output, "No such file or directory") && strings.Contains(output, "Errno::ENOENT") {
+		return errorsEnums.ErrGemLockNotFound
+	}
+
+	return nil
 }
 
 func (f *Formatter) removeOutputEsc(output string) string {
@@ -89,8 +105,11 @@ func (f *Formatter) parseOutput(output string) {
 }
 
 func (f *Formatter) setOutput(outputSplit string) {
-	output := &entities.Output{}
+	if outputSplit == "" {
+		return
+	}
 
+	output := &entities.Output{}
 	for _, value := range strings.Split(outputSplit, "\r\n") {
 		if value == "" || value == "Vulnerabilities found!" {
 			continue

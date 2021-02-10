@@ -19,6 +19,7 @@ const (
 	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
+		{{WORK_DIR}}
 		phpcs --report=json --standard=/vendor/pheromone/phpcs-security-audit/example_drupal7_ruleset.xml . > /tmp/result-ANALYSISID.json
 		cat /tmp/result-ANALYSISID.json
 		chmod -R 777 .
