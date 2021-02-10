@@ -45,7 +45,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Produce  json
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/health [get]
+// @Router /messages/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	if !h.mailer.IsAvailable() {
 		httpUtil.StatusInternalServerError(w, EnumErrors.ErrorSMTPServerIsNotAvailable)

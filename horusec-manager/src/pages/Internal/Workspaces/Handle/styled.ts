@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { Input } from 'components';
+import { Input, Icon } from 'components';
 
 const Title = styled.h1`
   font-weight: normal;
@@ -39,9 +39,13 @@ const Form = styled.form`
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: flex-end;
-  margin-top: 45px;
+  align-items: flex-start;
+  margin-top: 20px;
   width: 100%;
+`;
+
+const WrapperColumn = styled(Wrapper)`
+  flex-direction: column;
 `;
 
 const Label = styled.label`
@@ -54,6 +58,10 @@ const Field = styled(Input)`
   margin: 20px 0 30px 0;
 `;
 
+const OptionIcon = styled(Icon)`
+  margin-right: 10px;
+`;
+
 export default {
   Title,
   SubTitle,
@@ -61,4 +69,6 @@ export default {
   Wrapper,
   Label,
   Field,
+  OptionIcon,
+  WrapperColumn,
 };

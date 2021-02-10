@@ -21,6 +21,7 @@ import (
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type ICompanyRepository interface {
@@ -30,7 +31,7 @@ type ICompanyRepository interface {
 	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
-	GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error)
+	ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error)
 }
 
 type Repository struct {
@@ -92,7 +93,7 @@ func (r *Repository) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.Co
 		GetConnection().
 		Select(
 			"comp.company_id, comp.name, comp.description, accountComp.role,"+
-				" comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
+				"comp.created_at, comp.updated_at",
 		).
 		Table("companies AS comp").
 		Joins("JOIN account_company AS accountComp ON accountComp.company_id = comp.company_id"+
@@ -127,32 +128,36 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 	return accounts, response.GetError()
 }
 
-func (r *Repository) GetAllOfAccountLdap(permissions []string) (*[]accountEntities.CompanyResponse, error) {
-	companies := &[]accountEntities.CompanyResponse{}
-	filter := r.companyFilterByLdapPermissions(permissions)
+//nolint
+func (r *Repository) ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	workspaces := &[]accountEntities.CompanyResponse{}
 
-	query := r.databaseRead.
-		GetConnection().
-		Select(
-			"comp.company_id, comp.name, comp.description, 'admin' AS role, " +
-				"comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
-		).
-		Table("companies AS comp").
-		Where(fmt.Sprintf("comp.authz_admin SIMILAR TO %s OR comp.authz_member SIMILAR TO %s", filter, filter)).
-		Find(&companies)
+	query := fmt.Sprintf(`
+		SELECT *
+		FROM (
+			SELECT * FROM (%[1]s) AS admin
+			UNION ALL
+			SELECT * FROM (%[2]s) AS member
+			WHERE member.company_id NOT IN (SELECT company_id FROM (%[1]s) AS admin)
+		) AS workspace
+	`, r.listByLdapPermissionsWhenAdmin(), r.listByLdapPermissionsWhenMember())
 
-	return companies, query.Error
+	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&workspaces)
+	return workspaces, response.Error
 }
 
-func (r *Repository) companyFilterByLdapPermissions(permissions []string) (result string) {
-	for _, permission := range permissions {
-		if result == "" {
-			result = permission
-			continue
-		}
+func (r *Repository) listByLdapPermissionsWhenAdmin() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'admin' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_admin
+	`
+}
 
-		result = fmt.Sprintf("%s|%s", result, permission)
-	}
-
-	return "'%(" + result + ")%'"
+func (r *Repository) listByLdapPermissionsWhenMember() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'member' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_member
+	`
 }

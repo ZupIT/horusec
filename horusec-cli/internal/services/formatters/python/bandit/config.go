@@ -14,13 +14,10 @@
 
 package bandit
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/bandit"
-	ImageTag        = "v1.0.1"
-	ImageCmd        = `
+	ImageName = "horuszup/bandit"
+	ImageTag  = "v1.0.1"
+	ImageCmd  = `
 		{{WORK_DIR}}
       	chmod +x /usr/local/bin/horusec-file-ignore.sh
       	horusec-file-ignore.sh 2> /tmp/errorBanditIgnoreScript-ANALYSISID 1> /dev/null

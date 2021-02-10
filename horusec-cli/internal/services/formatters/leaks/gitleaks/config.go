@@ -14,12 +14,9 @@
 
 package gitleaks
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/gitleaks"
-	ImageTag        = "v1.0.2"
+	ImageName = "horuszup/gitleaks"
+	ImageTag  = "v1.0.2"
 	// nolint
 	ImageCmd = `
 		{{WORK_DIR}}

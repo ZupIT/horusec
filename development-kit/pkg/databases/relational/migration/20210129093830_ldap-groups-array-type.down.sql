@@ -9,6 +9,4 @@ ALTER TABLE repositories
     DROP COLUMN IF EXISTS authz_admin,
     DROP COLUMN IF EXISTS authz_supervisor;
 
-ALTER TABLE "accounts" ALTER COLUMN "password" SET NOT NULL;
-
 COMMIT;
