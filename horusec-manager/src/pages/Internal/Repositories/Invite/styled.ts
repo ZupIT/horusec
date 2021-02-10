@@ -180,9 +180,6 @@ const EmptyText = styled.span`
 `;
 
 const HelpIcon = styled(Icon)`
-  position: absolute;
-  right: 10px;
-  top: 20px;
   cursor: pointer;
 
   :hover {
