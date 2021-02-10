@@ -39,8 +39,8 @@ func (a *HorusecAdminConfig) ToMap() map[string]string {
 		"horusec_enable_application_admin":    a.HorusecEnableApplicationAdmin, // DONE
 		"horusec_auth_type":                   a.HorusecAuthType,               // DONE
 		"horusec_disabled_broker":             a.HorusecDisabledBroker,         // DONE
-		"horusec_jwt_secret_key":              a.HorusecJwtSecretKey,
-		"horusec_application_admin_data":      a.HorusecJwtSecretKey,
+		"horusec_jwt_secret_key":              a.HorusecJwtSecretKey,           // DONE
+		"horusec_application_admin_data":      a.HorusecApplicationAdminData,   // DONE
 		"horusec_keycloak_base_path":          a.HorusecKeycloakBasePath,
 		"horusec_keycloak_client_id":          a.HorusecKeycloakClientID,
 		"horusec_keycloak_client_secret":      a.HorusecKeycloakClientSecret,
@@ -56,17 +56,17 @@ func (a *HorusecAdminConfig) ToMap() map[string]string {
 		"horusec_ldap_bindpassword":           a.HorusecLdapBindPassword,
 		"horusec_ldap_userfilter":             a.HorusecLdapUserFilter,
 		"horusec_ldap_admin_group":            a.HorusecLdapAdminGroup,
-		"react_app_keycloak_client_id":        a.ReactAppKeycloakClientID,
-		"react_app_keycloak_realm":            a.ReactAppKeycloakRealm,
-		"react_app_keycloak_base_path":        a.ReactAppKeycloakBasePath,
-		"react_app_horusec_endpoint_api":      a.ReactAppHorusecEndpointApi,
-		"react_app_horusec_endpoint_analytic": a.ReactAppHorusecEndpointAnalytic,
-		"react_app_horusec_endpoint_account":  a.ReactAppHorusecEndpointAccount,
-		"react_app_horusec_endpoint_auth":     a.ReactAppHorusecEndpointAuth,
-		"react_app_horusec_manager_path":      a.ReactAppHorusecManagerPath,
+		"react_app_keycloak_client_id":        a.ReactAppKeycloakClientID,        // DONE
+		"react_app_keycloak_realm":            a.ReactAppKeycloakRealm,           // DONE
+		"react_app_keycloak_base_path":        a.ReactAppKeycloakBasePath,        // DONE
+		"react_app_horusec_endpoint_api":      a.ReactAppHorusecEndpointApi,      // DONE
+		"react_app_horusec_endpoint_analytic": a.ReactAppHorusecEndpointAnalytic, // DONE
+		"react_app_horusec_endpoint_account":  a.ReactAppHorusecEndpointAccount,  // DONE
+		"react_app_horusec_endpoint_auth":     a.ReactAppHorusecEndpointAuth,     // DONE
+		"react_app_horusec_manager_path":      a.ReactAppHorusecManagerPath,      // DONE
 	}
 }
 
 func (a *HorusecAdminConfig) GetTable() string {
-	return "companies"
+	return "horusec_config"
 }

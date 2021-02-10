@@ -19,9 +19,9 @@ type Env struct {
 	value interface{}
 }
 
-func GetEnvFromAdminDatabaseOrDefault(databaseRead SQL.InterfaceRead, env, defaultValue string) IEnv {
-	var entity *admin.HorusecAdminConfig
-	response := databaseRead.Find(&entity, databaseRead.GetConnection(), entity.GetTable())
+func GetEnvFromAdminOrDefault(databaseRead SQL.InterfaceRead, env, defaultValue string) IEnv {
+	entity := &admin.HorusecAdminConfig{}
+	response := databaseRead.Find(entity, databaseRead.GetConnection(), entity.GetTable())
 	if err := response.GetError(); err != nil {
 		logger.LogError(fmt.Sprintf("Error on get env (%s) on database", env), err)
 		return &Env{value: GetEnvOrDefault(env, defaultValue)}

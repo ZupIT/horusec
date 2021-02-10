@@ -68,7 +68,6 @@ lint:
 		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.25.0
 		$(GOCILINT) run -v --timeout=2m -c .golangci.yml ./...
     endif
-		cd horusec-admin && npm run lint && cd ..
 
 # Run all tests of project but stop the execution on the first test fail
 test:

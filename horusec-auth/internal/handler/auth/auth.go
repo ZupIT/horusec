@@ -15,6 +15,7 @@
 package auth
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	netHTTP "net/http"
 
 	authDTO "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
@@ -35,11 +36,13 @@ type Handler struct {
 	authUseCases   authUseCases.IUseCases
 	authController authController.IController
 	appConfig      *app.Config
+	postgresRead   relational.InterfaceRead
 }
 
 func NewAuthHandler(
 	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Handler {
 	return &Handler{
+		postgresRead:   postgresRead,
 		appConfig:      appConfig,
 		authUseCases:   authUseCases.NewAuthUseCases(),
 		authController: authController.NewAuthController(postgresRead, postgresWrite, appConfig),
@@ -57,11 +60,20 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Produce  json
 // @Success 200 {object} http.Response{content=string} "STATUS OK"
 // @Router /auth/auth/config [get]
+// nolint:lll because is necessary
 func (h *Handler) Config(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusOK(w, auth.ConfigAuth{
-		ApplicationAdminEnable: h.appConfig.GetEnableApplicationAdmin(),
-		AuthType:               h.appConfig.GetAuthType(),
-		DisabledBroker:         h.appConfig.GetDisabledBroker(),
+		ApplicationAdminEnable:          h.appConfig.GetEnableApplicationAdmin(),
+		AuthType:                        h.appConfig.GetAuthType(),
+		DisabledBroker:                  h.appConfig.GetDisabledBroker(),
+		ReactAppKeycloakClientID:        env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_KEYCLOAK_CLIENT_ID", "").ToString(),
+		ReactAppKeycloakRealm:           env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_KEYCLOAK_REALM", "").ToString(),
+		ReactAppKeycloakBasePath:        env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_KEYCLOAK_BASE_PATH", "").ToString(),
+		ReactAppHorusecEndpointAPI:      env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_HORUSEC_ENDPOINT_API", "http://127.0.0.1:8000").ToString(),
+		ReactAppHorusecEndpointAnalytic: env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_HORUSEC_ENDPOINT_ANALYTIC", "http://127.0.0.1:8005").ToString(),
+		ReactAppHorusecEndpointAccount:  env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_HORUSEC_ENDPOINT_ACCOUNT", "http://127.0.0.1:8003").ToString(),
+		ReactAppHorusecEndpointAuth:     env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_HORUSEC_ENDPOINT_AUTH", "http://127.0.0.1:8006").ToString(),
+		ReactAppHorusecManagerPath:      env.GetEnvFromAdminOrDefault(h.postgresRead, "REACT_APP_HORUSEC_MANAGER_PATH", "/").ToString(),
 	})
 }
 

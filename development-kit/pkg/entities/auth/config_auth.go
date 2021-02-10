@@ -20,9 +20,17 @@ import (
 )
 
 type ConfigAuth struct {
-	ApplicationAdminEnable bool                   `json:"applicationAdminEnable"`
-	DisabledBroker         bool                   `json:"disabledBroker"`
-	AuthType               auth.AuthorizationType `json:"authType"`
+	ApplicationAdminEnable          bool                   `json:"applicationAdminEnable"`
+	DisabledBroker                  bool                   `json:"disabledBroker"`
+	AuthType                        auth.AuthorizationType `json:"authType"`
+	ReactAppKeycloakClientID        string                 `json:"reactAppKeycloakClientID"`
+	ReactAppKeycloakRealm           string                 `json:"reactAppKeycloakRealm"`
+	ReactAppKeycloakBasePath        string                 `json:"reactAppKeycloakBasePath"`
+	ReactAppHorusecEndpointAPI      string                 `json:"reactAppHorusecEndpointApi"`
+	ReactAppHorusecEndpointAnalytic string                 `json:"reactAppHorusecEndpointAnalytic"`
+	ReactAppHorusecEndpointAccount  string                 `json:"reactAppHorusecEndpointAccount"`
+	ReactAppHorusecEndpointAuth     string                 `json:"reactAppHorusecEndpointAuth"`
+	ReactAppHorusecManagerPath      string                 `json:"reactAppHorusecManagerPath"`
 }
 
 func ParseInterfaceToConfigAuth(content interface{}) (configAuth ConfigAuth, err error) {

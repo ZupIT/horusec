@@ -44,12 +44,12 @@ func NewConfig(databaseRead SQL.InterfaceRead) *Config {
 	c := &Config{}
 	c.HorusecAPIURL = env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006")
 	c.AuthType = authEnums.AuthorizationType(
-		env.GetEnvFromAdminDatabaseOrDefault(databaseRead, EnvAuthType, authEnums.Horusec.ToString()).ToString())
-	c.EnableApplicationAdmin = env.GetEnvFromAdminDatabaseOrDefault(
+		env.GetEnvFromAdminOrDefault(databaseRead, EnvAuthType, authEnums.Horusec.ToString()).ToString())
+	c.EnableApplicationAdmin = env.GetEnvFromAdminOrDefault(
 		databaseRead, EnvEnableApplicationAdmin, "false").ToBool()
-	c.ApplicationAdminData = env.GetEnvFromAdminDatabaseOrDefault(
+	c.ApplicationAdminData = env.GetEnvFromAdminOrDefault(
 		databaseRead, EnvApplicationAdminData, DefaultApplicationAdminData).ToString()
-	c.DisabledBroker = env.GetEnvFromAdminDatabaseOrDefault(
+	c.DisabledBroker = env.GetEnvFromAdminOrDefault(
 		databaseRead, EnvDisabledBroker, "false").ToBool()
 	return c
 }
