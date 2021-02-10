@@ -67,14 +67,14 @@ type Account struct {
 	databaseWrite         SQL.InterfaceWrite
 	accountRepositoryRepo repoAccountRepository.IAccountRepository
 	cacheRepository       cache.Interface
-	appConfig             *app.Config
+	appConfig             app.IConfig
 	authUseCases          authUseCases.IUseCases
 	keycloak              keycloak.IService
 	jwt                   jwt.IJWT
 }
 
 func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig *app.Config) IAccount {
+	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IConfig) IAccount {
 	return &Account{
 		accountRepository:     repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
 		keycloakService:       keycloak.NewKeycloakService(),

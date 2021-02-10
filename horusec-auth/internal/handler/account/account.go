@@ -41,7 +41,7 @@ type Handler struct {
 }
 
 func NewHandler(broker brokerLib.IBroker, databaseRead SQL.InterfaceRead,
-	databaseWrite SQL.InterfaceWrite, cache cacheRepository.Interface, appConfig *app.Config) *Handler {
+	databaseWrite SQL.InterfaceWrite, cache cacheRepository.Interface, appConfig app.IConfig) *Handler {
 	return &Handler{
 		controller: accountController.NewAccountController(broker, databaseRead, databaseWrite, cache, appConfig),
 		useCases:   authUseCases.NewAuthUseCases(),

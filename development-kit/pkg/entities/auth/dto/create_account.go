@@ -14,7 +14,11 @@
 
 package dto
 
-import authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+import (
+	"encoding/json"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+)
 
 type CreateAccount struct {
 	Email    string `json:"email"`
@@ -28,4 +32,12 @@ func (c *CreateAccount) ToAccount() *authEntities.Account {
 		Password: c.Password,
 		Username: c.Username,
 	}
+}
+
+func (c *CreateAccount) ToString() string {
+	bytes, err := json.Marshal(c)
+	if err != nil {
+		logger.LogError("Error on parse CreateAccount to bytes", err)
+	}
+	return string(bytes)
 }

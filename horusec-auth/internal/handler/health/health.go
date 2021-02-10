@@ -30,11 +30,11 @@ type Handler struct {
 	postgresRead  relational.InterfaceRead
 	postgresWrite relational.InterfaceWrite
 	ldap          ldapService.ILDAPService
-	appConfig     *app.Config
+	appConfig     app.IConfig
 }
 
 func NewHandler(postgresRead relational.InterfaceRead,
-	postgresWrite relational.InterfaceWrite, appConfig *app.Config) httpUtil.Interface {
+	postgresWrite relational.InterfaceWrite, appConfig app.IConfig) httpUtil.Interface {
 	return &Handler{
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,

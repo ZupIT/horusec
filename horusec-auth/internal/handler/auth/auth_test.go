@@ -18,8 +18,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -82,7 +84,7 @@ func TestAuthByType(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
-			appConfig:      &app.Config{},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, nil)),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -123,9 +125,8 @@ func TestAuthByType(t *testing.T) {
 
 func TestHandler_AuthTypes(t *testing.T) {
 	t.Run("should return 200 when get auth types", func(t *testing.T) {
-		handler := NewAuthHandler(nil, nil, &app.Config{
-			AuthType: authEnums.Horusec,
-		})
+		postgresRead := env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})
+		handler := NewAuthHandler(postgresRead, nil, app.NewConfig(postgresRead))
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -136,19 +137,18 @@ func TestHandler_AuthTypes(t *testing.T) {
 	})
 	t.Run("should return 200 when get auth types mocked", func(t *testing.T) {
 		controllerMock := &authController.MockAuthController{}
-		controllerMock.On("GetAuthType").Return(authEnums.Horusec, nil)
+		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, nil)
 		handler := Handler{
-			appConfig: &app.Config{
-				AuthType: "test",
-			},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
 
-		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		credentialsBytes, _ := json.Marshal(dto.Credentials{Username: "test", Password: "test"})
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(credentialsBytes))
 		w := httptest.NewRecorder()
 
-		handler.Config(w, r)
+		handler.AuthByType(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -159,7 +159,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
-			appConfig:      &app.Config{AuthType: authEnums.Ldap},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -182,7 +182,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
-			appConfig:      &app.Config{AuthType: authEnums.Keycloak},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Keycloak.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -205,7 +205,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errors.New("test"))
 
 		handler := Handler{
-			appConfig:      &app.Config{AuthType: authEnums.Horusec},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -228,7 +228,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorAccountEmailNotConfirmed)
 
 		handler := Handler{
-			appConfig:      &app.Config{AuthType: authEnums.Horusec},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}
@@ -251,7 +251,7 @@ func TestHandler_AuthTypes(t *testing.T) {
 		controllerMock.On("AuthByType").Return(map[string]interface{}{"test": "test"}, errorsEnums.ErrorWrongEmailOrPassword)
 
 		handler := Handler{
-			appConfig:      &app.Config{AuthType: authEnums.Horusec},
+			appConfig:      app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			authUseCases:   authUseCases.NewAuthUseCases(),
 			authController: controllerMock,
 		}

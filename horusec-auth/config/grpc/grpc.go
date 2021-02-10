@@ -31,7 +31,7 @@ import (
 )
 
 func SetUpGRPCServer(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) {
 	if env.GetEnvOrDefaultBool("HORUSEC_GRPC_USE_CERTS", false) {
 		setupWithCerts(postgresRead, postgresWrite, appConfig)
 	}
@@ -40,7 +40,7 @@ func SetUpGRPCServer(
 }
 
 func setupWithoutCerts(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) {
 	server := grpc.NewServer()
 	grpc_health_v1.RegisterHealthServer(server, health.NewHealthCheckGrpcServer())
 	authGrpc.RegisterAuthServiceServer(server, authController.NewAuthController(postgresRead, postgresWrite, appConfig))
@@ -50,7 +50,7 @@ func setupWithoutCerts(
 }
 
 func setupWithCerts(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) {
 	grpCredentials, err := credentials.NewServerTLSFromFile(env.GetEnvOrDefault("HORUSEC_GRPC_CERT_PATH", ""),
 		env.GetEnvOrDefault("HORUSEC_GRPC_KEY_PATH", ""))
 	if err != nil {

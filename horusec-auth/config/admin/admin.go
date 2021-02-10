@@ -22,7 +22,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 )
 
-func CreateApplicationAdmin(config *app.Config, read relational.InterfaceRead, write relational.InterfaceWrite) {
+func CreateApplicationAdmin(config app.IConfig, read relational.InterfaceRead, write relational.InterfaceWrite) {
 	if config.GetEnableApplicationAdmin() {
 		err := account.NewAccountRepository(read, write).Create(getDefaultAccountApplicationAdmin(config).SetAccountData())
 		if err != nil {
@@ -37,7 +37,7 @@ func CreateApplicationAdmin(config *app.Config, read relational.InterfaceRead, w
 	}
 }
 
-func getDefaultAccountApplicationAdmin(config *app.Config) *authEntities.Account {
+func getDefaultAccountApplicationAdmin(config app.IConfig) *authEntities.Account {
 	entity, err := config.GetApplicationAdminData()
 	if err != nil {
 		logger.LogPanic("Some error occurs when parse Application Admin Data to Account", err)

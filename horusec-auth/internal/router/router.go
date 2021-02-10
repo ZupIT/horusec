@@ -53,7 +53,7 @@ func (r *Router) setMiddleware() {
 }
 
 func (r *Router) GetRouter(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
-	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig *app.Config) *chi.Mux {
+	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig app.IConfig) *chi.Mux {
 	r.setMiddleware()
 	r.RouterAuth(postgresRead, postgresWrite, appConfig)
 	r.RouterHealth(postgresRead, postgresWrite, appConfig)
@@ -102,7 +102,7 @@ func (r *Router) RouterMetrics() *Router {
 }
 
 func (r *Router) RouterHealth(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) *Router {
 	handler := health.NewHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.HealthHandler, func(router chi.Router) {
 		router.Get("/", handler.Get)
@@ -113,7 +113,7 @@ func (r *Router) RouterHealth(
 }
 
 func (r *Router) RouterAuth(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Router {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) *Router {
 	handler := auth.NewAuthHandler(postgresRead, postgresWrite, appConfig)
 	r.router.Route(routes.AuthHandler, func(router chi.Router) {
 		router.Get("/config", handler.Config)
@@ -126,7 +126,7 @@ func (r *Router) RouterAuth(
 
 // nolint
 func (r *Router) RouterAccount(postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite,
-	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig *app.Config) *Router {
+	broker brokerLib.IBroker, cache cacheRepository.Interface, appConfig app.IConfig) *Router {
 	handler := account.NewHandler(broker, postgresRead, postgresWrite, cache, appConfig)
 	r.router.Route(routes.AccountHandler, func(router chi.Router) {
 		router.Post("/create-account-from-keycloak", handler.CreateAccountFromKeycloak)

@@ -23,53 +23,61 @@ import (
 )
 
 const (
-	EnvEnableApplicationAdmin   = "HORUSEC_ENABLE_APPLICATION_ADMIN"
-	EnvApplicationAdminData     = "HORUSEC_APPLICATION_ADMIN_DATA"
-	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
-	EnvHorusecAPIURL            = "HORUSEC_API_URL"
-	EnvDisabledBroker           = "HORUSEC_DISABLED_BROKER"
-	DefaultApplicationAdminData = "{\"username\": \"horusec-admin\", " +
-		"\"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
+	EnvEnableApplicationAdmin = "HORUSEC_ENABLE_APPLICATION_ADMIN"
+	EnvApplicationAdminData   = "HORUSEC_APPLICATION_ADMIN_DATA"
+	EnvAuthType               = "HORUSEC_AUTH_TYPE"
+	EnvHorusecAPIURL          = "HORUSEC_API_URL"
+	EnvDisabledBroker         = "HORUSEC_DISABLED_BROKER"
 )
 
+type IConfig interface {
+	GetHorusecAPIURL() string
+	GetEnableApplicationAdmin() bool
+	GetDisabledBroker() bool
+	GetApplicationAdminData() (entity *dto.CreateAccount, err error)
+	GetAuthType() authEnums.AuthorizationType
+}
+
 type Config struct {
-	HorusecAPIURL          string
-	EnableApplicationAdmin bool
-	ApplicationAdminData   string
-	AuthType               authEnums.AuthorizationType
-	DisabledBroker         bool
+	databaseRead SQL.InterfaceRead
 }
 
-func NewConfig(databaseRead SQL.InterfaceRead) *Config {
-	c := &Config{}
-	c.HorusecAPIURL = env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006")
-	c.AuthType = authEnums.AuthorizationType(
-		env.GetEnvFromAdminOrDefault(databaseRead, EnvAuthType, authEnums.Horusec.ToString()).ToString())
-	c.EnableApplicationAdmin = env.GetEnvFromAdminOrDefault(
-		databaseRead, EnvEnableApplicationAdmin, "false").ToBool()
-	c.ApplicationAdminData = env.GetEnvFromAdminOrDefault(
-		databaseRead, EnvApplicationAdminData, DefaultApplicationAdminData).ToString()
-	c.DisabledBroker = env.GetEnvFromAdminOrDefault(
-		databaseRead, EnvDisabledBroker, "false").ToBool()
-	return c
+func NewConfig(databaseRead SQL.InterfaceRead) IConfig {
+	return &Config{
+		databaseRead: databaseRead,
+	}
 }
 
-func (a *Config) GetEnableApplicationAdmin() bool {
-	return a.EnableApplicationAdmin
+func (c *Config) GetHorusecAPIURL() string {
+	return env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006")
 }
 
-func (a *Config) GetApplicationAdminData() (entity *dto.CreateAccount, err error) {
-	return entity, json.Unmarshal([]byte(a.ApplicationAdminData), &entity)
+func (c *Config) GetEnableApplicationAdmin() bool {
+	return env.GetEnvFromAdminOrDefault(
+		c.databaseRead, EnvEnableApplicationAdmin, "false").ToBool()
 }
 
-func (a *Config) GetAuthType() authEnums.AuthorizationType {
-	return a.AuthType
+func (c *Config) GetApplicationAdminData() (entity *dto.CreateAccount, err error) {
+	defaultApplicationAdmin := &dto.CreateAccount{
+		Email:    "horusec-admin@example.com",
+		Password: "Devpass0*",
+		Username: "horusec-admin",
+	}
+	createAccountString := env.GetEnvFromAdminOrDefault(
+		c.databaseRead, EnvApplicationAdminData, defaultApplicationAdmin.ToString()).ToString()
+	return entity, json.Unmarshal([]byte(createAccountString), &entity)
 }
 
-func (a *Config) GetHorusecAPIURL() string {
-	return a.HorusecAPIURL
+func (c *Config) GetAuthType() authEnums.AuthorizationType {
+	authTypeString := env.GetEnvFromAdminOrDefault(c.databaseRead, EnvAuthType, authEnums.Horusec.ToString()).ToString()
+	authType := authEnums.AuthorizationType(authTypeString)
+	if authType.IsInvalid() {
+		return authEnums.Unknown
+	}
+	return authType
 }
 
-func (a *Config) GetDisabledBroker() bool {
-	return a.DisabledBroker
+func (c *Config) GetDisabledBroker() bool {
+	return env.GetEnvFromAdminOrDefault(
+		c.databaseRead, EnvDisabledBroker, "false").ToBool()
 }

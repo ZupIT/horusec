@@ -35,12 +35,12 @@ import (
 type Handler struct {
 	authUseCases   authUseCases.IUseCases
 	authController authController.IController
-	appConfig      *app.Config
+	appConfig      app.IConfig
 	postgresRead   relational.InterfaceRead
 }
 
 func NewAuthHandler(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Handler {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) *Handler {
 	return &Handler{
 		postgresRead:   postgresRead,
 		appConfig:      appConfig,

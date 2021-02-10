@@ -38,7 +38,7 @@ func (m *MockAuthController) IsAuthorized(_ context.Context, _ *authGrpc.IsAutho
 }
 
 func (m *MockAuthController) GetAuthConfig(_ context.Context, _ *authGrpc.GetAuthConfigData) (*authGrpc.GetAuthConfigResponse, error) {
-	args := m.MethodCalled("GetAuthType")
+	args := m.MethodCalled("GetAuthConfig")
 	return args.Get(0).(*authGrpc.GetAuthConfigResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 

@@ -16,6 +16,7 @@ package auth
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"os"
 	"testing"
@@ -55,7 +56,7 @@ func TestAuthByType(t *testing.T) {
 		mockService.On("Authenticate").Return("success", nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -72,7 +73,7 @@ func TestAuthByType(t *testing.T) {
 		mockService.On("Authenticate").Return("success", nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Keycloak.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -90,7 +91,7 @@ func TestAuthByType(t *testing.T) {
 
 		controller := Controller{
 			ldapAuthService: mockService,
-			appConfig:       &app.Config{AuthType: authEnums.Ldap},
+			appConfig:       app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 		}
 
 		result, err := controller.AuthByType(&dto.Credentials{})
@@ -105,7 +106,7 @@ func TestAuthByType(t *testing.T) {
 		mockService.On("Authenticate").Return(nil, errors.New("test"))
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: "test"},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "test"})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -125,7 +126,7 @@ func TestAuthorizeByType(t *testing.T) {
 		mockService.On("IsAuthorized").Return(true, nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -147,7 +148,7 @@ func TestAuthorizeByType(t *testing.T) {
 		mockService.On("IsAuthorized").Return(true, nil)
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Keycloak.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -170,9 +171,7 @@ func TestAuthorizeByType(t *testing.T) {
 
 		controller := Controller{
 			ldapAuthService: mockService,
-			appConfig: &app.Config{
-				AuthType: authEnums.Ldap,
-			},
+			appConfig:       app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 		}
 
 		result, err := controller.IsAuthorized(nil, &authGrpc.IsAuthorizedData{
@@ -194,7 +193,7 @@ func TestAuthorizeByType(t *testing.T) {
 		mockService.On("IsAuthorized").Return(nil, errors.New("test"))
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: "test"},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "test"})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -216,7 +215,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 	t.Run("Should return default authentication type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -228,7 +227,7 @@ func TestController_GetAuthTypes(t *testing.T) {
 	t.Run("Should return error when invalid type", func(t *testing.T) {
 		mockService := &services.MockAuthService{}
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: "unknown"},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "unknown"})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -249,7 +248,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		mockService := &services.MockAuthService{}
 
 		controller := Controller{
-			appConfig:           &app.Config{AuthType: authEnums.Horusec},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
@@ -277,7 +276,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 
 		controller := Controller{
 			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
-			appConfig:           &app.Config{AuthType: authEnums.Keycloak},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Keycloak.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 			keycloak:            keycloakMock,
@@ -302,7 +301,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 
 		controller := Controller{
 			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
-			appConfig:           &app.Config{AuthType: authEnums.Ldap},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}
@@ -320,7 +319,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 
 		controller := Controller{
 			jwt:                 jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
-			appConfig:           &app.Config{AuthType: "test"},
+			appConfig:           app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "test"})),
 			horusAuthService:    mockService,
 			keycloakAuthService: mockService,
 		}

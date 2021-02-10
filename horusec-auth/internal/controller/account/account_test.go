@@ -16,6 +16,7 @@ package account
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"os"
 	"testing"
@@ -1004,7 +1005,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		}
 
 		controller := &Account{
-			appConfig: &app.Config{AuthType: authEnums.Horusec},
+			appConfig: app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})),
 			jwt:       jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
 
@@ -1029,7 +1030,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		controller := Account{
-			appConfig: &app.Config{AuthType: authEnums.Keycloak},
+			appConfig: app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Keycloak.ToString()})),
 			keycloak:  keycloakMock,
 		}
 
@@ -1047,7 +1048,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 		}
 
 		controller := Account{
-			appConfig: &app.Config{AuthType: authEnums.Ldap},
+			appConfig: app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 			jwt:       jwt.NewJWT(env.GlobalAdminReadMock(0, nil, nil)),
 		}
 
@@ -1061,7 +1062,7 @@ func TestGetAccountIDByAuthType(t *testing.T) {
 
 	t.Run("should return error when invalid auth type", func(t *testing.T) {
 		controller := Account{
-			appConfig: &app.Config{AuthType: "test"},
+			appConfig: app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: "test"})),
 		}
 
 		accountID, err := controller.GetAccountID("test")

@@ -15,6 +15,8 @@
 package health
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -65,7 +67,7 @@ func TestGet(t *testing.T) {
 			postgresRead:  mockRead,
 			postgresWrite: mockWrite,
 			ldap:          mockLdap,
-			appConfig:     &app.Config{AuthType: authEnums.Ldap},
+			appConfig:     app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
@@ -83,7 +85,7 @@ func TestGet(t *testing.T) {
 		mockRead.On("IsAvailable").Return(false)
 		mockWrite.On("IsAvailable").Return(true)
 
-		handler := NewHandler(mockRead, mockWrite, &app.Config{AuthType: authEnums.Horusec})
+		handler := NewHandler(mockRead, mockWrite, app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Horusec.ToString()})))
 		r, _ := http.NewRequest(http.MethodGet, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -99,7 +101,7 @@ func TestGet(t *testing.T) {
 	//
 	//	handler := Handler{
 	//		ldap:      mockLdap,
-	//		appConfig: &app.Config{AuthType: authEnums.Ldap},
+	//		appConfig: app.NewConfig(env.GlobalAdminReadMock(0, nil, &admin.HorusecAdminConfig{HorusecAuthType: authEnums.Ldap.ToString()})),
 	//	}
 	//
 	//	r, _ := http.NewRequest(http.MethodGet, "api/health", nil)

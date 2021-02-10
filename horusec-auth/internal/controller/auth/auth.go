@@ -48,12 +48,12 @@ type Controller struct {
 	keycloakAuthService services.IAuthService
 	ldapAuthService     services.IAuthService
 	keycloak            keycloak.IService
-	appConfig           *app.Config
+	appConfig           app.IConfig
 	jwt                 jwt.IJWT
 }
 
 func NewAuthController(
-	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig *app.Config) *Controller {
+	postgresRead relational.InterfaceRead, postgresWrite relational.InterfaceWrite, appConfig app.IConfig) *Controller {
 	return &Controller{
 		appConfig:           appConfig,
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead, postgresWrite),
@@ -125,9 +125,9 @@ func (c *Controller) GetAuthConfig(_ context.Context,
 	}
 
 	return &authGrpc.GetAuthConfigResponse{
-		ApplicationAdminEnable: c.appConfig.EnableApplicationAdmin,
+		ApplicationAdminEnable: c.appConfig.GetEnableApplicationAdmin(),
 		AuthType:               authType.ToString(),
-		DisabledBroker:         c.appConfig.DisabledBroker,
+		DisabledBroker:         c.appConfig.GetDisabledBroker(),
 	}, nil
 }
 
