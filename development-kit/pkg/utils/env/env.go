@@ -63,7 +63,3 @@ func GetEnvOrDefaultInterface(env string, defaultValue interface{}) interface{} 
 
 	return value
 }
-
-func GetHorusecManagerURL() string {
-	return GetEnvOrDefault("HORUSEC_MANAGER_URL", "http://localhost:8043")
-}

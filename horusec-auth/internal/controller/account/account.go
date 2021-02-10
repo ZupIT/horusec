@@ -302,7 +302,7 @@ func (a *Account) Logout(accountID uuid.UUID) error {
 }
 
 func (a *Account) getURLToResetPassword(email, code string) string {
-	base := env.GetHorusecManagerURL()
+	base := env.GetEnvOrDefault("HORUSEC_MANAGER_URL", "http://localhost:8043")
 	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s", base, email, code)
 }
 

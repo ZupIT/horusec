@@ -146,7 +146,7 @@ func (h *Handler) ValidateEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, env.GetHorusecManagerURL(), http.StatusSeeOther)
+	http.Redirect(w, r, env.GetEnvOrDefault("HORUSEC_MANAGER_URL", "http://localhost:8043"), http.StatusSeeOther)
 }
 
 // @Tags Account

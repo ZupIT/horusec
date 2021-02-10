@@ -174,7 +174,7 @@ func (c *Controller) sendInviteUserEmail(email, username, companyName string) er
 		Data: map[string]interface{}{
 			"CompanyName": companyName,
 			"Username":    username,
-			"URL":         env.GetHorusecManagerURL()},
+			"URL":         env.GetEnvOrDefault("HORUSEC_MANAGER_URL", "http://localhost:8043")},
 	}
 
 	return c.broker.Publish(queues.HorusecEmail.ToString(), "", "", emailMessage.ToBytes())

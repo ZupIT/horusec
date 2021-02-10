@@ -93,18 +93,6 @@ func TestGetEnvOrDefaultAndParseToBool(t *testing.T) {
 	})
 }
 
-func TestGetHorusecManagerURL(t *testing.T) {
-	t.Run("should success get horusec manager URL default value", func(t *testing.T) {
-		_ = os.Setenv("HORUSEC_MANAGER_URL", "")
-		assert.Equal(t, "http://localhost:8043", GetHorusecManagerURL())
-	})
-
-	t.Run("should success get horusec manager URL", func(t *testing.T) {
-		_ = os.Setenv("HORUSEC_MANAGER_URL", "test-url.com")
-		assert.Equal(t, "test-url.com", GetHorusecManagerURL())
-	})
-}
-
 func TestGetEnvOrDefaultInterface(t *testing.T) {
 	t.Run("should success get env as interface", func(t *testing.T) {
 		_ = os.Setenv("TEST_ENV", "test")
