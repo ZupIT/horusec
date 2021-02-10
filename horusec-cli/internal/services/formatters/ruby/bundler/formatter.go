@@ -71,8 +71,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetFullImagePath(
-		f.GetToolsConfig()[tools.BundlerAudit].ImagePath, ImageRepository, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.BundlerAudit].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) removeOutputEsc(output string) string {
@@ -106,7 +105,6 @@ func (f *Formatter) setOutput(outputSplit string) {
 func (f *Formatter) setVulnerabilityData(output *entities.Output) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
-	data.Confidence = output.GetSeverity().ToString()
 	data.Details = output.GetDetails()
 	data.File = f.GetFilepathFromFilename("Gemfile.lock")
 	data.Code = f.GetCodeWithMaxCharacters(output.Name, 0)
