@@ -9,40 +9,40 @@ import (
 	"strings"
 )
 
-type IEnv interface {
+type IEnvAdmin interface {
 	ToString() string
 	ToBool() bool
 	ToInt() int
 }
 
-type Env struct {
+type EnvAdmin struct {
 	value interface{}
 }
 
-func GetEnvFromAdminOrDefault(databaseRead SQL.InterfaceRead, env, defaultValue string) IEnv {
+func GetEnvFromAdminOrDefault(databaseRead SQL.InterfaceRead, env, defaultValue string) IEnvAdmin {
 	entity := &admin.HorusecAdminConfig{}
 	response := databaseRead.Find(entity, databaseRead.GetConnection(), entity.GetTable())
 	if err := response.GetError(); err != nil {
 		logger.LogError(fmt.Sprintf("Error on get env (%s) on database", env), err)
-		return &Env{value: GetEnvOrDefault(env, defaultValue)}
+		return &EnvAdmin{value: GetEnvOrDefault(env, defaultValue)}
 	}
 	if data := response.GetData(); data == nil {
-		return &Env{value: GetEnvOrDefault(env, defaultValue)}
+		return &EnvAdmin{value: GetEnvOrDefault(env, defaultValue)}
 	}
 	if value := response.GetData().(*admin.HorusecAdminConfig).ToMap()[strings.ToLower(env)]; value != "" {
-		return &Env{value: value}
+		return &EnvAdmin{value: value}
 	}
-	return &Env{value: GetEnvOrDefault(env, defaultValue)}
+	return &EnvAdmin{value: GetEnvOrDefault(env, defaultValue)}
 }
 
-func (e *Env) ToString() string {
+func (e *EnvAdmin) ToString() string {
 	return fmt.Sprintf("%v", e.value)
 }
-func (e *Env) ToBool() bool {
+func (e *EnvAdmin) ToBool() bool {
 	stringValue := e.ToString()
 	return strings.EqualFold(stringValue, "true") || stringValue == "1"
 }
-func (e *Env) ToInt() int {
+func (e *EnvAdmin) ToInt() int {
 	stringValue := e.ToString()
 	intValue, err := strconv.Atoi(stringValue)
 	logger.LogError(fmt.Sprintf("Error on convert \"%s\" to int", stringValue), err)
