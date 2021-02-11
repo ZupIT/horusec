@@ -148,7 +148,7 @@ const ResetPasswordTpl = `<!doctype html>
       box-sizing: border-box;
       cursor: pointer;
       display: inline-block;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: normal;
       margin: 0;
       padding: 12px 25px;
@@ -269,12 +269,11 @@ const ResetPasswordTpl = `<!doctype html>
                   <tr>
                     <td>
                       <p class="align-center logo-wrapper">
-                        <img width="150px" src="https://horusec.io/images/logo/horus_principal.svg">
+                        <img width="150px" src="https://horusec.io/public/email_logo.png">
                       </p>
                       <h1 class="align-left">Hello, {{.Username}}!</h1>
                       <p>You have requested a password reset to access HORUSEC. The code is valid for 10 minutes
                       and should be used 1x.</p>
-                      <h2 class="align-left">{{.Code}}</h1>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                           <tbody>
                             <tr>
@@ -282,7 +281,7 @@ const ResetPasswordTpl = `<!doctype html>
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                   <tbody>
                                     <tr>
-                                      <td> <a href="{{.URL}}" target="_blank">Back to Horusec</a>
+                                      <td> <a href="{{.URL}}" target="_blank">{{.Code}}</a>
                                       </td>
                                     </tr>
                                   </tbody>
@@ -308,5 +307,4 @@ const ResetPasswordTpl = `<!doctype html>
     </tr>
   </table>
 </body>
-</html>
-`
+</html>`
