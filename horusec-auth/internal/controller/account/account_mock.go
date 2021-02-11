@@ -15,8 +15,6 @@
 package account
 
 import (
-	"time"
-
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
@@ -36,11 +34,6 @@ func (m *Mock) CreateAccountFromKeycloak(_ *dto.KeycloakToken) (*dto.CreateAccou
 func (m *Mock) CreateAccount(_ *authEntities.Account) error {
 	args := m.MethodCalled("CreateAccount")
 	return mockUtils.ReturnNilOrError(args, 0)
-}
-
-func (m *Mock) Login(_ *dto.LoginData) (*dto.LoginResponse, error) {
-	args := m.MethodCalled("Login")
-	return args.Get(0).(*dto.LoginResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
 func (m *Mock) ValidateEmail(_ uuid.UUID) error {
@@ -73,11 +66,6 @@ func (m *Mock) Logout(_ uuid.UUID) error {
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) createTokenWithAccountPermissions(_ *authEntities.Account) (string, time.Time, error) {
-	args := m.MethodCalled("createTokenWithAccountPermissions")
-	return args.Get(0).(string), args.Get(1).(time.Time), mockUtils.ReturnNilOrError(args, 2)
-}
-
 func (m *Mock) VerifyAlreadyInUse(_ *dto.ValidateUnique) error {
 	args := m.MethodCalled("VerifyAlreadyInUse")
 	return mockUtils.ReturnNilOrError(args, 0)
@@ -99,6 +87,6 @@ func (m *Mock) GetAccountID(token string) (uuid.UUID, error) {
 }
 
 func (m *Mock) UpdateAccount(account *authEntities.Account) error {
-	args := m.MethodCalled("UpdateAccount", account)
+	args := m.MethodCalled("UpdateAccount")
 	return mockUtils.ReturnNilOrError(args, 0)
 }

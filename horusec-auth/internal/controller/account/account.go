@@ -43,8 +43,7 @@ import (
 )
 
 type IAccount interface {
-	CreateAccountFromKeycloak(
-		keyCloakToken *dto.KeycloakToken) (*dto.CreateAccountFromKeycloakResponse, error)
+	CreateAccountFromKeycloak(keyCloakToken *dto.KeycloakToken) (*dto.CreateAccountFromKeycloakResponse, error)
 	CreateAccount(account *authEntities.Account) error
 	ValidateEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
