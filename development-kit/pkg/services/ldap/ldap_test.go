@@ -17,6 +17,7 @@ package ldap
 import (
 	"crypto/tls"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"testing"
 	"time"
 
@@ -60,7 +61,7 @@ func (m *MockLdapConn) Bind(username, password string) error {
 
 func TestNewLDAPClient(t *testing.T) {
 	t.Run("should create a new ldap client instance", func(t *testing.T) {
-		ldapClient := NewLDAPClient()
+		ldapClient := NewLDAPClient(env.GlobalAdminReadMock(0, nil, nil))
 		assert.NotNil(t, ldapClient)
 	})
 }
@@ -76,8 +77,7 @@ func TestConnect(t *testing.T) {
 
 	t.Run("should return error when connecting with ssl", func(t *testing.T) {
 		service := Service{
-			UseSSL:             true,
-			ClientCertificates: []tls.Certificate{{}},
+			UseSSL: true,
 		}
 
 		err := service.Connect()

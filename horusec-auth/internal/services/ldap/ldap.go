@@ -47,7 +47,7 @@ type Service struct {
 
 func NewService(databaseRead relational.InterfaceRead, databaseWrite relational.InterfaceWrite) services.IAuthService {
 	return &Service{
-		client:         ldapService.NewLDAPClient(),
+		client:         ldapService.NewLDAPClient(databaseRead),
 		accountRepo:    accountRepo.NewAccountRepository(databaseRead, databaseWrite),
 		companyRepo:    companyRepo.NewCompanyRepository(databaseRead, databaseWrite),
 		repositoryRepo: repositoryRepo.NewRepository(databaseRead, databaseWrite),

@@ -17,6 +17,7 @@ package ldap
 import (
 	"crypto/tls"
 	"fmt"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"strings"
 	"time"
 
@@ -48,26 +49,25 @@ type Service struct {
 	Base               string
 	BindDN             string
 	BindPassword       string
-	ServerName         string
-	InsecureSkipVerify bool
 	UseSSL             bool
 	SkipTLS            bool
-	ClientCertificates []tls.Certificate
-	Conn               ILdapClient
+	InsecureSkipVerify bool
 	UserFilter         string
+	Conn               ILdapClient
 }
 
-func NewLDAPClient() ILDAPService {
+func NewLDAPClient(databaseRead SQL.InterfaceRead) ILDAPService {
 	return &Service{
-		Host:               env.GetEnvOrDefault("HORUSEC_LDAP_HOST", ""),
-		Port:               env.GetEnvOrDefaultInt("HORUSEC_LDAP_PORT", 389),
-		Base:               env.GetEnvOrDefault("HORUSEC_LDAP_BASE", ""),
-		BindDN:             env.GetEnvOrDefault("HORUSEC_LDAP_BINDDN", ""),
-		BindPassword:       env.GetEnvOrDefault("HORUSEC_LDAP_BINDPASSWORD", ""),
-		UseSSL:             env.GetEnvOrDefaultBool("HORUSEC_LDAP_USESSL", false),
-		SkipTLS:            env.GetEnvOrDefaultBool("HORUSEC_LDAP_SKIP_TLS", true),
-		InsecureSkipVerify: env.GetEnvOrDefaultBool("HORUSEC_LDAP_INSECURE_SKIP_VERIFY", true),
-		UserFilter:         env.GetEnvOrDefault("HORUSEC_LDAP_USERFILTER", "(sAMAccountName=%s)"),
+		Host:               env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_HOST", "").ToString(),
+		Port:               env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_PORT", "389").ToInt(),
+		Base:               env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_BASE", "").ToString(),
+		BindDN:             env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_BINDDN", "").ToString(),
+		BindPassword:       env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_BINDPASSWORD", "").ToString(),
+		UseSSL:             env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_USESSL", "false").ToBool(),
+		SkipTLS:            env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_SKIP_TLS", "true").ToBool(),
+		InsecureSkipVerify: env.GetEnvFromAdminOrDefault(databaseRead, "HORUSEC_LDAP_INSECURE_SKIP_VERIFY", "true").ToBool(),
+		UserFilter: env.GetEnvFromAdminOrDefault(
+			databaseRead, "HORUSEC_LDAP_USERFILTER", "(sAMAccountName=%s)").ToString(),
 	}
 }
 
@@ -104,11 +104,6 @@ func (s *Service) dialWithoutSSL() error {
 func (s *Service) dialWithSSL() error {
 	config := &tls.Config{
 		InsecureSkipVerify: s.InsecureSkipVerify,
-		ServerName:         s.ServerName,
-	}
-
-	if s.ClientCertificates != nil && len(s.ClientCertificates) > 0 {
-		config.Certificates = s.ClientCertificates
 	}
 
 	return s.setLDAPServiceConnection(ldap.DialTLS("tcp", s.getLdapURL(), config))

@@ -39,7 +39,7 @@ func NewHandler(postgresRead relational.InterfaceRead,
 		postgresRead:  postgresRead,
 		postgresWrite: postgresWrite,
 		appConfig:     appConfig,
-		ldap:          ldapService.NewLDAPClient(),
+		ldap:          ldapService.NewLDAPClient(postgresRead),
 	}
 }
 

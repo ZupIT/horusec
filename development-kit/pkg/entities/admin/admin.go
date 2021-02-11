@@ -41,11 +41,11 @@ func (a *HorusecAdminConfig) ToMap() map[string]string {
 		"horusec_disabled_broker":             a.HorusecDisabledBroker,         // DONE
 		"horusec_jwt_secret_key":              a.HorusecJwtSecretKey,           // DONE
 		"horusec_application_admin_data":      a.HorusecApplicationAdminData,   // DONE
-		"horusec_keycloak_base_path":          a.HorusecKeycloakBasePath,
-		"horusec_keycloak_client_id":          a.HorusecKeycloakClientID,
-		"horusec_keycloak_client_secret":      a.HorusecKeycloakClientSecret,
-		"horusec_keycloak_realm":              a.HorusecKeycloakRealm,
-		"horusec_keycloak_otp":                a.HorusecKeycloakOTP,
+		"horusec_keycloak_base_path":          a.HorusecKeycloakBasePath,       // DONE
+		"horusec_keycloak_client_id":          a.HorusecKeycloakClientID,       // DONE
+		"horusec_keycloak_client_secret":      a.HorusecKeycloakClientSecret,   // DONE
+		"horusec_keycloak_realm":              a.HorusecKeycloakRealm,          // DONE
+		"horusec_keycloak_otp":                a.HorusecKeycloakOTP,            // DONE
 		"horusec_ldap_base":                   a.HorusecLdapBase,
 		"horusec_ldap_host":                   a.HorusecLdapHost,
 		"horusec_ldap_port":                   a.HorusecLdapPort,
