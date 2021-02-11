@@ -17,11 +17,11 @@ package keycloak
 import (
 	"context"
 	"errors"
+	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"strings"
 
 	"github.com/Nerzal/gocloak/v7"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/google/uuid"
 )
 
@@ -33,35 +33,28 @@ type IService interface {
 }
 
 type Service struct {
-	ctx          context.Context
-	client       gocloak.GoCloak
-	clientID     string
-	clientSecret string
-	realm        string
-	otp          bool
+	ctx    context.Context
+	config IKeycloakConfig
 }
 
-func NewKeycloakService() IService {
+func NewKeycloakService(databaseRead SQL.InterfaceRead) IService {
 	return &Service{
-		ctx:          context.Background(),
-		client:       gocloak.NewClient(env.GetEnvOrDefault("HORUSEC_KEYCLOAK_BASE_PATH", "")),
-		clientID:     env.GetEnvOrDefault("HORUSEC_KEYCLOAK_CLIENT_ID", ""),
-		clientSecret: env.GetEnvOrDefault("HORUSEC_KEYCLOAK_CLIENT_SECRET", ""),
-		realm:        env.GetEnvOrDefault("HORUSEC_KEYCLOAK_REALM", ""),
-		otp:          env.GetEnvOrDefaultBool("HORUSEC_KEYCLOAK_OTP", false),
+		ctx:    context.Background(),
+		config: NewKeycloakConfig(databaseRead),
 	}
 }
 
 func (s *Service) LoginOtp(username, password, otp string) (*gocloak.JWT, error) {
-	if otp == "" && s.otp {
+	if otp == "" && s.config.getOtp() {
 		return nil, errors.New("invalid otp")
 	}
 
-	return s.client.LoginOtp(s.ctx, s.clientID, s.clientSecret, s.realm, username, password, otp)
+	return s.config.getClient().LoginOtp(s.ctx, s.config.getClientID(), s.config.getClientSecret(), s.config.getRealm(), username, password, otp)
 }
 
 func (s *Service) IsActiveToken(token string) (bool, error) {
-	result, err := s.client.RetrospectToken(s.ctx, s.removeBearer(token), s.clientID, s.clientSecret, s.realm)
+	result, err := s.config.getClient().
+		RetrospectToken(s.ctx, s.removeBearer(token), s.config.getClientID(), s.config.getClientSecret(), s.config.getRealm())
 	if err != nil {
 		return false, err
 	}
@@ -83,7 +76,7 @@ func (s *Service) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
 		return nil, errorsEnum.ErrorUnauthorized
 	}
 
-	return s.client.GetUserInfo(s.ctx, s.removeBearer(accessToken), s.realm)
+	return s.config.getClient().GetUserInfo(s.ctx, s.removeBearer(accessToken), s.config.getRealm())
 }
 
 func (s *Service) removeBearer(accessToken string) string {

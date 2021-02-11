@@ -17,6 +17,7 @@ package keycloak
 import (
 	"context"
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"testing"
 
@@ -46,7 +47,7 @@ func (m *GoCloakMock) GetUserInfo(ctx context.Context, accessToken, realm string
 
 func TestNewKeycloakService(t *testing.T) {
 	t.Run("Should return default type service keycloak", func(t *testing.T) {
-		assert.IsType(t, NewKeycloakService(), &Service{})
+		assert.IsType(t, NewKeycloakService(env.GlobalAdminReadMock(0, nil, nil)), &Service{})
 	})
 }
 
@@ -61,13 +62,15 @@ func TestService_LoginOtp(t *testing.T) {
 			RefreshToken:     "refresh_token",
 			TokenType:        "unique",
 		}, nil)
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 		resp, err := service.LoginOtp("root", "root", "")
 		assert.NoError(t, err)
@@ -84,13 +87,15 @@ func TestService_LoginOtp(t *testing.T) {
 			RefreshToken:     "refresh_token",
 			TokenType:        "unique",
 		}, nil)
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(true)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          true,
+			config:       keycloakConfigMock,
 		}
 		_, err := service.LoginOtp("root", "root", "")
 		assert.Error(t, err)
@@ -111,13 +116,15 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 			Sub:   &sub,
 		}, nil)
 
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 
 		userID, err := service.GetAccountIDByJWTToken("access_token")
@@ -134,13 +141,15 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{Sub: &sub}, errors.New("some error"))
 		goCloakMock.On("IsActiveToken").Return(false, errors.New("error"))
 
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 
 		userID, err := service.GetAccountIDByJWTToken("access_token")
@@ -154,13 +163,16 @@ func Test_IsActiveToken(t *testing.T) {
 		goCloakMock := &GoCloakMock{}
 		active := true
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &active}, nil)
+
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
@@ -170,13 +182,16 @@ func Test_IsActiveToken(t *testing.T) {
 		goCloakMock := &GoCloakMock{}
 		active := false
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &active}, nil)
+
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
@@ -185,13 +200,16 @@ func Test_IsActiveToken(t *testing.T) {
 	t.Run("Should IsActiveToken with error", func(t *testing.T) {
 		goCloakMock := &GoCloakMock{}
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{}, errors.New("error"))
+
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 		_, err := service.IsActiveToken("access_token")
 		assert.Error(t, err)
@@ -208,13 +226,15 @@ func TestService_GetUserInfo(t *testing.T) {
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &valid}, nil)
 		goCloakMock.On("IsActiveToken").Return(true, nil)
 
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 
 		user, err := service.GetUserInfo("access_token")
@@ -228,13 +248,15 @@ func TestService_GetUserInfo(t *testing.T) {
 		goCloakMock.On("GetUserInfo").Return(&gocloak.UserInfo{}, errors.New("error"))
 		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{}, errors.New("test"))
 
+		keycloakConfigMock := &Mock{}
+		keycloakConfigMock.On("getClient").Return(goCloakMock)
+		keycloakConfigMock.On("getClientID").Return("")
+		keycloakConfigMock.On("getClientSecret").Return("")
+		keycloakConfigMock.On("getRealm").Return("")
+		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
 			ctx:          context.Background(),
-			client:       goCloakMock,
-			clientID:     "",
-			clientSecret: "",
-			realm:        "",
-			otp:          false,
+			config:       keycloakConfigMock,
 		}
 
 		_, err := service.GetUserInfo("access_token")

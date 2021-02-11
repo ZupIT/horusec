@@ -16,6 +16,7 @@ package account
 
 import (
 	"errors"
+	repoAccountRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_repository"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/admin"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"os"
@@ -81,7 +82,19 @@ func TestNewAccountController(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 	})
 }
@@ -98,7 +111,19 @@ func TestCreateAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		account := &authEntities.Account{
@@ -122,7 +147,19 @@ func TestCreateAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		account := &authEntities.Account{
@@ -147,7 +184,19 @@ func TestCreateAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		account := &authEntities.Account{
@@ -173,7 +222,19 @@ func TestCreateAccount(t *testing.T) {
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
 
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		account := &authEntities.Account{
@@ -205,7 +266,19 @@ func TestValidateEmail(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ValidateEmail(uuid.New())
@@ -224,7 +297,19 @@ func TestValidateEmail(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ValidateEmail(uuid.New())
@@ -250,7 +335,19 @@ func TestSendResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -272,7 +369,19 @@ func TestSendResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -292,7 +401,19 @@ func TestSendResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.SendResetPasswordCode("test@test.com")
@@ -321,7 +442,19 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
@@ -345,7 +478,19 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
@@ -364,7 +509,19 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
@@ -383,7 +540,19 @@ func TestVerifyResetPasswordCode(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		data := &dto.ResetCodeData{Email: "test@test.com", Code: "123456"}
@@ -413,7 +582,19 @@ func TestResetPassword(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "Ch@ng3m3")
@@ -438,7 +619,19 @@ func TestResetPassword(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "Ch@ng3m3")
@@ -464,7 +657,19 @@ func TestResetPassword(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "")
@@ -484,7 +689,19 @@ func TestResetPassword(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.ChangePassword(uuid.New(), "123456")
@@ -521,7 +738,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -549,7 +778,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -572,7 +813,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -598,7 +851,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("testError", token)
@@ -624,7 +889,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ1c2VybmFtZSI6In" +
@@ -654,7 +931,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -683,7 +972,19 @@ func TestRenewToken(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		renewResponse, err := controller.RenewToken("test", token)
@@ -710,7 +1011,19 @@ func TestLogout(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.Logout(uuid.New())
@@ -730,7 +1043,19 @@ func TestLogout(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.Logout(uuid.New())
@@ -754,7 +1079,19 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
@@ -777,7 +1114,19 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
@@ -801,7 +1150,19 @@ func TestVerifyAlreadyInUse(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.VerifyAlreadyInUse(&dto.ValidateUnique{})
@@ -825,7 +1186,19 @@ func TestDeleteAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.DeleteAccount(uuid.New())
@@ -845,7 +1218,19 @@ func TestDeleteAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.DeleteAccount(uuid.New())
@@ -1086,7 +1471,19 @@ func TestGetAccountIDByEmail(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		accountID, err := controller.GetAccountIDByEmail("test@test.com")
@@ -1108,7 +1505,19 @@ func TestGetAccountIDByEmail(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		accountID, err := controller.GetAccountIDByEmail("test@test.com")
@@ -1138,7 +1547,19 @@ func TestUpdateAccount(t *testing.T) {
 
 		mockReadAdmin := env.GlobalAdminReadMock(0, nil, nil)
 		appConfig := app.NewConfig(mockReadAdmin)
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
+		controller := &Account{
+		accountRepository:     repositoryAccount.NewAccountRepository(mockRead, mockWrite),
+		keycloakService:       keycloak.NewKeycloakService(mockReadAdmin),
+		broker:                brokerMock,
+		databaseWrite:         mockWrite,
+		databaseRead:          mockRead,
+		accountRepositoryRepo: repoAccountRepository.NewAccountRepositoryRepository(mockRead, mockWrite),
+		cacheRepository:       cacheRepositoryMock,
+		appConfig:             appConfig,
+		authUseCases:          authUseCases.NewAuthUseCases(),
+		keycloak:              keycloak.NewKeycloakService(mockReadAdmin),
+		jwt:                   jwt.NewJWT(mockReadAdmin),
+	}
 		assert.NotNil(t, controller)
 
 		err := controller.UpdateAccount(account)

@@ -44,3 +44,23 @@ func (m *Mock) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
 	args := m.MethodCalled("GetUserInfo")
 	return args.Get(0).(*gocloak.UserInfo), mockUtils.ReturnNilOrError(args, 1)
 }
+func (m *Mock) getClient() gocloak.GoCloak {
+	args := m.MethodCalled("getClient")
+	return args.Get(0).(gocloak.GoCloak)
+}
+func (m *Mock) getClientID() string {
+	args := m.MethodCalled("getClientID")
+	return args.Get(0).(string)
+}
+func (m *Mock) getClientSecret() string {
+	args := m.MethodCalled("getClientSecret")
+	return args.Get(0).(string)
+}
+func (m *Mock) getRealm() string {
+	args := m.MethodCalled("getRealm")
+	return args.Get(0).(string)
+}
+func (m *Mock) getOtp() bool {
+	args := m.MethodCalled("getOtp")
+	return args.Get(0).(bool)
+}

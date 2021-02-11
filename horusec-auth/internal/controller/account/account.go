@@ -77,7 +77,7 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 	databaseWrite SQL.InterfaceWrite, cacheRepository cache.Interface, appConfig app.IConfig) IAccount {
 	return &Account{
 		accountRepository:     repositoryAccount.NewAccountRepository(databaseRead, databaseWrite),
-		keycloakService:       keycloak.NewKeycloakService(),
+		keycloakService:       keycloak.NewKeycloakService(databaseRead),
 		broker:                broker,
 		databaseWrite:         databaseWrite,
 		databaseRead:          databaseRead,
@@ -85,7 +85,7 @@ func NewAccountController(broker brokerLib.IBroker, databaseRead SQL.InterfaceRe
 		cacheRepository:       cacheRepository,
 		appConfig:             appConfig,
 		authUseCases:          authUseCases.NewAuthUseCases(),
-		keycloak:              keycloak.NewKeycloakService(),
+		keycloak:              keycloak.NewKeycloakService(databaseRead),
 		jwt:                   jwt.NewJWT(databaseRead),
 	}
 }

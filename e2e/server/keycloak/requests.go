@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"net/http"
 	"os"
 	"strings"
@@ -282,7 +283,9 @@ func CheckIfTokenIsValid(t *testing.T, token, secret string) {
 	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_CLIENT_SECRET", secret))
 	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_REALM", "master"))
 	assert.NoError(t, os.Setenv("HORUSEC_KEYCLOAK_OTP", "false"))
-	userID, err := keycloak.NewKeycloakService().GetAccountIDByJWTToken(token)
+	userID, err := keycloak.
+		NewKeycloakService(env.GlobalAdminReadMock(0, nil, nil)).
+		GetAccountIDByJWTToken(token)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, userID)
 }

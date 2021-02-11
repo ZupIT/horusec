@@ -59,7 +59,7 @@ func NewAuthController(
 		horusAuthService:    horusecService.NewHorusAuthService(postgresRead, postgresWrite),
 		ldapAuthService:     ldap.NewService(postgresRead, postgresWrite),
 		keycloakAuthService: keycloakService.NewKeycloakAuthService(postgresRead),
-		keycloak:            keycloak.NewKeycloakService(),
+		keycloak:            keycloak.NewKeycloakService(postgresRead),
 		jwt:                 jwt.NewJWT(postgresRead),
 	}
 }
