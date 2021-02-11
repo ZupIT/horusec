@@ -49,7 +49,9 @@ func (s *Service) LoginOtp(username, password, otp string) (*gocloak.JWT, error)
 		return nil, errors.New("invalid otp")
 	}
 
-	return s.config.getClient().LoginOtp(s.ctx, s.config.getClientID(), s.config.getClientSecret(), s.config.getRealm(), username, password, otp)
+	return s.config.
+		getClient().
+		LoginOtp(s.ctx, s.config.getClientID(), s.config.getClientSecret(), s.config.getRealm(), username, password, otp)
 }
 
 func (s *Service) IsActiveToken(token string) (bool, error) {

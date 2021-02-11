@@ -14,30 +14,30 @@ type IKeycloakConfig interface {
 	getOtp() bool
 }
 
-type KeycloakConfig struct {
+type Config struct {
 	databaseRead SQL.InterfaceRead
 }
 
 func NewKeycloakConfig(databaseRead SQL.InterfaceRead) IKeycloakConfig {
-	return &KeycloakConfig{
+	return &Config{
 		databaseRead: databaseRead,
 	}
 }
 
-func (k *KeycloakConfig) getClient() gocloak.GoCloak {
+func (k *Config) getClient() gocloak.GoCloak {
 	basePath := env.GetEnvFromAdminOrDefault(k.databaseRead, "HORUSEC_KEYCLOAK_BASE_PATH", "").ToString()
 	return gocloak.NewClient(basePath)
 }
 
-func (k *KeycloakConfig) getClientID() string {
+func (k *Config) getClientID() string {
 	return env.GetEnvFromAdminOrDefault(k.databaseRead, "HORUSEC_KEYCLOAK_CLIENT_ID", "").ToString()
 }
-func (k *KeycloakConfig) getClientSecret() string {
+func (k *Config) getClientSecret() string {
 	return env.GetEnvFromAdminOrDefault(k.databaseRead, "HORUSEC_KEYCLOAK_CLIENT_SECRET", "").ToString()
 }
-func (k *KeycloakConfig) getRealm() string {
+func (k *Config) getRealm() string {
 	return env.GetEnvFromAdminOrDefault(k.databaseRead, "HORUSEC_KEYCLOAK_REALM", "").ToString()
 }
-func (k *KeycloakConfig) getOtp() bool {
+func (k *Config) getOtp() bool {
 	return env.GetEnvFromAdminOrDefault(k.databaseRead, "HORUSEC_KEYCLOAK_OTP", "false").ToBool()
 }

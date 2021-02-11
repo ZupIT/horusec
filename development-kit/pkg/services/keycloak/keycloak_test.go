@@ -69,8 +69,8 @@ func TestService_LoginOtp(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 		resp, err := service.LoginOtp("root", "root", "")
 		assert.NoError(t, err)
@@ -94,8 +94,8 @@ func TestService_LoginOtp(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(true)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 		_, err := service.LoginOtp("root", "root", "")
 		assert.Error(t, err)
@@ -123,8 +123,8 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 
 		userID, err := service.GetAccountIDByJWTToken("access_token")
@@ -148,8 +148,8 @@ func Test_GetAccountIDByJWTToken(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 
 		userID, err := service.GetAccountIDByJWTToken("access_token")
@@ -171,8 +171,8 @@ func Test_IsActiveToken(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
@@ -190,8 +190,8 @@ func Test_IsActiveToken(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 		isActive, err := service.IsActiveToken("access_token")
 		assert.NoError(t, err)
@@ -208,8 +208,8 @@ func Test_IsActiveToken(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 		_, err := service.IsActiveToken("access_token")
 		assert.Error(t, err)
@@ -233,8 +233,8 @@ func TestService_GetUserInfo(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 
 		user, err := service.GetUserInfo("access_token")
@@ -255,8 +255,8 @@ func TestService_GetUserInfo(t *testing.T) {
 		keycloakConfigMock.On("getRealm").Return("")
 		keycloakConfigMock.On("getOtp").Return(false)
 		service := &Service{
-			ctx:          context.Background(),
-			config:       keycloakConfigMock,
+			ctx:    context.Background(),
+			config: keycloakConfigMock,
 		}
 
 		_, err := service.GetUserInfo("access_token")
