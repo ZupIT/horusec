@@ -29,6 +29,7 @@ import { authTypes } from 'helpers/enums/authTypes';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { cloneDeep } from 'lodash';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
   isVisible: boolean;
@@ -144,28 +145,32 @@ const HandleWorkspace: React.FC<Props> = ({
     }
   };
 
-  const handleSetAdminGroup = (index: number, value: string) => {
-    const adminGroupCopy = cloneDeep(adminGroup);
-    adminGroupCopy[index] = value;
-    setAdminGroup(adminGroupCopy);
+  const handleSetGroupValue = (group: string, index: number, value: string) => {
+    const allGroups: ObjectLiteral = {
+      admin: [adminGroup, setAdminGroup],
+      member: [memberGroup, setMemberGroup],
+    };
+
+    const groupList = allGroups[group][0];
+    const groupSetter = allGroups[group][1];
+    const copyOfGroup = cloneDeep(groupList);
+
+    copyOfGroup[index] = value.trim();
+    groupSetter(copyOfGroup);
   };
 
-  const handleRemoveAdminGroup = () => {
-    const adminGroupCopy = cloneDeep(adminGroup);
-    adminGroupCopy.pop();
-    setAdminGroup(adminGroupCopy);
-  };
+  const handleRemoveGroupValue = (group: string) => {
+    const allGroups: ObjectLiteral = {
+      admin: [adminGroup, setAdminGroup],
+      member: [memberGroup, setMemberGroup],
+    };
 
-  const handleRemoveMemberGroup = () => {
-    const memberGroupCopy = cloneDeep(memberGroup);
-    memberGroupCopy.pop();
-    setMemberGroup(memberGroupCopy);
-  };
+    const groupList = allGroups[group][0];
+    const groupSetter = allGroups[group][1];
+    const copyOfGroup = cloneDeep(groupList);
 
-  const handleSetMemberGroup = (index: number, value: string) => {
-    const memberGroupCopy = cloneDeep(memberGroup);
-    memberGroupCopy[index] = value;
-    setMemberGroup(memberGroupCopy);
+    copyOfGroup.pop();
+    groupSetter(copyOfGroup);
   };
 
   useEffect(() => {
@@ -246,7 +251,7 @@ const HandleWorkspace: React.FC<Props> = ({
                     initialValue={adminGroup[index]}
                     label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
-                      handleSetAdminGroup(index, field.value)
+                      handleSetGroupValue('admin', index, field.value)
                     }
                   />
 
@@ -255,7 +260,7 @@ const HandleWorkspace: React.FC<Props> = ({
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={handleRemoveAdminGroup}
+                      onClick={() => handleRemoveGroupValue('admin')}
                     />
                   ) : null}
 
@@ -276,11 +281,11 @@ const HandleWorkspace: React.FC<Props> = ({
               {memberGroup?.map((_, index) => (
                 <Styled.Wrapper key={index}>
                   <Input
-                    name={`admin-group-${index}`}
+                    name={`member-group-${index}`}
                     initialValue={memberGroup[index]}
                     label={t('WORKSPACES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
-                      handleSetMemberGroup(index, field.value)
+                      handleSetGroupValue('member', index, field.value)
                     }
                   />
 
@@ -289,7 +294,7 @@ const HandleWorkspace: React.FC<Props> = ({
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={handleRemoveMemberGroup}
+                      onClick={() => handleRemoveGroupValue('member')}
                     />
                   ) : null}
 
