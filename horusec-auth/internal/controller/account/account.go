@@ -154,7 +154,7 @@ func (a *Account) sendValidateAccountEmail(account *authEntities.Account) error 
 }
 
 func (a *Account) getConfirmationEmailURL(accountID uuid.UUID) string {
-	return fmt.Sprintf("%s/api/account/validate/%s", a.appConfig.GetHorusecAPIURL(), accountID)
+	return fmt.Sprintf("%s/auth/account/validate/%s", a.appConfig.GetHorusecAPIURL(), accountID)
 }
 
 func (a *Account) SendResetPasswordCode(email string) error {
