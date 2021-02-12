@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package shellcheck
+package bundler
 
 const (
-	ImageName = "horuszup/shellcheck"
-	ImageTag  = "v1.0.0"
+	ImageName = "horuszup/horusec-ruby"
+	ImageTag  = "1.0.1"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
-		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')
-		shellcheck --format=json $shell_files $bat_files
+		bundle-audit check
   `
 )

@@ -14,13 +14,11 @@
 
 package flawfinder
 
-import "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
-
 const (
-	ImageRepository = docker.DefaultRepository
-	ImageName       = "horuszup/horusec-flawfinder"
-	ImageTag        = "v1.0.0"
-	ImageCmd        = `
+	ImageName = "horuszup/horusec-flawfinder"
+	ImageTag  = "v1.0.0"
+	ImageCmd  = `
+		{{WORK_DIR}}
 		flawfinder --columns --singleline --dataonly --context --csv . > /tmp/result-ANALYSISID.json
 		cat /tmp/result-ANALYSISID.json
 		chmod -R 777 .

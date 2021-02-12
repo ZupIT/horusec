@@ -66,6 +66,7 @@ func (s *Service) Authenticate(credentials *dto.Credentials) (interface{}, error
 		return nil, err
 	}
 
+	defer s.client.Close()
 	return s.setLDAPAuthResponse(account, data["dn"])
 }
 

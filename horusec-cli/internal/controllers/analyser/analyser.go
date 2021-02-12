@@ -57,6 +57,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/bandit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/safety"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/brakeman"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/bundler"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/shell/shellcheck"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/horusec-cli/internal/services/horusapi"
@@ -260,8 +261,9 @@ func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go brakeman.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go bundler.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {

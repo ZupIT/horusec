@@ -64,24 +64,24 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
 
-	if err := d.pullNewImage(data.ImagePath); err != nil {
+	if err := d.pullNewImage(data); err != nil {
 		return "", err
 	}
 
-	return d.logStatusAndExecuteCRDContainer(data.ImagePath, d.replaceCMDAnalysisID(data.CMD))
+	return d.logStatusAndExecuteCRDContainer(data.GetImageWithoutRegistry(), d.replaceCMDAnalysisID(data.CMD))
 }
 
-func (d *API) pullNewImage(imagePath string) error {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imagePath)
-	if imageNotExist, err := d.checkImageNotExists(imagePath); err != nil || !imageNotExist {
+func (d *API) pullNewImage(data *dockerEntities.AnalysisData) error {
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, data.GetImageWithRegistry())
+	if imageNotExist, err := d.checkImageNotExists(data); err != nil || !imageNotExist {
 		return err
 	}
 
-	return d.downloadImage(imagePath)
+	return d.downloadImage(data)
 }
 
-func (d *API) downloadImage(imagePath string) error {
-	reader, err := d.dockerClient.ImagePull(d.ctx, imagePath, dockerTypes.ImagePullOptions{})
+func (d *API) downloadImage(data *dockerEntities.AnalysisData) error {
+	reader, err := d.dockerClient.ImagePull(d.ctx, data.GetImageWithRegistry(), dockerTypes.ImagePullOptions{})
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		return err
@@ -97,9 +97,9 @@ func (d *API) downloadImage(imagePath string) error {
 	return nil
 }
 
-func (d *API) checkImageNotExists(imagePath string) (bool, error) {
+func (d *API) checkImageNotExists(data *dockerEntities.AnalysisData) (bool, error) {
 	args := dockerTypesFilters.NewArgs()
-	args.Add("reference", imagePath)
+	args.Add("reference", data.GetImageWithoutRegistry())
 	options := dockerTypes.ImageListOptions{Filters: args}
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)

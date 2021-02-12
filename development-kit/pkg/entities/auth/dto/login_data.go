@@ -37,7 +37,7 @@ func (l *LoginData) IsInvalid(email, passwordHash string) bool {
 
 func (l *LoginData) Validate() error {
 	return validation.ValidateStruct(l,
-		validation.Field(&l.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&l.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
 		validation.Field(&l.Password, validation.Length(1, 255), validation.Required),
 	)
 }

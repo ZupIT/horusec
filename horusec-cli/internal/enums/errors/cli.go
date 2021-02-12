@@ -35,3 +35,9 @@ var ErrCsProjNotFound = errors.New("{HORUSEC_CLI} Error project csproj not found
 // Occurs when not found rails project
 
 var ErrNotFoundRailsProject = errors.New("{HORUSEC_CLI} Error not found rails project syntax")
+
+// Occurs when gem lock not found
+
+var ErrGemLockNotFound = errors.New(
+	"{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file," +
+		" it would be a good idea to commit it so horusec can check for vulnerabilities")

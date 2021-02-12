@@ -260,7 +260,7 @@ const OrganizationInviteTpl = `<!doctype html>
                   <tr>
                     <td>
                       <p class="align-center logo-wrapper">
-                        <img width="150px" src="https://horusec.io/images/logo/horus_principal.svg">
+                        <img width="150px" src="https://horusec.io/public/email_logo.png">
                       </p>
                       <h1 class="align-left">Hello, {{.Username}}!</h1>
                       <p>You have been invited to join the workspace {{.CompanyName}}.</p>
