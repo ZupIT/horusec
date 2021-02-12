@@ -266,43 +266,82 @@ const Vulnerabilities: React.FC = () => {
         <Styled.Title>{t('VULNERABILITIES_SCREEN.TITLE')}</Styled.Title>
         <Datatable
           columns={[
-            { label: t('VULNERABILITIES_SCREEN.TABLE.HASH'), property: 'hash', type: 'text' },
-            { label: t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION'), property: 'description', type: 'text' },
-            { label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'), property: 'severity', type: 'text', cssClass: ['center'] },
-            { label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'), property: 'status', type: 'text' },
-            { label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'), property: 'details', type: 'text' },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
+              property: 'hash',
+              type: 'text',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
+              property: 'severity',
+              type: 'text',
+              cssClass: ['center'],
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
+              property: 'status',
+              type: 'text',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),
+              property: 'details',
+              type: 'text',
+            },
           ]}
-          datasource={vulnerabilities.map(row => {
-            let repo: Datasource = {
+          datasource={vulnerabilities.map((row) => {
+            const repo: Datasource = {
               ...row,
               id: row.vulnerabilityID,
               hash: row.vulnHash,
-              severity: <Styled.Tag color={get(colors.vulnerabilities, row.severity, colors.vulnerabilities.DEFAULT)}>
-                {row.severity}
-              </Styled.Tag>,
-              status: !isLoading ? <Select
-                keyLabel="description"
-                keyValue="value"
-                width="150px"
-                optionsHeight="130px"
-                className="select-role"
-                rounded
-                initialValue={row.type}
-                options={vulnTypes}
-                disabled={!isAdminOrSupervisorOfRepository()}
-                onChangeValue={(value) =>
-                  handleUpdateVulnerabilityType(row, value.value)
-                }
-              /> : null,
-              details: <Icon name="info" size="20px" onClick={() => setSelectedVuln(row)} />
+              severity: (
+                <Styled.Tag
+                  color={get(
+                    colors.vulnerabilities,
+                    row.severity,
+                    colors.vulnerabilities.DEFAULT
+                  )}
+                >
+                  {row.severity}
+                </Styled.Tag>
+              ),
+              status: !isLoading ? (
+                <Select
+                  keyLabel="description"
+                  keyValue="value"
+                  width="150px"
+                  optionsHeight="130px"
+                  className="select-role"
+                  rounded
+                  initialValue={row.type}
+                  options={vulnTypes}
+                  disabled={!isAdminOrSupervisorOfRepository()}
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilityType(row, value.value)
+                  }
+                />
+              ) : null,
+              details: (
+                <Icon
+                  name="info"
+                  size="20px"
+                  onClick={() => setSelectedVuln(row)}
+                />
+              ),
             };
             return repo;
           })}
           isLoading={isLoading}
           emptyListText={t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
-          paginate={{ pagination, onChange: (pag) => fetchData(filters, { ...pag }) }}
+          paginate={{
+            pagination,
+            onChange: (pag) => fetchData(filters, { ...pag }),
+          }}
         />
-
       </Styled.Content>
 
       <Details

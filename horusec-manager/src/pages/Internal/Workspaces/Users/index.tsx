@@ -127,24 +127,50 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
         <Datatable
           columns={[
-              {label: t('WORKSPACES_SCREEN.USERS.TABLE.USER'), property: 'username', type: "text"},
-              {label: t('WORKSPACES_SCREEN.USERS.TABLE.EMAIL'), property: 'email', type: "text"},
-              {label: t('WORKSPACES_SCREEN.USERS.TABLE.PERMISSION'), property: 'permission', type: "text"},
-              {label: t('WORKSPACES_SCREEN.USERS.TABLE.ACTION'), property: 'actions', type: "text"},
+            {
+              label: t('WORKSPACES_SCREEN.USERS.TABLE.USER'),
+              property: 'username',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.USERS.TABLE.EMAIL'),
+              property: 'email',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.USERS.TABLE.PERMISSION'),
+              property: 'permission',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.USERS.TABLE.ACTION'),
+              property: 'actions',
+              type: 'text',
+            },
           ]}
-          datasource={filteredUsers.map(row => {
-            let data: Datasource = {
+          datasource={filteredUsers.map((row) => {
+            const data: Datasource = {
               ...row,
               id: row.accountID,
-              
-              permission: t(`WORKSPACES_SCREEN.USERS.TABLE.ROLE.${row.role.toLocaleUpperCase()}`),
-              actions: []
+
+              permission: t(
+                `WORKSPACES_SCREEN.USERS.TABLE.ROLE.${row.role.toLocaleUpperCase()}`
+              ),
+              actions: [],
             };
 
             if (row.email !== currentUser?.email) {
               data.actions = [
-                { title: t('WORKSPACES_SCREEN.USERS.TABLE.DELETE'), icon: 'delete', function: () => setUserToDelete(row) },
-                { title: t('WORKSPACES_SCREEN.USERS.TABLE.EDIT'), icon: 'edit', function: () => setUserToEdit(row)}
+                {
+                  title: t('WORKSPACES_SCREEN.USERS.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setUserToDelete(row),
+                },
+                {
+                  title: t('WORKSPACES_SCREEN.USERS.TABLE.EDIT'),
+                  icon: 'edit',
+                  function: () => setUserToEdit(row),
+                },
               ];
             }
             return data;
@@ -152,7 +178,6 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           isLoading={isLoading}
           emptyListText={t('WORKSPACES_SCREEN.USERS.TABLE.EMPTY')}
         />
-
       </Styled.Wrapper>
 
       <InviteToCompany

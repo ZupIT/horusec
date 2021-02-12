@@ -100,23 +100,42 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           onClick={() => setAddTokenVisible(true)}
         />
 
-
         <Datatable
           columns={[
-            { label: t('WORKSPACES_SCREEN.TOKEN'), property: 'token', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.DESCRIPTION'), property: 'description', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.EXPIRES'), property: 'expiresAt', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.ACTION'), property: 'actions', type: 'actions' },
+            {
+              label: t('WORKSPACES_SCREEN.TOKEN'),
+              property: 'token',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.EXPIRES'),
+              property: 'expiresAt',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
           ]}
-          datasource={tokens.map(row => {
-            let data: Datasource = {
+          datasource={tokens.map((row) => {
+            const data: Datasource = {
               ...row,
               id: row.tokenID,
               token: '***************' + row.suffixValue,
               expiresAt: formatToHumanDate(row.expiresAt),
               actions: [
-                { title: t('WORKSPACES_SCREEN.DELETE'), icon: 'delete', function: () => setTokenToDelete(row) }
-              ]
+                {
+                  title: t('WORKSPACES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setTokenToDelete(row),
+                },
+              ],
             };
             return data;
           })}

@@ -113,27 +113,46 @@ const Tokens: React.FC<Props> = ({
 
         <Datatable
           columns={[
-            { label: t('REPOSITORIES_SCREEN.TOKEN'), property: 'token', type: 'text' },
-            { label: t('REPOSITORIES_SCREEN.DESCRIPTION'), property: 'description', type: 'text' },
-            { label: t('REPOSITORIES_SCREEN.EXPIRES'), property: 'expiresAt', type: 'text' },
-            { label: t('REPOSITORIES_SCREEN.ACTION'), property: 'actions', type: 'actions' },
+            {
+              label: t('REPOSITORIES_SCREEN.TOKEN'),
+              property: 'token',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.EXPIRES'),
+              property: 'expiresAt',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
           ]}
-          datasource={tokens.map(row => {
-            let repo: Datasource = {
+          datasource={tokens.map((row) => {
+            const repo: Datasource = {
               ...row,
               id: row.tokenID,
               token: '***************' + row.suffixValue,
               expiresAt: formatToHumanDate(row.expiresAt),
               actions: [
-                { title: t('REPOSITORIES_SCREEN.DELETE'), icon: 'delete', function: () => setTokenToDelete(row) }
-              ]
+                {
+                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setTokenToDelete(row),
+                },
+              ],
             };
             return repo;
           })}
           isLoading={isLoading}
           emptyListText={t('REPOSITORIES_SCREEN.NO_TOKENS')}
         />
-
       </Styled.Wrapper>
 
       <Dialog

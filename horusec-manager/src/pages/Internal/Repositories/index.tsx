@@ -108,112 +108,121 @@ const Repositories: React.FC = () => {
   useEffect(() => fetchData(), [currentWorkspace]);
 
   return (
-        <Styled.Wrapper>
-          <Styled.Options>
-            <SearchBar
-              placeholder={t('REPOSITORIES_SCREEN.SEARCH_REPO')}
-              onSearch={(value) => onSearchRepository(value)}
-            />
+    <Styled.Wrapper>
+      <Styled.Options>
+        <SearchBar
+          placeholder={t('REPOSITORIES_SCREEN.SEARCH_REPO')}
+          onSearch={(value) => onSearchRepository(value)}
+        />
 
-            {isAdminOfWorkspace ? (
-              <Button
-                text={t('REPOSITORIES_SCREEN.CREATE_REPO')}
-                rounded
-                width={180}
-                icon="plus"
-                onClick={() => setVisibleHandleModal(true)}
-              />
-            ) : null}
-          </Styled.Options>
+        {isAdminOfWorkspace ? (
+          <Button
+            text={t('REPOSITORIES_SCREEN.CREATE_REPO')}
+            rounded
+            width={180}
+            icon="plus"
+            onClick={() => setVisibleHandleModal(true)}
+          />
+        ) : null}
+      </Styled.Options>
 
-          <Styled.Content>
+      <Styled.Content>
+        <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
 
-            <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
+        <Datatable
+          columns={[
+            {
+              label: t('REPOSITORIES_SCREEN.NAME'),
+              property: 'name',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={filteredRepos.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.repositoryID,
+              actions: [],
+            };
 
-            <Datatable
-              columns={[
-                { label: t('REPOSITORIES_SCREEN.NAME'), property: 'name', type: 'text' },
-                { label: t('REPOSITORIES_SCREEN.DESCRIPTION'), property: 'description', type: 'text' },
-                { label: t('REPOSITORIES_SCREEN.ACTION'), property: 'actions', type: 'actions' },
-              ]}
-              datasource={filteredRepos.map(row => {
-                let repo: Datasource = {
-                  ...row,
-                  id: row.repositoryID,
-                  actions: []
-                };
-          
-                if (row.role === 'admin') {
+            if (row.role === 'admin') {
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.EDIT'),
+                icon: 'edit',
+                function: () => setVisibleHandleModal(true, row),
+              });
+
+              if (isAdminOfWorkspace) {
+                repo.actions.push({
+                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setRepoToDelete(row),
+                });
+
+                if (authType !== authTypes.LDAP) {
                   repo.actions.push({
-                    title: t('REPOSITORIES_SCREEN.EDIT'), 
-                    icon: 'edit', 
-                    function: () => setVisibleHandleModal(true, row)
-                  })
-          
-                  if (isAdminOfWorkspace) {
-                    repo.actions.push({
-                      title: t('REPOSITORIES_SCREEN.DELETE'),
-                      icon: 'delete',
-                      function: () => setRepoToDelete(row)
-                    })
-          
-                    if (authType !== authTypes.LDAP) {
-                      repo.actions.push({
-                        title: t('REPOSITORIES_SCREEN.INVITE'),
-                        icon: 'users',
-                        function: () => setRepoToInvite(row)
-                      })
-                    }
-                  }
-          
-                  repo.actions.push({
-                    title: t('REPOSITORIES_SCREEN.TOKENS'),
-                    icon: 'lock',
-                    function: () => setRepoToManagerTokens(row)
-                  })
-                
+                    title: t('REPOSITORIES_SCREEN.INVITE'),
+                    icon: 'users',
+                    function: () => setRepoToInvite(row),
+                  });
                 }
-                return repo;
-              })}
-              isLoading={isLoading}
-              emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
-            />
+              }
 
-          </Styled.Content>
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.TOKENS'),
+                icon: 'lock',
+                function: () => setRepoToManagerTokens(row),
+              });
+            }
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+        />
+      </Styled.Content>
 
-          <Dialog
-            message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_REPO')}
-            confirmText={t('REPOSITORIES_SCREEN.YES')}
-            loadingConfirm={deleteIsLoading}
-            defaultButton
-            hasCancel
-            isVisible={!!repoTodelete}
-            onCancel={() => setRepoToDelete(null)}
-            onConfirm={handleConfirmDeleteRepo}
-          />
+      <Dialog
+        message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_REPO')}
+        confirmText={t('REPOSITORIES_SCREEN.YES')}
+        loadingConfirm={deleteIsLoading}
+        defaultButton
+        hasCancel
+        isVisible={!!repoTodelete}
+        onCancel={() => setRepoToDelete(null)}
+        onConfirm={handleConfirmDeleteRepo}
+      />
 
-          <HandleRepository
-            isVisible={handleRepositoryVisible}
-            repositoryToEdit={repoToEdit}
-            onConfirm={() => {
-              setVisibleHandleModal(false);
-              fetchData();
-            }}
-            onCancel={() => setVisibleHandleModal(false)}
-          />
+      <HandleRepository
+        isVisible={handleRepositoryVisible}
+        repositoryToEdit={repoToEdit}
+        onConfirm={() => {
+          setVisibleHandleModal(false);
+          fetchData();
+        }}
+        onCancel={() => setVisibleHandleModal(false)}
+      />
 
-          <InviteToRepository
-            isVisible={!!repoToInvite}
-            repoToInvite={repoToInvite}
-            onClose={() => setRepoToInvite(null)}
-          />
+      <InviteToRepository
+        isVisible={!!repoToInvite}
+        repoToInvite={repoToInvite}
+        onClose={() => setRepoToInvite(null)}
+      />
 
-          <Tokens
-            isVisible={!!repoToManagerTokens}
-            repoToManagerTokens={repoToManagerTokens}
-            onClose={() => setRepoToManagerTokens(null)}
-          />
-        </Styled.Wrapper>
+      <Tokens
+        isVisible={!!repoToManagerTokens}
+        repoToManagerTokens={repoToManagerTokens}
+        onClose={() => setRepoToManagerTokens(null)}
+      />
+    </Styled.Wrapper>
   );
 };
 

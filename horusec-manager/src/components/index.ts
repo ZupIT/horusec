@@ -57,11 +57,7 @@ export {
   Permissions,
   Pagination,
   Splash,
-  Datatable
+  Datatable,
 };
 
-export type {
-  TableColumn,
-  Datasource
-};
-
+export type { TableColumn, Datasource };

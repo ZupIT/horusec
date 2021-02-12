@@ -42,15 +42,15 @@ const Table = styled.table<{ isPaginate: boolean }>`
   width: 100%;
   border-spacing: 0px 5px;
   ${({ isPaginate }) =>
-    isPaginate ?
-      css`
-      display: block;
-      max-height: 65vh;
-      overflow-y: scroll;
-    `:
-      css`
-      visibility: visible;
-    `};
+    isPaginate
+      ? css`
+          display: block;
+          max-height: 65vh;
+          overflow-y: scroll;
+        `
+      : css`
+          visibility: visible;
+        `};
 `;
 
 const Head = styled.tr`
@@ -85,14 +85,14 @@ const Cell = styled.td`
     }
   }
 
-  &:first-child { 
+  &:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
   }
 
-  &:last-child { 
-    border-top-right-radius: 5px; 
-    border-bottom-right-radius: 5px; 
+  &:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 `;
 
@@ -173,5 +173,5 @@ export default {
   Table,
   EmptyText,
   LoadingWrapper,
-  ButtonIcon
+  ButtonIcon,
 };

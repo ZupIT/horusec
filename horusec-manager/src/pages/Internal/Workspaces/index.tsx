@@ -113,51 +113,66 @@ const Workspaces: React.FC = () => {
 
         <Datatable
           columns={[
-            { label: t('WORKSPACES_SCREEN.TABLE.NAME'), property: 'name', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.TABLE.DATE'), property: 'date', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.TABLE.DESCRIPTION'), property: 'description', type: 'text' },
-            { label: t('WORKSPACES_SCREEN.TABLE.ACTION'), property: 'actions', type: 'actions' },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.NAME'),
+              property: 'name',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.DATE'),
+              property: 'date',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
           ]}
-          datasource={filteredWorkspaces.map(row => {
-            let data: Datasource = {
+          datasource={filteredWorkspaces.map((row) => {
+            const data: Datasource = {
               ...row,
               id: row.companyID,
               date: formatToHumanDate(row.createdAt),
-              actions: []
+              actions: [],
             };
 
             if (row.role === roles.ADMIN) {
               data.actions.push({
                 title: t('WORKSPACES_SCREEN.TABLE.EDIT'),
                 icon: 'edit',
-                function: () => setVisibleHandleModal(true, row)
+                function: () => setVisibleHandleModal(true, row),
               });
 
               data.actions.push({
                 title: t('WORKSPACES_SCREEN.TABLE.REMOVE'),
                 icon: 'delete',
-                function: () => setWorkspaceToDelete(row)
+                function: () => setWorkspaceToDelete(row),
               });
 
               if (authType !== authTypes.LDAP) {
                 data.actions.push({
                   title: t('WORKSPACES_SCREEN.TABLE.USERS'),
                   icon: 'grid',
-                  function: () => setWorkspaceToManagerUsers(row)
+                  function: () => setWorkspaceToManagerUsers(row),
                 });
               }
 
               data.actions.push({
                 title: t('WORKSPACES_SCREEN.TABLE.TOKENS'),
                 icon: 'lock',
-                function: () => setWorkspaceToManagerTokens(row)
+                function: () => setWorkspaceToManagerTokens(row),
               });
             }
             return data;
           })}
           emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
         />
-
       </Styled.Content>
 
       <HandleWorkspace

@@ -59,7 +59,6 @@ const Settings: React.FC = () => {
       });
   };
 
-
   return (
     <Styled.Wrapper>
       <Styled.Content>
@@ -67,21 +66,46 @@ const Settings: React.FC = () => {
 
         <Datatable
           columns={[
-            { label: t('SETTINGS_SCREEN.TABLE.USER'), property: 'username', type: 'text' },
-            { label: t('SETTINGS_SCREEN.TABLE.EMAIL'), property: 'email', type: 'text' },
-            { label: t('SETTINGS_SCREEN.TABLE.ACTION'), property: 'actions', type: 'actions' },
+            {
+              label: t('SETTINGS_SCREEN.TABLE.USER'),
+              property: 'username',
+              type: 'text',
+            },
+            {
+              label: t('SETTINGS_SCREEN.TABLE.EMAIL'),
+              property: 'email',
+              type: 'text',
+            },
+            {
+              label: t('SETTINGS_SCREEN.TABLE.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
           ]}
           datasource={[
             {
-              username, email, actions: [
-                { title: t('SETTINGS_SCREEN.TABLE.DELETE'), icon: 'delete', function: () => setOpenEditDialog(true) },
-                { title: t('SETTINGS_SCREEN.TABLE.EDIT'), icon: 'edit', function: () => setOpenEditDialog(true) },
-                { title: t('SETTINGS_SCREEN.TABLE.PASSWORD'), icon: 'lock', function: () => setOpenChangePassDialog(true) }
-              ]
-            }
+              username,
+              email,
+              actions: [
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setOpenEditDialog(true),
+                },
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.EDIT'),
+                  icon: 'edit',
+                  function: () => setOpenEditDialog(true),
+                },
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.PASSWORD'),
+                  icon: 'lock',
+                  function: () => setOpenChangePassDialog(true),
+                },
+              ],
+            },
           ]}
         />
-        
       </Styled.Content>
 
       <Dialog

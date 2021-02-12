@@ -125,34 +125,76 @@ const Webhooks: React.FC = () => {
           <Styled.Title>{t('WEBHOOK_SCREEN.TITLE')}</Styled.Title>
         </Styled.TitleWrapper>
 
-
         <Datatable
           columns={[
-            { label: t('WEBHOOK_SCREEN.TABLE.METHOD'), property: 'method', type: 'custom', cssClass: ['flex-center']},
-            { label: t('WEBHOOK_SCREEN.TABLE.URL'), property: 'url', type: 'text' },
-            { label: t('WEBHOOK_SCREEN.TABLE.DESCRIPTION'), property: 'description', type: 'text' },
-            { label: t('WEBHOOK_SCREEN.TABLE.REPOSITORY'), property: 'repository', type: 'text' },
-            { label: t('WEBHOOK_SCREEN.TABLE.ACTION'), property: 'actions', type: 'actions' },
+            {
+              label: t('WEBHOOK_SCREEN.TABLE.METHOD'),
+              property: 'method',
+              type: 'custom',
+              cssClass: ['flex-center'],
+            },
+            {
+              label: t('WEBHOOK_SCREEN.TABLE.URL'),
+              property: 'url',
+              type: 'text',
+            },
+            {
+              label: t('WEBHOOK_SCREEN.TABLE.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('WEBHOOK_SCREEN.TABLE.REPOSITORY'),
+              property: 'repository',
+              type: 'text',
+            },
+            {
+              label: t('WEBHOOK_SCREEN.TABLE.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
           ]}
-          datasource={filteredWebhooks.map(row => {
-            let data: Datasource = {
+          datasource={filteredWebhooks.map((row) => {
+            const data: Datasource = {
               ...row,
               id: row.webhookID,
               repository: row?.repository?.name,
-              method: <Styled.Tag color={get(colors.methods, row?.method?.toLowerCase(), colors.methods.unknown)}>
-                {row.method}
-              </Styled.Tag>,
+              method: (
+                <Styled.Tag
+                  color={get(
+                    colors.methods,
+                    row?.method?.toLowerCase(),
+                    colors.methods.unknown
+                  )}
+                >
+                  {row.method}
+                </Styled.Tag>
+              ),
               actions: [
-                { title: t('WEBHOOK_SCREEN.TABLE.DELETE'), icon: "delete", function: () => setWebhookToDelete(row) },
-                { title: t('WEBHOOK_SCREEN.TABLE.EDIT'), icon: "edit", function: () => setWebhookToEdit(row) },
-                { title: t('WEBHOOK_SCREEN.TABLE.COPY'), icon: "copy", function: () => { setWebhookToCopy(row); setAddWebhookVisible(true) } },
-              ]
-            }
+                {
+                  title: t('WEBHOOK_SCREEN.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setWebhookToDelete(row),
+                },
+                {
+                  title: t('WEBHOOK_SCREEN.TABLE.EDIT'),
+                  icon: 'edit',
+                  function: () => setWebhookToEdit(row),
+                },
+                {
+                  title: t('WEBHOOK_SCREEN.TABLE.COPY'),
+                  icon: 'copy',
+                  function: () => {
+                    setWebhookToCopy(row);
+                    setAddWebhookVisible(true);
+                  },
+                },
+              ],
+            };
             return data;
           })}
           isLoading={isLoading}
         />
-
       </Styled.Content>
 
       <AddWebhook
