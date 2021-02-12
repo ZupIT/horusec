@@ -126,6 +126,6 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.Sobelow
 	vulnerabilitySeverity.Language = languages.Elixir
-	vulnerabilitySeverity.Severity = severity.High
+	vulnerabilitySeverity.Severity = severity.Unknown
 	return vulnerabilitySeverity
 }

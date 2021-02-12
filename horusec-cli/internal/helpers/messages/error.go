@@ -94,4 +94,6 @@ const (
 	MsgErrorReplayWrong             = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
 	MsgErrorErrorOnCreateConfigFile = "{HORUSEC-CLI} Error on create config file: "
 	MsgErrorErrorOnReadConfigFile   = "{HORUSEC-CLI} Error on read config file on path: "
+	MsgErrorGemLockNotFound         = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
+		"it would be a good idea to commit it so horusec can check for vulnerabilities"
 )

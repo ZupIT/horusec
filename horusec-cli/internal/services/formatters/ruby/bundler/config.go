@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package phpcs
+package bundler
 
 const (
-	ImageName = "horuszup/horusec-phpcs"
-	ImageTag  = "v1.0.0"
-	// nolint
-	ImageCmd = `
+	ImageName = "horuszup/horusec-ruby"
+	ImageTag  = "1.0.1"
+	ImageCmd  = `
 		{{WORK_DIR}}
-		phpcs --report=json --standard=/vendor/pheromone/phpcs-security-audit/example_drupal7_ruleset.xml . > /tmp/result-ANALYSISID.json
-		cat /tmp/result-ANALYSISID.json
-		chmod -R 777 .
-  	`
+		bundle-audit check
+  `
 )

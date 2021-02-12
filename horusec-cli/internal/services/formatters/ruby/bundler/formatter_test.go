@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package brakeman
+package bundler
 
 import (
 	"errors"
@@ -36,7 +36,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		output := "{\"warnings\":[{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Low\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Medium\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"High\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Test\"}]}"
+		output := "\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8164\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/f6ioe4sdpbY\n\u001B[31mTitle: \u001B[0mPossible Strong Parameters Bypass in ActionPack\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n\n\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8166\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/NOjKiGeXUgw\n\u001B[31mTitle: \u001B[0mAbility to forge per-form CSRF tokens given a global CSRF token\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n"
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
@@ -48,55 +48,7 @@ func TestParseOutput(t *testing.T) {
 			formatter.StartAnalysis("")
 		})
 
-		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
-	})
-
-	t.Run("Should success parse output empty to analysis", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-
-		dockerAPIControllerMock := &docker.Mock{}
-		dockerAPIControllerMock.On("SetAnalysisID")
-
-		output := ""
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-
-		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
-
-		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
-	})
-
-	t.Run("Should error rails not found when parse output to analysis", func(t *testing.T) {
-		analysis := &horusec.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-
-		dockerAPIControllerMock := &docker.Mock{}
-		dockerAPIControllerMock.On("SetAnalysisID")
-
-		output := "Please supply the path to a Rails application"
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
-
-		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
-
-		assert.NotEmpty(t, analysis.Errors)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 2)
 	})
 
 	t.Run("Should return error when parsing invalid output", func(t *testing.T) {
@@ -108,6 +60,42 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+	})
+
+	t.Run("Should return error when gem lock not found", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
+			Return("No such file or directory Errno::ENOENT", nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
+
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+	})
+
+	t.Run("Should return no vulnerabilities", func(t *testing.T) {
+		analysis := &horusec.Analysis{}
+
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
+			Return("No vulnerabilities found", nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 
@@ -136,7 +124,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsToIgnore([]string{"Brakeman"})
+		config.SetToolsToIgnore([]string{"BundlerAudit"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 
