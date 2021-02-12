@@ -28,7 +28,6 @@ interface TagProps {
 const Wrapper = styled.div`
   width: 100%;
   padding: 35px 40px 10px 35px;
-  max-width: 1200px;
 `;
 
 const Options = styled.div`

@@ -163,7 +163,7 @@ func (u *UseCases) GenerateResetPasswordCode() string {
 }
 
 func (u *UseCases) ValidateEmail(email string) error {
-	return validation.Validate(email, validation.Required, validation.Length(1, 255), is.Email)
+	return validation.Validate(email, validation.Required, validation.Length(1, 255), is.EmailFormat)
 }
 
 func (u *UseCases) NewKeycloakTokenFromReadCloser(body io.ReadCloser) (*dto.KeycloakToken, error) {
@@ -189,7 +189,7 @@ func (u *UseCases) NewAccountFromReadCloser(body io.ReadCloser) (*authEntities.A
 
 	account := createAccount.ToAccount()
 	return account, validation.ValidateStruct(account,
-		validation.Field(&account.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&account.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
 		validation.Field(&account.Password, u.getPasswordValidation()...),
 		validation.Field(&account.Username, validation.Length(1, 255), validation.Required),
 	)

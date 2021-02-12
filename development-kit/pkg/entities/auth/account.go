@@ -74,7 +74,7 @@ func (a *Account) SetIsConfirmed() *Account {
 
 func (a *Account) Validate() error {
 	return validation.ValidateStruct(a,
-		validation.Field(&a.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&a.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
 		validation.Field(&a.Password, validation.Length(1, 255), validation.Required),
 		validation.Field(&a.Username, validation.Length(1, 255), validation.Required),
 	)
@@ -83,7 +83,7 @@ func (a *Account) Validate() error {
 func (a *Account) UpdationValidate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(
-			&a.Email, validation.When(a.Username == "", validation.Required), validation.Length(1, 255), is.Email),
+			&a.Email, validation.When(a.Username == "", validation.Required), validation.Length(1, 255), is.EmailFormat),
 		validation.Field(&a.Username, validation.Length(1, 255), validation.When(a.Email == "", validation.Required)),
 	)
 }

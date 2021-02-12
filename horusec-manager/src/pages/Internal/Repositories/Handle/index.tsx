@@ -30,6 +30,7 @@ import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { Repository } from 'helpers/interfaces/Repository';
 import { cloneDeep } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
   isVisible: boolean;
@@ -156,40 +157,34 @@ const HandleRepository: React.FC<Props> = ({
     }
   };
 
-  const handleSetAdminGroup = (index: number, value: string) => {
-    const adminGroupCopy = cloneDeep(adminGroup);
-    adminGroupCopy[index] = value;
-    setAdminGroup(adminGroupCopy);
+  const handleSetGroupValue = (group: string, index: number, value: string) => {
+    const allGroups: ObjectLiteral = {
+      admin: [adminGroup, setAdminGroup],
+      supervisor: [supervisorGroup, setSupervisorGroup],
+      member: [memberGroup, setMemberGroup],
+    };
+
+    const groupList = allGroups[group][0];
+    const groupSetter = allGroups[group][1];
+    const copyOfGroup = cloneDeep(groupList);
+
+    copyOfGroup[index] = value.trim();
+    groupSetter(copyOfGroup);
   };
 
-  const handleRemoveAdminGroup = () => {
-    const adminGroupCopy = cloneDeep(adminGroup);
-    adminGroupCopy.pop();
-    setAdminGroup(adminGroupCopy);
-  };
+  const handleRemoveGroupValue = (group: string) => {
+    const allGroups: ObjectLiteral = {
+      admin: [adminGroup, setAdminGroup],
+      supervisor: [supervisorGroup, setSupervisorGroup],
+      member: [memberGroup, setMemberGroup],
+    };
 
-  const handleRemoveMemberGroup = () => {
-    const memberGroupCopy = cloneDeep(memberGroup);
-    memberGroupCopy.pop();
-    setMemberGroup(memberGroupCopy);
-  };
+    const groupList = allGroups[group][0];
+    const groupSetter = allGroups[group][1];
+    const copyOfGroup = cloneDeep(groupList);
 
-  const handleSetMemberGroup = (index: number, value: string) => {
-    const memberGroupCopy = cloneDeep(memberGroup);
-    memberGroupCopy[index] = value;
-    setMemberGroup(memberGroupCopy);
-  };
-
-  const handleRemoveSupervisorGroup = () => {
-    const supervisorGroupCopy = cloneDeep(supervisorGroup);
-    supervisorGroupCopy.pop();
-    setSupervisorGroup(supervisorGroupCopy);
-  };
-
-  const handleSetSupervisorGroup = (index: number, value: string) => {
-    const supervisorGroupCopy = cloneDeep(supervisorGroup);
-    supervisorGroupCopy[index] = value;
-    setSupervisorGroup(supervisorGroupCopy);
+    copyOfGroup.pop();
+    groupSetter(copyOfGroup);
   };
 
   useEffect(() => {
@@ -271,7 +266,7 @@ const HandleRepository: React.FC<Props> = ({
                     initialValue={adminGroup[index]}
                     label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
-                      handleSetAdminGroup(index, field.value)
+                      handleSetGroupValue('admin', index, field.value)
                     }
                   />
 
@@ -280,7 +275,7 @@ const HandleRepository: React.FC<Props> = ({
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={handleRemoveAdminGroup}
+                      onClick={() => handleRemoveGroupValue('admin')}
                     />
                   ) : null}
 
@@ -301,11 +296,11 @@ const HandleRepository: React.FC<Props> = ({
               {memberGroup?.map((_, index) => (
                 <Styled.Wrapper key={index}>
                   <Input
-                    name={`admin-group-${index}`}
+                    name={`member-group-${index}`}
                     initialValue={memberGroup[index]}
                     label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
-                      handleSetMemberGroup(index, field.value)
+                      handleSetGroupValue('member', index, field.value)
                     }
                   />
 
@@ -314,7 +309,7 @@ const HandleRepository: React.FC<Props> = ({
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={handleRemoveMemberGroup}
+                      onClick={() => handleRemoveGroupValue('member')}
                     />
                   ) : null}
 
@@ -335,11 +330,11 @@ const HandleRepository: React.FC<Props> = ({
               {supervisorGroup?.map((_, index) => (
                 <Styled.Wrapper key={index}>
                   <Input
-                    name={`admin-group-${index}`}
+                    name={`supervisor-group-${index}`}
                     initialValue={supervisorGroup[index]}
                     label={t('REPOSITORIES_SCREEN.GROUP_NAME')}
                     onChangeValue={(field: Field) =>
-                      handleSetSupervisorGroup(index, field.value)
+                      handleSetGroupValue('supervisor', index, field.value)
                     }
                   />
 
@@ -348,7 +343,7 @@ const HandleRepository: React.FC<Props> = ({
                     <Styled.OptionIcon
                       name="delete"
                       size="20px"
-                      onClick={handleRemoveSupervisorGroup}
+                      onClick={() => handleRemoveGroupValue('supervisor')}
                     />
                   ) : null}
 

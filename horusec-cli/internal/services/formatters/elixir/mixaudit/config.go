@@ -18,6 +18,7 @@ const (
 	ImageName = "horuszup/horusec-elixir"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
+		{{WORK_DIR}}
 		mix_audit --format json --path ./
   `
 )

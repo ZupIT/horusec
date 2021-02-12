@@ -26,7 +26,7 @@ type ResetCodeData struct {
 
 func (r *ResetCodeData) Validate() error {
 	return validation.ValidateStruct(r,
-		validation.Field(&r.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&r.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
 		validation.Field(&r.Code, validation.Required, validation.Length(6, 6)),
 	)
 }

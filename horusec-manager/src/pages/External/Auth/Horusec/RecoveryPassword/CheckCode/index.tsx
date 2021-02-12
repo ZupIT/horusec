@@ -55,7 +55,7 @@ function CheckCode() {
         .validateCode(email.value, code.value)
         .then((result) => {
           const token = result?.data?.content;
-          history.push(`/recovery-password/new-password?token=${token}`);
+          history.push(`/auth/recovery-password/new-password?token=${token}`);
         })
         .catch((err) => {
           dispatchMessage(err?.response?.data);

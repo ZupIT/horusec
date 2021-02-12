@@ -18,20 +18,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
-
-	"github.com/ZupIT/horusec/horusec-cli/config"
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/sonarqube"
-
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/sonarqube"
 )
 
 var (
@@ -292,7 +290,8 @@ func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 
 func (pr *PrintResults) printErrors(errorMessage string) {
 	if strings.Contains(errorMessage, messages.MsgErrorPacketJSONNotFound) ||
-		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) {
+		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) ||
+		strings.Contains(errorMessage, messages.MsgErrorGemLockNotFound) {
 		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""))
 		return
 	}
