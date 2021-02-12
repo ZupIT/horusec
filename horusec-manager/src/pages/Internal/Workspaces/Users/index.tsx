@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Button, SearchBar, Dialog, Icon, Datatable, Datasource } from 'components';
+import { Button, SearchBar, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import companyService from 'services/company';

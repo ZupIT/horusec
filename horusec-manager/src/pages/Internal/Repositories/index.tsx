@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import { SearchBar, Button, Icon, Dialog, Datatable, Datasource } from 'components';
+import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';

@@ -81,13 +81,13 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
 
                                         {columns.map((column, columnId) => {
 
-                                            const renderTooltip = () => {
-                                                return !!tooltip ? { ['data-for']: tooltip.id, ['data-tip']: row[column.property] } : {}
+                                            const renderTooltipProps = () => {
+                                                return !!tooltip ? { 'data-for': tooltip.id, 'data-tip': row[column.property] } : {}
                                             }
 
                                             if (column.type === 'text' || column.type === 'custom') {
                                                 return (
-                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltip()}>
+                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltipProps()}>
                                                         {row[column.property] || '-'}
                                                     </Styled.Cell>
                                                 )
@@ -95,7 +95,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
 
                                             if (column.type === 'actions') {
                                                 return (
-                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltip()} >
+                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltipProps()} >
                                                         <div className="row">
                                                             {row[column.type].map((action, actionId) => (
                                                                 <Button

@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Button, Icon, Dialog, Datatable, Datasource } from 'components';
+import { Button, Dialog, Datatable, Datasource } from 'components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';

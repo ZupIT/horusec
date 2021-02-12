@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { Button, Icon, Dialog, SearchBar, Datatable, Datasource } from 'components';
+import { Button, Dialog, SearchBar, Datatable, Datasource } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';

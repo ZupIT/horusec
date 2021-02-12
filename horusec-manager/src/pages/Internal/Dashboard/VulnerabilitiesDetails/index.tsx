@@ -17,10 +17,9 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Datatable, Icon, Pagination } from 'components';
+import { Datatable } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
-import ReactTooltip from 'react-tooltip';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 interface Props {
