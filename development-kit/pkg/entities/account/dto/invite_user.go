@@ -16,6 +16,7 @@ package dto
 
 import (
 	"encoding/json"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -32,7 +33,7 @@ type InviteUser struct {
 
 func (i *InviteUser) Validate() error {
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Email, validation.Length(1, 255), validation.Required, is.Email),
+		validation.Field(&i.Email, validation.Length(1, 255), validation.Required, is.EmailFormat),
 		validation.Field(&i.Role, validation.Length(1, 255),
 			validation.In(accountEnums.Admin, accountEnums.Member, accountEnums.Supervisor), validation.Required),
 		validation.Field(&i.RepositoryID, is.UUID),

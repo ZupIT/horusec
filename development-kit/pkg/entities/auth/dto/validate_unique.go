@@ -26,7 +26,7 @@ type ValidateUnique struct {
 
 func (v *ValidateUnique) Validate() error {
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Email, validation.Required, validation.Length(1, 255), is.Email),
-		validation.Field(&v.Username, validation.Length(1, 255), validation.Required),
+		validation.Field(&v.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
+		validation.Field(&v.Username, validation.Required, validation.Length(1, 255)),
 	)
 }
