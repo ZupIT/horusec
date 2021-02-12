@@ -127,9 +127,6 @@ const Repositories: React.FC = () => {
           </Styled.Options>
 
           <Styled.Content>
-            <Styled.LoadingWrapper isLoading={isLoading}>
-              <Icon name="loading" size="200px" className="loading" />
-            </Styled.LoadingWrapper>
 
             <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
 
@@ -178,6 +175,7 @@ const Repositories: React.FC = () => {
                 }
                 return repo;
               })}
+              isLoading={isLoading}
               emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
             />
 

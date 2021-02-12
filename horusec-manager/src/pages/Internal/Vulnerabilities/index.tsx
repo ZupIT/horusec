@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Select, Icon, Pagination } from 'components';
+import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import repositoryService from 'services/repository';
@@ -263,93 +263,46 @@ const Vulnerabilities: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
         <Styled.Title>{t('VULNERABILITIES_SCREEN.TITLE')}</Styled.Title>
+        <Datatable
+          columns={[
+            { label: t('VULNERABILITIES_SCREEN.TABLE.HASH'), property: 'hash', type: 'text' },
+            { label: t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION'), property: 'description', type: 'text' },
+            { label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'), property: 'severity', type: 'text', cssClass: ['center'] },
+            { label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'), property: 'status', type: 'text' },
+            { label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'), property: 'details', type: 'text' },
+          ]}
+          datasource={vulnerabilities.map(row => {
+            let repo: Datasource = {
+              ...row,
+              id: row.vulnerabilityID,
+              hash: row.vulnHash,
+              severity: <Styled.Tag color={get(colors.vulnerabilities, row.severity, colors.vulnerabilities.DEFAULT)}>
+                {row.severity}
+              </Styled.Tag>,
+              status: !isLoading ? <Select
+                keyLabel="description"
+                keyValue="value"
+                width="150px"
+                optionsHeight="130px"
+                className="select-role"
+                rounded
+                initialValue={row.type}
+                options={vulnTypes}
+                disabled={!isAdminOrSupervisorOfRepository()}
+                onChangeValue={(value) =>
+                  handleUpdateVulnerabilityType(row, value.value)
+                }
+              /> : null,
+              details: <Icon name="info" size="20px" onClick={() => setSelectedVuln(row)} />
+            };
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
+          paginate={{ pagination, onChange: (pag) => fetchData(filters, { ...pag }) }}
+        />
 
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.HASH')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.SEVERITY')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.STATUS')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.DETAILS')}
-            </Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!vulnerabilities || vulnerabilities.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {vulnerabilities.map((vul, index) => (
-              <Styled.Row key={index}>
-                <Styled.Cell>{vul.vulnHash}</Styled.Cell>
-
-                <Styled.Cell>{vul.details}</Styled.Cell>
-
-                <Styled.Cell className="center">
-                  <Styled.Tag
-                    color={get(
-                      colors.vulnerabilities,
-                      vul.severity,
-                      colors.vulnerabilities.DEFAULT
-                    )}
-                  >
-                    {vul.severity}
-                  </Styled.Tag>
-                </Styled.Cell>
-
-                <Styled.Cell>
-                  {!isLoading ? (
-                    <Select
-                      keyLabel="description"
-                      keyValue="value"
-                      width="250px"
-                      optionsHeight="130px"
-                      className="select-type"
-                      rounded
-                      initialValue={vul.type}
-                      options={vulnTypes}
-                      disabled={!isAdminOrSupervisorOfRepository()}
-                      onChangeValue={(value) =>
-                        handleUpdateVulnerabilityType(vul, value.value)
-                      }
-                    />
-                  ) : null}
-                </Styled.Cell>
-
-                <Styled.Cell>
-                  <Icon
-                    name="info"
-                    size="20px"
-                    onClick={() => setSelectedVuln(vul)}
-                  />
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-
-          {vulnerabilities && vulnerabilities.length > 0 ? (
-            <Pagination
-              pagination={pagination}
-              onChange={(pag) => fetchData(filters, { ...pag })}
-            />
-          ) : null}
-        </Styled.Table>
       </Styled.Content>
 
       <Details

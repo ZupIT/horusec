@@ -215,9 +215,8 @@ const InviteToRepository: React.FC<Props> = ({
               action: <Checkbox initialValue={accountsInRepository.includes(row.accountID)}
                 disabled={row.email === currentUser?.email} onChangeValue={(value) => handleInviteUser(value, row)}
               />,
-              permission: <div style={{ width: '150px', marginBottom: '30px' }}>
-                <Select
-                disabled={row.email === currentUser?.email || !accountsInRepository.includes(row.accountID)}
+              permission: <Select
+                //disabled={row.email === currentUser?.email || !accountsInRepository.includes(row.accountID)}
                 className="select-role"
                 rounded
                 width="150px"
@@ -229,7 +228,7 @@ const InviteToRepository: React.FC<Props> = ({
                 onChangeValue={(role) =>
                   handleChangeUserRole(role?.value, row)
                 }
-              /></div>
+              />
             };
             return repo;
           })}

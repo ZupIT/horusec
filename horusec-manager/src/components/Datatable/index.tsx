@@ -16,7 +16,9 @@
 
 import React from 'react';
 import Styled from './styled';
-import { Button, Icon } from 'components';
+import { Button, Icon, Pagination } from 'components';
+import { PaginationInfo } from 'helpers/interfaces/Pagination';
+import ReactTooltip, { TooltipProps } from 'react-tooltip';
 
 export interface TableColumn {
     label: string,
@@ -38,73 +40,98 @@ interface DatatableInterface {
     columns: TableColumn[],
     datasource: Datasource[],
     total?: number,
-    pagination?: boolean,
+    paginate?: {
+        pagination: PaginationInfo,
+        onChange: (pagination: PaginationInfo) => void
+    }
     emptyListText?: string,
     isLoading?: boolean;
+    tooltip?: TooltipProps;
 }
 
 const Datatable: React.FC<DatatableInterface> = (props) => {
-    const { columns, datasource, emptyListText, isLoading} = props;
+    const { columns, datasource, emptyListText, isLoading, paginate, tooltip } = props;
 
     return (
         <>
-            <Styled.LoadingWrapper isLoading={isLoading}>
-                <Icon name="loading" size="120px" className="loading" />
-            </Styled.LoadingWrapper>
-            <Styled.Table>
+            {isLoading ? (
+                <Styled.LoadingWrapper isLoading={isLoading}>
+                    <Icon name="loading" size="120px" className="loading" />
+                </Styled.LoadingWrapper>
 
-                <thead>
-                    <Styled.Head>
-                        {columns.map((el, index) => <Styled.Column key={index} >{el.label}</Styled.Column>)}
-                    </Styled.Head>
-                </thead>
+            ) : (
+                    <>
+                        <Styled.Table isPaginate={!!paginate}>
 
-                <Styled.Body>
-                    {!datasource || datasource.length <= 0 ? (
-                        <Styled.Cell colSpan={columns.length} >
-                            <Styled.EmptyText>{emptyListText}</Styled.EmptyText>
-                        </Styled.Cell>
-                    ) : datasource.map((row, dataId) => (
-                        <Styled.Row key={row.id || dataId}>
+                            <thead>
+                                <Styled.Head>
+                                    {columns.map((el, index) => <Styled.Column key={index} >{el.label}</Styled.Column>)}
+                                </Styled.Head>
+                            </thead>
 
-                            {columns.map((column, columnId) => {
-
-                                if (column.type === 'text' || column.type === 'custom') {
-                                    return (
-                                        <Styled.Cell key={columnId} className={row.cssClass?.join(' ')}>
-                                            {row[column.property] || '-'}
+                            <Styled.Body>
+                                {!datasource || datasource.length <= 0 ? (
+                                    <tr>
+                                        <Styled.Cell colSpan={columns.length} >
+                                            <Styled.EmptyText>{emptyListText}</Styled.EmptyText>
                                         </Styled.Cell>
-                                    )
-                                }
+                                    </tr>
+                                ) : datasource.map((row, dataId) => (
+                                    <Styled.Row key={row.id || dataId}>
 
-                                if (column.type === 'actions') {
-                                    return (
-                                        <Styled.Cell key={columnId} >
-                                            <div className="row">
-                                                {row[column.type].map((action, actionId) => (
-                                                    <Button
-                                                        key={actionId}
-                                                        rounded
-                                                        outline
-                                                        opaque
-                                                        text={action.title}
-                                                        width={90}
-                                                        height={30}
-                                                        icon={action.icon}
-                                                        onClick={action.function}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </Styled.Cell>
-                                    )
-                                }
+                                        {columns.map((column, columnId) => {
 
-                                return null;
-                            })}
-                        </Styled.Row>
-                    ))}
-                </Styled.Body>
-            </Styled.Table>
+                                            const renderTooltip = () => {
+                                                return !!tooltip ? { ['data-for']: tooltip.id, ['data-tip']: row[column.property] } : {}
+                                            }
+
+                                            if (column.type === 'text' || column.type === 'custom') {
+                                                return (
+                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltip()}>
+                                                        {row[column.property] || '-'}
+                                                    </Styled.Cell>
+                                                )
+                                            }
+
+                                            if (column.type === 'actions') {
+                                                return (
+                                                    <Styled.Cell key={columnId} className={column.cssClass?.join(' ')} {...renderTooltip()} >
+                                                        <div className="row">
+                                                            {row[column.type].map((action, actionId) => (
+                                                                <Button
+                                                                    key={actionId}
+                                                                    rounded
+                                                                    outline
+                                                                    opaque
+                                                                    text={action.title}
+                                                                    width={90}
+                                                                    height={30}
+                                                                    icon={action.icon}
+                                                                    onClick={action.function}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </Styled.Cell>
+                                                )
+                                            }
+
+
+
+                                            return null;
+                                        })}
+
+                                        { !!tooltip ? <ReactTooltip {...tooltip} /> : null}
+                                    </Styled.Row>
+                                ))}
+                            </Styled.Body>
+
+                        </Styled.Table>
+
+                        {datasource && datasource.length > 0 && paginate ? (
+                            <Pagination pagination={paginate.pagination} onChange={paginate.onChange} />
+                        ) : null}
+                    </>
+                )}
         </>
     );
 };

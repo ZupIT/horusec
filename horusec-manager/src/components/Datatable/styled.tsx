@@ -37,10 +37,20 @@ const Title = styled.h1`
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
 `;
 
-const Table = styled.table`
+const Table = styled.table<{ isPaginate: boolean }>`
   margin-top: 20px;
   width: 100%;
   border-spacing: 0px 5px;
+  ${({ isPaginate }) =>
+    isPaginate ?
+      css`
+      display: block;
+      max-height: 65vh;
+      overflow-y: scroll;
+    `:
+      css`
+      visibility: visible;
+    `};
 `;
 
 const Head = styled.tr`
@@ -61,7 +71,7 @@ const Cell = styled.td`
   color: ${({ theme }) => theme.colors.dataTable.row.text};
   font-weight: normal;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: ellipsis;
   width: 1%;
   padding: 10px 20px;
@@ -83,11 +93,6 @@ const Cell = styled.td`
   &:last-child { 
     border-top-right-radius: 5px; 
     border-bottom-right-radius: 5px; 
-  }
-
-  .select-role {
-    position: absolute !important;
-    margin-top: 2px;
   }
 `;
 
@@ -132,6 +137,7 @@ const LoadingWrapper = styled.div<LoadingWrapperProps>`
   height: 100%;
   position: absolute;
   width: 100%;
+  height: 72vh;
   left: 0;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   z-index: 2;

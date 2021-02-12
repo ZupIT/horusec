@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Button, SearchBar, Dialog, Icon } from 'components';
+import { Button, SearchBar, Dialog, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import companyService from 'services/company';
@@ -125,76 +125,34 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           />
         </Styled.Header>
 
-        <Styled.Table>
-          <Styled.LoadingWrapper isLoading={isLoading}>
-            <Icon name="loading" size="120px" className="loading" />
-          </Styled.LoadingWrapper>
+        <Datatable
+          columns={[
+              {label: t('WORKSPACES_SCREEN.USERS.TABLE.USER'), property: 'username', type: "text"},
+              {label: t('WORKSPACES_SCREEN.USERS.TABLE.EMAIL'), property: 'email', type: "text"},
+              {label: t('WORKSPACES_SCREEN.USERS.TABLE.PERMISSION'), property: 'permission', type: "text"},
+              {label: t('WORKSPACES_SCREEN.USERS.TABLE.ACTION'), property: 'actions', type: "text"},
+          ]}
+          datasource={filteredUsers.map(row => {
+            let data: Datasource = {
+              ...row,
+              id: row.accountID,
+              
+              permission: t(`WORKSPACES_SCREEN.USERS.TABLE.ROLE.${row.role.toLocaleUpperCase()}`),
+              actions: []
+            };
 
-          <Styled.Head>
-            <Styled.Column>
-              {t('WORKSPACES_SCREEN.USERS.TABLE.USER')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('WORKSPACES_SCREEN.USERS.TABLE.EMAIL')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('WORKSPACES_SCREEN.USERS.TABLE.PERMISSION')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('WORKSPACES_SCREEN.USERS.TABLE.ACTION')}
-            </Styled.Column>
-          </Styled.Head>
+            if (row.email !== currentUser?.email) {
+              data.actions = [
+                { title: t('WORKSPACES_SCREEN.USERS.TABLE.DELETE'), icon: 'delete', function: () => setUserToDelete(row) },
+                { title: t('WORKSPACES_SCREEN.USERS.TABLE.EDIT'), icon: 'edit', function: () => setUserToEdit(row)}
+              ];
+            }
+            return data;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('WORKSPACES_SCREEN.USERS.TABLE.EMPTY')}
+        />
 
-          <Styled.Body>
-            {!filteredUsers || filteredUsers.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('WORKSPACES_SCREEN.USERS.TABLE.EMPTY')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {filteredUsers.map((user) => (
-              <Styled.Row key={user.accountID}>
-                <Styled.Cell>{user.username}</Styled.Cell>
-
-                <Styled.Cell>{user.email}</Styled.Cell>
-
-                <Styled.Cell>
-                  {t(
-                    `WORKSPACES_SCREEN.USERS.TABLE.ROLE.${user.role.toLocaleUpperCase()}`
-                  )}
-                </Styled.Cell>
-
-                <Styled.Cell className="row">
-                  {user.email !== currentUser?.email ? (
-                    <>
-                      <Button
-                        rounded
-                        outline
-                        opaque
-                        text={t('WORKSPACES_SCREEN.USERS.TABLE.DELETE')}
-                        width={90}
-                        height={30}
-                        icon="delete"
-                        onClick={() => setUserToDelete(user)}
-                      />
-
-                      <Button
-                        outline
-                        rounded
-                        opaque
-                        text={t('WORKSPACES_SCREEN.USERS.TABLE.EDIT')}
-                        width={90}
-                        height={30}
-                        icon="edit"
-                        onClick={() => setUserToEdit(user)}
-                      />
-                    </>
-                  ) : null}
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
       </Styled.Wrapper>
 
       <InviteToCompany

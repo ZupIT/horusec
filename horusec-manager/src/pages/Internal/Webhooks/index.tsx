@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { Button, Icon, Dialog, SearchBar } from 'components';
+import { Button, Icon, Dialog, SearchBar, Datatable, Datasource } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
@@ -125,95 +125,34 @@ const Webhooks: React.FC = () => {
           <Styled.Title>{t('WEBHOOK_SCREEN.TITLE')}</Styled.Title>
         </Styled.TitleWrapper>
 
-        <Styled.Table>
-          <Styled.LoadingWrapper isLoading={isLoading}>
-            <Icon name="loading" size="200px" className="loading" />
-          </Styled.LoadingWrapper>
 
-          <Styled.Head>
-            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.METHOD')}</Styled.Column>
+        <Datatable
+          columns={[
+            { label: t('WEBHOOK_SCREEN.TABLE.METHOD'), property: 'method', type: 'custom', cssClass: ['flex-center']},
+            { label: t('WEBHOOK_SCREEN.TABLE.URL'), property: 'url', type: 'text' },
+            { label: t('WEBHOOK_SCREEN.TABLE.DESCRIPTION'), property: 'description', type: 'text' },
+            { label: t('WEBHOOK_SCREEN.TABLE.REPOSITORY'), property: 'repository', type: 'text' },
+            { label: t('WEBHOOK_SCREEN.TABLE.ACTION'), property: 'actions', type: 'actions' },
+          ]}
+          datasource={filteredWebhooks.map(row => {
+            let data: Datasource = {
+              ...row,
+              id: row.webhookID,
+              repository: row?.repository?.name,
+              method: <Styled.Tag color={get(colors.methods, row?.method?.toLowerCase(), colors.methods.unknown)}>
+                {row.method}
+              </Styled.Tag>,
+              actions: [
+                { title: t('WEBHOOK_SCREEN.TABLE.DELETE'), icon: "delete", function: () => setWebhookToDelete(row) },
+                { title: t('WEBHOOK_SCREEN.TABLE.EDIT'), icon: "edit", function: () => setWebhookToEdit(row) },
+                { title: t('WEBHOOK_SCREEN.TABLE.COPY'), icon: "copy", function: () => { setWebhookToCopy(row); setAddWebhookVisible(true) } },
+              ]
+            }
+            return data;
+          })}
+          isLoading={isLoading}
+        />
 
-            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.URL')}</Styled.Column>
-
-            <Styled.Column>
-              {t('WEBHOOK_SCREEN.TABLE.DESCRIPTION')}
-            </Styled.Column>
-
-            <Styled.Column>
-              {t('WEBHOOK_SCREEN.TABLE.REPOSITORY')}
-            </Styled.Column>
-
-            <Styled.Column>{t('WEBHOOK_SCREEN.TABLE.ACTION')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!filteredWebhooks || filteredWebhooks.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('WEBHOOK_SCREEN.TABLE.EMPTY')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {filteredWebhooks.map((webhook, index) => (
-              <Styled.Row key={index}>
-                <Styled.Cell className="flex-center">
-                  <Styled.Tag
-                    color={get(
-                      colors.methods,
-                      webhook?.method?.toLowerCase(),
-                      colors.methods.unknown
-                    )}
-                  >
-                    {webhook.method}
-                  </Styled.Tag>
-                </Styled.Cell>
-
-                <Styled.Cell>{webhook.url}</Styled.Cell>
-
-                <Styled.Cell>{webhook.description}</Styled.Cell>
-
-                <Styled.Cell>{webhook?.repository?.name}</Styled.Cell>
-
-                <Styled.Cell className="row">
-                  <Button
-                    rounded
-                    outline
-                    opaque
-                    text={t('WEBHOOK_SCREEN.TABLE.DELETE')}
-                    width={80}
-                    height={30}
-                    icon="delete"
-                    onClick={() => setWebhookToDelete(webhook)}
-                  />
-
-                  <Button
-                    outline
-                    rounded
-                    opaque
-                    text={t('WEBHOOK_SCREEN.TABLE.EDIT')}
-                    width={80}
-                    height={30}
-                    icon="edit"
-                    onClick={() => setWebhookToEdit(webhook)}
-                  />
-
-                  <Button
-                    outline
-                    rounded
-                    opaque
-                    text={t('WEBHOOK_SCREEN.TABLE.COPY')}
-                    width={80}
-                    height={30}
-                    icon="copy"
-                    onClick={() => {
-                      setWebhookToCopy(webhook);
-                      setAddWebhookVisible(true);
-                    }}
-                  />
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
       </Styled.Content>
 
       <AddWebhook

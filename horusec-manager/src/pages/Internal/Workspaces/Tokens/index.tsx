@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Button, Icon, Dialog } from 'components';
+import { Button, Icon, Dialog, Datatable, Datasource } from 'components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
@@ -100,49 +100,29 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           onClick={() => setAddTokenVisible(true)}
         />
 
-        <Styled.Table>
-          <Styled.LoadingWrapper isLoading={isLoading}>
-            <Icon name="loading" size="120px" className="loading" />
-          </Styled.LoadingWrapper>
 
-          <Styled.Head>
-            <Styled.Column>{t('WORKSPACES_SCREEN.TOKEN')}</Styled.Column>
-            <Styled.Column>{t('WORKSPACES_SCREEN.DESCRIPTION')}</Styled.Column>
-            <Styled.Column>{t('WORKSPACES_SCREEN.EXPIRES')}</Styled.Column>
-            <Styled.Column>{t('WORKSPACES_SCREEN.ACTION')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!tokens || tokens.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('WORKSPACES_SCREEN.NO_TOKENS')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {tokens.map((token) => (
-              <Styled.Row key={token.tokenID}>
-                <Styled.Cell>***************{token.suffixValue}</Styled.Cell>
-
-                <Styled.Cell>{token.description}</Styled.Cell>
-
-                <Styled.Cell>{formatToHumanDate(token.expiresAt)}</Styled.Cell>
-
-                <Styled.Cell className="row">
-                  <Button
-                    rounded
-                    outline
-                    opaque
-                    text={t('WORKSPACES_SCREEN.DELETE')}
-                    width={90}
-                    height={30}
-                    icon="delete"
-                    onClick={() => setTokenToDelete(token)}
-                  />
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+        <Datatable
+          columns={[
+            { label: t('WORKSPACES_SCREEN.TOKEN'), property: 'token', type: 'text' },
+            { label: t('WORKSPACES_SCREEN.DESCRIPTION'), property: 'description', type: 'text' },
+            { label: t('WORKSPACES_SCREEN.EXPIRES'), property: 'expiresAt', type: 'text' },
+            { label: t('WORKSPACES_SCREEN.ACTION'), property: 'actions', type: 'actions' },
+          ]}
+          datasource={tokens.map(row => {
+            let data: Datasource = {
+              ...row,
+              id: row.tokenID,
+              token: '***************' + row.suffixValue,
+              expiresAt: formatToHumanDate(row.expiresAt),
+              actions: [
+                { title: t('WORKSPACES_SCREEN.DELETE'), icon: 'delete', function: () => setTokenToDelete(row) }
+              ]
+            };
+            return data;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('WORKSPACES_SCREEN.NO_TOKENS')}
+        />
       </Styled.Wrapper>
 
       <Dialog
