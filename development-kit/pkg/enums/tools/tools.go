@@ -43,6 +43,7 @@ const (
 	MixAudit          Tool = "MixAudit"
 	Sobelow           Tool = "Sobelow"
 	ShellCheck        Tool = "ShellCheck"
+	BundlerAudit      Tool = "BundlerAudit"
 )
 
 func (t Tool) ToString() string {
