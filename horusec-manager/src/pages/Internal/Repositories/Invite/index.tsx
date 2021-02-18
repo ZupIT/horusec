@@ -251,7 +251,7 @@ const InviteToRepository: React.FC<Props> = ({
               ),
               permission: (
                 <Select
-                  //disabled={row.email === currentUser?.email || !accountsInRepository.includes(row.accountID)}
+                  disabled={row.email === currentUser?.email || !accountsInRepository.includes(row.accountID)}
                   className="select-role"
                   rounded
                   width="150px"
