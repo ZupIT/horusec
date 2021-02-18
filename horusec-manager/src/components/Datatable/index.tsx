@@ -70,7 +70,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
           <Icon name="loading" size="120px" className="loading" />
         </Styled.LoadingWrapper>
       ) : (
-        <>
+        <Styled.Wrapper>
           <Styled.Table isPaginate={!!paginate}>
             <thead>
               <Styled.Head>
@@ -154,7 +154,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
               onChange={paginate.onChange}
             />
           ) : null}
-        </>
+        </Styled.Wrapper>
       )}
     </>
   );

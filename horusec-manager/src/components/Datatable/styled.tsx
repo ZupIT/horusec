@@ -18,9 +18,19 @@ import { Icon } from 'components';
 import styled, { css } from 'styled-components';
 
 const Wrapper = styled.section`
-  padding: 35px;
-  width: 100%;
-  max-width: 1200px;
+  max-height: 68vh;
+  overflow-y: auto;
+  margin: 20px 0;
+  padding-right: 10px;
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.scrollbar};
+    border-radius: 4px;
+  }
 `;
 
 const Content = styled.div`
@@ -107,15 +117,6 @@ const Body = styled.tbody`
   overflow-y: scroll;
   margin-top: 10px;
   padding-right: 10px;
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.scrollbar};
-    border-radius: 4px;
-  }
 `;
 
 const EmptyText = styled.span`
