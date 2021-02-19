@@ -16,12 +16,15 @@ package management
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
-	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewUpdateVulnTypeFromReadCloser(t *testing.T) {
@@ -40,6 +43,24 @@ func TestNewUpdateVulnTypeFromReadCloser(t *testing.T) {
 
 		useCases := NewManagementUseCases()
 		_, err := useCases.NewUpdateVulnTypeFromReadCloser(readCloser)
+		assert.Error(t, err)
+	})
+}
+
+func TestNewUpdateVulnSeverityFromReadCloser(t *testing.T) {
+	t.Run("should success parse read closer to update data", func(t *testing.T) {
+		bytes, _ := json.Marshal(&dto.UpdateVulnSeverity{Severity: severity.Critical})
+		readCloser := ioutil.NopCloser(strings.NewReader(string(bytes)))
+
+		data, err := NewManagementUseCases().NewUpdateVulnSeverityFromReadCloser(readCloser)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, data)
+	})
+
+	t.Run("should return error when invalid read closer", func(t *testing.T) {
+		readCloser := ioutil.NopCloser(strings.NewReader(""))
+
+		_, err := NewManagementUseCases().NewUpdateVulnSeverityFromReadCloser(readCloser)
 		assert.Error(t, err)
 	})
 }

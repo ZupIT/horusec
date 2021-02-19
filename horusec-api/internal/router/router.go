@@ -167,6 +167,8 @@ func (r *Router) RouterManagement(
 		router.With(repositoryMiddleware.IsRepositoryMember).Get("/", handler.Get)
 		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/type",
 			handler.UpdateVulnType)
+		router.With(repositoryMiddleware.IsRepositorySupervisor).Put("/{vulnerabilityID}/severity",
+			handler.UpdateVulnSeverity)
 		router.Options("/", handler.Options)
 	})
 

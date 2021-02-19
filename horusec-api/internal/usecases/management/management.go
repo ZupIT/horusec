@@ -16,12 +16,14 @@ package management
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"io"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 )
 
 type IUseCases interface {
 	NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateData *dto.UpdateVulnType, err error)
+	NewUpdateVulnSeverityFromReadCloser(body io.ReadCloser) (severityDTO *dto.UpdateVulnSeverity, err error)
 }
 
 type UseCases struct {
@@ -39,4 +41,15 @@ func (u *UseCases) NewUpdateVulnTypeFromReadCloser(body io.ReadCloser) (updateDa
 	}
 
 	return updateData, updateData.Validate()
+}
+
+func (u *UseCases) NewUpdateVulnSeverityFromReadCloser(
+	body io.ReadCloser) (severityDTO *dto.UpdateVulnSeverity, err error) {
+	err = json.NewDecoder(body).Decode(&severityDTO)
+	_ = body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return severityDTO, severityDTO.Validate()
 }
