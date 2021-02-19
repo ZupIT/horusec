@@ -18,11 +18,12 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { Language } from 'helpers/interfaces/Language';
 
 const getCurrentLanguage = (): Language | null => {
-  const localData: Language = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.LANGUAGE)
-  );
-
-  return localData;
+  try {
+    const localData = window.localStorage.getItem(localStorageKeys.LANGUAGE);
+    return localData ? JSON.parse(localData) : null;
+  } catch (e) {
+    return null;
+  }
 };
 
 const setCurrentLanguage = (value: Language) => {
