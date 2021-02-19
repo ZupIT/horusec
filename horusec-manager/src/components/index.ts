@@ -34,6 +34,7 @@ import Checkbox from './Checkbox';
 import Permissions from './Permissions';
 import Pagination from './Pagination';
 import Splash from './Splash';
+import Datatable, { TableColumn, Datasource } from './Datatable';
 
 export {
   Button,
@@ -56,4 +57,7 @@ export {
   Permissions,
   Pagination,
   Splash,
+  Datatable,
 };
+
+export type { TableColumn, Datasource };

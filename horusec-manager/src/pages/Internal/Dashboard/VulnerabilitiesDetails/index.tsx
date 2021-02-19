@@ -17,10 +17,9 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Icon, Pagination } from 'components';
+import { Datatable } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
-import ReactTooltip from 'react-tooltip';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 interface Props {
@@ -117,68 +116,53 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
           {t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}
         </Styled.Title>
 
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>{t('DASHBOARD_SCREEN.LANGUAGE')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.SEVERITY')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.AUTHOR')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.DESCRIPTION')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.FILE')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.LINE')}</Styled.Column>
-            <Styled.Column>{t('DASHBOARD_SCREEN.CODE')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!dataValues || dataValues.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('DASHBOARD_SCREEN.CHART_NO_DATA')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {dataValues.map((item, index) => (
-              <Styled.Row key={index}>
-                <Styled.Cell className="small">
-                  {item.language || '-'}
-                </Styled.Cell>
-
-                <Styled.Cell className="small">
-                  {item.severity || '-'}
-                </Styled.Cell>
-
-                <Styled.Cell data-for="main" data-tip={item.commitEmail}>
-                  {item.commitEmail || '-'}
-                </Styled.Cell>
-
-                <Styled.Cell data-for="main" data-tip={item.details}>
-                  {item.details || '-'}
-                </Styled.Cell>
-
-                <Styled.Cell data-for="main" data-tip={item.file}>
-                  {item.file || '-'}
-                </Styled.Cell>
-
-                <Styled.Cell className="small">{item.line || '-'}</Styled.Cell>
-
-                <Styled.Cell data-for="main" data-tip={item.code}>
-                  {item.code || '-'}
-                </Styled.Cell>
-
-                <ReactTooltip id="main" place="top" type="dark" insecure />
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-
-          {dataValues && dataValues.length > 0 ? (
-            <Pagination
-              pagination={pagination}
-              onChange={(pag) => fetchData(pag.currentPage, pag.pageSize)}
-            />
-          ) : null}
-        </Styled.Table>
+        <Datatable
+          columns={[
+            {
+              label: t('DASHBOARD_SCREEN.LANGUAGE'),
+              property: 'language',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.SEVERITY'),
+              property: 'severity',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.AUTHOR'),
+              property: 'commitEmail',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.DESCRIPTION'),
+              property: 'details',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.FILE'),
+              property: 'file',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.LINE'),
+              property: 'line',
+              type: 'text',
+            },
+            {
+              label: t('DASHBOARD_SCREEN.CODE'),
+              property: 'code',
+              type: 'text',
+            },
+          ]}
+          datasource={dataValues}
+          paginate={{
+            pagination,
+            onChange: (pag) => fetchData(pag.currentPage, pag.pageSize),
+          }}
+          isLoading={isLoading}
+          emptyListText={t('DASHBOARD_SCREEN.CHART_NO_DATA')}
+          tooltip={{ id: 'main', place: 'top', type: 'dark', insecure: true }}
+        />
       </Styled.Wrapper>
     </div>
   );

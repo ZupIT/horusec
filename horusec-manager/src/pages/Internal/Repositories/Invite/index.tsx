@@ -18,7 +18,14 @@ import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Repository } from 'helpers/interfaces/Repository';
-import { SearchBar, Checkbox, Select, Icon, Permissions } from 'components';
+import {
+  SearchBar,
+  Checkbox,
+  Select,
+  Permissions,
+  Datatable,
+  Datasource,
+} from 'components';
 import { Account } from 'helpers/interfaces/Account';
 import repositoryService from 'services/repository';
 import companyService from 'services/company';
@@ -199,70 +206,74 @@ const InviteToRepository: React.FC<Props> = ({
           onSearch={(value) => onSearchUser(value)}
         />
 
-        <Styled.Table>
-          <Styled.LoadingWrapper isLoading={isLoading}>
-            <Icon name="loading" size="120px" className="loading" />
-          </Styled.LoadingWrapper>
-
-          <Styled.Head>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.USER')}</Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.EMAIL')}</Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.PERMISSION')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!filteredUserAccounts || filteredUserAccounts.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('REPOSITORIES_SCREEN.NO_USERS_TO_INVITE')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {filteredUserAccounts.map((account) => (
-              <Styled.Row key={account.accountID}>
-                <Styled.Cell className="flex-row-center">
-                  <Checkbox
-                    initialValue={accountsInRepository.includes(
-                      account.accountID
-                    )}
-                    disabled={account.email === currentUser?.email}
-                    onChangeValue={(value) => handleInviteUser(value, account)}
-                  />
-                </Styled.Cell>
-
-                <Styled.Cell>{account.username}</Styled.Cell>
-
-                <Styled.Cell>{account.email}</Styled.Cell>
-
-                <Styled.Cell>
-                  <Select
-                    disabled={
-                      account.email === currentUser?.email ||
-                      !accountsInRepository.includes(account.accountID)
-                    }
-                    className="select-role"
-                    rounded
-                    width="150px"
-                    optionsHeight="96px"
-                    keyLabel="name"
-                    keyValue="value"
-                    initialValue={account.role}
-                    options={roles}
-                    onChangeValue={(role) =>
-                      handleChangeUserRole(role?.value, account)
-                    }
-                  />
-                </Styled.Cell>
-
+        <Datatable
+          columns={[
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'action',
+              type: 'custom',
+              cssClass: ['flex-row-center'],
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.USER'),
+              property: 'username',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.EMAIL'),
+              property: 'email',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.PERMISSION'),
+              property: 'permission',
+              type: 'custom',
+            },
+            { label: '', property: 'help', type: 'custom' },
+          ]}
+          datasource={filteredUserAccounts.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.accountID,
+              help: (
                 <Styled.HelpIcon
                   name="help"
                   size="18px"
                   onClick={() => setPermissionsOpen(true)}
                 />
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+              ),
+              action: (
+                <Checkbox
+                  initialValue={accountsInRepository.includes(row.accountID)}
+                  disabled={row.email === currentUser?.email}
+                  onChangeValue={(value) => handleInviteUser(value, row)}
+                />
+              ),
+              permission: (
+                <Select
+                  disabled={
+                    row.email === currentUser?.email ||
+                    !accountsInRepository.includes(row.accountID)
+                  }
+                  className="select-role"
+                  rounded
+                  width="150px"
+                  optionsHeight="96px"
+                  keyLabel="name"
+                  keyValue="value"
+                  initialValue={row.role}
+                  options={roles}
+                  onChangeValue={(role) =>
+                    handleChangeUserRole(role?.value, row)
+                  }
+                />
+              ),
+            };
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_USERS_TO_INVITE')}
+        />
       </Styled.Wrapper>
 
       <Permissions

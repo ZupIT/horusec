@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import { SearchBar, Button, Icon, Dialog } from 'components';
+import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
@@ -127,91 +127,67 @@ const Repositories: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
         <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
 
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.NAME')}</Styled.Column>
-            <Styled.Column>
-              {t('REPOSITORIES_SCREEN.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
-          </Styled.Head>
+        <Datatable
+          columns={[
+            {
+              label: t('REPOSITORIES_SCREEN.NAME'),
+              property: 'name',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={filteredRepos.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.repositoryID,
+              actions: [],
+            };
 
-          <Styled.Body>
-            {!filteredRepos || filteredRepos.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
-              </Styled.EmptyText>
-            ) : null}
+            if (row.role === 'admin') {
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.EDIT'),
+                icon: 'edit',
+                function: () => setVisibleHandleModal(true, row),
+              });
 
-            {filteredRepos.map((repo) => (
-              <Styled.Row key={repo.repositoryID}>
-                <Styled.Cell>{repo.name}</Styled.Cell>
+              if (isAdminOfWorkspace) {
+                repo.actions.push({
+                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setRepoToDelete(row),
+                });
 
-                <Styled.Cell>{repo.description || '-'}</Styled.Cell>
+                if (authType !== authTypes.LDAP) {
+                  repo.actions.push({
+                    title: t('REPOSITORIES_SCREEN.INVITE'),
+                    icon: 'users',
+                    function: () => setRepoToInvite(row),
+                  });
+                }
+              }
 
-                {repo.role === 'admin' ? (
-                  <Styled.Cell className="row">
-                    <Button
-                      outline
-                      rounded
-                      opaque
-                      text={t('REPOSITORIES_SCREEN.EDIT')}
-                      width={90}
-                      height={30}
-                      icon="edit"
-                      onClick={() => setVisibleHandleModal(true, repo)}
-                    />
-
-                    {isAdminOfWorkspace ? (
-                      <>
-                        <Button
-                          rounded
-                          outline
-                          opaque
-                          text={t('REPOSITORIES_SCREEN.DELETE')}
-                          width={90}
-                          height={30}
-                          icon="delete"
-                          onClick={() => setRepoToDelete(repo)}
-                        />
-
-                        {authType !== authTypes.LDAP ? (
-                          <Button
-                            outline
-                            rounded
-                            opaque
-                            text={t('REPOSITORIES_SCREEN.INVITE')}
-                            width={90}
-                            height={30}
-                            icon="users"
-                            onClick={() => setRepoToInvite(repo)}
-                          />
-                        ) : null}
-                      </>
-                    ) : null}
-
-                    <Button
-                      outline
-                      rounded
-                      opaque
-                      text={t('REPOSITORIES_SCREEN.TOKENS')}
-                      width={90}
-                      height={30}
-                      icon="lock"
-                      onClick={() => setRepoToManagerTokens(repo)}
-                    />
-                  </Styled.Cell>
-                ) : null}
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.TOKENS'),
+                icon: 'lock',
+                function: () => setRepoToManagerTokens(row),
+              });
+            }
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+        />
       </Styled.Content>
 
       <Dialog

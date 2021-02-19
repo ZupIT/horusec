@@ -39,6 +39,7 @@ const Wrapper = styled.div`
   width: 720px;
   padding: 30px 40px;
   border-radius: 4px;
+  overflow: visible;
 `;
 
 const Header = styled.div`
@@ -180,9 +181,6 @@ const EmptyText = styled.span`
 `;
 
 const HelpIcon = styled(Icon)`
-  position: absolute;
-  right: 10px;
-  top: 20px;
   cursor: pointer;
 
   :hover {
