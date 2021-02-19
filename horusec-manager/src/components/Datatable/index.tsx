@@ -91,23 +91,35 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                 datasource.map((row, dataId) => (
                   <Styled.Row key={row.id || dataId}>
                     {columns.map((column, columnId) => {
-                      const renderTooltipProps = () => {
-                        return tooltip
+                      const renderTooltipProps = (tip: string) => {
+                          return !!tooltip 
                           ? {
                               'data-for': tooltip.id,
-                              'data-tip': row[column.property],
-                            }
-                          : {};
+                              'data-tip': tip,
+                            } 
+                          : null;
                       };
 
-                      if (column.type === 'text' || column.type === 'custom') {
+                      if (column.type === 'text') {
                         return (
                           <Styled.Cell
                             key={columnId}
                             className={column.cssClass?.join(' ')}
-                            {...renderTooltipProps()}
+                            {...renderTooltipProps(row[column.property])}
                           >
                             {row[column.property] || '-'}
+                          </Styled.Cell>
+                        );
+                      }
+
+                      if (column.type === 'custom') {
+                        return (
+                          <Styled.Cell
+                            key={columnId}
+                            className={column.cssClass?.join(' ')}
+                            style={{ overflow: 'visible' }}
+                          >
+                            {row[column.property]}
                           </Styled.Cell>
                         );
                       }
@@ -117,7 +129,6 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                           <Styled.Cell
                             key={columnId}
                             className={column.cssClass?.join(' ')}
-                            {...renderTooltipProps()}
                           >
                             <div className="row">
                               {row[column.type].map((action, actionId) => (
@@ -127,7 +138,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                                   outline
                                   opaque
                                   text={action.title}
-                                  width={90}
+                                  width={'100%'}
                                   height={30}
                                   icon={action.icon}
                                   onClick={action.function}
@@ -141,13 +152,12 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                       return null;
                     })}
 
-                    {tooltip ? <ReactTooltip {...tooltip} /> : null}
                   </Styled.Row>
                 ))
-              )}
+                )}
             </Styled.Body>
           </Styled.Table>
-
+          { !!tooltip ? <ReactTooltip {...tooltip} /> : null }
           {datasource && datasource.length > 0 && paginate ? (
             <Pagination
               pagination={paginate.pagination}

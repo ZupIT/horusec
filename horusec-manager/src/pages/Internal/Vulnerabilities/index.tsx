@@ -279,18 +279,18 @@ const Vulnerabilities: React.FC = () => {
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
               property: 'severity',
-              type: 'text',
+              type: 'custom',
               cssClass: ['center'],
             },
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
               property: 'status',
-              type: 'text',
+              type: 'custom',
             },
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),
               property: 'details',
-              type: 'text',
+              type: 'custom',
             },
           ]}
           datasource={vulnerabilities.map((row) => {

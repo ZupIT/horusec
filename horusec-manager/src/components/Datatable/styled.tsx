@@ -51,10 +51,10 @@ const Table = styled.table<{ isPaginate: boolean }>`
   margin-top: 20px;
   width: 100%;
   border-spacing: 0px 5px;
+  table-layout: fixed;
   ${({ isPaginate }) =>
     isPaginate
       ? css`
-          display: block;
           max-height: 65vh;
           overflow-y: scroll;
         `
@@ -81,7 +81,7 @@ const Cell = styled.td`
   color: ${({ theme }) => theme.colors.dataTable.row.text};
   font-weight: normal;
   white-space: nowrap;
-  overflow: visible;
+  overflow: auto;
   text-overflow: ellipsis;
   width: 1%;
   padding: 10px 20px;
