@@ -19,11 +19,12 @@ import { User } from 'helpers/interfaces/User';
 import { getCurrentConfig } from './horusecConfig';
 
 const getCurrentUser = (): User | null => {
-  const localData: User = JSON.parse(
-    window.localStorage.getItem(localStorageKeys.USER)
-  );
-
-  return localData;
+  try {
+    const localData = window.localStorage.getItem(localStorageKeys.USER);
+    return localData ? JSON.parse(localData) : null;
+  } catch (e) {
+    return null;
+  }
 };
 
 const setCurrentUser = (value: User) => {
