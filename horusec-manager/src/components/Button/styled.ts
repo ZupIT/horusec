@@ -33,7 +33,8 @@ const Button = styled.button<ButtonProps>`
       `90deg, ${theme.colors.button.primary} 0%, ${theme.colors.button.secundary} 100%`}
   );
   color: ${({ theme }) => theme.colors.button.text};
-  width: ${({ width }) => (width ? (typeof width === 'string' ? width : `${width}px`) : '252px')};
+  width: ${({ width }) =>
+    width ? (typeof width === 'string' ? width : `${width}px`) : '252px'};
   height: ${({ height }) => (height ? `${height}px` : '35px')};
   padding: 10px;
   border-radius: 4px;

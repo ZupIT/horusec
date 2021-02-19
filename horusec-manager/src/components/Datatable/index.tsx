@@ -92,11 +92,11 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                   <Styled.Row key={row.id || dataId}>
                     {columns.map((column, columnId) => {
                       const renderTooltipProps = (tip: string) => {
-                          return !!tooltip 
+                        return tooltip
                           ? {
                               'data-for': tooltip.id,
                               'data-tip': tip,
-                            } 
+                            }
                           : null;
                       };
 
@@ -151,13 +151,12 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
 
                       return null;
                     })}
-
                   </Styled.Row>
                 ))
-                )}
+              )}
             </Styled.Body>
           </Styled.Table>
-          { !!tooltip ? <ReactTooltip {...tooltip} /> : null }
+          {tooltip ? <ReactTooltip {...tooltip} /> : null}
           {datasource && datasource.length > 0 && paginate ? (
             <Pagination
               pagination={paginate.pagination}
