@@ -13,7 +13,7 @@ type UpdateVulnSeverity struct {
 
 func (u *UpdateVulnSeverity) Validate() error {
 	return validation.ValidateStruct(u,
-		validation.Field(&u.Severity, validation.In(severityEnum.Values()...)),
+		validation.Field(&u.Severity, validation.Required, validation.In(severityEnum.Values()...)),
 	)
 }
 
