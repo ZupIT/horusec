@@ -166,9 +166,11 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         <Select
           keyLabel="name"
           width="200px"
+          optionsHeight="200px"
           initialValue={repositories[0]}
           options={repositories}
           title={t('DASHBOARD_SCREEN.REPOSITORY')}
+          hasSearch
           onChangeValue={(value) =>
             setFilters({ ...filters, repositoryID: value.repositoryID })
           }
