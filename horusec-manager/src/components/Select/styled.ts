@@ -29,6 +29,7 @@ interface WrapperProps {
   rounded: boolean;
   width: string;
   height?: string;
+  backgroundColor?: string;
 }
 
 interface OptionItem {
@@ -72,6 +73,12 @@ const Container = styled.div<WrapperProps>`
       background-color: ${({ theme }) =>
         theme.colors.select.darkBackground} !important;
     `};
+
+  ${({ backgroundColor }) =>
+    backgroundColor &&
+    css`
+      background-color: ${backgroundColor} !important;
+    `}
 `;
 
 const Select = styled.div`

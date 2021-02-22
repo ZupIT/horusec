@@ -36,6 +36,7 @@ interface Props {
   width?: string;
   optionsHeight?: string;
   selectText?: string;
+  backgroundColor?: string;
 }
 
 const Select: React.FC<Props> = ({
@@ -53,6 +54,7 @@ const Select: React.FC<Props> = ({
   selectText,
   fixedItemTitle,
   onClickFixedItem,
+  backgroundColor,
 }) => {
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);
@@ -101,6 +103,7 @@ const Select: React.FC<Props> = ({
         rounded={rounded}
         className={className}
         width={width}
+        backgroundColor={backgroundColor}
       >
         <Styled.CurrentValue>
           {currentValue ? currentValue[keyLabel] : renderSelectText()}
