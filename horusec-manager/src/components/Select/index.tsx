@@ -54,7 +54,7 @@ const Select: React.FC<Props> = ({
   selectText,
   fixedItemTitle,
   onClickFixedItem,
-  backgroundColor
+  backgroundColor,
 }) => {
   const [currentValue, setCurrentValue] = useState<any>(null);
   const [openOptionsList, setOpenOptionsList] = useState(false);

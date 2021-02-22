@@ -196,5 +196,5 @@ export default {
   updateUserRole,
   getAllVulnerabilities,
   updateVulnerabilityType,
-  updateVulnerabilitySeverity
+  updateVulnerabilitySeverity,
 };
