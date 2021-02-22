@@ -100,9 +100,10 @@ const Select: React.FC<Props> = ({
     if (isObject(initialValue)) {
       setCurrentValue(initialValue[keyLabel]);
     } else if (isString(initialValue)) {
-      setCurrentValue(
-        options.filter((item) => item[keyValue] === initialValue)[0]
+      const initialOption = options.find(
+        (item) => item[keyValue] === initialValue
       );
+      setCurrentValue(initialOption[keyValue]);
     }
     // eslint-disable-next-line
   }, [initialValue]);
