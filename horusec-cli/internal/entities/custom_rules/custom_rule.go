@@ -30,8 +30,8 @@ type CustomRule struct {
 func (c *CustomRule) Validate() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.ID, validation.Required, is.UUID),
-		validation.Field(&c.Severity, validation.Required, validation.In(severity.Info, severity.Audit,
-			severity.Low, severity.Medium, severity.High)),
+		validation.Field(&c.Severity, validation.Required, validation.In(severity.Info, severity.Unknown,
+			severity.Low, severity.Medium, severity.High, severity.Critical)),
 		validation.Field(&c.Confidence, validation.Required, validation.In(
 			confidence.Low, confidence.Medium, confidence.High)),
 		validation.Field(&c.Type, validation.Required, validation.In(customRulesEnums.Regular,

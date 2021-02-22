@@ -15,8 +15,9 @@
 package cli
 
 import (
-	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"testing"
+
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
@@ -65,7 +66,7 @@ func TestValidateConfigs(t *testing.T) {
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
 		assert.Equal(t, "severitiesToIgnore: Type of severity not valid:  test. "+
-			"See severities enable: [NOSEC LOW MEDIUM HIGH AUDIT INFO].", err.Error())
+			"See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO].", err.Error())
 	})
 
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {

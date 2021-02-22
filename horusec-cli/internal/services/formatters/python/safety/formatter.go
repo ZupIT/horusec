@@ -166,7 +166,7 @@ func (f *Formatter) getLine(name string, scanner *bufio.Scanner) string {
 func (f *Formatter) getDefaultVulnerabilitySeverityInSafety() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.Language = languages.Python
-	vulnerabilitySeverity.Severity = severity.Audit
+	vulnerabilitySeverity.Severity = severity.Unknown
 	vulnerabilitySeverity.SecurityTool = tools.Safety
 	vulnerabilitySeverity.Confidence = "-"
 	vulnerabilitySeverity.Column = "0"

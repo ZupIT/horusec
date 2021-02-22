@@ -16,8 +16,6 @@
   "horusecCliCertInsecureSkipVerify": false,
   "horusecCliEnableCommitAuthor": false,
   "horusecCliSeveritiesToIgnore": [
-    "INFO",
-    "NOSEC"
   ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",

@@ -16,13 +16,12 @@ package analysis
 
 import (
 	"encoding/json"
-	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
 
+	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	horusecEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -30,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker/packet"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
@@ -105,7 +105,7 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 						Vulnerability: horusecEntities.Vulnerability{
 							SecurityTool: tools.GoSec,
 							Language:     languages.Go,
-							Severity:     severity.NoSec,
+							Severity:     severity.Info,
 							Type:         horusec.Vulnerability,
 							VulnHash:     uuid.New().String(),
 						},
@@ -190,7 +190,7 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 						Vulnerability: horusecEntities.Vulnerability{
 							SecurityTool: tools.GoSec,
 							Language:     languages.Go,
-							Severity:     severity.NoSec,
+							Severity:     severity.Critical,
 						},
 					},
 				},
@@ -217,7 +217,7 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 						Vulnerability: horusecEntities.Vulnerability{
 							SecurityTool: tools.GoSec,
 							Language:     languages.Go,
-							Severity:     severity.NoSec,
+							Severity:     severity.Critical,
 						},
 					},
 				},
@@ -244,7 +244,7 @@ func TestDecodeAnalysisFromIoRead(t *testing.T) {
 						Vulnerability: horusecEntities.Vulnerability{
 							SecurityTool: tools.GoSec,
 							Language:     languages.Go,
-							Severity:     severity.NoSec,
+							Severity:     severity.Critical,
 						},
 					},
 				},

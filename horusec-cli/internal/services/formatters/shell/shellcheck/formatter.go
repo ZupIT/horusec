@@ -133,6 +133,6 @@ func (f *Formatter) parseLevelToSeverity(level string) severity.Severity {
 	case "warning":
 		return severity.Low
 	default:
-		return severity.Info
+		return severity.Unknown
 	}
 }

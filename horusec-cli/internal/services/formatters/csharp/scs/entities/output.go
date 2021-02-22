@@ -89,5 +89,5 @@ func (s *ScsResult) GetSeverity() severity.Severity {
 		return severity.High
 	}
 
-	return severity.NoSec
+	return severity.Unknown
 }

@@ -137,9 +137,9 @@ func TestGetDotNetSeverityByCode(t *testing.T) {
 		assert.Equal(t, severity.High, output.GetSeverity())
 	})
 
-	t.Run("should return a no sec severity", func(t *testing.T) {
+	t.Run("should return a info severity", func(t *testing.T) {
 		output.ErrorID = ""
-		assert.Equal(t, severity.NoSec, output.GetSeverity())
+		assert.Equal(t, severity.Unknown, output.GetSeverity())
 	})
 }
 
