@@ -168,6 +168,20 @@ const updateVulnerabilityType = (
   );
 };
 
+const updateVulnerabilitySeverity = (
+  companyId: string,
+  repositoryId: string,
+  vulnerabilityId: string,
+  severity: string
+) => {
+  return defaultHTTP.put(
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
+    {
+      severity,
+    }
+  );
+};
+
 export default {
   getAll,
   create,
@@ -182,4 +196,5 @@ export default {
   updateUserRole,
   getAllVulnerabilities,
   updateVulnerabilityType,
+  updateVulnerabilitySeverity
 };
