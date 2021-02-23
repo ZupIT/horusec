@@ -226,7 +226,7 @@ const HandleRepository: React.FC<Props> = ({
           width="100%"
           onChangeValue={(field: Field) => setName(field)}
           validation={isEmptyString}
-          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_WORKSPACE_NAME')}
+          invalidMessage={t('REPOSITORIES_SCREEN.INVALID_NAME')}
           initialValue={name.value}
         />
 
