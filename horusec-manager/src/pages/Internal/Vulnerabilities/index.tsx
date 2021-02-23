@@ -248,7 +248,8 @@ const Vulnerabilities: React.FC = () => {
         <Select
           keyLabel="name"
           width="220px"
-          optionsHeight="100px"
+          optionsHeight="200px"
+          hasSearch
           rounded
           initialValue={repositories[0]}
           options={repositories}
