@@ -382,7 +382,7 @@ Check the following table to get to know more about each field.
 | ID              | Random UUID that will be used to identify the vulnerability, your rules should not duplicate this id.                                                                                  |
 | Name            | String with the name of the vulnerability.                                                                                                                                             |
 | Description     | String with the description of the vulnerability.                                                                                                                                      |
-| Severity        | String with the severity of the vulnerability with the possible values: (INFO, AUDIT, LOW, MEDIUM, HIGH).                                                                              |
+| Severity        | String with the severity of the vulnerability with the possible values: (INFO, UNKNOWN, LOW, MEDIUM, HIGH, CRITICAL).																   |
 | Confidence      | String with the confidence of the vulnerability report with the possible values: (LOW, MEDIUM, HIGH).                                                                                  |
 | Type            | String with the regex type containing these possible values: (Regular, OrMatch, AndMatch).                                                                                             |
 | Tool            | String with the tool where the rules is going to run containing these possible values: (HorusecCsharp, HorusecJava, HorusecKotlin, HorusecKubernetes, HorusecLeaks, HorusecNodejs).    |

@@ -55,7 +55,7 @@ const (
 	EnvJSONOutputFilePath = "HORUSEC_CLI_JSON_OUTPUT_FILEPATH"
 	// This setting is to find out what types of severity I don't want you to recognize as a vulnerability.
 	// The types are: "LOW", "MEDIUM", "HIGH"
-	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, NOSEC"
+	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, CRITICAL"
 	// This setting is to know what types of severity
 	// I do not want you to recognize as a vulnerability
 	// and will not count towards the return of exit (1) if configured
