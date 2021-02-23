@@ -157,14 +157,15 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
             </Styled.Body>
           </Styled.Table>
           {tooltip ? <ReactTooltip {...tooltip} /> : null}
-          {datasource && datasource.length > 0 && paginate ? (
-            <Pagination
-              pagination={paginate.pagination}
-              onChange={paginate.onChange}
-            />
-          ) : null}
         </Styled.Wrapper>
       )}
+
+      {datasource && datasource.length > 0 && paginate ? (
+        <Pagination
+          pagination={paginate.pagination}
+          onChange={paginate.onChange}
+        />
+      ) : null}
     </>
   );
 };

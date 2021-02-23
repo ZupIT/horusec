@@ -18,7 +18,7 @@ import { Icon } from 'components';
 import styled, { css } from 'styled-components';
 
 const Wrapper = styled.section`
-  max-height: 68vh;
+  height: 65vh;
   overflow-y: auto;
   margin: 20px 0;
   padding-right: 10px;
