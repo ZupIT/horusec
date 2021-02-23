@@ -16,11 +16,5 @@ package dashboard
 
 type VulnByDeveloper struct {
 	Developer string `json:"developer"`
-	Total     int    `json:"total"`
-	Low       int    `json:"low"`
-	Medium    int    `json:"medium"`
-	High      int    `json:"high"`
-	Audit     int    `json:"audit"`
-	Info      int    `json:"info"`
-	NoSec     int    `json:"noSec"`
+	SeverityCount
 }
