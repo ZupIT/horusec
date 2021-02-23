@@ -150,11 +150,15 @@ const FixedOptionItem = styled(OptionItem)`
   text-decoration: underline;
 `;
 
-const CurrentValue = styled.div`
+const CurrentValue = styled.input`
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.select.text};
   display: block;
   width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
 `;
 
 export default {
