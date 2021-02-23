@@ -108,6 +108,8 @@ const Vulnerabilities: React.FC = () => {
     },
   ];
 
+  const severitiesOptions = severities.slice(1);
+
   const fetchData = (filt: FilterVuln, pag: PaginationInfo) => {
     setLoading(true);
 
@@ -167,6 +169,26 @@ const Vulnerabilities: React.FC = () => {
         filters.repositoryID,
         vulnerability.vulnerabilityID,
         type
+      )
+      .then(() => {
+        fetchData(filters, pagination);
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      });
+  };
+
+  const handleUpdateVulnerabilitySeverity = (
+    vulnerability: Vulnerability,
+    severity: string
+  ) => {
+    repositoryService
+      .updateVulnerabilitySeverity(
+        filters.companyID,
+        filters.repositoryID,
+        vulnerability.vulnerabilityID,
+        severity
       )
       .then(() => {
         fetchData(filters, pagination);
@@ -300,15 +322,25 @@ const Vulnerabilities: React.FC = () => {
               id: row.vulnerabilityID,
               hash: row.vulnHash,
               severity: (
-                <Styled.Tag
-                  color={get(
+                <Select
+                  keyLabel="description"
+                  keyValue="value"
+                  width="150px"
+                  optionsHeight="130px"
+                  className="select-role"
+                  rounded
+                  backgroundColor={get(
                     colors.vulnerabilities,
                     row.severity,
                     colors.vulnerabilities.DEFAULT
                   )}
-                >
-                  {row.severity}
-                </Styled.Tag>
+                  initialValue={row.severity}
+                  options={severitiesOptions}
+                  disabled={!isAdminOrSupervisorOfRepository()}
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilitySeverity(row, value.value)
+                  }
+                />
               ),
               status: !isLoading ? (
                 <Select
