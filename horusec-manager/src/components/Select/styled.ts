@@ -29,6 +29,7 @@ interface WrapperProps {
   rounded: boolean;
   width: string;
   height?: string;
+  backgroundColor?: string;
 }
 
 interface OptionItem {
@@ -72,6 +73,12 @@ const Container = styled.div<WrapperProps>`
       background-color: ${({ theme }) =>
         theme.colors.select.darkBackground} !important;
     `};
+
+  ${({ backgroundColor }) =>
+    backgroundColor &&
+    css`
+      background-color: ${backgroundColor} !important;
+    `}
 `;
 
 const Select = styled.div`
@@ -143,11 +150,15 @@ const FixedOptionItem = styled(OptionItem)`
   text-decoration: underline;
 `;
 
-const CurrentValue = styled.div`
+const CurrentValue = styled.input`
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
   color: ${({ theme }) => theme.colors.select.text};
   display: block;
   width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
 `;
 
 export default {
