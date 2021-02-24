@@ -117,6 +117,9 @@ compose: compose-down compose-up
 compose-dev:
 	$(DOCKER_COMPOSE) -f deployments/docker-compose.dev.yaml up -d --build
 
+compose-network-host:
+	$(DOCKER_COMPOSE) -f deployments/docker-compose-network-host up
+
 # Down all containers on depends to the project run
 compose-down:
 	$(DOCKER_COMPOSE) -f deployments/$(COMPOSE_FILE_NAME) down -v
