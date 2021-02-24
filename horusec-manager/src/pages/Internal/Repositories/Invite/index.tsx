@@ -257,7 +257,7 @@ const InviteToRepository: React.FC<Props> = ({
                   }
                   className="select-role"
                   rounded
-                  width="150px"
+                  width="auto"
                   optionsHeight="96px"
                   keyLabel="name"
                   keyValue="value"

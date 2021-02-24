@@ -36,7 +36,8 @@ const Background = styled.div`
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.dialog.background};
-  width: 720px;
+  min-width: 720px;
+  width: 50vw;
   padding: 30px 40px;
   border-radius: 4px;
   overflow: visible;
