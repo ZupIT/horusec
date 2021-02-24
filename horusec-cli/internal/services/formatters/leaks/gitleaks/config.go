@@ -28,6 +28,5 @@ const (
         else
             jq -j -M -c . /tmp/results-ANALYSISID.json
         fi
-		chmod -R 777 .
   `
 )

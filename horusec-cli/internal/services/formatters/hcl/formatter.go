@@ -21,7 +21,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
@@ -91,8 +90,8 @@ func (f *Formatter) parseOutput(output string) error {
 }
 
 func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *horusec.Vulnerability {
-	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Unknown
+	vulnerability := f.getDefaultVulnerabilityData()
+	vulnerability.Severity = results[index].GetSeverity()
 	vulnerability.Details = results[index].GetDetails()
 	vulnerability.Line = results[index].GetStartLine()
 	vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].GetCode(), 0)
@@ -101,7 +100,7 @@ func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *
 	return f.SetCommitAuthor(vulnerability)
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
+func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.TfSec
 	vulnerabilitySeverity.Language = languages.HCL
