@@ -4,7 +4,7 @@ image:
   repository: horuszup/horusec-api
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v2.6.0
+  tag: v2.8.0
 
 imagePullSecrets: []
 nameOverride: ""
@@ -73,7 +73,7 @@ env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_BROKER_HOST"
-    value: "horus-mq-rabbitmq"
+    value: "rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
@@ -83,7 +83,7 @@ env:
   - name: "HORUSEC_DATABASE_SQL_DIALECT"
     value: "postgres"
   - name: "HORUSEC_GRPC_AUTH_URL"
-    value: "horus-auth:8007"
+    value: "auth-horusec-auth-helm:8007"
   - name: "HORUSEC_GRPC_USE_CERTS"
     value: "false"
   - name: "HORUSEC_GRPC_CERT_PATH"

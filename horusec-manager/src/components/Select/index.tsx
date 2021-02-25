@@ -37,6 +37,7 @@ interface Props {
   width?: string;
   optionsHeight?: string;
   selectText?: string;
+  backgroundColor?: string;
   hasSearch?: boolean;
 }
 
@@ -55,6 +56,7 @@ const Select: React.FC<Props> = ({
   selectText,
   fixedItemTitle,
   onClickFixedItem,
+  backgroundColor,
   hasSearch,
 }) => {
   const [currentValue, setCurrentValue] = useState<string>('');
@@ -122,6 +124,7 @@ const Select: React.FC<Props> = ({
         rounded={rounded}
         className={className}
         width={width}
+        backgroundColor={backgroundColor}
       >
         <Styled.CurrentValue
           disabled={!hasSearch}
