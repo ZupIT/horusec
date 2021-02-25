@@ -14,6 +14,8 @@
 
 package severities
 
+import "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+
 const (
 	CookieWithoutSSLFlag                                    = "SCS0008"
 	CookieWithoutHTTPOnlyFlag                               = "SCS0009"
@@ -24,23 +26,14 @@ const (
 	EventValidationDisabled                                 = "SCS0022"
 )
 
-func MapLowValues() map[string]string {
-	return map[string]string{
-		CookieWithoutSSLFlag:                                    "LOW",
-		CookieWithoutHTTPOnlyFlag:                               "LOW",
-		RequestValidationDisabledAttribute:                      "LOW",
-		RequestValidationDisabledConfigurationFile:              "LOW",
-		RequestValidationIsEnabledOnlyForPagesConfigurationFile: "LOW",
-		OutputCacheConflict:                                     "LOW",
-		EventValidationDisabled:                                 "LOW",
+func MapLowValues() map[string]severity.Severity {
+	return map[string]severity.Severity{
+		CookieWithoutSSLFlag:                                    severity.Low,
+		CookieWithoutHTTPOnlyFlag:                               severity.Low,
+		RequestValidationDisabledAttribute:                      severity.Low,
+		RequestValidationDisabledConfigurationFile:              severity.Low,
+		RequestValidationIsEnabledOnlyForPagesConfigurationFile: severity.Low,
+		OutputCacheConflict:                                     severity.Low,
+		EventValidationDisabled:                                 severity.Low,
 	}
-}
-
-func GetLowSeverityByCode(id string) string {
-	values := MapLowValues()
-	return values[id]
-}
-
-func IsLowSeverity(id string) bool {
-	return GetLowSeverityByCode(id) != ""
 }
