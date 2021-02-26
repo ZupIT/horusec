@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import http from 'config/axios/default';
+import http from 'config/axios';
 import { WebhookHeader } from 'helpers/interfaces/Webhook';
 import { SERVICE_ACCOUNT } from '../config/endpoints';
 
