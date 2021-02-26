@@ -47,8 +47,9 @@ function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   return keycloakConfig.clientId ? (
     <ReactKeycloakProvider
       authClient={keycloakInstance}
-      onTokens={(tokens) =>
-        handleSetKeyclockData(tokens.token, tokens.refreshToken)
+      autoRefreshToken={false}
+      onTokens={({ token, refreshToken }) =>
+        handleSetKeyclockData(token, refreshToken)
       }
     >
       <AppContent />

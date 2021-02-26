@@ -13,33 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-const isLocalHost =
-  window.location.origin.includes('localhost') ||
-  window.location.origin.includes('127.0.0.1');
-
-function API_HOST(ENV_ENDPOINT: any) {
-  if (!ENV_ENDPOINT) {
-    return window.location.origin;
+declare global {
+  interface Window {
+    REACT_APP_HORUSEC_ENDPOINT_ACCOUNT: string;
+    REACT_APP_HORUSEC_ENDPOINT_API: string;
+    REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: string;
+    REACT_APP_HORUSEC_ENDPOINT_AUTH: string;
   }
-
-  return ENV_ENDPOINT;
 }
 
-const SERVICE_ACCOUNT = isLocalHost
-  ? 'http://127.0.0.1:8003'
-  : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_ACCOUNT);
+const SERVICE_ACCOUNT =
+  window.REACT_APP_HORUSEC_ENDPOINT_ACCOUNT || 'http://127.0.0.1:8003';
 
-const SERVICE_API = isLocalHost
-  ? 'http://127.0.0.1:8000'
-  : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_API);
+const SERVICE_API =
+  window.REACT_APP_HORUSEC_ENDPOINT_API || 'http://127.0.0.1:8000';
 
-const SERVICE_ANALYTIC = isLocalHost
-  ? 'http://127.0.0.1:8005'
-  : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_ANALYTIC);
+const SERVICE_ANALYTIC =
+  window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC || 'http://127.0.0.1:8005';
 
-const SERVICE_AUTH = isLocalHost
-  ? 'http://127.0.0.1:8006'
-  : API_HOST((window as any).REACT_APP_HORUSEC_ENDPOINT_AUTH);
+const SERVICE_AUTH =
+  window.REACT_APP_HORUSEC_ENDPOINT_AUTH || 'http://127.0.0.1:8006';
 
 export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC, SERVICE_AUTH };
