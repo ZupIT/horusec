@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import http from 'config/axios/default';
+import http from 'config/axios';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 
