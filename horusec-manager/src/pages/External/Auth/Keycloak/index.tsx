@@ -20,10 +20,17 @@ import { Button } from 'components';
 import { useTranslation } from 'react-i18next';
 import useAuth from 'helpers/hooks/useAuth';
 import Styled from './styled';
+import { keycloakInstance } from 'config/keycloak';
+import { useHistory } from 'react-router-dom';
 
 function KeycloakAuth() {
   const { t } = useTranslation();
   const { login } = useAuth();
+  const history = useHistory();
+
+  keycloakInstance.onAuthSuccess = () => {
+    history.replace('/home/dashboard');
+  };
 
   return (
     <ExternalLayout>
