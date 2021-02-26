@@ -25,7 +25,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   opaque?: boolean;
   isDisabled?: boolean;
   isLoading?: boolean;
-  width?: number;
+  width?: number | string;
   height?: number;
   color?: string;
   icon?: string;

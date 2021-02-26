@@ -19,7 +19,6 @@ import styled from 'styled-components';
 const Wrapper = styled.section`
   padding: 35px;
   width: 100%;
-  max-width: 1200px;
 `;
 
 const Options = styled.div`
