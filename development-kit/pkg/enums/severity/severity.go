@@ -43,3 +43,14 @@ func Map() map[string]Severity {
 func ParseStringToSeverity(content string) Severity {
 	return Map()[content]
 }
+
+func Values() []interface{} {
+	return []interface{}{
+		Critical,
+		High,
+		Medium,
+		Low,
+		Info,
+		Unknown,
+	}
+}
