@@ -53,7 +53,6 @@ function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
       authClient={keycloakInstance}
       autoRefreshToken={true}
       initOptions={keycloakInitOptions}
-      onEvent={(e) => console.log(e)}
       onTokens={({ token, refreshToken }) =>
         handleSetKeyclockData(token, refreshToken)
       }
