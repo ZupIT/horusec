@@ -15,13 +15,16 @@
 package management
 
 import (
+	"testing"
+
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/vulnerability"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewManagementController(t *testing.T) {
@@ -69,5 +72,31 @@ func TestUpdateVulnType(t *testing.T) {
 
 		_, err := controller.UpdateVulnType(uuid.New(), &dto.UpdateVulnType{})
 		assert.NoError(t, err)
+	})
+}
+
+func TestUpdateVulnSeverity(t *testing.T) {
+	t.Run("should success update severity", func(t *testing.T) {
+		repositoryMock := &vulnerability.Mock{}
+
+		repositoryMock.On("UpdateVulnerability").Return(&horusec.Vulnerability{}, nil)
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, nil)
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.UpdateVulnSeverity(uuid.New(), &dto.UpdateVulnSeverity{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when vulnerability not found", func(t *testing.T) {
+		repositoryMock := &vulnerability.Mock{}
+
+		repositoryMock.On("GetVulnByID").Return(&horusec.Vulnerability{}, errorsEnums.ErrNotFoundRecords)
+
+		controller := Controller{managementRepository: repositoryMock}
+
+		_, err := controller.UpdateVulnSeverity(uuid.New(), &dto.UpdateVulnSeverity{})
+		assert.Error(t, err)
+		assert.Equal(t, errorsEnums.ErrNotFoundRecords, err)
 	})
 }

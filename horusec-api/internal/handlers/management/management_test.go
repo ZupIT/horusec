@@ -19,18 +19,20 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/horusec-api/internal/controllers/management"
 	managementUseCases "github.com/ZupIT/horusec/horusec-api/internal/usecases/management"
 	"github.com/go-chi/chi"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestNewHandler(t *testing.T) {
@@ -230,6 +232,107 @@ func TestUpdateType(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.UpdateVulnType(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestUpdateVulnSeverity(t *testing.T) {
+	t.Run("should return 200 when successfully update severity", func(t *testing.T) {
+		controllerMock := &management.Mock{}
+		controllerMock.On("UpdateVulnSeverity").Return(&horusec.Vulnerability{}, nil)
+
+		handler := Handler{
+			controllerMock,
+			managementUseCases.NewManagementUseCases(),
+		}
+
+		updateSeverityDTO := &dto.UpdateVulnSeverity{Severity: severity.Critical}
+
+		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(updateSeverityDTO.ToBytes()))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
+
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		w := httptest.NewRecorder()
+		handler.UpdateVulnSeverity(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong while updating severity", func(t *testing.T) {
+		controllerMock := &management.Mock{}
+		controllerMock.On("UpdateVulnSeverity").Return(&horusec.Vulnerability{}, errors.New("test"))
+
+		handler := Handler{
+			controllerMock,
+			managementUseCases.NewManagementUseCases(),
+		}
+
+		updateSeverityDTO := &dto.UpdateVulnSeverity{Severity: severity.Critical}
+
+		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(updateSeverityDTO.ToBytes()))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
+
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		w := httptest.NewRecorder()
+		handler.UpdateVulnSeverity(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 404 when vulnerability not found", func(t *testing.T) {
+		controllerMock := &management.Mock{}
+		controllerMock.On("UpdateVulnSeverity").Return(&horusec.Vulnerability{},
+			errorsEnum.ErrNotFoundRecords)
+
+		handler := Handler{
+			controllerMock,
+			managementUseCases.NewManagementUseCases(),
+		}
+
+		updateSeverityDTO := &dto.UpdateVulnSeverity{Severity: severity.Critical}
+
+		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(updateSeverityDTO.ToBytes()))
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("vulnerabilityID", "85d08ec1-7786-4c2d-bf4e-5fee3a010315")
+
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		w := httptest.NewRecorder()
+		handler.UpdateVulnSeverity(w, r)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
+
+	t.Run("should return 400 when invalid vulnerability id", func(t *testing.T) {
+		handler := Handler{managementUseCases: managementUseCases.NewManagementUseCases()}
+
+		updateSeverityDTO := &dto.UpdateVulnSeverity{Severity: severity.Critical}
+
+		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(updateSeverityDTO.ToBytes()))
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, nil))
+
+		w := httptest.NewRecorder()
+		handler.UpdateVulnSeverity(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid DTO body", func(t *testing.T) {
+		handler := Handler{managementUseCases: managementUseCases.NewManagementUseCases()}
+
+		r, _ := http.NewRequest(http.MethodPut, "api/management", bytes.NewReader(nil))
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, nil))
+
+		w := httptest.NewRecorder()
+		handler.UpdateVulnSeverity(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

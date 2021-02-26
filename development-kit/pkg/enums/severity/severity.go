@@ -33,15 +33,28 @@ func (s Severity) ToString() string {
 
 func Map() map[string]Severity {
 	return map[string]Severity{
-		NoSec.ToString():  NoSec,
-		Info.ToString():   Info,
-		Low.ToString():    Low,
-		Medium.ToString(): Medium,
-		High.ToString():   High,
-		Audit.ToString():  Audit,
+		NoSec.ToString():    NoSec,
+		Info.ToString():     Info,
+		Low.ToString():      Low,
+		Medium.ToString():   Medium,
+		High.ToString():     High,
+		Audit.ToString():    Audit,
+		Critical.ToString(): Critical,
+		Unknown.ToString():  Unknown,
 	}
 }
 
 func ParseStringToSeverity(content string) Severity {
 	return Map()[content]
+}
+
+func Values() []interface{} {
+	return []interface{}{
+		Critical,
+		High,
+		Medium,
+		Low,
+		Info,
+		Unknown,
+	}
 }
