@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import http from 'config/axios/default';
+import http from 'config/axios';
 import axios from 'axios';
 import { SERVICE_AUTH } from '../config/endpoints';
 import {
