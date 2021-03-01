@@ -148,7 +148,7 @@ func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore
 
 	for _, typeToIgnore := range pr.configs.GetSeveritiesToIgnore() {
 		if strings.EqualFold(vulnerabilityType, strings.TrimSpace(typeToIgnore)) ||
-			vulnerabilityType == string(severity.NoSec) || vulnerabilityType == string(severity.Info) {
+			vulnerabilityType == string(severity.Info) {
 			ignore = true
 			return ignore
 		}

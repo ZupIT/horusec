@@ -16,11 +16,12 @@
 package regular
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewDartRegularXSSAttack() text.TextRule {
@@ -82,7 +83,7 @@ func NewDartRegularNoUseSelfSignedCertificate() text.TextRule {
 			ID:          "7b67c2b2-3e22-4738-b202-8e6360560f2b",
 			Name:        "No Use Self Signed Certificate",
 			Description: "Insecure Implementation of SSL. Trusting all the certificates or accepting self signed certificates is a critical Security Hole. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.Regular,

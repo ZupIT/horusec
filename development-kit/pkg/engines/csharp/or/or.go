@@ -16,11 +16,12 @@
 package or
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewCsharpOrLDAPInjection() text.TextRule {
@@ -186,7 +187,7 @@ func NewCsharpOrIdentityWeakPasswordComplexity() text.TextRule {
 			ID:          "928962a4-0e8c-494d-9e96-771ca9b4863f",
 			Name:        "Identity Weak Password Complexity",
 			Description: "Weak passwords can allow attackers to easily guess user passwords using wordlist or brute force attacks. Enforcing a strict password complexity policy mitigates these attacks by significantly increasing the time to guess a user’s valid password. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.OrMatch,

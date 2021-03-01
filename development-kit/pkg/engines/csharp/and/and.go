@@ -16,11 +16,12 @@
 package and
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewCsharpAndCommandInjection() text.TextRule {
@@ -297,7 +298,7 @@ func NewCsharpAndJwtSignatureValidationDisabled() text.TextRule {
 			ID:          "07b30a32-b3af-4e70-b043-25853cfdda09",
 			Name:        "Jwt Signature Validation Disabled",
 			Description: "Web service APIs relying on JSON Web Tokens (JWT) for authentication and authorization must sign each JWT with a private key or secret. Each web service endpoint must require JWT signature validation prior to decoding and using the token to access protected resources. The values RequireExpirationTime, RequireSignedTokens, ValidateLifetime can't was false. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) and CWE-613 (https://cwe.mitre.org/data/definitions/613.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,

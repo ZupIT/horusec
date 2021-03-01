@@ -47,11 +47,6 @@ func TestGetSeverity(t *testing.T) {
 		output := Warning{Confidence: "Low"}
 		assert.Equal(t, severity.Low, output.GetSeverity())
 	})
-
-	t.Run("Should return output no sec severity", func(t *testing.T) {
-		output := Warning{}
-		assert.Equal(t, severity.NoSec, output.GetSeverity())
-	})
 }
 
 func TestGetLine(t *testing.T) {

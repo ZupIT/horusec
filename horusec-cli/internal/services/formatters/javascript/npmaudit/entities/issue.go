@@ -26,31 +26,18 @@ type Issue struct {
 }
 
 func (i *Issue) GetSeverity() severity.Severity {
-	if i.IsLowSeverity() {
-		return severity.Low
-	}
-
-	if i.IsMediumSeverity() {
-		return severity.Medium
-	}
-
-	if i.IsHighSeverity() {
-		return severity.High
-	}
-
-	return severity.NoSec
+	return i.mapSeverities()[i.Severity]
 }
 
-func (i *Issue) IsLowSeverity() bool {
-	return i.Severity == "low" || i.Severity == "info"
-}
-
-func (i *Issue) IsMediumSeverity() bool {
-	return i.Severity == "moderate"
-}
-
-func (i *Issue) IsHighSeverity() bool {
-	return i.Severity == "high" || i.Severity == "critical"
+func (i *Issue) mapSeverities() map[string]severity.Severity {
+	return map[string]severity.Severity{
+		"critical": severity.Critical,
+		"high":     severity.High,
+		"moderate": severity.Medium,
+		"low":      severity.Low,
+		"info":     severity.Info,
+		"":         severity.Unknown,
+	}
 }
 
 func (i *Issue) GetVersion() string {

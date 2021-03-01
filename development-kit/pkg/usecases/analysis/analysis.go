@@ -213,15 +213,14 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Unknown,
 	}
 }
+
 func (au *UseCases) sliceSeverities() []interface{} {
 	return []interface{}{
-		severity.Info,
-		severity.NoSec,
-		severity.Low,
-		severity.Medium,
-		severity.High,
-		severity.Audit,
-		severity.Unknown,
 		severity.Critical,
+		severity.High,
+		severity.Medium,
+		severity.Low,
+		severity.Unknown,
+		severity.Info,
 	}
 }

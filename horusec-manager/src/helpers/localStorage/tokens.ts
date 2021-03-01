@@ -69,10 +69,6 @@ const handleSetKeyclockData = async (
         const userData = result?.data?.content;
 
         setCurrentUser(userData);
-
-        // if (window.location.pathname === '/auth') {
-        //   window.location.replace('/');
-        // }
       })
       .catch(() => {
         clearTokens();

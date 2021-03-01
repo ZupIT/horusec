@@ -14,11 +14,11 @@
 
 package severities
 
+import "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+
 const (
 	PathTraversal                  = "SCS0018"
 	WeakRandomNumberGenerator      = "SCS0005"
-	WeakHashingFunction            = "SCS0006"
-	WeakCipherAlgorithm            = "SCS0010"
 	WeakCBCMode                    = "SCS0011"
 	WeakECBMode                    = "SCS0012"
 	WeakCipherMode                 = "SCS0013"
@@ -27,32 +27,21 @@ const (
 	PasswordRequiredLengthNotSet   = "SCS0034"
 	PasswordRequiredLengthTooSmall = "SCS0032"
 	PasswordComplexity             = "SCS0033"
-	OpenRedirect                   = "SCS0027"
+	LegacyPacket                   = "SCS9999"
 )
 
-func MapMediumValues() map[string]string {
-	return map[string]string{
-		PathTraversal:                  "MEDIUM",
-		WeakRandomNumberGenerator:      "MEDIUM",
-		WeakHashingFunction:            "MEDIUM",
-		WeakCipherAlgorithm:            "MEDIUM",
-		WeakCBCMode:                    "MEDIUM",
-		WeakECBMode:                    "MEDIUM",
-		WeakCipherMode:                 "MEDIUM",
-		ViewStateNotEncrypted:          "MEDIUM",
-		ViewStateMACDisabled:           "MEDIUM",
-		PasswordRequiredLengthNotSet:   "MEDIUM",
-		PasswordRequiredLengthTooSmall: "MEDIUM",
-		PasswordComplexity:             "MEDIUM",
-		OpenRedirect:                   "MEDIUM",
+func MapMediumValues() map[string]severity.Severity {
+	return map[string]severity.Severity{
+		PathTraversal:                  severity.Medium,
+		WeakRandomNumberGenerator:      severity.Medium,
+		WeakCBCMode:                    severity.Medium,
+		WeakECBMode:                    severity.Medium,
+		WeakCipherMode:                 severity.Medium,
+		ViewStateNotEncrypted:          severity.Medium,
+		ViewStateMACDisabled:           severity.Medium,
+		PasswordRequiredLengthNotSet:   severity.Medium,
+		PasswordRequiredLengthTooSmall: severity.Medium,
+		PasswordComplexity:             severity.Medium,
+		LegacyPacket:                   severity.Medium,
 	}
-}
-
-func GetMediumSeverityByCode(id string) string {
-	values := MapMediumValues()
-	return values[id]
-}
-
-func IsMediumSeverity(id string) bool {
-	return GetMediumSeverityByCode(id) != ""
 }

@@ -260,12 +260,12 @@ func (ar *Repository) GetVulnByDeveloper(companyID, repositoryID uuid.UUID, init
 	query := ar.databaseRead.
 		GetConnection().
 		Select("vulnerabilities.commit_email AS developer, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total,"+
-			" (?) AS low, (?) AS medium, (?) AS high, (?) AS audit, (?) AS no_sec, (?) AS info",
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "LOW"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "MEDIUM"),
+			" (?) AS critical, (?) AS high, (?) AS medium, (?) AS low, (?) AS unknown, (?) AS info",
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "CRITICAL"),
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "HIGH"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "AUDIT"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "NOSEC"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "MEDIUM"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "LOW"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "UNKNOWN"),
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "commit_email", "INFO")).
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
@@ -284,12 +284,12 @@ func (ar *Repository) GetVulnByLanguage(companyID, repositoryID uuid.UUID, initi
 	query := ar.databaseRead.
 		GetConnection().
 		Select("vulnerabilities.language AS language, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total,"+
-			" (?) AS low, (?) AS medium, (?) AS high, (?) AS audit, (?) AS no_sec, (?) AS info",
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "LOW"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "MEDIUM"),
+			" (?) AS critical, (?) AS high, (?) AS medium, (?) AS low, (?) AS unknown, (?) AS info",
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "CRITICAL"),
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "HIGH"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "AUDIT"),
-			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "NOSEC"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "MEDIUM"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "LOW"),
+			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "UNKNOWN"),
 			ar.getSubQueryByVulnerability(companyID, repositoryID, initialDate, finalDate, "language", "INFO")).
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
@@ -306,12 +306,12 @@ func (ar *Repository) GetVulnByRepository(companyID, repositoryID uuid.UUID, ini
 	query := ar.databaseRead.
 		GetConnection().
 		Select(" MAX(analysis.repository_name) AS repository, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total,"+
-			" (?) AS low, (?) AS medium, (?) AS high, (?) AS audit, (?) AS no_sec, (?) AS info",
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "LOW"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "MEDIUM"),
+			" (?) AS critical, (?) AS high, (?) AS medium, (?) AS low, (?) AS unknown, (?) AS info",
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "CRITICAL"),
 			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "HIGH"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "AUDIT"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "NOSEC"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "MEDIUM"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "LOW"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "UNKNOWN"),
 			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "repository_id", "INFO")).
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
@@ -330,12 +330,12 @@ func (ar *Repository) GetVulnByTime(companyID, repositoryID uuid.UUID, initialDa
 	query := ar.databaseRead.
 		GetConnection().
 		Select("analysis.finished_at AS time, COUNT( DISTINCT (vulnerabilities.vulnerability_id) ) AS total,"+
-			" (?) AS low, (?) AS medium, (?) AS high, (?) AS audit, (?) AS no_sec, (?) AS info",
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "LOW"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "MEDIUM"),
+			" (?) AS critical, (?) AS high, (?) AS medium, (?) AS low, (?) AS unknown, (?) AS info",
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "CRITICAL"),
 			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "HIGH"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "AUDIT"),
-			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "NOSEC"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "MEDIUM"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "LOW"),
+			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "UNKNOWN"),
 			ar.getSubQueryByAnalysis(companyID, repositoryID, initialDate, finalDate, "finished_at", "INFO")).
 		Table("analysis").
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").

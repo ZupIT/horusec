@@ -101,7 +101,7 @@ func (f *Formatter) parseMessages(filepath string, result interface{}) {
 
 func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Info
+	vulnerability.Severity = severity.Unknown
 	vulnerability.Details = result.Message
 	vulnerability.Line = result.GetLine()
 	vulnerability.Column = result.GetColumn()

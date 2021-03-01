@@ -21,6 +21,5 @@ const (
 		{{WORK_DIR}}
 		brakeman -q -o results-ANALYSISID.json .
 		jq -j -M -c . results-ANALYSISID.json
-	  	chmod -R 777 .
   `
 )

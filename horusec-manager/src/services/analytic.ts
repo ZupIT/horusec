@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import http from 'config/axios/default';
+import http from 'config/axios';
 import { SERVICE_ANALYTIC } from '../config/endpoints';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
