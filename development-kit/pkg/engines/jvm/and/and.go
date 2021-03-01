@@ -47,7 +47,7 @@ func NewJvmAndAndroidKeystore() text.TextRule {
 			ID:          "c64f7930-53a1-49e2-bada-b67dcfb8b45a",
 			Name:        "Android Keystore",
 			Description: "Android Keystore",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,

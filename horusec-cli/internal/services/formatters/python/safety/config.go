@@ -47,6 +47,5 @@ const (
 	  else
 		echo "ERROR_REQ_NOT_FOUND"
 	  fi
-	  chmod -R 777 .
   `
 )

@@ -26,27 +26,3 @@ func TestMapHighValues(t *testing.T) {
 		assert.NotEmpty(t, result)
 	})
 }
-
-func TestGetHighSeverityByCode(t *testing.T) {
-	t.Run("should success return a high severity", func(t *testing.T) {
-		result := GetHighSeverityByCode("SCS0029")
-		assert.NotEmpty(t, result)
-	})
-
-	t.Run("should return a empty high severity", func(t *testing.T) {
-		result := GetHighSeverityByCode("SCS0021")
-		assert.Empty(t, result)
-	})
-}
-
-func TestIsHighSeverity(t *testing.T) {
-	t.Run("should return true for high severity", func(t *testing.T) {
-		result := IsHighSeverity("SCS0029")
-		assert.True(t, result)
-	})
-
-	t.Run("should return false for high severity", func(t *testing.T) {
-		result := IsHighSeverity("SCS0021")
-		assert.False(t, result)
-	})
-}

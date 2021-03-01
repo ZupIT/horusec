@@ -54,12 +54,12 @@ const (
 	// Validation: It is mandatory to be valid path
 	EnvJSONOutputFilePath = "HORUSEC_CLI_JSON_OUTPUT_FILEPATH"
 	// This setting is to find out what types of severity I don't want you to recognize as a vulnerability.
-	// The types are: "LOW", "MEDIUM", "HIGH", "NOSEC", "AUDIT"
-	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, NOSEC"
+	// The types are: "LOW", "MEDIUM", "HIGH"
+	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, CRITICAL"
 	// This setting is to know what types of severity
 	// I do not want you to recognize as a vulnerability
 	// and will not count towards the return of exit (1) if configured
-	// Validation: It is mandatory to be in "LOW", "MEDIUM", "HIGH", "NOSEC", "AUDIT"
+	// Validation: It is mandatory to be in "LOW", "MEDIUM", "HIGH"
 	EnvSeveritiesToIgnore = "HORUSEC_CLI_SEVERITIES_TO_IGNORE"
 	// This setting is to know which files and folders I want to ignore to send for analysis
 	// By default we ignore each other:

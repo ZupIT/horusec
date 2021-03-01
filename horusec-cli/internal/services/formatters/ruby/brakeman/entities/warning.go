@@ -34,7 +34,6 @@ type Warning struct {
 const (
 	confidenceHigh   = "High"
 	confidenceMedium = "Medium"
-	confidenceLow    = "Low"
 )
 
 func (o *Warning) GetDetails() string {
@@ -45,13 +44,12 @@ func (o *Warning) GetSeverity() severity.Severity {
 	if o.Confidence == confidenceHigh {
 		return severity.High
 	}
+
 	if o.Confidence == confidenceMedium {
 		return severity.Medium
 	}
-	if o.Confidence == confidenceLow {
-		return severity.Low
-	}
-	return severity.NoSec
+
+	return severity.Low
 }
 
 func (o *Warning) GetLine() string {
