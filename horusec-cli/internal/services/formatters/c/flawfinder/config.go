@@ -15,11 +15,11 @@
 package flawfinder
 
 const (
-	ImageName = "horuszup/horusec-flawfinder"
+	ImageName = "horuszup/horusec-c"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > /tmp/result-ANALYSISID.json
-		cat /tmp/result-ANALYSISID.json
+		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > flawfinder-result.json
+		cat flawfinder-result.json
   `
 )

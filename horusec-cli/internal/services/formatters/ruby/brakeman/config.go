@@ -19,7 +19,7 @@ const (
 	ImageTag  = "v1.0.2"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		brakeman -q -o brakeman.json .
-		cat brakeman.json
+		brakeman -q -o brakeman-result.json .
+		cat brakeman-result.json
   `
 )
