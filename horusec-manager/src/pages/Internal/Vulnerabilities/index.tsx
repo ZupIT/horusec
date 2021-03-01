@@ -31,6 +31,7 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { get, find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { AxiosError } from 'axios';
 
 const INITIAL_PAGE = 1;
 
@@ -194,7 +195,7 @@ const Vulnerabilities: React.FC = () => {
         fetchData(filters, pagination);
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         dispatchMessage(err?.response?.data);
       });
   };

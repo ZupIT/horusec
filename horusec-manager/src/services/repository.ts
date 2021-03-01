@@ -174,7 +174,7 @@ const updateVulnerabilitySeverity = (
   vulnerabilityId: string,
   severity: string
 ) => {
-  return defaultHTTP.put(
+  return http.put(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
     {
       severity,
