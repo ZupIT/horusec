@@ -21,6 +21,5 @@ const (
 			{{WORK_DIR}}
         	tfsec --format=json | grep -v "WARNING: skipped" > results.json
 			cat results.json
-	  		chmod -R 777 .
   `
 )

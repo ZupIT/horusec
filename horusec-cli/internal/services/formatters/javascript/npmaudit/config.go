@@ -27,6 +27,5 @@ const (
           echo 'ERROR_PACKAGE_LOCK_NOT_FOUND'
         fi
       fi
-	  chmod -R 777 .
   `
 )

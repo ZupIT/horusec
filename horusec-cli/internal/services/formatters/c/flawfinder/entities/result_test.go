@@ -31,39 +31,29 @@ func TestGetSeverity(t *testing.T) {
 	t.Run("should get severity low", func(t *testing.T) {
 		assert.Equal(t, severity.Low, result.GetSeverity())
 
-		result.Level = "1"
+		result.Level = "0"
 		assert.Equal(t, severity.Low, result.GetSeverity())
 
-		result.Level = "2"
+		result.Level = "1"
 		assert.Equal(t, severity.Low, result.GetSeverity())
 	})
 
 	t.Run("should get severity medium", func(t *testing.T) {
+		result.Level = "2"
+		assert.Equal(t, severity.Medium, result.GetSeverity())
+
 		result.Level = "3"
 		assert.Equal(t, severity.Medium, result.GetSeverity())
-
-		result.Level = "4"
-		assert.Equal(t, severity.Medium, result.GetSeverity())
-
-		result.Level = "2"
-		assert.NotEqual(t, severity.Medium, result.GetSeverity())
-
-		result.Level = "5"
-		assert.NotEqual(t, severity.Medium, result.GetSeverity())
 	})
 
 	t.Run("should get severity high", func(t *testing.T) {
-		result.Level = "5"
-		assert.Equal(t, severity.High, result.GetSeverity())
-
-		result.Level = "6"
-		assert.Equal(t, severity.High, result.GetSeverity())
-
-		result.Level = "1"
-		assert.NotEqual(t, severity.High, result.GetSeverity())
-
 		result.Level = "4"
-		assert.NotEqual(t, severity.High, result.GetSeverity())
+		assert.Equal(t, severity.High, result.GetSeverity())
+	})
+
+	t.Run("should get severity critical", func(t *testing.T) {
+		result.Level = "5"
+		assert.Equal(t, severity.Critical, result.GetSeverity())
 	})
 }
 

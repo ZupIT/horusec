@@ -32,6 +32,5 @@ const (
                 echo 'ERROR_YARN_LOCK_NOT_FOUND'
             fi
         fi
-	  	chmod -R 777 .
   `
 )

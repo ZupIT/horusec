@@ -86,7 +86,7 @@ func (f *Formatter) parseOutput(output string) error {
 
 func (f *Formatter) setVulnerabilityData(vulnerabilities []entities.Vulnerability, index int) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Audit
+	vulnerability.Severity = severity.High
 	vulnerability.Details = vulnerabilities[index].GetDetails()
 	vulnerability.Code = f.GetCodeWithMaxCharacters(vulnerabilities[index].Advisory.Package, 0)
 	vulnerability.File = f.RemoveSrcFolderFromPath(vulnerabilities[index].Dependency.Lockfile)

@@ -228,7 +228,7 @@ func (c *Config) SetJSONOutputFilePath(jsonOutputFilePath string) {
 }
 
 func (c *Config) GetSeveritiesToIgnore() []string {
-	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"AUDIT", "INFO"})
+	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"INFO"})
 }
 
 func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {

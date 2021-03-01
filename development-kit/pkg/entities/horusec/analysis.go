@@ -158,9 +158,7 @@ func (a *Analysis) getDefaultCountBySeverity() map[severity.Severity]int {
 		severity.Medium:   0,
 		severity.Low:      0,
 		severity.Unknown:  0,
-		severity.Audit:    0,
 		severity.Info:     0,
-		severity.NoSec:    0,
 	}
 }
 
@@ -171,8 +169,6 @@ func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Low)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Unknown)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Info)...)
-	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Audit)...)
-	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.NoSec)...)
 	a.AnalysisVulnerabilities = analysisVulnerabilities
 	return a
 }

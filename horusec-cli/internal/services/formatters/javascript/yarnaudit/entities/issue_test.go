@@ -57,19 +57,27 @@ func TestGetSeverity(t *testing.T) {
 		assert.Equal(t, severity.Medium, issue.GetSeverity())
 	})
 
-	t.Run("should return a high severity", func(t *testing.T) {
+	t.Run("should return a critical severity", func(t *testing.T) {
 		issue := Issue{
 			Severity: "critical",
 		}
 
-		assert.Equal(t, severity.High, issue.GetSeverity())
+		assert.Equal(t, severity.Critical, issue.GetSeverity())
 	})
 
-	t.Run("should return a no sec severity", func(t *testing.T) {
+	t.Run("should return a info severity", func(t *testing.T) {
 		issue := Issue{
-			Severity: "sec",
+			Severity: "info",
 		}
 
-		assert.Equal(t, severity.NoSec, issue.GetSeverity())
+		assert.Equal(t, severity.Info, issue.GetSeverity())
+	})
+
+	t.Run("should return a unknown severity", func(t *testing.T) {
+		issue := Issue{
+			Severity: "",
+		}
+
+		assert.Equal(t, severity.Unknown, issue.GetSeverity())
 	})
 }

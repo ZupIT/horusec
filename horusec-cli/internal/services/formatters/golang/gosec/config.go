@@ -23,6 +23,5 @@ const (
 		touch /tmp/results-ANALYSISID.json
 		$(which gosec) -quiet -fmt=json -log=log-ANALYSISID.txt -out=/tmp/results-ANALYSISID.json ./... 2> /dev/null
 		jq -j -M -c . /tmp/results-ANALYSISID.json
-		chmod -R 777 .
 	`
 )
