@@ -15,7 +15,7 @@
 package semgrep
 
 const (
-	ImageName = "horuszup/horusec-semgrep"
+	ImageName = "horuszup/horusec-generic"
 	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
