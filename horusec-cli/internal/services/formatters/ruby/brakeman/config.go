@@ -15,11 +15,11 @@
 package brakeman
 
 const (
-	ImageName = "horuszup/brakeman"
-	ImageTag  = "v1.0.0"
+	ImageName = "horuszup/horusec-ruby"
+	ImageTag  = "v1.0.2"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		brakeman -q -o results-ANALYSISID.json .
-		jq -j -M -c . results-ANALYSISID.json
+		brakeman -q -o brakeman.json .
+		cat brakeman.json
   `
 )
