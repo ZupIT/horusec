@@ -62,7 +62,7 @@ instance.interceptors.response.use(
     const status = error?.response ? error?.response?.status : null;
     const { authType } = getCurrentConfig();
 
-    if (authType === authTypes.KEYCLOAK && [401, 403, 500].includes(status)) {
+    if (authType === authTypes.KEYCLOAK && status === 401) {
       await keycloakInstance.updateToken(0);
 
       if (!error.response.config._retry) {
