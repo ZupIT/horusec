@@ -19,7 +19,7 @@ const (
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > flawfinder-result.json
-		cat flawfinder-result.json
+		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > /tmp/result-ANALYSISID.csv
+		cat /tmp/result-ANALYSISID.csv
   `
 )
