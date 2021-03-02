@@ -40,7 +40,7 @@ func TestIsAuthorized(t *testing.T) {
 		repositoryID := uuid.New()
 		mockRead.On("Find").Return(resp.SetData(&api.Token{
 			RepositoryID: &repositoryID,
-			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day() + 1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
+			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day()+1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
 		}))
 
 		middleware := NewTokenAuthz(mockRead)
@@ -85,7 +85,7 @@ func TestIsAuthorized(t *testing.T) {
 		repositoryID := uuid.New()
 		mockRead.On("Find").Return(resp.SetData(&api.Token{
 			RepositoryID: &repositoryID,
-			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day() + 1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
+			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day()+1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
 		}))
 
 		middleware := NewTokenAuthz(mockRead)
