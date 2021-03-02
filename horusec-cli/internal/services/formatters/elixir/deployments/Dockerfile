@@ -14,7 +14,7 @@
 
 FROM alpine:latest
 
-RUN apk add elixir git
+RUN apk add elixir
 
 RUN mix local.hex --force
 RUN mix local.rebar --force
