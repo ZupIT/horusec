@@ -15,18 +15,16 @@
 package relational
 
 import (
-	"encoding/json"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 type MockRead struct {
 	mock.Mock
 }
 
-func (m *MockRead) Connect() *response.Response {
+func (m *MockRead) Connect(_, _ string, _ bool) *response.Response {
 	args := m.MethodCalled("Connect")
 	return args.Get(0).(*response.Response)
 }
@@ -38,36 +36,22 @@ func (m *MockRead) IsAvailable() bool {
 	args := m.MethodCalled("IsAvailable")
 	return args.Get(0).(bool)
 }
-func (m *MockRead) Find(entity interface{}, query *gorm.DB, tableName string) *response.Response {
+func (m *MockRead) Find(_ interface{}, _ *gorm.DB, _ string) *response.Response {
 	args := m.MethodCalled("Find")
-	result := args.Get(0).(*response.Response)
-	parseResponseData(entity, result)
-	return result
+	return args.Get(0).(*response.Response)
 }
-func (m *MockRead) SetLogMode(logMode bool) {
+func (m *MockRead) SetLogMode(_ bool) {
 	_ = m.MethodCalled("SetLogMode")
 }
-func (m *MockRead) SetFilter(filter map[string]interface{}) *gorm.DB {
+func (m *MockRead) SetFilter(_ map[string]interface{}) *gorm.DB {
 	args := m.MethodCalled("SetFilter")
 	return args.Get(0).(*gorm.DB)
 }
-func (m *MockRead) First(out interface{}, where ...interface{}) *response.Response {
+func (m *MockRead) First(_ interface{}, _ string, _ ...interface{}) *response.Response {
 	args := m.MethodCalled("First")
 	return args.Get(0).(*response.Response)
 }
-func (m *MockRead) Related(model, related interface{}, filter map[string]interface{}, foreignKeys ...string) *response.Response {
-	args := m.MethodCalled("Related")
-	return args.Get(0).(*response.Response)
-}
-
-func (m *MockRead) RawSQL(sql string, entity interface{}) *response.Response {
+func (m *MockRead) RawSQL(_ string, _ interface{}) *response.Response {
 	args := m.MethodCalled("RawSQL")
-	result := args.Get(0).(*response.Response)
-	parseResponseData(entity, result)
-	return result
-}
-
-func parseResponseData(entity interface{}, result *response.Response) {
-	bytes, _ := json.Marshal(result.GetData())
-	_ = json.Unmarshal(bytes, &entity)
+	return args.Get(0).(*response.Response)
 }

@@ -26,7 +26,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/pagination"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type IAnalysisRepository interface {
@@ -193,7 +193,7 @@ func (ar *Repository) GetDetailsPaginated(companyID, repositoryID uuid.UUID, pag
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Limit(size).
-		Offset(pagination.GetSkip(int64(page), int64(size)))
+		Offset(int(pagination.GetSkip(int64(page), int64(size))))
 
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Find(&vulnDetails)
 
@@ -201,7 +201,7 @@ func (ar *Repository) GetDetailsPaginated(companyID, repositoryID uuid.UUID, pag
 }
 
 func (ar *Repository) GetDetailsCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+	finalDate time.Time) (int, error) {
 	query := ar.databaseRead.
 		GetConnection().
 		Table("analysis").
@@ -209,13 +209,14 @@ func (ar *Repository) GetDetailsCount(companyID, repositoryID uuid.UUID, initial
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id")
 
+	var count int64
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Count(&count)
 
-	return count, query.Error
+	return int(count), query.Error
 }
 
 func (ar *Repository) GetDeveloperCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+	finalDate time.Time) (int, error) {
 	query := ar.databaseRead.
 		GetConnection().
 		Table("analysis").
@@ -223,21 +224,23 @@ func (ar *Repository) GetDeveloperCount(companyID, repositoryID uuid.UUID, initi
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id")
 
+	var count int64
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Count(&count)
 
-	return count, query.Error
+	return int(count), query.Error
 }
 
 func (ar *Repository) GetRepositoryCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+	finalDate time.Time) (int, error) {
 	query := ar.databaseRead.
 		GetConnection().
 		Table("analysis").
 		Select("COUNT( DISTINCT ( analysis.repository_id ) )")
 
+	var count int64
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Count(&count)
 
-	return count, query.Error
+	return int(count), query.Error
 }
 
 func (ar *Repository) GetVulnBySeverity(companyID, repositoryID uuid.UUID, initialDate,
@@ -271,7 +274,7 @@ func (ar *Repository) GetVulnByDeveloper(companyID, repositoryID uuid.UUID, init
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Group("vulnerabilities.commit_email").
-		Order("total DESC", true).
+		Order("total DESC").
 		Limit(5)
 
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Find(&vulnByDeveloper)
@@ -317,7 +320,7 @@ func (ar *Repository) GetVulnByRepository(companyID, repositoryID uuid.UUID, ini
 		Joins("JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id").
 		Joins("JOIN vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Group("analysis.repository_id").
-		Order("total DESC", true).
+		Order("total DESC").
 		Limit(5)
 
 	query = ar.setWhereFilter(query, companyID, repositoryID, initialDate, finalDate).Find(&vulnByRepository)
@@ -348,7 +351,7 @@ func (ar *Repository) GetVulnByTime(companyID, repositoryID uuid.UUID, initialDa
 }
 
 func (ar *Repository) getSubQueryByAnalysis(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time, field, severity string) *gorm.SqlExpr {
+	finalDate time.Time, field, severity string) *gorm.DB {
 	subQuery := ar.databaseRead.
 		GetConnection().
 		Select("COUNT( DISTINCT (vuln.vulnerability_id) )").
@@ -357,11 +360,11 @@ func (ar *Repository) getSubQueryByAnalysis(companyID, repositoryID uuid.UUID, i
 		Joins("JOIN vulnerabilities AS vuln ON vuln.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Where(fmt.Sprintf("ana.%s = analysis.%s AND vuln.severity = ?", field, field), severity)
 
-	return ar.setWhereFilter(subQuery, companyID, repositoryID, initialDate, finalDate).SubQuery()
+	return ar.setWhereFilter(subQuery, companyID, repositoryID, initialDate, finalDate)
 }
 
 func (ar *Repository) getSubQueryByVulnerability(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time, field, severity string) *gorm.SqlExpr {
+	finalDate time.Time, field, severity string) *gorm.DB {
 	subQuery := ar.databaseRead.
 		GetConnection().
 		Select("COUNT( DISTINCT (vuln.vulnerability_id) )").
@@ -370,7 +373,7 @@ func (ar *Repository) getSubQueryByVulnerability(companyID, repositoryID uuid.UU
 		Joins("JOIN vulnerabilities AS vuln ON vuln.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Where(fmt.Sprintf("vuln.%s = vulnerabilities.%s AND vuln.severity = ?", field, field), severity)
 
-	return ar.setWhereFilter(subQuery, companyID, repositoryID, initialDate, finalDate).SubQuery()
+	return ar.setWhereFilter(subQuery, companyID, repositoryID, initialDate, finalDate)
 }
 
 func (ar *Repository) setWhereFilter(query *gorm.DB, companyID, repositoryID uuid.UUID, initialDate,

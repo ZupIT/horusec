@@ -16,17 +16,16 @@ package relational
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type InterfaceRead interface {
-	Connect() *response.Response
+	Connect(dialect, uri string, logMode bool) *response.Response
 	GetConnection() *gorm.DB
 	IsAvailable() bool
 	SetLogMode(logMode bool)
 	Find(entity interface{}, query *gorm.DB, tableName string) *response.Response
 	SetFilter(filter map[string]interface{}) *gorm.DB
-	First(out interface{}, where ...interface{}) *response.Response
-	Related(model, related interface{}, filter map[string]interface{}, foreignKeys ...string) *response.Response
+	First(out interface{}, tableName string, where ...interface{}) *response.Response
 	RawSQL(sql string, entity interface{}) *response.Response
 }

@@ -16,17 +16,18 @@ package company
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
-
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
 
 func TestNewController(t *testing.T) {
@@ -136,8 +137,9 @@ func TestGetAllOfRepository(t *testing.T) {
 
 		resp := &response.Response{}
 		resp.SetData(&[]api.Token{{Description: "some text"}})
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp)
 
@@ -156,8 +158,9 @@ func TestGetAllOfRepository(t *testing.T) {
 
 		resp := &response.Response{}
 		resp.SetError(errors.New("test"))
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp)
 

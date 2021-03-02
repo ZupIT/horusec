@@ -16,6 +16,8 @@ package analysis
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	repositoryAnalysis "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/analysis"
 	repositoryCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
@@ -26,13 +28,14 @@ import (
 	analysisUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/ZupIT/horusec/horusec-api/config/app"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
+	"gorm.io/gorm"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
@@ -53,12 +56,12 @@ func TestNewAnalysisController(t *testing.T) {
 }
 
 func TestController_SaveAnalysis(t *testing.T) {
-	conn, err := gorm.Open("sqlite3", ":memory:")
-	assert.NoError(t, err)
+	_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+	_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+	conn := adapter.NewRepositoryRead().GetConnection()
 	conn.Table("analysis").AutoMigrate(&horusec.Analysis{})
 	conn.Table("analysis_vulnerabilities").AutoMigrate(&horusec.AnalysisVulnerabilities{})
 	conn.Table("vulnerabilities").AutoMigrate(&horusec.Vulnerability{})
-	conn.LogMode(true)
 
 	t.Run("should send a new analysis without errors", func(t *testing.T) {
 		mockBroker := &broker.Mock{}
@@ -391,8 +394,9 @@ func TestController_GetAnalysis(t *testing.T) {
 
 		repo := test.CreateAnalysisMock()
 		resp := &response.Response{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetData(repo))
 
@@ -410,14 +414,15 @@ func TestController_GetAnalysis(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
 		resp := &response.Response{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetError(errors.New("error")))
 
 		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
-		_, err = controller.GetAnalysis(uuid.New())
+		_, err := controller.GetAnalysis(uuid.New())
 		assert.Error(t, err)
 	})
 	t.Run("should get analysis return error not found", func(t *testing.T) {
@@ -426,14 +431,15 @@ func TestController_GetAnalysis(t *testing.T) {
 
 		repo := &horusec.Analysis{ID: uuid.New(), Status: enumHorusec.Running}
 		resp := &response.Response{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(resp.SetData(repo).SetError(errorsEnum.ErrNotFoundRecords))
 
 		controller := NewAnalysisController(mockRead, mockWrite, nil, nil)
 
-		_, err = controller.GetAnalysis(repo.ID)
+		_, err := controller.GetAnalysis(repo.ID)
 
 		assert.Equal(t, errorsEnum.ErrNotFoundRecords, err)
 	})

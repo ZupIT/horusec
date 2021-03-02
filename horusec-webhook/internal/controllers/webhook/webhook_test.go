@@ -16,7 +16,10 @@ package webhook
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
@@ -29,10 +32,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
 
 func TestNewWebhookController(t *testing.T) {
@@ -42,8 +43,9 @@ func TestNewWebhookController(t *testing.T) {
 }
 
 func TestMock_DispatchRequest(t *testing.T) {
-	conn, err := gorm.Open("sqlite3", ":memory:")
-	assert.NoError(t, err)
+	_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+	_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+	conn := adapter.NewRepositoryRead().GetConnection()
 	t.Run("Should return error because not found webhook in database", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockRead.On("SetFilter").Return(conn)
