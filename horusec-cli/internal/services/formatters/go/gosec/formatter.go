@@ -26,7 +26,7 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec/entities"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/go/gosec/entities"
 )
 
 type Formatter struct {

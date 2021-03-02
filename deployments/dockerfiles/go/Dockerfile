@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM securego/gosec:latest
+FROM golang:alpine
 
-RUN apk --no-cache add ca-certificates openssh-client jq
-
-ENTRYPOINT []
-CMD ["/bin/sh"]
+RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s latest
