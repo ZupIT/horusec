@@ -17,10 +17,9 @@ package gosec
 const (
 	ImageName = "horuszup/horusec-go"
 	ImageTag  = "v1.0.0"
-	//nolint
-	ImageCmd = `
+	ImageCmd  = `
 		{{WORK_DIR}}
-		gosec -quiet -fmt=json -out=/tmp/result-ANALYSISID.json ./...
-		cat /tmp/result-ANALYSISID.json
+		gosec -quiet -fmt=json -out=/tmp/result-gosec-ANALYSISID.json ./...
+		cat /tmp/result-gosec-ANALYSISID.json
 	`
 )
