@@ -64,6 +64,8 @@ func (t *Token) Map() map[string]interface{} {
 		"suffixValue":  t.SuffixValue,
 		"value":        t.Value,
 		"createdAt":    t.CreatedAt,
+		"expiresAt":    t.ExpiresAt,
+		"isExpirable":  t.IsExpirable,
 	}
 }
 
