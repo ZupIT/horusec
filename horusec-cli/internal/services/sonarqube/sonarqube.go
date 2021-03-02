@@ -79,10 +79,11 @@ func (sq *SonarQube) convertHorusecSeverityToSonarQube(severity horusecSeverity.
 
 func (sq *SonarQube) getSonarQubeSeverityMap() map[horusecSeverity.Severity]string {
 	return map[horusecSeverity.Severity]string{
-		horusecSeverity.NoSec:  "INFO",
-		horusecSeverity.Audit:  "INFO",
-		horusecSeverity.Low:    "MINOR",
-		horusecSeverity.Medium: "MAJOR",
-		horusecSeverity.High:   "BLOCKER",
+		horusecSeverity.Critical: "BLOCKER",
+		horusecSeverity.High:     "CRITICAL",
+		horusecSeverity.Medium:   "MAJOR",
+		horusecSeverity.Low:      "MINOR",
+		horusecSeverity.Unknown:  "INFO",
+		horusecSeverity.Info:     "INFO",
 	}
 }

@@ -20,10 +20,40 @@ import { Button } from 'components';
 import { useTranslation } from 'react-i18next';
 import useAuth from 'helpers/hooks/useAuth';
 import Styled from './styled';
+import { keycloakInstance } from 'config/keycloak';
+import { useHistory } from 'react-router-dom';
+import accountService from 'services/account';
+import { clearTokens, getAccessToken } from 'helpers/localStorage/tokens';
+import { setCurrentUser } from 'helpers/localStorage/currentUser';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
 
 function KeycloakAuth() {
   const { t } = useTranslation();
   const { login } = useAuth();
+  const history = useHistory();
+  const { showErrorFlash } = useFlashMessage();
+
+  keycloakInstance.onAuthSuccess = () => {
+    const accessToken = getAccessToken() || keycloakInstance.token;
+
+    accountService
+      .createAccountFromKeycloak(accessToken)
+      .then((result) => {
+        const userData = result?.data?.content;
+
+        setCurrentUser(userData);
+
+        history.replace('/home/dashboard');
+      })
+      .catch(() => {
+        showErrorFlash(t('API_ERRORS.KEYCLOAK_LOGIN'));
+
+        setTimeout(() => {
+          clearTokens();
+          keycloakInstance.logout();
+        }, 3200);
+      });
+  };
 
   return (
     <ExternalLayout>

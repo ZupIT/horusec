@@ -31,6 +31,7 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { get, find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { AxiosError } from 'axios';
 
 const INITIAL_PAGE = 1;
 
@@ -108,6 +109,8 @@ const Vulnerabilities: React.FC = () => {
     },
   ];
 
+  const severitiesOptions = severities.slice(1);
+
   const fetchData = (filt: FilterVuln, pag: PaginationInfo) => {
     setLoading(true);
 
@@ -173,6 +176,26 @@ const Vulnerabilities: React.FC = () => {
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      });
+  };
+
+  const handleUpdateVulnerabilitySeverity = (
+    vulnerability: Vulnerability,
+    severity: string
+  ) => {
+    repositoryService
+      .updateVulnerabilitySeverity(
+        filters.companyID,
+        filters.repositoryID,
+        vulnerability.vulnerabilityID,
+        severity
+      )
+      .then(() => {
+        fetchData(filters, pagination);
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+      })
+      .catch((err: AxiosError) => {
         dispatchMessage(err?.response?.data);
       });
   };
@@ -280,18 +303,18 @@ const Vulnerabilities: React.FC = () => {
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
               property: 'severity',
-              type: 'text',
+              type: 'custom',
               cssClass: ['center'],
             },
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
               property: 'status',
-              type: 'text',
+              type: 'custom',
             },
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),
               property: 'details',
-              type: 'text',
+              type: 'custom',
             },
           ]}
           datasource={vulnerabilities.map((row) => {
@@ -300,15 +323,25 @@ const Vulnerabilities: React.FC = () => {
               id: row.vulnerabilityID,
               hash: row.vulnHash,
               severity: (
-                <Styled.Tag
-                  color={get(
+                <Select
+                  keyLabel="description"
+                  keyValue="value"
+                  width="150px"
+                  optionsHeight="130px"
+                  className="select-role"
+                  rounded
+                  backgroundColor={get(
                     colors.vulnerabilities,
                     row.severity,
                     colors.vulnerabilities.DEFAULT
                   )}
-                >
-                  {row.severity}
-                </Styled.Tag>
+                  initialValue={row.severity}
+                  options={severitiesOptions}
+                  disabled={!isAdminOrSupervisorOfRepository()}
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilitySeverity(row, value.value)
+                  }
+                />
               ),
               status: !isLoading ? (
                 <Select

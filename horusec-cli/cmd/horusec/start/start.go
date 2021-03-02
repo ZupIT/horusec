@@ -74,7 +74,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringP("output-format", "o", s.configs.GetPrintOutputType(), "The format for the output to be shown. Options are: text (stdout), json, sonarqube")
 	_ = startCmd.PersistentFlags().
-		StringSliceP("ignore-severity", "s", s.configs.GetSeveritiesToIgnore(), "The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, NOSEC\"")
+		StringSliceP("ignore-severity", "s", s.configs.GetSeveritiesToIgnore(), "The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, HIGH\"")
 	_ = startCmd.PersistentFlags().
 		StringP("json-output-file", "O", s.configs.GetJSONOutputFilePath(), "If your pass output-format you can configure the output JSON location. Example: -O=\"/tmp/output.json\"")
 	_ = startCmd.PersistentFlags().

@@ -16,11 +16,12 @@
 package and
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewKubernetesAndAllowPrivilegeEscalation() text.TextRule {
@@ -83,7 +84,7 @@ func NewKubernetesAndCapabilitySystemAdmin() text.TextRule {
 			ID:          "3e68d755-e860-49db-84b4-65f323edb1f1",
 			Name:        "Capability System Admin",
 			Description: "CAP_SYS_ADMIN is the most privileged capability and should always be avoided.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,

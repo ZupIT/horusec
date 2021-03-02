@@ -16,11 +16,5 @@ package dashboard
 
 type VulnByLanguage struct {
 	Language string `json:"language"`
-	Total    int    `json:"total"`
-	Low      int    `json:"low"`
-	Medium   int    `json:"medium"`
-	High     int    `json:"high"`
-	Audit    int    `json:"audit"`
-	NoSec    int    `json:"noSec"`
-	Info     int    `json:"info"`
+	SeverityCount
 }

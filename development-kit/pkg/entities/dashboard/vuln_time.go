@@ -17,12 +17,6 @@ package dashboard
 import "time"
 
 type VulnByTime struct {
-	Time   time.Time `json:"time"`
-	Total  int       `json:"total"`
-	Low    int       `json:"low"`
-	Medium int       `json:"medium"`
-	High   int       `json:"high"`
-	Audit  int       `json:"audit"`
-	Info   int       `json:"info"`
-	NoSec  int       `json:"noSec"`
+	Time time.Time `json:"time"`
+	SeverityCount
 }

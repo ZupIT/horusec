@@ -20,7 +20,11 @@ import accountService from 'services/account';
 import {
   getExpiresTokenTime,
   getAccessToken,
+  setTokens,
 } from 'helpers/localStorage/tokens';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
+import { keycloakInstance } from './keycloak';
 
 const instance: AxiosInstance = axios.create({
   timeout: 15000,
@@ -51,5 +55,33 @@ instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
 
   return config;
 });
+
+instance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const status = error?.response ? error?.response?.status : null;
+    const { authType } = getCurrentConfig();
+
+    if (authType === authTypes.KEYCLOAK && status === 401) {
+      await keycloakInstance.updateToken(0);
+
+      if (!error.response.config._retry) {
+        error.response.config._retry = true;
+
+        const { token, refreshToken } = keycloakInstance;
+
+        setTokens(token, refreshToken);
+
+        error.response.config.headers['X-Horusec-Authorization'] = token;
+
+        return axios(error.response.config);
+      }
+
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default instance;

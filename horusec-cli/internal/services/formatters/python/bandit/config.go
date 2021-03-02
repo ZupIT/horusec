@@ -23,6 +23,5 @@ const (
       	horusec-file-ignore.sh 2> /tmp/errorBanditIgnoreScript-ANALYSISID 1> /dev/null
       	bandit -r . -f json 2> /dev/null > results-ANALYSISID.json
       	jq -j -M -c . results-ANALYSISID.json
-	  	chmod -R 777 .
   `
 )

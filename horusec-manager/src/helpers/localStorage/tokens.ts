@@ -18,9 +18,6 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { isPast } from 'date-fns';
 import { getCurrentConfig } from './horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import accountService from 'services/account';
-import { setCurrentUser } from './currentUser';
-import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
 
 const getAccessToken = (): string => {
   return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
@@ -49,41 +46,24 @@ const setTokens = (
     window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
 };
 
-const handleSetKeyclockData = async (
-  accessToken: string,
-  refreshToken: string
-) => {
-  const currentAccessToken = getAccessToken();
-
-  setTokens(accessToken, refreshToken);
-
-  if (accessToken && accessToken !== currentAccessToken) {
-    accountService.createAccountFromKeycloak(accessToken).then((result) => {
-      const userData = result?.data?.content;
-
-      setCurrentUser(userData);
-
-      if (window.location.pathname === '/auth') {
-        window.location.replace('/');
-      }
-    });
-  }
-};
-
 const clearTokens = () => {
   window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
   window.localStorage.removeItem(localStorageKeys.REFRESH_TOKEN);
   window.localStorage.removeItem(localStorageKeys.TOKEN_EXPIRES);
 };
 
+const handleSetKeyclockData = async (
+  accessToken: string,
+  refreshToken: string
+) => {
+  setTokens(accessToken, refreshToken);
+};
+
 const isLogged = (): boolean => {
   const { authType } = getCurrentConfig();
   const accessToken = getAccessToken();
 
-  if (
-    (authType === authTypes.KEYCLOAK && accessToken) ||
-    isAuthenticatedInMicrofrontend()
-  ) {
+  if (authType === authTypes.KEYCLOAK) {
     return true;
   }
 
