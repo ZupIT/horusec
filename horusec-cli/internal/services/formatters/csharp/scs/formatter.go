@@ -60,8 +60,8 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 		return err
 	}
 
-	if errCsproj := f.verifyIsSolutionError(output, err); errCsproj != nil {
-		return errCsproj
+	if errSolution := f.verifyIsSolutionError(output, err); errSolution != nil {
+		return errSolution
 	}
 
 	f.parseOutput(output)
