@@ -15,19 +15,12 @@
 package scs
 
 const (
-	ImageName = "horuszup/dotnet-core-3.1"
+	ImageName = "horuszup/horusec-csharp"
 	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 		{{WORK_DIR}}
-		touch /tmp/output_tmp-ANALYSISID.txt
-		dotnet add package -n SecurityCodeScan.VS2017 > /tmp/add_packet_output-ANALYSISID.txt
-		if [ $? -eq 0 ]; then
-			dotnet build --nologo -v q > /tmp/output_tmp-ANALYSISID.txt
-		else
-			echo "ERROR_ADDING_PACKAGE"
-			exit 1
-		fi
+		dotnet build --nologo -v q > /tmp/output_tmp-ANALYSISID.txt
 
     	while read -r LINE; do
 		
@@ -41,7 +34,6 @@ const (
 		done < /tmp/output_tmp-ANALYSISID.txt
 		
 		jq '.' /tmp/output-ANALYSISID.txt > /tmp/result-ANALYSISID.json
-
       	jq -j -M -c . /tmp/result-ANALYSISID.json
 		chmod -R 777 .
   `

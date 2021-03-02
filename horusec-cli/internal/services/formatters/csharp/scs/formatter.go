@@ -60,7 +60,7 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 		return err
 	}
 
-	if errCsproj := f.verifyIsCsProjError(output, err); errCsproj != nil {
+	if errCsproj := f.verifyIsSolutionError(output, err); errCsproj != nil {
 		return errCsproj
 	}
 
@@ -123,18 +123,18 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
 		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
+			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
 	return analysisData.SetData(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
 }
 
-func (f *Formatter) verifyIsCsProjError(output string, err error) error {
-	if strings.Contains(output, "Could not find any project in") {
+func (f *Formatter) verifyIsSolutionError(output string, err error) error {
+	if strings.Contains(output, "Specify a project or solution file") {
 		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound)
-		return errorsEnums.ErrCsProjNotFound
+		logger.LogErrorWithLevel(msg, errorsEnums.ErrSolutionNotFound)
+		return errorsEnums.ErrSolutionNotFound
 	}
 
 	return err

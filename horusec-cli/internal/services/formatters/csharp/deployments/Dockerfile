@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine
+FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine
 
-RUN apk add --no-cache bash jq openssh-client alpine-sdk
+RUN apk add jq
 
-LABEL org.label-schema.schema-version="1.0" \
-    org.label-schema.name="NetCore 3.1 Base Image" \
-    org.label-schema.vendor="NetCore" \
-    org.opencontainers.image.created="2020-04-08 00:00:00-08:00"
+RUN dotnet tool install --global security-scan
+
+ENV PATH="$PATH:/root/.dotnet/tools"
