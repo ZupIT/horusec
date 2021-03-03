@@ -91,7 +91,17 @@ const SideMenu: React.FC = () => {
 
   const handleSelectedRoute = (route: InternalRoute) => {
     if (route.type === 'route') {
-      setSelectedRoute(route);
+      setSelectedRoute((state) => {
+        if (
+          state &&
+          state?.subRoutes &&
+          route?.subRoutes &&
+          !selectedSubRoute
+        ) {
+          return null;
+        }
+        return route;
+      });
       setSelectedSubRoute(null);
 
       if (!route?.subRoutes) {
