@@ -16,13 +16,13 @@
 package main
 
 import (
+	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"log"
 	"net/http"
 
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 
-	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	brokerConfig "github.com/ZupIT/horusec/horusec-account/config/broker"

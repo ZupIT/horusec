@@ -30,7 +30,7 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/graphql-go/graphql v0.7.9
 	github.com/iancoleman/strcase v0.1.2
-	github.com/jinzhu/gorm v1.9.16
+	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
 	github.com/kofalt/go-memoize v0.0.0-20200917044458-9b55a8d73e1c
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
@@ -40,10 +40,8 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
-	github.com/mattn/go-sqlite3 v1.14.4 // indirect
+	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
-	github.com/onsi/ginkgo v1.12.0
-	github.com/onsi/gomega v1.9.0
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/otiai10/copy v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
@@ -62,10 +60,10 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
 	github.com/swaggo/swag v1.6.9
-	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
+	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102
 	golang.org/x/sys v0.0.0-20201223074533-0d417f636930 // indirect
-	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/tools v0.0.0-20201215192005-fa10ef0b8743 // indirect
 	google.golang.org/genproto v0.0.0-20201106154455-f9bfe239b0ba // indirect
 	google.golang.org/grpc v1.33.2
@@ -74,6 +72,8 @@ require (
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/ini.v1 v1.62.0 // indirect
-	gopkg.in/ldap.v2 v2.5.1
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+	gorm.io/driver/postgres v1.0.8
+	gorm.io/driver/sqlite v1.1.4
+	gorm.io/gorm v1.20.12
 )

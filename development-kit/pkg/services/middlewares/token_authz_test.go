@@ -27,8 +27,8 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestIsAuthorized(t *testing.T) {

@@ -34,9 +34,9 @@ import (
 	ldapService "github.com/ZupIT/horusec/development-kit/pkg/services/ldap"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/kofalt/go-memoize"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestNewService(t *testing.T) {

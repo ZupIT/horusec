@@ -34,8 +34,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMock(t *testing.T) {
