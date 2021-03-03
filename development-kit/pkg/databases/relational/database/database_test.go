@@ -294,8 +294,8 @@ func TestIntegration(t *testing.T) {
 			UserID: mockUser.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connWrite.SetLogMode(false)
@@ -337,8 +337,8 @@ func TestIntegration(t *testing.T) {
 			ZooID: mockZoo.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connWrite.SetLogMode(false)
@@ -379,21 +379,21 @@ func TestIntegration(t *testing.T) {
 			Name: uuid.New().String(),
 		}
 		mockManyToMany := entities.ComputersLanguages{
-			ID:         uuid.New(),
 			ComputerID: mockComputer.ID,
 			LanguageID: mockLanguage.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
-		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
-		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
-		connWrite.SetLogMode(false)
-		connRead.SetLogMode(false)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
+		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connWrite.SetLogMode(true)
 		_ = connWrite.GetConnection().Table("computers").AutoMigrate(&entities.Computer{})
 		_ = connWrite.GetConnection().Table("languages").AutoMigrate(&entities.Language{})
 		_ = connWrite.GetConnection().Table("computers_languages").AutoMigrate(&entities.ComputersLanguages{})
+
+		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connRead.SetLogMode(true)
 
 		response := connWrite.Create(&mockComputer, "computers")
 		assert.NoError(t, response.GetError())
@@ -416,7 +416,6 @@ func TestIntegration(t *testing.T) {
 			assert.NotEqual(t, convertedData.Name, "")
 			assert.NotEqual(t, convertedData.ComputersLanguages, nil)
 			assert.NotEqual(t, len(convertedData.ComputersLanguages), 0)
-			assert.NotEqual(t, convertedData.ComputersLanguages[0].ID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].ComputerID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].LanguageID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].Language.ID, uuid.Nil)

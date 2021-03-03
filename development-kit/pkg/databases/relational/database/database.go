@@ -96,7 +96,7 @@ func (r *Relational) SetLogMode(logMode bool) {
 		if logMode {
 			r.connection.Logger = r.connection.Logger.LogMode(loggerGorm.Info)
 		} else {
-			r.connection.Logger = r.connection.Logger.LogMode(loggerGorm.Warn)
+			r.connection.Logger = r.connection.Logger.LogMode(loggerGorm.Error)
 		}
 	}
 }
