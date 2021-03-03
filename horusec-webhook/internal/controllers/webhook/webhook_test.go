@@ -36,6 +36,13 @@ import (
 	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
 
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
+
 func TestNewWebhookController(t *testing.T) {
 	t.Run("Should call NewWebhookController", func(t *testing.T) {
 		assert.NotEmpty(t, NewWebhookController(&relational.MockRead{}))

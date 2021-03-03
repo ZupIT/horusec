@@ -29,6 +29,13 @@ import (
 	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
 
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
+
 func TestNewController(t *testing.T) {
 	t.Run("should create a new token repository", func(t *testing.T) {
 		mockRead := &relational.MockRead{}

@@ -15,6 +15,7 @@
 package relational
 
 import (
+	"encoding/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
@@ -36,9 +37,11 @@ func (m *MockRead) IsAvailable() bool {
 	args := m.MethodCalled("IsAvailable")
 	return args.Get(0).(bool)
 }
-func (m *MockRead) Find(_ interface{}, _ *gorm.DB, _ string) *response.Response {
+func (m *MockRead) Find(entity interface{}, _ *gorm.DB, _ string) *response.Response {
 	args := m.MethodCalled("Find")
-	return args.Get(0).(*response.Response)
+	result := args.Get(0).(*response.Response)
+	parseResponseData(entity, result)
+	return result
 }
 func (m *MockRead) SetLogMode(_ bool) {
 	_ = m.MethodCalled("SetLogMode")
@@ -51,7 +54,13 @@ func (m *MockRead) First(_ interface{}, _ string, _ ...interface{}) *response.Re
 	args := m.MethodCalled("First")
 	return args.Get(0).(*response.Response)
 }
-func (m *MockRead) RawSQL(_ string, _ interface{}) *response.Response {
+func (m *MockRead) RawSQL(_ string, entity interface{}) *response.Response {
 	args := m.MethodCalled("RawSQL")
-	return args.Get(0).(*response.Response)
+	result := args.Get(0).(*response.Response)
+	parseResponseData(entity, result)
+	return result
+}
+func parseResponseData(entity interface{}, result *response.Response) {
+	bytes, _ := json.Marshal(result.GetData())
+	_ = json.Unmarshal(bytes, &entity)
 }

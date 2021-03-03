@@ -32,6 +32,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
+
 func TestNewCacheRepository(t *testing.T) {
 	t.Run("Should create new cache repository without errors", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}

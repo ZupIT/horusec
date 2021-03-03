@@ -125,7 +125,7 @@ func (ar *Repository) getVulnerabilityIDByHashAndRepositoryID(vulnHash string, r
 		Joins("INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id").
 		Joins("INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id").
 		Where("analysis.repository_id = ?", repositoryID.String()).
-		Where(map[string]interface{}{"vuln_hash": vulnHash}).
+		Where("vulnerabilities.vuln_hash = ?", vulnHash).
 		Table(vulnerability.GetTable()).Find(&vulnerability)
 	if query.Error != nil {
 		// If error is "record not found" is not necessary procced because we go add new vulnerability

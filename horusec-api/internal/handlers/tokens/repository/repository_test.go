@@ -36,6 +36,13 @@ import (
 	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
 
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
+
 func TestPost(t *testing.T) {
 	repositoryID := uuid.New()
 	t.Run("should return status 200 when successfully create a token", func(t *testing.T) {
