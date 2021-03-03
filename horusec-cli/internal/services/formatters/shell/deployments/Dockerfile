@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.14-alpine
+FROM alpine
 
-RUN apk add --no-cache shellcheck
-
-CMD ["/bin/sh"]
+RUN apk add shellcheck

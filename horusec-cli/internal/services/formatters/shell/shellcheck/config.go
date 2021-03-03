@@ -15,7 +15,7 @@
 package shellcheck
 
 const (
-	ImageName = "horuszup/shellcheck"
+	ImageName = "horuszup/horusec-shell"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
