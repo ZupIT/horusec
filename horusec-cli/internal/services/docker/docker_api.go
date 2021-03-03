@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"time"
 
@@ -175,9 +176,9 @@ func (d *API) readContainer(containerID string) (string, error) {
 	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
 	chanContainerStatus, _ := d.dockerClient.ContainerWait(d.ctx, containerID, "")
 	if containerWaitStatus := <-chanContainerStatus; containerWaitStatus.Error != nil {
-		message := fmt.Sprintf("Error on wait container %s: %s | Exited with status %v",
+		message := fmt.Sprintf("Error on wait container %s: %s | Exited with status %s",
 			containerID, containerWaitStatus.Error.Message,
-			containerWaitStatus.StatusCode,
+			strconv.Itoa(int(containerWaitStatus.StatusCode)),
 		)
 		return "", errors.New(message)
 	}
