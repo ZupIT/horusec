@@ -12,7 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node
+FROM node:alpine
 
+RUN npm install -g npm@6.14.7 #update
 RUN npm install -g eslint
 RUN npm install -g eslint-plugin-security
+
+RUN wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+RUN chmod +x ./jq
+RUN cp jq /usr/bin
