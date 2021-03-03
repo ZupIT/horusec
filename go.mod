@@ -15,7 +15,7 @@ require (
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
-	github.com/docker/docker v1.13.1
+	github.com/docker/docker v20.10.5+incompatible
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
@@ -43,6 +43,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.0.1
 	github.com/otiai10/copy v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect

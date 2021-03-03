@@ -16,8 +16,4 @@ package errors
 
 import "errors"
 
-const (
-	ErrReadHorusecConfigFile = "{ERROR_DOCKER_API} error while opening horusec-config.json"
-)
-
 var ErrImageTagCmdRequired = errors.New("{ERROR_DOCKER_API} required exists Image, Tag and CMD not empty")

@@ -151,7 +151,7 @@ func (d *API) removeContainer(containerID string) {
 
 func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
 	config, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
-	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, d.getImageID())
+	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, nil, d.getImageID())
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err)
 		return "", err
@@ -172,9 +172,9 @@ func (d *API) getImageID() string {
 
 func (d *API) readContainer(containerID string) (string, error) {
 	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
-	_, err := d.dockerClient.ContainerWait(d.ctx, containerID)
-	if err != nil {
-		return "", err
+	_, chanErr := d.dockerClient.ContainerWait(d.ctx, containerID, "")
+	if chanErr != nil {
+		return "", <-chanErr
 	}
 
 	containerOutput, err := d.dockerClient.ContainerLogs(d.ctx, containerID,

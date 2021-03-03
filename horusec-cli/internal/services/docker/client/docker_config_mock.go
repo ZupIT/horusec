@@ -15,12 +15,13 @@
 package client
 
 import (
+	utilsMock "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
+	networktypes "github.com/docker/docker/api/types/network"
 	"io"
 
-	utilsMock "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
+	containertypes "github.com/docker/docker/api/types/container"
+	specs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/net/context"
 )
@@ -30,12 +31,13 @@ type Mock struct {
 }
 
 func (m *Mock) ContainerCreate(
-	ctx context.Context, config *container.Config, hostConfig *container.HostConfig,
-	networkingConfig *network.NetworkingConfig, containerName string) (container.ContainerCreateCreatedBody, error) {
+	ctx context.Context, config *containertypes.Config, hostConfig *containertypes.HostConfig,
+	networkingConfig *networktypes.NetworkingConfig, platform *specs.Platform, containerName string) (
+	containertypes.ContainerCreateCreatedBody, error) {
 	args := m.MethodCalled("ContainerCreate")
-	return args.Get(0).(container.ContainerCreateCreatedBody), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(containertypes.ContainerCreateCreatedBody), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ContainerStart(ctx context.Context, containerID string, options types.ContainerStartOptions) error {
+func (m *Mock) ContainerStart(ctx context.Context, container string, options types.ContainerStartOptions) error {
 	args := m.MethodCalled("ContainerStart")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
@@ -43,15 +45,27 @@ func (m *Mock) ContainerList(ctx context.Context, options types.ContainerListOpt
 	args := m.MethodCalled("ContainerList")
 	return args.Get(0).([]types.Container), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ContainerWait(ctx context.Context, containerID string) (int64, error) {
+
+func (m *Mock) ContainerWait(ctx context.Context, container string,
+	condition containertypes.WaitCondition) (<-chan containertypes.ContainerWaitOKBody, <-chan error) {
 	args := m.MethodCalled("ContainerWait")
-	return args.Get(0).(int64), utilsMock.ReturnNilOrError(args, 1)
+	agr1 := make(chan containertypes.ContainerWaitOKBody)
+	agr2 := make(chan error)
+	go func() {
+		agr1 <- args.Get(0).(containertypes.ContainerWaitOKBody)
+	}()
+	go func() {
+		agr2 <- utilsMock.ReturnNilOrError(args, 1)
+	}()
+	return agr1, agr2
 }
-func (m *Mock) ContainerLogs(ctx context.Context, container string, options types.ContainerLogsOptions) (io.ReadCloser, error) {
+
+func (m *Mock) ContainerLogs(ctx context.Context, container string,
+	options types.ContainerLogsOptions) (io.ReadCloser, error) {
 	args := m.MethodCalled("ContainerLogs")
 	return args.Get(0).(io.ReadCloser), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error {
+func (m *Mock) ContainerRemove(ctx context.Context, container string, options types.ContainerRemoveOptions) error {
 	args := m.MethodCalled("ContainerRemove")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
