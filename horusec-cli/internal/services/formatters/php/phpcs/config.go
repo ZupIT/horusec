@@ -15,7 +15,7 @@
 package phpcs
 
 const (
-	ImageName = "horuszup/horusec-phpcs"
+	ImageName = "horuszup/horusec-php"
 	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
