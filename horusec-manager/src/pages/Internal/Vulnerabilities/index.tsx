@@ -250,12 +250,7 @@ const Vulnerabilities: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [
-    currentWorkspace,
-    refresh,
-    pagination.pageSize,
-    dispatchMessage,
-  ]);
+  }, [currentWorkspace, refresh, pagination.pageSize, dispatchMessage]);
 
   return (
     <Styled.Wrapper>
