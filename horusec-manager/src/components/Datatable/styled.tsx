@@ -15,13 +15,14 @@
  */
 
 import { Icon } from 'components';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
-  height: 65vh;
+  max-height: 56vh;
   overflow-y: auto;
-  margin: 20px 0;
+  margin-top: 20px;
   padding-right: 10px;
+  height: 100vh;
 
   ::-webkit-scrollbar {
     width: 6px;
@@ -47,20 +48,10 @@ const Title = styled.h1`
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
 `;
 
-const Table = styled.table<{ isPaginate: boolean }>`
-  margin-top: 20px;
+const Table = styled.table<{ isPaginate: boolean; fixed: boolean }>`
   width: 100%;
   border-spacing: 0px 5px;
-  table-layout: fixed;
-  ${({ isPaginate }) =>
-    isPaginate
-      ? css`
-          max-height: 65vh;
-          overflow-y: scroll;
-        `
-      : css`
-          visibility: visible;
-        `};
+  table-layout: ${({ fixed }) => (fixed ? 'fixed' : 'auto')};
 `;
 
 const Head = styled.tr`
@@ -127,28 +118,14 @@ const EmptyText = styled.span`
   line-height: 170px;
 `;
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
-
-const LoadingWrapper = styled.div<LoadingWrapperProps>`
+const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  position: absolute;
   width: 100%;
-  height: 72vh;
-  left: 0;
+  height: 56vh;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   z-index: 2;
-  visibility: hidden;
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      visibility: visible;
-    `};
 `;
 
 const ButtonIcon = styled(Icon)`
