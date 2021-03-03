@@ -27,6 +27,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
+
 func MockTableEntity() entities.Test {
 	return entities.Test{
 		ID:        uuid.New(),
@@ -36,19 +43,19 @@ func MockTableEntity() entities.Test {
 	}
 }
 
-func GetTableAndConnectionRead(logMode bool) (entities.Test, relational.InterfaceRead) {
-	tableTest := entities.Test{}
-	connection := NewRelationalRead()
+func GetTableAndConnectionRead(logMode bool) (*entities.Test, relational.InterfaceRead) {
+	tableTest := &entities.Test{}
+	connection := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 	connection.SetLogMode(logMode)
-	connection.GetConnection().Table(tableTest.TableName()).AutoMigrate(tableTest)
+	_ = connection.GetConnection().Table(tableTest.TableName()).AutoMigrate(tableTest)
 	return tableTest, connection
 }
 
-func GetTableAndConnectionWrite(logMode bool) (entities.Test, relational.InterfaceWrite) {
-	tableTest := entities.Test{}
-	connection := NewRelationalWrite()
+func GetTableAndConnectionWrite(logMode bool) (*entities.Test, relational.InterfaceWrite) {
+	tableTest := &entities.Test{}
+	connection := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 	connection.SetLogMode(logMode)
-	connection.GetConnection().Table(tableTest.TableName()).AutoMigrate(tableTest)
+	_ = connection.GetConnection().Table(tableTest.TableName()).AutoMigrate(tableTest)
 	return tableTest, connection
 }
 
@@ -83,8 +90,8 @@ func TestNewRelationalWrite(t *testing.T) {
 
 func TestRelational_IsAvailable(t *testing.T) {
 	t.Run("Should return true when check isAvailable", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, ":memory:")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 		_, conn := GetTableAndConnectionRead(false)
 		assert.True(t, conn.IsAvailable())
 	})
@@ -96,21 +103,20 @@ func TestRelational_IsAvailable(t *testing.T) {
 
 func TestRelational_StartTransaction(t *testing.T) {
 	t.Run("Should Create data with transaction without error", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		entityToCreate := MockTableEntity()
 
-		table, connWrite := GetTableAndConnectionWrite(false)
-		_, connRead := GetTableAndConnectionRead(false)
+		table, connWrite := GetTableAndConnectionWrite(true)
+		_, connRead := GetTableAndConnectionRead(true)
 
 		tx := connWrite.StartTransaction()
-		responseCreate := tx.Create(entityToCreate, table.TableName())
+		responseCreate := tx.Create(&entityToCreate, table.TableName())
 		assert.NoError(t, responseCreate.GetError())
 		assert.NoError(t, tx.CommitTransaction().GetError())
 
-		filter := connRead.GetConnection().Where(map[string]interface{}{"id": entityToCreate.ID})
-		responseFindAll := connRead.Find(&[]entities.Test{}, filter, table.TableName())
+		responseFindAll := connRead.Find(&[]entities.Test{}, connRead.GetConnection().Where(map[string]interface{}{"id": entityToCreate.ID.String()}), table.TableName())
 		assert.NoError(t, responseFindAll.GetError())
 		dataFounded := responseFindAll.GetData().(*[]entities.Test)
 		assert.NotEqual(t, dataFounded, &[]entities.Test{})
@@ -120,8 +126,8 @@ func TestRelational_StartTransaction(t *testing.T) {
 
 func TestRelational_StartTransactionWithNotTransactionOperation(t *testing.T) {
 	t.Run("Should not affect another operations", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		entityToCreate := MockTableEntity()
 
@@ -148,8 +154,8 @@ func TestRelational_StartTransactionWithNotTransactionOperation(t *testing.T) {
 
 func TestRelational_RollbackTransaction(t *testing.T) {
 	t.Run("Should Create data with transaction and rollback data", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		entityToCreate := MockTableEntity()
 		table, connWrite := GetTableAndConnectionWrite(false)
@@ -162,10 +168,7 @@ func TestRelational_RollbackTransaction(t *testing.T) {
 
 		filter := connRead.GetConnection().Where(map[string]interface{}{"id": entityToCreate.ID})
 		responseFindAll := connRead.Find(&[]entities.Test{}, filter, table.TableName())
-		assert.NoError(t, responseFindAll.GetError())
-		dataFounded := responseFindAll.GetData().(*[]entities.Test)
-		assert.Equal(t, dataFounded, &[]entities.Test{})
-		assert.Len(t, *dataFounded, 0)
+		assert.Equal(t, EnumErrors.ErrNotFoundRecords, responseFindAll.GetError())
 	})
 }
 
@@ -189,8 +192,8 @@ func TestRelational_FindOne(t *testing.T) {
 		assert.Equal(t, fakeConn.Find(nil, nil, "").GetError(), EnumErrors.ErrDatabaseNotConnected)
 	})
 	t.Run("Should return error when table not exists ", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		table := MockTableEntity()
 		_, connRead := GetTableAndConnectionRead(false)
@@ -199,8 +202,8 @@ func TestRelational_FindOne(t *testing.T) {
 		assert.Error(t, responseFindOne.GetError())
 	})
 	t.Run("Should create item and check if exists on database", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		entityToCreate := MockTableEntity()
 		table, connWrite := GetTableAndConnectionWrite(false)
@@ -214,8 +217,8 @@ func TestRelational_FindOne(t *testing.T) {
 		assert.NotEqual(t, responseFindOne.GetData().(*entities.Test), &entities.Test{})
 	})
 	t.Run("Should return not found when search item not exists on database", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 		table := MockTableEntity()
 		_, connRead := GetTableAndConnectionRead(false)
 		filter := connRead.GetConnection().Where(map[string]interface{}{"id": table.ID})
@@ -231,8 +234,8 @@ func TestRelational_Update(t *testing.T) {
 		assert.Equal(t, fakeConn.Update(nil, nil, "").GetError(), EnumErrors.ErrDatabaseNotConnected)
 	})
 	t.Run("Should update data with new values", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 		table := MockTableEntity()
 		_, connRead := GetTableAndConnectionRead(false)
 		_, connWrite := GetTableAndConnectionWrite(false)
@@ -256,8 +259,8 @@ func TestRelational_Delete(t *testing.T) {
 		assert.Equal(t, fakeConn.Delete(nil, "").GetError(), EnumErrors.ErrDatabaseNotConnected)
 	})
 	t.Run("Should delete data without error", func(t *testing.T) {
-		_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-		_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
 		table := MockTableEntity()
 		_, connRead := GetTableAndConnectionRead(false)
@@ -291,17 +294,17 @@ func TestIntegration(t *testing.T) {
 			UserID: mockUser.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
-		connWrite := NewRelationalWrite()
-		connRead := NewRelationalRead()
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connWrite.SetLogMode(false)
 		connRead.SetLogMode(false)
 
 		founded := entities.CreditCard{}
 
-		connWrite.GetConnection().Table("users").AutoMigrate(&entities.User{})
-		connWrite.GetConnection().Table("credit_cards").AutoMigrate(&entities.CreditCard{})
+		_ = connWrite.GetConnection().Table("users").AutoMigrate(&entities.User{})
+		_ = connWrite.GetConnection().Table("credit_cards").AutoMigrate(&entities.CreditCard{})
 
 		response := connWrite.Create(&mockUser, "users")
 		assert.NoError(t, response.GetError())
@@ -334,16 +337,16 @@ func TestIntegration(t *testing.T) {
 			ZooID: mockZoo.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
-		connWrite := NewRelationalWrite()
-		connRead := NewRelationalRead()
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
 		connWrite.SetLogMode(false)
 		connRead.SetLogMode(false)
 
 		founded := entities.Zoo{}
-		connWrite.GetConnection().Table("zoos").AutoMigrate(&entities.Zoo{})
-		connWrite.GetConnection().Table("pets").AutoMigrate(&entities.Pet{})
+		_ = connWrite.GetConnection().Table("zoos").AutoMigrate(&entities.Zoo{})
+		_ = connWrite.GetConnection().Table("pets").AutoMigrate(&entities.Pet{})
 
 		response := connWrite.Create(&mockZoo, "zoos")
 		assert.NoError(t, response.GetError())
@@ -376,21 +379,21 @@ func TestIntegration(t *testing.T) {
 			Name: uuid.New().String(),
 		}
 		mockManyToMany := entities.ComputersLanguages{
-			ID:         uuid.New(),
 			ComputerID: mockComputer.ID,
 			LanguageID: mockLanguage.ID,
 		}
 
-		_ = os.Setenv(config.EnvRelationalDialect, "postgres")
-		_ = os.Setenv(config.EnvRelationalURI, "host=0.0.0.0 port=5432 user=root dbname=postgres password=root sslmode=disable")
-		connWrite := NewRelationalWrite()
-		connRead := NewRelationalRead()
-		connWrite.SetLogMode(false)
-		connRead.SetLogMode(false)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
 
-		connWrite.GetConnection().Table("computers").AutoMigrate(&entities.Computer{})
-		connWrite.GetConnection().Table("languages").AutoMigrate(&entities.Language{})
-		connWrite.GetConnection().Table("computers_languages").AutoMigrate(&entities.ComputersLanguages{})
+		connWrite := NewRelationalWrite(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connWrite.SetLogMode(true)
+		_ = connWrite.GetConnection().Table("computers").AutoMigrate(&entities.Computer{})
+		_ = connWrite.GetConnection().Table("languages").AutoMigrate(&entities.Language{})
+		_ = connWrite.GetConnection().Table("computers_languages").AutoMigrate(&entities.ComputersLanguages{})
+
+		connRead := NewRelationalRead(config.NewConfig().Dialect, config.NewConfig().URI, config.NewConfig().LogMode)
+		connRead.SetLogMode(true)
 
 		response := connWrite.Create(&mockComputer, "computers")
 		assert.NoError(t, response.GetError())
@@ -413,7 +416,6 @@ func TestIntegration(t *testing.T) {
 			assert.NotEqual(t, convertedData.Name, "")
 			assert.NotEqual(t, convertedData.ComputersLanguages, nil)
 			assert.NotEqual(t, len(convertedData.ComputersLanguages), 0)
-			assert.NotEqual(t, convertedData.ComputersLanguages[0].ID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].ComputerID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].LanguageID, uuid.Nil)
 			assert.NotEqual(t, convertedData.ComputersLanguages[0].Language.ID, uuid.Nil)

@@ -22,8 +22,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestGetAccountRepository(t *testing.T) {
@@ -126,15 +126,15 @@ func TestGetOfAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
 		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetData(&[]roles.AccountRepository{}))
+		mockRead.On("Find").Return(resp.SetData(&[]roles.AccountRepository{{}}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		repository := NewAccountRepositoryRepository(mockRead, mockWrite)
 
-		roles, err := repository.GetOfAccount(uuid.New())
+		rolesFound, err := repository.GetOfAccount(uuid.New())
 
 		assert.NoError(t, err)
-		assert.NotNil(t, roles)
+		assert.NotNil(t, rolesFound)
 	})
 
 	t.Run("should not try to parse the nil pointer response", func(t *testing.T) {
@@ -142,13 +142,13 @@ func TestGetOfAccount(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
 		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetData(nil))
+		mockRead.On("Find").Return(resp)
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 
 		repository := NewAccountRepositoryRepository(mockRead, mockWrite)
 
-		roles, _ := repository.GetOfAccount(uuid.New())
+		rolesFound, _ := repository.GetOfAccount(uuid.New())
 
-		assert.Nil(t, roles)
+		assert.Nil(t, rolesFound)
 	})
 }

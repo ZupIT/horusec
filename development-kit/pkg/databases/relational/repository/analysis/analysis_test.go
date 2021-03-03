@@ -15,148 +15,138 @@
 package analysis
 
 import (
-	"os"
-	"testing"
-	"time"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	dashboardEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/dashboard"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	enumHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/google/uuid"
+	"testing"
+	"time"
 )
 
-var accountID = uuid.New()
-var companyID = uuid.New()
-var repositoryID = uuid.New()
-var analysisID = uuid.New()
-var vulnerabilityID = uuid.New()
-
-func insertAnalysisData() error {
-	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
-	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
-	_ = os.Setenv(config.EnvRelationalLogMode, "false")
-
-	databaseWrite := adapter.NewRepositoryWrite()
-
-	account := &authEntities.Account{
-		Email:     "test@test.com",
-		Username:  "test",
-		CreatedAt: time.Now(),
-		Password:  "test",
-		AccountID: accountID,
-	}
-
-	company := &accountEntities.Company{
-		CompanyID:   companyID,
-		Name:        "test",
-		Description: "test",
-		CreatedAt:   time.Now(),
-	}
-
-	repository := &accountEntities.Repository{
-		RepositoryID: repositoryID,
-		CompanyID:    company.CompanyID,
-		Name:         "test",
-		CreatedAt:    time.Now(),
-	}
-
-	accountCompany := &roles.AccountCompany{
-		AccountID: account.AccountID,
-		CompanyID: company.CompanyID,
-		Role:      rolesEnum.Admin,
-		CreatedAt: time.Now(),
-	}
-
-	accountRepository := &roles.AccountRepository{
-		AccountID:    account.AccountID,
-		CompanyID:    company.CompanyID,
-		RepositoryID: repository.RepositoryID,
-		Role:         rolesEnum.Admin,
-		CreatedAt:    time.Now(),
-	}
-
-	analysis := &horusec.Analysis{
-		ID:             analysisID,
-		CompanyID:      company.CompanyID,
-		CompanyName:    "test",
-		RepositoryID:   repository.RepositoryID,
-		RepositoryName: "test",
-		CreatedAt:      time.Now(),
-		FinishedAt:     time.Now(),
-	}
-
-	vulnerability := &horusec.Vulnerability{
-		VulnerabilityID: vulnerabilityID,
-		Severity:        severity.Low,
-		CommitEmail:     "test@test.com",
-		Type:            enumHorusec.Vulnerability,
-	}
-
-	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{
-		VulnerabilityID: vulnerabilityID,
-		AnalysisID:      analysisID,
-	}
-
-	databaseWrite.SetLogMode(true)
-	databaseWrite.GetConnection().Table(account.GetTable()).AutoMigrate(account)
-	databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
-	databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
-	databaseWrite.GetConnection().Table(accountRepository.GetTable()).AutoMigrate(accountRepository)
-	databaseWrite.GetConnection().Table(accountCompany.GetTable()).AutoMigrate(accountCompany)
-	databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
-	databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
-	databaseWrite.GetConnection().Table(vulnerability.GetTable()).AutoMigrate(vulnerability)
-
-	resp := databaseWrite.Create(account, account.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(company, company.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(repository, repository.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(accountRepository, accountRepository.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(accountCompany, accountCompany.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(analysis, analysis.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(vulnerability, vulnerability.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	resp = databaseWrite.Create(analysisVulnerabilities, analysisVulnerabilities.GetTable())
-	if resp.GetError() != nil {
-		return resp.GetError()
-	}
-
-	return nil
-}
+//var accountID = uuid.New()
+//var companyID = uuid.New()
+//var repositoryID = uuid.New()
+//var analysisID = uuid.New()
+//var vulnerabilityID = uuid.New()
+//
+//func insertAnalysisData() error {
+//	_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+//	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
+//	_ = os.Setenv(config.EnvRelationalLogMode, "false")
+//
+//	databaseWrite := adapter.NewRepositoryWrite()
+//
+//	account := &authEntities.Account{
+//		Email:     "test@test.com",
+//		Username:  "test",
+//		CreatedAt: time.Now(),
+//		Password:  "test",
+//		AccountID: accountID,
+//	}
+//
+//	company := &accountEntities.Company{
+//		CompanyID:   companyID,
+//		Name:        "test",
+//		Description: "test",
+//		CreatedAt:   time.Now(),
+//	}
+//
+//	repository := &accountEntities.Repository{
+//		RepositoryID: repositoryID,
+//		CompanyID:    company.CompanyID,
+//		Name:         "test",
+//		CreatedAt:    time.Now(),
+//	}
+//
+//	accountCompany := &roles.AccountCompany{
+//		AccountID: account.AccountID,
+//		CompanyID: company.CompanyID,
+//		Role:      rolesEnum.Admin,
+//		CreatedAt: time.Now(),
+//	}
+//
+//	accountRepository := &roles.AccountRepository{
+//		AccountID:    account.AccountID,
+//		CompanyID:    company.CompanyID,
+//		RepositoryID: repository.RepositoryID,
+//		Role:         rolesEnum.Admin,
+//		CreatedAt:    time.Now(),
+//	}
+//
+//	analysis := &horusec.Analysis{
+//		ID:             analysisID,
+//		CompanyID:      company.CompanyID,
+//		CompanyName:    "test",
+//		RepositoryID:   repository.RepositoryID,
+//		RepositoryName: "test",
+//		CreatedAt:      time.Now(),
+//		FinishedAt:     time.Now(),
+//	}
+//
+//	vulnerability := &horusec.Vulnerability{
+//		VulnerabilityID: vulnerabilityID,
+//		Severity:        severity.Low,
+//		CommitEmail:     "test@test.com",
+//		Type:            enumHorusec.Vulnerability,
+//	}
+//
+//	analysisVulnerabilities := &horusec.AnalysisVulnerabilities{
+//		VulnerabilityID: vulnerabilityID,
+//		AnalysisID:      analysisID,
+//	}
+//
+//	databaseWrite.SetLogMode(true)
+//	_ = databaseWrite.GetConnection().Table(account.GetTable()).AutoMigrate(account)
+//	_ = databaseWrite.GetConnection().Table(repository.GetTable()).AutoMigrate(repository)
+//	_ = databaseWrite.GetConnection().Table(company.GetTable()).AutoMigrate(company)
+//	_ = databaseWrite.GetConnection().Table(accountRepository.GetTable()).AutoMigrate(accountRepository)
+//	_ = databaseWrite.GetConnection().Table(accountCompany.GetTable()).AutoMigrate(accountCompany)
+//	_ = databaseWrite.GetConnection().Table(analysis.GetTable()).AutoMigrate(analysis)
+//	_ = databaseWrite.GetConnection().Table(analysisVulnerabilities.GetTable()).AutoMigrate(analysisVulnerabilities)
+//	_ = databaseWrite.GetConnection().Table(vulnerability.GetTable()).AutoMigrate(vulnerability)
+//
+//	resp := databaseWrite.Create(account, account.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(company, company.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(repository, repository.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(accountRepository, accountRepository.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(accountCompany, accountCompany.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(analysis, analysis.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(vulnerability, vulnerability.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	resp = databaseWrite.Create(analysisVulnerabilities, analysisVulnerabilities.GetTable())
+//	if resp.GetError() != nil {
+//		return resp.GetError()
+//	}
+//
+//	return nil
+//}
 
 func TestMock(t *testing.T) {
 	t.Run("Should run mock", func(t *testing.T) {
@@ -187,15 +177,15 @@ func TestMock(t *testing.T) {
 	})
 }
 
-func getCreatedAtTime() time.Time {
-	return time.Date(2020, 1, 1, 00, 00, 00, 00, time.UTC)
-}
-
-func getFinishedAtTime() time.Time {
-	finishedAt := time.Now()
-	finishedAt.AddDate(1, 1, 1)
-	return finishedAt
-}
+//func getCreatedAtTime() time.Time {
+//	return time.Date(2020, 1, 1, 00, 00, 00, 00, time.UTC)
+//}
+//
+//func getFinishedAtTime() time.Time {
+//	finishedAt := time.Now()
+//	finishedAt.AddDate(1, 1, 1)
+//	return finishedAt
+//}
 
 //
 //func testGetDetailsPaginated() ([]dashboardEntities.VulnDetails, error) {

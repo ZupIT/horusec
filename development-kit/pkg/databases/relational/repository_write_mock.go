@@ -16,15 +16,15 @@ package relational
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 type MockWrite struct {
 	mock.Mock
 }
 
-func (m *MockWrite) Connect() *response.Response {
+func (m *MockWrite) Connect(_, _ string, _ bool) *response.Response {
 	args := m.MethodCalled("Connect")
 	return args.Get(0).(*response.Response)
 }
@@ -36,19 +36,19 @@ func (m *MockWrite) IsAvailable() bool {
 	args := m.MethodCalled("IsAvailable")
 	return args.Get(0).(bool)
 }
-func (m *MockWrite) Create(entity interface{}, tableName string) *response.Response {
+func (m *MockWrite) Create(_ interface{}, _ string) *response.Response {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*response.Response)
 }
-func (m *MockWrite) CreateOrUpdate(entity interface{}, conditions map[string]interface{}, tableName string) *response.Response {
+func (m *MockWrite) CreateOrUpdate(_ interface{}, _ map[string]interface{}, _ string) *response.Response {
 	args := m.MethodCalled("CreateOrUpdate")
 	return args.Get(0).(*response.Response)
 }
-func (m *MockWrite) Update(entity interface{}, conditions map[string]interface{}, tableName string) *response.Response {
+func (m *MockWrite) Update(_ interface{}, _ map[string]interface{}, _ string) *response.Response {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*response.Response)
 }
-func (m *MockWrite) Delete(conditions map[string]interface{}, tableName string) *response.Response {
+func (m *MockWrite) Delete(_ map[string]interface{}, _ string) *response.Response {
 	args := m.MethodCalled("Delete")
 	return args.Get(0).(*response.Response)
 }

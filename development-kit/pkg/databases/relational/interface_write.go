@@ -16,11 +16,11 @@ package relational
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type InterfaceWrite interface {
-	Connect() *response.Response
+	Connect(dialect, uri string, logMode bool) *response.Response
 	GetConnection() *gorm.DB
 	IsAvailable() bool
 	SetLogMode(logMode bool)
