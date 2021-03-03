@@ -73,7 +73,7 @@ test-e2e-cli:
 	$(GO) get -v ./e2e/...
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
 test-e2e-server-horusec: compose-e2e-server-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
@@ -81,7 +81,7 @@ test-e2e-server-horusec: compose-e2e-server-horusec
 test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=10m -parallel=1 -failfast
 test-e2e-messages: compose-e2e-messages
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache

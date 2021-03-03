@@ -19,7 +19,7 @@ import "github.com/google/uuid"
 type Computer struct {
 	ID                 uuid.UUID `gorm:"type:uuid;primary_key;"`
 	Name               string
-	ComputersLanguages []ComputersLanguages `gorm:"foreignkey:ComputerID;association_foreignkey:ID"`
+	ComputersLanguages []ComputersLanguages `gorm:"foreignKey:ComputerID;references:ID"`
 }
 type Language struct {
 	ID                 uuid.UUID `gorm:"type:uuid;primary_key;"`
@@ -30,6 +30,6 @@ type ComputersLanguages struct {
 	ID         uuid.UUID `gorm:"type:uuid;primary_key;"`
 	ComputerID uuid.UUID `sql:"type:uuid REFERENCES computers(id) ON DELETE CASCADE"`
 	LanguageID uuid.UUID `sql:"type:uuid REFERENCES languages(id) ON DELETE CASCADE"`
-	Language   Language  `gorm:"foreignkey:LanguageID;association_foreignkey:ID"`
-	Computer   Computer  `gorm:"foreignkey:ComputerID;association_foreignkey:ID"`
+	Language   Language  `gorm:"foreignKey:LanguageID;references:ID"`
+	Computer   Computer  `gorm:"foreignKey:ComputerID;references:ID"`
 }
