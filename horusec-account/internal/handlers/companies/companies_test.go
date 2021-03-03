@@ -42,8 +42,8 @@ import (
 	companiesController "github.com/ZupIT/horusec/horusec-account/internal/controller/companies"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func getTestAuthorizationToken() string {
