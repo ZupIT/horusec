@@ -15,17 +15,18 @@
 package relational
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/dialect"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMockRead_Connect(t *testing.T) {
 	m := &MockRead{}
 	m.On("Connect").Return(response.NewResponse(0, nil, nil))
-	assert.NoError(t, m.Connect().GetError())
+	assert.NoError(t, m.Connect(dialect.SQLite.ToString(), ":memory:", false).GetError())
 }
 func TestMockRead_GetConnection(t *testing.T) {
 	m := &MockRead{}
@@ -52,7 +53,7 @@ func TestMockRead_Find(t *testing.T) {
 func TestMockWrite_Connect(t *testing.T) {
 	m := &MockWrite{}
 	m.On("Connect").Return(response.NewResponse(0, nil, nil))
-	assert.NoError(t, m.Connect().GetError())
+	assert.NoError(t, m.Connect(dialect.SQLite.ToString(), ":memory:", false).GetError())
 }
 func TestMockWrite_GetConnection(t *testing.T) {
 	m := &MockWrite{}
@@ -111,10 +112,5 @@ func TestMockRead_RawSQL(t *testing.T) {
 func TestMockRead_First(t *testing.T) {
 	m := &MockRead{}
 	m.On("First").Return(response.NewResponse(0, nil, nil))
-	assert.NoError(t, m.First("", nil).GetError())
-}
-func TestMockRead_Related(t *testing.T) {
-	m := &MockRead{}
-	m.On("Related").Return(response.NewResponse(0, nil, nil))
-	assert.NoError(t, m.Related(nil, "", nil).GetError())
+	assert.NoError(t, m.First("", "", nil).GetError())
 }

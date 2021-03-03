@@ -26,19 +26,19 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Get(key string) (*cache.Cache, error) {
+func (m *Mock) Get(_ string) (*cache.Cache, error) {
 	args := m.MethodCalled("Get")
 	return args.Get(0).(*cache.Cache), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) Exists(key string) bool {
+func (m *Mock) Exists(_ string) bool {
 	args := m.MethodCalled("Exists")
 	return args.Get(0).(bool)
 }
-func (m *Mock) Set(entity *cache.Cache, expiration time.Duration) error {
+func (m *Mock) Set(_ *cache.Cache, _ time.Duration) error {
 	args := m.MethodCalled("Set")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
-func (m *Mock) Del(key string) error {
+func (m *Mock) Del(_ string) error {
 	args := m.MethodCalled("Del")
 	return utilsMock.ReturnNilOrError(args, 0)
 }

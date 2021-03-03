@@ -21,7 +21,7 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"

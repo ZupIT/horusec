@@ -20,7 +20,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	authDto "github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -101,8 +100,9 @@ func TestMessages(t *testing.T) {
 
 func GetLastAccountCreated(t *testing.T) (accountCreated authEntities.Account) {
 	dbRead := adapter.NewRepositoryRead()
-	sqlUtil := test.NewSQLUtil(dbRead)
-	sqlUtil.GetLast(&accountCreated)
+	condition := dbRead.GetConnection().Order("created_at desc").Limit(1)
+	result := dbRead.Find(&accountCreated, condition, accountCreated.GetTable())
+	assert.NoError(t, result.GetError())
 	assert.NotEmpty(t, accountCreated)
 	assert.NotEqual(t, accountCreated.AccountID, uuid.Nil)
 	return accountCreated
