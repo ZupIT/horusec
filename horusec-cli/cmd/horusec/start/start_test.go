@@ -456,7 +456,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", dstProject, "-s", "CRITICAL, HIGH, UNKNOWN"})
+		cobraCmd.SetArgs([]string{"-p", dstProject, "-s", "CRITICAL, LOW"})
 
 		assert.NoError(t, cobraCmd.Execute())
 		outputBytes, err := ioutil.ReadAll(stdoutMock)

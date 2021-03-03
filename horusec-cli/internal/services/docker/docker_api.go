@@ -15,6 +15,7 @@
 package docker
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -172,17 +173,19 @@ func (d *API) getImageID() string {
 
 func (d *API) readContainer(containerID string) (string, error) {
 	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
-	_, chanErr := d.dockerClient.ContainerWait(d.ctx, containerID, "")
-	if chanErr != nil {
-		return "", <-chanErr
+	chanContainerStatus, _ := d.dockerClient.ContainerWait(d.ctx, containerID, "")
+	if containerWaitStatus := <-chanContainerStatus; containerWaitStatus.Error != nil {
+		message := fmt.Sprintf("Error on wait container %s: %s | Exited with status %v",
+			containerID, containerWaitStatus.Error.Message,
+			containerWaitStatus.StatusCode,
+		)
+		return "", errors.New(message)
 	}
-
 	containerOutput, err := d.dockerClient.ContainerLogs(d.ctx, containerID,
 		dockerTypes.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		return "", err
 	}
-
 	return d.getOutputString(containerOutput)
 }
 
