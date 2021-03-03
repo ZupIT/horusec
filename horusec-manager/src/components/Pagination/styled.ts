@@ -26,8 +26,8 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding: 5px 20px;
-  margin-top: 5px;
+  padding: 10px;
+  height: 80px;
 `;
 
 const ArrowIcon = styled(Icon)`
