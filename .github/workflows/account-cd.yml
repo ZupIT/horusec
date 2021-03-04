@@ -3,11 +3,18 @@ name: HorusecAccountPipelineCD
 on:
   push:
     branches:
-      - develop
-      - master
-      - staging
+      - 'develop'
+      - 'master'
+      - 'staging'
     paths:
-      - horusec-account
+      - 'horusec-account/**'
+      - 'development-kit/**'
+      - 'go.mod'
+      - 'go.dum'
+      - '.gitignore'
+      - '.dockerignore'
+      - '.golangci.yml'
+      - 'horusec-config.json'
 
 jobs:
   deploy:
