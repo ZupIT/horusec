@@ -68,7 +68,7 @@ func (f *Formatter) startYarnAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDYarnOrNpmAudit(projectSubPath, ImageCmd, tools.YarnAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "yarn.lock", tools.YarnAudit),
 		Language: languages.Javascript,
 	}
 

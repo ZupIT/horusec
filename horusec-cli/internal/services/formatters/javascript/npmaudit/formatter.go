@@ -68,7 +68,7 @@ func (f *Formatter) startNpmAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDYarnOrNpmAudit(projectSubPath, ImageCmd, tools.NpmAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "package-lock.json", tools.NpmAudit),
 		Language: languages.Javascript,
 	}
 
