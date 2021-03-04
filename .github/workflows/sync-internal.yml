@@ -28,7 +28,7 @@ jobs:
           ref: develop
       - name: deploy
         run: |
-          BRANCH_NAME=${GITHUB_REF##*/}
+          ls
 
           cp ./open_source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
