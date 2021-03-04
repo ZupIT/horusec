@@ -6,12 +6,15 @@ on:
       service:
         description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages, horusec-auth, horusec-migration, horusec-webhook'
         required: true
+        default: 'horusec-'
       update_type:
         description: 'Update Type: alpha, rc, release, minor, major'
         required: true
+        default: 'release'
       is_to_update_latest:
         description: 'Is to update latest: true, false'
         required: false
+        default: 'true'
 
 jobs:
   deploy:
