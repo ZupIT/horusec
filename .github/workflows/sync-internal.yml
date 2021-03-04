@@ -18,32 +18,29 @@ jobs:
         uses: actions/checkout@master
         with:
           path: open_source
+          ref: develop
       - name: Check out code internal
         uses: actions/checkout@master
         with:
           repository: ZupIT/horusec-internal
           token: ${{ secrets.SECRET_GITHUB_TOKEN }}
           path: internal
+          ref: develop
       - name: deploy
         env:
           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
         run: |
-          ls
-          echo ==========================================================================
-          ls ..
-          echo ==========================================================================
-          ls ../..
-          echo ==========================================================================
-      #     BRANCH_NAME=${GITHUB_REF##*/}
+          BRANCH_NAME=${GITHUB_REF##*/}
 
-      #     chmod +x ./deployments/scripts/sync-internal.sh
-      #     ./deployments/scripts/sync-internal.sh "develop" "$SECRET_GITHUB_TOKEN"
-      #     cd tmp-horusec-internal
-      #     git status
+          cp ./open_source/deployments/scripts/sync-internal.sh ./sync-internal.sh
+          chmod +x ./sync-internal.sh
+          ./sync-internal.sh "develop" "$SECRET_GITHUB_TOKEN"
+          cd internal
+          git status
       # - name: Commit changes
       #   uses: EndBug/add-and-commit@v4
       #   with:
-      #     cwd: './tmp-horusec-internal'
+      #     cwd: './internal'
       #     author_name: "Horusec"
       #     author_email: "horusec@zup.com.br"
       #     message: "[skip cicd] update versioning file"
