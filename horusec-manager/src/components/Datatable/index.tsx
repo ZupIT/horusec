@@ -51,6 +51,7 @@ interface DatatableInterface {
   emptyListText?: string;
   isLoading?: boolean;
   tooltip?: TooltipProps;
+  fixed?: boolean;
 }
 
 const Datatable: React.FC<DatatableInterface> = (props) => {
@@ -61,105 +62,107 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     isLoading,
     paginate,
     tooltip,
+    fixed = true,
   } = props;
 
   return (
     <>
-      {isLoading ? (
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="120px" className="loading" />
-        </Styled.LoadingWrapper>
-      ) : (
-        <Styled.Wrapper>
-          <Styled.Table isPaginate={!!paginate}>
-            <thead>
-              <Styled.Head>
-                {columns.map((el, index) => (
-                  <Styled.Column key={index}>{el.label}</Styled.Column>
-                ))}
-              </Styled.Head>
-            </thead>
+      <Styled.Wrapper>
+        {isLoading ? (
+          <Styled.LoadingWrapper>
+            <Icon name="loading" size="120px" className="loading" />
+          </Styled.LoadingWrapper>
+        ) : (
+          <>
+            <Styled.Table isPaginate={!!paginate} fixed={fixed}>
+              <thead>
+                <Styled.Head>
+                  {columns.map((el, index) => (
+                    <Styled.Column key={index}>{el.label}</Styled.Column>
+                  ))}
+                </Styled.Head>
+              </thead>
 
-            <Styled.Body>
-              {!datasource || datasource.length <= 0 ? (
-                <tr>
-                  <Styled.Cell colSpan={columns.length}>
-                    <Styled.EmptyText>{emptyListText}</Styled.EmptyText>
-                  </Styled.Cell>
-                </tr>
-              ) : (
-                datasource.map((row, dataId) => (
-                  <Styled.Row key={row.id || dataId}>
-                    {columns.map((column, columnId) => {
-                      const renderTooltipProps = (tip: string) => {
-                        return tooltip
-                          ? {
-                              'data-for': tooltip.id,
-                              'data-tip': tip,
-                            }
-                          : null;
-                      };
+              <Styled.Body>
+                {!datasource || datasource.length <= 0 ? (
+                  <tr>
+                    <Styled.Cell colSpan={columns.length}>
+                      <Styled.EmptyText>{emptyListText}</Styled.EmptyText>
+                    </Styled.Cell>
+                  </tr>
+                ) : (
+                  datasource.map((row, dataId) => (
+                    <Styled.Row key={row.id || dataId}>
+                      {columns.map((column, columnId) => {
+                        const renderTooltipProps = (tip: string) => {
+                          return tooltip
+                            ? {
+                                'data-for': tooltip.id,
+                                'data-tip': tip,
+                              }
+                            : null;
+                        };
 
-                      if (column.type === 'text') {
-                        return (
-                          <Styled.Cell
-                            key={columnId}
-                            className={column.cssClass?.join(' ')}
-                            {...renderTooltipProps(row[column.property])}
-                          >
-                            {row[column.property] || '-'}
-                          </Styled.Cell>
-                        );
-                      }
+                        if (column.type === 'text') {
+                          return (
+                            <Styled.Cell
+                              key={columnId}
+                              className={column.cssClass?.join(' ')}
+                              {...renderTooltipProps(row[column.property])}
+                            >
+                              {row[column.property] || '-'}
+                            </Styled.Cell>
+                          );
+                        }
 
-                      if (column.type === 'custom') {
-                        return (
-                          <Styled.Cell
-                            key={columnId}
-                            className={column.cssClass?.join(' ')}
-                            style={{ overflow: 'visible' }}
-                          >
-                            {row[column.property]}
-                          </Styled.Cell>
-                        );
-                      }
+                        if (column.type === 'custom') {
+                          return (
+                            <Styled.Cell
+                              key={columnId}
+                              className={column.cssClass?.join(' ')}
+                              style={{ overflow: 'visible' }}
+                            >
+                              {row[column.property]}
+                            </Styled.Cell>
+                          );
+                        }
 
-                      if (column.type === 'actions') {
-                        return (
-                          <Styled.Cell
-                            key={columnId}
-                            className={column.cssClass?.join(' ')}
-                          >
-                            <div className="row">
-                              {row[column.type].map((action, actionId) => (
-                                <Button
-                                  key={actionId}
-                                  rounded
-                                  outline
-                                  opaque
-                                  text={action.title}
-                                  width={'100%'}
-                                  height={30}
-                                  icon={action.icon}
-                                  onClick={action.function}
-                                />
-                              ))}
-                            </div>
-                          </Styled.Cell>
-                        );
-                      }
+                        if (column.type === 'actions') {
+                          return (
+                            <Styled.Cell
+                              key={columnId}
+                              className={column.cssClass?.join(' ')}
+                            >
+                              <div className="row">
+                                {row[column.type].map((action, actionId) => (
+                                  <Button
+                                    key={actionId}
+                                    rounded
+                                    outline
+                                    opaque
+                                    text={action.title}
+                                    width={'100%'}
+                                    height={30}
+                                    icon={action.icon}
+                                    onClick={action.function}
+                                  />
+                                ))}
+                              </div>
+                            </Styled.Cell>
+                          );
+                        }
 
-                      return null;
-                    })}
-                  </Styled.Row>
-                ))
-              )}
-            </Styled.Body>
-          </Styled.Table>
-          {tooltip ? <ReactTooltip {...tooltip} /> : null}
-        </Styled.Wrapper>
-      )}
-
+                        return null;
+                      })}
+                    </Styled.Row>
+                  ))
+                )}
+              </Styled.Body>
+            </Styled.Table>
+            {tooltip ? <ReactTooltip {...tooltip} /> : null}
+          </>
+        )}
+      </Styled.Wrapper>
       {datasource && datasource.length > 0 && paginate ? (
         <Pagination
           pagination={paginate.pagination}
