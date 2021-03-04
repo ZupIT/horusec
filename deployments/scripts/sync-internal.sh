@@ -35,7 +35,7 @@ validateAccessToken () {
     if [[ -z "$ACCESS_TOKEN" ]]
     then
         echo "Access Token is invalid, please send valid access token!"
-        exit 1;;
+        exit 1
     fi
 }
 
