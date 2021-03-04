@@ -30,24 +30,22 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) ContainerCreate(
-	ctx context.Context, config *containertypes.Config, hostConfig *containertypes.HostConfig,
-	networkingConfig *networktypes.NetworkingConfig, platform *specs.Platform, containerName string) (
-	containertypes.ContainerCreateCreatedBody, error) {
+func (m *Mock) ContainerCreate(_ context.Context, _ *containertypes.Config, _ *containertypes.HostConfig,
+	_ *networktypes.NetworkingConfig, _ *specs.Platform, _ string) (containertypes.ContainerCreateCreatedBody, error) {
 	args := m.MethodCalled("ContainerCreate")
 	return args.Get(0).(containertypes.ContainerCreateCreatedBody), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ContainerStart(ctx context.Context, container string, options types.ContainerStartOptions) error {
+func (m *Mock) ContainerStart(_ context.Context, _ string, _ types.ContainerStartOptions) error {
 	args := m.MethodCalled("ContainerStart")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
-func (m *Mock) ContainerList(ctx context.Context, options types.ContainerListOptions) ([]types.Container, error) {
+func (m *Mock) ContainerList(_ context.Context, _ types.ContainerListOptions) ([]types.Container, error) {
 	args := m.MethodCalled("ContainerList")
 	return args.Get(0).([]types.Container), utilsMock.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ContainerWait(ctx context.Context, container string,
-	condition containertypes.WaitCondition) (<-chan containertypes.ContainerWaitOKBody, <-chan error) {
+func (m *Mock) ContainerWait(_ context.Context, _ string, _ containertypes.WaitCondition) (
+	<-chan containertypes.ContainerWaitOKBody, <-chan error) {
 	args := m.MethodCalled("ContainerWait")
 	agr1 := make(chan containertypes.ContainerWaitOKBody)
 	agr2 := make(chan error)
@@ -60,24 +58,23 @@ func (m *Mock) ContainerWait(ctx context.Context, container string,
 	return agr1, agr2
 }
 
-func (m *Mock) ContainerLogs(ctx context.Context, container string,
-	options types.ContainerLogsOptions) (io.ReadCloser, error) {
+func (m *Mock) ContainerLogs(_ context.Context, _ string, _ types.ContainerLogsOptions) (io.ReadCloser, error) {
 	args := m.MethodCalled("ContainerLogs")
 	return args.Get(0).(io.ReadCloser), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ContainerRemove(ctx context.Context, container string, options types.ContainerRemoveOptions) error {
+func (m *Mock) ContainerRemove(_ context.Context, _ string, _ types.ContainerRemoveOptions) error {
 	args := m.MethodCalled("ContainerRemove")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
-func (m *Mock) ImageList(ctx context.Context, options types.ImageListOptions) ([]types.ImageSummary, error) {
+func (m *Mock) ImageList(_ context.Context, _ types.ImageListOptions) ([]types.ImageSummary, error) {
 	args := m.MethodCalled("ImageList")
 	return args.Get(0).([]types.ImageSummary), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) ImagePull(ctx context.Context, ref string, options types.ImagePullOptions) (io.ReadCloser, error) {
+func (m *Mock) ImagePull(_ context.Context, _ string, _ types.ImagePullOptions) (io.ReadCloser, error) {
 	args := m.MethodCalled("ImagePull")
 	return args.Get(0).(io.ReadCloser), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) Ping(ctx context.Context) (types.Ping, error) {
+func (m *Mock) Ping(_ context.Context) (types.Ping, error) {
 	args := m.MethodCalled("Ping")
 	return args.Get(0).(types.Ping), utilsMock.ReturnNilOrError(args, 1)
 }
