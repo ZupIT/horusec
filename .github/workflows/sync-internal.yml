@@ -1,32 +1,52 @@
-name: SyncRepositories
+# name: SyncRepositories
 
-on: ["workflow_dispatch"]
+# on: ["workflow_dispatch"]
+
+# jobs:
+#   deploy:
+#     name: deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Set up Go 1.14
+#         uses: actions/setup-go@v1
+#         with:
+#           go-version: 1.14
+#         id: go
+#       - name: Check out code
+#         uses: actions/checkout@v2
+#       - name: deploy
+#         env:
+#           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+#         run: |
+#           BRANCH_NAME=${GITHUB_REF##*/}
+
+#           chmod +x ./deployments/scripts/sync-internal.sh
+#           ./deployments/scripts/sync-internal.sh $BRANCH_NAME $SECRET_GITHUB_TOKEN
+#       - name: Commit changes
+#         uses: EndBug/add-and-commit@v4
+#         with:
+#           cwd: './tmp-horusec-internal'
+#           author_name: "Horusec"
+#           author_email: "horusec@zup.com.br"
+#           message: "[skip cicd] update versioning file"
+#           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+
+name: CI
+
+on:
+  workflow_dispatch:
 
 jobs:
-  deploy:
-    name: deploy
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.14
-        id: go
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: deploy
-        env:
-          SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
-        run: |
-          BRANCH_NAME=${GITHUB_REF##*/}
 
-          chmod +x ./deployments/scripts/sync-internal.sh
-          ./deployments/scripts/sync-internal.sh $BRANCH_NAME $SECRET_GITHUB_TOKEN
-      # - name: Commit changes
-      #   uses: EndBug/add-and-commit@v4
-      #   with:
-      #     cwd: './tmp-horusec-internal'
-      #     author_name: "Horusec"
-      #     author_email: "horusec@zup.com.br"
-      #     message: "[skip cicd] update versioning file"
-      #     GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
