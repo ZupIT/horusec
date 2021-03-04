@@ -1,11 +1,8 @@
 name: SyncRepositories
 
 on:
-  workflow_dispatch:
-    inputs:
-      sync_now:
-        description: 'Check is to sync now'
-        required: false
+  - workflow_dispatch
+  - push
 
 jobs:
   deploy:
@@ -27,11 +24,11 @@ jobs:
 
           chmod +x ./deployments/scripts/sync-internal.sh
           ./deployments/scripts/sync-internal.sh $BRANCH_NAME $SECRET_GITHUB_TOKEN
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v4
-        with:
-          cwd: './tmp-horusec-internal'
-          author_name: "Horusec"
-          author_email: "horusec@zup.com.br"
-          message: "[skip cicd] update versioning file"
-          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+      # - name: Commit changes
+      #   uses: EndBug/add-and-commit@v4
+      #   with:
+      #     cwd: './tmp-horusec-internal'
+      #     author_name: "Horusec"
+      #     author_email: "horusec@zup.com.br"
+      #     message: "[skip cicd] update versioning file"
+      #     GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
