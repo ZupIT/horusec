@@ -31,12 +31,12 @@ type Interface interface {
 	ContainerCreate(ctx context.Context, config *containertypes.Config, hostConfig *containertypes.HostConfig,
 		networkingConfig *networktypes.NetworkingConfig, platform *specs.Platform, containerName string) (
 		containertypes.ContainerCreateCreatedBody, error)
-	ContainerStart(ctx context.Context, container string, options types.ContainerStartOptions) error
+	ContainerStart(ctx context.Context, containerID string, options types.ContainerStartOptions) error
 	ContainerList(ctx context.Context, options types.ContainerListOptions) ([]types.Container, error)
-	ContainerWait(ctx context.Context, container string, condition containertypes.WaitCondition) (
+	ContainerWait(ctx context.Context, containerID string, condition containertypes.WaitCondition) (
 		<-chan containertypes.ContainerWaitOKBody, <-chan error)
-	ContainerLogs(ctx context.Context, container string, options types.ContainerLogsOptions) (io.ReadCloser, error)
-	ContainerRemove(ctx context.Context, container string, options types.ContainerRemoveOptions) error
+	ContainerLogs(ctx context.Context, containerID string, options types.ContainerLogsOptions) (io.ReadCloser, error)
+	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
 	ImageList(ctx context.Context, options types.ImageListOptions) ([]types.ImageSummary, error)
 	ImagePull(ctx context.Context, ref string, options types.ImagePullOptions) (io.ReadCloser, error)
 	Ping(ctx context.Context) (types.Ping, error)
