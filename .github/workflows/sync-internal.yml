@@ -33,8 +33,9 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
-          cwd: './tmp-internal'
+          cwd: "./tmp-internal"
           author_name: "Horusec"
           author_email: "horusec@zup.com.br"
           message: "[skip cicd] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          ref: "develop"
