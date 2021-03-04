@@ -1,8 +1,8 @@
-name: SyncRepositories
+name: SyncRepositoriesMaster
 
 on:
   push:
-    branches: ["staging"]
+    branches: ["master"]
 
 jobs:
   deploy:
@@ -18,24 +18,24 @@ jobs:
         uses: actions/checkout@master
         with:
           path: tmp-open-source
-          ref: staging
+          ref: master
       - name: Check out code internal
         uses: actions/checkout@master
         with:
           repository: ZupIT/horusec-internal
           token: ${{ secrets.SECRET_GITHUB_TOKEN }}
           path: tmp-internal
-          ref: develop
+          ref: master
       - name: deploy
         run: |
           chmod +x ./tmp-open-source/deployments/scripts/sync-internal.sh
-          ./tmp-open-source/deployments/scripts/sync-internal.sh "develop" false
+          ./tmp-open-source/deployments/scripts/sync-internal.sh "master" false
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
           cwd: "./tmp-internal"
           author_name: "Horusec"
           author_email: "horusec@zup.com.br"
-          message: "[skip cicd] update versioning file"
+          message: "Sync Open Source on branch master with internal"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
-          ref: "develop"
+          ref: "master"

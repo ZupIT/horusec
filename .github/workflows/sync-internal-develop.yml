@@ -1,0 +1,41 @@
+name: SyncRepositoriesDevelop
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code open source
+        uses: actions/checkout@master
+        with:
+          path: tmp-open-source
+          ref: develop
+      - name: Check out code internal
+        uses: actions/checkout@master
+        with:
+          repository: ZupIT/horusec-internal
+          token: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          path: tmp-internal
+          ref: develop
+      - name: deploy
+        run: |
+          chmod +x ./tmp-open-source/deployments/scripts/sync-internal.sh
+          ./tmp-open-source/deployments/scripts/sync-internal.sh "develop" false
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        with:
+          cwd: "./tmp-internal"
+          author_name: "Horusec"
+          author_email: "horusec@zup.com.br"
+          message: "Sync Open Source on branch develop with internal"
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          ref: "develop"
