@@ -5,7 +5,7 @@ on:
     inputs:
       sync:
         description: 'sync'
-        required: false
+        required: true
         default: 'sync'
 
 jobs:

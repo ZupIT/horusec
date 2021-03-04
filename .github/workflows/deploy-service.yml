@@ -13,7 +13,7 @@ on:
         default: 'release'
       is_to_update_latest:
         description: 'Is to update latest: true, false'
-        required: false
+        required: true
         default: 'true'
 
 jobs:
