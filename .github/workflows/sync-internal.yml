@@ -28,6 +28,13 @@ jobs:
           ref: develop
       - name: deploy
         run: |
+          ls ./
+          echo =======================================
+          ls ./tmp-open-source
+          echo =======================================
+          ls ./tmp-open-source/deployments
+          echo =======================================
+          ls ./tmp-open-source/deployments/scripts
           cp ./tmp-open-source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
           ./sync-internal.sh "develop" false
