@@ -30,13 +30,11 @@ jobs:
         run: |
           chmod +x ./tmp-open-source/deployments/scripts/sync-internal.sh
           ./tmp-open-source/deployments/scripts/sync-internal.sh "develop" false
-          cd ./tmp-internal
-          git status
-      # - name: Commit changes
-      #   uses: EndBug/add-and-commit@v4
-      #   with:
-      #     cwd: './internal'
-      #     author_name: "Horusec"
-      #     author_email: "horusec@zup.com.br"
-      #     message: "[skip cicd] update versioning file"
-      #     GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        with:
+          cwd: './tmp-internal'
+          author_name: "Horusec"
+          author_email: "horusec@zup.com.br"
+          message: "[skip cicd] update versioning file"
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
