@@ -41,7 +41,7 @@ validateIsClone () {
 }
 
 cloneInternalInTmpFolder () {
-    if [[ "$IS_CLONE" == "true"]]
+    if [[ "$IS_CLONE" = "true"]]
     then
         rm -rf $HORUSEC_INTERNAL_FOLDER
         git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER"
