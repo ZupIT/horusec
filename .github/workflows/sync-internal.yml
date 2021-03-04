@@ -19,11 +19,11 @@ jobs:
           with:
             path: open_source
       - name: Check out code internal
-          repository: ZupIT/horusec-internal
-          token: ${{ secrets.SECRET_GITHUB_TOKEN }}
-          with:
-            path: internal
         uses: actions/checkout@v2
+          with:
+            repository: ZupIT/horusec-internal
+            token: ${{ secrets.SECRET_GITHUB_TOKEN }}
+            path: internal
       - name: deploy
         env:
           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
