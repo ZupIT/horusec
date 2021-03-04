@@ -39,7 +39,6 @@ jobs:
           UPDATE_TYPE="${{ github.event.inputs.update_type }}"
           IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
           TOOL_NAME="${{ github.event.inputs.tool_name }}"
-          BRANCH_NAME=${GITHUB_REF##*/}
 
           docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
