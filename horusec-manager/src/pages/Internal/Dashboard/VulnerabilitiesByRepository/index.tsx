@@ -25,6 +25,7 @@ import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
 import { formatChartStacked } from 'helpers/formatters/chartData';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   filters?: FilterValues;
@@ -95,18 +96,27 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ filters }) => {
   };
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (filters) {
       setLoading(true);
 
       analyticService
         .getVulnerabilitiesByRepository(filters)
-        .then((result) => {
-          setChartData(formatChartStacked(result.data.content, 'repository'));
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            setChartData(formatChartStacked(result.data.content, 'repository'));
+          }
         })
         .finally(() => {
-          setLoading(false);
+          if (!isCancelled) {
+            setLoading(false);
+          }
         });
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [filters]);
 
   return (

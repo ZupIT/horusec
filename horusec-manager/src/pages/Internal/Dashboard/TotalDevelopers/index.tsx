@@ -19,6 +19,7 @@ import { Counter } from 'components';
 import { useTranslation } from 'react-i18next';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   filters?: FilterValues;
@@ -31,21 +32,32 @@ const TotalDevelopers: React.FC<Props> = ({ filters }) => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isCancelled = false;
     if (filters) {
       setLoading(true);
 
       analyticService
         .getTotalDevelopers(filters)
-        .then((result) => {
-          setTotal(result.data.content);
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            setTotal(result.data.content);
+          }
         })
         .catch(() => {
-          setTotal(null);
+          if (!isCancelled) {
+            setTotal(null);
+          }
         })
         .finally(() => {
-          setLoading(false);
+          if (!isCancelled) {
+            setLoading(false);
+          }
         });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [filters]);
 
   return (

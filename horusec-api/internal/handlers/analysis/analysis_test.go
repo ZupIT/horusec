@@ -18,9 +18,11 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	loggerGorm "gorm.io/gorm/logger"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	config2 "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 
@@ -33,7 +35,6 @@ import (
 	enumsHorusec "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -42,6 +43,13 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
 
 func TestNewHandler(t *testing.T) {
 	t.Run("should return a new analysis handler", func(t *testing.T) {
@@ -86,8 +94,9 @@ func TestGet(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
 		mockResponse := &response.Response{}
-		conn, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-		assert.NoError(t, err)
+		_ = os.Setenv(config2.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config2.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(mockResponse.SetError(errors.New("test")))
 
@@ -109,8 +118,9 @@ func TestGet(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 
 		mockResponse := &response.Response{}
-		conn, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-		assert.NoError(t, err)
+		_ = os.Setenv(config2.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config2.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(mockResponse.SetError(errorsEnum.ErrNotFoundRecords))
 
@@ -131,8 +141,9 @@ func TestGet(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		conn, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-		assert.NoError(t, err)
+		_ = os.Setenv(config2.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config2.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(1, nil, test.CreateAnalysisMock()))
 
@@ -190,12 +201,12 @@ func TestPost(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
 
-		conn, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-		assert.NoError(t, err)
+		_ = os.Setenv(config2.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config2.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		_ = conn.Table("analysis").AutoMigrate(&horusec.Analysis{})
 		_ = conn.Table("analysis_vulnerabilities").AutoMigrate(&horusec.AnalysisVulnerabilities{})
 		_ = conn.Table("vulnerabilities").AutoMigrate(&horusec.Vulnerability{})
-		conn.Logger.LogMode(loggerGorm.Info)
 		resp := &response.Response{}
 
 		mockWrite.On("StartTransaction").Return(mockWrite)

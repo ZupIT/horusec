@@ -29,6 +29,7 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
+import { AxiosError, AxiosResponse } from 'axios';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
@@ -41,31 +42,17 @@ const Repositories: React.FC = () => {
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
 
   const [isLoading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
   const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
   const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
     null
   );
-  const [repoTodelete, setRepoToDelete] = useState<Repository>(null);
+  const [repoToDelete, setRepoToDelete] = useState<Repository>(null);
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
-
-  const fetchData = () => {
-    setLoading(true);
-    repositoryService
-      .getAll(currentWorkspace?.companyID)
-      .then((result) => {
-        setRepositories(result?.data?.content);
-        setFilteredRepos(result?.data?.content);
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   const onSearchRepository = (search: string) => {
     if (search) {
@@ -82,11 +69,11 @@ const Repositories: React.FC = () => {
   const handleConfirmDeleteRepo = () => {
     setDeleteLoading(true);
     repositoryService
-      .remove(repoTodelete.companyID, repoTodelete.repositoryID)
+      .remove(repoToDelete.companyID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
         setRepoToDelete(null);
-        fetchData();
+        setRefresh((state) => !state);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -104,8 +91,38 @@ const Repositories: React.FC = () => {
     setRepoToEdit(repository || null);
   };
 
-  // eslint-disable-next-line
-  useEffect(() => fetchData(), [currentWorkspace]);
+  const handleConfirmRepositoryEdit = () => {
+    setVisibleHandleModal(false);
+    setRefresh((state) => !state);
+  };
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    setLoading(true);
+    repositoryService
+      .getAll(currentWorkspace?.companyID)
+      .then((result: AxiosResponse) => {
+        if (!isCancelled) {
+          setRepositories(result.data?.content);
+          setFilteredRepos(result.data?.content);
+        }
+      })
+      .catch((err: AxiosError) => {
+        if (!isCancelled) {
+          dispatchMessage(err.response?.data);
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentWorkspace, refresh, dispatchMessage]);
 
   return (
     <Styled.Wrapper>
@@ -196,7 +213,7 @@ const Repositories: React.FC = () => {
         loadingConfirm={deleteIsLoading}
         defaultButton
         hasCancel
-        isVisible={!!repoTodelete}
+        isVisible={!!repoToDelete}
         onCancel={() => setRepoToDelete(null)}
         onConfirm={handleConfirmDeleteRepo}
       />
@@ -204,11 +221,8 @@ const Repositories: React.FC = () => {
       <HandleRepository
         isVisible={handleRepositoryVisible}
         repositoryToEdit={repoToEdit}
-        onConfirm={() => {
-          setVisibleHandleModal(false);
-          fetchData();
-        }}
         onCancel={() => setVisibleHandleModal(false)}
+        onConfirm={handleConfirmRepositoryEdit}
       />
 
       <InviteToRepository
