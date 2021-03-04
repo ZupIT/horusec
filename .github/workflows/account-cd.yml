@@ -2,8 +2,12 @@ name: HorusecAccountPipelineCD
 
 on:
   push:
-    branches: [ "develop", "master", "staging" ]
-    paths: ["horusec-account"]
+    branches:
+      - develop
+      - master
+      - staging
+    paths:
+      - horusec-account
 
 jobs:
   deploy:
