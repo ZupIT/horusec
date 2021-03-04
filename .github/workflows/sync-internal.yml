@@ -1,7 +1,11 @@
 name: SyncRepositories
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      sync_now:
+        description: 'Check is to sync now'
+        required: false
 
 jobs:
   deploy:
