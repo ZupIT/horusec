@@ -34,3 +34,5 @@ jobs:
         run: |
           CURRENT_BRANCH="$(echo ${GITHUB_REF##*/})"
           echo $CURRENT_BRANCH
+          cd horusec-account
+          semver get rc
