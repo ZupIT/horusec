@@ -28,13 +28,7 @@ jobs:
           ref: develop
       - name: deploy
         run: |
-          ls ./
-          echo ================================================
-          ls ..
-          echo ================================================
-          ls ../..
-
-          cp ./open_source/deployments/scripts/sync-internal.sh ./sync-internal.sh
+          cp ./tmp-open-source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
           ./sync-internal.sh "develop" false
           cd internal
