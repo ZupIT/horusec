@@ -16,6 +16,7 @@ package jwt
 
 import (
 	"fmt"
+	jwtGo "github.com/form3tech-oss/jwt-go"
 	"net/http"
 	"strings"
 	"time"
@@ -70,7 +71,7 @@ func parseStringToToken(tokenString string) (*jwt.Token, error) {
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	middleware := jwtMiddleware.New(jwtMiddleware.Options{
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+		ValidationKeyGetter: func(token *jwtGo.Token) (interface{}, error) {
 			return getHorusecJWTKey(), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
