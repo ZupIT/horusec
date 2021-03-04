@@ -93,6 +93,8 @@ cloneOpenSourceInTmpFolder () {
             echo "ERROR on clone open source content!"
             exit 1
         fi
+    else
+        cp -r "../$HORUSEC_OPEN_SOURCE_FOLDER" ./$HORUSEC_OPEN_SOURCE_FOLDER
     fi
     rm -rf "./$HORUSEC_OPEN_SOURCE_FOLDER/.git"
 }
