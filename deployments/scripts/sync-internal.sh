@@ -41,7 +41,7 @@ validateIsClone () {
 }
 
 cloneInternalInTmpFolder () {
-    if [[ "$IS_CLONE" = "true"]]
+    if [[ "$IS_CLONE" == "true" ]]
     then
         rm -rf $HORUSEC_INTERNAL_FOLDER
         git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER"
@@ -85,7 +85,7 @@ deleteCurrentContent () {
 }
 
 cloneOpenSourceInTmpFolder () {
-    if [[ "$IS_CLONE" == "true"]]
+    if [[ "$IS_CLONE" == "true" ]]
     then
         git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec.git" "$HORUSEC_OPEN_SOURCE_FOLDER"
         if [ $? != "0" ]
