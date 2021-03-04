@@ -31,22 +31,59 @@
 #           message: "[skip cicd] update versioning file"
 #           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
 
-name: CI
+name: SyncRepositories
 
 on:
   workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages, horusec-auth, horusec-migration, horusec-webhook'
+        required: true
+        default: 'horusec-'
+      update_type:
+        description: 'Update Type: alpha, rc, release, minor, major'
+        required: true
+        default: 'release'
+      is_to_update_latest:
+        description: 'Is to update latest: true, false'
+        required: true
+        default: 'true'
 
 jobs:
-  build:
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: deploy
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
+          then
+              echo "Variables DOCKER_USERNAME, DOCKER_PASSWORD is required"
+              exit 1
+          fi
+
+          UPDATE_TYPE="${{ github.event.inputs.update_type }}"
+          IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
+          SERVICE="${{ github.event.inputs.service }}"
+
+          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+          chmod +x ./deployments/scripts/update-image-service.sh
+          ./deployments/scripts/update-image-service.sh $SERVICE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        with:
+          author_name: "Horusec"
+          author_email: "horusec@zup.com.br"
+          message: "[skip cicd] update versioning file"
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
