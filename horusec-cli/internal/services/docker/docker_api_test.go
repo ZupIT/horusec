@@ -184,7 +184,11 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
 		dockerAPIClient.On("ContainerStart").Return(nil)
-		dockerAPIClient.On("ContainerWait").Return(int64(1), ErrGeneric)
+		dockerAPIClient.On("ContainerWait").Return(container.ContainerWaitOKBody{
+			Error: &container.ContainerWaitOKBodyError{
+				Message: ErrGeneric.Error(),
+			},
+		}, nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
@@ -196,7 +200,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
-		assert.Equal(t, ErrGeneric, err)
+		assert.Contains(t, err.Error(), ErrGeneric.Error())
 	})
 
 	t.Run("Should return error when read container logs", func(t *testing.T) {
@@ -208,7 +212,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
 		dockerAPIClient.On("ContainerStart").Return(nil)
-		dockerAPIClient.On("ContainerWait").Return(int64(1), nil)
+		dockerAPIClient.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
 		dockerAPIClient.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader(nil)), ErrGeneric)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
@@ -233,7 +237,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
 		dockerAPIClient.On("ContainerStart").Return(nil)
-		dockerAPIClient.On("ContainerWait").Return(int64(1), nil)
+		dockerAPIClient.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
 		dockerAPIClient.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte("{}"))), nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
