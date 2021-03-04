@@ -24,6 +24,7 @@ import { Icon } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
 import { get } from 'lodash';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   filters?: FilterValues;
@@ -98,18 +99,27 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
   };
 
   useEffect(() => {
+    let isCancelled = false;
     if (filters) {
       setLoading(true);
 
       analyticService
         .getAllVulnerabilities(filters)
-        .then((result) => {
-          formatData(result?.data?.content);
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            formatData(result.data?.content);
+          }
         })
         .finally(() => {
-          setLoading(false);
+          if (!isCancelled) {
+            setLoading(false);
+          }
         });
     }
+
+    return () => {
+      isCancelled = true;
+    };
     // eslint-disable-next-line
   }, [filters]);
 

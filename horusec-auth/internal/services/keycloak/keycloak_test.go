@@ -30,8 +30,8 @@ import (
 	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestNewKeycloakAuthService(t *testing.T) {

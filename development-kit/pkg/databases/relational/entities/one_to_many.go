@@ -23,6 +23,6 @@ type Pet struct {
 }
 type Zoo struct {
 	ID   uuid.UUID `gorm:"type:uuid;primary_key;"`
-	Pet  []Pet     `gorm:"foreignkey:ZooID;association_foreignkey:ID"`
+	Pet  []Pet     `gorm:"foreignKey:ZooID;references:ID"`
 	Name string
 }

@@ -35,7 +35,7 @@ type Analysis struct {
 	Errors                  string                    `json:"errors" gorm:"Column:errors"`
 	CreatedAt               time.Time                 `json:"createdAt" gorm:"Column:created_at"`
 	FinishedAt              time.Time                 `json:"finishedAt" gorm:"Column:finished_at"`
-	AnalysisVulnerabilities []AnalysisVulnerabilities `json:"analysisVulnerabilities" gorm:"foreignkey:AnalysisID;association_foreignkey:ID"` //nolint:lll gorm usage
+	AnalysisVulnerabilities []AnalysisVulnerabilities `json:"analysisVulnerabilities" gorm:"foreignKey:AnalysisID;references:ID"` //nolint:lll gorm usage
 }
 
 func (a *Analysis) GetTable() string {

@@ -23,8 +23,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMock(t *testing.T) {
@@ -254,7 +254,7 @@ func TestGetAllAccountsInCompany(t *testing.T) {
 }
 
 // func TestGetAllOfAccountLdap(t *testing.T) {
-// 	_ = os.Setenv(config.EnvRelationalDialect, "sqlite3")
+// 	_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
 // 	_ = os.Setenv(config.EnvRelationalURI, "tmp.db")
 // 	_ = os.Setenv(config.EnvRelationalLogMode, "false")
 

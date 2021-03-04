@@ -24,15 +24,19 @@ import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
 import { debounce } from 'lodash';
-import i18n from 'config/i18n';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { get, find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { AxiosError, AxiosResponse } from 'axios';
 
 const INITIAL_PAGE = 1;
+interface RefreshInterface {
+  filter: FilterVuln;
+  page: PaginationInfo;
+}
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
@@ -56,6 +60,11 @@ const Vulnerabilities: React.FC = () => {
     totalItems: 0,
     pageSize: 10,
     totalPages: 10,
+  });
+
+  const [refresh, setRefresh] = useState<RefreshInterface>({
+    filter: filters,
+    page: pagination,
   });
 
   const vulnTypes = [
@@ -110,44 +119,6 @@ const Vulnerabilities: React.FC = () => {
 
   const severitiesOptions = severities.slice(1);
 
-  const fetchData = (filt: FilterVuln, pag: PaginationInfo) => {
-    setLoading(true);
-
-    if (pag.pageSize !== pagination.pageSize) {
-      pag.currentPage = INITIAL_PAGE;
-    }
-
-    setFilters(filt);
-
-    filt = {
-      ...filt,
-      vulnSeverity: filt.vulnHash ? null : filt.vulnSeverity,
-      vulnType: filt.vulnHash ? null : filt.vulnType,
-    };
-
-    repositoryService
-      .getAllVulnerabilities(filt, pag)
-      .then((result) => {
-        setVulnerabilities(result.data?.content?.data);
-        const totalItems = result?.data?.content?.totalItems;
-
-        let totalPages = totalItems ? Math.ceil(totalItems / pag.pageSize) : 1;
-
-        if (totalPages <= 0) {
-          totalPages = 1;
-        }
-
-        setPagination({ ...pag, totalPages, totalItems });
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setVulnerabilities([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   const isAdminOrSupervisorOfRepository = () => {
     const repository = find(repositories, {
       repositoryID: filters.repositoryID,
@@ -156,7 +127,10 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData({ ...filters, vulnHash: searchString }, pagination);
+    setRefresh({
+      filter: { ...filters, vulnHash: searchString },
+      page: pagination,
+    });
   }, 500);
 
   const handleUpdateVulnerabilityType = (
@@ -171,7 +145,7 @@ const Vulnerabilities: React.FC = () => {
         type
       )
       .then(() => {
-        fetchData(filters, pagination);
+        setRefresh({ filter: filters, page: pagination });
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
@@ -191,33 +165,92 @@ const Vulnerabilities: React.FC = () => {
         severity
       )
       .then(() => {
-        fetchData(filters, pagination);
+        setRefresh({ filter: filters, page: pagination });
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         dispatchMessage(err?.response?.data);
       });
   };
 
   useEffect(() => {
-    const fetchRepositories = () => {
-      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        setRepositories(result.data.content);
+    let isCancelled = false;
 
-        if (result.data?.content.length > 0) {
-          fetchData(
-            { ...filters, repositoryID: result.data?.content[0].repositoryID },
-            pagination
-          );
-        } else {
-          setLoading(false);
-        }
-      });
+    const fetchRepositories = () => {
+      repositoryService
+        .getAll(currentWorkspace?.companyID)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const response = result.data.content;
+            setRepositories(response);
+
+            if (response.length > 0) {
+              setLoading(true);
+
+              const page = refresh.page;
+              let filter = refresh.filter;
+
+              if (page.pageSize !== pagination.pageSize) {
+                page.currentPage = INITIAL_PAGE;
+              }
+
+              if (!filter.repositoryID) {
+                filter.repositoryID = response[0].repositoryID;
+              }
+
+              setFilters(filter);
+
+              filter = {
+                ...filter,
+                vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
+                vulnType: filter.vulnHash ? null : filter.vulnType,
+              };
+
+              repositoryService
+                .getAllVulnerabilities(filter, page)
+                .then((result: AxiosResponse) => {
+                  if (!isCancelled) {
+                    const response = result.data?.content;
+                    setVulnerabilities(response?.data);
+                    const totalItems = response?.totalItems;
+
+                    let totalPages = totalItems
+                      ? Math.ceil(totalItems / page.pageSize)
+                      : 1;
+
+                    if (totalPages <= 0) {
+                      totalPages = 1;
+                    }
+
+                    setPagination({ ...page, totalPages, totalItems });
+                  }
+                })
+                .catch((err: AxiosError) => {
+                  if (!isCancelled) {
+                    dispatchMessage(err?.response?.data);
+                    setVulnerabilities([]);
+                  }
+                })
+                .finally(() => {
+                  if (!isCancelled) {
+                    setLoading(false);
+                  }
+                });
+            } else {
+              if (!isCancelled) {
+                setLoading(false);
+              }
+            }
+          }
+        });
     };
 
     fetchRepositories();
-    // eslint-disable-next-line
-  }, [i18n.language, currentWorkspace]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentWorkspace, refresh, pagination.pageSize, dispatchMessage]);
 
   return (
     <Styled.Wrapper>
@@ -237,10 +270,10 @@ const Vulnerabilities: React.FC = () => {
           options={severities}
           title={t('VULNERABILITIES_SCREEN.SEVERITY')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, vulnSeverity: item.value },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, vulnSeverity: item.value },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
 
@@ -260,10 +293,10 @@ const Vulnerabilities: React.FC = () => {
           ]}
           title={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, vulnType: item.value },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, vulnType: item.value },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
 
@@ -277,10 +310,10 @@ const Vulnerabilities: React.FC = () => {
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, repositoryID: item.repositoryID },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, repositoryID: item.repositoryID },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
       </Styled.Options>
@@ -370,9 +403,10 @@ const Vulnerabilities: React.FC = () => {
           })}
           isLoading={isLoading}
           emptyListText={t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
+          fixed={false}
           paginate={{
             pagination,
-            onChange: (pag) => fetchData(filters, { ...pag }),
+            onChange: (page) => setRefresh({ filter: filters, page }),
           }}
         />
       </Styled.Content>

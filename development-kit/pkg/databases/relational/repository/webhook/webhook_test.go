@@ -17,17 +17,26 @@ package webhook
 import (
 	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	entitiesWebhook "github.com/ZupIT/horusec/development-kit/pkg/entities/webhook"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 	"github.com/stretchr/testify/assert"
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
 	"net/http"
+	"os"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
 
 func TestMock(t *testing.T) {
 	m := &Mock{}
@@ -58,8 +67,9 @@ func TestNewWebhookRepository(t *testing.T) {
 func TestMock_GetByRepositoryID(t *testing.T) {
 	t.Run("Should return error when get webhook by repository id", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, EnumErrors.ErrNotFoundRecords, nil))
 		mockWrite := &relational.MockWrite{}
@@ -77,8 +87,9 @@ func TestMock_GetByRepositoryID(t *testing.T) {
 			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: uuid.New(),
 		}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockWrite := &relational.MockWrite{}
@@ -92,8 +103,9 @@ func TestMock_GetByRepositoryID(t *testing.T) {
 func TestWebhook_GetByWebhookID(t *testing.T) {
 	t.Run("Should return error when get webhook by webhook id", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, EnumErrors.ErrNotFoundRecords, nil))
 		mockWrite := &relational.MockWrite{}
@@ -111,8 +123,9 @@ func TestWebhook_GetByWebhookID(t *testing.T) {
 			Headers:      []entitiesWebhook.Headers{},
 			RepositoryID: uuid.New(),
 		}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockWrite := &relational.MockWrite{}
@@ -126,8 +139,9 @@ func TestWebhook_GetByWebhookID(t *testing.T) {
 func TestWebhook_GetAllByCompanyID(t *testing.T) {
 	t.Run("Should return error when get webhook by company id", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, EnumErrors.ErrNotFoundRecords, nil))
 		mockWrite := &relational.MockWrite{}
@@ -150,8 +164,9 @@ func TestWebhook_GetAllByCompanyID(t *testing.T) {
 				},
 			},
 		}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, webhookData))
 		mockWrite := &relational.MockWrite{}
