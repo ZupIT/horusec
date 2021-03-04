@@ -31,7 +31,7 @@ jobs:
           cp ./tmp-open-source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
           ./sync-internal.sh "develop" false
-          cd internal
+          cd tmp-internal
           git status
       # - name: Commit changes
       #   uses: EndBug/add-and-commit@v4
