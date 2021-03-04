@@ -16,14 +16,14 @@ jobs:
         id: go
       - name: Check out code open source
         uses: actions/checkout@v2
-          with:
-            path: open_source
+        with:
+          path: open_source
       - name: Check out code internal
         uses: actions/checkout@v2
-          with:
-            repository: ZupIT/horusec-internal
-            token: ${{ secrets.SECRET_GITHUB_TOKEN }}
-            path: internal
+        with:
+          repository: ZupIT/horusec-internal
+          token: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          path: internal
       - name: deploy
         env:
           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
