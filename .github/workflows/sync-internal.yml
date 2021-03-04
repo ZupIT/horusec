@@ -27,14 +27,12 @@ jobs:
           path: internal
           ref: develop
       - name: deploy
-        env:
-          SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
         run: |
           BRANCH_NAME=${GITHUB_REF##*/}
 
           cp ./open_source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
-          ./sync-internal.sh "develop" "$SECRET_GITHUB_TOKEN"
+          ./sync-internal.sh "develop" false
           cd internal
           git status
       # - name: Commit changes

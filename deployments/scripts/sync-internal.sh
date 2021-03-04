@@ -14,9 +14,9 @@
 # limitations under the License.
 
 BRANCH_NAME=$1
-ACCESS_TOKEN=$2
-HORUSEC_INTERNAL_FOLDER="tmp-horusec-internal"
-HORUSEC_OPEN_SOURCE_FOLDER="tmp-horusec-open-source"
+IS_CLONE=$2
+HORUSEC_INTERNAL_FOLDER="internal"
+HORUSEC_OPEN_SOURCE_FOLDER="open_source"
 
 validateBranchName () {
     case "$BRANCH_NAME" in
@@ -31,21 +31,25 @@ validateBranchName () {
     esac
 }
 
-validateAccessToken () {
-    if [[ -z "$ACCESS_TOKEN" ]]
+validateIsClone () {
+    if [[ "$IS_CLONE" != "true" && "$IS_CLONE" != "false" ]]
     then
-        echo "Access Token is invalid, please send valid access token!"
+        echo "Param IsClone is invalid, please use the examples bellow allowed and try again!"
+        echo "Params IsClone allowed: true, false"
         exit 1
     fi
 }
 
 cloneInternalInTmpFolder () {
-    rm -rf $HORUSEC_INTERNAL_FOLDER
-    git clone -b "$BRANCH_NAME" "https://$ACCESS_TOKEN@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER"
-    if [ $? != "0" ]
+    if [[ "$IS_CLONE" == "true"]]
     then
-        echo "ERROR on clone internal project!"
-        exit 1
+        rm -rf $HORUSEC_INTERNAL_FOLDER
+        git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER"
+        if [ $? != "0" ]
+        then
+            echo "ERROR on clone internal project!"
+            exit 1
+        fi
     else
         cd "./$HORUSEC_INTERNAL_FOLDER"
     fi
@@ -81,14 +85,16 @@ deleteCurrentContent () {
 }
 
 cloneOpenSourceInTmpFolder () {
-    git clone -b "$BRANCH_NAME" "https://$ACCESS_TOKEN@github.com:ZupIT/horusec.git" "$HORUSEC_OPEN_SOURCE_FOLDER"
-    if [ $? != "0" ]
+    if [[ "$IS_CLONE" == "true"]]
     then
-        echo "ERROR on clone open source content!"
-        exit 1
-    else
-        rm -rf "./$HORUSEC_OPEN_SOURCE_FOLDER/.git"
+        git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec.git" "$HORUSEC_OPEN_SOURCE_FOLDER"
+        if [ $? != "0" ]
+        then
+            echo "ERROR on clone open source content!"
+            exit 1
+        fi
     fi
+    rm -rf "./$HORUSEC_OPEN_SOURCE_FOLDER/.git"
 }
 
 copyContentFromTmpToInternal () {
@@ -132,7 +138,7 @@ echo "\n"
 validateBranchName
 
 echo "\n"
-validateAccessToken
+validateIsClone
 
 echo "\n"
 cloneInternalInTmpFolder
