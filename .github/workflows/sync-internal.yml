@@ -25,7 +25,7 @@ jobs:
         env:
           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
         run: |
-          ls
+          ls ..
       #     BRANCH_NAME=${GITHUB_REF##*/}
 
       #     chmod +x ./deployments/scripts/sync-internal.sh
