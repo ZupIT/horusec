@@ -55,6 +55,6 @@ jobs:
         with:
           author_name: "Horusec"
           author_email: "horus@zup.com.br"
-          ref: "merge/update-versioning-file"
+          ref: ${GITHUB_REF##*/}
           message: "[skip cicd] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
