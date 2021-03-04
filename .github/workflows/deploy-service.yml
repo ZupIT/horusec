@@ -47,8 +47,7 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
-          author_name: "Wilian Gabriel"
-          author_email: "wilian.silva@zup.com.br"
-          ref: ${GITHUB_REF##*/}
+          author_name: "Horusec"
+          author_email: "horusec@zup.com.br"
           message: "[skip cicd] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
