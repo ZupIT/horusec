@@ -1,4 +1,4 @@
-name: HorusecAccountPipeline
+name: HorusecAccountPipelineCI
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ jobs:
   install-build-test-fmt-lint:
     name: install-build-test-fmt-lint
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "!contains(github.event.head_commit.message, '[skip cicd]')"
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v1

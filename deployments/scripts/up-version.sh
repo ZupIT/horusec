@@ -135,7 +135,7 @@ upNewVersion () {
     # Commit new version
     git tag "$NEW_RELEASE"
     git add .
-    git commit -m "[skip ci] update versioning file"
+    git commit -m "[skip cicd] update versioning file"
 }
 
 pushChangesAndCheckResponse () {

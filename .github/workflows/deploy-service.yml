@@ -55,5 +55,5 @@ jobs:
           author_name: "Wilian Gabriel"
           author_email: "wilian.silva@zup.com.br"
           ref: "merge/update-versioning-file"
-          message: "[skip ci] update versioning file"
+          message: "[skip cicd] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
