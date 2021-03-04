@@ -2,11 +2,6 @@ name: SyncRepositories
 
 on:
   workflow_dispatch:
-    inputs:
-      sync:
-        description: 'sync'
-        required: true
-        default: 'sync'
 
 jobs:
   deploy:
