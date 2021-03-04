@@ -49,7 +49,6 @@ jobs:
         uses: EndBug/add-and-commit@v4
         with:
           author_name: "Horusec"
-          author_email: "horus@zup.com.br"
-          ref: ${GITHUB_REF##*/}
+          author_email: "horusec@zup.com.br"
           message: "[skip cicd] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
