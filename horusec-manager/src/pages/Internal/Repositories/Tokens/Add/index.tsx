@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import { Dialog } from 'components';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -25,6 +25,7 @@ import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Repository } from 'helpers/interfaces/Repository';
 import SuccessAddToken from './Sucess';
+import validateExpiresAt from 'helpers/validators/validateExpiresAt';
 
 interface Props {
   isVisible: boolean;
@@ -32,6 +33,11 @@ interface Props {
   onConfirm: () => void;
   currentRepository: Repository;
 }
+
+const INITIAL_FIELD = {
+  value: '',
+  isValid: false,
+};
 
 const AddToken: React.FC<Props> = ({
   isVisible,
@@ -45,25 +51,51 @@ const AddToken: React.FC<Props> = ({
 
   const [isLoading, setLoading] = useState(false);
   const [tokenCreated, setTokenCreated] = useState<string>(null);
-  const [description, setDescription] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
+  const [isExpirable, setIsExpirable] = useState(false);
+  const [description, setDescription] = useState<Field>(INITIAL_FIELD);
+  const [expiresAt, setExpiresAt] = useState<Field>(INITIAL_FIELD);
 
   const resetFields = () => {
-    const defaultValue = { value: '', isValid: false };
-    setDescription(defaultValue);
+    setDescription(INITIAL_FIELD);
+    setExpiresAt(INITIAL_FIELD);
+    setIsExpirable(false);
+  };
+
+  const formatStringDate = (string: string) => {
+    const result: string[] = [];
+    const value = string.replace(/\D/g, '').substring(0, 8);
+    value.split('').map((element, index) => {
+      const value = index === 1 || index === 3 ? [element, '/'] : [element];
+      result.push(...value);
+    });
+
+    const last = result.length - 1;
+    if (result[last] === '/') {
+      delete result[last];
+    }
+    return result.join('');
   };
 
   const handleConfirmSave = () => {
     if (description.isValid) {
       setLoading(true);
 
+      const data = {
+        description: description.value,
+        isExpirable: isExpirable,
+        expiresAt: new Date(expiresAt.value),
+      };
+
+      if (isExpirable === false) {
+        delete data.isExpirable;
+        delete data.expiresAt;
+      }
+
       repositoryService
         .createToken(
           currentRepository.companyID,
           currentRepository.repositoryID,
-          description.value
+          data
         )
         .then((res) => {
           onConfirm();
@@ -78,6 +110,12 @@ const AddToken: React.FC<Props> = ({
         });
     }
   };
+
+  useEffect(() => {
+    if (isExpirable === false) {
+      setExpiresAt(INITIAL_FIELD);
+    }
+  }, [isExpirable, expiresAt]);
 
   return (
     <>
@@ -109,6 +147,31 @@ const AddToken: React.FC<Props> = ({
           type="text"
           width="100%"
         />
+
+        <Styled.ContainerCheckbox>
+          <Checkbox
+            disabled={false}
+            initialValue={isExpirable}
+            onChangeValue={(field) => setIsExpirable(field)}
+            label={t('REPOSITORIES_SCREEN.IS_EXPIRABLE')}
+          />
+        </Styled.ContainerCheckbox>
+
+        {isExpirable ? (
+          <Styled.Field
+            label={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
+            initialValue={expiresAt.value}
+            name="expiresAt"
+            type="text"
+            onChangeValue={(field: Field) =>
+              setExpiresAt({ ...field, value: formatStringDate(field.value) })
+            }
+            validation={validateExpiresAt}
+            invalidMessage={t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT')}
+            maxLength={8}
+            width="100%"
+          />
+        ) : null}
       </Dialog>
 
       {tokenCreated ? (

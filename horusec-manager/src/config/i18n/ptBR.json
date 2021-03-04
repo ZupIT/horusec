@@ -214,8 +214,9 @@
     "NO_TOKENS": "Não há tokens registrados para este repositório.",
     "EXPIRES": "Expira em:",
     "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
-    "CREATE_NEW_TOKEN": "Adicionar novo token ",
+    "CREATE_NEW_TOKEN": "Adicionar novo token",
     "INVALID_DESCRIPTION": "Descrição inválida",
+    "INVALID_EXPIRES_AT": "Espera-se que demore pelo menos um dia ou mais",
     "SUCCESS_ADD_USER": "Sucesso ao adicionar usuário ao repositório!",
     "SUCCESS_CREATE_REPO": "Repositório criado com sucesso!",
     "SUCCESS_EDIT_REPO": "Repositório editado com sucesso!",
@@ -230,7 +231,9 @@
     "ADMIN": "Administrador:",
     "SUPERVISOR": "Supervisor:",
     "MEMBER": "Membro",
-    "GROUP_NAME": "Nome do grupo"
+    "GROUP_NAME": "Nome do grupo",
+    "IS_EXPIRABLE": "É expirável",
+    "EXPIRES_AT": "Expira em"
   },
 
   "GENERAL": {

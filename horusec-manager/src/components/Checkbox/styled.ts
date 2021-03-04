@@ -21,6 +21,11 @@ interface CheckboxProps {
   disabled?: boolean;
 }
 
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const Checkbox = styled.div<CheckboxProps>`
   border: 1px solid ${({ theme }) => theme.colors.checkbox.border};
   border-radius: 4px;
@@ -31,7 +36,7 @@ const Checkbox = styled.div<CheckboxProps>`
   ${({ isChecked }) =>
     isChecked &&
     css`
-      border: none;
+      border: 1px solid transparent;
       background: linear-gradient(
         ${({ theme }) =>
           `90deg, ${theme.colors.checkbox.checked.primary} 0%, ${theme.colors.checkbox.checked.secundary} 100%`}
@@ -46,6 +51,15 @@ const Checkbox = styled.div<CheckboxProps>`
     `};
 `;
 
+const Label = styled.div`
+  color: ${({ theme }) => theme.colors.input.label};
+  margin-left: 10px;
+  user-select: none;
+  cursor: pointer;
+`;
+
 export default {
+  Container,
   Checkbox,
+  Label,
 };

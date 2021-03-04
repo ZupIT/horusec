@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import { Input } from 'components';
+import isEmptyString from './isEmptyString';
+import moment from 'moment';
 
-const SubTitle = styled.h3`
-  font-weight: normal;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.text.secundary};
-`;
+export default function validateExpiresAt(value: string): boolean {
+  if (!isEmptyString(value)) return false;
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
+  if (value.length >= 10) {
+    const ExpiresAt = moment(value, 'DD/MM/YYYY');
 
-const Field = styled(Input)`
-  margin-top: 25px;
-`;
+    if (ExpiresAt.isBefore(moment.now())) {
+      return false;
+    }
+  }
 
-const ContainerCheckbox = styled.div`
-  margin-top: 25px;
-  margin-bottom: 40px;
-`;
-
-export default {
-  SubTitle,
-  Form,
-  Field,
-  ContainerCheckbox,
-};
+  return true;
+}
