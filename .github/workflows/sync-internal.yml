@@ -14,20 +14,26 @@ jobs:
         with:
           go-version: 1.14
         id: go
-      - name: Check out code
+      - name: Check out code open source
         uses: actions/checkout@v2
-      - name: deploy2
+          with:
+            path: open_source
+      - name: Check out code internal
+          repository: ZupIT/horusec-internal
+          token: ${{ secrets.SECRET_GITHUB_TOKEN }}
+          with:
+            path: internal
+        uses: actions/checkout@v2
+      - name: deploy
         env:
           SECRET_GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
         run: |
-          if [[ -z "$SECRET_GITHUB_TOKEN" ]]
-          then
-              echo "Variable SECRET_GITHUB_TOKEN is required"
-              exit 1
-          fi
-          git clone -b develop "https://$SECRET_GITHUB_TOKEN@github.com:ZupIT/horusec.git" tmp-horusec-open-source
-          git clone -b develop "https://$SECRET_GITHUB_TOKEN@github.com:ZupIT/horusec-internal.git" tmp-horusec-internal
           ls
+          echo ==========================================================================
+          ls ..
+          echo ==========================================================================
+          ls ../..
+          echo ==========================================================================
       #     BRANCH_NAME=${GITHUB_REF##*/}
 
       #     chmod +x ./deployments/scripts/sync-internal.sh
