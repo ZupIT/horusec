@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@master
         with:
           path: tmp-open-source
-          ref: develop
+          ref: staging
       - name: Check out code internal
         uses: actions/checkout@master
         with:
