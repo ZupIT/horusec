@@ -15,8 +15,8 @@
 
 BRANCH_NAME=$1
 IS_CLONE=$2
-HORUSEC_INTERNAL_FOLDER="internal"
-HORUSEC_OPEN_SOURCE_FOLDER="open_source"
+HORUSEC_INTERNAL_FOLDER="tmp-internal"
+HORUSEC_OPEN_SOURCE_FOLDER="tmp-open-source"
 
 validateBranchName () {
     case "$BRANCH_NAME" in

@@ -17,18 +17,22 @@ jobs:
       - name: Check out code open source
         uses: actions/checkout@master
         with:
-          path: open_source
+          path: tmp-open-source
           ref: develop
       - name: Check out code internal
         uses: actions/checkout@master
         with:
           repository: ZupIT/horusec-internal
           token: ${{ secrets.SECRET_GITHUB_TOKEN }}
-          path: internal
+          path: tmp-internal
           ref: develop
       - name: deploy
         run: |
-          ls
+          ls ./
+          echo ================================================
+          ls ..
+          echo ================================================
+          ls ../..
 
           cp ./open_source/deployments/scripts/sync-internal.sh ./sync-internal.sh
           chmod +x ./sync-internal.sh
