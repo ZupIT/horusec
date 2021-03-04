@@ -31,7 +31,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: deploy
-        with:
+        env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
