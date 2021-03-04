@@ -21,9 +21,9 @@ HORUSEC_OPEN_SOURCE_FOLDER="tmp-horusec-open-source"
 validateBranchName () {
     case "$BRANCH_NAME" in
         "develop")
-            echo "Branch Name selected is develop" ;;
+            echo "Branch Name selected is develop";;
         "master")
-            echo "Branch Name selected is master" ;;
+            echo "Branch Name selected is master";;
         *)
             echo "Param Branch Name is invalid, please use the examples bellow allowed and try again!"
             echo "Params Branch Name allowed: develop, master"
@@ -32,9 +32,10 @@ validateBranchName () {
 }
 
 validateAccessToken () {
-    if [[ -z "$ACCESS_TOKEN" ]]; then
-      echo "Access Token is invalid, please send valid access token!"
-      exit 1;;
+    if [[ -z "$ACCESS_TOKEN" ]]
+    then
+        echo "Access Token is invalid, please send valid access token!"
+        exit 1;;
     fi
 }
 
