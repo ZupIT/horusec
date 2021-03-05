@@ -3,6 +3,10 @@ definitions:
     properties:
       description:
         type: string
+      expiresAt:
+        type: string
+      isExpirable:
+        type: boolean
     type: object
   dto.UpdateVulnSeverity:
     properties:
@@ -18,7 +22,7 @@ definitions:
     properties:
       analysisVulnerabilities:
         items:
-          $ref: '#/definitions/horusec.AnalysisVulnerabilities'
+          type: AnalysisVulnerabilities
         type: array
       companyID:
         type: string
@@ -37,17 +41,6 @@ definitions:
       repositoryName:
         type: string
       status:
-        type: string
-    type: object
-  horusec.AnalysisVulnerabilities:
-    properties:
-      analysisID:
-        type: string
-      createdAt:
-        type: string
-      vulnerabilities:
-        $ref: '#/definitions/horusec.Vulnerability'
-      vulnerabilityID:
         type: string
     type: object
   horusec.CommitAuthor:
@@ -115,6 +108,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-API
 paths:
