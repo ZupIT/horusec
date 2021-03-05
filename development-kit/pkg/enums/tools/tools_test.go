@@ -15,12 +15,19 @@
 package tools
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestToString(t *testing.T) {
 	t.Run("Should success parse to string", func(t *testing.T) {
 		assert.Equal(t, "GoSec", GoSec.ToString())
+	})
+}
+
+func TestToLowerCase(t *testing.T) {
+	t.Run("Should success parse to string", func(t *testing.T) {
+		assert.Equal(t, "goSec", GoSec.ToLowerCamel())
 	})
 }

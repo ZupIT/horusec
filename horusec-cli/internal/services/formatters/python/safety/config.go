@@ -16,10 +16,10 @@
 package safety
 
 const (
-	ImageName = "horuszup/safety"
+	ImageName = "horuszup/horusec-python"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
-		{{WORK_DIR}}
+      {{WORK_DIR}}
       touch /tmp/warning-ANALYSISID
 	  touch /tmp/output-ANALYSISID.json
 	  touch /tmp/errorRunning-ANALYSISID

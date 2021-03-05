@@ -15,9 +15,11 @@
 package docker
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"time"
 
@@ -151,7 +153,7 @@ func (d *API) removeContainer(containerID string) {
 
 func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
 	config, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
-	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, d.getImageID())
+	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, nil, d.getImageID())
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err)
 		return "", err
@@ -172,17 +174,19 @@ func (d *API) getImageID() string {
 
 func (d *API) readContainer(containerID string) (string, error) {
 	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
-	_, err := d.dockerClient.ContainerWait(d.ctx, containerID)
-	if err != nil {
-		return "", err
+	chanContainerStatus, _ := d.dockerClient.ContainerWait(d.ctx, containerID, "")
+	if containerWaitStatus := <-chanContainerStatus; containerWaitStatus.Error != nil {
+		message := fmt.Sprintf("Error on wait container %s: %s | Exited with status %s",
+			containerID, containerWaitStatus.Error.Message,
+			strconv.Itoa(int(containerWaitStatus.StatusCode)),
+		)
+		return "", errors.New(message)
 	}
-
 	containerOutput, err := d.dockerClient.ContainerLogs(d.ctx, containerID,
 		dockerTypes.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		return "", err
 	}
-
 	return d.getOutputString(containerOutput)
 }
 
