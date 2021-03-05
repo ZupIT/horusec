@@ -34,9 +34,9 @@ func (a *AnalysisData) IsInvalid() bool {
 	return a.DefaultImage == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetData(customImage, imageName, imageTag string) *AnalysisData {
+func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
 	a.CustomImage = customImage
-	a.DefaultImage = fmt.Sprintf("%s/%s:%s", DefaultRegistry, imageName, imageTag)
+	a.DefaultImage = fmt.Sprintf("%s/%s", DefaultRegistry, imageWithTag)
 
 	return a
 }

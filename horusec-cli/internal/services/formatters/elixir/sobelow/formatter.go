@@ -18,6 +18,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -73,11 +75,11 @@ func (f *Formatter) startSobelow(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "mix.lock", tools.Sobelow),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "mix.lock", tools.Sobelow),
 		Language: languages.Elixir,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Sobelow].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.Sobelow].ImagePath, images.Elixir)
 }
 
 func (f *Formatter) parseOutput(output string) error {

@@ -17,6 +17,8 @@ package gosec
 import (
 	"strconv"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -118,9 +120,9 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GoSec),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.GoSec),
 		Language: languages.Go,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.GoSec].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.GoSec].ImagePath, images.Go)
 }

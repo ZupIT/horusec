@@ -21,6 +21,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -74,12 +76,12 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+		CMD: f.AddWorkDirInCmd(CMD, fileUtil.GetSubPathByExtension(
 			f.GetConfigProjectPath(), projectSubPath, "Gemfile.lock"), tools.SecurityCodeScan),
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.BundlerAudit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.BundlerAudit].ImagePath, images.Ruby)
 }
 
 func (f *Formatter) verifyGemLockError(output string) error {

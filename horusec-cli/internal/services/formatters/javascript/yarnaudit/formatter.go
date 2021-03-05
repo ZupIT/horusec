@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -68,11 +70,11 @@ func (f *Formatter) startYarnAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "yarn.lock", tools.YarnAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "yarn.lock", tools.YarnAudit),
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.YarnAudit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.YarnAudit].ImagePath, images.Javascript)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {

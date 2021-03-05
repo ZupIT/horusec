@@ -14,12 +14,8 @@
 
 package flawfinder
 
-const (
-	ImageName = "horuszup/horusec-c"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > /tmp/result-ANALYSISID.csv
 		cat /tmp/result-ANALYSISID.csv
   `
-)

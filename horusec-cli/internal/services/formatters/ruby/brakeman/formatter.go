@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -111,11 +113,11 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Brakeman),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Brakeman),
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Brakeman].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.Brakeman].ImagePath, images.Ruby)
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {

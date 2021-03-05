@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -65,11 +67,11 @@ func (f *Formatter) startBandit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Bandit),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Bandit),
 		Language: languages.Python,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.Bandit].ImagePath, images.Python)
 }
 
 func (f *Formatter) parseOutput(output string) {

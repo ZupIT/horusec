@@ -14,10 +14,7 @@
 
 package npmaudit
 
-const (
-	ImageName = "horuszup/horusec-js"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
  	  {{WORK_DIR}}
       if [ -f package-lock.json ]; then
         npm audit --only=prod --json > /tmp/results-ANALYSISID.json 2> /tmp/errorNpmaudit-ANALYSISID
@@ -28,4 +25,3 @@ const (
         fi
       fi
   `
-)

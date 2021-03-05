@@ -14,11 +14,8 @@
 
 package scs
 
-const (
-	ImageName = "horuszup/horusec-csharp"
-	ImageTag  = "v1.0.0"
-	// nolint
-	ImageCmd = `
+//nolint
+const CMD = `
 		{{WORK_DIR}}
 		dotnet build --nologo -v q > /tmp/build-output-ANALYSISID.txt
 
@@ -37,4 +34,3 @@ const (
       	jq -j -M -c . /tmp/scs-result-ANALYSISID.json
 		chmod -R 777 .
   `
-)

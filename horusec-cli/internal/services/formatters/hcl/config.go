@@ -14,11 +14,7 @@
 
 package hcl
 
-const (
-	ImageName = "horuszup/horusec-hcl"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 			{{WORK_DIR}}
         	tfsec --format=json 
   `
-)

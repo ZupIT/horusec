@@ -23,12 +23,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-
 	enumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	dockerTypes "github.com/docker/docker/api/types"
 	dockerContainer "github.com/docker/docker/api/types/container"
@@ -38,8 +37,11 @@ import (
 	goContext "golang.org/x/net/context"
 )
 
+const FailedToPullImage = "Failed to pull docker image"
+
 type Interface interface {
 	CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error)
+	PullImage(imageWithTagAndRegistry string) error
 	DeleteContainersFromAPI()
 }
 
@@ -66,24 +68,23 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
 
-	if err := d.pullNewImage(data); err != nil {
-		return "", err
-	}
-
 	return d.logStatusAndExecuteCRDContainer(data.GetImageWithoutRegistry(), d.replaceCMDAnalysisID(data.CMD))
 }
 
-func (d *API) pullNewImage(data *dockerEntities.AnalysisData) error {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, data.GetImageWithRegistry())
-	if imageNotExist, err := d.checkImageNotExists(data); err != nil || !imageNotExist {
+func (d *API) PullImage(imageWithTagAndRegistry string) error {
+	if imageNotExist, err := d.checkImageNotExists(imageWithTagAndRegistry); err != nil || !imageNotExist {
+		logger.LogError(fmt.Sprintf("%s -> %s", FailedToPullImage, imageWithTagAndRegistry), err)
 		return err
 	}
 
-	return d.downloadImage(data)
+	err := d.downloadImage(imageWithTagAndRegistry)
+	logger.LogError(fmt.Sprintf("%s -> %s", FailedToPullImage, imageWithTagAndRegistry), err)
+	return err
 }
 
-func (d *API) downloadImage(data *dockerEntities.AnalysisData) error {
-	reader, err := d.dockerClient.ImagePull(d.ctx, data.GetImageWithRegistry(), dockerTypes.ImagePullOptions{})
+func (d *API) downloadImage(imageWithTagAndRegistry string) error {
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imageWithTagAndRegistry)
+	reader, err := d.dockerClient.ImagePull(d.ctx, imageWithTagAndRegistry, dockerTypes.ImagePullOptions{})
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		return err
@@ -99,9 +100,9 @@ func (d *API) downloadImage(data *dockerEntities.AnalysisData) error {
 	return nil
 }
 
-func (d *API) checkImageNotExists(data *dockerEntities.AnalysisData) (bool, error) {
+func (d *API) checkImageNotExists(imageWithTagAndRegistry string) (bool, error) {
 	args := dockerTypesFilters.NewArgs()
-	args.Add("reference", data.GetImageWithoutRegistry())
+	args.Add("reference", d.removeRegistry(imageWithTagAndRegistry))
 	options := dockerTypes.ImageListOptions{Filters: args}
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)
@@ -305,4 +306,13 @@ func (d *API) getSourceFolderFromWindows(path string) string {
 	path = strings.ReplaceAll(path, "/", "//")
 	// //c//Users//usr//Documents//Horusec//project//.horusec//ID
 	return path
+}
+
+func (d *API) removeRegistry(imageWithTagAndRegistry string) string {
+	index := strings.Index(imageWithTagAndRegistry, "/")
+	if index < 0 {
+		return imageWithTagAndRegistry
+	}
+
+	return imageWithTagAndRegistry[index+1:]
 }

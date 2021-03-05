@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -64,11 +66,11 @@ func (f *Formatter) startTfSec(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.TfSec),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.TfSec].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.TfSec].ImagePath, images.HCL)
 }
 
 func (f *Formatter) parseOutput(output string) error {

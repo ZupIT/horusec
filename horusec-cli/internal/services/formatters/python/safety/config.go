@@ -15,10 +15,7 @@
 // nolint
 package safety
 
-const (
-	ImageName = "horuszup/horusec-python"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
       {{WORK_DIR}}
       touch /tmp/warning-ANALYSISID
 	  touch /tmp/output-ANALYSISID.json
@@ -48,4 +45,3 @@ const (
 		echo "ERROR_REQ_NOT_FOUND"
 	  fi
   `
-)
