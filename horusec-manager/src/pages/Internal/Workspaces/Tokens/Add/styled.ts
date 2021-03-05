@@ -32,8 +32,13 @@ const Field = styled(Input)`
   margin-top: 25px;
 `;
 
+const ContainerCheckbox = styled.div`
+  margin: 25px 0px;
+`;
+
 export default {
   SubTitle,
   Form,
   Field,
+  ContainerCheckbox,
 };

@@ -128,7 +128,9 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
               ...row,
               id: row.tokenID,
               token: '***************' + row.suffixValue,
-              expiresAt: formatToHumanDate(row.expiresAt),
+              expiresAt: row.isExpirable
+                ? formatToHumanDate(row.expiresAt)
+                : t('GENERAL.NOT_EXPIRABLE'),
               actions: [
                 {
                   title: t('WORKSPACES_SCREEN.DELETE'),

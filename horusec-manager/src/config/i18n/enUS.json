@@ -239,6 +239,7 @@
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
       "OF": "of",

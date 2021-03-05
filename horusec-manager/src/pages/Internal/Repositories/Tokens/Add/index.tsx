@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Dialog } from 'components';
+import { Calendar, Checkbox, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -39,6 +39,8 @@ const INITIAL_FIELD = {
   isValid: false,
 };
 
+const MIN_DATE = new Date(Date.now() + 86400000);
+
 const AddToken: React.FC<Props> = ({
   isVisible,
   onCancel,
@@ -53,27 +55,12 @@ const AddToken: React.FC<Props> = ({
   const [tokenCreated, setTokenCreated] = useState<string>(null);
   const [isExpirable, setIsExpirable] = useState(false);
   const [description, setDescription] = useState<Field>(INITIAL_FIELD);
-  const [expiresAt, setExpiresAt] = useState<Field>(INITIAL_FIELD);
+  const [expiresAt, setExpiresAt] = useState<Date>(MIN_DATE);
 
   const resetFields = () => {
     setDescription(INITIAL_FIELD);
-    setExpiresAt(INITIAL_FIELD);
+    setExpiresAt(MIN_DATE);
     setIsExpirable(false);
-  };
-
-  const formatStringDate = (string: string) => {
-    const result: string[] = [];
-    const value = string.replace(/\D/g, '').substring(0, 8);
-    value.split('').map((element, index) => {
-      const value = index === 1 || index === 3 ? [element, '/'] : [element];
-      result.push(...value);
-    });
-
-    const last = result.length - 1;
-    if (result[last] === '/') {
-      delete result[last];
-    }
-    return result.join('');
   };
 
   const handleConfirmSave = () => {
@@ -83,7 +70,7 @@ const AddToken: React.FC<Props> = ({
       const data = {
         description: description.value,
         isExpirable: isExpirable,
-        expiresAt: new Date(expiresAt.value),
+        expiresAt: expiresAt,
       };
 
       if (isExpirable === false) {
@@ -113,7 +100,7 @@ const AddToken: React.FC<Props> = ({
 
   useEffect(() => {
     if (isExpirable === false) {
-      setExpiresAt(INITIAL_FIELD);
+      setExpiresAt(MIN_DATE);
     }
   }, [isExpirable, expiresAt]);
 
@@ -158,18 +145,13 @@ const AddToken: React.FC<Props> = ({
         </Styled.ContainerCheckbox>
 
         {isExpirable ? (
-          <Styled.Field
-            label={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
-            initialValue={expiresAt.value}
-            name="expiresAt"
-            type="text"
-            onChangeValue={(field: Field) =>
-              setExpiresAt({ ...field, value: formatStringDate(field.value) })
-            }
+          <Calendar
+            initialDate={expiresAt}
+            title={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
+            onChangeValue={(field) => setExpiresAt(field.value)}
+            minDate={MIN_DATE}
             validation={validateExpiresAt}
             invalidMessage={t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT')}
-            maxLength={8}
-            width="100%"
           />
         ) : null}
       </Dialog>

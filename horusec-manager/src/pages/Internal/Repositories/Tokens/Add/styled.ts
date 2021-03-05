@@ -33,8 +33,7 @@ const Field = styled(Input)`
 `;
 
 const ContainerCheckbox = styled.div`
-  margin-top: 25px;
-  margin-bottom: 40px;
+  margin: 25px 0px;
 `;
 
 export default {

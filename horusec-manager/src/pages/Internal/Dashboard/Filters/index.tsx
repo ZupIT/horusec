@@ -152,8 +152,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             <Calendar
               initialDate={filters.initialDate}
               title={t('DASHBOARD_SCREEN.START_DATE')}
-              onChangeValue={(date: Date) =>
-                setFilters({ ...filters, initialDate: date })
+              onChangeValue={(field) =>
+                setFilters({ ...filters, initialDate: field.value })
               }
             />
           </Styled.CalendarWrapper>
@@ -161,8 +161,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           <Styled.CalendarWrapper>
             <Calendar
               title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-              onChangeValue={(date: Date) =>
-                setFilters({ ...filters, finalDate: date })
+              onChangeValue={(field) =>
+                setFilters({ ...filters, finalDate: field.value })
               }
             />
           </Styled.CalendarWrapper>

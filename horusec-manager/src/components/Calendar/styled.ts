@@ -48,9 +48,29 @@ const Container = styled.div`
   padding-bottom: 3px;
 `;
 
+interface InputProps {
+  isInvalid?: boolean;
+}
+
+const Error = styled.span<InputProps>`
+  visibility: hidden;
+  margin-top: 5px;
+  color: ${({ theme }) => theme.colors.input.error};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  min-height: 14px;
+  position: absolute;
+
+  ${({ isInvalid }) =>
+    isInvalid &&
+    css`
+      visibility: visible;
+    `};
+`;
+
 export default {
   DatePicker,
   Wrapper,
   Title,
   Container,
+  Error,
 };
