@@ -276,7 +276,7 @@ func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\s+|^)(alert|confirm|prompt)\(`),
+			regexp.MustCompile(`(?m)(?i)(^| |;)(alert|confirm|prompt)\(.*`),
 		},
 	}
 }
