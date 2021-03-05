@@ -37,8 +37,6 @@ import (
 	goContext "golang.org/x/net/context"
 )
 
-const FailedToPullImage = "Failed to pull docker image"
-
 type Interface interface {
 	CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error)
 	PullImage(imageWithTagAndRegistry string) error
@@ -73,12 +71,13 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 
 func (d *API) PullImage(imageWithTagAndRegistry string) error {
 	if imageNotExist, err := d.checkImageNotExists(imageWithTagAndRegistry); err != nil || !imageNotExist {
-		logger.LogError(fmt.Sprintf("%s -> %s", FailedToPullImage, imageWithTagAndRegistry), err)
+		logger.LogError(fmt.Sprintf("%s -> %s",
+			messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
 		return err
 	}
 
 	err := d.downloadImage(imageWithTagAndRegistry)
-	logger.LogError(fmt.Sprintf("%s -> %s", FailedToPullImage, imageWithTagAndRegistry), err)
+	logger.LogError(fmt.Sprintf("%s -> %s", messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
 	return err
 }
 
@@ -97,6 +96,7 @@ func (d *API) downloadImage(imageWithTagAndRegistry string) error {
 		return err
 	}
 
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIDownloadWithSuccess, imageWithTagAndRegistry)
 	return nil
 }
 
@@ -119,8 +119,6 @@ func (d *API) replaceCMDAnalysisID(cmd string) string {
 }
 
 func (d *API) logStatusAndExecuteCRDContainer(imageNameWithTag, cmd string) (containerOutput string, err error) {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIDownloadWithSuccess, imageNameWithTag)
-
 	containerOutput, err = d.executeCRDContainer(imageNameWithTag, cmd)
 	if err != nil {
 		d.loggerAPIStatus(messages.MsgDebugDockerAPIFinishedError, imageNameWithTag)
@@ -142,7 +140,6 @@ func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput
 
 	time.Sleep(5 * time.Second)
 	d.removeContainer(containerID)
-
 	return containerOutput, err
 }
 
