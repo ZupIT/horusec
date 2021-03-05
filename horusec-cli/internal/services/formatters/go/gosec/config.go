@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package shellcheck
+package gosec
 
 const (
-	ImageName = "horuszup/horusec-shell"
+	ImageName = "horuszup/horusec-go"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
-		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')
-		shellcheck --format=json $shell_files $bat_files
-  `
+		gosec -quiet -fmt=json -out=/tmp/result-gosec-ANALYSISID.json ./...
+		cat /tmp/result-gosec-ANALYSISID.json
+	`
 )

@@ -43,7 +43,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/mixaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/sobelow"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"

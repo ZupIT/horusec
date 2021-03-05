@@ -15,11 +15,10 @@
 package hcl
 
 const (
-	ImageName = "horuszup/tfsec"
+	ImageName = "horuszup/horusec-hcl"
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 			{{WORK_DIR}}
-        	tfsec --format=json | grep -v "WARNING: skipped" > results.json
-			cat results.json
+        	tfsec --format=json 
   `
 )
