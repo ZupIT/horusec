@@ -89,6 +89,10 @@ func (d *API) downloadImage(imageWithTagAndRegistry string) error {
 		return err
 	}
 
+	return d.readPullReader(imageWithTagAndRegistry, reader)
+}
+
+func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadCloser) error {
 	readResult, err := ioutil.ReadAll(reader)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)

@@ -107,12 +107,8 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		ad := &dockerEntities.AnalysisData{
-			CMD: Cmd,
-		}
-		ad.SetData("", Image)
-		_, err := api.CreateLanguageAnalysisContainer(ad)
 
+		err := api.PullImage("")
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
 	})
@@ -123,11 +119,8 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), ErrGeneric)
 
 		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
-		ad := &dockerEntities.AnalysisData{
-			CMD: Cmd,
-		}
-		ad.SetData("", Image)
-		_, err := api.CreateLanguageAnalysisContainer(ad)
+
+		err := api.PullImage("")
 
 		assert.Error(t, err)
 		assert.Equal(t, ErrGeneric, err)
