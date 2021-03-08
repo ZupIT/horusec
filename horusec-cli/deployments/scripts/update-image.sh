@@ -73,7 +73,7 @@ generateBinaries () {
     ACTUAL_RELEASE_FORMATTED=`tr '.' '-' <<<"$ACTUAL_RELEASE"`
 
     # Build for linux x86
-    env GOOS=linux GOARCH=386 go build -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec" ./horusec-cli/cmd/horusec/main.go
+    env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec" ./horusec-cli/cmd/horusec/main.go
     if [[ $? -eq 0 ]]
     then
         echo "1/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec"
@@ -82,7 +82,7 @@ generateBinaries () {
     fi
 
     # Build for linux x64
-    env GOOS=linux GOARCH=amd64 go build -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec" ./horusec-cli/cmd/horusec/main.go
+    env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec" ./horusec-cli/cmd/horusec/main.go
     if [[ $? -eq 0 ]]
     then
         echo "2/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
