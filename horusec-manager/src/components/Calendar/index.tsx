@@ -58,9 +58,7 @@ const Calendar: React.FC<
 
   const handleSelectedDate = (date: Date) => {
     let isValid;
-
-    console.log(date.toDateString());
-
+    
     if (validation) {
       isValid = validation(date.toDateString());
 

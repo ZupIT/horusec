@@ -58,7 +58,6 @@ const Error = styled.span<InputProps>`
   color: ${({ theme }) => theme.colors.input.error};
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   min-height: 14px;
-  position: absolute;
 
   ${({ isInvalid }) =>
     isInvalid &&

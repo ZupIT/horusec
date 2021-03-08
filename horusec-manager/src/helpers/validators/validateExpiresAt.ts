@@ -15,15 +15,15 @@
  */
 
 import isEmptyString from './isEmptyString';
-import moment from 'moment';
+import { isBefore } from 'date-fns';
 
 export default function validateExpiresAt(value: string): boolean {
   if (!isEmptyString(value)) return false;
 
   if (value.length >= 10) {
-    const ExpiresAt = moment(value, 'DD/MM/YYYY');
+    const expiresAt = new Date(value);
 
-    if (ExpiresAt.isBefore(moment.now())) {
+    if (isBefore(expiresAt, Date.now())) {
       return false;
     }
   }
