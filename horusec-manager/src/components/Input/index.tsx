@@ -44,7 +44,7 @@ const Input: React.FC<InputProps> = ({
   onChangeValue,
   validation,
   type,
-  initialValue = '',
+  initialValue = undefined,
 }) => {
   const [isFocused, setFocused] = useState(false);
   const [inputType, setInputType] = useState(type);
