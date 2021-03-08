@@ -15,20 +15,21 @@
 package analysis
 
 import (
-	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
-	"github.com/ZupIT/horusec/horusec-api/config/app"
-	netHTTP "net/http"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/horusec" // [swagger-import]
+	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http"    // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/middlewares"
 	usecasesAnalysis "github.com/ZupIT/horusec/development-kit/pkg/usecases/analysis"
 	"github.com/ZupIT/horusec/horusec-api/internal/controllers/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+
+	apiEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/api"
+	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
+	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
+	"github.com/ZupIT/horusec/horusec-api/config/app"
+	netHTTP "net/http"
 )
 
 type Handler struct {

@@ -24,6 +24,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -1370,6 +1371,12 @@ var doc = `{
             "properties": {
                 "description": {
                     "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "isExpirable": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1395,7 +1402,7 @@ var doc = `{
                 "analysisVulnerabilities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/horusec.AnalysisVulnerabilities"
+                        "type": "AnalysisVulnerabilities"
                     }
                 },
                 "companyID": {
@@ -1423,23 +1430,6 @@ var doc = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "horusec.AnalysisVulnerabilities": {
-            "type": "object",
-            "properties": {
-                "analysisID": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "vulnerabilities": {
-                    "$ref": "#/definitions/horusec.Vulnerability"
-                },
-                "vulnerabilityID": {
                     "type": "string"
                 }
             }

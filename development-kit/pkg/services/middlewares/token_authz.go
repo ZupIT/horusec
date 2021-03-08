@@ -107,9 +107,11 @@ func (t *TokenAuthz) bindCompanyIDCtx(ctx context.Context, companyID uuid.UUID) 
 }
 
 func (t *TokenAuthz) returnErrorIfTokenIsExpired(token *api.Token) error {
-	if token.CreatedAt.AddDate(0, 3, 0).Before(time.Now()) {
+	if !token.IsExpirable {
+		return nil
+	}
+	if token.ExpiresAt.Before(time.Now()) {
 		return errors.ErrorTokenExpired
 	}
-
 	return nil
 }

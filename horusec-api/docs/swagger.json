@@ -8,7 +8,8 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        }
+        },
+        "license": {}
     },
     "paths": {
         "/api/analysis": {
@@ -1352,6 +1353,12 @@
             "properties": {
                 "description": {
                     "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "isExpirable": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1377,7 +1384,7 @@
                 "analysisVulnerabilities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/horusec.AnalysisVulnerabilities"
+                        "type": "AnalysisVulnerabilities"
                     }
                 },
                 "companyID": {
@@ -1405,23 +1412,6 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "horusec.AnalysisVulnerabilities": {
-            "type": "object",
-            "properties": {
-                "analysisID": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "vulnerabilities": {
-                    "$ref": "#/definitions/horusec.Vulnerability"
-                },
-                "vulnerabilityID": {
                     "type": "string"
                 }
             }

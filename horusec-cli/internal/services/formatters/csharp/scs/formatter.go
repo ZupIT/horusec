@@ -18,8 +18,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -28,6 +26,7 @@ import (
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs/entities"

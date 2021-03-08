@@ -17,6 +17,7 @@ package api
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -140,5 +141,13 @@ func TestTokenGetKey(t *testing.T) {
 	t.Run("should success get key", func(t *testing.T) {
 		token := &Token{key: uuid.New()}
 		assert.NotEmpty(t, token.GetKey())
+	})
+}
+
+func TestToken_SetExpiresAtTimeDefault(t *testing.T) {
+	t.Run("Should setup always time default", func(t *testing.T) {
+		token := &Token{ExpiresAt: time.Now()}
+		expected := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Local().Location())
+		assert.Equal(t, expected, token.SetExpiresAtTimeDefault().ExpiresAt)
 	})
 }

@@ -33,7 +33,6 @@
   ],
   "horusecCliFalsePositiveHashes": [
     "8ae984cfcfbea61b3786604366139b8b254436c9fb73e3f07dd6ba085f974e34",
-    "2ce87bddc40e085562618f441750eeefe3cffc79d0b05b2e07a98f644c55b2c5",
     "f4f5d429ea2a8cbed3813ee58bac655162c65e50c64f68b65de6cfe408ab91c1",
     "d057a467e98c66fa437c62b11afc3fbecbab63e2331fdfe299bad0a011e46707",
     "e2eaa19612eed0124b1fec396f8d41381c618c677c2025fc07c1cd0ccbe92b3c",
@@ -84,11 +83,15 @@
     "aace0a3a90fcd55039430afb5458d291a27fa9e2be6e583421d316613510626d",
     "dd48b2e1fd672fe0c95ef6906189247385eaba5c7daffaeb71100fdda4091a4b",
     "1bf0230d92b7e5d0fd5f4344a2ad35b2f7f57c6271f3182229bff2625fe50461",
+    "4530caeaffd6d7fa42cf73240710b141a455547d75dd643ecbdbc6adf7c66037",
+    "ab7025565845ac49ddb8f74a22364932abf3699c59249d1933c4b690e087612e",
     "3f095c1d5bb845ef8ef58b6071ba39898fe81bef886d9f4fadc11d46e2c6a7d5",
     "b4b43fc1ddc7c112dd3260d0386173df969a0f31771a31cb762716330dd59aad",
     "4530caeaffd6d7fa42cf73240710b141a455547d75dd643ecbdbc6adf7c66037"
   ],
-  "horusecCliRiskAcceptHashes": [],
+  "horusecCliRiskAcceptHashes": [
+    "3f095c1d5bb845ef8ef58b6071ba39898fe81bef886d9f4fadc11d46e2c6a7d5"
+  ],
   "horusecCliWorkDir": {
     "go": [],
     "csharp": [],
