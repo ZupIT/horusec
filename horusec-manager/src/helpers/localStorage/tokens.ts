@@ -34,7 +34,8 @@ const getExpiresTokenTime = (): string => {
 const setTokens = (
   accessToken: string,
   refreshToken: string,
-  expiresAt?: string
+  expiresAt?: string,
+  idToken?: string
 ) => {
   if (accessToken)
     window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
@@ -44,19 +45,23 @@ const setTokens = (
 
   if (expiresAt)
     window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
+
+  if (idToken) window.localStorage.setItem(localStorageKeys.ID_TOKEN, idToken);
 };
 
 const clearTokens = () => {
   window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
   window.localStorage.removeItem(localStorageKeys.REFRESH_TOKEN);
   window.localStorage.removeItem(localStorageKeys.TOKEN_EXPIRES);
+  window.localStorage.removeItem(localStorageKeys.ID_TOKEN);
 };
 
 const handleSetKeyclockData = async (
   accessToken: string,
-  refreshToken: string
+  refreshToken: string,
+  idToken: string
 ) => {
-  setTokens(accessToken, refreshToken);
+  setTokens(accessToken, refreshToken, null, idToken);
 };
 
 const isLogged = (): boolean => {

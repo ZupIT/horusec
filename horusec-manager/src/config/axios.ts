@@ -21,10 +21,12 @@ import {
   getExpiresTokenTime,
   getAccessToken,
   setTokens,
+  clearTokens,
 } from 'helpers/localStorage/tokens';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { keycloakInstance } from './keycloak';
+import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 
 const instance: AxiosInstance = axios.create({
   timeout: 15000,
@@ -63,21 +65,27 @@ instance.interceptors.response.use(
     const { authType } = getCurrentConfig();
 
     if (authType === authTypes.KEYCLOAK && status === 401) {
-      await keycloakInstance.updateToken(0);
+      try {
+        await keycloakInstance.updateToken(0);
 
-      if (!error.response.config._retry) {
-        error.response.config._retry = true;
+        if (!error.response.config._retry) {
+          error.response.config._retry = true;
 
-        const { token, refreshToken } = keycloakInstance;
+          const { token, refreshToken, idToken } = keycloakInstance;
 
-        setTokens(token, refreshToken);
+          setTokens(token, refreshToken, null, idToken);
 
-        error.response.config.headers['X-Horusec-Authorization'] = token;
+          error.response.config.headers['X-Horusec-Authorization'] = token;
 
-        return axios(error.response.config);
+          return axios(error.response.config);
+        }
+
+        return Promise.reject(error);
+      } catch {
+        clearCurrentUser();
+        clearTokens();
+        window.location.replace('/auth');
       }
-
-      return Promise.reject(error);
     }
 
     return Promise.reject(error);
