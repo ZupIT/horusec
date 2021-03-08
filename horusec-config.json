@@ -89,9 +89,7 @@
     "b4b43fc1ddc7c112dd3260d0386173df969a0f31771a31cb762716330dd59aad",
     "4530caeaffd6d7fa42cf73240710b141a455547d75dd643ecbdbc6adf7c66037"
   ],
-  "horusecCliRiskAcceptHashes": [
-    "3f095c1d5bb845ef8ef58b6071ba39898fe81bef886d9f4fadc11d46e2c6a7d5"
-  ],
+  "horusecCliRiskAcceptHashes": [],
   "horusecCliWorkDir": {
     "go": [],
     "csharp": [],
