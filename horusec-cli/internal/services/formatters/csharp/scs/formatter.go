@@ -129,7 +129,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.CSharp,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, images.Csharp)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
 func (f *Formatter) verifyIsSolutionError(output string, err error) error {

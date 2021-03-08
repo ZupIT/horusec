@@ -19,13 +19,13 @@ import (
 	"path"
 	"testing"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,6 +63,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, false, configs.GetDisableDocker())
 		assert.Equal(t, "", configs.GetCustomRulesPath())
 		assert.Equal(t, false, configs.GetEnableInformationSeverity())
+		assert.Equal(t, 0, len(configs.GetCustomImages()))
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		currentPath, _ := os.Getwd()
@@ -91,10 +92,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetHeaders(map[string]string{"x-header": "value"})
 		configs.SetContainerBindProjectPath("./some-other-file-path")
 		configs.SetIsTimeout(true)
-		configs.SetToolsConfig(toolsconfig.MapToolConfig{tools.Eslint: {ImagePath: "docker.io/company/eslint:latest", IsToIgnore: true}})
+		configs.SetToolsConfig(toolsconfig.MapToolConfig{tools.Eslint: {IsToIgnore: true}})
 		configs.SetDisableDocker(true)
 		configs.SetCustomRulesPath("test")
 		configs.SetEnableInformationSeverity(true)
+		configs.SetCustomImages(map[languages.Language]string{languages.Go: "test/test"})
 
 		assert.NotEqual(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.NotEqual(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
@@ -124,6 +126,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
+		assert.NotEqual(t, map[languages.Language]string{}, configs.GetCustomImages())
 	})
 	t.Run("Should return horusec config using old viper file", func(t *testing.T) {
 		viper.Reset()
@@ -161,8 +164,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 	})
 	t.Run("Should return horusec config using new viper file", func(t *testing.T) {
 		viper.Reset()
@@ -200,8 +203,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 	})
 	t.Run("Should return horusec config using viper file and override by environment", func(t *testing.T) {
 		viper.Reset()
@@ -238,8 +241,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 
 		assert.NoError(t, os.Setenv(EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(EnvTimeoutInSecondsRequest, "99"))
@@ -329,8 +332,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 
 		assert.NoError(t, os.Setenv(EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(EnvTimeoutInSecondsRequest, "99"))
@@ -444,6 +447,7 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliToolsConfig", configs.toLowerCamel(EnvToolsConfig))
 		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
 		assert.Equal(t, "horusecCliWorkDir", configs.toLowerCamel(EnvWorkDir))
+		assert.Equal(t, "horusecCliCustomImages", configs.toLowerCamel(EnvCustomImages))
 	})
 }
 

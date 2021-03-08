@@ -79,7 +79,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 		Language: languages.Elixir,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Sobelow].ImagePath, images.Elixir)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
 func (f *Formatter) parseOutput(output string) error {

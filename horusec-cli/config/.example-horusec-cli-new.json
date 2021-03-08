@@ -36,5 +36,8 @@
       "isToIgnore": true,
       "imagePath": "docker.io/company/gosec:latest"
     }
+  },
+  "horusecCliCustomImages": {
+    "go": "docker.io/company/go:latest"
   }
 }

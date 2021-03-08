@@ -70,7 +70,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.PHP,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.PhpCS].ImagePath, images.PHP)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.PHP), images.PHP)
 }
 
 func (f *Formatter) parseOutput(output string) error {

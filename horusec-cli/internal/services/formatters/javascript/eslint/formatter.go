@@ -73,7 +73,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Eslint].ImagePath, images.Javascript)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Javascript), images.Javascript)
 }
 
 func (f *Formatter) processOutput(output string) {

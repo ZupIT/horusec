@@ -71,7 +71,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Python,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Bandit].ImagePath, images.Python)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
 func (f *Formatter) parseOutput(output string) {

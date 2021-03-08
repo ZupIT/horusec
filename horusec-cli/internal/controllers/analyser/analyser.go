@@ -216,7 +216,7 @@ func (a *Analyser) detectVulnerabilityCsharp(projectSubPath string) {
 	a.monitor.AddProcess(2)
 	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 
-	if err := a.dockerSDK.PullImage(images.Csharp); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.CSharp)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -234,7 +234,7 @@ func (a *Analyser) executeGitLeaks(projectSubPath string) {
 	if a.config.GetEnableGitHistoryAnalysis() {
 		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
 
-		if err := a.dockerSDK.PullImage(images.Leaks); err != nil {
+		if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Leaks)); err != nil {
 			a.setErrorAndRemoveProcess(err, 1)
 			return
 		}
@@ -248,7 +248,7 @@ func (a *Analyser) executeGitLeaks(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityGo(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.Go); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -270,7 +270,7 @@ func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
 	a.monitor.AddProcess(3)
 	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 
-	if err := a.dockerSDK.PullImage(images.Javascript); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Javascript)); err != nil {
 		a.setErrorAndRemoveProcess(err, 2)
 		return
 	}
@@ -282,7 +282,7 @@ func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 	a.monitor.AddProcess(2)
 
-	if err := a.dockerSDK.PullImage(images.Python); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Python)); err != nil {
 		a.setErrorAndRemoveProcess(err, 2)
 		return
 	}
@@ -294,7 +294,7 @@ func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 	a.monitor.AddProcess(2)
 
-	if err := a.dockerSDK.PullImage(images.Ruby); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Ruby)); err != nil {
 		a.setErrorAndRemoveProcess(err, 2)
 		return
 	}
@@ -306,7 +306,7 @@ func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.HCL); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.HCL)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -333,7 +333,7 @@ func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.PHP); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.PHP)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -344,7 +344,7 @@ func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.Generic); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -360,7 +360,7 @@ func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
 	a.monitor.AddProcess(2)
 
-	if err := a.dockerSDK.PullImage(images.Elixir); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Elixir)); err != nil {
 		a.setErrorAndRemoveProcess(err, 2)
 		return
 	}
@@ -372,7 +372,7 @@ func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.Shell); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Shell)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
@@ -426,4 +426,12 @@ func (a *Analyser) setFalsePositive() {
 func (a *Analyser) setErrorAndRemoveProcess(err error, processNumber int) {
 	a.analysis.SetAnalysisError(err)
 	a.monitor.RemoveProcess(processNumber)
+}
+
+func (a *Analyser) getCustomOrDefaultImage(language languages.Language) string {
+	if customImage := a.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]; customImage != "" {
+		return customImage
+	}
+
+	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }

@@ -71,7 +71,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Generic,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Semgrep].ImagePath, images.Generic)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
 func (f *Formatter) parseOutput(output string) error {

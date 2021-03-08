@@ -96,5 +96,6 @@ const (
 	MsgErrorErrorOnReadConfigFile   = "{HORUSEC-CLI} Error on read config file on path: "
 	MsgErrorGemLockNotFound         = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
-	MsgErrorFailedToPullImage = "Failed to pull docker image"
+	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
+	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config."
 )

@@ -19,9 +19,8 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 )
-
-const DefaultRegistry = "docker.io"
 
 type AnalysisData struct {
 	CustomImage  string
@@ -36,7 +35,7 @@ func (a *AnalysisData) IsInvalid() bool {
 
 func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
 	a.CustomImage = customImage
-	a.DefaultImage = fmt.Sprintf("%s/%s", DefaultRegistry, imageWithTag)
+	a.DefaultImage = fmt.Sprintf("%s/%s", images.DefaultRegistry, imageWithTag)
 
 	return a
 }

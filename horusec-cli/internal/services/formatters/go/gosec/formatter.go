@@ -124,5 +124,5 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Go,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.GoSec].ImagePath, images.Go)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Go), images.Go)
 }

@@ -74,7 +74,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.YarnAudit].ImagePath, images.Javascript)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Javascript), images.Javascript)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {

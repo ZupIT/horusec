@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
@@ -107,4 +108,7 @@ type IConfig interface {
 	ToBytes(isMarshalIndent bool) (bytes []byte)
 	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
+
+	GetCustomImages() images.Custom
+	SetCustomImages(configData interface{})
 }
