@@ -139,7 +139,9 @@ const Tokens: React.FC<Props> = ({
               ...row,
               id: row.tokenID,
               token: '***************' + row.suffixValue,
-              expiresAt: formatToHumanDate(row.expiresAt),
+              expiresAt: row.isExpirable
+                ? formatToHumanDate(row.expiresAt)
+                : t('GENERAL.NOT_EXPIRABLE'),
               actions: [
                 {
                   title: t('REPOSITORIES_SCREEN.DELETE'),
