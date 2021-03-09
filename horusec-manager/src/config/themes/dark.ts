@@ -108,12 +108,12 @@ export default {
     },
 
     vulnerabilities: {
-      HIGH: '#E84138',
+      CRITICAL: '#E84138',
+      HIGH: '#9b59b6',
       MEDIUM: '#e67e22',
       LOW: '#10AA80',
-      AUDIT: '#64D2FF',
-      NOSEC: '#34495e',
-      INFO: '#746dda',
+      INFO: '#3498db',
+      UNKNOWN: '#34495e',
       DEFAULT: '#8E8E93',
     },
 
