@@ -15,6 +15,8 @@
 package docker
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -24,6 +26,7 @@ import (
 	"time"
 
 	enumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
@@ -84,13 +87,28 @@ func (d *API) PullImage(imageWithTagAndRegistry string) error {
 
 func (d *API) downloadImage(imageWithTagAndRegistry string) error {
 	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imageWithTagAndRegistry)
-	reader, err := d.dockerClient.ImagePull(d.ctx, imageWithTagAndRegistry, dockerTypes.ImagePullOptions{})
+	reader, err := d.dockerClient.ImagePull(d.ctx, imageWithTagAndRegistry, d.setPullOptions())
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		return err
 	}
 
 	return d.readPullReader(imageWithTagAndRegistry, reader)
+}
+
+func (d *API) setPullOptions() dockerTypes.ImagePullOptions {
+	authConfig := dockerTypes.AuthConfig{
+		Username:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_USERNAME", ""),
+		Password:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_PASSWORD", ""),
+		ServerAddress: env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_ADDRESS", ""),
+	}
+
+	if authConfig.Username != "" && authConfig.Password != "" {
+		encodedAuthConfig, _ := json.Marshal(authConfig)
+		return dockerTypes.ImagePullOptions{RegistryAuth: base64.URLEncoding.EncodeToString(encodedAuthConfig)}
+	}
+
+	return dockerTypes.ImagePullOptions{}
 }
 
 func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadCloser) error {
