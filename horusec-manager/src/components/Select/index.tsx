@@ -18,7 +18,7 @@ import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Icon from 'components/Icon';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { isObject, isString } from 'lodash';
+import { get, isObject, isString } from 'lodash';
 import useOutsideClick from 'helpers/hooks/useClickOutside';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
@@ -37,7 +37,10 @@ interface Props {
   width?: string;
   optionsHeight?: string;
   selectText?: string;
-  backgroundColor?: string;
+  backgroundColors?: {
+    colors: ObjectLiteral;
+    default: string;
+  };
   hasSearch?: boolean;
 }
 
@@ -56,7 +59,7 @@ const Select: React.FC<Props> = ({
   selectText,
   fixedItemTitle,
   onClickFixedItem,
-  backgroundColor,
+  backgroundColors,
   hasSearch,
 }) => {
   const [currentValue, setCurrentValue] = useState<string>('');
@@ -124,7 +127,15 @@ const Select: React.FC<Props> = ({
         rounded={rounded}
         className={className}
         width={width}
-        backgroundColor={backgroundColor}
+        backgroundColor={
+          backgroundColors
+            ? get(
+                backgroundColors.colors,
+                currentValue,
+                backgroundColors.default
+              )
+            : null
+        }
       >
         <Styled.CurrentValue
           disabled={!hasSearch}
