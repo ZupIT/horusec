@@ -66,7 +66,7 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
 
-	return d.logStatusAndExecuteCRDContainer(data.GetImageWithoutRegistry(), d.replaceCMDAnalysisID(data.CMD))
+	return d.logStatusAndExecuteCRDContainer(data.GetCustomOrDefaultImage(), d.replaceCMDAnalysisID(data.CMD))
 }
 
 func (d *API) PullImage(imageWithTagAndRegistry string) error {

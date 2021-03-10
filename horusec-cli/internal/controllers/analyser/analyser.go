@@ -322,7 +322,7 @@ func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
 func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
 	a.monitor.AddProcess(1)
 
-	if err := a.dockerSDK.PullImage(images.C); err != nil {
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.C)); err != nil {
 		a.setErrorAndRemoveProcess(err, 1)
 		return
 	}
