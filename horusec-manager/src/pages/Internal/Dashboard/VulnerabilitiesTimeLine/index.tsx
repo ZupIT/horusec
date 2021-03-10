@@ -95,18 +95,28 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
   };
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (filters) {
       setLoading(true);
 
       analyticService
         .getVulnerabilitiesTimeLine(filters)
         .then((result) => {
-          setChartData(formatChartStacked(result.data.content, 'time', true));
+          if (!isCancelled) {
+            setChartData(formatChartStacked(result.data.content, 'time', true));
+          }
         })
         .finally(() => {
-          setLoading(false);
+          if (!isCancelled) {
+            setLoading(false);
+          }
         });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [filters]);
 
   return (

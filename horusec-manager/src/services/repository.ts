@@ -71,12 +71,16 @@ const getAllTokens = (companyId: string, repositoryId: string) => {
 const createToken = (
   companyId: string,
   repositoryId: string,
-  description: string
+  data: {
+    description: string;
+    isExpirable?: boolean;
+    expiredAt?: string;
+  }
 ) => {
   return http.post(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
-      description,
+      ...data,
     }
   );
 };
@@ -168,6 +172,20 @@ const updateVulnerabilityType = (
   );
 };
 
+const updateVulnerabilitySeverity = (
+  companyId: string,
+  repositoryId: string,
+  vulnerabilityId: string,
+  severity: string
+) => {
+  return http.put(
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
+    {
+      severity,
+    }
+  );
+};
+
 export default {
   getAll,
   create,
@@ -182,4 +200,5 @@ export default {
   updateUserRole,
   getAllVulnerabilities,
   updateVulnerabilityType,
+  updateVulnerabilitySeverity,
 };

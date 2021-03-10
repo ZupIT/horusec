@@ -90,6 +90,10 @@ const GlobalStyle = createGlobalStyle`
   /* React Date Picker */
 
   div.react-datepicker-wrapper {
+     
+    width: 100%;
+    min-width: 120px;
+    
     div.react-datepicker__input-container {
       input {
         background: none;
@@ -97,7 +101,7 @@ const GlobalStyle = createGlobalStyle`
         border: none;
         color: ${theme.colors.text.primary};
         font-size: ${theme.metrics.fontSize.medium} !important;
-        max-width: 120px;
+        width: 100%;
       }
     }
   }

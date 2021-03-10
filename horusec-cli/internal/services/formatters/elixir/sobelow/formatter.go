@@ -73,7 +73,7 @@ func (f *Formatter) startSobelow(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Sobelow),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "mix.lock", tools.Sobelow),
 		Language: languages.Elixir,
 	}
 
@@ -126,6 +126,6 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.Sobelow
 	vulnerabilitySeverity.Language = languages.Elixir
-	vulnerabilitySeverity.Severity = severity.High
+	vulnerabilitySeverity.Severity = severity.Unknown
 	return vulnerabilitySeverity
 }

@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useTranslation } from 'react-i18next';
-import { Button, Icon, Dialog } from 'components';
+import { Button, Dialog, Datatable, Datasource } from 'components';
 import repositoryService from 'services/repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
@@ -111,51 +111,50 @@ const Tokens: React.FC<Props> = ({
           onClick={() => setAddTokenVisible(true)}
         />
 
-        <Styled.Table>
-          <Styled.LoadingWrapper isLoading={isLoading}>
-            <Icon name="loading" size="120px" className="loading" />
-          </Styled.LoadingWrapper>
-
-          <Styled.Head>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.TOKEN')}</Styled.Column>
-            <Styled.Column>
-              {t('REPOSITORIES_SCREEN.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.EXPIRES')}</Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!tokens || tokens.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('REPOSITORIES_SCREEN.NO_TOKENS')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {tokens.map((token) => (
-              <Styled.Row key={token.tokenID}>
-                <Styled.Cell>***************{token.suffixValue}</Styled.Cell>
-
-                <Styled.Cell>{token.description}</Styled.Cell>
-
-                <Styled.Cell>{formatToHumanDate(token.expiresAt)}</Styled.Cell>
-
-                <Styled.Cell className="row">
-                  <Button
-                    rounded
-                    outline
-                    opaque
-                    text={t('REPOSITORIES_SCREEN.DELETE')}
-                    width={90}
-                    height={30}
-                    icon="delete"
-                    onClick={() => setTokenToDelete(token)}
-                  />
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+        <Datatable
+          columns={[
+            {
+              label: t('REPOSITORIES_SCREEN.TOKEN'),
+              property: 'token',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.EXPIRES'),
+              property: 'expiresAt',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={tokens.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.tokenID,
+              token: '***************' + row.suffixValue,
+              expiresAt: row.isExpirable
+                ? formatToHumanDate(row.expiresAt)
+                : t('GENERAL.NOT_EXPIRABLE'),
+              actions: [
+                {
+                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setTokenToDelete(row),
+                },
+              ],
+            };
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_TOKENS')}
+        />
       </Styled.Wrapper>
 
       <Dialog

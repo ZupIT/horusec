@@ -155,6 +155,10 @@ func (c *Config) GetDefaultConfigFilePath() string {
 	return path.Join(currentDir, "horusec-config.json")
 }
 
+func (c *Config) GetVersion() string {
+	return "{{VERSION_NOT_FOUND}}"
+}
+
 func (c *Config) GetConfigFilePath() string {
 	return valueordefault.GetStringValueOrDefault(c.configFilePath, c.GetDefaultConfigFilePath())
 }
@@ -228,7 +232,7 @@ func (c *Config) SetJSONOutputFilePath(jsonOutputFilePath string) {
 }
 
 func (c *Config) GetSeveritiesToIgnore() []string {
-	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"AUDIT", "INFO"})
+	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"INFO"})
 }
 
 func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {

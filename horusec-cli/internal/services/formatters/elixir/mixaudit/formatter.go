@@ -63,7 +63,7 @@ func (f *Formatter) startMixAudit(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.MixAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "mix.lock", tools.MixAudit),
 		Language: languages.Elixir,
 	}
 
@@ -86,7 +86,7 @@ func (f *Formatter) parseOutput(output string) error {
 
 func (f *Formatter) setVulnerabilityData(vulnerabilities []entities.Vulnerability, index int) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Audit
+	vulnerability.Severity = severity.High
 	vulnerability.Details = vulnerabilities[index].GetDetails()
 	vulnerability.Code = f.GetCodeWithMaxCharacters(vulnerabilities[index].Advisory.Package, 0)
 	vulnerability.File = f.RemoveSrcFolderFromPath(vulnerabilities[index].Dependency.Lockfile)

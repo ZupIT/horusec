@@ -16,13 +16,16 @@ package adapter
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/database"
 )
 
 func NewRepositoryRead() relational.InterfaceRead {
-	return database.NewRelationalRead()
+	configs := config.NewConfig()
+	return database.NewRelationalRead(configs.Dialect, configs.URI, configs.LogMode)
 }
 
 func NewRepositoryWrite() relational.InterfaceWrite {
-	return database.NewRelationalWrite()
+	configs := config.NewConfig()
+	return database.NewRelationalWrite(configs.Dialect, configs.URI, configs.LogMode)
 }

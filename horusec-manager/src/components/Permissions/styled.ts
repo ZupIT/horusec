@@ -35,6 +35,7 @@ const Wrapper = styled.div`
   width: 580px;
   padding: 30px 50px;
   border-radius: 4px;
+  overflow: visible;
 `;
 
 const Header = styled.div`

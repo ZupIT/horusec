@@ -36,8 +36,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func generateToken() string {

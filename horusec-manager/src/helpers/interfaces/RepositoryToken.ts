@@ -23,4 +23,5 @@ export interface RepositoryToken {
   suffixValue?: string;
   tokenID?: string;
   value?: string;
+  isExpirable: boolean;
 }

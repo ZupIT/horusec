@@ -14,34 +14,61 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import Icon from 'components/Icon';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
+import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import { Field } from 'helpers/interfaces/Field';
+
+type ModifiedField = Omit<Field, 'value'> & {
+  value: Date;
+};
 
 interface CalendarProps {
-  onChangeValue: (date: Date) => void;
+  onChangeValue: (params: ModifiedField) => any;
   initialDate?: Date;
   title: string;
   disabled?: boolean;
+  invalidMessage?: string;
+  validation?: Function;
 }
 
-const Calendar: React.FC<CalendarProps> = ({
-  onChangeValue,
-  initialDate,
-  title,
-  disabled,
-}) => {
+const Calendar: React.FC<
+  CalendarProps & Omit<ReactDatePickerProps, 'onChange'>
+> = (props) => {
+  const {
+    onChangeValue,
+    initialDate,
+    title,
+    disabled,
+    invalidMessage,
+    validation,
+  } = props;
+
   const [currentDate, setCurrentDate] = useState(null);
   const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
   const { i18n } = useTranslation();
   const { allLanguages } = useLanguage();
+  const [isInvalid, setInvalid] = useState(false);
+
+  const ref = useRef<ReactDatePicker>();
 
   const handleSelectedDate = (date: Date) => {
+    let isValid;
+
+    if (validation) {
+      isValid = validation(date.toDateString());
+
+      setInvalid(!isValid);
+    } else {
+      isValid = true;
+    }
+
     setCurrentDate(date);
-    onChangeValue(date);
+    onChangeValue({ value: date, isValid });
   };
 
   useEffect(() => {
@@ -59,14 +86,22 @@ const Calendar: React.FC<CalendarProps> = ({
 
       <Styled.Container>
         <Styled.DatePicker
+          ref={ref}
           disabled={disabled}
           selected={currentDate}
           onChange={(date: Date) => handleSelectedDate(date)}
           dateFormat={dateFormat}
+          {...props}
         />
 
-        <Icon name="calendar" size="18px" />
+        <Icon
+          name="calendar"
+          size="18px"
+          onClick={() => ref.current.setFocus()}
+        />
       </Styled.Container>
+
+      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
     </Styled.Wrapper>
   );
 };

@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Select, Icon, Pagination } from 'components';
+import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import repositoryService from 'services/repository';
@@ -24,20 +24,25 @@ import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
 import { debounce } from 'lodash';
-import i18n from 'config/i18n';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
-import { get, find } from 'lodash';
+import { find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { AxiosError, AxiosResponse } from 'axios';
 
 const INITIAL_PAGE = 1;
+interface RefreshInterface {
+  filter: FilterVuln;
+  page: PaginationInfo;
+}
 
 const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
+
   const { showSuccessFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
   const [isLoading, setLoading] = useState(true);
@@ -56,6 +61,11 @@ const Vulnerabilities: React.FC = () => {
     totalItems: 0,
     pageSize: 10,
     totalPages: 10,
+  });
+
+  const [refresh, setRefresh] = useState<RefreshInterface>({
+    filter: filters,
+    page: pagination,
   });
 
   const vulnTypes = [
@@ -83,6 +93,10 @@ const Vulnerabilities: React.FC = () => {
       description: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
     },
     {
+      value: 'CRITICAL',
+      description: 'CRITICAL',
+    },
+    {
       value: 'HIGH',
       description: 'HIGH',
     },
@@ -95,56 +109,16 @@ const Vulnerabilities: React.FC = () => {
       description: 'LOW',
     },
     {
-      value: 'AUDIT',
-      description: 'AUDIT',
-    },
-    {
-      value: 'NOSEC',
-      description: 'NOSEC',
-    },
-    {
       value: 'INFO',
       description: 'INFO',
     },
+    {
+      value: 'UNKNOWN',
+      description: 'UNKNOWN',
+    },
   ];
 
-  const fetchData = (filt: FilterVuln, pag: PaginationInfo) => {
-    setLoading(true);
-
-    if (pag.pageSize !== pagination.pageSize) {
-      pag.currentPage = INITIAL_PAGE;
-    }
-
-    setFilters(filt);
-
-    filt = {
-      ...filt,
-      vulnSeverity: filt.vulnHash ? null : filt.vulnSeverity,
-      vulnType: filt.vulnHash ? null : filt.vulnType,
-    };
-
-    repositoryService
-      .getAllVulnerabilities(filt, pag)
-      .then((result) => {
-        setVulnerabilities(result.data?.content?.data);
-        const totalItems = result?.data?.content?.totalItems;
-
-        let totalPages = totalItems ? Math.ceil(totalItems / pag.pageSize) : 1;
-
-        if (totalPages <= 0) {
-          totalPages = 1;
-        }
-
-        setPagination({ ...pag, totalPages, totalItems });
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setVulnerabilities([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const severitiesOptions = severities.slice(1);
 
   const isAdminOrSupervisorOfRepository = () => {
     const repository = find(repositories, {
@@ -154,8 +128,11 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    fetchData({ ...filters, vulnHash: searchString }, pagination);
-  }, 500);
+    setRefresh((state) => ({
+      ...state,
+      filter: { ...state.filter, vulnHash: searchString },
+    }));
+  }, 800);
 
   const handleUpdateVulnerabilityType = (
     vulnerability: Vulnerability,
@@ -169,33 +146,124 @@ const Vulnerabilities: React.FC = () => {
         type
       )
       .then(() => {
-        fetchData(filters, pagination);
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
+        setRefresh((state) => state);
+        dispatchMessage(err?.response?.data);
+      });
+  };
+
+  const handleUpdateVulnerabilitySeverity = (
+    vulnerability: Vulnerability,
+    severity: string
+  ) => {
+    repositoryService
+      .updateVulnerabilitySeverity(
+        filters.companyID,
+        filters.repositoryID,
+        vulnerability.vulnerabilityID,
+        severity
+      )
+      .then(() => {
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+      })
+      .catch((err: AxiosError) => {
+        setRefresh((state) => state);
         dispatchMessage(err?.response?.data);
       });
   };
 
   useEffect(() => {
-    const fetchRepositories = () => {
-      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        setRepositories(result.data.content);
+    let isCancelled = false;
 
-        if (result.data?.content.length > 0) {
-          fetchData(
-            { ...filters, repositoryID: result.data?.content[0].repositoryID },
-            pagination
-          );
-        } else {
-          setLoading(false);
-        }
-      });
+    const fetchRepositories = () => {
+      repositoryService
+        .getAll(currentWorkspace?.companyID)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const response = result.data.content;
+            setRepositories(response);
+          }
+        });
     };
 
     fetchRepositories();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentWorkspace]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchVulnerabilities = () => {
+      if (repositories.length > 0) {
+        setLoading(true);
+
+        const page = refresh.page;
+        let filter = refresh.filter;
+
+        if (page.pageSize !== pagination.pageSize) {
+          page.currentPage = INITIAL_PAGE;
+        }
+
+        if (!filter.repositoryID) {
+          filter.repositoryID = repositories[0].repositoryID;
+        }
+
+        setFilters(filter);
+
+        filter = {
+          ...filter,
+          vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
+          vulnType: filter.vulnHash ? null : filter.vulnType,
+        };
+
+        repositoryService
+          .getAllVulnerabilities(filter, page)
+          .then((result: AxiosResponse) => {
+            if (!isCancelled) {
+              const response = result.data?.content;
+              setVulnerabilities(response?.data);
+              const totalItems = response?.totalItems;
+
+              let totalPages = totalItems
+                ? Math.ceil(totalItems / page.pageSize)
+                : 1;
+
+              if (totalPages <= 0) {
+                totalPages = 1;
+              }
+
+              setPagination({ ...page, totalPages, totalItems });
+            }
+          })
+          .catch((err: AxiosError) => {
+            if (!isCancelled) {
+              dispatchMessage(err?.response?.data);
+              setVulnerabilities([]);
+            }
+          })
+          .finally(() => {
+            if (!isCancelled) {
+              setLoading(false);
+            }
+          });
+      } else {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchVulnerabilities();
+    return () => {
+      isCancelled = true;
+    };
     // eslint-disable-next-line
-  }, [i18n.language, currentWorkspace]);
+  }, [repositories.length, refresh, pagination.pageSize]);
 
   return (
     <Styled.Wrapper>
@@ -215,10 +283,10 @@ const Vulnerabilities: React.FC = () => {
           options={severities}
           title={t('VULNERABILITIES_SCREEN.SEVERITY')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, vulnSeverity: item.value },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, vulnSeverity: item.value },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
 
@@ -238,118 +306,121 @@ const Vulnerabilities: React.FC = () => {
           ]}
           title={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, vulnType: item.value },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, vulnType: item.value },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
 
         <Select
           keyLabel="name"
           width="220px"
-          optionsHeight="100px"
+          optionsHeight="200px"
+          hasSearch
           rounded
           initialValue={repositories[0]}
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
           onChangeValue={(item) =>
-            fetchData(
-              { ...filters, repositoryID: item.repositoryID },
-              { ...pagination, currentPage: INITIAL_PAGE }
-            )
+            setRefresh({
+              filter: { ...filters, repositoryID: item.repositoryID },
+              page: { ...pagination, currentPage: INITIAL_PAGE },
+            })
           }
         />
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
         <Styled.Title>{t('VULNERABILITIES_SCREEN.TITLE')}</Styled.Title>
-
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.HASH')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.SEVERITY')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.STATUS')}
-            </Styled.Column>
-            <Styled.Column>
-              {t('VULNERABILITIES_SCREEN.TABLE.DETAILS')}
-            </Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            {!vulnerabilities || vulnerabilities.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
-              </Styled.EmptyText>
-            ) : null}
-
-            {vulnerabilities.map((vul, index) => (
-              <Styled.Row key={index}>
-                <Styled.Cell>{vul.vulnHash}</Styled.Cell>
-
-                <Styled.Cell>{vul.details}</Styled.Cell>
-
-                <Styled.Cell className="center">
-                  <Styled.Tag
-                    color={get(
-                      colors.vulnerabilities,
-                      vul.severity,
-                      colors.vulnerabilities.DEFAULT
-                    )}
-                  >
-                    {vul.severity}
-                  </Styled.Tag>
-                </Styled.Cell>
-
-                <Styled.Cell>
-                  {!isLoading ? (
-                    <Select
-                      keyLabel="description"
-                      keyValue="value"
-                      width="250px"
-                      optionsHeight="130px"
-                      className="select-type"
-                      rounded
-                      initialValue={vul.type}
-                      options={vulnTypes}
-                      disabled={!isAdminOrSupervisorOfRepository()}
-                      onChangeValue={(value) =>
-                        handleUpdateVulnerabilityType(vul, value.value)
-                      }
-                    />
-                  ) : null}
-                </Styled.Cell>
-
-                <Styled.Cell>
-                  <Icon
-                    name="info"
-                    size="20px"
-                    onClick={() => setSelectedVuln(vul)}
-                  />
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-
-          {vulnerabilities && vulnerabilities.length > 0 ? (
-            <Pagination
-              pagination={pagination}
-              onChange={(pag) => fetchData(filters, { ...pag })}
-            />
-          ) : null}
-        </Styled.Table>
+        <Datatable
+          columns={[
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
+              property: 'hash',
+              type: 'text',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
+              property: 'severity',
+              type: 'custom',
+              cssClass: ['center'],
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
+              property: 'status',
+              type: 'custom',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),
+              property: 'details',
+              type: 'custom',
+            },
+          ]}
+          datasource={vulnerabilities.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.vulnerabilityID,
+              hash: row.vulnHash,
+              severity: (
+                <Select
+                  keyLabel="description"
+                  keyValue="value"
+                  width="150px"
+                  optionsHeight="130px"
+                  className="select-role"
+                  rounded
+                  backgroundColors={{
+                    colors: colors.vulnerabilities,
+                    default: colors.vulnerabilities.DEFAULT,
+                  }}
+                  initialValue={row.severity}
+                  options={severitiesOptions}
+                  disabled={!isAdminOrSupervisorOfRepository()}
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilitySeverity(row, value.value)
+                  }
+                />
+              ),
+              status: !isLoading ? (
+                <Select
+                  keyLabel="description"
+                  keyValue="value"
+                  width="150px"
+                  optionsHeight="130px"
+                  className="select-role"
+                  rounded
+                  initialValue={row.type}
+                  options={vulnTypes}
+                  disabled={!isAdminOrSupervisorOfRepository()}
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilityType(row, value.value)
+                  }
+                />
+              ) : null,
+              details: (
+                <Icon
+                  name="info"
+                  size="20px"
+                  onClick={() => setSelectedVuln(row)}
+                />
+              ),
+            };
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
+          fixed={false}
+          paginate={{
+            pagination,
+            onChange: (page) => setRefresh({ filter: filters, page }),
+          }}
+        />
       </Styled.Content>
 
       <Details

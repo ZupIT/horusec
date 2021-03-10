@@ -94,7 +94,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 
 func (f *Formatter) setVulnerabilityData(output *entities.Output) *horusec.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = f.parseLevelToSeverity(output.Level)
+	data.Severity = severity.Low
 	data.Confidence = confidence.Low.ToString()
 	data.Details = output.Message
 	data.Column = output.GetColumn()
@@ -124,15 +124,4 @@ func (f *Formatter) isIgnoredFix(message string) bool {
 	const MessageNotIncludes = "Tips depend on target shell and yours is unknown"
 
 	return strings.Contains(strings.ToLower(message), strings.ToLower(MessageNotIncludes))
-}
-
-func (f *Formatter) parseLevelToSeverity(level string) severity.Severity {
-	switch level {
-	case "error":
-		return severity.Low
-	case "warning":
-		return severity.Low
-	default:
-		return severity.Info
-	}
 }

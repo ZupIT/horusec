@@ -17,7 +17,6 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,6 +24,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -189,11 +189,11 @@ func (au *UseCases) checkIfExistItemInSliceOfSeverity(item string) bool {
 
 func (au *UseCases) sliceSeverityEnable() []severity.Severity {
 	return []severity.Severity{
-		severity.NoSec,
-		severity.Low,
-		severity.Medium,
+		severity.Critical,
 		severity.High,
-		severity.Audit,
+		severity.Medium,
+		severity.Low,
+		severity.Unknown,
 		severity.Info,
 	}
 }

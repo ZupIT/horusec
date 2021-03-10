@@ -68,7 +68,7 @@ generateBinaries () {
 
     cd ..
 
-    sed -i -e "s/{{VERSION_NOT_FOUND}}/$ACTUAL_RELEASE/g" "./horusec-cli/cmd/horusec/version/version.go"
+    sed -i -e "s/{{VERSION_NOT_FOUND}}/$ACTUAL_RELEASE/g" "./horusec-cli/config/config.go"
 
     ACTUAL_RELEASE_FORMATTED=`tr '.' '-' <<<"$ACTUAL_RELEASE"`
 
@@ -122,7 +122,7 @@ generateBinaries () {
     echo "Binary in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec was copied to $GOPATH/bin/horusec with success!"
     echo "Please run \"horusec version\" to check installation"
 
-    sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./horusec-cli/cmd/horusec/version/version.go"
+    sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./horusec-cli/config/config.go"
 
     if [[ "$SEND_NEW_VERSION_TO_S3" == "true" ]]
     then
@@ -158,7 +158,7 @@ resetAlphaRcToMaster () {
 }
 
 rollback_version_command () {
-    sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./horusec-cli/cmd/horusec/version/version.go"
+    sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./horusec-cli/config/config.go"
 }
 
 rollback_binaries () {

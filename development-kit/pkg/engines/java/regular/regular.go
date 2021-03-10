@@ -686,7 +686,7 @@ func NewJavaRegularDatabasesPasswordNotProtected() text.TextRule {
 			ID:          "71dd0c28-bed7-4c34-ac50-94a9ac3b8b5b",
 			Name:        "Databases should be password-protected",
 			Description: "Databases should always be password protected. The use of a database connection with an empty password is a clear indication of a database that is not protected. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.Regular,

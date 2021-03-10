@@ -17,11 +17,12 @@ package horusec
 import (
 	"encoding/json"
 	"errors"
+	"testing"
+
 	horusecEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestTableName(t *testing.T) {
@@ -164,9 +165,6 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Low},
 				},
 				{
-					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Audit},
-				},
-				{
 					Vulnerability: Vulnerability{Type: horusecEnum.Vulnerability, Severity: severity.Medium},
 				},
 				{
@@ -184,8 +182,6 @@ func TestGetTotalVulnerabilitiesBySeverity(t *testing.T) {
 		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Low])
 		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Medium])
 		assert.Equal(t, 2, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.High])
-		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Audit])
-		assert.Equal(t, 0, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.NoSec])
 		assert.Equal(t, 1, analysis.GetTotalVulnerabilitiesBySeverity()[horusecEnum.Vulnerability][severity.Info])
 	})
 }

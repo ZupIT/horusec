@@ -14,6 +14,8 @@
 
 package severities
 
+import "github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
+
 const (
 	CommandInjection                  = "SCS0001"
 	XPathInjection                    = "SCS0003"
@@ -31,41 +33,36 @@ const (
 	CQLInjectionCassandra             = "SCS0038"
 	SQLInjectionNPGSQL                = "SCS0039"
 	CertificateValidationDisabled     = "SCS0004"
-	HardcodedPassword                 = "SCS0015"
 	CrossSiteRequestForgeryCSRF       = "SCS0016"
 	InsecureDeserialization           = "SCS0028"
+	OpenRedirect                      = "SCS0027"
+	WeakHashingFunction               = "SCS0006"
+	WeakCipherAlgorithm               = "SCS0010"
 )
 
 // nolint
-func MapHighValues() map[string]string {
-	return map[string]string{
-		CommandInjection:                  "HIGH",
-		XPathInjection:                    "HIGH",
-		XMLExternalEntityInjectionXXE:     "HIGH",
-		CrossSiteScriptingXSS:             "HIGH",
-		LDAPInjection:                     "HIGH",
-		SQLInjectionLINQ:                  "HIGH",
-		SQLInjectionWebControls:           "HIGH",
-		SQLInjectionOLEDB:                 "HIGH",
-		SQLInjectionODBC:                  "HIGH",
-		SQLInjectionMsSQLDataProvider:     "HIGH",
-		SQLInjectionEntityFramework:       "HIGH",
-		SQLInjectionEnterpriseLibraryData: "HIGH",
-		SQLInjectionNHibernate:            "HIGH",
-		CQLInjectionCassandra:             "HIGH",
-		SQLInjectionNPGSQL:                "HIGH",
-		CertificateValidationDisabled:     "HIGH",
-		HardcodedPassword:                 "HIGH",
-		CrossSiteRequestForgeryCSRF:       "HIGH",
-		InsecureDeserialization:           "HIGH",
+func MapHighValues() map[string]severity.Severity {
+	return map[string]severity.Severity{
+		CommandInjection:                  severity.High,
+		XPathInjection:                    severity.High,
+		XMLExternalEntityInjectionXXE:     severity.High,
+		CrossSiteScriptingXSS:             severity.High,
+		LDAPInjection:                     severity.High,
+		SQLInjectionLINQ:                  severity.High,
+		SQLInjectionWebControls:           severity.High,
+		SQLInjectionOLEDB:                 severity.High,
+		SQLInjectionODBC:                  severity.High,
+		SQLInjectionMsSQLDataProvider:     severity.High,
+		SQLInjectionEntityFramework:       severity.High,
+		SQLInjectionEnterpriseLibraryData: severity.High,
+		SQLInjectionNHibernate:            severity.High,
+		CQLInjectionCassandra:             severity.High,
+		SQLInjectionNPGSQL:                severity.High,
+		CertificateValidationDisabled:     severity.High,
+		CrossSiteRequestForgeryCSRF:       severity.High,
+		InsecureDeserialization:           severity.High,
+		OpenRedirect:                      severity.High,
+		WeakHashingFunction:               severity.High,
+		WeakCipherAlgorithm:               severity.High,
 	}
-}
-
-func GetHighSeverityByCode(id string) string {
-	values := MapHighValues()
-	return values[id]
-}
-
-func IsHighSeverity(id string) bool {
-	return GetHighSeverityByCode(id) != ""
 }

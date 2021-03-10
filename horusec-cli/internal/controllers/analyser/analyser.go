@@ -43,10 +43,9 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/mixaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/sobelow"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/generic/semgrep"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/golang/gosec"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/hcl"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/java/horusecjava"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/eslint"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/horusecnodejs"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit"
@@ -57,6 +56,7 @@ import (
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/bandit"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/python/safety"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/brakeman"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/ruby/bundler"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/shell/shellcheck"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/horusec-cli/internal/services/horusapi"
@@ -246,10 +246,9 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
-	a.monitor.AddProcess(4)
+	a.monitor.AddProcess(3)
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-	go eslint.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
@@ -260,8 +259,9 @@ func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 }
 
 func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go brakeman.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go bundler.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {

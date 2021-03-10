@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Icon from 'components/Icon';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { isObject, isString } from 'lodash';
+import { get, isObject, isString } from 'lodash';
 import useOutsideClick from 'helpers/hooks/useClickOutside';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
   title?: string;
@@ -30,12 +31,17 @@ interface Props {
   keyLabel: string;
   onChangeValue: (value: any) => any;
   className?: string;
-  initialValue?: any;
+  initialValue?: ObjectLiteral | string;
   keyValue?: string;
   rounded?: boolean;
   width?: string;
   optionsHeight?: string;
   selectText?: string;
+  backgroundColors?: {
+    colors: ObjectLiteral;
+    default: string;
+  };
+  hasSearch?: boolean;
 }
 
 const Select: React.FC<Props> = ({
@@ -53,8 +59,11 @@ const Select: React.FC<Props> = ({
   selectText,
   fixedItemTitle,
   onClickFixedItem,
+  backgroundColors,
+  hasSearch,
 }) => {
-  const [currentValue, setCurrentValue] = useState<any>(null);
+  const [currentValue, setCurrentValue] = useState<string>('');
+  const [filteredOptions, setFilteredOptions] = useState<any[]>(options);
   const [openOptionsList, setOpenOptionsList] = useState(false);
   const { t } = useTranslation();
 
@@ -66,26 +75,43 @@ const Select: React.FC<Props> = ({
 
   const handleSelectedValue = (option: any) => {
     if (!disabled) {
-      setCurrentValue(option);
       onChangeValue(option);
+      setCurrentValue(option[keyLabel]);
+      setFilteredOptions(options);
     }
+  };
+
+  const renderSelectText = () => {
+    setCurrentValue(selectText || t('GENERAL.SELECT'));
+  };
+
+  const handleSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const { value } = event.target;
+    setCurrentValue(value);
+
+    const filteredItens = options.filter((item) =>
+      item[keyLabel].toLowerCase().includes(value.toLowerCase())
+    );
+
+    setFilteredOptions(filteredItens);
   };
 
   useEffect(() => {
+    setFilteredOptions(options);
+
+    if (!initialValue) renderSelectText();
+
     if (isObject(initialValue)) {
-      setCurrentValue(initialValue);
+      setCurrentValue(initialValue[keyLabel]);
     } else if (isString(initialValue)) {
-      setCurrentValue(
-        options.filter((item) => item[keyValue] === initialValue)[0]
+      const initialOption = options.find(
+        (item) => item[keyValue] === initialValue
       );
+      setCurrentValue(initialOption[keyValue]);
     }
     // eslint-disable-next-line
   }, [initialValue]);
-
-  const renderSelectText = () => {
-    if (selectText) return selectText;
-    else return t('GENERAL.SELECT');
-  };
 
   return (
     <Styled.Wrapper
@@ -101,10 +127,22 @@ const Select: React.FC<Props> = ({
         rounded={rounded}
         className={className}
         width={width}
+        backgroundColor={
+          backgroundColors
+            ? get(
+                backgroundColors.colors,
+                currentValue,
+                backgroundColors.default
+              )
+            : null
+        }
       >
-        <Styled.CurrentValue>
-          {currentValue ? currentValue[keyLabel] : renderSelectText()}
-        </Styled.CurrentValue>
+        <Styled.CurrentValue
+          disabled={!hasSearch}
+          type="text"
+          onChange={handleSearchValue}
+          value={currentValue}
+        />
 
         <Styled.OptionsList
           isOpen={openOptionsList}
@@ -114,7 +152,7 @@ const Select: React.FC<Props> = ({
           className="options-list"
           ref={optionsRef}
         >
-          {options.map((option, index) => (
+          {filteredOptions.map((option, index) => (
             <Styled.OptionItem
               rounded={rounded}
               key={index}

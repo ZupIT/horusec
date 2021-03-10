@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Button, Dialog } from 'components';
+import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Workspace } from 'helpers/interfaces/Workspace';
@@ -43,12 +43,14 @@ const Workspaces: React.FC = () => {
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
   const [workspaceToEdit, setWorkspaceToEdit] = useState<Workspace>(null);
   const [handleWorkspaceVisible, setHandleWorkspaceVisible] = useState(false);
-  const [workspaceToManagerTokens, setWorkspaceToManagerTokens] = useState<
-    Workspace
-  >(null);
-  const [workspaceToManagerUsers, setWorkspaceToManagerUsers] = useState<
-    Workspace
-  >(null);
+  const [
+    workspaceToManagerTokens,
+    setWorkspaceToManagerTokens,
+  ] = useState<Workspace>(null);
+  const [
+    workspaceToManagerUsers,
+    setWorkspaceToManagerUsers,
+  ] = useState<Workspace>(null);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
   );
@@ -111,82 +113,69 @@ const Workspaces: React.FC = () => {
       <Styled.Content>
         <Styled.Title>{t('WORKSPACES_SCREEN.TITLE')}</Styled.Title>
 
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>{t('WORKSPACES_SCREEN.TABLE.NAME')}</Styled.Column>
-            <Styled.Column>{t('WORKSPACES_SCREEN.TABLE.DATE')}</Styled.Column>
-            <Styled.Column>
-              {t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>{t('WORKSPACES_SCREEN.TABLE.ACTION')}</Styled.Column>
-          </Styled.Head>
+        <Datatable
+          columns={[
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.NAME'),
+              property: 'name',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.DATE'),
+              property: 'date',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('WORKSPACES_SCREEN.TABLE.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={filteredWorkspaces.map((row) => {
+            const data: Datasource = {
+              ...row,
+              id: row.companyID,
+              date: formatToHumanDate(row.createdAt),
+              actions: [],
+            };
 
-          <Styled.Body>
-            {filteredWorkspaces.map((workspace) => (
-              <Styled.Row key={workspace.companyID}>
-                <Styled.Cell>{workspace.name}</Styled.Cell>
+            if (row.role === roles.ADMIN) {
+              data.actions.push({
+                title: t('WORKSPACES_SCREEN.TABLE.EDIT'),
+                icon: 'edit',
+                function: () => setVisibleHandleModal(true, row),
+              });
 
-                <Styled.Cell>
-                  {formatToHumanDate(workspace.createdAt)}
-                </Styled.Cell>
+              data.actions.push({
+                title: t('WORKSPACES_SCREEN.TABLE.REMOVE'),
+                icon: 'delete',
+                function: () => setWorkspaceToDelete(row),
+              });
 
-                <Styled.Cell>{workspace.description || '-'}</Styled.Cell>
+              if (authType !== authTypes.LDAP) {
+                data.actions.push({
+                  title: t('WORKSPACES_SCREEN.TABLE.USERS'),
+                  icon: 'grid',
+                  function: () => setWorkspaceToManagerUsers(row),
+                });
+              }
 
-                <Styled.Cell className="row">
-                  {workspace.role === roles.ADMIN ? (
-                    <>
-                      <Button
-                        outline
-                        rounded
-                        opaque
-                        text={t('WORKSPACES_SCREEN.TABLE.EDIT')}
-                        width={100}
-                        height={30}
-                        icon="edit"
-                        onClick={() => setVisibleHandleModal(true, workspace)}
-                      />
-
-                      <Button
-                        rounded
-                        outline
-                        opaque
-                        text={t('WORKSPACES_SCREEN.TABLE.REMOVE')}
-                        width={100}
-                        height={30}
-                        icon="delete"
-                        onClick={() => setWorkspaceToDelete(workspace)}
-                      />
-
-                      {authType !== authTypes.LDAP ? (
-                        <Button
-                          outline
-                          rounded
-                          opaque
-                          text={t('WORKSPACES_SCREEN.TABLE.USERS')}
-                          width={200}
-                          height={30}
-                          icon="grid"
-                          onClick={() => setWorkspaceToManagerUsers(workspace)}
-                        />
-                      ) : null}
-
-                      <Button
-                        outline
-                        rounded
-                        opaque
-                        text={t('WORKSPACES_SCREEN.TABLE.TOKENS')}
-                        width={100}
-                        height={30}
-                        icon="lock"
-                        onClick={() => setWorkspaceToManagerTokens(workspace)}
-                      />
-                    </>
-                  ) : null}
-                </Styled.Cell>
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+              data.actions.push({
+                title: t('WORKSPACES_SCREEN.TABLE.TOKENS'),
+                icon: 'lock',
+                function: () => setWorkspaceToManagerTokens(row),
+              });
+            }
+            return data;
+          })}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+          fixed={false}
+        />
       </Styled.Content>
 
       <HandleWorkspace

@@ -12,6 +12,8 @@ type IConfig interface {
 	NewConfigsFromViper() IConfig
 	NewConfigsFromEnvironments() IConfig
 
+	GetVersion() string
+
 	GetDefaultConfigFilePath() string
 	GetConfigFilePath() string
 	SetConfigFilePath(configFilePath string)

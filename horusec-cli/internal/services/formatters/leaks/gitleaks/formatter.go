@@ -98,7 +98,7 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
 	vulnerabilitySeverity *horusec.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = severity.High
+	vulnerabilitySeverity.Severity = severity.Unknown
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File

@@ -183,6 +183,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.Flawfinder,
 		tools.PhpCS,
 		tools.ShellCheck,
+		tools.BundlerAudit,
 		tools.Sobelow,
 		tools.MixAudit,
 	}
@@ -212,13 +213,14 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Unknown,
 	}
 }
+
 func (au *UseCases) sliceSeverities() []interface{} {
 	return []interface{}{
-		severity.Info,
-		severity.NoSec,
-		severity.Low,
-		severity.Medium,
+		severity.Critical,
 		severity.High,
-		severity.Audit,
+		severity.Medium,
+		severity.Low,
+		severity.Unknown,
+		severity.Info,
 	}
 }

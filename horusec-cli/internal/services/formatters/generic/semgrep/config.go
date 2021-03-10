@@ -15,12 +15,11 @@
 package semgrep
 
 const (
-	ImageName = "horuszup/horusec-semgrep"
+	ImageName = "horuszup/horusec-generic"
 	ImageTag  = "v1.0.0"
 	// nolint
 	ImageCmd = `
 	    {{WORK_DIR}}
 		semgrep --config=p/r2c-ci -q --json .
-		chmod -R 777 .
   `
 )

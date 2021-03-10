@@ -16,6 +16,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"time"
@@ -32,7 +33,8 @@ type Token struct {
 	SuffixValue  string     `json:"suffixValue" swaggerignore:"true" gorm:"Column:suffix_value"`
 	Value        string     `json:"value" swaggerignore:"true" gorm:"Column:value"`
 	CreatedAt    time.Time  `json:"createdAt" swaggerignore:"true" gorm:"Column:created_at"`
-	ExpiresAt    time.Time  `json:"expiresAt" swaggerignore:"true" gorm:"Column:expires_at"`
+	ExpiresAt    time.Time  `json:"expiresAt" gorm:"Column:expires_at"`
+	IsExpirable  bool       `json:"isExpirable" gorm:"Column:is_expirable"`
 	key          uuid.UUID  `gorm:"-"`
 }
 
@@ -62,25 +64,27 @@ func (t *Token) Map() map[string]interface{} {
 		"suffixValue":  t.SuffixValue,
 		"value":        t.Value,
 		"createdAt":    t.CreatedAt,
+		"expiresAt":    t.ExpiresAt,
+		"isExpirable":  t.IsExpirable,
 	}
 }
 
 func (t *Token) Validate(isRequiredRepositoryID bool) error {
-	validationRepositoryID := validation.Field(&t.RepositoryID)
-	if isRequiredRepositoryID {
-		validationRepositoryID = validation.Field(&t.RepositoryID, validation.Required)
-	}
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Description, validation.Required),
+	return validation.ValidateStruct(t, validation.Field(&t.Description, validation.Required),
 		validation.Field(&t.CompanyID, validation.Required),
-		validationRepositoryID,
+		validation.Field(&t.ExpiresAt, validation.By(t.validateExpiresAt)),
+		validation.Field(&t.RepositoryID, validation.By(func(value interface{}) error {
+			return t.validateRepositoryID(isRequiredRepositoryID)
+		})),
 	)
 }
 
 func (t *Token) SetCreateData() *Token {
 	t.CreatedAt = time.Now()
 	t.TokenID = uuid.New()
-	t.ExpiresAt = t.CreatedAt.AddDate(0, 3, 0)
+	if !t.IsExpirable {
+		t.ExpiresAt = time.Time{}
+	}
 
 	return t
 }
@@ -101,6 +105,13 @@ func (t *Token) GetTable() string {
 	return "tokens"
 }
 
+func (t *Token) SetExpiresAtTimeDefault() *Token {
+	year, month, day := t.ExpiresAt.Date()
+	location := t.ExpiresAt.Local().Location()
+	t.ExpiresAt = time.Date(year, month, day, 0, 0, 0, 0, location)
+	return t
+}
+
 func (t *Token) setHashValue() {
 	value, err := hash.GenerateSHA256(t.key.String())
 	logger.LogError("Error on generate hash value", err)
@@ -112,4 +123,18 @@ func (t *Token) setSuffixValue() {
 
 	// xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxx => xxxxx
 	t.SuffixValue = valueStr[31:]
+}
+
+func (t *Token) validateExpiresAt(_ interface{}) error {
+	if t.IsExpirable && t.ExpiresAt.Before(time.Now()) {
+		return errors.New("ExpiresAt is expected to be at least one day longer at now")
+	}
+	return nil
+}
+
+func (t *Token) validateRepositoryID(isRequiredRepositoryID bool) error {
+	if isRequiredRepositoryID && (t.RepositoryID == nil || t.RepositoryID == &uuid.Nil) {
+		return errors.New("RepositoryID is required")
+	}
+	return nil
 }

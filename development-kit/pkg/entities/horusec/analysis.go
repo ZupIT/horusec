@@ -35,7 +35,7 @@ type Analysis struct {
 	Errors                  string                    `json:"errors" gorm:"Column:errors"`
 	CreatedAt               time.Time                 `json:"createdAt" gorm:"Column:created_at"`
 	FinishedAt              time.Time                 `json:"finishedAt" gorm:"Column:finished_at"`
-	AnalysisVulnerabilities []AnalysisVulnerabilities `json:"analysisVulnerabilities" gorm:"foreignkey:AnalysisID;association_foreignkey:ID"` //nolint:lll gorm usage
+	AnalysisVulnerabilities []AnalysisVulnerabilities `json:"analysisVulnerabilities" gorm:"foreignKey:AnalysisID;references:ID"` //nolint:lll gorm usage
 }
 
 func (a *Analysis) GetTable() string {
@@ -153,22 +153,22 @@ func (a *Analysis) getDefaultTotalVulnerabilitiesBySeverity() map[horusec.Vulner
 
 func (a *Analysis) getDefaultCountBySeverity() map[severity.Severity]int {
 	return map[severity.Severity]int{
-		severity.High:   0,
-		severity.Medium: 0,
-		severity.Low:    0,
-		severity.Audit:  0,
-		severity.Info:   0,
-		severity.NoSec:  0,
+		severity.Critical: 0,
+		severity.High:     0,
+		severity.Medium:   0,
+		severity.Low:      0,
+		severity.Unknown:  0,
+		severity.Info:     0,
 	}
 }
 
 func (a *Analysis) SortVulnerabilitiesByCriticality() *Analysis {
-	analysisVulnerabilities := a.getVulnerabilitiesBySeverity(severity.High)
+	analysisVulnerabilities := a.getVulnerabilitiesBySeverity(severity.Critical)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.High)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Medium)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Low)...)
+	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Unknown)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Info)...)
-	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.Audit)...)
-	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severity.NoSec)...)
 	a.AnalysisVulnerabilities = analysisVulnerabilities
 	return a
 }

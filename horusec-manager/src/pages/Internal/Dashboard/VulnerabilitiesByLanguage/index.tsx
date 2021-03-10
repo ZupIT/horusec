@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Styled from './styled';
@@ -24,6 +24,7 @@ import { Icon } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
 import { get } from 'lodash';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   filters?: FilterValues;
@@ -81,43 +82,54 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     },
   };
 
-  const formatData = (data: [{ language: string; total: number }]) => {
-    const itemColors: string[] = [];
-    const labels: string[] = [];
-    const values: number[] = [];
+  const formatData = useCallback(
+    (data: [{ language: string; total: number }]) => {
+      const itemColors: string[] = [];
+      const labels: string[] = [];
+      const values: number[] = [];
 
-    data.forEach((item) => {
-      labels.push(item.language);
-      values.push(item.total);
-      itemColors.push(
-        get(
-          colors.languages,
-          item.language.toUpperCase(),
-          colors.languages.UNKNOWN
-        )
-      );
-    });
+      data.forEach((item) => {
+        labels.push(item.language);
+        values.push(item.total);
+        itemColors.push(
+          get(
+            colors.languages,
+            item.language.toUpperCase(),
+            colors.languages.UNKNOWN
+          )
+        );
+      });
 
-    setChartColors(itemColors);
-    setChartLabels(labels);
-    setChartValues(values);
-  };
+      setChartColors(itemColors);
+      setChartLabels(labels);
+      setChartValues(values);
+    },
+    [colors]
+  );
 
   useEffect(() => {
+    let isCancelled = false;
     if (filters) {
       setLoading(true);
 
       analyticService
         .getVulnerabilitiesByLanguage(filters)
-        .then((result) => {
-          formatData(result.data.content);
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            formatData(result.data.content);
+          }
         })
         .finally(() => {
-          setLoading(false);
+          if (!isCancelled) {
+            setLoading(false);
+          }
         });
     }
-    // eslint-disable-next-line
-  }, [filters]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [filters, formatData]);
 
   return (
     <div className="block max-space">

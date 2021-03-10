@@ -16,11 +16,12 @@
 package and
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput() text.TextRule {
@@ -63,7 +64,7 @@ func NewNodeJSAndCryptographicRsaShouldBeRobust() text.TextRule {
 			ID:          "f434338d-0480-4f80-9af0-cd6a3e61f2d1",
 			Name:        "Cryptographic RSA should be robust",
 			Description: "Most of cryptographic systems require a sufficient key size to be robust against brute-force attacks. n ≥ 2048 for RSA (n is the key length). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
@@ -97,7 +98,7 @@ func NewNodeJSAndJWTNeedStrongCipherAlgorithms() text.TextRule {
 			ID:          "f8c6b5bb-2e8c-4e63-9db2-7a075e9fe3fc",
 			Name:        "JWT should be signed and verified with strong cipher algorithms",
 			Description: "If a JSON Web Token (JWT) is not signed with a strong cipher algorithm (or not signed at all) an attacker can forge it and impersonate user identities. Don't use none algorithm to sign or verify the validity of an algorithm. Don't use a token without verifying its signature before. For more information checkout the CWE-347 (https://cwe.mitre.org/data/definitions/347.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
@@ -167,7 +168,7 @@ func NewNodeJSAndMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
 			ID:          "c25c5d12-1ae0-4d74-bff1-2ccee6548da9",
 			Name:        "Mysql Hard-coded credentials are security-sensitive",
 			Description: "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source. It's recommended to customize the configuration of this rule with additional credential words such as \"oauthToken\", \"secret\", others. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
