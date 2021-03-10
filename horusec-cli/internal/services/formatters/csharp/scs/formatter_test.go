@@ -59,7 +59,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		output := "Could not find any project in test"
+		output := "Specify a project or solution file"
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 

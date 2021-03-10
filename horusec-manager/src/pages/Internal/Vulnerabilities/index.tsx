@@ -92,6 +92,10 @@ const Vulnerabilities: React.FC = () => {
       description: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
     },
     {
+      value: 'CRITICAL',
+      description: 'CRITICAL',
+    },
+    {
       value: 'HIGH',
       description: 'HIGH',
     },
@@ -104,16 +108,12 @@ const Vulnerabilities: React.FC = () => {
       description: 'LOW',
     },
     {
-      value: 'AUDIT',
-      description: 'AUDIT',
-    },
-    {
-      value: 'NOSEC',
-      description: 'NOSEC',
-    },
-    {
       value: 'INFO',
       description: 'INFO',
+    },
+    {
+      value: 'UNKNOWN',
+      description: 'UNKNOWN',
     },
   ];
 

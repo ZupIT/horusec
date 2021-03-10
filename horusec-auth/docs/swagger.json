@@ -8,7 +8,8 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        }
+        },
+        "license": {}
     },
     "paths": {
         "/auth/account/change-password": {

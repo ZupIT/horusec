@@ -134,7 +134,7 @@ func (m *Mock) GetCustomRulesByTool(_ tools.Tool) []engine.Rule {
 	return args.Get(0).([]engine.Rule)
 }
 
-func (m *Mock) GetConfigCMDYarnOrNpmAudit(_, _ string, _ tools.Tool) string {
-	args := m.MethodCalled("GetConfigCMDYarnOrNpmAudit")
+func (m *Mock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string {
+	args := m.MethodCalled("GetConfigCMDByFileExtension")
 	return args.Get(0).(string)
 }

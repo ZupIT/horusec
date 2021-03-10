@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import { Dialog } from 'components';
+import React, { useEffect, useState } from 'react';
+import { Calendar, Checkbox, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { isEmptyString } from 'helpers/validators';
@@ -26,6 +26,7 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import SuccessAddToken from './Success';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import validateExpiresAt from 'helpers/validators/validateExpiresAt';
 
 interface Props {
   isVisible: boolean;
@@ -33,6 +34,13 @@ interface Props {
   onConfirm: () => void;
   selectedWorkspace: Workspace;
 }
+
+const INITIAL_FIELD = {
+  value: '',
+  isValid: false,
+};
+
+const MIN_DATE = new Date(Date.now() + 86400000);
 
 const AddToken: React.FC<Props> = ({
   isVisible,
@@ -46,22 +54,33 @@ const AddToken: React.FC<Props> = ({
 
   const [isLoading, setLoading] = useState(false);
   const [tokenCreated, setTokenCreated] = useState<string>(null);
-  const [description, setDescription] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
+  const [isExpirable, setIsExpirable] = useState(false);
+  const [description, setDescription] = useState<Field>(INITIAL_FIELD);
+  const [expiresAt, setExpiresAt] = useState<Date>(MIN_DATE);
 
   const resetFields = () => {
-    const defaultValue = { value: '', isValid: false };
-    setDescription(defaultValue);
+    setDescription(INITIAL_FIELD);
+    setExpiresAt(MIN_DATE);
+    setIsExpirable(false);
   };
 
   const handleConfirmSave = () => {
     if (description.isValid) {
       setLoading(true);
 
+      const data = {
+        description: description.value,
+        isExpirable: isExpirable,
+        expiresAt: expiresAt,
+      };
+
+      if (isExpirable === false) {
+        delete data.isExpirable;
+        delete data.expiresAt;
+      }
+
       companyService
-        .createToken(selectedWorkspace.companyID, description.value)
+        .createToken(selectedWorkspace.companyID, data)
         .then((res) => {
           onConfirm();
           resetFields();
@@ -75,6 +94,12 @@ const AddToken: React.FC<Props> = ({
         });
     }
   };
+
+  useEffect(() => {
+    if (isExpirable === false) {
+      setExpiresAt(MIN_DATE);
+    }
+  }, [isExpirable, expiresAt]);
 
   return (
     <>
@@ -107,6 +132,26 @@ const AddToken: React.FC<Props> = ({
           type="text"
           width="100%"
         />
+
+        <Styled.ContainerCheckbox>
+          <Checkbox
+            disabled={false}
+            initialValue={isExpirable}
+            onChangeValue={(field) => setIsExpirable(field)}
+            label={t('REPOSITORIES_SCREEN.IS_EXPIRABLE')}
+          />
+        </Styled.ContainerCheckbox>
+
+        {isExpirable ? (
+          <Calendar
+            initialDate={expiresAt}
+            title={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
+            onChangeValue={(field) => setExpiresAt(field.value)}
+            minDate={MIN_DATE}
+            validation={validateExpiresAt}
+            invalidMessage={t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT')}
+          />
+        ) : null}
       </Dialog>
 
       {tokenCreated ? (

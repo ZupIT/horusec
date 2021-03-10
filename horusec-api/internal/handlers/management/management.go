@@ -15,6 +15,7 @@
 package management
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
 	netHTTP "net/http"
 	"strconv"
 
@@ -72,7 +73,15 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	page, size := h.getPageSize(r)
 	result, err := h.managementController.ListVulnManagementData(repositoryID, page, size,
 		h.getVulnSeverity(r), h.getVulnType(r), h.getVulnHash(r))
+	h.handleResultGet(result, err, w)
+}
+
+func (h *Handler) handleResultGet(result dto.VulnManagement, err error, w netHTTP.ResponseWriter) {
 	if err != nil {
+		if err == errors.ErrNotFoundRecords {
+			httpUtil.StatusOK(w, dto.VulnManagement{TotalItems: 0, Data: []dto.Data{}})
+			return
+		}
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
