@@ -24,6 +24,7 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
         },
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -2247,7 +2248,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "BAD REQUEST",
                         "schema": {
@@ -2345,7 +2348,9 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "BAD REQUEST",
                         "schema": {
@@ -2409,16 +2414,10 @@ var doc = `{
             "type": "object",
             "properties": {
                 "authzAdmin": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "authzMember": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -2432,22 +2431,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "authzAdmin": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "authzMember": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "authzSupervisor": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -2461,22 +2451,13 @@ var doc = `{
             "type": "object",
             "properties": {
                 "authzAdmin": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "authzMember": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "authzSupervisor": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "companyID": {
                     "type": "string"
@@ -2566,15 +2547,13 @@ var doc = `{
                     "type": "string"
                 },
                 "headers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/webhook.Headers"
-                    }
+                    "type": "HeaderType"
                 },
                 "method": {
                     "type": "string"
                 },
                 "repository": {
+                    "type": "object",
                     "$ref": "#/definitions/account.Repository"
                 },
                 "repositoryID": {
@@ -2592,24 +2571,7 @@ var doc = `{
             }
         },
         "webhook.Webhook": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "headers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/webhook.Headers"
-                    }
-                },
-                "method": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         }
     },
     "securityDefinitions": {
