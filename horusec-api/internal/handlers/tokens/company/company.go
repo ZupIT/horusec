@@ -119,15 +119,14 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-
 	tokens, err := h.controller.GetAllTokenCompany(companyID)
 	if err != nil {
 		if err == EnumErrors.ErrNotFoundRecords {
 			httpUtil.StatusOK(w, &[]api.Token{})
-			return
+		} else {
+			httpUtil.StatusInternalServerError(w, err)
 		}
-		httpUtil.StatusInternalServerError(w, err)
-		return
+	} else {
+		httpUtil.StatusOK(w, tokens)
 	}
-	httpUtil.StatusOK(w, tokens)
 }

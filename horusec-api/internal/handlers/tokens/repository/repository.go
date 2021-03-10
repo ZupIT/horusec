@@ -122,16 +122,14 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 		http.StatusBadRequest(w, err)
 		return
 	}
-
 	tokens, err := h.controller.GetAllTokenRepository(repositoryID)
 	if err != nil {
 		if err == EnumErrors.ErrNotFoundRecords {
 			http.StatusOK(w, &[]api.Token{})
-			return
+		} else {
+			http.StatusInternalServerError(w, err)
 		}
-		http.StatusInternalServerError(w, err)
-		return
+	} else {
+		http.StatusOK(w, tokens)
 	}
-
-	http.StatusOK(w, tokens)
 }
