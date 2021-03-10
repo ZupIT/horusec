@@ -125,15 +125,15 @@ func (u *UseCases) ValidateLogin(account *authEntities.Account, loginData *dto.L
 }
 
 func (u *UseCases) CheckCreateAccountErrorType(err error) error {
-	if err.Error() == "pq: duplicate key value violates unique constraint \"accounts_email_key\"" {
+	if err.Error() == "duplicate key value violates unique constraint \"accounts_email_key\"" {
 		return errors.ErrorEmailAlreadyInUse
 	}
 
-	if err.Error() == "pq: duplicate key value violates unique constraint \"uk_accounts_username\"" {
+	if err.Error() == "duplicate key value violates unique constraint \"uk_accounts_username\"" {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
-	if err.Error() == "pq: duplicate key value violates unique constraint \"accounts_pkey\"" {
+	if err.Error() == "duplicate key value violates unique constraint \"accounts_pkey\"" {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
