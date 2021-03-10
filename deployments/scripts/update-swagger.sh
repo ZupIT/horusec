@@ -54,7 +54,7 @@ validateSwagger () {
 }
 
 updateDocs () {
-    swag init -d $DIRECTORY -g ./cmd/app/main.go -o $DIRECTORY/docs
+    swag init -d "$DIRECTORY" -g ./cmd/app/main.go -o "$DIRECTORY/docs"
 }
 
 validateSwagger
