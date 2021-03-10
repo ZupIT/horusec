@@ -21,6 +21,7 @@ import (
 	"io"
 	"math/rand"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/Nerzal/gocloak/v7"
@@ -125,15 +126,17 @@ func (u *UseCases) ValidateLogin(account *authEntities.Account, loginData *dto.L
 }
 
 func (u *UseCases) CheckCreateAccountErrorType(err error) error {
-	if err.Error() == "duplicate key value violates unique constraint \"accounts_email_key\"" {
+	if strings.Contains(
+		strings.ToLower(err.Error()), "duplicate key value violates unique constraint \"accounts_email_key\"") {
 		return errors.ErrorEmailAlreadyInUse
 	}
 
-	if err.Error() == "duplicate key value violates unique constraint \"uk_accounts_username\"" {
+	if strings.Contains(
+		strings.ToLower(err.Error()), "duplicate key value violates unique constraint \"uk_accounts_username\"") {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
-	if err.Error() == "duplicate key value violates unique constraint \"accounts_pkey\"" {
+	if strings.Contains(strings.ToLower(err.Error()), "duplicate key value violates unique constraint \"accounts_pkey\"") {
 		return errors.ErrorUsernameAlreadyInUse
 	}
 
