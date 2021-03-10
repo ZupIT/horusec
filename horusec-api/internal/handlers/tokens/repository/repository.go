@@ -15,6 +15,7 @@
 package repository
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	netHttp "net/http"
 
@@ -124,6 +125,10 @@ func (h *Handler) Get(w netHttp.ResponseWriter, r *netHttp.Request) {
 
 	tokens, err := h.controller.GetAllTokenRepository(repositoryID)
 	if err != nil {
+		if err == EnumErrors.ErrNotFoundRecords {
+			http.StatusOK(w, &[]api.Token{})
+			return
+		}
 		http.StatusInternalServerError(w, err)
 		return
 	}
