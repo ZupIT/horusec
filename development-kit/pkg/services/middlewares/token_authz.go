@@ -17,6 +17,7 @@ package middlewares
 import (
 	"context"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/hash"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"net/http"
 	"time"
 
@@ -55,13 +56,12 @@ func (t *TokenAuthz) IsAuthorized(next http.Handler) http.Handler {
 			httpUtil.StatusUnauthorized(w, errors.ErrorUnauthorized)
 			return
 		}
-
 		ctx, err := t.getContextAndValidateIsValidToken(tokenValue, r)
 		if err != nil {
 			t.verifyValidateTokenErrors(w, err)
 			return
 		}
-
+		t.showCLIVersion(r)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -114,4 +114,9 @@ func (t *TokenAuthz) returnErrorIfTokenIsExpired(token *api.Token) error {
 		return errors.ErrorTokenExpired
 	}
 	return nil
+}
+
+func (t *TokenAuthz) showCLIVersion(r *http.Request) {
+	cliVersion := r.Header.Get("X-Horusec-CLI-Version")
+	logger.LogInfo("Current Horusec-CLI version is: " + cliVersion)
 }
