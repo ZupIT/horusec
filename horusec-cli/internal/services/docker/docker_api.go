@@ -27,6 +27,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	dockerTypes "github.com/docker/docker/api/types"
@@ -310,10 +311,5 @@ func (d *API) getSourceFolderFromWindows(path string) string {
 }
 
 func (d *API) removeRegistry(imageWithTagAndRegistry string) string {
-	index := strings.Index(imageWithTagAndRegistry, "/")
-	if index < 0 {
-		return imageWithTagAndRegistry
-	}
-
-	return imageWithTagAndRegistry[index+1:]
+	return strings.ReplaceAll(imageWithTagAndRegistry, images.DefaultRegistry+"/", "")
 }
