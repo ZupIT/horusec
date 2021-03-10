@@ -17,10 +17,9 @@ package tokenusecases
 import (
 	"encoding/json"
 	"errors"
-	"net/http"
-
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+	"net/http"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 )
@@ -72,5 +71,6 @@ func (u *TokenUseCases) ValidateTokenCompany(r *http.Request) (token *api.Token,
 		return nil, errors.New("invalid companyID")
 	}
 	token.RepositoryID = nil
+	token = token.SetExpiresAtTimeDefault()
 	return token, token.Validate(false)
 }

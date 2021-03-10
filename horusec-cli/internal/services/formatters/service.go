@@ -266,15 +266,10 @@ func (s *Service) GetCustomRulesByTool(tool tools.Tool) []engine.Rule {
 	return s.customRulesService.GetCustomRulesByTool(tool)
 }
 
-func (s *Service) GetConfigCMDYarnOrNpmAudit(projectSubPath, imageCmd string, tool tools.Tool) string {
+func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string {
 	projectPath := s.GetConfigProjectPath()
 
-	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "yarn.lock")
-	if newProjectSubPath != "" {
-		return s.AddWorkDirInCmd(imageCmd, newProjectSubPath, tool)
-	}
-
-	newProjectSubPath = fileUtil.GetSubPathByExtension(projectPath, projectSubPath, "package-lock.json")
+	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, ext)
 	if newProjectSubPath != "" {
 		return s.AddWorkDirInCmd(imageCmd, newProjectSubPath, tool)
 	}

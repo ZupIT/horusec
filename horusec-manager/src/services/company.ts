@@ -97,9 +97,16 @@ const getAllTokens = (companyId: string) => {
   return http.get(`${SERVICE_API}/api/companies/${companyId}/tokens`);
 };
 
-const createToken = (companyId: string, description: string) => {
+const createToken = (
+  companyId: string,
+  data: {
+    description: string;
+    isExpirable?: boolean;
+    expiredAt?: string;
+  }
+) => {
   return http.post(`${SERVICE_API}/api/companies/${companyId}/tokens`, {
-    description,
+    ...data,
   });
 };
 

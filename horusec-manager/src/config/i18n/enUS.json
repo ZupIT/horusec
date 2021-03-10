@@ -216,6 +216,7 @@
     "CONFIRM_DELETE_TOKEN": "Do you really want to delete this token? This action cannot be undone.",
     "CREATE_NEW_TOKEN": "Add new token",
     "INVALID_DESCRIPTION": "Invalid description",
+    "INVALID_EXPIRES_AT": "Is expected to be at least one day longer at now",
     "CREATE_TOKEN_BELOW": "Enter the description for the new token:",
     "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "TOKEN_SUCCESS": "Token created successfully!",
@@ -230,12 +231,15 @@
     "ADMIN": "Administrator:",
     "SUPERVISOR": "Supervisor:",
     "MEMBER": "Member",
-    "GROUP_NAME": "Group Name"
+    "GROUP_NAME": "Group Name",
+    "IS_EXPIRABLE": "Is expirable",
+    "EXPIRES_AT": "Expires at"
   },
 
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
       "OF": "of",

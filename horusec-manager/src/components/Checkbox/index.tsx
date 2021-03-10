@@ -21,12 +21,14 @@ interface Props {
   initialValue: boolean;
   disabled: boolean;
   onChangeValue: (isChecked: boolean) => void;
+  label?: string;
 }
 
 const Checkbox: React.FC<Props> = ({
   initialValue,
   disabled,
   onChangeValue,
+  label,
 }) => {
   const [isChecked, setChecked] = useState(false);
 
@@ -42,11 +44,16 @@ const Checkbox: React.FC<Props> = ({
   }, [initialValue]);
 
   return (
-    <Styled.Checkbox
-      disabled={disabled}
-      onClick={handleChangeValue}
-      isChecked={isChecked}
-    />
+    <Styled.Container>
+      <Styled.Checkbox
+        disabled={disabled}
+        onClick={handleChangeValue}
+        isChecked={isChecked}
+      />
+      {label ? (
+        <Styled.Label onClick={handleChangeValue}>{label}</Styled.Label>
+      ) : null}
+    </Styled.Container>
   );
 };
 

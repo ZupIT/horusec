@@ -21,22 +21,10 @@ POSTGRES_HOST="localhost"
 POSTGRES_PORT="5432"
 POSTGRES_DB_NAME="horusec_db"
 POSTGRES_SSL_MODE="disable"
-MIGRATE_TYPE=$1
-MIGRATE_NUMBERS=$2
 
-runMigration() {
-    if [[ -z "$MIGRATE_TYPE" ]]
-    then
-        echo "Migration type param not found. Setup default \"up\""
-        MIGRATE_TYPE="up"
-    fi
-
-    docker run --name migrate \
-        --rm -v "$(pwd)/$MIGRATION_PATH:/migrations" \
-        --network=container:postgresql migrate/migrate:v4.13.0 \
-        -path=/migrations/ \
-        -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
-        $MIGRATE_TYPE "$MIGRATE_NUMBERS"
-}
-
-runMigration
+docker run --name migrate \
+    --rm -v "$(pwd)/$MIGRATION_PATH:/migrations" \
+    --network=container:postgresql migrate/migrate:v4.13.0 \
+    -path=/migrations/ \
+    -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
+    "$@"

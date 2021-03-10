@@ -19,7 +19,6 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 )
@@ -30,21 +29,13 @@ func TestNewDockerAPI(t *testing.T) {
 			NewDockerClient()
 		})
 	})
-
-	t.Run("Should set environments and return panics", func(t *testing.T) {
-		assert.Panics(t, func() {
-			err := os.Setenv("DOCKER_HOST", "test")
-			assert.NoError(t, err)
-			NewDockerClient()
-		})
-	})
 }
 
 func TestMock(t *testing.T) {
 	t.Run("Should return expected data to ContainerCreate", func(t *testing.T) {
 		m := &Mock{}
 		m.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
-		_, err := m.ContainerCreate(nil, nil, nil, nil, "")
+		_, err := m.ContainerCreate(nil, nil, nil, nil, nil, "")
 		assert.NoError(t, err)
 	})
 	t.Run("Should return expected data to ContainerStart", func(t *testing.T) {
@@ -55,9 +46,9 @@ func TestMock(t *testing.T) {
 	})
 	t.Run("Should return expected data to ContainerWait", func(t *testing.T) {
 		m := &Mock{}
-		m.On("ContainerWait").Return(int64(10), nil)
-		_, err := m.ContainerWait(nil, "")
-		assert.NoError(t, err)
+		m.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
+		_, err := m.ContainerWait(nil, "", "")
+		assert.NoError(t, <-err)
 	})
 	t.Run("Should return expected data to ContainerLogs", func(t *testing.T) {
 		m := &Mock{}

@@ -18,7 +18,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/docker/pkg/testutil/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMailerConfig(t *testing.T) {
@@ -142,6 +142,6 @@ func TestValidate(t *testing.T) {
 		config := NewMailerConfig()
 		err := config.Validate()
 
-		assert.NilError(t, err)
+		assert.NoError(t, err)
 	})
 }

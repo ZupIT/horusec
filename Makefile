@@ -13,7 +13,7 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 80 "./development-kit"
+	deployments/scripts/coverage.sh 78 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 99 "./horusec-api"
@@ -179,7 +179,7 @@ install-semver:
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
+	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
 build-install-cli-windows:

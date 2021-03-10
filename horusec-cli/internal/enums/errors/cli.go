@@ -30,7 +30,8 @@ var ErrDockerNotInstalled = errors.New("{HORUSEC_CLI} Error Docker not found. Pl
 
 // Occurs when CsProj not found in dotnet project
 
-var ErrCsProjNotFound = errors.New("{HORUSEC_CLI} Error project csproj not found. Please use workdir flag or try again")
+var ErrSolutionNotFound = errors.New("{HORUSEC_CLI} Security code scan failed to execute," +
+	" specify a solution file. The current working directory does not contain a solution file")
 
 // Occurs when not found rails project
 
