@@ -15,8 +15,8 @@
 package bandit
 
 const (
-	ImageName = "horuszup/bandit"
-	ImageTag  = "v1.0.1"
+	ImageName = "horuszup/horusec-python"
+	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
       	chmod +x /usr/local/bin/horusec-file-ignore.sh

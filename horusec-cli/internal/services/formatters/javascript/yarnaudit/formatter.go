@@ -23,18 +23,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit/entities"
-
-	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	vulnHash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/yarnaudit/entities"
 )
 
 type Formatter struct {
@@ -71,11 +68,11 @@ func (f *Formatter) startYarnAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDYarnOrNpmAudit(projectSubPath, ImageCmd, tools.YarnAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "yarn.lock", tools.YarnAudit),
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.NpmAudit].ImagePath, npmaudit.ImageName, npmaudit.ImageTag)
+	return analysisData.SetData(f.GetToolsConfig()[tools.YarnAudit].ImagePath, ImageName, ImageTag)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {
@@ -139,7 +136,7 @@ func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue) *horuse
 	data.Details = output.Overview
 	data.Code = output.ModuleName
 	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
-	data = vulnhash.Bind(data)
+	data = vulnHash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
 

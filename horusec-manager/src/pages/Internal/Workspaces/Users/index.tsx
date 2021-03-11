@@ -145,7 +145,7 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
             {
               label: t('WORKSPACES_SCREEN.USERS.TABLE.ACTION'),
               property: 'actions',
-              type: 'text',
+              type: 'actions',
             },
           ]}
           datasource={filteredUsers.map((row) => {
@@ -162,14 +162,14 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
             if (row.email !== currentUser?.email) {
               data.actions = [
                 {
-                  title: t('WORKSPACES_SCREEN.USERS.TABLE.DELETE'),
-                  icon: 'delete',
-                  function: () => setUserToDelete(row),
-                },
-                {
                   title: t('WORKSPACES_SCREEN.USERS.TABLE.EDIT'),
                   icon: 'edit',
                   function: () => setUserToEdit(row),
+                },
+                {
+                  title: t('WORKSPACES_SCREEN.USERS.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setUserToDelete(row),
                 },
               ];
             }

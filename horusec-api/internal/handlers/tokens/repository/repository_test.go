@@ -19,21 +19,29 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
-
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
 
 func TestPost(t *testing.T) {
 	repositoryID := uuid.New()
@@ -333,8 +341,9 @@ func TestGetAllOfAccount(t *testing.T) {
 		}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, tokens))
 
@@ -372,8 +381,9 @@ func TestGetAllOfAccount(t *testing.T) {
 		}
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, nil, tokens))
 
@@ -397,8 +407,9 @@ func TestGetAllOfAccount(t *testing.T) {
 		companyID := uuid.New()
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockRead.On("SetFilter").Return(conn)
 		mockRead.On("Find").Return(response.NewResponse(0, errors.New("error"), nil))
 

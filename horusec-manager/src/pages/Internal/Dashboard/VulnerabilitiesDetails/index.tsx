@@ -48,6 +48,8 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
     totalPages: 10,
   });
 
+  const [refresh, setRefresh] = useState<PaginationInfo>(pagination);
+
   const formatDataValues = (data: any[]) => {
     const formattedData: DatatableValue[] = [];
 
@@ -76,38 +78,46 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
     setDataValues(formattedData);
   };
 
-  const fetchData = (currentPage: number, pageSize: number) => {
-    setLoading(true);
-    if (pageSize !== pagination.pageSize) {
-      currentPage = 1;
-    }
-
-    analyticService
-      .getVulnerabilitiesDetails(filters, currentPage, pageSize)
-      .then((result) => {
-        formatDataValues(result.data?.content?.data?.analysis);
-        const totalItems = result?.data?.content?.data?.totalItems;
-
-        let totalPages = totalItems ? Math.ceil(totalItems / pageSize) : 1;
-
-        if (totalPages <= 0) {
-          totalPages = 1;
-        }
-
-        setPagination({ currentPage, pageSize, totalPages, totalItems });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
+    let isCancelled = false;
+
     if (filters) {
-      fetchData(1, 10);
+      setLoading(true);
+      const page = refresh;
+
+      if (page.pageSize !== pagination.pageSize) {
+        page.currentPage = 1;
+      }
+
+      analyticService
+        .getVulnerabilitiesDetails(filters, page.currentPage, page.pageSize)
+        .then((result) => {
+          if (!isCancelled) {
+            formatDataValues(result.data?.content?.data?.analysis);
+            const totalItems = result?.data?.content?.data?.totalItems;
+
+            let totalPages = totalItems
+              ? Math.ceil(totalItems / page.pageSize)
+              : 1;
+
+            if (totalPages <= 0) {
+              totalPages = 1;
+            }
+
+            setPagination({ ...page, totalPages, totalItems });
+          }
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setLoading(false);
+          }
+        });
     }
 
-    // eslint-disable-next-line
-  }, [filters]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [filters, refresh, pagination.pageSize]);
 
   return (
     <div className="max-space">
@@ -157,7 +167,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
           datasource={dataValues}
           paginate={{
             pagination,
-            onChange: (pag) => fetchData(pag.currentPage, pag.pageSize),
+            onChange: (pag) => setRefresh(pag),
           }}
           isLoading={isLoading}
           emptyListText={t('DASHBOARD_SCREEN.CHART_NO_DATA')}

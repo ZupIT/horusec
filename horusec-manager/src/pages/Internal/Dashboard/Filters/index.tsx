@@ -24,7 +24,7 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-
+import { AxiosResponse } from 'axios';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -91,24 +91,29 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   };
 
   useEffect(() => {
+    let isCancelled = false;
     const fetchRepositories = () => {
-      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        const repositories: Repository[] = result.data.content;
-        setRepositories(repositories);
+      repositoryService
+        .getAll(currentWorkspace?.companyID)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const repositories: Repository[] = result.data.content;
+            setRepositories(repositories);
 
-        if (repositories.length > 0) {
-          setFilters({
-            ...filters,
-            repositoryID: repositories[0]?.repositoryID,
-          });
-          onApply({
-            ...filters,
-            repositoryID: repositories[0]?.repositoryID,
-          });
-        } else {
-          showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
-        }
-      });
+            if (repositories.length > 0) {
+              setFilters({
+                ...filters,
+                repositoryID: repositories[0]?.repositoryID,
+              });
+              onApply({
+                ...filters,
+                repositoryID: repositories[0]?.repositoryID,
+              });
+            } else {
+              showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
+            }
+          }
+        });
     };
 
     if (currentWorkspace) {
@@ -121,7 +126,9 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         });
       }
     }
-
+    return function () {
+      isCancelled = true;
+    };
     // eslint-disable-next-line
   }, [currentWorkspace]);
 
@@ -145,8 +152,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             <Calendar
               initialDate={filters.initialDate}
               title={t('DASHBOARD_SCREEN.START_DATE')}
-              onChangeValue={(date: Date) =>
-                setFilters({ ...filters, initialDate: date })
+              onChangeValue={(field) =>
+                setFilters({ ...filters, initialDate: field.value })
               }
             />
           </Styled.CalendarWrapper>
@@ -154,8 +161,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           <Styled.CalendarWrapper>
             <Calendar
               title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-              onChangeValue={(date: Date) =>
-                setFilters({ ...filters, finalDate: date })
+              onChangeValue={(field) =>
+                setFilters({ ...filters, finalDate: field.value })
               }
             />
           </Styled.CalendarWrapper>

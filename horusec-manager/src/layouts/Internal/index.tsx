@@ -18,8 +18,17 @@ import React from 'react';
 import { SideMenu, Footer } from 'components';
 import Styled from './styled';
 import { WorkspaceProvider } from 'contexts/Workspace';
+import { keycloakInstance } from 'config/keycloak';
+import { clearTokens } from 'helpers/localStorage/tokens';
+import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 
 function InternalLayout({ children }: { children: JSX.Element }) {
+  keycloakInstance.onAuthRefreshError = () => {
+    clearTokens();
+    clearCurrentUser();
+    keycloakInstance.logout();
+  };
+
   return (
     <WorkspaceProvider>
       <>

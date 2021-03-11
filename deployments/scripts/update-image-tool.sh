@@ -276,6 +276,9 @@ resetAlphaRcToMaster () {
 trap rollbackVersionInCliVersionFile SIGINT
 trap rollbackVersionInConfigFile SIGINT
 
+echo "script blocked"
+exit 1
+
 getDirectoryAndImageNameByToolName
 
 validateUpdateType

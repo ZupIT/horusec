@@ -27,37 +27,37 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(company *accountEntities.Company, tx SQL.InterfaceWrite) (*accountEntities.Company, error) {
+func (m *Mock) Create(_ *accountEntities.Company, _ SQL.InterfaceWrite) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetByID(companyID uuid.UUID) (*accountEntities.Company, error) {
+func (m *Mock) GetByID(_ uuid.UUID) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+func (m *Mock) GetAllOfAccount(_ uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("GetAllOfAccount")
 	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Delete(companyID uuid.UUID) error {
+func (m *Mock) Delete(_ uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error) {
+func (m *Mock) GetAllAccountsInCompany(_ uuid.UUID) (*[]roles.AccountRole, error) {
 	args := m.MethodCalled("GetAllAccountsInCompany")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+func (m *Mock) ListByLdapPermissions(_ []string) (*[]accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("ListByLdapPermissions")
 	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }

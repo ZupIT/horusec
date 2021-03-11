@@ -43,12 +43,14 @@ const Workspaces: React.FC = () => {
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
   const [workspaceToEdit, setWorkspaceToEdit] = useState<Workspace>(null);
   const [handleWorkspaceVisible, setHandleWorkspaceVisible] = useState(false);
-  const [workspaceToManagerTokens, setWorkspaceToManagerTokens] = useState<
-    Workspace
-  >(null);
-  const [workspaceToManagerUsers, setWorkspaceToManagerUsers] = useState<
-    Workspace
-  >(null);
+  const [
+    workspaceToManagerTokens,
+    setWorkspaceToManagerTokens,
+  ] = useState<Workspace>(null);
+  const [
+    workspaceToManagerUsers,
+    setWorkspaceToManagerUsers,
+  ] = useState<Workspace>(null);
   const [filteredWorkspaces, setFilteredWorkspaces] = useState<Workspace[]>(
     allWorkspaces
   );
@@ -172,6 +174,7 @@ const Workspaces: React.FC = () => {
             return data;
           })}
           emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+          fixed={false}
         />
       </Styled.Content>
 

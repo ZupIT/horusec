@@ -13,10 +13,10 @@ coverage: coverage-development-kit coverage-horusec-api coverage-horusec-cli cov
 
 coverage-development-kit:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 80 "./development-kit"
+	deployments/scripts/coverage.sh 78 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 99 "./horusec-api"
+	deployments/scripts/coverage.sh 97 "./horusec-api"
 coverage-horusec-cli:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 89 "./horusec-cli"
@@ -59,10 +59,10 @@ coverage-horusec-dart:
 # Check lint of project setup on file .golangci.yml
 lint:
     ifeq ($(wildcard $(GOCILINT)), $(GOCILINT))
-		$(GOCILINT) run -v --timeout=2m -c .golangci.yml ./...
+		$(GOCILINT) run -v --timeout=5m -c .golangci.yml ./...
     else
 		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.25.0
-		$(GOCILINT) run -v --timeout=2m -c .golangci.yml ./...
+		$(GOCILINT) run -v --timeout=5m -c .golangci.yml ./...
     endif
 
 # Run all tests of project but stop the execution on the first test fail
@@ -73,7 +73,7 @@ test-e2e-cli:
 	$(GO) get -v ./e2e/...
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
 test-e2e-server-horusec: compose-e2e-server-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
@@ -81,7 +81,7 @@ test-e2e-server-horusec: compose-e2e-server-horusec
 test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=5m -parallel=1 -failfast
+	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=10m -parallel=1 -failfast
 test-e2e-messages: compose-e2e-messages
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
@@ -179,7 +179,7 @@ install-semver:
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
+	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
 build-install-cli-windows:

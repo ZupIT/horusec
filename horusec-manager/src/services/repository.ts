@@ -71,12 +71,16 @@ const getAllTokens = (companyId: string, repositoryId: string) => {
 const createToken = (
   companyId: string,
   repositoryId: string,
-  description: string
+  data: {
+    description: string;
+    isExpirable?: boolean;
+    expiredAt?: string;
+  }
 ) => {
   return http.post(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
-      description,
+      ...data,
     }
   );
 };

@@ -15,37 +15,43 @@
 package database
 
 import (
+	"errors"
+	enumDialect "github.com/ZupIT/horusec/development-kit/pkg/enums/dialect"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	loggerGorm "gorm.io/gorm/logger"
 	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
 	EnumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mssql"    // Required in gorm usage
-	_ "github.com/jinzhu/gorm/dialects/mysql"    // Required in gorm usage
-	_ "github.com/jinzhu/gorm/dialects/postgres" // Required in gorm usage
-	_ "github.com/jinzhu/gorm/dialects/sqlite"   // Required in gorm usage
+	_ "gorm.io/driver/postgres" // Required in gorm usage
+	_ "gorm.io/driver/sqlite"   // Required in gorm usage
+	"gorm.io/gorm"
+)
+
+var (
+	ErrDialectNotFound = errors.New("error on create connection with database dialect not found")
 )
 
 type Relational struct {
 	connection *gorm.DB
 }
 
-func NewRelationalRead() relational.InterfaceRead {
-	return constructor()
+func NewRelationalRead(dialect, uri string, logMode bool) relational.InterfaceRead {
+	return constructor(dialect, uri, logMode)
 }
 
-func NewRelationalWrite() relational.InterfaceWrite {
-	return constructor()
+func NewRelationalWrite(dialect, uri string, logMode bool) relational.InterfaceWrite {
+	return constructor(dialect, uri, logMode)
 }
 
-func constructor() *Relational {
+func constructor(dialect, uri string, logMode bool) *Relational {
 	db := &Relational{
 		connection: nil,
 	}
-	result := db.Connect()
+	result := db.Connect(dialect, uri, logMode)
 	if err := result.GetError(); err != nil {
 		logger.LogPanic("connection with database has failed: ", err)
 	}
@@ -58,12 +64,27 @@ func newRelationalForTransaction(conn *gorm.DB) relational.InterfaceWrite {
 	}
 }
 
-func (r *Relational) Connect() *response.Response {
-	configs := config.NewConfig()
-	connection, err := gorm.Open(configs.Dialect, configs.URI)
+func (r *Relational) Connect(dialect, uri string, logMode bool) *response.Response {
+	connection, err := r.factoryConnection(dialect, uri)
+	if err != nil {
+		return response.NewResponse(0, err, nil)
+	}
 	r.connection = connection
-	r.SetLogMode(configs.LogMode)
+	r.SetLogMode(logMode)
 	return response.NewResponse(0, err, r.connection)
+}
+
+func (r *Relational) factoryConnection(dialect, uri string) (*gorm.DB, error) {
+	switch dialect {
+	case enumDialect.Postgres.ToString():
+		return gorm.Open(postgres.Open(uri), &gorm.Config{})
+	case enumDialect.SQLite.ToString():
+		return gorm.Open(sqlite.Open(uri), &gorm.Config{
+			DisableForeignKeyConstraintWhenMigrating: true,
+		})
+	default:
+		return nil, ErrDialectNotFound
+	}
 }
 
 func (r *Relational) GetConnection() *gorm.DB {
@@ -72,7 +93,11 @@ func (r *Relational) GetConnection() *gorm.DB {
 
 func (r *Relational) SetLogMode(logMode bool) {
 	if r.connection != nil {
-		r.connection = r.connection.LogMode(logMode)
+		if logMode {
+			r.connection.Logger = r.connection.Logger.LogMode(loggerGorm.Info)
+		} else {
+			r.connection.Logger = r.connection.Logger.LogMode(loggerGorm.Error)
+		}
 	}
 }
 
@@ -90,7 +115,12 @@ func (r *Relational) CommitTransaction() *response.Response {
 
 func (r *Relational) IsAvailable() bool {
 	if r.connection != nil {
-		return r.connection.DB().Ping() == nil
+		database, err := r.connection.DB()
+		if err != nil {
+			logger.LogError("Error on get database to ping", err)
+			return false
+		}
+		return database.Ping() == nil
 	}
 	return false
 }
@@ -123,6 +153,9 @@ func (r *Relational) Find(entity interface{}, query *gorm.DB, tableName string) 
 		}
 		return response.NewResponse(int(result.RowsAffected), result.Error, nil)
 	}
+	if result.RowsAffected == 0 {
+		return response.NewResponse(int(result.RowsAffected), EnumErrors.ErrNotFoundRecords, nil)
+	}
 	return response.NewResponse(int(result.RowsAffected), nil, entity)
 }
 
@@ -132,7 +165,7 @@ func (r *Relational) Update(
 		return response.NewResponse(0, EnumErrors.ErrDatabaseNotConnected, nil)
 	}
 
-	result := r.connection.Table(tableName).Where(conditions).Update(entity)
+	result := r.connection.Table(tableName).Where(conditions).Updates(entity)
 
 	return response.NewResponse(int(result.RowsAffected), result.Error, entity)
 }
@@ -161,12 +194,12 @@ func (r *Relational) SetFilter(filter map[string]interface{}) *gorm.DB {
 	return r.GetConnection().Where(filter)
 }
 
-func (r *Relational) First(out interface{}, where ...interface{}) *response.Response {
+func (r *Relational) First(out interface{}, tableName string, where ...interface{}) *response.Response {
 	if r.connection == nil {
 		return response.NewResponse(0, EnumErrors.ErrDatabaseNotConnected, nil)
 	}
 
-	result := r.connection.First(out, where...)
+	result := r.connection.Table(tableName).First(out, where...)
 	if result.Error != nil {
 		if strings.EqualFold(result.Error.Error(), "record not found") {
 			return response.NewResponse(int(result.RowsAffected), EnumErrors.ErrNotFoundRecords, nil)
@@ -175,19 +208,6 @@ func (r *Relational) First(out interface{}, where ...interface{}) *response.Resp
 	}
 
 	return response.NewResponse(0, result.Error, out)
-}
-
-func (r *Relational) Related(
-	model, related interface{}, filter map[string]interface{}, foreignKeys ...string) *response.Response {
-	if r.connection == nil {
-		return response.NewResponse(0, EnumErrors.ErrDatabaseNotConnected, nil)
-	}
-	result := r.connection.Model(model)
-	if filter != nil {
-		result = result.Where(filter)
-	}
-	result = result.Related(related, foreignKeys...)
-	return response.NewResponse(0, result.Error, related)
 }
 
 func (r *Relational) RawSQL(sql string, entity interface{}) *response.Response {

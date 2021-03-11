@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package gitleaks
 
 const (
-	ImageName = "horuszup/gitleaks"
-	ImageTag  = "v1.0.2"
-	// nolint
-	ImageCmd = `
+	ImageName = "horuszup/horusec-leaks"
+	ImageTag  = "v1.0.0"
+	ImageCmd  = `
 		{{WORK_DIR}}
         touch /tmp/results-ANALYSISID.json
         gitleaks --config="/rules/rules.toml" --owner-path=. --verbose --pretty --report="/tmp/results-ANALYSISID.json" &> /tmp/errorGitleaks-ANALYSISID

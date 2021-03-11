@@ -16,22 +16,31 @@ package expiredkeys
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
+	"github.com/google/uuid"
+	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
-	"github.com/stretchr/testify/assert"
+	_ "gorm.io/driver/sqlite" // Required in gorm usage
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
 
 func TestExpiredKeys_RemoveKeysExpiredFromDatabase(t *testing.T) {
 	t.Run("Should return empty key because return unexpected error on find keys", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		mockRead.On("Find").Return(response.NewResponse(0, errors.New("some error"), nil))
@@ -42,9 +51,9 @@ func TestExpiredKeys_RemoveKeysExpiredFromDatabase(t *testing.T) {
 		c.RemoveKeysExpiredFromDatabase()
 	})
 	t.Run("Should return empty key because return not found records", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		mockRead.On("Find").Return(response.NewResponse(0, errorsEnum.ErrNotFoundRecords, nil))
@@ -55,9 +64,9 @@ func TestExpiredKeys_RemoveKeysExpiredFromDatabase(t *testing.T) {
 		c.RemoveKeysExpiredFromDatabase()
 	})
 	t.Run("Should return keys but return errors on delete from database", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
-
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockWrite := &relational.MockWrite{}
 		mockWrite.On("DeleteByQuery").Return(response.NewResponse(0, errors.New("test"), nil))
 		mockWrite.On("GetConnection").Return(conn)

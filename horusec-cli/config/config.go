@@ -155,6 +155,10 @@ func (c *Config) GetDefaultConfigFilePath() string {
 	return path.Join(currentDir, "horusec-config.json")
 }
 
+func (c *Config) GetVersion() string {
+	return "{{VERSION_NOT_FOUND}}"
+}
+
 func (c *Config) GetConfigFilePath() string {
 	return valueordefault.GetStringValueOrDefault(c.configFilePath, c.GetDefaultConfigFilePath())
 }

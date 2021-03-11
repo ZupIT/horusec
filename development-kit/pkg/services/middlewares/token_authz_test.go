@@ -27,8 +27,8 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/test"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestIsAuthorized(t *testing.T) {
@@ -40,7 +40,7 @@ func TestIsAuthorized(t *testing.T) {
 		repositoryID := uuid.New()
 		mockRead.On("Find").Return(resp.SetData(&api.Token{
 			RepositoryID: &repositoryID,
-			CreatedAt:    time.Now(),
+			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day()+1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
 		}))
 
 		middleware := NewTokenAuthz(mockRead)
@@ -62,7 +62,8 @@ func TestIsAuthorized(t *testing.T) {
 		repositoryID := uuid.New()
 		mockRead.On("Find").Return(resp.SetData(&api.Token{
 			RepositoryID: &repositoryID,
-			CreatedAt:    time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC),
+			ExpiresAt:    time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC),
+			IsExpirable:  true,
 		}))
 
 		middleware := NewTokenAuthz(mockRead)
@@ -84,7 +85,7 @@ func TestIsAuthorized(t *testing.T) {
 		repositoryID := uuid.New()
 		mockRead.On("Find").Return(resp.SetData(&api.Token{
 			RepositoryID: &repositoryID,
-			CreatedAt:    time.Now(),
+			ExpiresAt:    time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day()+1, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location()),
 		}))
 
 		middleware := NewTokenAuthz(mockRead)
