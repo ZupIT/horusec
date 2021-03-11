@@ -26,7 +26,7 @@ const (
 	Bandit            Tool = "Bandit"
 	NpmAudit          Tool = "NpmAudit"
 	YarnAudit         Tool = "YarnAudit"
-	SpotBugs          Tool = "SpotBugs"
+	SpotBugs          Tool = "SpotBugs" // deprecated
 	HorusecKotlin     Tool = "HorusecKotlin"
 	HorusecJava       Tool = "HorusecJava"
 	HorusecLeaks      Tool = "HorusecLeaks"
@@ -36,7 +36,7 @@ const (
 	HorusecCsharp     Tool = "HorusecCsharp"
 	HorusecDart       Tool = "HorusecDart"
 	HorusecKubernetes Tool = "HorusecKubernetes"
-	Eslint            Tool = "Eslint"
+	Eslint            Tool = "Eslint" // deprecated in next release
 	HorusecNodejs     Tool = "HorusecNodeJS"
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"

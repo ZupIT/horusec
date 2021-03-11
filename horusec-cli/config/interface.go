@@ -54,8 +54,8 @@ type IConfig interface {
 	GetProjectPath() string
 	SetProjectPath(projectPath string)
 
-	GetFilterPath() string
-	SetFilterPath(filterPath string)
+	GetFilterPath() string           // deprecated in next release
+	SetFilterPath(filterPath string) // deprecated in next release
 
 	GetWorkDir() *workdir.WorkDir
 	SetWorkDir(toParse interface{})
@@ -81,8 +81,8 @@ type IConfig interface {
 	GetFalsePositiveHashes() (output []string)
 	SetFalsePositiveHashes(falsePositive []string)
 
-	GetToolsToIgnore() (output []string)
-	SetToolsToIgnore(toolsToIgnore []string)
+	GetToolsToIgnore() (output []string)     // deprecated in next release
+	SetToolsToIgnore(toolsToIgnore []string) // deprecated in next release
 
 	GetHeaders() (headers map[string]string)
 	SetHeaders(headers interface{})
