@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -71,12 +73,12 @@ func (f *Formatter) startSafety(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+		CMD: f.AddWorkDirInCmd(CMD, fileUtil.GetSubPathByExtension(
 			f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
 func (f *Formatter) parseOutput(output string) {

@@ -183,144 +183,109 @@ The configuration file receive an object with the content follow:
   "horusecCliRiskAcceptHashes":"",
   "horusecCliContainerBindProjectPath":"",
   "horusecCliWorkDir":{
-    "go":[
-
-    ],
-    "csharp":[
-
-    ],
-    "ruby":[
-
-    ],
-    "python":[
-
-    ],
-    "java":[
-
-    ],
-    "kotlin":[
-
-    ],
-    "javaScript":[
-
-    ],
-    "leaks":[
-
-    ],
-    "generic":[
-
-    ],
-    "php":[
-
-    ],
-    "c":[
-
-    ],
-    "yaml":[
-
-    ],
-    "hlc":[
-
-    ],
-    "shell":[
-
-    ],
-    "elixir":[
-
-    ]
+    "go":[],
+    "csharp":[],
+    "ruby":[],
+    "python":[],
+    "java":[],
+    "kotlin":[],
+    "javaScript":[],
+    "leaks":[],
+    "generic":[],
+    "php":[],
+    "c":[],
+    "yaml":[],
+    "hlc":[],
+    "shell":[],
+    "elixir":[]
+  },
+  "horusecCliCustomImages": {
+    "csharp": "",
+    "leaks": "",
+    "go": "",
+    "java": "",
+    "kotlin": "",
+    "javascript": "",
+    "python": "",
+    "ruby": "",
+    "hcl": "",
+    "generic": "",
+    "yaml": "",
+    "c": "",
+    "php": "",
+    "dart": "",
+    "elixir": "",
+    "shell": ""
   },
   "horusecCliToolsConfig":{
     "Bandit":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Brakeman":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Eslint":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Flawfinder":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "GitLeaks":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "GoSec":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecCsharp":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecJava":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecKotlin":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecKubernetes":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecLeaks":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "HorusecNodeJS":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "NpmAudit":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "PhpCS":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Safety":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "SecurityCodeScan":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Semgrep":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "TfSec":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "YarnAudit":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "ShellCheck":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "MixAudit":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     },
     "Sobelow":{
-      "isToIgnore":false,
-      "imagePath":""
+      "isToIgnore":false
     }
   },
   "horusecCliHeaders":{
-
   }
 }
 ```

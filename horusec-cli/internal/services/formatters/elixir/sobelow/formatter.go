@@ -25,6 +25,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/elixir/sobelow/entities"
@@ -73,11 +74,11 @@ func (f *Formatter) startSobelow(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "mix.lock", tools.Sobelow),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "mix.lock", tools.Sobelow),
 		Language: languages.Elixir,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.Sobelow].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
 func (f *Formatter) parseOutput(output string) error {

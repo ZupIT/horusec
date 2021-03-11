@@ -17,6 +17,8 @@ package gitleaks
 import (
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks/entities"
 
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
@@ -118,11 +120,11 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability,
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GitLeaks),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.GitLeaks),
 		Language: languages.Leaks,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Leaks), images.Leaks)
 }
 
 func (f *Formatter) getDefaultSeverity() *horusec.Vulnerability {

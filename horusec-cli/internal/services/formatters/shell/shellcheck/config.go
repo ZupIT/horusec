@@ -14,13 +14,9 @@
 
 package shellcheck
 
-const (
-	ImageName = "horuszup/horusec-shell"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
 		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')
 		shellcheck --format=json $shell_files $bat_files
   `
-)

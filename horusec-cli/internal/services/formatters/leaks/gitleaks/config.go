@@ -15,10 +15,7 @@
 //nolint
 package gitleaks
 
-const (
-	ImageName = "horuszup/horusec-leaks"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
         touch /tmp/results-ANALYSISID.json
         gitleaks --config="/rules/rules.toml" --owner-path=. --verbose --pretty --report="/tmp/results-ANALYSISID.json" &> /tmp/errorGitleaks-ANALYSISID
@@ -29,4 +26,3 @@ const (
             jq -j -M -c . /tmp/results-ANALYSISID.json
         fi
   `
-)

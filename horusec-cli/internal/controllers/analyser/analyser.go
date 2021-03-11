@@ -32,6 +32,7 @@ import (
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	languageDetect "github.com/ZupIT/horusec/horusec-cli/internal/controllers/language_detect"
 	"github.com/ZupIT/horusec/horusec-cli/internal/controllers/printresults"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
@@ -127,11 +128,8 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 		return 0, err
 	}
 
-	monitor := horusec.NewMonitor()
-
-	a.setMonitor(monitor)
+	a.setMonitor(horusec.NewMonitor())
 	a.startDetectVulnerabilities(langs)
-
 	return a.sendAnalysisAndStartPrintResults()
 }
 
@@ -169,7 +167,8 @@ func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
 		for _, projectSubPath := range a.config.GetWorkDir().GetArrayByLanguage(language) {
 			if a.shouldAnalysePath(projectSubPath) {
 				a.logProjectSubPath(language, projectSubPath)
-				a.mapDetectVulnerabilityByLanguage()[language](projectSubPath)
+				langFunc := a.mapDetectVulnerabilityByLanguage()[language]
+				go langFunc(projectSubPath)
 			}
 		}
 	}
@@ -194,7 +193,7 @@ func (a *Analyser) runMonitorTimeout(monitor int64) {
 //nolint:funlen all Languages is greater than 15
 func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
-		languages.CSharp:     a.detectVulnerabilityDotNet,
+		languages.CSharp:     a.detectVulnerabilityCsharp,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
 		languages.Java:       a.detectVulnerabilityJava,
@@ -213,25 +212,47 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 	}
 }
 
-func (a *Analyser) detectVulnerabilityDotNet(projectSubPath string) {
+func (a *Analyser) detectVulnerabilityCsharp(projectSubPath string) {
 	a.monitor.AddProcess(2)
-	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.CSharp)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
+	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {
-	a.monitor.AddProcess(1)
+	a.monitor.AddProcess(2)
 	go horusecleaks.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	a.executeGitLeaks(projectSubPath)
+}
 
+func (a *Analyser) executeGitLeaks(projectSubPath string) {
 	if a.config.GetEnableGitHistoryAnalysis() {
 		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
-		a.monitor.AddProcess(1)
+
+		if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Leaks)); err != nil {
+			a.setErrorAndRemoveProcess(err, 1)
+			return
+		}
+
 		go gitleaks.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	} else {
+		a.monitor.RemoveProcess(1)
 	}
 }
 
 func (a *Analyser) detectVulnerabilityGo(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go gosec.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
@@ -247,25 +268,49 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
 	a.monitor.AddProcess(3)
+	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Javascript)); err != nil {
+		a.setErrorAndRemoveProcess(err, 2)
+		return
+	}
+
 	go yarnaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 	a.monitor.AddProcess(2)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Python)); err != nil {
+		a.setErrorAndRemoveProcess(err, 2)
+		return
+	}
+
 	go bandit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go safety.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 	a.monitor.AddProcess(2)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Ruby)); err != nil {
+		a.setErrorAndRemoveProcess(err, 2)
+		return
+	}
+
 	go brakeman.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go bundler.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.HCL)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
@@ -276,16 +321,34 @@ func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
 
 func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.C)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go flawfinder.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.PHP)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go phpcs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
@@ -296,12 +359,24 @@ func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
 
 func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
 	a.monitor.AddProcess(2)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Elixir)); err != nil {
+		a.setErrorAndRemoveProcess(err, 2)
+		return
+	}
+
 	go mixaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	go sobelow.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
 	a.monitor.AddProcess(1)
+
+	if err := a.dockerSDK.PullImage(a.getCustomOrDefaultImage(languages.Shell)); err != nil {
+		a.setErrorAndRemoveProcess(err, 1)
+		return
+	}
+
 	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
@@ -346,4 +421,17 @@ func (a *Analyser) setFalsePositive() {
 
 	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashes())
 	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashes())
+}
+
+func (a *Analyser) setErrorAndRemoveProcess(err error, processNumber int) {
+	a.analysis.SetAnalysisError(err)
+	a.monitor.RemoveProcess(processNumber)
+}
+
+func (a *Analyser) getCustomOrDefaultImage(language languages.Language) string {
+	if customImage := a.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]; customImage != "" {
+		return customImage
+	}
+
+	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }

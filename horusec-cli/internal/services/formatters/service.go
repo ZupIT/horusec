@@ -276,3 +276,7 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 
 	return s.AddWorkDirInCmd(imageCmd, projectSubPath, tool)
 }
+
+func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
+	return s.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]
+}

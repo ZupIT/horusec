@@ -42,51 +42,25 @@ func TestSetData(t *testing.T) {
 			CMD: "test",
 		}
 
-		assert.NotEmpty(t, data.SetData("other-host.io/t/test:latest", "t", "v1.0.0"))
+		assert.NotEmpty(t, data.SetData("other-host.io/t/test:latest", "test:v1.0.0"))
 	})
 
 }
 
-func TestGetImageWithRegistry(t *testing.T) {
-	t.Run("should success get image with registry for custom image", func(t *testing.T) {
+func TestGetCustomOrDefaultImage(t *testing.T) {
+	t.Run("should success get image with custom image", func(t *testing.T) {
 		data := &AnalysisData{
 			CustomImage: "test/custom",
 		}
 
-		assert.Equal(t, "test/custom", data.GetImageWithRegistry())
+		assert.Equal(t, "test/custom", data.GetCustomOrDefaultImage())
 	})
 
-	t.Run("should success get image with registry for custom image", func(t *testing.T) {
+	t.Run("should success get image with default image", func(t *testing.T) {
 		data := &AnalysisData{
 			DefaultImage: "test/default",
 		}
 
-		assert.Equal(t, "test/default", data.GetImageWithRegistry())
-	})
-}
-
-func TestGetImageWithoutRegistry(t *testing.T) {
-	t.Run("should success get image without registry for custom image", func(t *testing.T) {
-		data := &AnalysisData{
-			CustomImage: "test/custom",
-		}
-
-		assert.Equal(t, "custom", data.GetImageWithoutRegistry())
-	})
-
-	t.Run("should success get image without registry for custom image", func(t *testing.T) {
-		data := &AnalysisData{
-			DefaultImage: "test/default",
-		}
-
-		assert.Equal(t, "default", data.GetImageWithoutRegistry())
-	})
-
-	t.Run("should return full image path when failed to get index", func(t *testing.T) {
-		data := &AnalysisData{
-			DefaultImage: "test",
-		}
-
-		assert.Equal(t, "test", data.GetImageWithoutRegistry())
+		assert.Equal(t, "test/default", data.GetCustomOrDefaultImage())
 	})
 }
