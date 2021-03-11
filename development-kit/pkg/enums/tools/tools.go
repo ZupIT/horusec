@@ -36,7 +36,7 @@ const (
 	HorusecCsharp     Tool = "HorusecCsharp"
 	HorusecDart       Tool = "HorusecDart"
 	HorusecKubernetes Tool = "HorusecKubernetes"
-	Eslint            Tool = "Eslint" // deprecated in next release
+	Eslint            Tool = "Eslint" // deprecated
 	HorusecNodejs     Tool = "HorusecNodeJS"
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"

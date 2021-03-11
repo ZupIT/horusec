@@ -23,7 +23,7 @@ import (
 
 type WorkDir struct {
 	Go         []string `json:"go"`
-	NetCore    []string `json:"netCore"` // deprecated in next release
+	NetCore    []string `json:"netCore"` // deprecated
 	CSharp     []string `json:"csharp"`
 	Ruby       []string `json:"ruby"`
 	Python     []string `json:"python"`
