@@ -198,7 +198,7 @@ func TestValidateLogin(t *testing.T) {
 func TestCheckCreateAccountErrorType(t *testing.T) {
 	t.Run("should return error email already in use", func(t *testing.T) {
 		useCases := NewAuthUseCases()
-		err := errors.New("pq: duplicate key value violates unique constraint \"accounts_email_key\"")
+		err := errors.New("duplicate key value violates unique constraint \"accounts_email_key\"")
 		result := useCases.CheckCreateAccountErrorType(err)
 		assert.Error(t, result)
 		assert.Equal(t, errorsEnums.ErrorEmailAlreadyInUse, result)
@@ -213,7 +213,7 @@ func TestCheckCreateAccountErrorType(t *testing.T) {
 
 	t.Run("should return error username already in use", func(t *testing.T) {
 		useCases := NewAuthUseCases()
-		err := errors.New("pq: duplicate key value violates unique constraint \"uk_accounts_username\"")
+		err := errors.New("duplicate key value violates unique constraint \"uk_accounts_username\"")
 		result := useCases.CheckCreateAccountErrorType(err)
 		assert.Error(t, result)
 		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
@@ -221,7 +221,7 @@ func TestCheckCreateAccountErrorType(t *testing.T) {
 
 	t.Run("should return error username already in use", func(t *testing.T) {
 		useCases := NewAuthUseCases()
-		err := errors.New("pq: duplicate key value violates unique constraint \"accounts_pkey\"")
+		err := errors.New("duplicate key value violates unique constraint \"accounts_pkey\"")
 		result := useCases.CheckCreateAccountErrorType(err)
 		assert.Error(t, result)
 		assert.Equal(t, errorsEnums.ErrorUsernameAlreadyInUse, result)
