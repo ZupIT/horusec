@@ -16,6 +16,7 @@ package version
 
 import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +37,7 @@ func (v *Version) CreateCobraCmd() *cobra.Command {
 		Short:   "Actual version installed of the horusec",
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.LogPrint(cmd.Short + " is: {{VERSION_NOT_FOUND}}")
+			logger.LogPrint(cmd.Short + " is: " + config.NewConfig().GetVersion())
 			return nil
 		},
 	}

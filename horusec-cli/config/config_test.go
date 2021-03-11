@@ -35,6 +35,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		currentPath, _ := os.Getwd()
 		configs := &Config{}
 		configs.NewConfigsFromEnvironments()
+		assert.Equal(t, "{{VERSION_NOT_FOUND}}", configs.GetVersion())
 		assert.Equal(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.Equal(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
 		assert.Equal(t, int64(300), configs.GetTimeoutInSecondsRequest())
