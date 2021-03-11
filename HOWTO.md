@@ -4,119 +4,122 @@ Here you can find how to add *Horusec* new features.
 
 ## Adding new tool using Horusec-engine
 
-To add a new analyse tool into horusec-cli you should follow the step-by-step examples above:
+#### 1 - Creating engine rules
 
+To begin, you will need to create the rules that you want our engine to run.
+These rules are basically one or more regexes that detect a vulnerability.
 
-#### 1 - Create a new CLI by copying some one of the existed one and rename it to **horusec-{name-of-the-cli}**.
+These regexes have a type, which are:
 
-e.g.:
+| Type            | Description                                                                                                                                                                                                                                                     |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| OrMatch         | These are more comprehensive rules, which may have more than one pattern to manifest, hence the name, since our engine will perform the logical OR operation for each of the registered RegExps.                                                                |
+| Regular         | It is very similar to OrMatch, but the idea is that it contains multiple ways to detect the same pattern.                                                                                                                                                       |  
+| AndMatch        | These are rules that need the file to manifest multiple patterns to be considered something to be reported, therefore, the engine performs the logical operation in each of the registered RegExps to ensure that all conditions have been met.                 |  
 
-[horusec-java](/horusec-java)
-
-[horusec-kotlin](/horusec-kotlin)
-
-[horusec-leaks](/horusec-leakse)
-
-
-#### 2-  Create the rules to be used by the new CLI that you create before.
-
-e.g.:
-
-[examples](/development-kit/pkg/engines/csharp)
-
-#### 3 - Update CLI Controller Importing Rules.
-
-
-```go
-type IAnalysis interface {
-    StartAnalysis() error
-}
-
-type Analysis struct {
-    configs      *config.Config
-    serviceRules csharp.Interface // Change the import to get your respective rules
-}
-
-func NewAnalysis(configs *config.Config) IAnalysis {
-return &Analysis{
-        configs:      configs,
-        serviceRules: csharp.NewRules(), // Change the import to get your respective rules
-    }
-}
-
-func (a *Analysis) StartAnalysis() error {
-    textUnit, err := a.serviceRules.GetTextUnitByRulesExt(a.configs.GetProjectPath())
-    if err != nil {
-        return err
-    }
-    
-    return engine.RunOutputInJSON(textUnit, a.getAllRules(), a.configs.GetOutputFilePath())
-}
-
-func (a *Analysis) getAllRules() []engine.Rule {
-    return a.serviceRules.GetAllRules()
-}
+Some examples of these rules can be found in the following path separated by language and type:
 
 ```
+ -horusec
+ --development-kit
+ ---pkg
+ ----engines
+```
 
-#### 4 - Update your CLI to use the rules that you create and update the CLI configuration.
+#### 2 - Creating formatter
 
-e.g.: Replace the curle braces in the code with your new cli definitions.
+After creation, now we only need to call the engine passing the rules and format the result to the horusec standard.
 
-```go
-// horusec-{name-of-the-cli}/cmd/app/main.go
-package main
+For this, it will be necessary to create a formatter as in the following example:
 
-import (
-	"os"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd/run"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/cmd/version"
-	"github.com/ZupIT/horusec/development-kit/pkg/cli_standard/config"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/{THE-NAME-OF-THE-YOUR-ENGINE-RULES}/analysis" 
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/spf13/cobra"
-)
-
-var rootCmd = &cobra.Command{
-	Use:   "horusec-{THE-NAME-OF-YOUR-CLI}",
-	Short: "Horusec-{THE-NAME-OF-YOUR-CLI} CLI",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.LogPrint("Horusec {THE-NAME-OF-YOUR-CLI} Command Line Interface")
-		return cmd.Help()
-	},
-	Example: `horusec-{THE-NAME-OF-YOUR-CLI} run`,
+```
+type Formatter struct {
+	formatters.IService
+	java.Interface
 }
 
-var configs *config.Config
-
-// nolint
-func init() {
-	configs = config.NewConfig()
-	cmd.InitFlags(configs, rootCmd)
-}
-
-func main() {
-	controller := analysis.NewAnalysis(configs)
-	rootCmd.AddCommand(run.NewRunCommand(configs, controller).CreateCobraCmd())
-	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
-
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
-	} else {
-		os.Exit(0)
+func NewFormatter(service formatters.IService) formatters.IFormatter {
+	return &Formatter{
+		service,
+		java.NewRules(),
 	}
 }
 
+func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.HorusecJava) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecJava.ToString())
+		return
+	}
+
+	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecJava, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecJava)
+	f.SetToolFinishedAnalysis()
+}
+
+func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecJava)
+
+	findings, err := f.execEngineAnalysis(projectSubPath)
+	if err != nil {
+		return err
+	}
+
+	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecJava, languages.Java)
+}
+
+func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
+	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
+	if err != nil {
+		return nil, err
+	}
+
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecJava)...)
+	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engineenums.DefaultMaxUnitsPerAnalysis), nil
+}
 ```
 
-#### 5 - Update the dockerfile following the example
+This example can be found in the following path:
 
-e.g.: [horusec-java dockerfile](/horusec-java/deployments/Dockerfile)
+```
+ -horusec
+ --horusec-cli
+ ---internal
+ ----services
+ -----fomatters
+ ------java
+ -------horusecjava
+ --------fomatter.go
+```
 
+It will be necessary to change the enum of tools and language, as well as import the rules created and pass as an argument of the function `RunMaxUnitsByAnalysis`
 
-#### 6 - Create a new formatter into horusec-cli following this [doc](/horusec-cli/README.md)
+#### 3 - Calling our formatter
+
+To finish we need to call our formatter that will perform the analysis.
+
+In the following path you will find a file with the name `analyser.go`.
+```
+ -horusec
+ --horusec-cli
+ ---internal
+ ----controllers
+ -----analyser
+ ------analyser.go
+```
+
+In this file it will be necessary to create a function like the following:
+
+```
+func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
+a.monitor.AddProcess(1)
+go horusecDart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+```
+
+Basically we are adding a new process in our `a.monitor.AddProcess(1)` counter, so that horusec is able to wait for all processes to finish.
+To finish we call the formatters that we created through the functions `NewFormatter(a.formatterService).StartAnalysis(projectSubPath)`.
+
+Once these steps are finished, just run and test your analysis.
 
 ## Adding Security Tool
  
@@ -128,26 +131,20 @@ To do this, follow the steps below:
  
 Here at horusec we use the docker to run the analysis tools, avoiding configuration and environment problems.
 So all tools used have their respective docker images.
- 
 
 This image must have the desired tool installed.
 We recommend that the output of this container be as clean as possible, or a json with the vulnerabilities found.
- 
+
+These images are separated by language, for example `horuszup/horusec-go`.
+
+If the tool you that you want to add is from a language which the horusec already has the image, you only need to add it to the existing dockerfile.
+
 Following is an example of a dockerfile:
  
 ```
- FROM golang:1.14-alpine
-  
- RUN apk update && apk upgrade \
-  	&& apk add jq curl
-  
- RUN set -o pipefail && curl https://api.github.com/repos/liamg/tfsec/releases/latest | jq -r ".assets[] | select(.name | contains(\"tfsec-linux-amd64\")) | .browser_download_url" | xargs wget
-  
- RUN mv tfsec-linux-amd64 /bin/tfsec
-  
- RUN chmod +x /bin/tfsec
-  
- CMD ["/bin/sh"]
+FROM python:alpine
+
+RUN pip install flawfinder
 ```
  
 The image must contain only what is necessary, so that it does not get too big.
@@ -159,28 +156,23 @@ For each image of the docker it is necessary it also has a configuration file an
 The formatter is the code responsible for getting the container output and transforming it into the horusec standard object,
 adding the workdir configuration, getting the commit author and some other things.
 
-The config file must contain the name and tag of the docker image that will be executed, which must be in the local docker or dockerhub.
-It must also contain all the commands that will be executed inside the container to analyze the code.
- 
- 
+The config file contains the commands that will be executed inside the container to analyze the code.
+
 Following is an example of a container config:
  
 ```
- const (
-    	ImageName = "horusec/tfsec"
-    	ImageTag  = "v1.0.0"
-    	ImageCmd       = `
-    			{{WORK_DIR}}
-            	tfsec --format=json | grep -v "WARNING: skipped" > results.json
-    			cat results.json
-      `
-    )
+const CMD = `
+		{{WORK_DIR}}
+		flawfinder --minlevel 0 --columns --singleline --dataonly --context --csv . > /tmp/result-ANALYSISID.csv
+		cat /tmp/result-ANALYSISID.csv
+  `
 ```
- 
+It is necessary that the code that will be executed in the container has a `{{WORK_DIR}}` at the beginning. We will replace this section for a specific path of the project that is being analyzed if the user wishes.
+
 Now let's create the code that will read the container's output and parse the standard horusec format.
  
-All formatters must follow the standard and implement the interface in the interface.go file.
-An example can be found by following the following path:
+All formatters must follow the standard and implement the interface `IFormatter` in the `interface.go` file.
+An example can be found by in the following path:
  
 ```
  -horusec
@@ -189,45 +181,8 @@ An example can be found by following the following path:
  ----services
  -----fomatters
  -----interface.go
- ------hcl
+ ------c
  -------fomatter.go
-```
-
-If it is a cli using the engine you can just import without the need for a docker image.
-An example can be found by following the following path:
-
-```
- -horusec
- --horusec-cli
- ---internal
- ----services
- -----fomatters
- -----interface.go
- ------csharp
- -------fomatter.go
-```
-
-You just need to import the rules and perform the analysis as shown in the example below:
-
-```
-func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
-	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
-	if err != nil {
-		return nil, err
-	}
-
-	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecCsharp)...)
-	return engine.Run(textUnit, allRules), nil
-}
-```
-
-The rule examples can be found in the following path:
-
-```
- -horusec
- --development-kit
- ---pkg
- ----engines
 ```
 
 #### 3 - Updating Enums
@@ -235,6 +190,33 @@ The rule examples can be found in the following path:
 You will also need to add the new one to the tool name in the tool's enum. 
 If it is a language that is not yet supported, it will also be necessary to add it to the enum of languages.
  
+Both can be found in the following path:
+
+```
+ -horusec
+ --development-kit
+ ---pkg
+ ----enums
+ -----tools
+ -----languages
+```
+
+It will also be necessary to add the new image to the image enum, this can be found at:
+
+```
+ -horusec
+ --horusec-cli
+ ---internal
+ ----enums
+ -----images
+ -----images.go
+```
+
+As stated earlier, if it is a language that horusec already supports, it will not be necessary to add a new image.
+
+Finally, add the new one to the tool name in the tool's enum.
+If it is a language that is not yet supported, it will also be necessary to add it to the enum of languages.
+
 Both can be found in the following path:
 
 ```
@@ -304,9 +286,8 @@ After:
  }
 ```
 
-Be careful not to forget that these functions must be performed in go routines, 
-and for each new go routine, it is necessary to update the monitor, as in the previous example, passing the total of new calls.
-If you forget this step the horusec will finish before the tool finishes analyze.
+Be careful not to forget that these functions must be performed in go routines, and for each new go routine, it is necessary to update the monitor, as in the previous example, passing the total of new calls. 
+In case you forget this step the horusec will finish before the tool finishes.
 
 #### 5 - Updating validations
 
@@ -330,7 +311,7 @@ Now add the new tool or language to the interface array according to what was ad
 
 #### 6 - Conclusion
 
-And it's ready. Now horusec is inte.grated with the new tool and generating unified reports.
+It's ready. Now horusec is integrated with the new tool and generating unified reports.
 
 Feel free to send us a pull request and collaborate with the project. We will love it!
 
