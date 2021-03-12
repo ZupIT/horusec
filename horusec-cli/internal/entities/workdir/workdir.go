@@ -16,15 +16,14 @@ package workdir
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 )
 
 type WorkDir struct {
 	Go         []string `json:"go"`
-	NetCore    []string `json:"netCore"`
+	NetCore    []string `json:"netCore"` // deprecated
 	CSharp     []string `json:"csharp"`
 	Ruby       []string `json:"ruby"`
 	Python     []string `json:"python"`
@@ -106,9 +105,9 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 }
 
 func (w *WorkDir) GetArrayByLanguage(language languages.Language) []string {
-	result := w.Map()[language]
-	if len(result) > 0 {
-		return result
+	allPaths := w.Map()[language]
+	if len(allPaths) > 0 {
+		return allPaths
 	}
 
 	return []string{""}

@@ -19,7 +19,10 @@ const (
 	ImageTag  = "v1.0.0"
 	ImageCmd  = `
 		{{WORK_DIR}}
-		gosec -quiet -fmt=json -out=/tmp/result-gosec-ANALYSISID.json ./...
-		cat /tmp/result-gosec-ANALYSISID.json
+		FILE_PATH="/tmp/result-gosec-ANALYSISID.json"
+		gosec -quiet -fmt=json -out=$FILE_PATH ./...
+		if [ -f "$FILE_PATH" ]; then
+			cat $FILE_PATH
+		fi
 	`
 )
