@@ -28,8 +28,8 @@ type Company struct {
 	CompanyID   uuid.UUID      `json:"companyID" gorm:"primary_key" swaggerignore:"true"`
 	Name        string         `json:"name"`
 	Description string         `json:"description"`
-	AuthzMember pq.StringArray `json:"authzMember"`
-	AuthzAdmin  pq.StringArray `json:"authzAdmin"`
+	AuthzMember pq.StringArray `json:"authzMember" gorm:"type:text[]"`
+	AuthzAdmin  pq.StringArray `json:"authzAdmin" gorm:"type:text[]"`
 	CreatedAt   time.Time      `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time      `json:"updatedAt" swaggerignore:"true"`
 }
@@ -39,8 +39,8 @@ type CompanyResponse struct {
 	Name        string         `json:"name"`
 	Role        rolesEnum.Role `json:"role"`
 	Description string         `json:"description"`
-	AuthzMember pq.StringArray `json:"authzMember"`
-	AuthzAdmin  pq.StringArray `json:"authzAdmin"`
+	AuthzMember pq.StringArray `json:"authzMember" gorm:"type:text[]"`
+	AuthzAdmin  pq.StringArray `json:"authzAdmin" gorm:"type:text[]"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 }
