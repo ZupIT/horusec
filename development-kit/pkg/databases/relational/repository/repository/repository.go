@@ -172,7 +172,8 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 	return accounts, response.GetError()
 }
 
-func (r *Repository) ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+func (r *Repository) ListByLdapPermissions(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
 
 	response := r.databaseRead.GetConnection().Raw(r.getListByLdapPermissionsQuery(),
