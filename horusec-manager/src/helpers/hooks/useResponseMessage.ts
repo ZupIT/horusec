@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { APIResponse } from 'helpers/interfaces/APIResponse';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -23,40 +23,46 @@ const useResponseMessage = () => {
   const { t } = useTranslation();
   const { showErrorFlash } = useFlashMessage();
 
-  const dispatchMessage = (response: APIResponse): void => {
-    const messages: ObjectLiteral = {
-      '{ACCOUNT} invalid username or password': t('API_ERRORS.ERROR_LOGIN'),
-      '{ACCOUNT} account email not confirmed': t(
-        'API_ERRORS.UNCONFIRMED_EMAIL'
-      ),
-      '{ACCOUNT} invalid reset password data': t(
-        'API_ERRORS.INVALID_RECOVERY_CODE'
-      ),
-      '{ACCOUNT} email already in use': t('API_ERRORS.EMAIL_IN_USE'),
-      '{ERROR_REPOSITORY} database not found records': t(
-        'API_ERRORS.NO_RECORDS'
-      ),
-      '{ERROR_COMPANY} this account already in this company': t(
-        'API_ERRORS.ALREADY_IN_COMPANY'
-      ),
-      'you do not have enough privileges for this action': t(
-        'API_ERRORS.PRIVILEGES'
-      ),
-      '{ACCOUNT} username already in use': t('API_ERRORS.USERNAME_IN_USE'),
-      '{ACCOUNT} repository name already in use': t(
-        'API_ERRORS.REPO_NAME_IN_USE'
-      ),
-      'already exists webhook to repository selected': t(
-        'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
-      ),
-      '{ACCOUNT} password is not valid': t('API_ERRORS.SAME_PASSWORD'),
-      generic: t('API_ERRORS.GENERIC_ERROR'),
-    };
+  const dispatchMessage = React.useCallback(
+    (response: APIResponse): void => {
+      const messages: ObjectLiteral = {
+        '{ACCOUNT} invalid username or password': t('API_ERRORS.ERROR_LOGIN'),
+        '{ACCOUNT} account email not confirmed': t(
+          'API_ERRORS.UNCONFIRMED_EMAIL'
+        ),
+        '{ACCOUNT} invalid reset password data': t(
+          'API_ERRORS.INVALID_RECOVERY_CODE'
+        ),
+        '{ACCOUNT} email already in use': t('API_ERRORS.EMAIL_IN_USE'),
+        '{ERROR_REPOSITORY} database not found records': t(
+          'API_ERRORS.NO_RECORDS'
+        ),
+        '{ERROR_COMPANY} this account already in this company': t(
+          'API_ERRORS.ALREADY_IN_COMPANY'
+        ),
+        'you do not have enough privileges for this action': t(
+          'API_ERRORS.PRIVILEGES'
+        ),
+        '{ACCOUNT} username already in use': t('API_ERRORS.USERNAME_IN_USE'),
+        '{ACCOUNT} repository name already in use': t(
+          'API_ERRORS.REPO_NAME_IN_USE'
+        ),
+        'already exists webhook to repository selected': t(
+          'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
+        ),
+        '{ACCOUNT} admin ldap group should be a valid one for this user': t(
+          'API_ERRORS.LDAP_GROUP'
+        ),
+        '{ACCOUNT} password is not valid': t('API_ERRORS.SAME_PASSWORD'),
+        generic: t('API_ERRORS.GENERIC_ERROR'),
+      };
 
-    const msg = messages[response?.content] || messages.generic;
+      const msg = messages[response?.content] || messages.generic;
 
-    showErrorFlash(msg);
-  };
+      showErrorFlash(msg);
+    },
+    [t, showErrorFlash]
+  );
 
   return {
     dispatchMessage,

@@ -17,6 +17,7 @@ package horuseccsharp
 import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/csharp"
+	engineenums "github.com/ZupIT/horusec/development-kit/pkg/enums/engine"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
@@ -38,7 +39,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.HorusecCsharp) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.HorusecCsharp.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecCsharp.ToString())
 		return
 	}
 
@@ -65,5 +66,5 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 	}
 
 	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecCsharp)...)
-	return engine.Run(textUnit, allRules), nil
+	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engineenums.DefaultMaxUnitsPerAnalysis), nil
 }

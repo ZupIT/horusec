@@ -15,18 +15,20 @@
 package management
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto"
+	netHTTP "net/http"
+	"strconv"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/api/dto" // [swagger-import]
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	horusecEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	managementUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/management"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/horusec-api/internal/controllers/management"
+	managementUseCases "github.com/ZupIT/horusec/horusec-api/internal/usecases/management"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	netHTTP "net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -71,7 +73,15 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	page, size := h.getPageSize(r)
 	result, err := h.managementController.ListVulnManagementData(repositoryID, page, size,
 		h.getVulnSeverity(r), h.getVulnType(r), h.getVulnHash(r))
+	h.handleResultGet(result, err, w)
+}
+
+func (h *Handler) handleResultGet(result dto.VulnManagement, err error, w netHTTP.ResponseWriter) {
 	if err != nil {
+		if err == errors.ErrNotFoundRecords {
+			httpUtil.StatusOK(w, dto.VulnManagement{TotalItems: 0, Data: []dto.Data{}})
+			return
+		}
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
@@ -106,6 +116,7 @@ func (h *Handler) getVulnHash(r *netHTTP.Request) string {
 // @Param UpdateVulnType body dto.UpdateVulnType true "type of vulnerability"
 // @Param vulnerabilityID path string true "vulnerabilityID of the vulnerability"
 // @Param repositoryID path string true "repositoryID of the repository"
+// @Param companyID path string true "companyID of the company"
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Success 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Success 404 {object} http.Response{content=string} "NOT FOUND"
@@ -120,6 +131,38 @@ func (h *Handler) UpdateVulnType(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	}
 
 	result, err := h.managementController.UpdateVulnType(vulnerabilityID, updateData)
+	if err != nil {
+		h.checkUpdateErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, result)
+}
+
+// @Tags Management
+// @Security ApiKeyAuth
+// @Description update vulnerability severity
+// @ID update-vuln-severity
+// @Accept  json
+// @Produce  json
+// @Param UpdateVulnSeverity body dto.UpdateVulnSeverity true "type of vulnerability"
+// @Param vulnerabilityID path string true "vulnerabilityID of the vulnerability"
+// @Param repositoryID path string true "repositoryID of the repository"
+// @Param companyID path string true "companyID of the company"
+// @Success 200 {object} http.Response{content=string} "OK"
+// @Success 400 {object} http.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} http.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/severity [put]
+func (h *Handler) UpdateVulnSeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	updateSeverityDTO, err := h.managementUseCases.NewUpdateVulnSeverityFromReadCloser(r.Body)
+	vulnerabilityID, _ := uuid.Parse(chi.URLParam(r, "vulnerabilityID"))
+	if err != nil || vulnerabilityID == uuid.Nil {
+		h.checkInvalidRequestErrors(w, err)
+		return
+	}
+
+	result, err := h.managementController.UpdateVulnSeverity(vulnerabilityID, updateSeverityDTO)
 	if err != nil {
 		h.checkUpdateErrors(w, err)
 		return

@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	flawfinderEntities "github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/c/flawfinder/entities"
@@ -39,7 +40,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Flawfinder) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Flawfinder.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Flawfinder.ToString())
 		return
 	}
 
@@ -61,11 +62,11 @@ func (f *Formatter) startFlawfinder(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Flawfinder),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Flawfinder].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.C), images.C)
 }
 
 func (f *Formatter) parseOutput(output string) error {

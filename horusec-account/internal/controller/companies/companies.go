@@ -25,20 +25,22 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
+	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	companyUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/company"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
+	companyUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/company"
 	"github.com/google/uuid"
 )
 
 type IController interface {
-	Create(accountID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
-	Update(companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error)
+	Create(accountID uuid.UUID, data *accountEntities.Company, permissions []string) (*accountEntities.Company, error)
+	Update(companyID uuid.UUID, data *accountEntities.Company, permissions []string) (*accountEntities.Company, error)
 	Get(companyID, accountID uuid.UUID) (*accountEntities.CompanyResponse, error)
-	List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
+	List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error)
 	UpdateAccountCompany(role *roles.AccountCompany) error
 	InviteUser(inviteUser *dto.InviteUser) error
 	Delete(companyID uuid.UUID) error
@@ -76,23 +78,39 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 	}
 }
 
-func (c *Controller) Create(accountID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (c *Controller) Create(accountID uuid.UUID, data *accountEntities.Company,
+	permissions []string) (*accountEntities.Company, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap && c.companyUseCases.IsInvalidLdapGroup(data.AuthzAdmin, permissions) {
+		return nil, errorsEnums.ErrorInvalidLdapGroup
+	}
+
+	return c.createCompanyWithTransaction(accountID, data)
+}
+
+func (c *Controller) createCompanyWithTransaction(accountID uuid.UUID,
+	data *accountEntities.Company) (*accountEntities.Company, error) {
 	tx := c.databaseWrite.StartTransaction()
 	newCompany, err := c.repoCompany.Create(data, tx)
 	if err != nil {
 		return nil, err
 	}
+
 	if err = c.repoAccountCompany.CreateAccountCompany(
 		newCompany.CompanyID, accountID, accountEnums.Admin, tx); err != nil {
 		_ = tx.RollbackTransaction()
 		return nil, err
 	}
+
 	_ = tx.CommitTransaction()
 	return newCompany, nil
 }
 
-func (c *Controller) Update(
-	companyID uuid.UUID, data *accountEntities.Company) (*accountEntities.Company, error) {
+func (c *Controller) Update(companyID uuid.UUID,
+	data *accountEntities.Company, permissions []string) (*accountEntities.Company, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap && c.companyUseCases.IsInvalidLdapGroup(data.AuthzAdmin, permissions) {
+		return nil, errorsEnums.ErrorInvalidLdapGroup
+	}
+
 	return c.repoCompany.Update(companyID, data)
 }
 
@@ -110,7 +128,11 @@ func (c *Controller) Get(companyID, accountID uuid.UUID) (*accountEntities.Compa
 	return company.ToCompanyResponse(accountCompany.Role), nil
 }
 
-func (c *Controller) List(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+func (c *Controller) List(accountID uuid.UUID, permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap {
+		return c.repoCompany.ListByLdapPermissions(permissions)
+	}
+
 	return c.repoCompany.GetAllOfAccount(accountID)
 }
 
@@ -181,5 +203,6 @@ func (c *Controller) GetAccountIDByEmail(email string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
+
 	return account.AccountID, nil
 }

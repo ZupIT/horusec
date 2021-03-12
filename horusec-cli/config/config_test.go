@@ -19,13 +19,13 @@ import (
 	"path"
 	"testing"
 
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,6 +35,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		currentPath, _ := os.Getwd()
 		configs := &Config{}
 		configs.NewConfigsFromEnvironments()
+		assert.Equal(t, "{{VERSION_NOT_FOUND}}", configs.GetVersion())
 		assert.Equal(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.Equal(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
 		assert.Equal(t, int64(300), configs.GetTimeoutInSecondsRequest())
@@ -43,8 +44,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, uuid.Nil.String(), configs.GetRepositoryAuthorization())
 		assert.Equal(t, "text", configs.GetPrintOutputType())
 		assert.Equal(t, "", configs.GetJSONOutputFilePath())
-		assert.Equal(t, 2, len(configs.GetSeveritiesToIgnore()))
-		assert.Equal(t, 0, len(configs.GetFilesOrPathsToIgnore()))
+		assert.Equal(t, 1, len(configs.GetSeveritiesToIgnore()))
+		assert.Equal(t, 2, len(configs.GetFilesOrPathsToIgnore()))
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, currentPath, configs.GetProjectPath())
 		assert.Equal(t, "", configs.GetFilterPath())
@@ -62,6 +63,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 0, len(configs.GetToolsConfig()))
 		assert.Equal(t, false, configs.GetDisableDocker())
 		assert.Equal(t, "", configs.GetCustomRulesPath())
+		assert.Equal(t, false, configs.GetEnableInformationSeverity())
+		assert.Equal(t, 0, len(configs.GetCustomImages()))
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		currentPath, _ := os.Getwd()
@@ -90,9 +93,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetHeaders(map[string]string{"x-header": "value"})
 		configs.SetContainerBindProjectPath("./some-other-file-path")
 		configs.SetIsTimeout(true)
-		configs.SetToolsConfig(map[tools.Tool]toolsconfig.ToolConfig{tools.Eslint: {ImagePath: "docker.io/company/eslint:latest", IsToIgnore: true}})
+		configs.SetToolsConfig(toolsconfig.MapToolConfig{tools.Eslint: {IsToIgnore: true}})
 		configs.SetDisableDocker(true)
 		configs.SetCustomRulesPath("test")
+		configs.SetEnableInformationSeverity(true)
+		configs.SetCustomImages(map[languages.Language]string{languages.Go: "test/test"})
 
 		assert.NotEqual(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.NotEqual(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
@@ -121,6 +126,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NotEqual(t, toolsconfig.ToolConfig{}, configs.GetToolsConfig()[tools.Eslint])
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
+		assert.NotEqual(t, map[languages.Language]string{}, configs.GetCustomImages())
 	})
 	t.Run("Should return horusec config using old viper file", func(t *testing.T) {
 		viper.Reset()
@@ -155,10 +162,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 	})
 	t.Run("Should return horusec config using new viper file", func(t *testing.T) {
 		viper.Reset()
@@ -193,10 +201,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 	})
 	t.Run("Should return horusec config using viper file and override by environment", func(t *testing.T) {
 		viper.Reset()
@@ -230,10 +239,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"hash1", "hash2"}, configs.GetFalsePositiveHashes())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 
 		assert.NoError(t, os.Setenv(EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(EnvTimeoutInSecondsRequest, "99"))
@@ -242,7 +252,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvRepositoryAuthorization, authorization))
 		assert.NoError(t, os.Setenv(EnvPrintOutputType, "sonarqube"))
 		assert.NoError(t, os.Setenv(EnvJSONOutputFilePath, "./output-sonarqube.json"))
-		assert.NoError(t, os.Setenv(EnvSeveritiesToIgnore, "AUDIT"))
+		assert.NoError(t, os.Setenv(EnvSeveritiesToIgnore, "INFO"))
 		assert.NoError(t, os.Setenv(EnvFilesOrPathsToIgnore, "**/*_test.go, **/*_mock.go"))
 		assert.NoError(t, os.Setenv(EnvReturnErrorIfFoundVulnerability, "false"))
 		assert.NoError(t, os.Setenv(EnvProjectPath, "./horusec-manager"))
@@ -258,6 +268,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "./my-path"))
 		assert.NoError(t, os.Setenv(EnvDisableDocker, "true"))
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
+		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
@@ -267,7 +278,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, authorization, configs.GetRepositoryAuthorization())
 		assert.Equal(t, "sonarqube", configs.GetPrintOutputType())
 		assert.Equal(t, "./output-sonarqube.json", configs.GetJSONOutputFilePath())
-		assert.Equal(t, []string{"AUDIT"}, configs.GetSeveritiesToIgnore())
+		assert.Equal(t, []string{"INFO"}, configs.GetSeveritiesToIgnore())
 		assert.Equal(t, []string{"**/*_test.go", "**/*_mock.go"}, configs.GetFilesOrPathsToIgnore())
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./horusec-manager", configs.GetProjectPath())
@@ -284,6 +295,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "./my-path", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 	})
 	t.Run("Should return horusec config using viper file and override by environment and override by flags", func(t *testing.T) {
 		viper.Reset()
@@ -318,10 +330,11 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{"hash1", "hash2"}, configs.GetFalsePositiveHashes())
 		assert.Equal(t, map[string]string{"x-headers": "some-other-value"}, configs.GetHeaders())
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
-			ImagePath:  "docker.io/company/gosec:latest",
 		}, configs.GetToolsConfig()[tools.GoSec])
+		assert.Equal(t, "docker.io/company/go:latest", configs.GetCustomImages()["go"])
 
 		assert.NoError(t, os.Setenv(EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(EnvTimeoutInSecondsRequest, "99"))
@@ -330,7 +343,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvRepositoryAuthorization, authorization))
 		assert.NoError(t, os.Setenv(EnvPrintOutputType, "sonarqube"))
 		assert.NoError(t, os.Setenv(EnvJSONOutputFilePath, "./output-sonarqube.json"))
-		assert.NoError(t, os.Setenv(EnvSeveritiesToIgnore, "AUDIT"))
+		assert.NoError(t, os.Setenv(EnvSeveritiesToIgnore, "INFO"))
 		assert.NoError(t, os.Setenv(EnvFilesOrPathsToIgnore, "**/*_test.go, **/*_mock.go"))
 		assert.NoError(t, os.Setenv(EnvReturnErrorIfFoundVulnerability, "false"))
 		assert.NoError(t, os.Setenv(EnvProjectPath, "./horusec-manager"))
@@ -346,6 +359,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "./my-path"))
 		assert.NoError(t, os.Setenv(EnvDisableDocker, "true"))
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
+		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
@@ -355,7 +369,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, authorization, configs.GetRepositoryAuthorization())
 		assert.Equal(t, "sonarqube", configs.GetPrintOutputType())
 		assert.Equal(t, "./output-sonarqube.json", configs.GetJSONOutputFilePath())
-		assert.Equal(t, []string{"AUDIT"}, configs.GetSeveritiesToIgnore())
+		assert.Equal(t, []string{"INFO"}, configs.GetSeveritiesToIgnore())
 		assert.Equal(t, []string{"**/*_test.go", "**/*_mock.go"}, configs.GetFilesOrPathsToIgnore())
 		assert.Equal(t, false, configs.GetReturnErrorIfFoundVulnerability())
 		assert.Equal(t, "./horusec-manager", configs.GetProjectPath())
@@ -372,6 +386,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "./my-path", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetDisableDocker())
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		cobraCmd := &cobra.Command{
 			Use:     "start",
 			Short:   "Start horusec-cli",
@@ -387,44 +402,53 @@ func TestNewHorusecConfig(t *testing.T) {
 			StringSliceP("false-positive", "F", configs.GetFalsePositiveHashes(), "Used to ignore a vulnerability by hash and setting it to be of the false positive type. Example -F=\"hash1, hash2\"")
 		_ = cobraCmd.PersistentFlags().
 			StringSliceP("risk-accept", "R", configs.GetRiskAcceptHashes(), "Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
-		args := []string{"-p", "/home/usr/project", "-F", "SOMEHASHALEATORY1,SOMEHASHALEATORY2", "-R", "SOMEHASHALEATORY3,SOMEHASHALEATORY4"}
+		_ = cobraCmd.PersistentFlags().
+			Int64P("analysis-timeout", "t", configs.GetTimeoutInSecondsAnalysis(), "The timeout threshold for the Horusec CLI wait for the analysis to complete.")
+		_ = cobraCmd.PersistentFlags().
+			BoolP("information-severity", "I", configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
+		args := []string{"-p", "/home/usr/project", "-F", "SOMEHASHALEATORY1,SOMEHASHALEATORY2", "-R", "SOMEHASHALEATORY3,SOMEHASHALEATORY4", "-t", "1000", "I", "true"}
 		assert.NoError(t, cobraCmd.PersistentFlags().Parse(args))
 		assert.NoError(t, cobraCmd.Execute())
 		configs.NewConfigsFromCobraAndLoadsCmdStartFlags(cobraCmd)
 		assert.Equal(t, "/home/usr/project", configs.GetProjectPath())
 		assert.Equal(t, []string{"SOMEHASHALEATORY1", "SOMEHASHALEATORY2"}, configs.GetFalsePositiveHashes())
 		assert.Equal(t, []string{"SOMEHASHALEATORY3", "SOMEHASHALEATORY4"}, configs.GetRiskAcceptHashes())
+		assert.Equal(t, int64(1000), configs.GetTimeoutInSecondsAnalysis())
+		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 	})
 }
 
 func TestToLowerCamel(t *testing.T) {
 	t.Run("should success set all configs as lower camel case", func(t *testing.T) {
 		configs := &Config{}
-
 		assert.Equal(t, "horusecCliHorusecApiUri", configs.toLowerCamel(EnvHorusecAPIUri))
+		assert.Equal(t, "horusecCliRepositoryAuthorization", configs.toLowerCamel(EnvRepositoryAuthorization))
+		assert.Equal(t, "horusecCliFilterPath", configs.toLowerCamel(EnvFilterPath))
+		assert.Equal(t, "horusecCliCertPath", configs.toLowerCamel(EnvCertPath))
+		assert.Equal(t, "horusecCliRepositoryName", configs.toLowerCamel(EnvRepositoryName))
+		assert.Equal(t, "horusecCliPrintOutputType", configs.toLowerCamel(EnvPrintOutputType))
+		assert.Equal(t, "horusecCliJsonOutputFilepath", configs.toLowerCamel(EnvJSONOutputFilePath))
+		assert.Equal(t, "horusecCliProjectPath", configs.toLowerCamel(EnvProjectPath))
+		assert.Equal(t, "horusecCliCustomRulesPath", configs.toLowerCamel(EnvCustomRulesPath))
+		assert.Equal(t, "horusecCliContainerBindProjectPath", configs.toLowerCamel(EnvContainerBindProjectPath))
 		assert.Equal(t, "horusecCliTimeoutInSecondsRequest", configs.toLowerCamel(EnvTimeoutInSecondsRequest))
 		assert.Equal(t, "horusecCliTimeoutInSecondsAnalysis", configs.toLowerCamel(EnvTimeoutInSecondsAnalysis))
 		assert.Equal(t, "horusecCliMonitorRetryInSeconds", configs.toLowerCamel(EnvMonitorRetryInSeconds))
-		assert.Equal(t, "horusecCliRepositoryAuthorization", configs.toLowerCamel(EnvRepositoryAuthorization))
-		assert.Equal(t, "horusecCliPrintOutputType", configs.toLowerCamel(EnvPrintOutputType))
-		assert.Equal(t, "horusecCliJsonOutputFilepath", configs.toLowerCamel(EnvJSONOutputFilePath))
+		assert.Equal(t, "horusecCliReturnErrorIfFoundVulnerability", configs.toLowerCamel(EnvReturnErrorIfFoundVulnerability))
+		assert.Equal(t, "horusecCliEnableGitHistoryAnalysis", configs.toLowerCamel(EnvEnableGitHistoryAnalysis))
+		assert.Equal(t, "horusecCliCertInsecureSkipVerify", configs.toLowerCamel(EnvCertInsecureSkipVerify))
+		assert.Equal(t, "horusecCliEnableCommitAuthor", configs.toLowerCamel(EnvEnableCommitAuthor))
+		assert.Equal(t, "horusecCliDisableDocker", configs.toLowerCamel(EnvDisableDocker))
+		assert.Equal(t, "horusecCliEnableInformationSeverity", configs.toLowerCamel(EnvEnableInformationSeverity))
 		assert.Equal(t, "horusecCliSeveritiesToIgnore", configs.toLowerCamel(EnvSeveritiesToIgnore))
 		assert.Equal(t, "horusecCliFilesOrPathsToIgnore", configs.toLowerCamel(EnvFilesOrPathsToIgnore))
-		assert.Equal(t, "horusecCliReturnErrorIfFoundVulnerability", configs.toLowerCamel(EnvReturnErrorIfFoundVulnerability))
-		assert.Equal(t, "horusecCliProjectPath", configs.toLowerCamel(EnvProjectPath))
-		assert.Equal(t, "horusecCliWorkDir", configs.toLowerCamel(EnvWorkDirPath))
-		assert.Equal(t, "horusecCliFilterPath", configs.toLowerCamel(EnvFilterPath))
-		assert.Equal(t, "horusecCliEnableGitHistoryAnalysis", configs.toLowerCamel(EnvEnableGitHistoryAnalysis))
-		assert.Equal(t, "horusecCliEnableCommitAuthor", configs.toLowerCamel(EnvEnableCommitAuthor))
-		assert.Equal(t, "horusecCliCertInsecureSkipVerify", configs.toLowerCamel(EnvCertInsecureSkipVerify))
-		assert.Equal(t, "horusecCliRepositoryName", configs.toLowerCamel(EnvRepositoryName))
 		assert.Equal(t, "horusecCliFalsePositiveHashes", configs.toLowerCamel(EnvFalsePositiveHashes))
 		assert.Equal(t, "horusecCliRiskAcceptHashes", configs.toLowerCamel(EnvRiskAcceptHashes))
-		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
-		assert.Equal(t, "horusecCliContainerBindProjectPath", configs.toLowerCamel(EnvContainerBindProjectPath))
+		assert.Equal(t, "horusecCliToolsToIgnore", configs.toLowerCamel(EnvToolsToIgnore))
 		assert.Equal(t, "horusecCliToolsConfig", configs.toLowerCamel(EnvToolsConfig))
-		assert.Equal(t, "horusecCliDisableDocker", configs.toLowerCamel(EnvDisableDocker))
-		assert.Equal(t, "horusecCliCustomRulesPath", configs.toLowerCamel(EnvCustomRulesPath))
+		assert.Equal(t, "horusecCliHeaders", configs.toLowerCamel(EnvHeaders))
+		assert.Equal(t, "horusecCliWorkDir", configs.toLowerCamel(EnvWorkDir))
+		assert.Equal(t, "horusecCliCustomImages", configs.toLowerCamel(EnvCustomImages))
 	})
 }
 

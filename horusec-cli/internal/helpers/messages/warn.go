@@ -33,5 +33,9 @@ const (
 		" please use csharp key in workdir"
 	MsgWarnToolsToIgnoreDeprecated = "{HORUSEC_CLI} The option 'tools to ignore' key will be removed in the next release" +
 		" after 16 jan 2021, please use tools config option"
-	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the list of vulnerabilities pointed out by Horusec: "
+	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the " +
+		"list of vulnerabilities pointed out by Horusec: "
+	MsgWarnInfoVulnerabilitiesDisabled = "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis, " +
+		"to see info vulnerabilities add option \"--information-severity=true\". " +
+		"For more details use (horusec start --help) command."
 )

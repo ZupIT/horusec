@@ -25,16 +25,16 @@ horusecSetVersion () {
 }
 
 horusecIdentifyOS () {
-    if [ $(uname) = "Linux" ]; then
-        if [ $(uname -m) = "x86_64" ]; then
+    if [ "$(uname)" = "Linux" ]; then
+        if [ "$(uname -m)" = "x86_64" ]; then
             echo "Installing Horusec for Linux x64"
             URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/linux_x64/horusec"
         else
             echo "Installing Horusec for Linux x86"
             URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/linux_x86/horusec"
         fi
-    elif [ $(uname) = "Darwin" ]; then
-        if [ $(uname -m) = "x86_64" ]; then
+    elif [ "$(uname)" = "Darwin" ]; then
+        if [ "$(uname -m)" = "x86_64" ]; then
             echo "Installing Horusec for Mac x64"
             URL_DOWNLOAD="https://horusec.io/bin/${VERSION_DOWNLOAD}/mac_x64/horusec"
         else
@@ -48,7 +48,7 @@ horusecIdentifyOS () {
 }
 
 horusecDownloadAndInstall () {
-    echo "You are using a install method that will be depracated soon. check our documentation at https://docs.horusec.io"
+    echo "You are using a install method that will be depracated soon. check our documentation at https://horusec.io/docs"
 
     INSTALL_PATH="/usr/local/bin"
 

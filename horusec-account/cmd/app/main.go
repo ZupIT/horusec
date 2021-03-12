@@ -16,13 +16,13 @@
 package main
 
 import (
+	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	"log"
 	"net/http"
 
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	grpcConfig "github.com/ZupIT/horusec/horusec-account/config/grpc"
 
-	databaseSQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	brokerConfig "github.com/ZupIT/horusec/horusec-account/config/broker"
@@ -44,21 +44,18 @@ import (
 // @name X-Horusec-Authorization
 func main() {
 	var broker brokerLib.IBroker
+	grpcCon := grpcConfig.SetupGrpcConnection()
 
-	appConfig := app.SetupApp()
+	appConfig := app.SetupApp(grpcCon)
 	if !appConfig.IsDisabledBroker() {
 		broker = brokerConfig.SetUp()
 	}
 
-	databaseRead := databaseSQL.NewRepositoryRead()
-	databaseWrite := databaseSQL.NewRepositoryWrite()
-
 	server := serverUtil.NewServerConfig("8003", cors.NewCorsConfig()).Timeout(10)
-	chiRouter := router.NewRouter(server).GetRouter(broker, databaseRead, databaseWrite,
-		appConfig, grpcConfig.SetupGrpcConnection())
+	chiRouter := router.NewRouter(server).GetRouter(broker, databaseSQL.NewRepositoryRead(),
+		databaseSQL.NewRepositoryWrite(), appConfig, grpcCon)
 
 	log.Println("service running on port", server.GetPort())
 	swagger.SetupSwagger(chiRouter, "8003")
-
 	log.Fatal(http.ListenAndServe(server.GetPort(), chiRouter))
 }

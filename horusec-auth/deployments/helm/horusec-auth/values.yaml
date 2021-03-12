@@ -4,7 +4,7 @@ image:
   repository: horuszup/horusec-auth
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.1.0
+  tag: v1.5.2
 
 imagePullSecrets: []
 nameOverride: ""
@@ -89,7 +89,7 @@ env:
   - name: "HORUSEC_GRPC_KEY_PATH"
     value: ""
   - name: "HORUSEC_BROKER_HOST"
-    value: "horus-mq-rabbitmq"
+    value: "rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_DISABLED_BROKER"

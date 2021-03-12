@@ -2,14 +2,16 @@ package toolsconfig
 
 import (
 	"encoding/json"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 )
 
+type MapToolConfig map[tools.Tool]ToolConfig
+
 type ToolConfig struct {
-	IsToIgnore bool   `json:"istoignore"`
-	ImagePath  string `json:"imagepath"`
+	IsToIgnore bool `json:"istoignore"`
 }
 
 type ToolsConfigsStruct struct {
@@ -32,11 +34,13 @@ type ToolsConfigsStruct struct {
 	HorusecNodejs     ToolConfig `json:"horusecnodejs"`
 	Flawfinder        ToolConfig `json:"flawfinder"`
 	PhpCS             ToolConfig `json:"phpcs"`
+	HorusecDart       ToolConfig `json:"horusecdart"`
+	ShellCheck        ToolConfig `json:"shellcheck"`
 }
 
 //nolint:funlen parse struct is necessary > 15 lines
-func (t *ToolsConfigsStruct) ToMap() map[tools.Tool]ToolConfig {
-	return map[tools.Tool]ToolConfig{
+func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
+	return MapToolConfig{
 		tools.GoSec:             t.GoSec,
 		tools.SecurityCodeScan:  t.SecurityCodeScan,
 		tools.Brakeman:          t.Brakeman,
@@ -56,19 +60,21 @@ func (t *ToolsConfigsStruct) ToMap() map[tools.Tool]ToolConfig {
 		tools.HorusecNodejs:     t.HorusecNodejs,
 		tools.Flawfinder:        t.Flawfinder,
 		tools.PhpCS:             t.PhpCS,
+		tools.HorusecDart:       t.HorusecDart,
+		tools.ShellCheck:        t.ShellCheck,
 	}
 }
 
-func ParseInterfaceToMapToolsConfig(input interface{}) (output map[tools.Tool]ToolConfig) {
+func ParseInterfaceToMapToolsConfig(input interface{}) (output MapToolConfig) {
 	outputStruct := ToolsConfigsStruct{}
 	bytes, err := json.Marshal(input)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
 		return outputStruct.ToMap()
 	}
 	err = json.Unmarshal(bytes, &outputStruct)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
 		return outputStruct.ToMap()
 	}
 	return outputStruct.ToMap()

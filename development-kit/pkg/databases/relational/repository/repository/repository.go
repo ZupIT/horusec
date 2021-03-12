@@ -16,10 +16,12 @@ package repository
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+
+	"github.com/lib/pq"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
@@ -34,6 +36,7 @@ type IRepository interface {
 	GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error)
 	GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error)
 	GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error)
+	ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error)
 }
 
 type Repository struct {
@@ -122,7 +125,7 @@ func (r *Repository) listByRoles(accountID, companyID uuid.UUID) (*[]accountEnti
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, accountRepo.role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+			"repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_repository AS accountRepo ON accountRepo.repository_id = repo.repository_id"+
 			" AND accountRepo.account_id = ?", accountID).
@@ -138,7 +141,7 @@ func (r *Repository) listAllInCompany(accountID, companyID uuid.UUID) (*[]accoun
 	query := r.databaseRead.
 		GetConnection().
 		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
-			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+			"repo.created_at, repo.updated_at").
 		Table("repositories AS repo").
 		Joins("JOIN account_company AS accountCompany ON accountCompany.company_id = repo.company_id "+
 			"AND accountCompany.account_id = ?", accountID).
@@ -167,4 +170,59 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 
 	response := r.databaseRead.RawSQL(query, accounts)
 	return accounts, response.GetError()
+}
+
+//nolint
+func (r *Repository) ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+	repositories := &[]accountEntities.RepositoryResponse{}
+
+	query := fmt.Sprintf(`
+		SELECT *
+		FROM (
+			SELECT * FROM (%[1]s) AS admin
+			UNION ALL
+			(
+				SELECT * FROM (%[2]s) AS supervisor
+				WHERE supervisor.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
+				UNION ALL
+				SELECT * FROM (%[3]s) AS member
+				WHERE member.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
+				AND member.repository_id NOT IN (SELECT repository_id FROM (%[2]s) AS supervisor)
+			)
+		) AS repositories
+	`, r.listByLdapPermissionsWhenAdmin(companyID), r.listByLdapPermissionsWhenSupervisor(companyID),
+		r.listByLdapPermissionsWhenMember(companyID))
+
+	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&repositories)
+	return repositories, response.Error
+}
+
+//nolint
+func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_admin
+	`, companyID)
+}
+
+//nolint
+func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_supervisor
+	`, companyID)
+}
+
+//nolint
+func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID) string {
+	return fmt.Sprintf(`	
+		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,
+		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
+		FROM repositories AS repo
+		WHERE repo.company_id = '%s' AND $1 && repo.authz_member
+	`, companyID)
 }

@@ -21,11 +21,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -37,8 +37,14 @@ import (
 
 func NewConfig() IConfig {
 	return &Config{
-		workDir:     workdir.NewWorkDir(),
-		toolsConfig: toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		falsePositiveHashes: []string{},
+		riskAcceptHashes:    []string{},
+		severitiesToIgnore:  []string{},
+		toolsToIgnore:       []string{},
+		headers:             map[string]string{},
+		workDir:             workdir.NewWorkDir(),
+		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		customImages:        images.NewCustomImages(),
 	}
 }
 
@@ -74,6 +80,7 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
 	c.SetDisableDocker(c.extractFlagValueBool(cmd, "disable-docker", c.GetDisableDocker()))
 	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
+	c.SetEnableInformationSeverity(c.extractFlagValueBool(cmd, "information-severity", c.GetEnableInformationSeverity()))
 	return c
 }
 
@@ -93,7 +100,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetFilesOrPathsToIgnore(viper.GetStringSlice(c.toLowerCamel(EnvFilesOrPathsToIgnore)))
 	c.SetReturnErrorIfFoundVulnerability(viper.GetBool(c.toLowerCamel(EnvReturnErrorIfFoundVulnerability)))
 	c.SetProjectPath(viper.GetString(c.toLowerCamel(EnvProjectPath)))
-	c.SetWorkDir(viper.Get(c.toLowerCamel(EnvWorkDirPath)))
+	c.SetWorkDir(viper.Get(c.toLowerCamel(EnvWorkDir)))
 	c.SetFilterPath(viper.GetString(c.toLowerCamel(EnvFilterPath)))
 	c.SetEnableGitHistoryAnalysis(viper.GetBool(c.toLowerCamel(EnvEnableGitHistoryAnalysis)))
 	c.SetCertInsecureSkipVerify(viper.GetBool(c.toLowerCamel(EnvCertInsecureSkipVerify)))
@@ -108,6 +115,8 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
 	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
 	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
+	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
+	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	return c
 }
 
@@ -137,15 +146,20 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
 	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
 	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
+	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	return c
 }
 
 func (c *Config) GetDefaultConfigFilePath() string {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGetCurrentPath, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorGetCurrentPath, err)
 	}
 	return path.Join(currentDir, "horusec-config.json")
+}
+
+func (c *Config) GetVersion() string {
+	return "{{VERSION_NOT_FOUND}}"
 }
 
 func (c *Config) GetConfigFilePath() string {
@@ -221,7 +235,7 @@ func (c *Config) SetJSONOutputFilePath(jsonOutputFilePath string) {
 }
 
 func (c *Config) GetSeveritiesToIgnore() []string {
-	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"AUDIT", "INFO"})
+	return valueordefault.GetSliceStringValueOrDefault(c.severitiesToIgnore, []string{"INFO"})
 }
 
 func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {
@@ -229,7 +243,7 @@ func (c *Config) SetSeveritiesToIgnore(severitiesToIgnore []string) {
 }
 
 func (c *Config) GetFilesOrPathsToIgnore() []string {
-	return c.filesOrPathsToIgnore
+	return valueordefault.GetSliceStringValueOrDefault(c.filesOrPathsToIgnore, []string{"*tmp*", "**/.vscode/**"})
 }
 
 func (c *Config) SetFilesOrPathsToIgnore(filesOrPaths []string) {
@@ -266,7 +280,7 @@ func (c *Config) GetWorkDir() *workdir.WorkDir {
 
 func (c *Config) SetWorkDir(input interface{}) {
 	if c.netCoreKeyIsDeprecated(input) {
-		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnNetCoreDeprecated)
 	}
 	if input != nil {
 		c.workDir = c.workDir.ParseInterfaceToStruct(input)
@@ -342,7 +356,7 @@ func (c *Config) GetToolsToIgnore() (output []string) {
 
 func (c *Config) SetToolsToIgnore(toolsToIgnore []string) {
 	if len(toolsToIgnore) > 0 {
-		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated, logger.WarnLevel)
+		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated)
 	}
 	c.toolsToIgnore = c.factoryParseInputToSliceString(toolsToIgnore)
 }
@@ -353,7 +367,7 @@ func (c *Config) GetHeaders() (headers map[string]string) {
 
 func (c *Config) SetHeaders(headers interface{}) {
 	output, err := utilsJson.ConvertInterfaceToMapString(headers)
-	logger.LogErrorWithLevel("Error on marshal headers to bytes", err, logger.PanicLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorSetHeadersOnConfig, err)
 	c.headers = output
 }
 
@@ -373,10 +387,10 @@ func (c *Config) SetIsTimeout(isTimeout bool) {
 	c.isTimeout = isTimeout
 }
 
-func (c *Config) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (c *Config) GetToolsConfig() toolsconfig.MapToolConfig {
 	content := toolsconfig.ToolsConfigsStruct{}
 	return valueordefault.GetInterfaceValueOrDefault(
-		c.toolsConfig, content.ToMap()).(map[tools.Tool]toolsconfig.ToolConfig)
+		c.toolsConfig, content.ToMap()).(toolsconfig.MapToolConfig)
 }
 
 func (c *Config) SetToolsConfig(toolsConfig interface{}) {
@@ -390,7 +404,7 @@ func (c *Config) IsEmptyRepositoryAuthorization() bool {
 func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue string) string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetString(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -399,7 +413,7 @@ func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue s
 func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultValue int64) int64 {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetInt64(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -408,7 +422,7 @@ func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultV
 func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultValue bool) bool {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetBool(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -417,7 +431,7 @@ func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultVa
 func (c *Config) extractFlagValueStringSlice(cmd *cobra.Command, name string, defaultValue []string) []string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetStringSlice(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
@@ -427,20 +441,20 @@ func (c *Config) extractFlagValueStringToString(
 	cmd *cobra.Command, name string, defaultValue map[string]string) map[string]string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetStringToString(name)
-		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err, logger.PanicLevel)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
 		return flagValue
 	}
 	return defaultValue
 }
 
 func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
-	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath+c.GetConfigFilePath(), logger.DebugLevel)
+	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath + c.GetConfigFilePath())
 	if _, err := os.Stat(c.GetConfigFilePath()); os.IsNotExist(err) {
-		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath, logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath)
 		return false
 	}
 	viper.SetConfigFile(c.GetConfigFilePath())
-	logger.LogPanicWithLevel(messages.MsgPanicGetConfigFilePath, viper.ReadInConfig(), logger.PanicLevel)
+	logger.LogPanicWithLevel(messages.MsgPanicGetConfigFilePath, viper.ReadInConfig())
 	return true
 }
 
@@ -475,6 +489,8 @@ func (c *Config) toMap() map[string]interface{} {
 		"workDir":                         c.workDir,
 		"disableDocker":                   c.disableDocker,
 		"customRulesPath":                 c.customRulesPath,
+		"enableInformationSeverity":       c.enableInformationSeverity,
+		"customImages":                    c.customImages,
 	}
 }
 
@@ -486,6 +502,40 @@ func (c *Config) ToBytes(isMarshalIndent bool) (bytes []byte) {
 	}
 
 	return bytes
+}
+
+// nolint:funlen is necessary to return complety map
+func (c *Config) ToMapLowerCase() map[string]interface{} {
+	return map[string]interface{}{
+		c.toLowerCamel(EnvHorusecAPIUri):                   c.GetHorusecAPIUri(),
+		c.toLowerCamel(EnvTimeoutInSecondsRequest):         c.GetTimeoutInSecondsRequest(),
+		c.toLowerCamel(EnvTimeoutInSecondsAnalysis):        c.GetTimeoutInSecondsAnalysis(),
+		c.toLowerCamel(EnvMonitorRetryInSeconds):           c.GetMonitorRetryInSeconds(),
+		c.toLowerCamel(EnvRepositoryAuthorization):         c.GetRepositoryAuthorization(),
+		c.toLowerCamel(EnvPrintOutputType):                 c.GetPrintOutputType(),
+		c.toLowerCamel(EnvJSONOutputFilePath):              c.GetJSONOutputFilePath(),
+		c.toLowerCamel(EnvSeveritiesToIgnore):              c.GetSeveritiesToIgnore(),
+		c.toLowerCamel(EnvFilesOrPathsToIgnore):            c.GetFilesOrPathsToIgnore(),
+		c.toLowerCamel(EnvReturnErrorIfFoundVulnerability): c.GetReturnErrorIfFoundVulnerability(),
+		c.toLowerCamel(EnvProjectPath):                     c.GetProjectPath(),
+		c.toLowerCamel(EnvWorkDir):                         c.GetWorkDir(),
+		c.toLowerCamel(EnvFilterPath):                      c.GetFilterPath(),
+		c.toLowerCamel(EnvEnableGitHistoryAnalysis):        c.GetEnableGitHistoryAnalysis(),
+		c.toLowerCamel(EnvCertInsecureSkipVerify):          c.GetCertInsecureSkipVerify(),
+		c.toLowerCamel(EnvCertPath):                        c.GetCertPath(),
+		c.toLowerCamel(EnvEnableCommitAuthor):              c.GetEnableCommitAuthor(),
+		c.toLowerCamel(EnvRepositoryName):                  c.GetRepositoryName(),
+		c.toLowerCamel(EnvFalsePositiveHashes):             c.GetFalsePositiveHashes(),
+		c.toLowerCamel(EnvRiskAcceptHashes):                c.GetRiskAcceptHashes(),
+		c.toLowerCamel(EnvToolsToIgnore):                   c.GetToolsToIgnore(),
+		c.toLowerCamel(EnvHeaders):                         c.GetHeaders(),
+		c.toLowerCamel(EnvContainerBindProjectPath):        c.GetContainerBindProjectPath(),
+		c.toLowerCamel(EnvToolsConfig):                     c.GetToolsConfig(),
+		c.toLowerCamel(EnvDisableDocker):                   c.GetDisableDocker(),
+		c.toLowerCamel(EnvCustomRulesPath):                 c.GetCustomRulesPath(),
+		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
+		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
+	}
 }
 
 func (c *Config) NormalizeConfigs() IConfig {
@@ -526,7 +576,8 @@ func (c *Config) factoryParseInputToSliceString(input interface{}) []string {
 	return []string{}
 }
 
-func (c *Config) replaceCommaToSpaceString(input string) (response []string) {
+func (c *Config) replaceCommaToSpaceString(input string) []string {
+	var response []string
 	if input != "" {
 		for _, item := range strings.Split(strings.TrimSpace(input), ",") {
 			newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
@@ -536,7 +587,8 @@ func (c *Config) replaceCommaToSpaceString(input string) (response []string) {
 	return response
 }
 
-func (c *Config) replaceCommaToSpaceSliceString(input []string) (response []string) {
+func (c *Config) replaceCommaToSpaceSliceString(input []string) []string {
+	var response []string
 	for _, item := range input {
 		newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
 		response = append(response, newItem)
@@ -558,4 +610,31 @@ func (c *Config) GetCustomRulesPath() string {
 
 func (c *Config) SetCustomRulesPath(customRulesPath string) {
 	c.customRulesPath = customRulesPath
+}
+
+func (c *Config) GetEnableInformationSeverity() bool {
+	return c.enableInformationSeverity
+}
+
+func (c *Config) SetEnableInformationSeverity(enableInformationSeverity bool) {
+	c.enableInformationSeverity = enableInformationSeverity
+}
+
+func (c *Config) GetCustomImages() images.Custom {
+	return c.customImages
+}
+
+func (c *Config) SetCustomImages(configData interface{}) {
+	customImages := images.Custom{}
+
+	bytes, err := json.Marshal(configData)
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
+	}
+
+	if err := json.Unmarshal(bytes, &customImages); err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
+	}
+
+	c.customImages = customImages
 }

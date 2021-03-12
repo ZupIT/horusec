@@ -154,6 +154,12 @@
   "DASHBOARD_SCREEN": {
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
+    "PERIOD": "Period",
+    "CUSTOM_RANGE": "Custom range",
+    "TODAY": "Today",
+    "LAST_WEEK": "Last 7 days",
+    "LAST_MONTH": "Last 30 days",
+    "BEGINNING": "From the beginning",
     "APPLY": "Apply",
     "TOTAL_DEVELOPERS": "Total developers",
     "TOTAL_REPOSITORIES": "Total repositories",
@@ -210,6 +216,7 @@
     "CONFIRM_DELETE_TOKEN": "Do you really want to delete this token? This action cannot be undone.",
     "CREATE_NEW_TOKEN": "Add new token",
     "INVALID_DESCRIPTION": "Invalid description",
+    "INVALID_EXPIRES_AT": "Is expected to be at least one day longer at now",
     "CREATE_TOKEN_BELOW": "Enter the description for the new token:",
     "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
     "TOKEN_SUCCESS": "Token created successfully!",
@@ -223,12 +230,16 @@
     "REFERENCE_GROUP": "Identify your user group, for the following Horusec groups:",
     "ADMIN": "Administrator:",
     "SUPERVISOR": "Supervisor:",
-    "GROUP_NAME": "Group Name"
+    "MEMBER": "Member",
+    "GROUP_NAME": "Group Name",
+    "IS_EXPIRABLE": "Is expirable",
+    "EXPIRES_AT": "Expires at"
   },
 
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
       "OF": "of",
@@ -387,7 +398,9 @@
     "REPO_NAME_IN_USE": "Repository name already in use.",
     "USERNAME_IN_USE": "Username already in use.",
     "SAME_PASSWORD": "The new password cannot be the same as the current one.",
-    "EMPTY_REPOSITORY": "Please select a repository to view the data."
+    "EMPTY_REPOSITORY": "Please select a repository to view the data.",
+    "LDAP_GROUP": "The user group must be valid for this user.",
+    "KEYCLOAK_LOGIN": "There was something unexpected when performing authentication, try again."
   },
 
   "NOT_FOUND_SCREEN": {

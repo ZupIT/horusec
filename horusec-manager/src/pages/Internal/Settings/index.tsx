@@ -16,7 +16,7 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Dialog } from 'components';
+import { Dialog, Datatable } from 'components';
 import Styled from './styled';
 import {
   getCurrentUser,
@@ -64,58 +64,48 @@ const Settings: React.FC = () => {
       <Styled.Content>
         <Styled.Title>{t('SETTINGS_SCREEN.TITLE')}</Styled.Title>
 
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.USER')}</Styled.Column>
-
-            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.EMAIL')}</Styled.Column>
-
-            <Styled.Column>{t('SETTINGS_SCREEN.TABLE.ACTION')}</Styled.Column>
-          </Styled.Head>
-
-          <Styled.Body>
-            <Styled.Row>
-              <Styled.Cell>{username}</Styled.Cell>
-
-              <Styled.Cell>{email}</Styled.Cell>
-
-              <Styled.Cell className="row">
-                <Button
-                  rounded
-                  outline
-                  opaque
-                  text={t('SETTINGS_SCREEN.TABLE.DELETE')}
-                  width={90}
-                  height={30}
-                  icon="delete"
-                  onClick={() => setOpenDeleteDialog(true)}
-                />
-
-                <Button
-                  outline
-                  rounded
-                  opaque
-                  text={t('SETTINGS_SCREEN.TABLE.EDIT')}
-                  width={90}
-                  height={30}
-                  icon="edit"
-                  onClick={() => setOpenEditDialog(true)}
-                />
-
-                <Button
-                  outline
-                  rounded
-                  opaque
-                  text={t('SETTINGS_SCREEN.TABLE.PASSWORD')}
-                  width={90}
-                  height={30}
-                  icon="lock"
-                  onClick={() => setOpenChangePassDialog(true)}
-                />
-              </Styled.Cell>
-            </Styled.Row>
-          </Styled.Body>
-        </Styled.Table>
+        <Datatable
+          columns={[
+            {
+              label: t('SETTINGS_SCREEN.TABLE.USER'),
+              property: 'username',
+              type: 'text',
+            },
+            {
+              label: t('SETTINGS_SCREEN.TABLE.EMAIL'),
+              property: 'email',
+              type: 'text',
+            },
+            {
+              label: t('SETTINGS_SCREEN.TABLE.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={[
+            {
+              username,
+              email,
+              actions: [
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setOpenEditDialog(true),
+                },
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.EDIT'),
+                  icon: 'edit',
+                  function: () => setOpenEditDialog(true),
+                },
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.PASSWORD'),
+                  icon: 'lock',
+                  function: () => setOpenChangePassDialog(true),
+                },
+              ],
+            },
+          ]}
+        />
       </Styled.Content>
 
       <Dialog

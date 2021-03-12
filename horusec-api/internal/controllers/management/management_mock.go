@@ -28,13 +28,18 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
-	vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error) {
+func (m *Mock) ListVulnManagementData(_ uuid.UUID, _, _ int, _ severity.Severity, _ horusecEnums.VulnerabilityType,
+	_ string) (vulnManagement dto.VulnManagement, err error) {
 	args := m.MethodCalled("ListVulnManagementData")
 	return args.Get(0).(dto.VulnManagement), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
+func (m *Mock) UpdateVulnType(_ uuid.UUID, _ *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
 	args := m.MethodCalled("UpdateVulnType")
+	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) UpdateVulnSeverity(_ uuid.UUID, _ *dto.UpdateVulnSeverity) (*horusec.Vulnerability, error) {
+	args := m.MethodCalled("UpdateVulnSeverity")
 	return args.Get(0).(*horusec.Vulnerability), mockUtils.ReturnNilOrError(args, 1)
 }

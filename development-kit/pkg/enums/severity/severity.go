@@ -17,12 +17,12 @@ package severity
 type Severity string
 
 const (
-	NoSec  Severity = "NOSEC"
-	Info   Severity = "INFO"
-	Low    Severity = "LOW"
-	Medium Severity = "MEDIUM"
-	High   Severity = "HIGH"
-	Audit  Severity = "AUDIT"
+	Critical Severity = "CRITICAL"
+	High     Severity = "HIGH"
+	Medium   Severity = "MEDIUM"
+	Low      Severity = "LOW"
+	Unknown  Severity = "UNKNOWN"
+	Info     Severity = "INFO"
 )
 
 func (s Severity) ToString() string {
@@ -31,15 +31,26 @@ func (s Severity) ToString() string {
 
 func Map() map[string]Severity {
 	return map[string]Severity{
-		NoSec.ToString():  NoSec,
-		Info.ToString():   Info,
-		Low.ToString():    Low,
-		Medium.ToString(): Medium,
-		High.ToString():   High,
-		Audit.ToString():  Audit,
+		Critical.ToString(): Critical,
+		High.ToString():     High,
+		Medium.ToString():   Medium,
+		Low.ToString():      Low,
+		Unknown.ToString():  Unknown,
+		Info.ToString():     Info,
 	}
 }
 
 func ParseStringToSeverity(content string) Severity {
 	return Map()[content]
+}
+
+func Values() []interface{} {
+	return []interface{}{
+		Critical,
+		High,
+		Medium,
+		Low,
+		Info,
+		Unknown,
+	}
 }

@@ -17,6 +17,8 @@ package gitleaks
 import (
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/leaks/gitleaks/entities"
 
 	vulnhash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
@@ -44,7 +46,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.GitLeaks) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.GitLeaks.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.GitLeaks.ToString())
 		return
 	}
 
@@ -66,7 +68,7 @@ func (f *Formatter) startGitLeaks(projectSubPath string) error {
 
 func (f *Formatter) formatOutputGitLeaks(output string) error {
 	if output == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
 		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
 		return nil
@@ -84,7 +86,7 @@ func (f *Formatter) formatOutputGitLeaks(output string) error {
 func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error) {
 	var issues []entities.Issue
 	err := jsonUtils.ConvertStringToOutput(output, &issues)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err)
 	return issues, err
 }
 
@@ -98,7 +100,7 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
 	vulnerabilitySeverity *horusec.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = severity.High
+	vulnerabilitySeverity.Severity = severity.Unknown
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File
@@ -118,11 +120,11 @@ func (f *Formatter) setCommitAuthor(vulnerability *horusec.Vulnerability,
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.GitLeaks),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.GitLeaks),
 		Language: languages.Leaks,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.GitLeaks].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Leaks), images.Leaks)
 }
 
 func (f *Formatter) getDefaultSeverity() *horusec.Vulnerability {

@@ -118,7 +118,11 @@ func (s *Service) verifyResponseCreateAnalysis(response httpResponse.Interface) 
 	if err != nil {
 		return err
 	}
-
+	if response.GetStatusCode() == 400 {
+		return fmt.Errorf("something went wrong while sending analysis to horusec. " +
+			"Check if your current version of Horusec-CLI is compatible with version in Horusec-API -> " +
+			string(body))
+	}
 	return fmt.Errorf("something went wrong while sending analysis to horusec -> %s", string(body))
 }
 
@@ -173,6 +177,7 @@ func (s *Service) newRequestData(analysis *horusec.Analysis) []byte {
 }
 
 func (s *Service) addHeaders(req *http.Request) {
+	req.Header.Add("X-Horusec-CLI-Version", s.config.GetVersion())
 	req.Header.Add("X-Horusec-Authorization", s.config.GetRepositoryAuthorization())
 	for key, value := range s.config.GetHeaders() {
 		req.Header.Add(key, value)

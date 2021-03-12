@@ -74,7 +74,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringP("output-format", "o", s.configs.GetPrintOutputType(), "The format for the output to be shown. Options are: text (stdout), json, sonarqube")
 	_ = startCmd.PersistentFlags().
-		StringSliceP("ignore-severity", "s", s.configs.GetSeveritiesToIgnore(), "The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, NOSEC\"")
+		StringSliceP("ignore-severity", "s", s.configs.GetSeveritiesToIgnore(), "The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, HIGH\"")
 	_ = startCmd.PersistentFlags().
 		StringP("json-output-file", "O", s.configs.GetJSONOutputFilePath(), "If your pass output-format you can configure the output JSON location. Example: -O=\"/tmp/output.json\"")
 	_ = startCmd.PersistentFlags().
@@ -117,16 +117,16 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		StringP("custom-rules-path", "c", s.configs.GetContainerBindProjectPath(), "Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
 	_ = startCmd.PersistentFlags().
 		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. Example: -D=\"true\"")
-
+	_ = startCmd.PersistentFlags().
+		BoolP("information-severity", "I", s.configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
 	return startCmd
 }
 
 func (s *Start) setConfig(startCmd *cobra.Command) {
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd)
-	s.configs = s.configs.NewConfigsFromViper()
-	s.configs = s.configs.NewConfigsFromEnvironments()
-	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd)
-	s.configs.NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdGlobalFlags(s.globalCmd).NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromViper().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromEnvironments().NormalizeConfigs()
+	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd).NormalizeConfigs()
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
@@ -148,7 +148,7 @@ func (s *Start) runE(cmd *cobra.Command, _ []string) error {
 
 func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err)
 		return 0, err
 	}
 	if err := s.configsValidations(cmd); err != nil {
@@ -159,7 +159,7 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 
 func (s *Start) configsValidations(cmd *cobra.Command) error {
 	if err := s.useCases.ValidateConfigs(s.configs); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err
 	}
@@ -167,7 +167,7 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 	s.configs.NormalizeConfigs()
 	s.validateRequirements()
 
-	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs+string(s.configs.ToBytes(true)), logger.DebugLevel)
+	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.ToBytes(true)))
 	return nil
 }
 
@@ -207,7 +207,11 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.GetProjectPath()),
 			"Y")
 		if err != nil {
-			return err
+			logger.LogWarnWithLevel(messages.MsgErrorWhenAskDirToRun+`
+Please use the command below informing the directory you want to run the analysis: 
+horusec start -p ./
+`, err.Error())
+			return nil
 		}
 		return s.validateReplyOfAsk(response)
 	}
@@ -216,8 +220,7 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 
 func (s *Start) validateReplyOfAsk(response string) error {
 	if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "n") {
-		logger.LogErrorWithLevel("Your response was: '"+response+"' Please type Y or N",
-			errors.New("reply invalid"), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorReplayWrong+response, errors.New("reply invalid"))
 		return s.askIfRunInDirectorySelected(true)
 	}
 	if strings.EqualFold(response, "n") {

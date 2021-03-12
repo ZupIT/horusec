@@ -40,11 +40,11 @@ jobs:
       - name: coverage
         run: make coverage-horusec-cli
       - name: build
-        run: go build -o "./tmp/bin/horusec-cli" ./horusec-cli/cmd/horusec/main.go
+        run: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "./tmp/bin/horusec-cli" ./horusec-cli/cmd/horusec/main.go
       - name: Running Horusec Security Running current version
         shell: bash
         run: |
-          go build -o horusec ./horusec-cli/cmd/horusec/main.go
+          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo  -o horusec ./horusec-cli/cmd/horusec/main.go
           chmod +x horusec
           sudo mv horusec /usr/local/bin
           horusec start -p="./"

@@ -21,16 +21,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-enry/go-enry/v2"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	copyUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/copy"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/toignore"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/bmatcuk/doublestar/v2"
+	"github.com/go-enry/go-enry/v2"
 	"github.com/google/uuid"
 )
 
@@ -54,7 +53,7 @@ func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language
 	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDetectLanguage, err)
 		return nil, err
 	}
 
@@ -70,7 +69,7 @@ func (ld *LanguageDetect) getLanguages(directory string) (languagesFound []strin
 	if filesToSkip > 0 {
 		print("\n")
 		msg := strings.ReplaceAll(messages.MsgWarnTotalFolderOrFileWasIgnored, "{{0}}", strconv.Itoa(filesToSkip))
-		logger.LogWarnWithLevel(msg, logger.WarnLevel)
+		logger.LogWarnWithLevel(msg)
 	}
 	return ld.uniqueLanguages(languagesFound), err
 }
@@ -95,12 +94,12 @@ func (ld *LanguageDetect) execWalkToGetLanguagesAndReturnIfSkip(
 	path string, info os.FileInfo) (languagesFound []string, skip bool) {
 	skip = ld.filesAndFoldersToIgnore(path)
 	if skip {
-		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, logger.WarnLevel, path)
+		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, path)
 	}
 	if !info.IsDir() && !skip {
 		newLanguages := enry.GetLanguages(path, nil)
 		logger.LogTraceWithLevel(messages.MsgTraceLanguageFound,
-			logger.TraceLevel, map[string][]string{path: newLanguages})
+			map[string][]string{path: newLanguages})
 		languagesFound = append(languagesFound, newLanguages...)
 	}
 	return languagesFound, skip
@@ -139,7 +138,7 @@ func (ld *LanguageDetect) filesAndFoldersToIgnore(path string) bool {
 }
 
 func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
-	for _, value := range cli.GetDefaultFoldersToIgnore() {
+	for _, value := range toignore.GetDefaultFoldersToIgnore() {
 		if strings.Contains(path, file.ReplacePathSeparator(value)) {
 			return true
 		}
@@ -159,7 +158,7 @@ func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
 
 func (ld *LanguageDetect) checkFileExtensionInvalid(path string) bool {
 	extensionFound := filepath.Ext(path)
-	for _, value := range cli.GetDefaultExtensionsToIgnore() {
+	for _, value := range toignore.GetDefaultExtensionsToIgnore() {
 		if strings.EqualFold(value, extensionFound) {
 			return true
 		}
@@ -171,10 +170,10 @@ func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 	folderDstName := file.ReplacePathSeparator(fmt.Sprintf("%s/.horusec/%s", directory, ld.analysisID.String()))
 	err := copyUtil.Copy(directory, folderDstName, ld.filesAndFoldersToIgnore)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
 	} else {
 		fmt.Print("\n")
-		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, logger.WarnLevel, folderDstName)
+		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, folderDstName)
 		fmt.Print("\n")
 	}
 	return err
@@ -210,15 +209,16 @@ func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound
 }
 
 func (ld *LanguageDetect) updateExistingLanguages(lang string, existingLanguages []string) []string {
-	if ld.isTypescriptOrJavascriptLang(lang) {
+	switch {
+	case ld.isTypescriptOrJavascriptLang(lang):
 		return append(existingLanguages, languages.Javascript.ToString())
-	}
-
-	if ld.isCPlusPLusOrCLang(lang) {
+	case ld.isCPlusPLusOrCLang(lang):
 		return append(existingLanguages, languages.C.ToString())
+	case ld.isBatFileOrShellFile(lang):
+		return append(existingLanguages, languages.Shell.ToString())
+	default:
+		return append(existingLanguages, lang)
 	}
-
-	return append(existingLanguages, lang)
 }
 
 func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
@@ -231,4 +231,9 @@ func (ld *LanguageDetect) isTypescriptOrJavascriptLang(lang string) bool {
 func (ld *LanguageDetect) isCPlusPLusOrCLang(lang string) bool {
 	return strings.EqualFold(lang, "C++") ||
 		strings.EqualFold(lang, "C")
+}
+
+func (ld *LanguageDetect) isBatFileOrShellFile(lang string) bool {
+	return strings.EqualFold(lang, "Batchfile") ||
+		strings.EqualFold(lang, "Shell")
 }

@@ -20,7 +20,7 @@ type CreditCard struct {
 	ID     uuid.UUID `gorm:"type:uuid;primary_key;"`
 	Name   string
 	UserID uuid.UUID `sql:"type:uuid REFERENCES users(id) ON DELETE CASCADE"`
-	User   User      `gorm:"foreignkey:UserID;association_foreignkey:ID"`
+	User   User      `gorm:"foreignKey:UserID;references:ID"`
 }
 
 type User struct {

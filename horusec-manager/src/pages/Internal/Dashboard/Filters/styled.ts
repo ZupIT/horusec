@@ -25,12 +25,17 @@ const Container = styled.div`
   width: min-content;
 `;
 
-const CalendarWrapper = styled.div`
+const Wrapper = styled.div`
   margin-right: 35px;
+`;
+
+const CalendarWrapper = styled(Wrapper)`
+  margin-right: 35px;
+  margin-top: 3px;
 `;
 
 const ApplyButton = styled(Button)`
   margin: 0px 15px;
 `;
 
-export default { Container, CalendarWrapper, ApplyButton };
+export default { Container, CalendarWrapper, Wrapper, ApplyButton };

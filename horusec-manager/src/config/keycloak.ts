@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig: Keycloak.KeycloakConfig = {
@@ -22,6 +23,19 @@ const keycloakConfig: Keycloak.KeycloakConfig = {
   url: (window as any).REACT_APP_KEYCLOAK_BASE_PATH,
 };
 
+const idToken = window.localStorage.getItem(localStorageKeys.ID_TOKEN);
+const token = window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
+const refreshToken = window.localStorage.getItem(
+  localStorageKeys.REFRESH_TOKEN
+);
+
+const keycloakInitOptions: Keycloak.KeycloakInitOptions = {
+  enableLogging: true,
+  idToken,
+  refreshToken,
+  token,
+};
+
 const keycloakInstance = Keycloak(keycloakConfig);
 
-export { keycloakInstance, keycloakConfig };
+export { keycloakInstance, keycloakConfig, keycloakInitOptions };

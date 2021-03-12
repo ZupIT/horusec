@@ -50,6 +50,7 @@ func TestParseOutput(t *testing.T) {
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
+
 	t.Run("Should success parse output empty to analysis", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 
@@ -73,6 +74,7 @@ func TestParseOutput(t *testing.T) {
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
+
 	t.Run("Should error rails not found when parse output to analysis", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 
@@ -129,11 +131,12 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 	})
+
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &horusec.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
+		config.SetToolsToIgnore([]string{"Brakeman"})
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &horusec.Monitor{})
 		formatter := NewFormatter(service)
 

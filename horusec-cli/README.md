@@ -140,6 +140,7 @@ The available commands to usage are:
 
 | Command | Description |
 |---------|-------------|
+| generate| This command create config file in current path or update if exists with new keys (not delete current keys) |
 | start   | This command start analysis with default values and in your current directory |
 | version | You see actual version running in your local machine |
 
@@ -161,43 +162,131 @@ All flags configurations can also be performed through a file called horusec-con
 The configuration file receive an object with the content follow:
 ```json
 {
-      "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
-      "horusecCliTimeoutInSecondsRequest": 300,
-      "horusecCliTimeoutInSecondsAnalysis": 600,
-      "horusecCliMonitorRetryInSeconds": 15,
-      "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
-      "horusecCliPrintOutputType": "text",
-      "horusecCliJsonOutputFilepath": "",
-      "horusecCliTypesOfVulnerabilitiesToIgnore": "",
-      "horusecCliFilesOrPathsToIgnore": "",
-      "horusecCliReturnErrorIfFoundVulnerability": false,
-      "horusecCliProjectPath": "",
-      "horusecCliFilterPath": "",
-      "horusecCliEnableGitHistoryAnalysis": false,
-      "horusecCliCertPath": "",
-      "horusecCliCertInsecureSkipVerify":  false,
-      "horusecCliEnableCommitAuthor": false,
-      "horusecCliRepositoryName": "",
-      "horusecCliFalsePositiveHashes": "",
-      "horusecCliRiskAcceptHashes": "",
-      "horusecCliContainerBindProjectPath": "",
-      "horusecCliDisableDocker": false,
-      "horusecCliCustomRulesPath": "",
-      "horusecCliWorkDir": {
-	        "go":         [],
-	        "csharp":     [],
-	        "ruby":       [],
-	        "python":     [],
-	        "java" :      [],
-	        "kotlin":     [],
-	        "javaScript": [],
-	        "leaks":      [],
-            "generic":    [],
-            "php":        [],
-            "c":          [],
-            "yaml":       [],
-                "hlc":        []    
-      }
+  "horusecCliHorusecApiUri":"http://0.0.0.0:8000",
+  "horusecCliTimeoutInSecondsRequest":300,
+  "horusecCliTimeoutInSecondsAnalysis":600,
+  "horusecCliMonitorRetryInSeconds":15,
+  "horusecCliRepositoryAuthorization":"00000000-0000-0000-0000-000000000000",
+  "horusecCliPrintOutputType":"text",
+  "horusecCliJsonOutputFilepath":"",
+  "horusecCliTypesOfVulnerabilitiesToIgnore":"",
+  "horusecCliFilesOrPathsToIgnore":"",
+  "horusecCliReturnErrorIfFoundVulnerability":false,
+  "horusecCliProjectPath":"",
+  "horusecCliFilterPath":"",
+  "horusecCliEnableGitHistoryAnalysis":false,
+  "horusecCliCertPath":"",
+  "horusecCliCertInsecureSkipVerify":false,
+  "horusecCliEnableCommitAuthor":false,
+  "horusecCliRepositoryName":"",
+  "horusecCliFalsePositiveHashes":"",
+  "horusecCliRiskAcceptHashes":"",
+  "horusecCliContainerBindProjectPath":"",
+  "horusecCliWorkDir":{
+    "go":[],
+    "csharp":[],
+    "ruby":[],
+    "python":[],
+    "java":[],
+    "kotlin":[],
+    "javaScript":[],
+    "leaks":[],
+    "generic":[],
+    "php":[],
+    "c":[],
+    "yaml":[],
+    "hlc":[],
+    "shell":[],
+    "elixir":[]
+  },
+  "horusecCliCustomImages": {
+    "csharp": "",
+    "leaks": "",
+    "go": "",
+    "java": "",
+    "kotlin": "",
+    "javascript": "",
+    "python": "",
+    "ruby": "",
+    "hcl": "",
+    "generic": "",
+    "yaml": "",
+    "c": "",
+    "php": "",
+    "dart": "",
+    "elixir": "",
+    "shell": ""
+  },
+  "horusecCliToolsConfig":{
+    "Bandit":{
+      "isToIgnore":false
+    },
+    "Brakeman":{
+      "isToIgnore":false
+    },
+    "Eslint":{
+      "isToIgnore":false
+    },
+    "Flawfinder":{
+      "isToIgnore":false
+    },
+    "GitLeaks":{
+      "isToIgnore":false
+    },
+    "GoSec":{
+      "isToIgnore":false
+    },
+    "HorusecCsharp":{
+      "isToIgnore":false
+    },
+    "HorusecJava":{
+      "isToIgnore":false
+    },
+    "HorusecKotlin":{
+      "isToIgnore":false
+    },
+    "HorusecKubernetes":{
+      "isToIgnore":false
+    },
+    "HorusecLeaks":{
+      "isToIgnore":false
+    },
+    "HorusecNodeJS":{
+      "isToIgnore":false
+    },
+    "NpmAudit":{
+      "isToIgnore":false
+    },
+    "PhpCS":{
+      "isToIgnore":false
+    },
+    "Safety":{
+      "isToIgnore":false
+    },
+    "SecurityCodeScan":{
+      "isToIgnore":false
+    },
+    "Semgrep":{
+      "isToIgnore":false
+    },
+    "TfSec":{
+      "isToIgnore":false
+    },
+    "YarnAudit":{
+      "isToIgnore":false
+    },
+    "ShellCheck":{
+      "isToIgnore":false
+    },
+    "MixAudit":{
+      "isToIgnore":false
+    },
+    "Sobelow":{
+      "isToIgnore":false
+    }
+  },
+  "horusecCliHeaders":{
+  }
 }
 ```
 
@@ -230,6 +319,7 @@ export HORUSEC_CLI_RISK_ACCEPT_HASHES=""
 export HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH=""
 export HORUSEC_CLI_DISABLE_DOCKER="false"
 export HORUSEC_CLI_CUSTOM_RULES_PATH=""
+export HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY=""
 ```
 
 ### Using Flags
@@ -245,7 +335,7 @@ All available flags are:
 |                                                 |                                            | log-level                   |               | info                                    | This setting will define what level of logging I want to see. The available levels are: "panic","fatal","error","warn","info","debug","trace" |
 | HORUSEC_CLI_MONITOR_RETRY_IN_SECONDS            | horusecCliMonitorRetryInSeconds            | monitor-retry-count         | m             | 15                                      | This setting will identify how many in how many seconds. I want to check if my analysis is close to the timeout. The minimum time is 10. |
 | HORUSEC_CLI_PRINT_OUTPUT_TYPE                   | horusecCliPrintOutputType                  | output-format               | o             | text                                    | The print output has been change into `json` or `sonarqube` or `text` |
-| HORUSEC_CLI_TYPES_OF_VULNERABILITIES_TO_IGNORE  | horusecCliTypesOfVulnerabilitiesToIgnore   | ignore-severity             | s             |                                         | You can specified some type of vulnerabilities to no apply with a error. The types available are: "LOW, MEDIUM, HIGH, AUDIT". Ex.: LOW, AUDIT all vulnerabilities of type configured are ignored |
+| HORUSEC_CLI_TYPES_OF_VULNERABILITIES_TO_IGNORE  | horusecCliTypesOfVulnerabilitiesToIgnore   | ignore-severity             | s             |                                         | You can specified some type of vulnerabilities to no apply with a error. The types available are: "LOW, MEDIUM, HIGH, CRITICAL". Ex.: LOW all vulnerabilities of type configured are ignored |
 | HORUSEC_CLI_JSON_OUTPUT_FILEPATH                | horusecCliJsonOutputFilepath               | json-output-file            | O             |                                         | Name of the json file to save result of the analysis Ex.:`./output.json` |
 | HORUSEC_CLI_FILES_OR_PATHS_TO_IGNORE            | horusecCliFilesOrPathsToIgnore             | ignore                      | i             |                                         | You can specified some path absolutes of files or folders to ignore in sent to analysis. Ex.: `/home/user/go/project/helpers/ , /home/user/go/project/utils/logger.go, **/*tests.go` This examples all files inside the folder helpers are ignored and the file `logger.go` is ignored too. Is recommended you not send `node_modules`, `vendor`, etc.. folders of dependence of the your project |
 | HORUSEC_CLI_DISABLE_DOCKER                      | horusecCliDisableDocker                    | disable-docker              | D             | false                                   | Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs. `Example: -D="true"`|
@@ -264,6 +354,7 @@ All available flags are:
 | HORUSEC_CLI_FALSE_POSITIVE_HASHES               | horusecCliFalsePositiveHashes              | false-positive              | F             |                                         | Used to ignore vulnerability on analysis and setup with type `False positive`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_RISK_ACCEPT_HASHES                  | horusecCliRiskAcceptHashes                 | risk-accept                 | R             |                                         | Used to ignore vulnerability on analysis and setup with type `Risk accept`. ATTENTION when you add this configuration directly to the CLI, the configuration performed via the Horusec graphical interface will be overwritten. |
 | HORUSEC_CLI_CUSTOM_RULES_PATH                   | horusecCliCustomRulesPath                  | custom-rules-path           | c             |                                         | Used to pass the path to the horusec custom rules file. Example: -c="./horusec/horusec-custom-rules.json". |
+| HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY         | horusecCliEnableInformationSeverity        | information-severity        | I             | false                                   | Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Ex.: `I="true"`|
 | HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH         | EnvContainerBindProjectPath                | container-bind-project-path | P             |                                         | Used to pass project path in host when running horusec cli inside a container |
 | HORUSEC_CLI_HEADERS                             | horusecCliHeaders                          | headers                     |               |                                         | Used to send dynamic headers on dispatch http request to horusec api service |
 |                                                 | horusecCliWorkDir                          |                             |               |                                         | This setting tells to horusec the right directory to run a specific language. |
@@ -333,6 +424,7 @@ The interface of languages accepts is:
     php        []string
     c          []string
     yaml       []string
+    elixir     []string
 }
 ```
 

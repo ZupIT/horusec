@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import http from 'config/axios/default';
+import http from 'config/axios';
 import { WebhookHeader } from 'helpers/interfaces/Webhook';
 import { SERVICE_ACCOUNT } from '../config/endpoints';
 
 const getAll = (companyID: string) => {
-  return http.get(`${SERVICE_ACCOUNT}/api/webhook/${companyID}`);
+  return http.get(`${SERVICE_ACCOUNT}/account/webhook/${companyID}`);
 };
 
 const create = (
@@ -31,7 +31,7 @@ const create = (
   description: string
 ) => {
   return http.post(
-    `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}`,
+    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}`,
     {
       url,
       method,
@@ -51,7 +51,7 @@ const update = (
   description: string
 ) => {
   return http.put(
-    `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}/${webhookID}`,
+    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}/${webhookID}`,
     {
       url,
       method,
@@ -63,7 +63,7 @@ const update = (
 
 const remove = (companyID: string, repositoryID: string, webhookID: string) => {
   return http.delete(
-    `${SERVICE_ACCOUNT}/api/webhook/${companyID}/${repositoryID}/${webhookID}`
+    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}/${webhookID}`
   );
 };
 

@@ -27,12 +27,12 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Create(_ uuid.UUID, _ *accountEntities.Company, _ []string) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Create")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Company) (*accountEntities.Company, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Company, _ []string) (*accountEntities.Company, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Company), mockUtils.ReturnNilOrError(args, 1)
 }
@@ -42,7 +42,7 @@ func (m *Mock) Get(_, _ uuid.UUID) (*accountEntities.CompanyResponse, error) {
 	return args.Get(0).(*accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) List(_ uuid.UUID) (*[]accountEntities.CompanyResponse, error) {
+func (m *Mock) List(_ uuid.UUID, _ []string) (*[]accountEntities.CompanyResponse, error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]accountEntities.CompanyResponse), mockUtils.ReturnNilOrError(args, 1)
 }

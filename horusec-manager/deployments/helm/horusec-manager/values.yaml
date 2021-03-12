@@ -4,7 +4,7 @@ image:
   repository: horuszup/horusec-manager
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.3.0
+  tag: v1.7.3
 
 imagePullSecrets: []
 nameOverride: ""
@@ -71,10 +71,10 @@ affinity: {}
 
 env:
   - name: "REACT_APP_HORUSEC_ENDPOINT_API"
-    value: 'https:\\/\\/api-horus-dev.zup.com.br'
+    value: 'http:\\/\\/api-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_ANALYTIC"
-    value: 'https:\\/\\/analytic-horus-dev.zup.com.br'
+    value: 'http:\\/\\/analytic-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_ACCOUNT"
-    value: 'https:\\/\\/account-horus-dev.zup.com.br'
+    value: 'http:\\/\\/account-horus-dev.zup.com.br'
   - name: "REACT_APP_HORUSEC_ENDPOINT_AUTH"
-    value: 'https:\\/\\/auth-horus-dev.zup.com.br'
+    value: 'http:\\/\\/auth-horus-dev.zup.com.br'

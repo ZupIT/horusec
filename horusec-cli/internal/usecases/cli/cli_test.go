@@ -17,7 +17,8 @@ package cli
 import (
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/cli"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/outputtype"
+
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/stretchr/testify/assert"
@@ -65,14 +66,14 @@ func TestValidateConfigs(t *testing.T) {
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
 		assert.Equal(t, "severitiesToIgnore: Type of severity not valid:  test. "+
-			"See severities enable: [NOSEC LOW MEDIUM HIGH AUDIT INFO].", err.Error())
+			"See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO].", err.Error())
 	})
 
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.NewConfigsFromEnvironments()
-		config.SetPrintOutputType(cli.JSON.ToString())
+		config.SetPrintOutputType(outputtype.JSON.ToString())
 		config.SetJSONOutputFilePath("")
 
 		err := useCases.ValidateConfigs(config)
@@ -85,7 +86,7 @@ func TestValidateConfigs(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.NewConfigsFromEnvironments()
-		config.SetPrintOutputType(cli.JSON.ToString())
+		config.SetPrintOutputType(outputtype.JSON.ToString())
 		config.SetJSONOutputFilePath("test.test")
 
 		err := useCases.ValidateConfigs(config)

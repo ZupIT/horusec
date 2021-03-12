@@ -18,14 +18,18 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { HorusecConfig } from 'helpers/interfaces/HorusecConfig';
 
 const initialValues: HorusecConfig = {
-  authType: null,
+  authType: 'horusec',
   applicationAdminEnable: false,
-  disabledBroker: false,
+  disabledBroker: true,
 };
 
 const getCurrentConfig = (): HorusecConfig => {
-  const config = window.localStorage.getItem(localStorageKeys.CONFIG);
-  return config ? JSON.parse(config) : initialValues;
+  try {
+    const config = window.localStorage.getItem(localStorageKeys.CONFIG);
+    return config ? JSON.parse(config) : initialValues;
+  } catch (e) {
+    return initialValues;
+  }
 };
 
 const setCurrenConfig = (value: HorusecConfig) => {

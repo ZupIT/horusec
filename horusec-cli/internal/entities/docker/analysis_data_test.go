@@ -15,39 +15,52 @@
 package docker
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestIsValid(t *testing.T) {
-	t.Run("Should return false for valid data ", func(t *testing.T) {
+func TestIsInvalid(t *testing.T) {
+	t.Run("should return false when valid", func(t *testing.T) {
 		data := &AnalysisData{
-			ImagePath: "docker.io/test:latest",
-			CMD:       "test",
+			DefaultImage: "docker.io/test:latest",
+			CMD:          "test",
 		}
 
 		assert.False(t, data.IsInvalid())
 	})
 
-	t.Run("Should return true for invalid data ", func(t *testing.T) {
+	t.Run("should return true when invalid data", func(t *testing.T) {
 		data := &AnalysisData{}
 		assert.True(t, data.IsInvalid())
 	})
 }
 
-func TestGetContainerImageNameWithTag(t *testing.T) {
-	t.Run("Should success set image path in config path", func(t *testing.T) {
+func TestSetData(t *testing.T) {
+	t.Run("should success set data", func(t *testing.T) {
 		data := &AnalysisData{
 			CMD: "test",
 		}
-		data.SetFullImagePath("other-host.io/t/test:latest", "t", "v1.0.0")
-		assert.Equal(t, "other-host.io/t/test:latest", data.ImagePath)
+
+		assert.NotEmpty(t, data.SetData("other-host.io/t/test:latest", "test:v1.0.0"))
 	})
-	t.Run("Should success set image path default", func(t *testing.T) {
+
+}
+
+func TestGetCustomOrDefaultImage(t *testing.T) {
+	t.Run("should success get image with custom image", func(t *testing.T) {
 		data := &AnalysisData{
-			CMD: "test",
+			CustomImage: "test/custom",
 		}
-		data.SetFullImagePath("", "t", "v1.0.0")
-		assert.NotEmpty(t, "docker.io/t:v1.0.0", data.ImagePath)
+
+		assert.Equal(t, "test/custom", data.GetCustomOrDefaultImage())
+	})
+
+	t.Run("should success get image with default image", func(t *testing.T) {
+		data := &AnalysisData{
+			DefaultImage: "test/default",
+		}
+
+		assert.Equal(t, "test/default", data.GetCustomOrDefaultImage())
 	})
 }

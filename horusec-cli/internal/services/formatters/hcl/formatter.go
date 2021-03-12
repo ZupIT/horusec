@@ -19,9 +19,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
@@ -43,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.TfSec) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.TfSec.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.TfSec.ToString())
 		return
 	}
 
@@ -65,11 +66,11 @@ func (f *Formatter) startTfSec(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.TfSec),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.TfSec].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.HCL), images.HCL)
 }
 
 func (f *Formatter) parseOutput(output string) error {
@@ -91,8 +92,8 @@ func (f *Formatter) parseOutput(output string) error {
 }
 
 func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *horusec.Vulnerability {
-	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.High
+	vulnerability := f.getDefaultVulnerabilityData()
+	vulnerability.Severity = results[index].GetSeverity()
 	vulnerability.Details = results[index].GetDetails()
 	vulnerability.Line = results[index].GetStartLine()
 	vulnerability.Code = f.GetCodeWithMaxCharacters(results[index].GetCode(), 0)
@@ -101,7 +102,7 @@ func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *
 	return f.SetCommitAuthor(vulnerability)
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
+func (f *Formatter) getDefaultVulnerabilityData() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.TfSec
 	vulnerabilitySeverity.Language = languages.HCL

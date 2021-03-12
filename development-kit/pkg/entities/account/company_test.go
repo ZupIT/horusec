@@ -15,10 +15,10 @@
 package account
 
 import (
-	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-	"github.com/google/uuid"
 	"testing"
 
+	rolesEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -69,7 +69,7 @@ func TestToCompanyResponse(t *testing.T) {
 func TestGetAuthzMemberCompany(t *testing.T) {
 	t.Run("should success get authz member", func(t *testing.T) {
 		company := &Company{
-			AuthzMember: "test",
+			AuthzMember: []string{"test"},
 		}
 
 		assert.NotEmpty(t, company.GetAuthzMember())
@@ -87,7 +87,7 @@ func TestGetAuthzSupervisorCompany(t *testing.T) {
 func TestGetAuthzAdminCompany(t *testing.T) {
 	t.Run("should success get authz admin", func(t *testing.T) {
 		company := &Company{
-			AuthzAdmin: "test",
+			AuthzAdmin: []string{"test"},
 		}
 
 		assert.NotEmpty(t, company.GetAuthzAdmin())

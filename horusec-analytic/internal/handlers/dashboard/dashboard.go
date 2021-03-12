@@ -56,7 +56,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Param size query string false "graphql query string"
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
-// @Router /api/dashboard/companies/{companyID}/details [get]
+// @Router /analytic/dashboard/companies/{companyID}/details [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	query := r.URL.Query().Get("query")
@@ -85,7 +85,7 @@ func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/total-developers [get]
+// @Router /analytic/dashboard/companies/{companyID}/total-developers [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -115,7 +115,7 @@ func (h *Handler) GetCompanyTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/total-repositories [get]
+// @Router /analytic/dashboard/companies/{companyID}/total-repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -145,7 +145,7 @@ func (h *Handler) GetCompanyTotalRepositories(w netHTTP.ResponseWriter, r *netHT
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-author [get]
+// @Router /analytic/dashboard/companies/{companyID}/vulnerabilities-by-author [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -175,7 +175,7 @@ func (h *Handler) GetCompanyVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-language [get]
+// @Router /analytic/dashboard/companies/{companyID}/vulnerabilities-by-language [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -205,7 +205,7 @@ func (h *Handler) GetCompanyVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-repository [get]
+// @Router /analytic/dashboard/companies/{companyID}/vulnerabilities-by-repository [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -235,7 +235,7 @@ func (h *Handler) GetCompanyVulnByRepository(w netHTTP.ResponseWriter, r *netHTT
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/vulnerabilities-by-time [get]
+// @Router /analytic/dashboard/companies/{companyID}/vulnerabilities-by-time [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -265,7 +265,7 @@ func (h *Handler) GetCompanyVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Requ
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/all-vulnerabilities [get]
+// @Router /analytic/dashboard/companies/{companyID}/all-vulnerabilities [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetCompanyVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	companyID, _ := uuid.Parse(chi.URLParam(r, "companyID"))
@@ -296,7 +296,7 @@ func (h *Handler) GetCompanyVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -327,7 +327,7 @@ func (h *Handler) GetRepositoryTotalDevelopers(w netHTTP.ResponseWriter, r *netH
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -358,7 +358,7 @@ func (h *Handler) GetRepositoryTotalRepositories(w netHTTP.ResponseWriter, r *ne
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -389,7 +389,7 @@ func (h *Handler) GetRepositoryVulnByDeveloper(w netHTTP.ResponseWriter, r *netH
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -420,7 +420,7 @@ func (h *Handler) GetRepositoryVulnByLanguage(w netHTTP.ResponseWriter, r *netHT
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -451,7 +451,7 @@ func (h *Handler) GetRepositoryVulnByRepository(w netHTTP.ResponseWriter, r *net
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -482,7 +482,7 @@ func (h *Handler) GetRepositoryVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.R
 // @Success 200 "OK"
 // @Failure 400 "BAD REQUEST"
 // @Failure 500 "INTERNAL SERVER ERROR"
-// @Router /api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities [get]
+// @Router /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetRepositoryVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	repositoryID, _ := uuid.Parse(chi.URLParam(r, "repositoryID"))
@@ -517,7 +517,11 @@ func getDateRangeFromRequestQuery(r *netHTTP.Request) (*time.Time, *time.Time, e
 
 func getDateFromRequestQuery(r *netHTTP.Request, queryStrKey string) (time.Time, error) {
 	date := r.URL.Query().Get(queryStrKey)
-	return time.Parse("2006-01-02T15:04:05Z", date)
+	if date != "" {
+		return time.Parse("2006-01-02T15:04:05Z", date)
+	}
+
+	return time.Time{}, nil
 }
 
 func (h *Handler) getPaginationPage(r *netHTTP.Request) (page int) {

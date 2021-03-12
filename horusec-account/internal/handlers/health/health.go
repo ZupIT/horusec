@@ -16,9 +16,10 @@ package health
 
 import (
 	"fmt"
+	netHTTP "net/http"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/services/grpc/health"
 	"google.golang.org/grpc"
-	netHTTP "net/http"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	_ "github.com/ZupIT/horusec/development-kit/pkg/entities/http" // [swagger-import]
@@ -61,7 +62,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Produce  json
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/health [get]
+// @Router /account/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	if !h.appConfig.IsDisabledBroker() {
 		if !h.broker.IsAvailable() {

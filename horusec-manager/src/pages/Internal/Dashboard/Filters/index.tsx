@@ -23,7 +23,8 @@ import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
+import { AxiosResponse } from 'axios';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -34,38 +35,85 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { showWarningFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
 
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
+  const fixedRanges = [
+    {
+      label: t('DASHBOARD_SCREEN.BEGINNING'),
+      value: 'beginning',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.CUSTOM_RANGE'),
+      value: 'customRange',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.TODAY'),
+      value: 'today',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.LAST_WEEK'),
+      value: 'lastWeek',
+    },
+    {
+      label: t('DASHBOARD_SCREEN.LAST_MONTH'),
+      value: 'lastMonth',
+    },
+  ];
+
+  const today = new Date();
+  const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
+  const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
 
   const [repositories, setRepositories] = useState<any[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
 
   const [filters, setFilters] = useState<FilterValues>({
-    initialDate: yesterday,
-    finalDate: new Date(),
+    initialDate: null,
+    finalDate: null,
     repositoryID: null,
     companyID: null,
     type,
   });
 
-  useEffect(() => {
-    const fetchRepositories = () => {
-      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        const repositories: Repository[] = result.data.content;
-        setRepositories(repositories);
+  const handleSelectedPeriod = (item: { label: string; value: string }) => {
+    setSelectedPeriod(item);
 
-        if (repositories.length > 0) {
-          setFilters({
-            ...filters,
-            repositoryID: repositories[0]?.repositoryID,
-          });
-          onApply({
-            ...filters,
-            repositoryID: repositories[0]?.repositoryID,
-          });
-        } else {
-          showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
-        }
-      });
+    const getRangeOfPeriod: ObjectLiteral = {
+      customRange: [today, today],
+      today: [today, today],
+      lastWeek: [lastWeek, today],
+      lastMonth: [lastMonth, today],
+      beginning: [null, null],
+    };
+    setFilters({
+      ...filters,
+      initialDate: getRangeOfPeriod[item.value][0],
+      finalDate: getRangeOfPeriod[item.value][1],
+    });
+  };
+
+  useEffect(() => {
+    let isCancelled = false;
+    const fetchRepositories = () => {
+      repositoryService
+        .getAll(currentWorkspace?.companyID)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const repositories: Repository[] = result.data.content;
+            setRepositories(repositories);
+
+            if (repositories.length > 0) {
+              setFilters({
+                ...filters,
+                repositoryID: repositories[0]?.repositoryID,
+              });
+              onApply({
+                ...filters,
+                repositoryID: repositories[0]?.repositoryID,
+              });
+            } else {
+              showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
+            }
+          }
+        });
     };
 
     if (currentWorkspace) {
@@ -78,38 +126,58 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         });
       }
     }
-
+    return function () {
+      isCancelled = true;
+    };
     // eslint-disable-next-line
   }, [currentWorkspace]);
 
   return (
     <Styled.Container>
-      <Styled.CalendarWrapper>
-        <Calendar
-          initialDate={filters.initialDate}
-          title={t('DASHBOARD_SCREEN.START_DATE')}
-          onChangeValue={(date: Date) =>
-            setFilters({ ...filters, initialDate: date })
-          }
+      <Styled.Wrapper>
+        <Select
+          keyLabel="label"
+          optionsHeight="160px"
+          width="200px"
+          initialValue={selectedPeriod}
+          options={fixedRanges}
+          title={t('DASHBOARD_SCREEN.PERIOD')}
+          onChangeValue={(item) => handleSelectedPeriod(item)}
         />
-      </Styled.CalendarWrapper>
+      </Styled.Wrapper>
 
-      <Styled.CalendarWrapper>
-        <Calendar
-          title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-          onChangeValue={(date: Date) =>
-            setFilters({ ...filters, finalDate: date })
-          }
-        />
-      </Styled.CalendarWrapper>
+      {selectedPeriod?.value === fixedRanges[1].value ? (
+        <>
+          <Styled.CalendarWrapper>
+            <Calendar
+              initialDate={filters.initialDate}
+              title={t('DASHBOARD_SCREEN.START_DATE')}
+              onChangeValue={(field) =>
+                setFilters({ ...filters, initialDate: field.value })
+              }
+            />
+          </Styled.CalendarWrapper>
+
+          <Styled.CalendarWrapper>
+            <Calendar
+              title={t('DASHBOARD_SCREEN.FINAL_DATE')}
+              onChangeValue={(field) =>
+                setFilters({ ...filters, finalDate: field.value })
+              }
+            />
+          </Styled.CalendarWrapper>
+        </>
+      ) : null}
 
       {type === 'repository' ? (
         <Select
           keyLabel="name"
           width="200px"
+          optionsHeight="200px"
           initialValue={repositories[0]}
           options={repositories}
           title={t('DASHBOARD_SCREEN.REPOSITORY')}
+          hasSearch
           onChangeValue={(value) =>
             setFilters({ ...filters, repositoryID: value.repositoryID })
           }

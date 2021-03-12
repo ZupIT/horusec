@@ -21,6 +21,7 @@ type Language string
 const (
 	Go         Language = "Go"
 	CSharp     Language = "C#"
+	Dart       Language = "Dart"
 	Ruby       Language = "Ruby"
 	Python     Language = "Python"
 	Java       Language = "Java"
@@ -34,6 +35,8 @@ const (
 	HTML       Language = "HTML"
 	Generic    Language = "Generic"
 	Yaml       Language = "YAML"
+	Elixir     Language = "Elixir"
+	Shell      Language = "Shell"
 	Unknown    Language = "Unknown"
 )
 
@@ -51,6 +54,7 @@ func SupportedLanguages() []Language {
 	return []Language{
 		Go,
 		CSharp,
+		Dart,
 		Ruby,
 		Python,
 		Java,
@@ -62,15 +66,19 @@ func SupportedLanguages() []Language {
 		Yaml,
 		C,
 		PHP,
+		Elixir,
+		Shell,
 		Unknown,
 	}
 }
 
+// nolint:funlen method is necessary more 15 lines
 func (l Language) MapEnableLanguages() map[string]Language {
 	return map[string]Language{
 		Go.ToString():         Go,
 		Leaks.ToString():      Leaks,
 		CSharp.ToString():     CSharp,
+		Dart.ToString():       Dart,
 		Ruby.ToString():       Ruby,
 		Python.ToString():     Python,
 		Java.ToString():       Java,
@@ -81,9 +89,37 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		Yaml.ToString():       Yaml,
 		C.ToString():          C,
 		PHP.ToString():        PHP,
+		Elixir.ToString():     Elixir,
+		Shell.ToString():      Shell,
 	}
 }
 
 func (l Language) ToString() string {
 	return string(l)
+}
+
+func (l Language) GetCustomImagesKeyByLanguage() string {
+	return l.mapConfigCustomImageJSONByLanguage()[l]
+}
+
+//nolint
+func (l Language) mapConfigCustomImageJSONByLanguage() map[Language]string {
+	return map[Language]string{
+		CSharp:     "csharp",
+		Leaks:      "leaks",
+		Go:         "go",
+		Javascript: "javascript",
+		Python:     "python",
+		Ruby:       "ruby",
+		HCL:        "hcl",
+		Generic:    "generic",
+		PHP:        "php",
+		Elixir:     "elixir",
+		Shell:      "shell",
+		C:          "c",
+		Java:       "java",
+		Kotlin:     "kotlin",
+		Yaml:       "yaml",
+		Dart:       "dart",
+	}
 }

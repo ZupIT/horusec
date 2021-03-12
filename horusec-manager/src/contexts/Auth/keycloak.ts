@@ -15,14 +15,18 @@
  */
 
 import { keycloakInstance } from 'config/keycloak';
+import { clearCurrentUser } from 'helpers/localStorage/currentUser';
+import { clearTokens } from 'helpers/localStorage/tokens';
 
-const login = () => keycloakInstance.login();
+const login = () =>
+  keycloakInstance.login({ redirectUri: `${window.location.origin}/auth` });
 
 const logout = () => {
-  return new Promise((resolve) => {
-    resolve(true);
+  clearCurrentUser();
+  clearTokens();
 
-    keycloakInstance.logout();
+  return keycloakInstance.logout({
+    redirectUri: `${window.location.origin}/auth`,
   });
 };
 

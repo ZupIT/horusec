@@ -39,15 +39,18 @@ func (r *Result) GetDetails() string {
 
 func (r *Result) GetSeverity() severity.Severity {
 	level, _ := strconv.Atoi(r.Level)
-	if level <= 2 {
-		return severity.Low
-	}
+	return r.mapSeverityByLevels()[level]
+}
 
-	if level >= 3 && level <= 4 {
-		return severity.Medium
+func (r *Result) mapSeverityByLevels() map[int]severity.Severity {
+	return map[int]severity.Severity{
+		5: severity.Critical,
+		4: severity.High,
+		3: severity.Medium,
+		2: severity.Medium,
+		1: severity.Low,
+		0: severity.Low,
 	}
-
-	return severity.High
 }
 
 func (r *Result) GetFilename() string {

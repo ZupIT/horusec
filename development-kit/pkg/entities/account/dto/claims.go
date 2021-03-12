@@ -21,16 +21,16 @@ import (
 )
 
 type ClaimsJWT struct {
-	Email            string            `json:"email"`
-	Username         string            `json:"username"`
-	RepositoriesRole map[string]string `json:"permissions"`
+	Email       string   `json:"email"`
+	Username    string   `json:"username"`
+	Permissions []string `json:"permissions"`
 	jwt.StandardClaims
 }
 
 func (c *ClaimsJWT) Valid() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Username, validation.Required, validation.Length(1, 255)),
-		validation.Field(&c.Email, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&c.Email, validation.Required, validation.Length(1, 255)),
 		validation.Field(&c.Subject, validation.Required, is.UUID),
 	)
 }

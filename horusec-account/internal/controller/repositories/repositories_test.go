@@ -16,26 +16,26 @@ package repositories
 
 import (
 	"errors"
+	"testing"
+
+	"github.com/lib/pq"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
+	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
-	"testing"
-
-	repositoryAccountCompany "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account_company"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
-
-	"github.com/ZupIT/horusec/horusec-account/config/app"
-
-	repositoryRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/repository"
+	accountEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
-
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMock(t *testing.T) {
@@ -51,10 +51,10 @@ func TestMock(t *testing.T) {
 		mock.On("Delete").Return(nil)
 		mock.On("GetAllAccountsInRepository").Return(&[]roles.AccountRole{}, nil)
 		mock.On("RemoveUser").Return(nil)
-		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{})
-		_, _ = mock.Update(uuid.New(), &accountEntities.Repository{})
+		_, _ = mock.Create(uuid.New(), &accountEntities.Repository{}, []string{})
+		_, _ = mock.Update(uuid.New(), &accountEntities.Repository{}, []string{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
-		_, _ = mock.List(uuid.New(), uuid.New())
+		_, _ = mock.List(uuid.New(), uuid.New(), []string{})
 		_ = mock.CreateAccountRepository(&roles.AccountRepository{})
 		_ = mock.UpdateAccountRepository(uuid.New(), &roles.AccountRepository{})
 		_ = mock.InviteUser(&dto.InviteUser{})
@@ -81,7 +81,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.NoError(t, err)
 	})
 
@@ -102,7 +102,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -126,7 +126,7 @@ func TestCreate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Create(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Create(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -141,11 +141,6 @@ func TestCreate(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockWrite)
 		mockWrite.On("CommitTransaction").Return(resp)
 
-		respFindCompany := &response.Response{}
-		respFindCompany.SetData(&accountEntities.Company{AuthzAdmin: "admin", AuthzMember: "member"})
-		mockRead.On("Find").Once().Return(respFindCompany)
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-
 		respFind := &response.Response{}
 		respFind.SetError(errorsEnums.ErrNotFoundRecords)
 		mockRead.On("Find").Return(respFind)
@@ -154,14 +149,15 @@ func TestCreate(t *testing.T) {
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
 		createdRepo, err := controller.Create(uuid.New(), &accountEntities.Repository{
-			AuthzAdmin:      "",
-			AuthzMember:     "",
-			AuthzSupervisor: "",
-		})
+			AuthzAdmin:      pq.StringArray{"admin"},
+			AuthzMember:     pq.StringArray{"member"},
+			AuthzSupervisor: pq.StringArray{"admin"},
+		}, []string{})
+
 		assert.NoError(t, err)
-		assert.Equal(t, createdRepo.AuthzAdmin, "admin")
-		assert.Equal(t, createdRepo.AuthzMember, "member")
-		assert.Equal(t, createdRepo.AuthzSupervisor, "admin")
+		assert.Contains(t, createdRepo.AuthzAdmin, "admin")
+		assert.Contains(t, createdRepo.AuthzMember, "member")
+		assert.Contains(t, createdRepo.AuthzSupervisor, "admin")
 	})
 }
 
@@ -178,8 +174,25 @@ func TestUpdate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Update(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Update(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return error updating repository when ldap auth type", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockWrite.On("Update").Return(resp)
+		mockRead.On("Find").Return(resp.SetData(&accountEntities.Repository{}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		controller := NewController(mockWrite, mockRead, brokerMock,
+			&app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}})
+
+		_, err := controller.Update(uuid.New(), &accountEntities.Repository{}, []string{})
+		assert.Error(t, err)
 	})
 
 	t.Run("should return error when something went wrong", func(t *testing.T) {
@@ -194,7 +207,7 @@ func TestUpdate(t *testing.T) {
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
 
-		_, err := controller.Update(uuid.New(), &accountEntities.Repository{})
+		_, err := controller.Update(uuid.New(), &accountEntities.Repository{}, []string{})
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
@@ -329,7 +342,7 @@ func TestList(t *testing.T) {
 	t.Run("should successfully retrieve repositories list with user member", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		brokerMock := &broker.Mock{}
 		repositoryMock := &repositoryRepo.Mock{}
@@ -347,14 +360,15 @@ func TestList(t *testing.T) {
 			repositoriesUseCases:     nil,
 		}
 
-		repositories, err := controller.List(uuid.New(), uuid.New())
+		repositories, err := controller.List(uuid.New(), uuid.New(), []string{})
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
 	})
+
 	t.Run("should return error in repositories list", func(t *testing.T) {
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: account.Member}))
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		brokerMock := &broker.Mock{}
 		repositoryMock := &repositoryRepo.Mock{}
@@ -372,8 +386,35 @@ func TestList(t *testing.T) {
 			repositoriesUseCases:     nil,
 		}
 
-		_, err := controller.List(uuid.New(), uuid.New())
+		_, err := controller.List(uuid.New(), uuid.New(), []string{})
 		assert.Error(t, err)
+	})
+
+	t.Run("should success get repositories by ldap", func(t *testing.T) {
+		mockWrite := &relational.MockWrite{}
+		mockRead := &relational.MockRead{}
+		brokerMock := &broker.Mock{}
+		repositoryMock := &repositoryRepo.Mock{}
+
+		mockRead.On("Find").Return(response.NewResponse(0, nil, &roles.AccountCompany{Role: accountEnums.Member}))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+		repositoryMock.On("ListByLdapPermissions").Return(&[]accountEntities.RepositoryResponse{{}}, nil)
+
+		controller := &Controller{
+			databaseWrite:            mockWrite,
+			databaseRead:             mockRead,
+			repository:               repositoryMock,
+			accountRepositoryRepo:    nil,
+			accountRepository:        nil,
+			accountCompanyRepository: repositoryAccountCompany.NewAccountCompanyRepository(mockRead, mockWrite),
+			broker:                   brokerMock,
+			appConfig:                &app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}},
+			repositoriesUseCases:     nil,
+		}
+
+		repositories, err := controller.List(uuid.New(), uuid.New(), []string{})
+		assert.NoError(t, err)
+		assert.NotNil(t, repositories)
 	})
 }
 
@@ -480,7 +521,9 @@ func TestInviteUser(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Create").Return(respRepository)
 
-		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{DisabledBroker: true})
+		appConfig := &app.Config{ConfigAuth: authEntities.ConfigAuth{DisabledBroker: true}}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, appConfig)
 
 		err := controller.InviteUser(inviteUser)
 		assert.NoError(t, err)

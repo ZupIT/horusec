@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint
 package yarnaudit
 
-const (
-	// nolint
-	ImageCmd = `
+const CMD = `
 		{{WORK_DIR}}
         if [ -f yarn.lock ]; then
             yarn audit --groups dependencies --json > /tmp/results-ANALYSISID.json 2> /tmp/errorYarnAudit-ANALYSISID
@@ -32,6 +31,4 @@ const (
                 echo 'ERROR_YARN_LOCK_NOT_FOUND'
             fi
         fi
-	  	chmod -R 777 .
   `
-)

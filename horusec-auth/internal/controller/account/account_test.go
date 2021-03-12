@@ -27,19 +27,18 @@ import (
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	entityCache "github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
 	keycloakService "github.com/ZupIT/horusec/development-kit/pkg/services/keycloak"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMock(t *testing.T) {
@@ -708,30 +707,6 @@ func TestLogout(t *testing.T) {
 		err := controller.Logout(uuid.New())
 		assert.Error(t, err)
 	})
-}
-
-func TestCreateTokenWithAccountPermissions(t *testing.T) {
-	t.Run("should successfully create a token", func(t *testing.T) {
-		brokerMock := &broker.Mock{}
-		mockRead := &relational.MockRead{}
-		mockWrite := &relational.MockWrite{}
-		cacheRepositoryMock := &cache.Mock{}
-
-		resp := &response.Response{}
-		mockRead.On("Find").Return(resp.SetData(&[]roles.AccountRepository{}))
-		mockRead.On("SetFilter").Return(&gorm.DB{})
-
-		appConfig := app.NewConfig()
-		controller := NewAccountController(brokerMock, mockRead, mockWrite, cacheRepositoryMock, appConfig)
-		assert.NotNil(t, controller)
-
-		account := &authEntities.Account{}
-		token, _, err := controller.createTokenWithAccountPermissions(account)
-
-		assert.NoError(t, err)
-		assert.NotEmpty(t, token)
-	})
-
 }
 
 func TestVerifyAlreadyInUse(t *testing.T) {

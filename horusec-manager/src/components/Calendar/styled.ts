@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import datepicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+interface WrapperProps {
+  disabled?: boolean;
+}
+
 const DatePicker = styled(datepicker)``;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: column;
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      opacity: 0.5;
+    `};
 `;
 
 const Title = styled.span`
@@ -38,9 +48,28 @@ const Container = styled.div`
   padding-bottom: 3px;
 `;
 
+interface InputProps {
+  isInvalid?: boolean;
+}
+
+const Error = styled.span<InputProps>`
+  visibility: hidden;
+  margin-top: 5px;
+  color: ${({ theme }) => theme.colors.input.error};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  min-height: 14px;
+
+  ${({ isInvalid }) =>
+    isInvalid &&
+    css`
+      visibility: visible;
+    `};
+`;
+
 export default {
   DatePicker,
   Wrapper,
   Title,
   Container,
+  Error,
 };

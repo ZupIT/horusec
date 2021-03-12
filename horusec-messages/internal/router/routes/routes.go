@@ -15,5 +15,5 @@
 package routes
 
 const (
-	HealthHandler = "/api/health"
+	HealthHandler = "/messages/health"
 )

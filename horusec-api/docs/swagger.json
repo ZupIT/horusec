@@ -8,7 +8,8 @@
             "name": "Horusec",
             "url": "https://github.com/ZupIT/horusec",
             "email": "horusec@zup.com.br"
-        }
+        },
+        "license": {}
     },
     "paths": {
         "/api/analysis": {
@@ -361,6 +362,132 @@
                 }
             }
         },
+        "/api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/severity": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update vulnerability severity",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management"
+                ],
+                "operationId": "update-vuln-severity",
+                "parameters": [
+                    {
+                        "description": "type of vulnerability",
+                        "name": "UpdateVulnSeverity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVulnSeverity"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "vulnerabilityID of the vulnerability",
+                        "name": "vulnerabilityID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "companyID of the company",
+                        "name": "companyID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/type": {
             "put": {
                 "security": [
@@ -400,6 +527,13 @@
                         "type": "string",
                         "description": "repositoryID of the repository",
                         "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "companyID of the company",
+                        "name": "companyID",
                         "in": "path",
                         "required": true
                     }
@@ -1219,6 +1353,20 @@
             "properties": {
                 "description": {
                     "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "isExpirable": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.UpdateVulnSeverity": {
+            "type": "object",
+            "properties": {
+                "severity": {
+                    "type": "string"
                 }
             }
         },
@@ -1236,7 +1384,7 @@
                 "analysisVulnerabilities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/horusec.AnalysisVulnerabilities"
+                        "type": "AnalysisVulnerabilities"
                     }
                 },
                 "companyID": {
@@ -1264,23 +1412,6 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "horusec.AnalysisVulnerabilities": {
-            "type": "object",
-            "properties": {
-                "analysisID": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "vulnerabilities": {
-                    "$ref": "#/definitions/horusec.Vulnerability"
-                },
-                "vulnerabilityID": {
                     "type": "string"
                 }
             }

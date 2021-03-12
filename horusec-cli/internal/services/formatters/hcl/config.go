@@ -14,13 +14,7 @@
 
 package hcl
 
-const (
-	ImageName = "horuszup/tfsec"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 			{{WORK_DIR}}
-        	tfsec --format=json | grep -v "WARNING: skipped" > results.json
-			cat results.json
-	  		chmod -R 777 .
+        	tfsec --format=json 
   `
-)

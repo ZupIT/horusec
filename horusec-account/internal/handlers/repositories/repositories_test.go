@@ -23,14 +23,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 
-	repositoriesUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
 	repositoriesController "github.com/ZupIT/horusec/horusec-account/internal/controller/repositories"
+	repositoriesUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
@@ -41,8 +43,8 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func setAuthorizationHeader(r *http.Request) {
@@ -90,6 +92,7 @@ func TestCreate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Create(w, r)
 
@@ -118,6 +121,7 @@ func TestCreate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Create(w, r)
 
@@ -146,6 +150,7 @@ func TestCreate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Create(w, r)
 
@@ -204,6 +209,7 @@ func TestCreate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Create(w, r)
 
@@ -230,6 +236,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 
@@ -254,6 +261,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 
@@ -278,6 +286,7 @@ func TestUpdate(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Update(w, r)
 
@@ -332,6 +341,7 @@ func TestGet(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Get(w, r)
 
@@ -353,10 +363,34 @@ func TestGet(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Get(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return bad request when ldap error", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		resp := &response.Response{}
+		mockRead.On("Find").Return(resp.SetError(errorsEnum.ErrorInvalidLdapGroup))
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		handler := NewRepositoryHandler(mockWrite, mockRead, brokerMock, &app.Config{})
+		r, _ := http.NewRequest(http.MethodPost, "api/repository", nil)
+		w := httptest.NewRecorder()
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData,
+			&authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("should return not found when no registry found", func(t *testing.T) {
@@ -374,6 +408,7 @@ func TestGet(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
 		handler.Get(w, r)
 
@@ -743,8 +778,9 @@ func TestList(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
@@ -793,8 +829,9 @@ func TestList(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", token)
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: uuid.New().String(), Permissions: []string{}}))
 
-		handler.List(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.List(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -818,6 +855,7 @@ func TestList(t *testing.T) {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("companyID", uuid.New().String())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, &authGrpc.GetAccountDataResponse{AccountID: "test", Permissions: []string{}}))
 
 		handler.List(w, r)
 

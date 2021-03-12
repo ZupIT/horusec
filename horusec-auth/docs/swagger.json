@@ -12,7 +12,7 @@
         "license": {}
     },
     "paths": {
-        "/api/account/change-password": {
+        "/auth/account/change-password": {
             "post": {
                 "security": [
                     {
@@ -117,7 +117,7 @@
                 }
             }
         },
-        "/api/account/create-account": {
+        "/auth/account/create-account": {
             "post": {
                 "description": "Create a new account!",
                 "consumes": [
@@ -199,7 +199,7 @@
                 }
             }
         },
-        "/api/account/create-account-from-keycloak": {
+        "/auth/account/create-account-from-keycloak": {
             "post": {
                 "description": "Create a new account with keycloak data!",
                 "consumes": [
@@ -299,7 +299,7 @@
                 }
             }
         },
-        "/api/account/delete": {
+        "/auth/account/delete": {
             "delete": {
                 "security": [
                     {
@@ -375,7 +375,7 @@
                 }
             }
         },
-        "/api/account/logout": {
+        "/auth/account/logout": {
             "post": {
                 "security": [
                     {
@@ -451,7 +451,7 @@
                 }
             }
         },
-        "/api/account/renew-token": {
+        "/auth/account/renew-token": {
             "post": {
                 "security": [
                     {
@@ -538,7 +538,7 @@
                 }
             }
         },
-        "/api/account/send-code": {
+        "/auth/account/send-code": {
             "post": {
                 "description": "send reset password code!",
                 "consumes": [
@@ -620,7 +620,7 @@
                 }
             }
         },
-        "/api/account/update": {
+        "/auth/account/update": {
             "patch": {
                 "security": [
                     {
@@ -707,7 +707,7 @@
                 }
             }
         },
-        "/api/account/validate-code": {
+        "/auth/account/validate-code": {
             "post": {
                 "description": "validate reset password code!",
                 "consumes": [
@@ -807,7 +807,7 @@
                 }
             }
         },
-        "/api/account/validate/{accountID}": {
+        "/auth/account/validate/{accountID}": {
             "get": {
                 "description": "validate email!",
                 "consumes": [
@@ -887,7 +887,7 @@
                 }
             }
         },
-        "/api/account/verify-already-used": {
+        "/auth/account/verify-already-used": {
             "post": {
                 "description": "Verify if email and username already in use!",
                 "consumes": [
@@ -969,7 +969,7 @@
                 }
             }
         },
-        "/api/auth/authenticate": {
+        "/auth/auth/authenticate": {
             "post": {
                 "description": "authenticate login by type!",
                 "consumes": [
@@ -1051,7 +1051,7 @@
                 }
             }
         },
-        "/api/auth/config": {
+        "/auth/auth/config": {
             "get": {
                 "description": "get actual type!",
                 "consumes": [
@@ -1086,7 +1086,7 @@
                 }
             }
         },
-        "/api/health": {
+        "/auth/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
                 "consumes": [

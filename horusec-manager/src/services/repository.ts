@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import defaultHTTP from 'config/axios/default';
+import http from 'config/axios';
 
 import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
@@ -22,8 +22,8 @@ import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
 const getAll = (companyId: string) => {
-  return defaultHTTP.get(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`
+  return http.get(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`
   );
 };
 
@@ -33,8 +33,8 @@ const create = (
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return defaultHTTP.post(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories`,
+  return http.post(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`,
     {
       name,
       description,
@@ -50,20 +50,20 @@ const update = (
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return defaultHTTP.patch(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`,
+  return http.patch(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`,
     { name, description, ...ldapGroups }
   );
 };
 
 const remove = (companyId: string, repositoryId: string) => {
-  return defaultHTTP.delete(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}`
+  return http.delete(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`
   );
 };
 
 const getAllTokens = (companyId: string, repositoryId: string) => {
-  return defaultHTTP.get(
+  return http.get(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`
   );
 };
@@ -71,12 +71,16 @@ const getAllTokens = (companyId: string, repositoryId: string) => {
 const createToken = (
   companyId: string,
   repositoryId: string,
-  description: string
+  data: {
+    description: string;
+    isExpirable?: boolean;
+    expiredAt?: string;
+  }
 ) => {
-  return defaultHTTP.post(
+  return http.post(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
     {
-      description,
+      ...data,
     }
   );
 };
@@ -86,14 +90,14 @@ const removeToken = (
   repositoryId: string,
   tokenId: string
 ) => {
-  return defaultHTTP.delete(
+  return http.delete(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
 const getUsersInRepository = (companyId: string, repositoryId: string) => {
-  return defaultHTTP.get(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`
+  return http.get(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`
   );
 };
 
@@ -103,8 +107,8 @@ const includeUser = (
   email: string,
   role: string
 ) => {
-  return defaultHTTP.post(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles`,
+  return http.post(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`,
     {
       email,
       role,
@@ -117,8 +121,8 @@ const removeUser = (
   repositoryId: string,
   accountId: string
 ) => {
-  return defaultHTTP.delete(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
+  return http.delete(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
 
@@ -128,8 +132,8 @@ const updateUserRole = (
   accountId: string,
   role: string
 ) => {
-  return defaultHTTP.patch(
-    `${SERVICE_ACCOUNT}/api/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
+  return http.patch(
+    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,
     }
@@ -140,7 +144,7 @@ const getAllVulnerabilities = (
   filters: FilterVuln,
   pagination: PaginationInfo
 ) => {
-  return defaultHTTP.get(
+  return http.get(
     `${SERVICE_API}/api/companies/${filters.companyID}/repositories/${filters.repositoryID}/management`,
     {
       params: {
@@ -160,10 +164,24 @@ const updateVulnerabilityType = (
   vulnerabilityId: string,
   type: string
 ) => {
-  return defaultHTTP.put(
+  return http.put(
     `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
     {
       type,
+    }
+  );
+};
+
+const updateVulnerabilitySeverity = (
+  companyId: string,
+  repositoryId: string,
+  vulnerabilityId: string,
+  severity: string
+) => {
+  return http.put(
+    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
+    {
+      severity,
     }
   );
 };
@@ -182,4 +200,5 @@ export default {
   updateUserRole,
   getAllVulnerabilities,
   updateVulnerabilityType,
+  updateVulnerabilitySeverity,
 };

@@ -15,11 +15,8 @@
 // nolint
 package safety
 
-const (
-	ImageName = "horuszup/safety"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
-		{{WORK_DIR}}
+const CMD = `
+      {{WORK_DIR}}
       touch /tmp/warning-ANALYSISID
 	  touch /tmp/output-ANALYSISID.json
 	  touch /tmp/errorRunning-ANALYSISID
@@ -47,6 +44,4 @@ const (
 	  else
 		echo "ERROR_REQ_NOT_FOUND"
 	  fi
-	  chmod -R 777 .
   `
-)

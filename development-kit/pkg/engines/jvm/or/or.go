@@ -49,7 +49,7 @@ func NewJvmOrSendSMS() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "92680eb9-9408-43a4-a098-1c6fda2713ff",
 			Name:        "Send SMS",
-			Description: "Send SMS",
+			Description: "Send SMS. For more information checkout the OWASP-M3 (https://owasp.org/www-project-mobile-top-10/2016-risks/m3-insecure-communication) advisory",
 			Severity:    severity.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},

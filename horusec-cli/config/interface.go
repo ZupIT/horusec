@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
@@ -12,6 +12,8 @@ type IConfig interface {
 	NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig
 	NewConfigsFromViper() IConfig
 	NewConfigsFromEnvironments() IConfig
+
+	GetVersion() string
 
 	GetDefaultConfigFilePath() string
 	GetConfigFilePath() string
@@ -92,16 +94,23 @@ type IConfig interface {
 	GetIsTimeout() bool
 	SetIsTimeout(isTimeout bool)
 
-	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
+	GetToolsConfig() toolsconfig.MapToolConfig
 	SetToolsConfig(toolsConfig interface{})
 
 	GetDisableDocker() bool
 	SetDisableDocker(disableDocker bool)
+
+	GetEnableInformationSeverity() bool
+	SetEnableInformationSeverity(enableInformationSeverity bool)
 
 	GetCustomRulesPath() string
 	SetCustomRulesPath(customRulesPath string)
 
 	IsEmptyRepositoryAuthorization() bool
 	ToBytes(isMarshalIndent bool) (bytes []byte)
+	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
+
+	GetCustomImages() images.Custom
+	SetCustomImages(configData interface{})
 }

@@ -29,66 +29,57 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(analysis *horusec.Analysis, tx SQL.InterfaceWrite) error {
+func (m *Mock) Create(_ *horusec.Analysis, _ SQL.InterfaceWrite) error {
 	args := m.MethodCalled("Create")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) GetByID(analysisID uuid.UUID) (*horusec.Analysis, error) {
+func (m *Mock) GetByID(_ uuid.UUID) (*horusec.Analysis, error) {
 	args := m.MethodCalled("GetByID")
 	return args.Get(0).(*horusec.Analysis), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetDetailsPaginated(companyID, repositoryID uuid.UUID, page, size int, initialDate,
-	finalDate time.Time) (vulnDetails []dashboard.VulnDetails, err error) {
+func (m *Mock) GetDetailsPaginated(_, _ uuid.UUID, _, _ int, _, _ time.Time) ([]dashboard.VulnDetails, error) {
 	args := m.MethodCalled("GetDetailsPaginated")
 	return args.Get(0).([]dashboard.VulnDetails), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetDetailsCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+func (m *Mock) GetDetailsCount(_, _ uuid.UUID, _, _ time.Time) (int, error) {
 	args := m.MethodCalled("GetDetailsCount")
 	return args.Get(0).(int), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetDeveloperCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+func (m *Mock) GetDeveloperCount(_, _ uuid.UUID, _, _ time.Time) (count int, err error) {
 	args := m.MethodCalled("GetDeveloperCount")
 	return args.Get(0).(int), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetRepositoryCount(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (count int, err error) {
+func (m *Mock) GetRepositoryCount(_, _ uuid.UUID, _, _ time.Time) (count int, err error) {
 	args := m.MethodCalled("GetRepositoryCount")
 	return args.Get(0).(int), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetVulnBySeverity(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (vulnBySeverity []dashboard.VulnBySeverity, err error) {
+func (m *Mock) GetVulnBySeverity(_, _ uuid.UUID, _, _ time.Time) ([]dashboard.VulnBySeverity, error) {
 	args := m.MethodCalled("GetVulnBySeverity")
 	return args.Get(0).([]dashboard.VulnBySeverity), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetVulnByDeveloper(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (vulnByDeveloper []dashboard.VulnByDeveloper, err error) {
+func (m *Mock) GetVulnByDeveloper(_, _ uuid.UUID, _, _ time.Time) ([]dashboard.VulnByDeveloper, error) {
 	args := m.MethodCalled("GetVulnByDeveloper")
 	return args.Get(0).([]dashboard.VulnByDeveloper), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetVulnByLanguage(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (vulnByLanguage []dashboard.VulnByLanguage, err error) {
+func (m *Mock) GetVulnByLanguage(_, _ uuid.UUID, _, _ time.Time) ([]dashboard.VulnByLanguage, error) {
 	args := m.MethodCalled("GetVulnByLanguage")
 	return args.Get(0).([]dashboard.VulnByLanguage), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetVulnByRepository(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (vulnByRepository []dashboard.VulnByRepository, err error) {
+func (m *Mock) GetVulnByRepository(_, _ uuid.UUID, _, _ time.Time) ([]dashboard.VulnByRepository, error) {
 	args := m.MethodCalled("GetVulnByRepository")
 	return args.Get(0).([]dashboard.VulnByRepository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetVulnByTime(companyID, repositoryID uuid.UUID, initialDate,
-	finalDate time.Time) (vulnByTime []dashboard.VulnByTime, err error) {
+func (m *Mock) GetVulnByTime(_, _ uuid.UUID, _, _ time.Time) ([]dashboard.VulnByTime, error) {
 	args := m.MethodCalled("GetVulnByTime")
 	return args.Get(0).([]dashboard.VulnByTime), mockUtils.ReturnNilOrError(args, 1)
 }

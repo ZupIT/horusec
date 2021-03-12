@@ -16,11 +16,12 @@ package company
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type ICompanyRepository interface {
@@ -30,6 +31,7 @@ type ICompanyRepository interface {
 	GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.CompanyResponse, error)
 	Delete(companyID uuid.UUID) error
 	GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.AccountRole, error)
+	ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error)
 }
 
 type Repository struct {
@@ -91,7 +93,7 @@ func (r *Repository) GetAllOfAccount(accountID uuid.UUID) (*[]accountEntities.Co
 		GetConnection().
 		Select(
 			"comp.company_id, comp.name, comp.description, accountComp.role,"+
-				" comp.authz_admin, comp.authz_member, comp.created_at, comp.updated_at",
+				"comp.created_at, comp.updated_at",
 		).
 		Table("companies AS comp").
 		Joins("JOIN account_company AS accountComp ON accountComp.company_id = comp.company_id"+
@@ -124,4 +126,38 @@ func (r *Repository) GetAllAccountsInCompany(companyID uuid.UUID) (*[]roles.Acco
 
 	response := r.databaseRead.RawSQL(query, accounts)
 	return accounts, response.GetError()
+}
+
+//nolint
+func (r *Repository) ListByLdapPermissions(permissions []string) (*[]accountEntities.CompanyResponse, error) {
+	workspaces := &[]accountEntities.CompanyResponse{}
+
+	query := fmt.Sprintf(`
+		SELECT *
+		FROM (
+			SELECT * FROM (%[1]s) AS admin
+			UNION ALL
+			SELECT * FROM (%[2]s) AS member
+			WHERE member.company_id NOT IN (SELECT company_id FROM (%[1]s) AS admin)
+		) AS workspace
+	`, r.listByLdapPermissionsWhenAdmin(), r.listByLdapPermissionsWhenMember())
+
+	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&workspaces)
+	return workspaces, response.Error
+}
+
+func (r *Repository) listByLdapPermissionsWhenAdmin() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'admin' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_admin
+	`
+}
+
+func (r *Repository) listByLdapPermissionsWhenMember() string {
+	return `SELECT comp.company_id, comp.name, comp.description, 'member' AS role, comp.authz_admin, comp.authz_member,
+			comp.created_at, comp.updated_at
+			FROM companies AS comp
+			WHERE $1 && comp.authz_member
+	`
 }

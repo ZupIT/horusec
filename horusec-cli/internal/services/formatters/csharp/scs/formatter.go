@@ -26,6 +26,7 @@ import (
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs/entities"
@@ -43,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.SecurityCodeScan) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.SecurityCodeScan.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.SecurityCodeScan.ToString())
 		return
 	}
 
@@ -60,8 +61,8 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 		return err
 	}
 
-	if errCsproj := f.verifyIsCsProjError(output, err); errCsproj != nil {
-		return errCsproj
+	if errSolution := f.verifyIsSolutionError(output, err); errSolution != nil {
+		return errSolution
 	}
 
 	f.parseOutput(output)
@@ -94,7 +95,7 @@ func (f *Formatter) splitSCSContainerOutput(output string) []string {
 
 func (f *Formatter) parseStringToStruct(output string) (scsResult entities.ScsResult, err error) {
 	err = json.Unmarshal([]byte(output), &scsResult)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err)
 	return scsResult, err
 }
 
@@ -122,19 +123,19 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, "*.csproj"), tools.SecurityCodeScan),
+		CMD: f.AddWorkDirInCmd(CMD, fileUtil.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-func (f *Formatter) verifyIsCsProjError(output string, err error) error {
-	if strings.Contains(output, "Could not find any project in") {
+func (f *Formatter) verifyIsSolutionError(output string, err error) error {
+	if strings.Contains(output, "Specify a project or solution file") {
 		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrCsProjNotFound, logger.ErrorLevel)
-		return errorsEnums.ErrCsProjNotFound
+		logger.LogErrorWithLevel(msg, errorsEnums.ErrSolutionNotFound)
+		return errorsEnums.ErrSolutionNotFound
 	}
 
 	return err

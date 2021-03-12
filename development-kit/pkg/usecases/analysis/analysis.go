@@ -174,6 +174,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecJava,
 		tools.HorusecKotlin,
 		tools.HorusecLeaks,
+		tools.HorusecDart,
 		tools.Semgrep,
 		tools.HorusecCsharp,
 		tools.HorusecNodejs,
@@ -181,6 +182,10 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.HorusecKubernetes,
 		tools.Flawfinder,
 		tools.PhpCS,
+		tools.ShellCheck,
+		tools.BundlerAudit,
+		tools.Sobelow,
+		tools.MixAudit,
 	}
 }
 
@@ -189,6 +194,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 	return []interface{}{
 		languages.Go,
 		languages.CSharp,
+		languages.Dart,
 		languages.Ruby,
 		languages.Python,
 		languages.Java,
@@ -202,16 +208,19 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.HTML,
 		languages.Generic,
 		languages.Yaml,
+		languages.Shell,
+		languages.Elixir,
 		languages.Unknown,
 	}
 }
+
 func (au *UseCases) sliceSeverities() []interface{} {
 	return []interface{}{
-		severity.Info,
-		severity.NoSec,
-		severity.Low,
-		severity.Medium,
+		severity.Critical,
 		severity.High,
-		severity.Audit,
+		severity.Medium,
+		severity.Low,
+		severity.Unknown,
+		severity.Info,
 	}
 }

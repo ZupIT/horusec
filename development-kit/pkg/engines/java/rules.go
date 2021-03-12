@@ -22,7 +22,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/or"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/java/regular"
 	"github.com/ZupIT/horusec/development-kit/pkg/engines/jvm"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 type Interface interface {
@@ -63,9 +62,18 @@ func (r *Rules) addJavaRules(rules []engine.Rule) []engine.Rule {
 }
 
 func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnit, err := text.LoadDirIntoSingleUnit(projectPath, r.getExtensions())
-	logger.LogDebugJSON("Text Unit selected is: ", textUnit)
-	return []engine.Unit{textUnit}, err
+	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
+	if err != nil {
+		return []engine.Unit{}, err
+	}
+	return r.parseTextUnitsToUnits(textUnits), nil
+}
+
+func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
+	for index := range textUnits {
+		units = append(units, textUnits[index])
+	}
+	return units
 }
 
 func (r *Rules) getExtensions() []string {

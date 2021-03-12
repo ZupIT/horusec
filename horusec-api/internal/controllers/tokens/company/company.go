@@ -18,7 +18,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	tokenRepository "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/token"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
-	tokenUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/tokens"
+	tokenUseCases "github.com/ZupIT/horusec/horusec-api/internal/usecases/tokens"
 	"github.com/google/uuid"
 )
 

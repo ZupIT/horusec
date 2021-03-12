@@ -16,6 +16,7 @@ package auth
 
 import (
 	"context"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authGrpc "github.com/ZupIT/horusec/development-kit/pkg/services/grpc/auth"
 	mockUtils "github.com/ZupIT/horusec/development-kit/pkg/utils/mock"
@@ -41,7 +42,7 @@ func (m *MockAuthController) GetAuthConfig(_ context.Context, _ *authGrpc.GetAut
 	return args.Get(0).(*authGrpc.GetAuthConfigResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *MockAuthController) GetAccountID(_ context.Context, _ *authGrpc.GetAccountIDData) (*authGrpc.GetAccountIDResponse, error) {
+func (m *MockAuthController) GetAccountID(_ context.Context, _ *authGrpc.GetAccountData) (*authGrpc.GetAccountDataResponse, error) {
 	args := m.MethodCalled("GetAccountID")
-	return args.Get(0).(*authGrpc.GetAccountIDResponse), mockUtils.ReturnNilOrError(args, 1)
+	return args.Get(0).(*authGrpc.GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
 }

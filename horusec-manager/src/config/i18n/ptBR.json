@@ -154,6 +154,12 @@
   "DASHBOARD_SCREEN": {
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
+    "PERIOD": "Período",
+    "CUSTOM_RANGE": "Período personalizado",
+    "TODAY": "Hoje",
+    "LAST_WEEK": "Últimos 7 dias",
+    "LAST_MONTH": "Últimos 30 dias",
+    "BEGINNING": "Desde o ínicio",
     "APPLY": "Aplicar",
     "TOTAL_DEVELOPERS": "Total de desenvolvedores",
     "TOTAL_REPOSITORIES": "Total de repositórios",
@@ -208,8 +214,9 @@
     "NO_TOKENS": "Não há tokens registrados para este repositório.",
     "EXPIRES": "Expira em:",
     "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
-    "CREATE_NEW_TOKEN": "Adicionar novo token ",
+    "CREATE_NEW_TOKEN": "Adicionar novo token",
     "INVALID_DESCRIPTION": "Descrição inválida",
+    "INVALID_EXPIRES_AT": "Espera-se que demore pelo menos um dia ou mais",
     "SUCCESS_ADD_USER": "Sucesso ao adicionar usuário ao repositório!",
     "SUCCESS_CREATE_REPO": "Repositório criado com sucesso!",
     "SUCCESS_EDIT_REPO": "Repositório editado com sucesso!",
@@ -223,12 +230,16 @@
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
     "SUPERVISOR": "Supervisor:",
-    "GROUP_NAME": "Nome do grupo"
+    "MEMBER": "Membro",
+    "GROUP_NAME": "Nome do grupo",
+    "IS_EXPIRABLE": "É expirável",
+    "EXPIRES_AT": "Expira em"
   },
 
   "GENERAL": {
     "SELECT": "Selecione",
     "CANCEL": "Cancelar",
+    "NOT_EXPIRABLE": "Não expirável",
     "PAGINATION": {
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",
@@ -388,7 +399,9 @@
     "REPO_NAME_IN_USE": "Nome do repositório já em uso.",
     "USERNAME_IN_USE": "Nome de usuário já em uso",
     "SAME_PASSWORD": "A nova senha não pode ser igual a atual.",
-    "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados."
+    "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados.",
+    "LDAP_GROUP": "O grupo de usuário deve ser válido para este usuário.",
+    "KEYCLOAK_LOGIN": "Houve algo inesperado ao realizar a autenticação, tente novamente."
   },
 
   "NOT_FOUND_SCREEN": {

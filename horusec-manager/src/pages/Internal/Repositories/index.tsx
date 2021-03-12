@@ -16,55 +16,43 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import { SearchBar, Button, Icon, Dialog } from 'components';
+import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
-import AddRepository from './Add';
-import EditRepository from './Edit';
+import HandleRepository from './Handle';
 import InviteToRepository from './Invite';
 import Tokens from './Tokens';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
+import { AxiosError, AxiosResponse } from 'axios';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
   const { currentWorkspace, isAdminOfWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
+  const { authType } = getCurrentConfig();
 
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
 
   const [isLoading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
   const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
     null
   );
-  const [repoTodelete, setRepoToDelete] = useState<Repository>(null);
+  const [repoToDelete, setRepoToDelete] = useState<Repository>(null);
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
-
-  const [addRepoVisible, setAddRepoVisible] = useState(false);
-
-  const fetchData = () => {
-    setLoading(true);
-    repositoryService
-      .getAll(currentWorkspace?.companyID)
-      .then((result) => {
-        setRepositories(result?.data?.content);
-        setFilteredRepos(result?.data?.content);
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   const onSearchRepository = (search: string) => {
     if (search) {
@@ -81,11 +69,11 @@ const Repositories: React.FC = () => {
   const handleConfirmDeleteRepo = () => {
     setDeleteLoading(true);
     repositoryService
-      .remove(repoTodelete.companyID, repoTodelete.repositoryID)
+      .remove(repoToDelete.companyID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
         setRepoToDelete(null);
-        fetchData();
+        setRefresh((state) => !state);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -95,8 +83,46 @@ const Repositories: React.FC = () => {
       });
   };
 
-  // eslint-disable-next-line
-  useEffect(() => fetchData(), [currentWorkspace]);
+  const setVisibleHandleModal = (
+    isVisible: boolean,
+    repository?: Repository
+  ) => {
+    sethandleRepositoryVisible(isVisible);
+    setRepoToEdit(repository || null);
+  };
+
+  const handleConfirmRepositoryEdit = () => {
+    setVisibleHandleModal(false);
+    setRefresh((state) => !state);
+  };
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    setLoading(true);
+    repositoryService
+      .getAll(currentWorkspace?.companyID)
+      .then((result: AxiosResponse) => {
+        if (!isCancelled) {
+          setRepositories(result.data?.content);
+          setFilteredRepos(result.data?.content);
+        }
+      })
+      .catch((err: AxiosError) => {
+        if (!isCancelled) {
+          dispatchMessage(err.response?.data);
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentWorkspace, refresh, dispatchMessage]);
 
   return (
     <Styled.Wrapper>
@@ -112,95 +138,73 @@ const Repositories: React.FC = () => {
             rounded
             width={180}
             icon="plus"
-            onClick={() => setAddRepoVisible(true)}
+            onClick={() => setVisibleHandleModal(true)}
           />
         ) : null}
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
         <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
 
-        <Styled.Table>
-          <Styled.Head>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.NAME')}</Styled.Column>
-            <Styled.Column>
-              {t('REPOSITORIES_SCREEN.DESCRIPTION')}
-            </Styled.Column>
-            <Styled.Column>{t('REPOSITORIES_SCREEN.ACTION')}</Styled.Column>
-          </Styled.Head>
+        <Datatable
+          columns={[
+            {
+              label: t('REPOSITORIES_SCREEN.NAME'),
+              property: 'name',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              property: 'description',
+              type: 'text',
+            },
+            {
+              label: t('REPOSITORIES_SCREEN.ACTION'),
+              property: 'actions',
+              type: 'actions',
+            },
+          ]}
+          datasource={filteredRepos.map((row) => {
+            const repo: Datasource = {
+              ...row,
+              id: row.repositoryID,
+              actions: [],
+            };
 
-          <Styled.Body>
-            {!filteredRepos || filteredRepos.length <= 0 ? (
-              <Styled.EmptyText>
-                {t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
-              </Styled.EmptyText>
-            ) : null}
+            if (row.role === 'admin') {
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.EDIT'),
+                icon: 'edit',
+                function: () => setVisibleHandleModal(true, row),
+              });
 
-            {filteredRepos.map((repo) => (
-              <Styled.Row key={repo.repositoryID}>
-                <Styled.Cell>{repo.name}</Styled.Cell>
+              if (isAdminOfWorkspace) {
+                repo.actions.push({
+                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  icon: 'delete',
+                  function: () => setRepoToDelete(row),
+                });
 
-                <Styled.Cell>{repo.description || '-'}</Styled.Cell>
+                if (authType !== authTypes.LDAP) {
+                  repo.actions.push({
+                    title: t('REPOSITORIES_SCREEN.INVITE'),
+                    icon: 'users',
+                    function: () => setRepoToInvite(row),
+                  });
+                }
+              }
 
-                {repo.role === 'admin' ? (
-                  <Styled.Cell className="row">
-                    <Button
-                      outline
-                      rounded
-                      opaque
-                      text={t('REPOSITORIES_SCREEN.EDIT')}
-                      width={90}
-                      height={30}
-                      icon="edit"
-                      onClick={() => setRepoToEdit(repo)}
-                    />
-
-                    {isAdminOfWorkspace ? (
-                      <>
-                        <Button
-                          rounded
-                          outline
-                          opaque
-                          text={t('REPOSITORIES_SCREEN.DELETE')}
-                          width={90}
-                          height={30}
-                          icon="delete"
-                          onClick={() => setRepoToDelete(repo)}
-                        />
-
-                        <Button
-                          outline
-                          rounded
-                          opaque
-                          text={t('REPOSITORIES_SCREEN.INVITE')}
-                          width={90}
-                          height={30}
-                          icon="users"
-                          onClick={() => setRepoToInvite(repo)}
-                        />
-                      </>
-                    ) : null}
-
-                    <Button
-                      outline
-                      rounded
-                      opaque
-                      text={t('REPOSITORIES_SCREEN.TOKENS')}
-                      width={90}
-                      height={30}
-                      icon="lock"
-                      onClick={() => setRepoToManagerTokens(repo)}
-                    />
-                  </Styled.Cell>
-                ) : null}
-              </Styled.Row>
-            ))}
-          </Styled.Body>
-        </Styled.Table>
+              repo.actions.push({
+                title: t('REPOSITORIES_SCREEN.TOKENS'),
+                icon: 'lock',
+                function: () => setRepoToManagerTokens(row),
+              });
+            }
+            return repo;
+          })}
+          isLoading={isLoading}
+          emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+        />
       </Styled.Content>
 
       <Dialog
@@ -209,28 +213,16 @@ const Repositories: React.FC = () => {
         loadingConfirm={deleteIsLoading}
         defaultButton
         hasCancel
-        isVisible={!!repoTodelete}
+        isVisible={!!repoToDelete}
         onCancel={() => setRepoToDelete(null)}
         onConfirm={handleConfirmDeleteRepo}
       />
 
-      <AddRepository
-        isVisible={addRepoVisible}
-        onCancel={() => setAddRepoVisible(false)}
-        onConfirm={() => {
-          setAddRepoVisible(false);
-          fetchData();
-        }}
-      />
-
-      <EditRepository
-        isVisible={!!repoToEdit}
-        onCancel={() => setRepoToEdit(null)}
-        repoToEdit={repoToEdit}
-        onConfirm={() => {
-          setRepoToEdit(null);
-          fetchData();
-        }}
+      <HandleRepository
+        isVisible={handleRepositoryVisible}
+        repositoryToEdit={repoToEdit}
+        onCancel={() => setVisibleHandleModal(false)}
+        onConfirm={handleConfirmRepositoryEdit}
       />
 
       <InviteToRepository

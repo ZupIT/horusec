@@ -14,20 +14,10 @@
 
 package scs
 
-const (
-	ImageName = "horuszup/dotnet-core-3.1"
-	ImageTag  = "v1.0.0"
-	// nolint
-	ImageCmd = `
+//nolint
+const CMD = `
 		{{WORK_DIR}}
-		touch /tmp/output_tmp-ANALYSISID.txt
-		dotnet add package -n SecurityCodeScan.VS2017 > /tmp/add_packet_output-ANALYSISID.txt
-		if [ $? -eq 0 ]; then
-			dotnet build --nologo -v q > /tmp/output_tmp-ANALYSISID.txt
-		else
-			echo "ERROR_ADDING_PACKAGE"
-			exit 1
-		fi
+		dotnet build --nologo -v q > /tmp/build-output-ANALYSISID.txt
 
     	while read -r LINE; do
 		
@@ -36,13 +26,11 @@ const (
 			ID=$(echo ${LINE} | awk -F ":" '{print $2}' | awk '{print $2}' | tr -d " ")
 			DESC=$(echo ${LINE} | awk -F ":" '{print $3}' | sed 's/^ *//')
 		
-			echo "{\"Filename\" : \"${FILECODE}\", \"IssueSeverity\" : \"${IDDESC}\", \"ErrorID\" : \"${ID}\", \"IssueText\" : \"${DESC}\"}" >> /tmp/output-ANALYSISID.txt
-		
-		done < /tmp/output_tmp-ANALYSISID.txt
-		
-		jq '.' /tmp/output-ANALYSISID.txt > /tmp/result-ANALYSISID.json
+			echo "{\"Filename\" : \"${FILECODE}\", \"IssueSeverity\" : \"${IDDESC}\", \"ErrorID\" : \"${ID}\", \"IssueText\" : \"${DESC}\"}" >> /tmp/build-output-parsed-ANALYSISID.txt
 
-      	jq -j -M -c . /tmp/result-ANALYSISID.json
+		done < /tmp/build-output-ANALYSISID.txt
+		
+		jq '.' /tmp/build-output-parsed-ANALYSISID.txt > /tmp/scs-result-ANALYSISID.json
+      	jq -j -M -c . /tmp/scs-result-ANALYSISID.json
 		chmod -R 777 .
   `
-)

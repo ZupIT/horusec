@@ -35,7 +35,7 @@ type IService interface {
 	GetCommitAuthor(line, filePath string) (commitAuthor horusec.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
-	GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig
+	GetToolsConfig() toolsconfig.MapToolConfig
 	GetAnalysis() *horusec.Analysis
 	SetToolFinishedAnalysis()
 	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
@@ -50,4 +50,6 @@ type IService interface {
 	AddNewVulnerabilityIntoAnalysis(vulnerability *horusec.Vulnerability)
 	IsDockerDisabled() bool
 	GetCustomRulesByTool(tool tools.Tool) []engine.Rule
+	GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string
+	GetCustomImageByLanguage(language languages.Language) string
 }

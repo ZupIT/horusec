@@ -14,13 +14,8 @@
 
 package brakeman
 
-const (
-	ImageName = "horuszup/brakeman"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
-		brakeman -q -o results-ANALYSISID.json .
-		jq -j -M -c . results-ANALYSISID.json
-	  	chmod -R 777 .
+		brakeman -q -o brakeman-result.json .
+		cat brakeman-result.json
   `
-)

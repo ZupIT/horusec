@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -48,7 +50,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Safety) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Safety.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Safety.ToString())
 		return
 	}
 
@@ -71,17 +73,17 @@ func (f *Formatter) startSafety(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+		CMD: f.AddWorkDirInCmd(CMD, fileUtil.GetSubPathByExtension(
 			f.GetConfigProjectPath(), projectSubPath, "requirements.txt"), tools.Safety),
 		Language: languages.Python,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Safety].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
 func (f *Formatter) parseOutput(output string) {
 	if output == "" {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, logger.DebugLevel,
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.Safety.ToString()})
 		return
 	}
@@ -98,7 +100,7 @@ func (f *Formatter) parseOutput(output string) {
 
 func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entities.SafetyOutput, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &safetyOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err)
 	return safetyOutput, err
 }
 
@@ -144,7 +146,7 @@ func (f *Formatter) getVulnerabilityLineByName(line, file string) string {
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close(), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close())
 	}()
 	scanner := bufio.NewScanner(fileOpened)
 	return f.getLine(line, scanner)
@@ -166,7 +168,7 @@ func (f *Formatter) getLine(name string, scanner *bufio.Scanner) string {
 func (f *Formatter) getDefaultVulnerabilitySeverityInSafety() *horusec.Vulnerability {
 	vulnerabilitySeverity := &horusec.Vulnerability{}
 	vulnerabilitySeverity.Language = languages.Python
-	vulnerabilitySeverity.Severity = severity.Audit
+	vulnerabilitySeverity.Severity = severity.High
 	vulnerabilitySeverity.SecurityTool = tools.Safety
 	vulnerabilitySeverity.Confidence = "-"
 	vulnerabilitySeverity.Column = "0"

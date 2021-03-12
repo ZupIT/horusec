@@ -17,9 +17,7 @@ package errors
 import "errors"
 
 var ErrorBrokerIsNotHealth = errors.New("{ERROR_HTTP} broker is not health")
-var ErrorDockerAPIIsNotHealth = errors.New("{ERROR_HTTP} docker_api is not health")
 var ErrorDatabaseIsNotHealth = errors.New("{ERROR_HTTP} database is not health")
-var ErrorCacheIsNotHealth = errors.New("{ERROR_HTTP} cache is not health")
 var ErrorRelationalDatabaseIsNotHealth = errors.New("{ERROR_HTTP} relational database is not healthy")
 var ErrorGenericInternalError = errors.New("{ERROR_HTTP} something went wrong, sorry for the inconvenience")
 

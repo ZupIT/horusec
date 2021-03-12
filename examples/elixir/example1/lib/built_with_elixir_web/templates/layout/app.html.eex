@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A place to discover projects built with Elixir." />
+    <meta name="author" content="Edgar Pino" />
+		<meta property="og:url" content="https://builtwithelixir.com" />
+		<meta property="og:type" content="website" />
+		<meta property="og:description" content="Find projects created by the community that are built with Elixir. Get inspired, create your own, and submit your awesome project!" />
+		<meta property="og:image" content="https://builtwithelixir.com<%= static_path(@conn, "/images/build-with-elixir-og.png") %>" />
+		
+  	<title>Built With Elixir - A place to discover projects built with Elixir.</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+		<script>
+			window.config = <%= raw elem(JSON.encode(Application.get_env(:built_with_elixir, :web)),1) %>
+		</script>
+  </head>
+
+  <body>
+  <!-- Wrapper -->
+	<div class="beta-banner">
+			<p>This website is still in beta, please report any issues <a href="https://github.com/edgar971/built_with_elixir/issues">here</a>.</p>
+		</div>
+	<div id="wrapper">
+		<!-- Header -->
+		
+		<header id="header">
+			
+			<div class="inner">
+
+				<!-- Logo -->
+				<a href="/" class="logo">
+					<span class="symbol">
+						<img src="/images/logo.svg" alt="" />
+					</span>
+					<h1 class="title">Built With Elixir</h1>
+				</a>
+			</div>
+		</header>
+
+		<!-- Main -->
+		<div id="main">
+      <%= render @view_module, @view_template, assigns %>
+		</div>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<div class="inner">
+				<section id="submit-form">
+			
+				</section>
+				<%# <section>
+					<h2>Follow</h2>
+					<ul class="icons">
+						<li>
+							<a href="#" class="icon style2 fa-twitter">
+								<span class="label">Twitter</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-facebook">
+								<span class="label">Facebook</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-instagram">
+								<span class="label">Instagram</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-dribbble">
+								<span class="label">Dribbble</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-github">
+								<span class="label">GitHub</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-500px">
+								<span class="label">500px</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-phone">
+								<span class="label">Phone</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="icon style2 fa-envelope-o">
+								<span class="label">Email</span>
+							</a>
+						</li>
+					</ul>
+				</section> %>
+				<ul class="copyright">
+					<li>Created By Edgar Pino &copy; 2018</li>
+					<li>Built With Elixir, Phoenix, and React.js</li>
+					<li>Design by HTML5 UP</li>
+				</ul>
+			</div>
+		</footer>
+
+	</div>
+	<!-- Scripts -->
+	<script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
+</body>
+
+</html>

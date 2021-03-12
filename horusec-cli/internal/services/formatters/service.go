@@ -26,13 +26,14 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
+	fileUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	customrules "github.com/ZupIT/horusec/horusec-cli/internal/services/custom_rules"
+	customRules "github.com/ZupIT/horusec/horusec-cli/internal/services/custom_rules"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/git"
 )
@@ -43,7 +44,7 @@ type Service struct {
 	gitService         git.IService
 	monitor            *horusec.Monitor
 	config             cliConfig.IConfig
-	customRulesService customrules.IService
+	customRulesService customRules.IService
 }
 
 func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
@@ -54,7 +55,7 @@ func NewFormatterService(analysis *horusec.Analysis, docker dockerService.Interf
 		gitService:         git.NewGitService(config),
 		monitor:            monitor,
 		config:             config,
-		customRulesService: customrules.NewCustomRulesService(config),
+		customRulesService: customRules.NewCustomRulesService(config),
 	}
 }
 
@@ -84,13 +85,13 @@ func (s *Service) GetConfigProjectPath() string {
 	)
 }
 
-func (s *Service) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (s *Service) GetToolsConfig() toolsconfig.MapToolConfig {
 	return s.config.GetToolsConfig()
 }
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
 	if projectSubPath != "" {
-		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, logger.DebugLevel, tool.ToString(), projectSubPath)
+		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, tool.ToString(), projectSubPath)
 		return strings.ReplaceAll(cmd, "{{WORK_DIR}}", fmt.Sprintf("cd %s", projectSubPath))
 	}
 
@@ -99,7 +100,7 @@ func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) s
 
 func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool) {
 	logger.LogDebugWithLevel(strings.ReplaceAll(msg, "{{0}}", tool.ToString()),
-		logger.DebugLevel, s.analysis.GetIDString())
+		s.analysis.GetIDString())
 }
 
 func (s *Service) GetAnalysisID() string {
@@ -119,7 +120,7 @@ func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath st
 		}
 
 		msg = strings.ReplaceAll(msg, "| output -> {{2}}", "")
-		logger.LogDebugWithLevel(fmt.Sprintf("%s - %s", msg, err), logger.ErrorLevel)
+		logger.LogDebugWithLevel(fmt.Sprintf("%s - %s", msg, err))
 	}
 }
 
@@ -159,8 +160,11 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 			return true
 		}
 	}
-
-	return s.config.GetToolsConfig()[tool].IsToIgnore
+	if s.config.GetToolsConfig()[tool].IsToIgnore {
+		s.SetToolFinishedAnalysis()
+		return true
+	}
+	return false
 }
 
 func (s *Service) getAHundredCharacters(code string, column int) string {
@@ -235,7 +239,7 @@ func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, 
 		Line:         strconv.Itoa(findings[index].SourceLocation.Line),
 		Column:       strconv.Itoa(findings[index].SourceLocation.Column),
 		Confidence:   findings[index].Confidence,
-		File:         s.RemoveSrcFolderFromPath(s.removeHorusecFolder(findings[index].SourceLocation.Filename)),
+		File:         s.removeHorusecFolder(findings[index].SourceLocation.Filename),
 		Code:         s.GetCodeWithMaxCharacters(findings[index].CodeSample, findings[index].SourceLocation.Column),
 		Details:      findings[index].Name + "\n" + findings[index].Description,
 		SecurityTool: tool,
@@ -260,4 +264,19 @@ func (s *Service) IsDockerDisabled() bool {
 
 func (s *Service) GetCustomRulesByTool(tool tools.Tool) []engine.Rule {
 	return s.customRulesService.GetCustomRulesByTool(tool)
+}
+
+func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string {
+	projectPath := s.GetConfigProjectPath()
+
+	newProjectSubPath := fileUtil.GetSubPathByExtension(projectPath, projectSubPath, ext)
+	if newProjectSubPath != "" {
+		return s.AddWorkDirInCmd(imageCmd, newProjectSubPath, tool)
+	}
+
+	return s.AddWorkDirInCmd(imageCmd, projectSubPath, tool)
+}
+
+func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
+	return s.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]
 }

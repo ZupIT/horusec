@@ -16,11 +16,12 @@
 package regular
 
 import (
+	"regexp"
+
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
-	"regexp"
 )
 
 func NewNodeJSRegularNoLogSensitiveInformationInConsole() text.TextRule {
@@ -45,7 +46,7 @@ func NewNodeJSRegularNoUseEval() text.TextRule {
 			ID:          "458736c7-8b9a-49f5-9102-f36b12b5a6c2",
 			Name:        "No use eval",
 			Description: "The eval function is extremely dangerous. Because if any user input is not handled correctly and passed to it, it will be possible to execute code remotely in the context of your application (RCE - Remote Code Executuion). For more information checkout the CWE-94 (https://cwe.mitre.org/data/definitions/94.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
@@ -61,7 +62,7 @@ func NewNodeJSRegularNoDisableTlsRejectUnauthorized() text.TextRule {
 			ID:          "eb3a06aa-b8a2-4249-a605-24799b0691c7",
 			Name:        "No disable tls reject unauthorized",
 			Description: "If the NODE_TLS_REJECT_UNAUTHORIZED option is disabled, the Node.js server will accept certificates that are self-signed, allowing an attacker to bypass the TLS security layer. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severity.High.ToString(),
+			Severity:    severity.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
@@ -276,7 +277,7 @@ func NewNodeJSRegularAlertStatementsShouldNotBeUsed() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\s+|^)(alert|confirm|prompt)\(`),
+			regexp.MustCompile(`(?m)(?i)(^| |;)(alert|confirm|prompt)\(.*`),
 		},
 	}
 }

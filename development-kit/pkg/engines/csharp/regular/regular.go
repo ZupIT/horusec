@@ -581,8 +581,8 @@ func NewCsharpRegularWeakRsaKeyLength() text.TextRule {
 			ID:          "126b300d-d512-4ca4-a32a-3aad096edb35",
 			Name:        "Weak Rsa Key Length",
 			Description: "Due to advances in cryptanalysis attacks and cloud computing capabilities, the National Institute of Standards and Technology (NIST) deprecated 1024-bit RSA keys on January 1, 2011. The Certificate Authority Browser Forum, along with the latest version of all browsers, currently mandates a minimum key size of 2048-bits for all RSA keys. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory.",
-			Severity:    severity.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			Severity:    severity.Critical.ToString(),
+			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -596,7 +596,7 @@ func NewCsharpRegularXmlReaderExternalEntityExpansion() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "3a3f1a75-e2ab-4fc6-a366-517c5771ecae",
 			Name:        "Xml Reader External Entity Expansion",
-			Description: "XML External Entity (XXE) vulnerabilities occur when applications process untrusted XML data without disabling external entities and DTD processing. Processing untrusted XML data with a vulnerable parser can allow attackers to extract data from the server, perform denial of service attacks, and in some cases gain remote code execution. The XmlReaderSettings and XmlTextReader classes are vulnerable to XXE attacks when setting the DtdProcessing property to DtdProcessing.Parse or the ProhibitDtd property to false.\n\n \n\nTo prevent XmlReader XXE attacks, avoid using the deprecated ProhibitDtd property. Set the DtdProcessing property to DtdProcessing.Prohibit. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+			Description: "XML External Entity (XXE) vulnerabilities occur when applications process untrusted XML data without disabling external entities and DTD processing. Processing untrusted XML data with a vulnerable parser can allow attackers to extract data from the server, perform denial of service attacks, and in some cases gain remote code execution. The XmlReaderSettings and XmlTextReader classes are vulnerable to XXE attacks when setting the DtdProcessing property to DtdProcessing.Parse or the ProhibitDtd property to false. To prevent XmlReader XXE attacks, avoid using the deprecated ProhibitDtd property. Set the DtdProcessing property to DtdProcessing.Prohibit. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
 			Severity:    severity.High.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},

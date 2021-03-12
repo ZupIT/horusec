@@ -17,6 +17,8 @@ package phpcs
 import (
 	"encoding/json"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/php/phpcs/entities"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -42,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.PhpCS) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.PhpCS.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.PhpCS.ToString())
 		return
 	}
 
@@ -64,11 +66,11 @@ func (f *Formatter) startPhpCs(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.PhpCS),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.PhpCS),
 		Language: languages.PHP,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.PhpCS].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.PHP), images.PHP)
 }
 
 func (f *Formatter) parseOutput(output string) error {
@@ -101,7 +103,7 @@ func (f *Formatter) parseMessages(filepath string, result interface{}) {
 
 func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *horusec.Vulnerability {
 	vulnerability := f.getDefaultVulnerabilitySeverity()
-	vulnerability.Severity = severity.Info
+	vulnerability.Severity = severity.Unknown
 	vulnerability.Details = result.Message
 	vulnerability.Line = result.GetLine()
 	vulnerability.Column = result.GetColumn()

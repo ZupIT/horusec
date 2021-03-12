@@ -1,21 +1,16 @@
-# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 definitions:
   api.Token:
     properties:
       description:
+        type: string
+      expiresAt:
+        type: string
+      isExpirable:
+        type: boolean
+    type: object
+  dto.UpdateVulnSeverity:
+    properties:
+      severity:
         type: string
     type: object
   dto.UpdateVulnType:
@@ -27,7 +22,7 @@ definitions:
     properties:
       analysisVulnerabilities:
         items:
-          $ref: '#/definitions/horusec.AnalysisVulnerabilities'
+          type: AnalysisVulnerabilities
         type: array
       companyID:
         type: string
@@ -46,17 +41,6 @@ definitions:
       repositoryName:
         type: string
       status:
-        type: string
-    type: object
-  horusec.AnalysisVulnerabilities:
-    properties:
-      analysisID:
-        type: string
-      createdAt:
-        type: string
-      vulnerabilities:
-        $ref: '#/definitions/horusec.Vulnerability'
-      vulnerabilityID:
         type: string
     type: object
   horusec.CommitAuthor:
@@ -124,6 +108,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-API
 paths:
@@ -316,6 +301,77 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Management
+  /api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/severity:
+    put:
+      consumes:
+      - application/json
+      description: update vulnerability severity
+      operationId: update-vuln-severity
+      parameters:
+      - description: type of vulnerability
+        in: body
+        name: UpdateVulnSeverity
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVulnSeverity'
+      - description: vulnerabilityID of the vulnerability
+        in: path
+        name: vulnerabilityID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "404":
+          description: NOT FOUND
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Management
   /api/companies/{companyID}/repositories/{repositoryID}/management/{vulnerabilityID}/type:
     put:
       consumes:
@@ -337,6 +393,11 @@ paths:
       - description: repositoryID of the repository
         in: path
         name: repositoryID
+        required: true
+        type: string
+      - description: companyID of the company
+        in: path
+        name: companyID
         required: true
         type: string
       produces:

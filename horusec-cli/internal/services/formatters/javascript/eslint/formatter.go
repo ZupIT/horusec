@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -43,7 +45,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Eslint) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Eslint.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Eslint.ToString())
 		return
 	}
 
@@ -67,17 +69,17 @@ func (f *Formatter) startEsLint(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Eslint),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Eslint),
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Eslint].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Javascript), images.Javascript)
 }
 
 func (f *Formatter) processOutput(output string) {
 	if output == "" {
 		logger.LogDebugWithLevel(
-			messages.MsgDebugOutputEmpty, logger.DebugLevel, map[string]interface{}{"tool": tools.Eslint.ToString()})
+			messages.MsgDebugOutputEmpty, map[string]interface{}{"tool": tools.Eslint.ToString()})
 		return
 	}
 
@@ -91,7 +93,7 @@ func (f *Formatter) processOutput(output string) {
 
 func (f *Formatter) parseOutput(output string) (eslintOutput *[]entities.Output, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &eslintOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Eslint, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Eslint, output), err)
 	return eslintOutput, err
 }
 

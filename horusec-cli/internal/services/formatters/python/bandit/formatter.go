@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -42,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Bandit) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Bandit.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Bandit.ToString())
 		return
 	}
 
@@ -65,17 +67,17 @@ func (f *Formatter) startBandit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Bandit),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Bandit),
 		Language: languages.Python,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
 func (f *Formatter) parseOutput(output string) {
 	if output == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
-			logger.DebugLevel, map[string]interface{}{"tool": tools.Bandit.ToString()})
+			map[string]interface{}{"tool": tools.Bandit.ToString()})
 		return
 	}
 
@@ -89,7 +91,7 @@ func (f *Formatter) parseOutput(output string) {
 
 func (f *Formatter) parseOutputToBanditOutput(output string) (banditOutput entities.BanditOutput, err error) {
 	err = jsonUtils.ConvertStringToOutput(output, &banditOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Bandit, output), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Bandit, output), err)
 	return banditOutput, err
 }
 
@@ -104,8 +106,7 @@ func (f *Formatter) setBanditOutPutInHorusecAnalysis(issues []entities.Result) {
 	}
 	if totalInformation > 0 {
 		logger.LogWarnWithLevel(
-			strings.ReplaceAll(messages.MsgWarnBanditFoundInformative, "{{0}}", strconv.Itoa(totalInformation)),
-			logger.WarnLevel)
+			strings.ReplaceAll(messages.MsgWarnBanditFoundInformative, "{{0}}", strconv.Itoa(totalInformation)))
 	}
 }
 

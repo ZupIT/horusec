@@ -77,17 +77,27 @@ func (s *ScsResult) GetFilename() string {
 }
 
 func (s *ScsResult) GetSeverity() severity.Severity {
-	if severities.IsLowSeverity(s.ErrorID) {
-		return severity.Low
+	if s.ErrorID == "" {
+		return severity.Unknown
 	}
 
-	if severities.IsMediumSeverity(s.ErrorID) {
-		return severity.Medium
-	}
+	return s.getVulnerabilityMap()[s.ErrorID]
+}
 
-	if severities.IsHighSeverity(s.ErrorID) {
-		return severity.High
-	}
+func (s *ScsResult) getVulnerabilityMap() map[string]severity.Severity {
+	values := map[string]severity.Severity{}
 
-	return severity.NoSec
+	for key, value := range severities.MapCriticalValues() {
+		values[key] = value
+	}
+	for key, value := range severities.MapHighValues() {
+		values[key] = value
+	}
+	for key, value := range severities.MapMediumValues() {
+		values[key] = value
+	}
+	for key, value := range severities.MapLowValues() {
+		values[key] = value
+	}
+	return values
 }

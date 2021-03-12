@@ -18,7 +18,6 @@ import (
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
 )
 
@@ -27,8 +26,8 @@ type CompanyApplicationAdmin struct {
 	Name        string    `json:"name"`
 	AdminEmail  string    `json:"adminEmail"`
 	Description string    `json:"description"`
-	AuthzMember string    `json:"authzMember"`
-	AuthzAdmin  string    `json:"authzAdmin"`
+	AuthzMember []string  `json:"authzMember"`
+	AuthzAdmin  []string  `json:"authzAdmin"`
 	CreatedAt   time.Time `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt   time.Time `json:"updatedAt" swaggerignore:"true"`
 }
@@ -36,7 +35,7 @@ type CompanyApplicationAdmin struct {
 func (c *CompanyApplicationAdmin) Validate() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Name, validation.Required, validation.Length(1, 255)),
-		validation.Field(&c.AdminEmail, validation.Required, validation.Length(1, 255), is.Email),
+		validation.Field(&c.AdminEmail, validation.Required, validation.Length(1, 255)),
 	)
 }
 

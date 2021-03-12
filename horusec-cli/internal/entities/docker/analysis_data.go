@@ -16,25 +16,33 @@ package docker
 
 import (
 	"fmt"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 )
 
 type AnalysisData struct {
-	ImagePath string
-	CMD       string
-	Language  languages.Language
+	CustomImage  string
+	DefaultImage string
+	CMD          string
+	Language     languages.Language
 }
 
 func (a *AnalysisData) IsInvalid() bool {
-	return a.ImagePath == "" || a.CMD == ""
+	return a.DefaultImage == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetFullImagePath(imagePathInConfig, imageName, imageTag string) *AnalysisData {
-	if imagePathInConfig != "" {
-		a.ImagePath = imagePathInConfig
-	} else {
-		a.ImagePath = fmt.Sprintf("docker.io/%s:%s", imageName, imageTag)
-	}
+func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
+	a.CustomImage = customImage
+	a.DefaultImage = fmt.Sprintf("%s/%s", images.DefaultRegistry, imageWithTag)
 
 	return a
+}
+
+func (a *AnalysisData) GetCustomOrDefaultImage() string {
+	if a.CustomImage != "" {
+		return a.CustomImage
+	}
+
+	return a.DefaultImage
 }

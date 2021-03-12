@@ -16,21 +16,28 @@ package cache
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
+	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/config"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/database"
 	expiredkeys "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/cache/expired_keys"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/cache"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // Required in gorm usage
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("tmp")
+	_ = os.MkdirAll("tmp", 0750)
+	m.Run()
+	_ = os.RemoveAll("tmp")
+}
 
 func TestNewCacheRepository(t *testing.T) {
 	t.Run("Should create new cache repository without errors", func(t *testing.T) {
@@ -56,12 +63,12 @@ func TestIntegration(t *testing.T) {
 		Value: value.ToBytes(),
 	}
 
-	mockRead := database.NewRelationalRead()
-	mockRead.GetConnection().Table(cacheEntity.GetTable()).AutoMigrate(cacheEntity)
+	mockRead := adapter.NewRepositoryRead()
+	_ = mockRead.GetConnection().Table(cacheEntity.GetTable()).AutoMigrate(cacheEntity)
 	mockRead.SetLogMode(true)
 
-	mockWrite := database.NewRelationalWrite()
-	mockWrite.GetConnection().Table(cacheEntity.GetTable()).AutoMigrate(cacheEntity)
+	mockWrite := adapter.NewRepositoryWrite()
+	_ = mockWrite.GetConnection().Table(cacheEntity.GetTable()).AutoMigrate(cacheEntity)
 	mockWrite.SetLogMode(true)
 
 	c := NewCacheRepository(mockRead, mockWrite)
@@ -129,8 +136,9 @@ func TestCache_Get(t *testing.T) {
 			Value: value.ToBytes(),
 		}
 
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
@@ -147,8 +155,9 @@ func TestCache_Get(t *testing.T) {
 		assert.Equal(t, result.Value, cacheEntity.Value)
 	})
 	t.Run("Should return unexpected error when get cache", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
@@ -158,7 +167,7 @@ func TestCache_Get(t *testing.T) {
 		mockExpiredKeys.On("RemoveKeysExpiredFromDatabase").Return()
 
 		c := &Cache{mockRead, mockWrite, mockExpiredKeys}
-		_, err = c.Get(uuid.New().String())
+		_, err := c.Get(uuid.New().String())
 		assert.Error(t, err)
 		assert.NotEqual(t, err, errorsEnum.ErrNotFoundRecords)
 	})
@@ -166,8 +175,9 @@ func TestCache_Get(t *testing.T) {
 
 func TestCache_Exists(t *testing.T) {
 	t.Run("Should return false when check if exists key in cache because return error on find", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		mockRead.On("Find").Return(response.NewResponse(0, errors.New("some error"), nil))
@@ -183,8 +193,9 @@ func TestCache_Exists(t *testing.T) {
 
 func TestCache_Del(t *testing.T) {
 	t.Run("Should return false when check if exists key in cache because return error on find", func(t *testing.T) {
-		conn, err := gorm.Open("sqlite3", ":memory:")
-		assert.NoError(t, err)
+		_ = os.Setenv(config.EnvRelationalDialect, "sqlite")
+		_ = os.Setenv(config.EnvRelationalURI, "tmp/tmp-"+uuid.New().String()+".db")
+		conn := adapter.NewRepositoryRead().GetConnection()
 		mockWrite := &relational.MockWrite{}
 		mockRead := &relational.MockRead{}
 		mockRead.On("Find").Return(response.NewResponse(0, errors.New("some error"), nil))

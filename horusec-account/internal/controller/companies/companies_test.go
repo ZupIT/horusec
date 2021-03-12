@@ -16,22 +16,22 @@ package companies
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"testing"
 	"time"
 
-	"github.com/ZupIT/horusec/horusec-account/config/app"
-
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
+	companyRepo "github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/company"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
+	"github.com/ZupIT/horusec/horusec-account/config/app"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestMock(t *testing.T) {
@@ -46,10 +46,10 @@ func TestMock(t *testing.T) {
 		mock.On("Delete").Return(nil)
 		mock.On("GetAllAccountsInCompany").Return(&[]roles.AccountRole{}, nil)
 		mock.On("RemoveUser").Return(nil)
-		_, _ = mock.Create(uuid.New(), &accountEntities.Company{})
-		_, _ = mock.Update(uuid.New(), &accountEntities.Company{})
+		_, _ = mock.Create(uuid.New(), &accountEntities.Company{}, []string{})
+		_, _ = mock.Update(uuid.New(), &accountEntities.Company{}, []string{})
 		_, _ = mock.Get(uuid.New(), uuid.New())
-		_, _ = mock.List(uuid.New())
+		_, _ = mock.List(uuid.New(), []string{})
 		_ = mock.UpdateAccountCompany(&roles.AccountCompany{})
 		_ = mock.InviteUser(&dto.InviteUser{})
 		_ = mock.Delete(uuid.New())
@@ -88,11 +88,36 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockTx)
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 		assert.NoError(t, err)
 		assert.NotNil(t, newCompany)
 		mockTx.AssertCalled(t, "CommitTransaction")
 		mockTx.AssertNumberOfCalls(t, "Create", 2)
+	})
+
+	t.Run("should return error when creating company with invalid ldap groups", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		mockTx := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		company := &accountEntities.Company{
+			Name: "test",
+		}
+
+		r := &response.Response{}
+		r.SetData(company)
+		mockTx.On("Create").Return(r)
+		mockTx.On("CommitTransaction").Return(&response.Response{})
+
+		mockWrite.On("StartTransaction").Return(mockTx)
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{
+			ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap},
+		})
+
+		_, err := controller.Create(uuid.New(), company, []string{})
+		assert.Error(t, err)
 	})
 
 	t.Run("should fails to create a company and rollback the transaction", func(t *testing.T) {
@@ -118,7 +143,7 @@ func TestCreateCompany(t *testing.T) {
 		mockWrite.On("StartTransaction").Return(mockTx)
 
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 
 		assert.Error(t, err, "test")
 		assert.Nil(t, newCompany)
@@ -141,7 +166,7 @@ func TestCreateCompany(t *testing.T) {
 			Name: "test",
 		}
 		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
-		newCompany, err := controller.Create(uuid.New(), company)
+		newCompany, err := controller.Create(uuid.New(), company, []string{})
 
 		assert.Error(t, err, "test")
 		assert.Nil(t, newCompany)
@@ -166,10 +191,31 @@ func TestUpdateCompany(t *testing.T) {
 		r.SetData(company)
 		mockWrite.On("Update").Return(r)
 
-		updatedCompany, err := controller.Update(uuid.New(), company)
+		updatedCompany, err := controller.Update(uuid.New(), company, []string{})
 
 		assert.NotNil(t, updatedCompany)
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return error when updating company with invalid ldap groups", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{
+			ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap},
+		})
+
+		company := &accountEntities.Company{
+			Name: "test",
+		}
+		r := &response.Response{}
+		r.SetData(company)
+		mockWrite.On("Update").Return(r)
+
+		_, err := controller.Update(uuid.New(), company, []string{})
+
+		assert.Error(t, err)
 	})
 }
 
@@ -219,6 +265,25 @@ func TestGetCompany(t *testing.T) {
 		assert.Error(t, err)
 		assert.Error(t, errors.New("test"), err)
 	})
+
+	t.Run("should return error while get account company", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+
+		r := &response.Response{}
+		r.SetError(errors.New("test"))
+
+		mockRead.On("Find").Return(r)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		updatedCompany, err := controller.Get(uuid.New(), uuid.New())
+
+		assert.Nil(t, updatedCompany)
+		assert.Error(t, err)
+	})
 }
 
 func TestUpdateAccountCompany(t *testing.T) {
@@ -247,7 +312,7 @@ func TestUpdateAccountCompany(t *testing.T) {
 
 func TestList(t *testing.T) {
 	t.Run("should successfully retrieve companies list", func(t *testing.T) {
-		companyRepoMock := &company.Mock{}
+		companyRepoMock := &companyRepo.Mock{}
 
 		companyResponse := &[]accountEntities.CompanyResponse{
 			{
@@ -264,9 +329,38 @@ func TestList(t *testing.T) {
 
 		controller := Controller{
 			repoCompany: companyRepoMock,
+			appConfig:   &app.Config{},
 		}
 
-		repositories, err := controller.List(uuid.New())
+		repositories, err := controller.List(uuid.New(), []string{})
+		assert.NoError(t, err)
+		assert.NotNil(t, repositories)
+	})
+
+	t.Run("should successfully retrieve companies list with ldap", func(t *testing.T) {
+		companyRepoMock := &companyRepo.Mock{}
+
+		companyResponse := &[]accountEntities.CompanyResponse{
+			{
+				CompanyID:   uuid.New(),
+				Name:        "",
+				Role:        "",
+				Description: "",
+				CreatedAt:   time.Time{},
+				UpdatedAt:   time.Time{},
+			},
+		}
+
+		companyRepoMock.On("ListByLdapPermissions").Return(companyResponse, nil)
+
+		appConfig := &app.Config{ConfigAuth: authEntities.ConfigAuth{AuthType: authEnums.Ldap}}
+
+		controller := Controller{
+			repoCompany: companyRepoMock,
+			appConfig:   appConfig,
+		}
+
+		repositories, err := controller.List(uuid.New(), []string{})
 		assert.NoError(t, err)
 		assert.NotNil(t, repositories)
 	})
@@ -374,7 +468,8 @@ func TestInviteUser(t *testing.T) {
 		mockRead.On("SetFilter").Return(&gorm.DB{})
 		mockWrite.On("Create").Return(respCompany)
 
-		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{DisabledBroker: true})
+		appConfig := &app.Config{ConfigAuth: authEntities.ConfigAuth{DisabledBroker: true}}
+		controller := NewController(mockWrite, mockRead, brokerMock, appConfig)
 
 		err := controller.InviteUser(inviteUser)
 		assert.NoError(t, err)
@@ -492,5 +587,49 @@ func TestGetAllAccountsInCompany(t *testing.T) {
 		result, err := controller.GetAllAccountsInCompany(uuid.New())
 		assert.NoError(t, err)
 		assert.NotEmpty(t, result, 2)
+	})
+}
+
+func TestGetAccountIDByEmail(t *testing.T) {
+	t.Run("should successfully get account id by email", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+
+		account := &authEntities.Account{
+			AccountID: uuid.UUID{},
+		}
+
+		resp := &response.Response{}
+		resp.SetData(account)
+
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		accountID, err := controller.GetAccountIDByEmail("")
+
+		assert.NotNil(t, accountID)
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return error while getting account id by email", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		brokerMock := &broker.Mock{}
+
+		controller := NewController(mockWrite, mockRead, brokerMock, &app.Config{})
+
+		resp := &response.Response{}
+		resp.SetError(errors.New("test"))
+
+		mockRead.On("Find").Return(resp)
+		mockRead.On("SetFilter").Return(&gorm.DB{})
+
+		accountID, err := controller.GetAccountIDByEmail("")
+
+		assert.Equal(t, uuid.Nil, accountID)
+		assert.Error(t, err)
 	})
 }

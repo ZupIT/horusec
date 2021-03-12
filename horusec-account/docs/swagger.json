@@ -12,7 +12,7 @@
         "license": {}
     },
     "paths": {
-        "/api/companies": {
+        "/account/companies": {
             "get": {
                 "security": [
                     {
@@ -209,7 +209,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}": {
+        "/account/companies/{companyID}": {
             "get": {
                 "security": [
                     {
@@ -469,7 +469,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/repositories": {
+        "/account/companies/{companyID}/repositories": {
             "get": {
                 "security": [
                     {
@@ -664,7 +664,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/repositories/{repositoryID}": {
+        "/account/companies/{companyID}/repositories/{repositoryID}": {
             "get": {
                 "security": [
                     {
@@ -981,7 +981,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/repositories/{repositoryID}/roles": {
+        "/account/companies/{companyID}/repositories/{repositoryID}/roles": {
             "get": {
                 "security": [
                     {
@@ -1208,7 +1208,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/repositories/{repositoryID}/roles/{accountID}": {
+        "/account/companies/{companyID}/repositories/{repositoryID}/roles/{accountID}": {
             "delete": {
                 "security": [
                     {
@@ -1449,7 +1449,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/roles": {
+        "/account/companies/{companyID}/roles": {
             "get": {
                 "security": [
                     {
@@ -1662,7 +1662,7 @@
                 }
             }
         },
-        "/api/companies/{companyID}/roles/{accountID}": {
+        "/account/companies/{companyID}/roles/{accountID}": {
             "delete": {
                 "security": [
                     {
@@ -1871,7 +1871,7 @@
                 }
             }
         },
-        "/api/health": {
+        "/account/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
                 "consumes": [
@@ -1924,7 +1924,7 @@
                 }
             }
         },
-        "/api/webhook/{companyID}": {
+        "/account/webhook/{companyID}": {
             "get": {
                 "security": [
                     {
@@ -2048,7 +2048,7 @@
                 }
             }
         },
-        "/api/webhook/{companyID}/{repositoryID}": {
+        "/account/webhook/{companyID}/{repositoryID}": {
             "post": {
                 "security": [
                     {
@@ -2164,7 +2164,7 @@
                 }
             }
         },
-        "/api/webhook/{companyID}/{repositoryID}/{webhookID}": {
+        "/account/webhook/{companyID}/{repositoryID}/{webhookID}": {
             "put": {
                 "security": [
                     {
@@ -2230,7 +2230,9 @@
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "BAD REQUEST",
                         "schema": {
@@ -2328,7 +2330,9 @@
                     }
                 ],
                 "responses": {
-                    "204": {},
+                    "204": {
+                        "description": ""
+                    },
                     "400": {
                         "description": "BAD REQUEST",
                         "schema": {
@@ -2525,17 +2529,14 @@
                     "type": "string"
                 },
                 "headers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/webhook.Headers"
-                    }
+                    "type": "HeaderType"
                 },
                 "method": {
                     "type": "string"
                 },
                 "repository": {
                     "type": "object",
-                    "$ref": "#/definitions/account.RepositoryResponse"
+                    "$ref": "#/definitions/account.Repository"
                 },
                 "repositoryID": {
                     "type": "string"
@@ -2552,24 +2553,7 @@
             }
         },
         "webhook.Webhook": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "headers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/webhook.Headers"
-                    }
-                },
-                "method": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         }
     },
     "securityDefinitions": {

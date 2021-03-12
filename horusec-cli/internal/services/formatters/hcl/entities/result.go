@@ -17,6 +17,8 @@ package entities
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 )
 
 type Result struct {
@@ -41,4 +43,16 @@ func (r *Result) GetCode() string {
 
 func (r *Result) GetFilename() string {
 	return r.Location.Filename
+}
+
+func (r *Result) GetSeverity() severity.Severity {
+	return r.mapSeverityValues()[r.Severity]
+}
+
+func (r *Result) mapSeverityValues() map[string]severity.Severity {
+	return map[string]severity.Severity{
+		"ERROR":   severity.High,
+		"WARNING": severity.Medium,
+		"":        severity.Low,
+	}
 }

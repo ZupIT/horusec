@@ -27,42 +27,47 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(repository *accountEntities.Repository, transaction SQL.InterfaceWrite) error {
+func (m *Mock) Create(_ *accountEntities.Repository, _ SQL.InterfaceWrite) error {
 	args := m.MethodCalled("Create")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error) {
+func (m *Mock) Update(_ uuid.UUID, _ *accountEntities.Repository) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Get(repositoryID uuid.UUID) (*accountEntities.Repository, error) {
+func (m *Mock) Get(_ uuid.UUID) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("Get")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) List(accountID, companyID uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
+func (m *Mock) List(_, _ uuid.UUID) (*[]accountEntities.RepositoryResponse, error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) Delete(repositoryID uuid.UUID) error {
+func (m *Mock) Delete(_ uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]roles.AccountRole, error) {
+func (m *Mock) GetAllAccountsInRepository(_ uuid.UUID) (*[]roles.AccountRole, error) {
 	args := m.MethodCalled("GetAllAccountsInRepository")
 	return args.Get(0).(*[]roles.AccountRole), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetByName(companyID uuid.UUID, repositoryName string) (*accountEntities.Repository, error) {
+func (m *Mock) GetByName(_ uuid.UUID, _ string) (*accountEntities.Repository, error) {
 	args := m.MethodCalled("GetByName")
 	return args.Get(0).(*accountEntities.Repository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetAccountCompanyRole(accountID, companyID uuid.UUID) (*roles.AccountCompany, error) {
+func (m *Mock) GetAccountCompanyRole(_, _ uuid.UUID) (*roles.AccountCompany, error) {
 	args := m.MethodCalled("GetAccountCompanyRole")
 	return args.Get(0).(*roles.AccountCompany), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) ListByLdapPermissions(_ uuid.UUID, _ []string) (*[]accountEntities.RepositoryResponse, error) {
+	args := m.MethodCalled("ListByLdapPermissions")
+	return args.Get(0).(*[]accountEntities.RepositoryResponse), mockUtils.ReturnNilOrError(args, 1)
 }

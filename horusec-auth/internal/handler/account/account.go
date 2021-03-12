@@ -23,12 +23,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 
@@ -62,7 +62,7 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/create-account-from-keycloak [post]
+// @Router /auth/account/create-account-from-keycloak [post]
 func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Request) {
 	keyCloakToken, err := h.useCases.NewKeycloakTokenFromReadCloser(r.Body)
 	if err != nil {
@@ -98,7 +98,7 @@ func (h *Handler) checkCreateAccountFromKeycloakErrors(
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/create-account [post]
+// @Router /auth/account/create-account [post]
 func (h *Handler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	account, err := h.useCases.NewAccountFromReadCloser(r.Body)
 	if err != nil {
@@ -132,7 +132,7 @@ func (h *Handler) checkCreateAccountErrors(w http.ResponseWriter, err error) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/validate/{accountID} [get]
+// @Router /auth/account/validate/{accountID} [get]
 func (h *Handler) ValidateEmail(w http.ResponseWriter, r *http.Request) {
 	accountID, err := uuid.Parse(chi.URLParam(r, "accountID"))
 	if err != nil {
@@ -158,7 +158,7 @@ func (h *Handler) ValidateEmail(w http.ResponseWriter, r *http.Request) {
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/send-code [post]
+// @Router /auth/account/send-code [post]
 func (h *Handler) SendResetPasswordCode(w http.ResponseWriter, r *http.Request) {
 	emailData, err := h.useCases.NewEmailDataFromReadCloser(r.Body)
 	if err != nil {
@@ -194,7 +194,7 @@ func (h *Handler) checkSendResetPasswordCodeErrors(w http.ResponseWriter, err er
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/validate-code [post]
+// @Router /auth/account/validate-code [post]
 func (h *Handler) ValidateResetPasswordCode(w http.ResponseWriter, r *http.Request) {
 	data, err := h.useCases.NewResetCodeDataFromReadCloser(r.Body)
 	if err != nil {
@@ -230,7 +230,7 @@ func (h *Handler) checkVerifyResetPasswordCodeErrors(w http.ResponseWriter, err 
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/change-password [post]
+// @Router /auth/account/change-password [post]
 // @Security ApiKeyAuth
 func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
@@ -270,7 +270,7 @@ func (h *Handler) executeChangePassword(w http.ResponseWriter, accountID uuid.UU
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
-// @Router /api/account/renew-token [post]
+// @Router /auth/account/renew-token [post]
 // @Security ApiKeyAuth
 func (h *Handler) RenewToken(w http.ResponseWriter, r *http.Request) {
 	accessToken, refreshToken, err := h.getRenewTokenData(w, r)
@@ -312,7 +312,7 @@ func (h *Handler) getRenewTokenData(w http.ResponseWriter, r *http.Request) (
 // @Success 200 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/logout [post]
+// @Router /auth/account/logout [post]
 // @Security ApiKeyAuth
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
@@ -339,7 +339,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 // @Success 201 {object} http.Response{content=string} "STATUS CREATED"
 // @Failure 400 {object} http.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/verify-already-used [post]
+// @Router /auth/account/verify-already-used [post]
 func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 	validateUnique, err := h.useCases.NewValidateUniqueFromReadCloser(r.Body)
 	if err != nil {
@@ -364,7 +364,7 @@ func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
 // @Success 204 {object} http.Response{content=string} "NO CONTENT"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/delete [delete]
+// @Router /auth/account/delete [delete]
 // @Security ApiKeyAuth
 func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	accountID, err := h.controller.GetAccountID(r.Header.Get("X-Horusec-Authorization"))
@@ -390,7 +390,7 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} http.Response{content=string} "OK"
 // @Failure 401 {object} http.Response{content=string} "UNAUTHORIZED"
 // @Failure 500 {object} http.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /api/account/update [patch]
+// @Router /auth/account/update [patch]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getAccountUpdateData(w, r)

@@ -1,17 +1,3 @@
-# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 definitions:
   http.Response:
     properties:
@@ -32,7 +18,7 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
-  /api/dashboard/companies/{companyID}/all-vulnerabilities:
+  /analytic/dashboard/companies/{companyID}/all-vulnerabilities:
     get:
       consumes:
       - application/json
@@ -65,7 +51,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/details:
+  /analytic/dashboard/companies/{companyID}/details:
     get:
       consumes:
       - application/json
@@ -100,7 +86,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/all-vulnerabilities:
     get:
       consumes:
       - application/json
@@ -138,7 +124,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-developers:
     get:
       consumes:
       - application/json
@@ -176,7 +162,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/total-repositories:
     get:
       consumes:
       - application/json
@@ -214,7 +200,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-author:
     get:
       consumes:
       - application/json
@@ -252,7 +238,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-language:
     get:
       consumes:
       - application/json
@@ -290,7 +276,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-repository:
     get:
       consumes:
       - application/json
@@ -328,7 +314,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time:
+  /analytic/dashboard/companies/{companyID}/repositories/{repositoryID}/vulnerabilities-by-time:
     get:
       consumes:
       - application/json
@@ -366,7 +352,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Repository
-  /api/dashboard/companies/{companyID}/total-developers:
+  /analytic/dashboard/companies/{companyID}/total-developers:
     get:
       consumes:
       - application/json
@@ -399,7 +385,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/total-repositories:
+  /analytic/dashboard/companies/{companyID}/total-repositories:
     get:
       consumes:
       - application/json
@@ -432,7 +418,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/vulnerabilities-by-author:
+  /analytic/dashboard/companies/{companyID}/vulnerabilities-by-author:
     get:
       consumes:
       - application/json
@@ -465,7 +451,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/vulnerabilities-by-language:
+  /analytic/dashboard/companies/{companyID}/vulnerabilities-by-language:
     get:
       consumes:
       - application/json
@@ -498,7 +484,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/vulnerabilities-by-repository:
+  /analytic/dashboard/companies/{companyID}/vulnerabilities-by-repository:
     get:
       consumes:
       - application/json
@@ -531,7 +517,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/dashboard/companies/{companyID}/vulnerabilities-by-time:
+  /analytic/dashboard/companies/{companyID}/vulnerabilities-by-time:
     get:
       consumes:
       - application/json
@@ -564,7 +550,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Dashboard Company
-  /api/health:
+  /analytic/health:
     get:
       consumes:
       - application/json

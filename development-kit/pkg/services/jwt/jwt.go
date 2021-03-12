@@ -16,29 +16,32 @@ package jwt
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
-	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	jwtGo "github.com/form3tech-oss/jwt-go"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/warnings"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/google/uuid"
-
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/account/dto"
+	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	jwtMiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 )
 
-const DefaultSecretJWT = "horusec-secret"
+const (
+	DefaultSecretJWT           = "horusec-secret"
+	WarningDefaultJWTSecretKey = "{JWT-INSECURE} horusec JWT secret key is the default one, for security " +
+		"reasons please replace it for a secure value, secret key environment variable name --> {HORUSEC_JWT_SECRET_KEY}"
+)
 
-func CreateToken(account *authEntities.Account, permissions map[string]string) (string, time.Time, error) {
+func CreateToken(account *authEntities.Account, permissions []string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(time.Hour * time.Duration(1))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &dto.ClaimsJWT{
-		Email:            account.Email,
-		Username:         account.Username,
-		RepositoriesRole: permissions,
+		Email:       account.Email,
+		Username:    account.Username,
+		Permissions: permissions,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			IssuedAt:  time.Now().Unix(),
@@ -68,7 +71,7 @@ func parseStringToToken(tokenString string) (*jwt.Token, error) {
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	middleware := jwtMiddleware.New(jwtMiddleware.Options{
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+		ValidationKeyGetter: func(token *jwtGo.Token) (interface{}, error) {
 			return getHorusecJWTKey(), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
@@ -86,19 +89,10 @@ func GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 	return uuid.Parse(claims.Subject)
 }
 
-func GetRepositoryPermissionsByJWTTOken(token string) (map[string]string, error) {
-	claims, err := DecodeToken(verifyIfContainsBearer(token))
-	if err != nil {
-		return nil, err
-	}
-
-	return claims.RepositoriesRole, nil
-}
-
 func getHorusecJWTKey() []byte {
 	secretKey := env.GetEnvOrDefault("HORUSEC_JWT_SECRET_KEY", DefaultSecretJWT)
 	if secretKey == DefaultSecretJWT {
-		logger.LogInfo(warnings.WarningDefaultJWTSecretKey)
+		logger.LogInfo(WarningDefaultJWTSecretKey)
 	}
 
 	return []byte(secretKey)

@@ -34,11 +34,16 @@ const (
 	TfSec             Tool = "TfSec"
 	Semgrep           Tool = "Semgrep"
 	HorusecCsharp     Tool = "HorusecCsharp"
+	HorusecDart       Tool = "HorusecDart"
 	HorusecKubernetes Tool = "HorusecKubernetes"
 	Eslint            Tool = "Eslint"
 	HorusecNodejs     Tool = "HorusecNodeJS"
 	Flawfinder        Tool = "Flawfinder"
 	PhpCS             Tool = "PhpCS"
+	MixAudit          Tool = "MixAudit"
+	Sobelow           Tool = "Sobelow"
+	ShellCheck        Tool = "ShellCheck"
+	BundlerAudit      Tool = "BundlerAudit"
 )
 
 func (t Tool) ToString() string {

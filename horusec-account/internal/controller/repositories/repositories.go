@@ -26,20 +26,24 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	accountEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/account"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	emailEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/messages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/queues"
 	brokerLib "github.com/ZupIT/horusec/development-kit/pkg/services/broker"
-	repositoriesUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/repositories"
 	"github.com/ZupIT/horusec/horusec-account/config/app"
+	repositoriesUseCases "github.com/ZupIT/horusec/horusec-account/internal/usecases/repositories"
 	"github.com/google/uuid"
 )
 
 type IController interface {
-	Create(accountID uuid.UUID, data *accountEntities.Repository) (*accountEntities.Repository, error)
-	Update(repositoryID uuid.UUID, repository *accountEntities.Repository) (*accountEntities.Repository, error)
+	Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository,
+		permissions []string) (*accountEntities.Repository, error)
+	Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository,
+		permissions []string) (*accountEntities.Repository, error)
 	Get(repositoryID, accountID uuid.UUID) (*accountEntities.RepositoryResponse, error)
-	List(accountID uuid.UUID, companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error)
+	List(accountID uuid.UUID, companyID uuid.UUID,
+		permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error)
 	CreateAccountRepository(accountRepository *roles.AccountRepository) error
 	UpdateAccountRepository(companyID uuid.UUID, accountRepository *roles.AccountRepository) error
 	InviteUser(inviteUser *dto.InviteUser) error
@@ -77,8 +81,18 @@ func NewController(databaseWrite SQL.InterfaceWrite, databaseRead SQL.InterfaceR
 	}
 }
 
-func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntities.Repository) (
-	*accountEntities.Repository, error) {
+func (c *Controller) Create(accountID uuid.UUID, repository *accountEntities.Repository,
+	permissions []string) (*accountEntities.Repository, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap &&
+		c.repositoriesUseCases.IsInvalidLdapGroup(repository.AuthzAdmin, permissions) {
+		return nil, errors.ErrorInvalidLdapGroup
+	}
+
+	return c.createRepositoryWithTransaction(accountID, repository)
+}
+
+func (c *Controller) createRepositoryWithTransaction(accountID uuid.UUID,
+	repositoryEntity *accountEntities.Repository) (*accountEntities.Repository, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	repositoryEntity = c.setAuthzGroups(repositoryEntity)
 
@@ -95,8 +109,13 @@ func (c *Controller) Create(accountID uuid.UUID, repositoryEntity *accountEntiti
 	return repositoryEntity, nil
 }
 
-func (c *Controller) Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository) (
-	*accountEntities.Repository, error) {
+func (c *Controller) Update(repositoryID uuid.UUID, repositoryEntity *accountEntities.Repository,
+	permissions []string) (*accountEntities.Repository, error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap &&
+		c.repositoriesUseCases.IsInvalidLdapGroup(repositoryEntity.AuthzAdmin, permissions) {
+		return nil, errors.ErrorInvalidLdapGroup
+	}
+
 	return c.repository.Update(repositoryID, repositoryEntity)
 }
 
@@ -114,8 +133,12 @@ func (c *Controller) Get(repositoryID, accountID uuid.UUID) (*accountEntities.Re
 	return response.ToRepositoryResponse(accountRepository.Role), nil
 }
 
-func (c *Controller) List(accountID,
-	companyID uuid.UUID) (repositories *[]accountEntities.RepositoryResponse, err error) {
+func (c *Controller) List(accountID, companyID uuid.UUID,
+	permissions []string) (repositories *[]accountEntities.RepositoryResponse, err error) {
+	if c.appConfig.GetAuthType() == authEnums.Ldap {
+		return c.repository.ListByLdapPermissions(companyID, permissions)
+	}
+
 	return c.repository.List(accountID, companyID)
 }
 
@@ -194,9 +217,8 @@ func (c *Controller) RemoveUser(removeUser *dto.RemoveUser) error {
 }
 
 func (c *Controller) setAuthzGroups(repository *accountEntities.Repository) *accountEntities.Repository {
-	if repository.AuthzAdmin == "" || repository.AuthzMember == "" || repository.AuthzSupervisor == "" {
-		companyOfRepository, err := c.company.GetByID(repository.CompanyID)
-		if err == nil {
+	if len(repository.AuthzAdmin) == 0 || len(repository.AuthzMember) == 0 || len(repository.AuthzSupervisor) == 0 {
+		if companyOfRepository, err := c.company.GetByID(repository.CompanyID); err == nil {
 			repository.AuthzAdmin = c.replaceIfEmpty(repository.AuthzAdmin, companyOfRepository.AuthzAdmin)
 			repository.AuthzMember = c.replaceIfEmpty(repository.AuthzMember, companyOfRepository.AuthzMember)
 			repository.AuthzSupervisor = c.replaceIfEmpty(repository.AuthzSupervisor, companyOfRepository.AuthzAdmin)
@@ -206,8 +228,8 @@ func (c *Controller) setAuthzGroups(repository *accountEntities.Repository) *acc
 	return repository
 }
 
-func (c *Controller) replaceIfEmpty(val, toReplace string) string {
-	if val != "" {
+func (c *Controller) replaceIfEmpty(val, toReplace []string) []string {
+	if len(val) == 0 {
 		return val
 	}
 

@@ -18,9 +18,6 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import { isPast } from 'date-fns';
 import { getCurrentConfig } from './horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import accountService from 'services/account';
-import { setCurrentUser } from './currentUser';
-import { isAuthenticatedInMicrofrontend } from 'helpers/localStorage/microfrontend';
 
 const getAccessToken = (): string => {
   return window.localStorage.getItem(localStorageKeys.ACCESS_TOKEN);
@@ -37,7 +34,8 @@ const getExpiresTokenTime = (): string => {
 const setTokens = (
   accessToken: string,
   refreshToken: string,
-  expiresAt?: string
+  expiresAt?: string,
+  idToken?: string
 ) => {
   if (accessToken)
     window.localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
@@ -47,42 +45,30 @@ const setTokens = (
 
   if (expiresAt)
     window.localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, expiresAt);
-};
 
-const handleSetKeyclockData = async (
-  accessToken: string,
-  refreshToken: string
-) => {
-  const currentAccessToken = getAccessToken();
-
-  if (accessToken && accessToken !== currentAccessToken) {
-    accountService.createAccountFromKeycloak(accessToken).then((result) => {
-      const userData = result?.data?.content;
-      setCurrentUser(userData);
-
-      if (window.location.pathname === '/auth') {
-        window.location.replace('/');
-      }
-    });
-  }
-
-  setTokens(accessToken, refreshToken);
+  if (idToken) window.localStorage.setItem(localStorageKeys.ID_TOKEN, idToken);
 };
 
 const clearTokens = () => {
   window.localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
   window.localStorage.removeItem(localStorageKeys.REFRESH_TOKEN);
   window.localStorage.removeItem(localStorageKeys.TOKEN_EXPIRES);
+  window.localStorage.removeItem(localStorageKeys.ID_TOKEN);
+};
+
+const handleSetKeyclockData = async (
+  accessToken: string,
+  refreshToken: string,
+  idToken: string
+) => {
+  setTokens(accessToken, refreshToken, null, idToken);
 };
 
 const isLogged = (): boolean => {
   const { authType } = getCurrentConfig();
   const accessToken = getAccessToken();
 
-  if (
-    (authType === authTypes.KEYCLOAK && accessToken) ||
-    isAuthenticatedInMicrofrontend()
-  ) {
+  if (authType === authTypes.KEYCLOAK) {
     return true;
   }
 

@@ -53,6 +53,5 @@ const (
        else
            echo "ERROR_UNSUPPORTED_JAVA_PROJECT"
        fi
-	   chmod -R 777 .
   `
 )

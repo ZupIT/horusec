@@ -14,15 +14,10 @@
 
 package bandit
 
-const (
-	ImageName = "horuszup/bandit"
-	ImageTag  = "v1.0.1"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
       	chmod +x /usr/local/bin/horusec-file-ignore.sh
       	horusec-file-ignore.sh 2> /tmp/errorBanditIgnoreScript-ANALYSISID 1> /dev/null
       	bandit -r . -f json 2> /dev/null > results-ANALYSISID.json
       	jq -j -M -c . results-ANALYSISID.json
-	  	chmod -R 777 .
   `
-)

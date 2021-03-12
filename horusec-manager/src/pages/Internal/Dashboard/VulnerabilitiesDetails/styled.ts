@@ -23,7 +23,7 @@ interface LoadingWrapperProps {
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.dataTable.backgorund};
   border-radius: 4px;
-  height: 360px;
+  height: auto;
   width: 100%;
   padding: 18px 15px 0px 15px;
   position: relative;

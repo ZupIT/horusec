@@ -16,7 +16,7 @@
 package config
 
 import (
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 )
@@ -55,12 +55,12 @@ const (
 	// Validation: It is mandatory to be valid path
 	EnvJSONOutputFilePath = "HORUSEC_CLI_JSON_OUTPUT_FILEPATH"
 	// This setting is to find out what types of severity I don't want you to recognize as a vulnerability.
-	// The types are: "LOW", "MEDIUM", "HIGH", "NOSEC", "AUDIT"
-	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, NOSEC"
+	// The types are: "LOW", "MEDIUM", "HIGH"
+	// If you want ignore other you can add in value. Ex.: "LOW, MEDIUM, CRITICAL"
 	// This setting is to know what types of severity
 	// I do not want you to recognize as a vulnerability
 	// and will not count towards the return of exit (1) if configured
-	// Validation: It is mandatory to be in "LOW", "MEDIUM", "HIGH", "NOSEC", "AUDIT"
+	// Validation: It is mandatory to be in "LOW", "MEDIUM", "HIGH"
 	EnvSeveritiesToIgnore = "HORUSEC_CLI_SEVERITIES_TO_IGNORE"
 	// This setting is to know which files and folders I want to ignore to send for analysis
 	// By default we ignore each other:
@@ -114,7 +114,7 @@ const (
 	//   generic    []string
 	// }
 	// Validation: It is mandatory to be valid interface of workdir to proceed
-	EnvWorkDirPath = "HORUSEC_CLI_WORK_DIR"
+	EnvWorkDir = "HORUSEC_CLI_WORK_DIR"
 	// This setting is to setup the path to run analysis keep current path in your base.
 	// By default is empty
 	// Validation: if exists is required valid path
@@ -167,6 +167,14 @@ const (
 	// By default is empty
 	// Validation: It is mandatory to be a valida path and contains file name
 	EnvCustomRulesPath = "HORUSEC_CLI_CUSTOM_RULES_PATH"
+	// Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives.
+	// By default is false
+	// Validation: It is mandatory to be in "false", "true"
+	EnvEnableInformationSeverity = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
+	// Used to pass personalized images of horusec tools.
+	// By default is empty
+	// Validation: Value should be a valid language of horusec
+	EnvCustomImages = "HORUSEC_CLI_CUSTOM_IMAGES"
 )
 
 type Config struct {
@@ -194,12 +202,14 @@ type Config struct {
 	certInsecureSkipVerify          bool
 	enableCommitAuthor              bool
 	disableDocker                   bool
+	enableInformationSeverity       bool
 	severitiesToIgnore              []string
 	filesOrPathsToIgnore            []string
 	falsePositiveHashes             []string
 	riskAcceptHashes                []string
 	toolsToIgnore                   []string
-	toolsConfig                     map[tools.Tool]toolsconfig.ToolConfig
+	toolsConfig                     toolsconfig.MapToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
+	customImages                    images.Custom
 }

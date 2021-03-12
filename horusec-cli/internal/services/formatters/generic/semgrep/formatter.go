@@ -19,6 +19,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -43,7 +45,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Semgrep) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Semgrep.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Semgrep.ToString())
 		return
 	}
 
@@ -65,11 +67,11 @@ func (f *Formatter) startSemgrep(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Semgrep),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Semgrep),
 		Language: languages.Generic,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Semgrep].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
 func (f *Formatter) parseOutput(output string) error {

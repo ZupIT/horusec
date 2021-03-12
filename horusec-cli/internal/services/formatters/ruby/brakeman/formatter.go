@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
@@ -42,7 +44,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Brakeman) || f.IsDockerDisabled() {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored+tools.Brakeman.ToString(), logger.DebugLevel)
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Brakeman.ToString())
 		return
 	}
 
@@ -86,7 +88,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	}
 
 	err = json.Unmarshal([]byte(containerOutput), &output)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err)
 	return output, err
 }
 
@@ -111,11 +113,11 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.Brakeman),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Brakeman),
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetFullImagePath(f.GetToolsConfig()[tools.Bandit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby)
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {

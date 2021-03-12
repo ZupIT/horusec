@@ -12,7 +12,7 @@
         "license": {}
     },
     "paths": {
-        "/api/health": {
+        "/webhook/health": {
             "get": {
                 "description": "Check if Health of service it's OK!",
                 "consumes": [

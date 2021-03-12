@@ -119,9 +119,9 @@ func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *horusec.Vulnerability) {
 	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
 }
 
-func (m *Mock) GetToolsConfig() map[tools.Tool]toolsconfig.ToolConfig {
+func (m *Mock) GetToolsConfig() toolsconfig.MapToolConfig {
 	args := m.MethodCalled("GetToolsConfig")
-	return args.Get(0).(map[tools.Tool]toolsconfig.ToolConfig)
+	return args.Get(0).(toolsconfig.MapToolConfig)
 }
 
 func (m *Mock) IsDockerDisabled() bool {
@@ -132,4 +132,14 @@ func (m *Mock) IsDockerDisabled() bool {
 func (m *Mock) GetCustomRulesByTool(_ tools.Tool) []engine.Rule {
 	args := m.MethodCalled("GetCustomRulesByTool")
 	return args.Get(0).([]engine.Rule)
+}
+
+func (m *Mock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string {
+	args := m.MethodCalled("GetConfigCMDByFileExtension")
+	return args.Get(0).(string)
+}
+
+func (m *Mock) GetCustomImageByLanguage(_ languages.Language) string {
+	args := m.MethodCalled("GetCustomImageByLanguage")
+	return args.Get(0).(string)
 }

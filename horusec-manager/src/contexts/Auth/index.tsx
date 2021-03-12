@@ -28,6 +28,9 @@ import defaultAuth from './default';
 import keycloakAuth from './keycloak';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
+const MANAGER_PATH: string =
+  (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '';
+
 interface AuthProviderPops {
   children: JSX.Element;
 }
@@ -87,17 +90,28 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
   };
 
   const logout = (): Promise<void> => {
-    return new Promise((resolve) => {
-      getAuthenticator()
-        .logout()
-        .catch((err: any) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          clearLocalStorage();
-          resolve();
-        });
-    });
+    const authenticator = getAuthenticator();
+
+    if (authenticator) {
+      return new Promise((resolve) => {
+        getAuthenticator()
+          .logout()
+          .finally(() => {
+            resolve();
+            clearLocalStorage();
+            window.location.replace(
+              `${
+                MANAGER_PATH.endsWith('/')
+                  ? MANAGER_PATH.slice(0, -1)
+                  : MANAGER_PATH
+              }/auth`
+            );
+          });
+      });
+    } else {
+      clearLocalStorage();
+      window.location.replace('/auth');
+    }
   };
 
   useEffect(() => {

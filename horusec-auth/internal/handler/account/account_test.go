@@ -32,14 +32,14 @@ import (
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/broker"
 	"github.com/ZupIT/horusec/development-kit/pkg/services/jwt"
-	authUseCases "github.com/ZupIT/horusec/development-kit/pkg/usecases/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/repository/response"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	accountController "github.com/ZupIT/horusec/horusec-auth/internal/controller/account"
+	authUseCases "github.com/ZupIT/horusec/horusec-auth/internal/usecases/auth"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestOptions(t *testing.T) {
@@ -554,7 +554,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("X-Horusec-Authorization", token)
 
-		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -583,7 +583,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("X-Horusec-Authorization", token)
 
-		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -606,7 +606,7 @@ func TestResetPassword(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("X-Horusec-Authorization", token)
 
-		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.ChangePassword(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -761,7 +761,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
-		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -784,7 +784,7 @@ func TestLogout(t *testing.T) {
 		token, _, _ := jwt.CreateToken(account, nil)
 		r.Header.Add("X-Horusec-Authorization", "Bearer "+token)
 
-		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.Logout(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
@@ -936,7 +936,7 @@ func TestDeleteAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("X-Horusec-Authorization", token)
 
-		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusNoContent, w.Code)
 	})
@@ -964,7 +964,7 @@ func TestDeleteAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.Header.Add("X-Horusec-Authorization", token)
 
-		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountID, uuid.New().String())))
+		handler.DeleteAccount(w, r.WithContext(context.WithValue(r.Context(), authEnums.AccountData, uuid.New().String())))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})

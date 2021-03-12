@@ -28,6 +28,8 @@ type IController interface {
 	ListVulnManagementData(repositoryID uuid.UUID, page, size int, vulnSeverity severity.Severity,
 		vulnType horusecEnums.VulnerabilityType, vulnHash string) (vulnManagement dto.VulnManagement, err error)
 	UpdateVulnType(vulnerabilityID uuid.UUID, vulnType *dto.UpdateVulnType) (*horusec.Vulnerability, error)
+	UpdateVulnSeverity(vulnerabilityID uuid.UUID,
+		updateSeverityDTO *dto.UpdateVulnSeverity) (*horusec.Vulnerability, error)
 }
 
 type Controller struct {
@@ -49,4 +51,15 @@ func (c *Controller) ListVulnManagementData(repositoryID uuid.UUID, page, size i
 func (c *Controller) UpdateVulnType(vulnerabilityID uuid.UUID,
 	updateTypeData *dto.UpdateVulnType) (*horusec.Vulnerability, error) {
 	return c.managementRepository.UpdateVulnType(vulnerabilityID, updateTypeData)
+}
+
+func (c *Controller) UpdateVulnSeverity(vulnerabilityID uuid.UUID,
+	updateSeverityDTO *dto.UpdateVulnSeverity) (*horusec.Vulnerability, error) {
+	vulnToUpdate, err := c.managementRepository.GetVulnByID(vulnerabilityID)
+	if err != nil {
+		return nil, err
+	}
+
+	vulnToUpdate.SetSeverity(updateSeverityDTO.Severity)
+	return vulnToUpdate, c.managementRepository.UpdateVulnerability(vulnToUpdate)
 }

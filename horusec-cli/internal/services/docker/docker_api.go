@@ -15,18 +15,23 @@
 package docker
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-
 	enumErrors "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/horusec-cli/config"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	dockerService "github.com/ZupIT/horusec/horusec-cli/internal/services/docker/client"
 	dockerTypes "github.com/docker/docker/api/types"
 	dockerContainer "github.com/docker/docker/api/types/container"
@@ -38,6 +43,7 @@ import (
 
 type Interface interface {
 	CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error)
+	PullImage(imageWithTagAndRegistry string) error
 	DeleteContainersFromAPI()
 }
 
@@ -64,47 +70,67 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
 
-	if err := d.pullNewImage(data.ImagePath); err != nil {
-		return "", err
-	}
-
-	return d.logStatusAndExecuteCRDContainer(data.ImagePath, d.replaceCMDAnalysisID(data.CMD))
+	return d.logStatusAndExecuteCRDContainer(data.GetCustomOrDefaultImage(), d.replaceCMDAnalysisID(data.CMD))
 }
 
-func (d *API) pullNewImage(imagePath string) error {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imagePath)
-	if imageNotExist, err := d.checkImageNotExists(imagePath); err != nil || !imageNotExist {
+func (d *API) PullImage(imageWithTagAndRegistry string) error {
+	if imageNotExist, err := d.checkImageNotExists(imageWithTagAndRegistry); err != nil || !imageNotExist {
+		logger.LogError(fmt.Sprintf("%s -> %s",
+			messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
 		return err
 	}
 
-	return d.downloadImage(imagePath)
+	err := d.downloadImage(imageWithTagAndRegistry)
+	logger.LogError(fmt.Sprintf("%s -> %s", messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
+	return err
 }
 
-func (d *API) downloadImage(imagePath string) error {
-	reader, err := d.dockerClient.ImagePull(d.ctx, imagePath, dockerTypes.ImagePullOptions{})
+func (d *API) downloadImage(imageWithTagAndRegistry string) error {
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIPullNewImage, imageWithTagAndRegistry)
+	reader, err := d.dockerClient.ImagePull(d.ctx, imageWithTagAndRegistry, d.setPullOptions())
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		return err
 	}
 
+	return d.readPullReader(imageWithTagAndRegistry, reader)
+}
+
+func (d *API) setPullOptions() dockerTypes.ImagePullOptions {
+	authConfig := dockerTypes.AuthConfig{
+		Username:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_USERNAME", ""),
+		Password:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_PASSWORD", ""),
+		ServerAddress: env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_ADDRESS", ""),
+	}
+
+	if authConfig.Username != "" && authConfig.Password != "" {
+		encodedAuthConfig, _ := json.Marshal(authConfig)
+		return dockerTypes.ImagePullOptions{RegistryAuth: base64.URLEncoding.EncodeToString(encodedAuthConfig)}
+	}
+
+	return dockerTypes.ImagePullOptions{}
+}
+
+func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadCloser) error {
 	readResult, err := ioutil.ReadAll(reader)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err, logger.ErrorLevel)
-		logger.LogDebugWithLevel(string(readResult), logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
+		logger.LogDebugWithLevel(string(readResult))
 		return err
 	}
 
+	d.loggerAPIStatus(messages.MsgDebugDockerAPIDownloadWithSuccess, imageWithTagAndRegistry)
 	return nil
 }
 
-func (d *API) checkImageNotExists(imagePath string) (bool, error) {
+func (d *API) checkImageNotExists(imageWithTagAndRegistry string) (bool, error) {
 	args := dockerTypesFilters.NewArgs()
-	args.Add("reference", imagePath)
+	args.Add("reference", d.removeRegistry(imageWithTagAndRegistry))
 	options := dockerTypes.ImageListOptions{Filters: args}
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerListImages, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerListImages, err)
 		return false, err
 	}
 
@@ -116,8 +142,6 @@ func (d *API) replaceCMDAnalysisID(cmd string) string {
 }
 
 func (d *API) logStatusAndExecuteCRDContainer(imageNameWithTag, cmd string) (containerOutput string, err error) {
-	d.loggerAPIStatus(messages.MsgDebugDockerAPIDownloadWithSuccess, imageNameWithTag)
-
 	containerOutput, err = d.executeCRDContainer(imageNameWithTag, cmd)
 	if err != nil {
 		d.loggerAPIStatus(messages.MsgDebugDockerAPIFinishedError, imageNameWithTag)
@@ -139,26 +163,25 @@ func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput
 
 	time.Sleep(5 * time.Second)
 	d.removeContainer(containerID)
-
 	return containerOutput, err
 }
 
 func (d *API) removeContainer(containerID string) {
 	err := d.dockerClient.ContainerRemove(d.ctx,
 		containerID, dockerTypes.ContainerRemoveOptions{Force: true})
-	logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err, logger.ErrorLevel)
+	logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 }
 
 func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
 	config, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
-	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, d.getImageID())
+	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, nil, d.getImageID())
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err)
 		return "", err
 	}
 
 	if err = d.dockerClient.ContainerStart(d.ctx, response.ID, dockerTypes.ContainerStartOptions{}); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerStartContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerStartContainer, err)
 		return "", err
 	}
 
@@ -172,17 +195,19 @@ func (d *API) getImageID() string {
 
 func (d *API) readContainer(containerID string) (string, error) {
 	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
-	_, err := d.dockerClient.ContainerWait(d.ctx, containerID)
-	if err != nil {
-		return "", err
+	chanContainerStatus, _ := d.dockerClient.ContainerWait(d.ctx, containerID, "")
+	if containerWaitStatus := <-chanContainerStatus; containerWaitStatus.Error != nil {
+		message := fmt.Sprintf("Error on wait container %s: %s | Exited with status %s",
+			containerID, containerWaitStatus.Error.Message,
+			strconv.Itoa(int(containerWaitStatus.StatusCode)),
+		)
+		return "", errors.New(message)
 	}
-
 	containerOutput, err := d.dockerClient.ContainerLogs(d.ctx, containerID,
 		dockerTypes.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		return "", err
 	}
-
 	return d.getOutputString(containerOutput)
 }
 
@@ -228,7 +253,6 @@ func (d *API) getContainerHostConfig() *dockerContainer.HostConfig {
 func (d *API) loggerAPIStatus(message, imageNameWithTag string) {
 	logger.LogDebugWithLevel(
 		message,
-		logger.DebugLevel,
 		map[string]interface{}{
 			"image":      imageNameWithTag,
 			"analysisId": d.analysisID.String(),
@@ -239,7 +263,6 @@ func (d *API) loggerAPIStatus(message, imageNameWithTag string) {
 func (d *API) loggerAPIStatusWithContainerID(message, imageNameWithTag, containerID string) {
 	logger.LogDebugWithLevel(
 		message,
-		logger.DebugLevel,
 		map[string]interface{}{
 			"image":       imageNameWithTag,
 			"containerId": containerID,
@@ -251,7 +274,7 @@ func (d *API) loggerAPIStatusWithContainerID(message, imageNameWithTag, containe
 func (d *API) DeleteContainersFromAPI() {
 	containers, err := d.listContainersByAnalysisID()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorDockerListAllContainers, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerListAllContainers, err)
 		return
 	}
 
@@ -259,7 +282,7 @@ func (d *API) DeleteContainersFromAPI() {
 		err = d.dockerClient.ContainerRemove(d.ctx, containers[index].ID,
 			dockerTypes.ContainerRemoveOptions{Force: true})
 
-		logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err, logger.ErrorLevel)
+		logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 	}
 }
 
@@ -303,4 +326,8 @@ func (d *API) getSourceFolderFromWindows(path string) string {
 	path = strings.ReplaceAll(path, "/", "//")
 	// //c//Users//usr//Documents//Horusec//project//.horusec//ID
 	return path
+}
+
+func (d *API) removeRegistry(imageWithTagAndRegistry string) string {
+	return strings.ReplaceAll(imageWithTagAndRegistry, images.DefaultRegistry+"/", "")
 }
