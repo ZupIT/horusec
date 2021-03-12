@@ -226,7 +226,7 @@ func (f *Formatter) getImageTagCmd(projectSubPath string) *dockerEntities.Analys
 		Language: languages.Java,
 	}
 
-	return ad.SetData(f.GetToolsConfig()[tools.SpotBugs].ImagePath, ImageName, ImageTag)
+	return ad.SetData(f.GetCustomImageByLanguage(languages.Java), ImageName+":"+ImageTag)
 }
 
 func (f *Formatter) verifyOutputErrors(output string) (err error) {

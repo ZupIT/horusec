@@ -29,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/javascript/npmaudit/entities"
@@ -68,11 +69,11 @@ func (f *Formatter) startNpmAudit(projectSubPath string) error {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "package-lock.json", tools.NpmAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "package-lock.json", tools.NpmAudit),
 		Language: languages.Javascript,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.NpmAudit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Javascript), images.Javascript)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {

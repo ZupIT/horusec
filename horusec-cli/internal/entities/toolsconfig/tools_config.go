@@ -2,6 +2,7 @@ package toolsconfig
 
 import (
 	"encoding/json"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -10,8 +11,7 @@ import (
 type MapToolConfig map[tools.Tool]ToolConfig
 
 type ToolConfig struct {
-	IsToIgnore bool   `json:"istoignore"`
-	ImagePath  string `json:"imagepath"`
+	IsToIgnore bool `json:"istoignore"`
 }
 
 type ToolsConfigsStruct struct {

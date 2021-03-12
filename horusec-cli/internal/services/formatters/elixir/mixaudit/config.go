@@ -14,11 +14,7 @@
 
 package mixaudit
 
-const (
-	ImageName = "horuszup/horusec-elixir"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		mix_audit --format json --path ./
   `
-)

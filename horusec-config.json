@@ -15,8 +15,7 @@
   "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliCertInsecureSkipVerify": false,
   "horusecCliEnableCommitAuthor": false,
-  "horusecCliSeveritiesToIgnore": [
-  ],
+  "horusecCliSeveritiesToIgnore": [],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",
     "**/examples/**",
@@ -88,6 +87,8 @@
     "3f095c1d5bb845ef8ef58b6071ba39898fe81bef886d9f4fadc11d46e2c6a7d5",
     "b4b43fc1ddc7c112dd3260d0386173df969a0f31771a31cb762716330dd59aad",
     "4530caeaffd6d7fa42cf73240710b141a455547d75dd643ecbdbc6adf7c66037",
+    "93f7d97bf528c4077222746782b6c426f2968b7f60f5b3ffa9d031e8814d5200",
+    "401a727939b5ac19fba9d59b716adeedbbccd175995c3dfe5fb69d36396e3836",
     "3da62e82b432a4cf01b03e2fe11004867daed41006771c96a76e1c27a9e4227f",
     "edf12860407857ed7e6136129ddb93a45eae325713efbef471ed44d88cea2cef",
     "b610c7a3cc6d7d613abcf54d306a00fd9e3c4d0abda2e297748bb8f9125d6f85",
@@ -99,7 +100,8 @@
     "8ae984cfcfbea61b3786604366139b8b254436c9fb73e3f07dd6ba085f974e34",
     "dd48b2e1fd672fe0c95ef6906189247385eaba5c7daffaeb71100fdda4091a4b",
     "93f7d97bf528c4077222746782b6c426f2968b7f60f5b3ffa9d031e8814d5200",
-    "dc5c1f3d6f720128aa8cc5a36e2f027ef72213e836ce02ad318d8f6c8e507fbc"
+    "dc5c1f3d6f720128aa8cc5a36e2f027ef72213e836ce02ad318d8f6c8e507fbc",
+    "e362b70fb4f26b2a84b0df2b2e1ec0a630b75118296c1abbd5f17281aa1cbf0d"
   ],
   "horusecCliRiskAcceptHashes": [],
   "horusecCliWorkDir": {
@@ -111,84 +113,91 @@
     "kotlin": [],
     "javaScript": [],
     "leaks": [],
-    "hcl": []
+    "hcl": [],
+    "javascript": [],
+    "generic": [],
+    "yaml": [],
+    "c": [],
+    "php": [],
+    "dart": [],
+    "elixir": [],
+    "shell": []
+  },
+  "horusecCliCustomImages": {
+    "csharp": "",
+    "leaks": "",
+    "go": "",
+    "java": "",
+    "kotlin": "",
+    "javascript": "",
+    "python": "",
+    "ruby": "",
+    "hcl": "",
+    "generic": "",
+    "yaml": "",
+    "c": "",
+    "php": "",
+    "dart": "",
+    "elixir": "",
+    "shell": ""
   },
   "horusecCliToolsConfig": {
     "Bandit": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "Brakeman": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "Eslint": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "Flawfinder": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "GitLeaks": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "GoSec": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecCsharp": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecJava": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecKotlin": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecKubernetes": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecLeaks": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "HorusecNodeJS": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "NpmAudit": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "PhpCS": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "Safety": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "SecurityCodeScan": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "Semgrep": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "TfSec": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     },
     "YarnAudit": {
-      "isToIgnore": false,
-      "imagePath": ""
+      "isToIgnore": false
     }
   },
   "horusecCliHeaders": {}

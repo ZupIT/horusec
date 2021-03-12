@@ -28,8 +28,10 @@
   },
   "horusecCliToolsConfig": {
     "GoSec": {
-      "isToIgnore": true,
-      "imagePath": "docker.io/company/gosec:latest"
+      "isToIgnore": true
     }
+  },
+  "horusecCliCustomImages": {
+    "go": "docker.io/company/go:latest"
   }
 }

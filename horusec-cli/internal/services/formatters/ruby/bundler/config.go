@@ -14,11 +14,7 @@
 
 package bundler
 
-const (
-	ImageName = "horuszup/horusec-ruby"
-	ImageTag  = "v1.0.2"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		bundle-audit check
   `
-)

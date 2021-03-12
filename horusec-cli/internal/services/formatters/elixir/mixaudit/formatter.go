@@ -17,6 +17,8 @@ package mixaudit
 import (
 	"encoding/json"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
@@ -63,11 +65,11 @@ func (f *Formatter) startMixAudit(projectSubPath string) error {
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, ImageCmd, "mix.lock", tools.MixAudit),
+		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "mix.lock", tools.MixAudit),
 		Language: languages.Elixir,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.MixAudit].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
 func (f *Formatter) parseOutput(output string) error {

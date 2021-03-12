@@ -15,10 +15,7 @@
 //nolint
 package yarnaudit
 
-const (
-	ImageName = "horuszup/horusec-js"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
         if [ -f yarn.lock ]; then
             yarn audit --groups dependencies --json > /tmp/results-ANALYSISID.json 2> /tmp/errorYarnAudit-ANALYSISID
@@ -35,4 +32,3 @@ const (
             fi
         fi
   `
-)

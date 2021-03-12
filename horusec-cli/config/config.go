@@ -25,6 +25,7 @@ import (
 	utilsJson "github.com/ZupIT/horusec/development-kit/pkg/utils/json"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/valueordefault"
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
@@ -43,6 +44,7 @@ func NewConfig() IConfig {
 		headers:             map[string]string{},
 		workDir:             workdir.NewWorkDir(),
 		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		customImages:        images.NewCustomImages(),
 	}
 }
 
@@ -114,6 +116,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetDisableDocker(viper.GetBool(c.toLowerCamel(EnvDisableDocker)))
 	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
 	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
+	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	return c
 }
 
@@ -487,6 +490,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"disableDocker":                   c.disableDocker,
 		"customRulesPath":                 c.customRulesPath,
 		"enableInformationSeverity":       c.enableInformationSeverity,
+		"customImages":                    c.customImages,
 	}
 }
 
@@ -530,6 +534,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvDisableDocker):                   c.GetDisableDocker(),
 		c.toLowerCamel(EnvCustomRulesPath):                 c.GetCustomRulesPath(),
 		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
+		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
 	}
 }
 
@@ -572,7 +577,7 @@ func (c *Config) factoryParseInputToSliceString(input interface{}) []string {
 }
 
 func (c *Config) replaceCommaToSpaceString(input string) []string {
-	response := []string{}
+	var response []string
 	if input != "" {
 		for _, item := range strings.Split(strings.TrimSpace(input), ",") {
 			newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
@@ -583,7 +588,7 @@ func (c *Config) replaceCommaToSpaceString(input string) []string {
 }
 
 func (c *Config) replaceCommaToSpaceSliceString(input []string) []string {
-	response := []string{}
+	var response []string
 	for _, item := range input {
 		newItem := strings.ReplaceAll(strings.TrimSpace(item), ",", "")
 		response = append(response, newItem)
@@ -613,4 +618,23 @@ func (c *Config) GetEnableInformationSeverity() bool {
 
 func (c *Config) SetEnableInformationSeverity(enableInformationSeverity bool) {
 	c.enableInformationSeverity = enableInformationSeverity
+}
+
+func (c *Config) GetCustomImages() images.Custom {
+	return c.customImages
+}
+
+func (c *Config) SetCustomImages(configData interface{}) {
+	customImages := images.Custom{}
+
+	bytes, err := json.Marshal(configData)
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
+	}
+
+	if err := json.Unmarshal(bytes, &customImages); err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
+	}
+
+	c.customImages = customImages
 }

@@ -51,4 +51,5 @@ type IService interface {
 	IsDockerDisabled() bool
 	GetCustomRulesByTool(tool tools.Tool) []engine.Rule
 	GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string
+	GetCustomImageByLanguage(language languages.Language) string
 }
