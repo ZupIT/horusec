@@ -4,8 +4,8 @@ describe("Login", () => {
     });
 
     it("Should login with default account", () => {
-        cy.get("#email").type("dev@examples.com");
+        cy.get("#email").type("dev@example.com");
         cy.get("#password").type("Devpass0*");
-        cy.get("button").click();
+        cy.get("button").first().click();
     });
 });
