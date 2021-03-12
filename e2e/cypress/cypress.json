@@ -68,7 +68,7 @@
         "runMode": 0,
         "openMode": 0
     },
-    "screenshotOnRunFailure": true,
+    "screenshotOnRunFailure": false,
     "screenshotsFolder": "./src/screenshots",
     "supportFile": "./src/support",
     "taskTimeout": 60000,
