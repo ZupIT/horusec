@@ -24,7 +24,7 @@ require (
 	github.com/iancoleman/strcase v0.1.3
 	github.com/kofalt/go-memoize v0.0.0-20200917044458-9b55a8d73e1c
 	github.com/labstack/echo v3.3.10+incompatible
-	github.com/lib/pq v1.9.0
+	github.com/lib/pq v1.10.0
 	github.com/magiconair/properties v1.8.4
 	github.com/manifoldco/promptui v0.8.0
 	github.com/opencontainers/image-spec v1.0.1
