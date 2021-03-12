@@ -144,6 +144,9 @@ compose-horusec-analytic:
 	$(DOCKER_COMPOSE) -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-auth:
 	$(DOCKER_COMPOSE) -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
+compose-e2e:
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-e2e-server-horusec:
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml down -v
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml up -d --build --force-recreate
