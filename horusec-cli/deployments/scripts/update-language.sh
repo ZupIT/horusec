@@ -172,13 +172,13 @@ updateImage() {
 
     updateVersionInConfigFile
 
-    if [ "$IS_TO_UPDATE_LATEST" == "true" ]; then
-        docker build -t "$IMAGE_NAME:latest" -f "$DIRECTORY_SEMVER/Dockerfile" .
-        docker push "$IMAGE_NAME:latest"
-    fi
-
-    docker build -t "$IMAGE_NAME:$NEW_RELEASE" -f "$DIRECTORY_SEMVER/Dockerfile" .
-    docker push "$IMAGE_NAME:$NEW_RELEASE"
+#    if [ "$IS_TO_UPDATE_LATEST" == "true" ]; then
+#        docker build -t "$IMAGE_NAME:latest" -f "$DIRECTORY_SEMVER/Dockerfile" .
+#        docker push "$IMAGE_NAME:latest"
+#    fi
+#
+#    docker build -t "$IMAGE_NAME:$NEW_RELEASE" -f "$DIRECTORY_SEMVER/Dockerfile" .
+#    docker push "$IMAGE_NAME:$NEW_RELEASE"
 }
 
 setActualRelease() {
@@ -201,8 +201,8 @@ updateVersionInConfigFile() {
     OLD_VALUE="${IMAGE_NAME}:$ACTUAL_RELEASE_IN_CONFIG"
     NEW_VALUE="${IMAGE_NAME}:$NEW_RELEASE"
     EXPRESSION="s/${OLD_VALUE/\//\\\/}/${NEW_VALUE/\//\\\/}/g"
-    sed -i -e "${EXPRESSION}" "$DIRECTORY_IMAGE_CONFIG"
-    if [[ $? != 0 ]]; then
+    if ! sed -i -e "${EXPRESSION}" "$DIRECTORY_IMAGE_CONFIG";
+    then
         echo "Error on update file $DIRECTORY_IMAGE_CONFIG to new version and expression: $EXPRESSION"
         rollbackVersionInConfigFile
         exit 1
@@ -225,8 +225,8 @@ rollbackVersionInConfigFile() {
     OLD_VALUE="${IMAGE_NAME}:$NEW_RELEASE"
     NEW_VALUE="${IMAGE_NAME}:$ACTUAL_RELEASE_IN_CONFIG"
     EXPRESSION="s/${OLD_VALUE/\//\\\/}/${NEW_VALUE/\//\\\/}/g"
-    sed -i -e "${EXPRESSION}" "$DIRECTORY_IMAGE_CONFIG"
-    if [[ $? != 0 ]]; then
+    if ! sed -i -e "${EXPRESSION}" "$DIRECTORY_IMAGE_CONFIG";
+    then
         echo "Error on rollback file $DIRECTORY_IMAGE_CONFIG to old version and expression: $EXPRESSION"
         exit 1
     fi

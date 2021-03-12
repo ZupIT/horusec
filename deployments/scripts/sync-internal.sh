@@ -47,8 +47,7 @@ cloneInternalInTmpFolder () {
     if [[ "$IS_CLONE" == "true" ]]
     then
         rm -rf $HORUSEC_INTERNAL_FOLDER
-        git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER"
-        if [ $? != "0" ]
+        if ! git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec-internal.git" "$HORUSEC_INTERNAL_FOLDER";
         then
             echo "ERROR on clone internal project!"
             exit 1
@@ -60,7 +59,7 @@ cloneInternalInTmpFolder () {
 
 deleteCurrentContent () {
     echo "Deleting all content..."
-    find . \
+    if ! find . \
     ! -path './.git*' \
     ! -path './merge-open-source.sh' \
     ! -path './horusec-account' \
@@ -79,8 +78,7 @@ deleteCurrentContent () {
     ! -path './horusec-webhook/deployments*' \
     ! -path './horusec-migration' \
     ! -path './horusec-migration/deployments*' \
-    -delete
-    if [ $? != "0" ]
+    -delete;
     then
         echo "ERROR on remove content in internal content!"
         exit 1
@@ -90,8 +88,7 @@ deleteCurrentContent () {
 cloneOpenSourceInTmpFolder () {
     if [[ "$IS_CLONE" == "true" ]]
     then
-        git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec.git" "$HORUSEC_OPEN_SOURCE_FOLDER"
-        if [ $? != "0" ]
+        if ! git clone -b "$BRANCH_NAME" "git@github.com:ZupIT/horusec.git" "$HORUSEC_OPEN_SOURCE_FOLDER";
         then
             echo "ERROR on clone open source content!"
             exit 1
@@ -105,8 +102,7 @@ cloneOpenSourceInTmpFolder () {
 copyContentFromTmpToInternal () {
     echo "Coping all content of open source to internal..."
     cd "./$HORUSEC_OPEN_SOURCE_FOLDER" || echo "directory $HORUSEC_OPEN_SOURCE_FOLDER not exists"
-    rsync -a -r -v ./ ../
-    if [ $? != "0" ]
+    if ! rsync -a -r -v ./ ../;
     then
         echo "ERROR on copy open source to internal content!"
         exit 1
@@ -116,8 +112,7 @@ copyContentFromTmpToInternal () {
 
 removeTmpFolder () {
     echo "Removing open source folder..."
-    rm -rf "./$HORUSEC_OPEN_SOURCE_FOLDER"
-    if [ $? != "0" ]
+    if ! rm -rf "./$HORUSEC_OPEN_SOURCE_FOLDER";
     then
         echo "ERROR on remove open source folder!"
         exit 1
@@ -139,28 +134,36 @@ stashDeployments () {
     git stash push ./horusec-migration/deployments --all --quiet
 }
 
-echo "\n"
+echo
+
 validateBranchName
 
-echo "\n"
+echo
+
 validateIsClone
 
-echo "\n"
+echo
+
 cloneInternalInTmpFolder
 
-echo "\n"
+echo
+
 deleteCurrentContent
 
-echo "\n"
+echo
+
 cloneOpenSourceInTmpFolder
 
-echo "\n"
+echo
+
 copyContentFromTmpToInternal
 
-echo "\n"
+echo
+
 removeTmpFolder
 
-echo "\n"
+echo
+
 stashDeployments
 
 echo "Merge has released, please commit your changes into the origin: "
