@@ -1,8 +1,7 @@
 name: SyncRepositoriesDevelop
 
 on:
-  push:
-    branches: ["develop"]
+  workflow_dispatch:
 
 jobs:
   deploy:

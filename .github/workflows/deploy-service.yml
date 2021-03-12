@@ -52,5 +52,5 @@ jobs:
         with:
           author_name: "Horusec"
           author_email: "horusec@zup.com.br"
-          message: "[skip cicd] update versioning file"
+          message: "[skip ci] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}

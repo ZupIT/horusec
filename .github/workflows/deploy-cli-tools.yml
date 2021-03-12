@@ -42,12 +42,12 @@ jobs:
 
           docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
-          chmod +x ./deployments/scripts/update-image-tool.sh
-          ./deployments/scripts/update-image-tool.sh $TOOL_NAME $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+          chmod +x ./horusec-cli/deployments/scripts/update-language.sh
+          ./horusec-cli/deployments/scripts/update-language.sh $TOOL_NAME $UPDATE_TYPE $IS_TO_UPDATE_LATEST
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
           author_name: "Horusec"
           author_email: "horusec@zup.com.br"
-          message: "[skip cicd] update versioning file"
+          message: "[skip ci] update versioning file"
           GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}

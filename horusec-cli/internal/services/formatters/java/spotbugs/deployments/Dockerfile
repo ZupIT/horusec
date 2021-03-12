@@ -47,9 +47,9 @@ ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 ENV GRADLE_USER_HOME "$USER_HOME_DIR/.gradle"
 
-COPY mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
-COPY settings-docker.xml /usr/share/maven/ref/
-COPY exclude.xml /opt/spotbugs/exclude.xml
+COPY ./horusec-cli/internal/services/formatters/java/spotbugs/deployments/mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
+COPY ./horusec-cli/internal/services/formatters/java/spotbugs/deployments/settings-docker.xml /usr/share/maven/ref/
+COPY ./horusec-cli/internal/services/formatters/java/spotbugs/deployments/exclude.xml /opt/spotbugs/exclude.xml
 
 VOLUME "$USER_HOME_DIR/.m2"
 VOLUME "$USER_HOME_DIR/.gradle"

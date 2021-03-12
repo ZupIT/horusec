@@ -32,7 +32,10 @@ validateBranchName () {
 }
 
 validateIsClone () {
-    if [[ "$IS_CLONE" != "true" && "$IS_CLONE" != "false" ]]
+    if [[ "$IS_CLONE" = "" ]]
+    then
+        IS_CLONE="true"
+    elif [[ "$IS_CLONE" != "true" && "$IS_CLONE" != "false" ]]
     then
         echo "Param IsClone is invalid, please use the examples bellow allowed and try again!"
         echo "Params IsClone allowed: true, false"
@@ -51,7 +54,7 @@ cloneInternalInTmpFolder () {
             exit 1
         fi
     else
-        cd "./$HORUSEC_INTERNAL_FOLDER"
+        cd "./$HORUSEC_INTERNAL_FOLDER" || echo "directory $HORUSEC_INTERNAL_FOLDER not exists"
     fi
 }
 
@@ -101,7 +104,7 @@ cloneOpenSourceInTmpFolder () {
 
 copyContentFromTmpToInternal () {
     echo "Coping all content of open source to internal..."
-    cd "./$HORUSEC_OPEN_SOURCE_FOLDER"
+    cd "./$HORUSEC_OPEN_SOURCE_FOLDER" || echo "directory $HORUSEC_OPEN_SOURCE_FOLDER not exists"
     rsync -a -r -v ./ ../
     if [ $? != "0" ]
     then
