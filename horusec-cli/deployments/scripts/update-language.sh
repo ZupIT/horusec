@@ -141,9 +141,9 @@ validateIsToUpdateLatest() {
 installSemver() {
     chmod +x ./deployments/scripts/install-semver.sh
     ./deployments/scripts/install-semver.sh
-    semver &>/dev/null
-    RESPONSE=$?
-    if [ $RESPONSE != "0" ]; then
+
+    if ! semver &>/dev/null;
+    then
         exit 1
     fi
 }
