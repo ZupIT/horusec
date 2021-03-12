@@ -16,10 +16,10 @@ coverage-development-kit:
 	deployments/scripts/coverage.sh 78 "./development-kit"
 coverage-horusec-api:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 99 "./horusec-api"
+	deployments/scripts/coverage.sh 97 "./horusec-api"
 coverage-horusec-cli:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 89 "./horusec-cli"
+	deployments/scripts/coverage.sh 87 "./horusec-cli"
 coverage-horusec-messages:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-messages"

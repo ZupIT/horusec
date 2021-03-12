@@ -14,6 +14,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:

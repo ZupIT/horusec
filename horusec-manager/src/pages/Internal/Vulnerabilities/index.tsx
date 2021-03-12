@@ -28,7 +28,7 @@ import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
-import { get, find } from 'lodash';
+import { find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { AxiosError, AxiosResponse } from 'axios';
 
@@ -42,6 +42,7 @@ const Vulnerabilities: React.FC = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
+
   const { showSuccessFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
   const [isLoading, setLoading] = useState(true);
@@ -127,11 +128,11 @@ const Vulnerabilities: React.FC = () => {
   };
 
   const handleSearch = debounce((searchString: string) => {
-    setRefresh({
-      filter: { ...filters, vulnHash: searchString },
-      page: pagination,
-    });
-  }, 500);
+    setRefresh((state) => ({
+      ...state,
+      filter: { ...state.filter, vulnHash: searchString },
+    }));
+  }, 800);
 
   const handleUpdateVulnerabilityType = (
     vulnerability: Vulnerability,
@@ -145,10 +146,10 @@ const Vulnerabilities: React.FC = () => {
         type
       )
       .then(() => {
-        setRefresh({ filter: filters, page: pagination });
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err) => {
+        setRefresh((state) => state);
         dispatchMessage(err?.response?.data);
       });
   };
@@ -165,10 +166,10 @@ const Vulnerabilities: React.FC = () => {
         severity
       )
       .then(() => {
-        setRefresh({ filter: filters, page: pagination });
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err: AxiosError) => {
+        setRefresh((state) => state);
         dispatchMessage(err?.response?.data);
       });
   };
@@ -183,64 +184,6 @@ const Vulnerabilities: React.FC = () => {
           if (!isCancelled) {
             const response = result.data.content;
             setRepositories(response);
-
-            if (response.length > 0) {
-              setLoading(true);
-
-              const page = refresh.page;
-              let filter = refresh.filter;
-
-              if (page.pageSize !== pagination.pageSize) {
-                page.currentPage = INITIAL_PAGE;
-              }
-
-              if (!filter.repositoryID) {
-                filter.repositoryID = response[0].repositoryID;
-              }
-
-              setFilters(filter);
-
-              filter = {
-                ...filter,
-                vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
-                vulnType: filter.vulnHash ? null : filter.vulnType,
-              };
-
-              repositoryService
-                .getAllVulnerabilities(filter, page)
-                .then((result: AxiosResponse) => {
-                  if (!isCancelled) {
-                    const response = result.data?.content;
-                    setVulnerabilities(response?.data);
-                    const totalItems = response?.totalItems;
-
-                    let totalPages = totalItems
-                      ? Math.ceil(totalItems / page.pageSize)
-                      : 1;
-
-                    if (totalPages <= 0) {
-                      totalPages = 1;
-                    }
-
-                    setPagination({ ...page, totalPages, totalItems });
-                  }
-                })
-                .catch((err: AxiosError) => {
-                  if (!isCancelled) {
-                    dispatchMessage(err?.response?.data);
-                    setVulnerabilities([]);
-                  }
-                })
-                .finally(() => {
-                  if (!isCancelled) {
-                    setLoading(false);
-                  }
-                });
-            } else {
-              if (!isCancelled) {
-                setLoading(false);
-              }
-            }
           }
         });
     };
@@ -250,7 +193,77 @@ const Vulnerabilities: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [currentWorkspace, refresh, pagination.pageSize, dispatchMessage]);
+  }, [currentWorkspace]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchVulnerabilities = () => {
+      if (repositories.length > 0) {
+        setLoading(true);
+
+        const page = refresh.page;
+        let filter = refresh.filter;
+
+        if (page.pageSize !== pagination.pageSize) {
+          page.currentPage = INITIAL_PAGE;
+        }
+
+        if (!filter.repositoryID) {
+          filter.repositoryID = repositories[0].repositoryID;
+        }
+
+        setFilters(filter);
+
+        filter = {
+          ...filter,
+          vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
+          vulnType: filter.vulnHash ? null : filter.vulnType,
+        };
+
+        repositoryService
+          .getAllVulnerabilities(filter, page)
+          .then((result: AxiosResponse) => {
+            if (!isCancelled) {
+              const response = result.data?.content;
+              setVulnerabilities(response?.data);
+              const totalItems = response?.totalItems;
+
+              let totalPages = totalItems
+                ? Math.ceil(totalItems / page.pageSize)
+                : 1;
+
+              if (totalPages <= 0) {
+                totalPages = 1;
+              }
+
+              setPagination({ ...page, totalPages, totalItems });
+            }
+          })
+          .catch((err: AxiosError) => {
+            if (!isCancelled) {
+              dispatchMessage(err?.response?.data);
+              setVulnerabilities([]);
+            }
+          })
+          .finally(() => {
+            if (!isCancelled) {
+              setLoading(false);
+            }
+          });
+      } else {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchVulnerabilities();
+    return () => {
+      isCancelled = true;
+    };
+    // eslint-disable-next-line
+  }, [repositories.length, refresh, pagination.pageSize]);
 
   return (
     <Styled.Wrapper>
@@ -362,11 +375,10 @@ const Vulnerabilities: React.FC = () => {
                   optionsHeight="130px"
                   className="select-role"
                   rounded
-                  backgroundColor={get(
-                    colors.vulnerabilities,
-                    row.severity,
-                    colors.vulnerabilities.DEFAULT
-                  )}
+                  backgroundColors={{
+                    colors: colors.vulnerabilities,
+                    default: colors.vulnerabilities.DEFAULT,
+                  }}
                   initialValue={row.severity}
                   options={severitiesOptions}
                   disabled={!isAdminOrSupervisorOfRepository()}

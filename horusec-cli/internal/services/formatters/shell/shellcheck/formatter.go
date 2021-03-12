@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
+
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/severity"
 
@@ -113,11 +115,11 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(ImageCmd, projectSubPath, tools.ShellCheck),
+		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.ShellCheck),
 		Language: languages.Shell,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.ShellCheck].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Shell), images.Shell)
 }
 
 func (f *Formatter) isIgnoredFix(message string) bool {

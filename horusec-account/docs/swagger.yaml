@@ -2,13 +2,9 @@ definitions:
   account.Company:
     properties:
       authzAdmin:
-        items:
-          type: string
-        type: array
+        type: string
       authzMember:
-        items:
-          type: string
-        type: array
+        type: string
       description:
         type: string
       name:
@@ -17,17 +13,11 @@ definitions:
   account.Repository:
     properties:
       authzAdmin:
-        items:
-          type: string
-        type: array
+        type: string
       authzMember:
-        items:
-          type: string
-        type: array
+        type: string
       authzSupervisor:
-        items:
-          type: string
-        type: array
+        type: string
       description:
         type: string
       name:
@@ -36,17 +26,11 @@ definitions:
   account.RepositoryResponse:
     properties:
       authzAdmin:
-        items:
-          type: string
-        type: array
+        type: string
       authzMember:
-        items:
-          type: string
-        type: array
+        type: string
       authzSupervisor:
-        items:
-          type: string
-        type: array
+        type: string
       companyID:
         type: string
       createdAt:
@@ -104,13 +88,12 @@ definitions:
       description:
         type: string
       headers:
-        items:
-          $ref: '#/definitions/webhook.Headers'
-        type: array
+        type: HeaderType
       method:
         type: string
       repository:
         $ref: '#/definitions/account.Repository'
+        type: object
       repositoryID:
         type: string
       updatedAt:
@@ -121,17 +104,6 @@ definitions:
         type: string
     type: object
   webhook.Webhook:
-    properties:
-      description:
-        type: string
-      headers:
-        items:
-          $ref: '#/definitions/webhook.Headers'
-        type: array
-      method:
-        type: string
-      url:
-        type: string
     type: object
 info:
   contact:
@@ -139,6 +111,7 @@ info:
     name: Horusec
     url: https://github.com/ZupIT/horusec
   description: Service of Horusec.
+  license: {}
   termsOfService: http://swagger.io/terms/
   title: Horusec-Account
 paths:
@@ -194,7 +167,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: create company! If applicationAdmin is enable add field adminEmail in body
+      description: create company! If applicationAdmin is enable add field adminEmail
+        in body
       operationId: create-company
       parameters:
       - description: create company info
@@ -1344,7 +1318,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: BAD REQUEST
           schema:
@@ -1413,7 +1388,8 @@ paths:
       produces:
       - application/json
       responses:
-        "204": {}
+        "204":
+          description: ""
         "400":
           description: BAD REQUEST
           schema:

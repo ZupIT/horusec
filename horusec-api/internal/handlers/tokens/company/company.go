@@ -15,6 +15,7 @@
 package company
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/api"
 	httpUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http"
 	"net/http"
 
@@ -118,12 +119,14 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-
 	tokens, err := h.controller.GetAllTokenCompany(companyID)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
+		if err == EnumErrors.ErrNotFoundRecords {
+			httpUtil.StatusOK(w, &[]api.Token{})
+		} else {
+			httpUtil.StatusInternalServerError(w, err)
+		}
+	} else {
+		httpUtil.StatusOK(w, tokens)
 	}
-
-	httpUtil.StatusOK(w, tokens)
 }
