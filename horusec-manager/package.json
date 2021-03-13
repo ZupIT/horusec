@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@atlaskit/select": "^13.2.0",
     "@react-keycloak/web": "^3.0.0",
     "apexcharts": "^3.20.2",
     "axios": "^0.21.1",

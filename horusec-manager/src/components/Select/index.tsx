@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import Icon from 'components/Icon';
-import Styled from './styled';
-import { useTranslation } from 'react-i18next';
-import { get, isObject, isString } from 'lodash';
-import useOutsideClick from 'helpers/hooks/useClickOutside';
-import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  CSSProperties,
+} from "react";
+import Icon from "components/Icon";
+import Styled from "./styled";
+import { useTranslation } from "react-i18next";
+import { get, isObject, isString } from "lodash";
+import useOutsideClick from "helpers/hooks/useClickOutside";
+import { ObjectLiteral } from "helpers/interfaces/ObjectLiteral";
 
+import Select, { OptionType, StylesConfig } from "@atlaskit/select";
+import { useTheme } from "styled-components";
 interface Props {
   title?: string;
   options: any[];
@@ -37,146 +45,210 @@ interface Props {
   width?: string;
   optionsHeight?: string;
   selectText?: string;
-  backgroundColors?: {
+  backgroundColor?: {
     colors: ObjectLiteral;
     default: string;
   };
   hasSearch?: boolean;
+  appearance?: "default" | "underline";
 }
 
-const Select: React.FC<Props> = ({
+const SelectInput: React.FC<Props> = ({
   title,
-  keyLabel,
   options,
   onChangeValue,
   className,
-  disabled,
   initialValue,
-  keyValue,
+  keyLabel = "label",
+  keyValue = "value",
+  appearance = "default",
   rounded,
   width,
   optionsHeight,
   selectText,
   fixedItemTitle,
   onClickFixedItem,
-  backgroundColors,
-  hasSearch,
+  backgroundColor,
+  disabled = false,
+  hasSearch = false,
 }) => {
-  const [currentValue, setCurrentValue] = useState<string>('');
-  const [filteredOptions, setFilteredOptions] = useState<any[]>(options);
-  const [openOptionsList, setOpenOptionsList] = useState(false);
+  const [currentValue, setCurrentValue] = useState<OptionType>(null);
   const { t } = useTranslation();
+  const theme = useTheme();
 
-  const optionsRef = useRef<HTMLDivElement>();
-
-  useOutsideClick(optionsRef, () => {
-    if (openOptionsList) setOpenOptionsList(false);
-  });
+  const selectOptions: OptionType[] = options.map((option) => ({
+    label: option[keyLabel],
+    value: keyValue ? option[keyValue] : option[keyLabel],
+    option: option,
+  }));
 
   const handleSelectedValue = (option: any) => {
     if (!disabled) {
-      onChangeValue(option);
-      setCurrentValue(option[keyLabel]);
-      setFilteredOptions(options);
+      onChangeValue(option.option);
+      setCurrentValue(option);
     }
   };
 
-  const renderSelectText = () => {
-    setCurrentValue(selectText || t('GENERAL.SELECT'));
-  };
-
-  const handleSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const { value } = event.target;
-    setCurrentValue(value);
-
-    const filteredItens = options.filter((item) =>
-      item[keyLabel].toLowerCase().includes(value.toLowerCase())
-    );
-
-    setFilteredOptions(filteredItens);
+  const getValue = (currentOption: string | number) => {
+    return selectOptions.find((value) => value.value === currentOption) || null;
   };
 
   useEffect(() => {
-    setFilteredOptions(options);
+    if (initialValue) {
+      setCurrentValue(() => {
+        if (isObject(initialValue)) {
+          return getValue(initialValue[keyValue]);
+        }
 
-    if (!initialValue) renderSelectText();
+        if (isString(initialValue)) {
+          return getValue(initialValue);
+        }
 
-    if (isObject(initialValue)) {
-      setCurrentValue(initialValue[keyLabel]);
-    } else if (isString(initialValue)) {
-      const initialOption = options.find(
-        (item) => item[keyValue] === initialValue
-      );
-      setCurrentValue(initialOption[keyValue]);
+        return null;
+      });
     }
     // eslint-disable-next-line
   }, [initialValue]);
 
+  const controlBackground = (() => {
+    if (backgroundColor && currentValue) {
+      const { colors, default: colorDefault } = backgroundColor;
+      return get(colors, currentValue.value, colorDefault);
+    }
+    return "none";
+  })();
+
+  const selectStyles: Partial<StylesConfig<OptionType, false>> = {
+    control: (style: CSSProperties) => {
+      const styles = {
+        ...style,
+        background: controlBackground,
+        border: "none",
+        borderRadius: 0,
+        ":hover": {
+          background: controlBackground,
+          borderColor: "#fff",
+        },
+      };
+
+      if (appearance === "underline") {
+        styles["borderBottom"] = "1px solid #fff";
+      }
+
+      return styles;
+    },
+    valueContainer: (style: CSSProperties) => ({
+      ...style,
+      padding: "0px !important",
+    }),
+    placeholder: (style: CSSProperties) => ({
+      ...style,
+      color: theme.colors.select.text,
+    }),
+    dropdownIndicator: (style: CSSProperties) => ({
+      ...style,
+      color: theme.colors.select.text,
+    }),
+    menuList: (style: CSSProperties) => ({
+      ...style,
+      background: theme.colors.background.highlight,
+      color: theme.colors.select.text,
+    }),
+    input: (style: CSSProperties) => ({
+      ...style,
+      color: theme.colors.select.text,
+    }),
+    option: (style: CSSProperties) => ({
+      ...style,
+      background: theme.colors.background.highlight,
+      ":hover": {
+        background: theme.colors.background.primary,
+      },
+    }),
+    singleValue: (style: CSSProperties) => ({
+      ...style,
+      color: theme.colors.select.text,
+    }),
+  };
+
   return (
-    <Styled.Wrapper
-      rounded={rounded}
-      disabled={disabled}
-      width={width}
-      onClick={() => (disabled ? null : setOpenOptionsList(!openOptionsList))}
-    >
+    <Styled.Container width={width}>
       {title ? <Styled.Title>{title}</Styled.Title> : null}
-
-      <Styled.Container
-        disabled={disabled}
-        rounded={rounded}
+      <Select
+        value={getValue(currentValue?.value)}
         className={className}
-        width={width}
-        backgroundColor={
-          backgroundColors
-            ? get(
-                backgroundColors.colors,
-                currentValue,
-                backgroundColors.default
-              )
-            : null
-        }
-      >
-        <Styled.CurrentValue
-          disabled={!hasSearch}
-          type="text"
-          onChange={handleSearchValue}
-          value={currentValue}
-        />
+        isSearchable={hasSearch}
+        isDisabled={!disabled}
+        styles={selectStyles}
+        options={selectOptions}
+        onChange={(option) => handleSelectedValue(option)}
+        placeholder={t("GENERAL.SELECT") + "..."}
+        noOptionsMessage={() => t("GENERAL.NO_OPTIONS")}
+      />
+    </Styled.Container>
+    // <Styled.Wrapper
+    //   rounded={rounded}
+    //   disabled={disabled}
+    //   width={width}
+    //   onClick={() => (disabled ? null : setOpenOptionsList(!openOptionsList))}
+    // >
+    //   {title ? <Styled.Title>{title}</Styled.Title> : null}
 
-        <Styled.OptionsList
-          isOpen={openOptionsList}
-          rounded={rounded}
-          width={width}
-          height={optionsHeight}
-          className="options-list"
-          ref={optionsRef}
-        >
-          {filteredOptions.map((option, index) => (
-            <Styled.OptionItem
-              rounded={rounded}
-              key={index}
-              className="options-item"
-              onClick={() => handleSelectedValue(option)}
-            >
-              {option[keyLabel]}
-            </Styled.OptionItem>
-          ))}
+    //   <Styled.Container
+    //     disabled={disabled}
+    //     rounded={rounded}
+    //     className={className}
+    //     width={width}
+    //     backgroundColor={
+    //       backgroundColors
+    //         ? get(
+    //             backgroundColors.colors,
+    //             currentValue,
+    //             backgroundColors.default
+    //           )
+    //         : null
+    //     }
+    //   >
+    //     <Styled.CurrentValue
+    //       disabled={!hasSearch}
+    //       type="text"
+    //       onChange={handleSearchValue}
+    //       value={currentValue}
+    //     />
 
-          {fixedItemTitle ? (
-            <Styled.FixedOptionItem
-              rounded={rounded}
-              onClick={onClickFixedItem}
-            >
-              {fixedItemTitle}
-            </Styled.FixedOptionItem>
-          ) : null}
-        </Styled.OptionsList>
+    //     <Styled.OptionsList
+    //       isOpen={openOptionsList}
+    //       rounded={rounded}
+    //       width={width}
+    //       height={optionsHeight}
+    //       className="options-list"
+    //       ref={optionsRef}
+    //     >
+    //       {filteredOptions.map((option, index) => (
+    //         <Styled.OptionItem
+    //           rounded={rounded}
+    //           key={index}
+    //           className="options-item"
+    //           onClick={() => handleSelectedValue(option)}
+    //         >
+    //           {option[keyLabel]}
+    //         </Styled.OptionItem>
+    //       ))}
 
-        <Icon name="down" size="12px" />
-      </Styled.Container>
-    </Styled.Wrapper>
+    //       {fixedItemTitle ? (
+    //         <Styled.FixedOptionItem
+    //           rounded={rounded}
+    //           onClick={onClickFixedItem}
+    //         >
+    //           {fixedItemTitle}
+    //         </Styled.FixedOptionItem>
+    //       ) : null}
+    //     </Styled.OptionsList>
+
+    //     <Icon name="down" size="12px" />
+    //   </Styled.Container>
+    // </Styled.Wrapper>
   );
 };
 
-export default Select;
+export default SelectInput;

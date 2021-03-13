@@ -23,10 +23,13 @@ const Container = styled.div`
   padding: 20px;
   display: flex;
   width: min-content;
+  align-items: center;
 `;
 
 const Wrapper = styled.div`
+  min-width: 200px;
   margin-right: 35px;
+  transition: all 1s;
 `;
 
 const CalendarWrapper = styled(Wrapper)`

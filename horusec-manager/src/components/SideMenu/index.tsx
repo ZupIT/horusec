@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
-import { Icon, Language, Logout, Helper } from 'components';
+import { Icon, Language, Logout, Helper, Select } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
@@ -171,14 +171,13 @@ const SideMenu: React.FC = () => {
 
           {allWorkspaces && allWorkspaces.length > 0 ? (
             <Styled.SelectWrapper>
-              <Styled.SelectWorkspace
-                selectText="Selecione"
+              <Select
                 options={allWorkspaces}
                 initialValue={currentWorkspace}
                 onChangeValue={(value) => handleSelectedWorkspace(value)}
                 keyLabel="name"
                 title="WORKSPACE"
-                optionsHeight={`${allWorkspaces.length * 32 + 45}px`}
+                hasSearch
                 fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
                 onClickFixedItem={() => history.push('/home/workspaces')}
               />

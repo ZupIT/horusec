@@ -137,7 +137,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       <Styled.Wrapper>
         <Select
           keyLabel="label"
-          optionsHeight="160px"
+          appearance="underline"
           width="200px"
           initialValue={selectedPeriod}
           options={fixedRanges}
@@ -170,9 +170,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       ) : null}
 
       {type === 'repository' ? (
+         <Styled.Wrapper>
         <Select
           keyLabel="name"
-          width="200px"
+          appearance="underline"
           optionsHeight="200px"
           initialValue={repositories[0]}
           options={repositories}
@@ -182,6 +183,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             setFilters({ ...filters, repositoryID: value.repositoryID })
           }
         />
+        </Styled.Wrapper>
       ) : null}
 
       <Styled.ApplyButton

@@ -47,38 +47,13 @@ const Title = styled.span`
   margin-bottom: 10px;
 `;
 
-const Container = styled.div<WrapperProps>`
-  border-bottom: 1px ${({ theme }) => theme.colors.select.border} solid;
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding-bottom: 3px;
-  width: ${({ width }) => (width ? width : '100%')};
-  height: 20px;
-  cursor: pointer;
+interface ContainerInterface {
+  width: string;
+} 
 
-  ${({ disabled }) =>
-    disabled &&
-    css`
-      cursor: not-allowed;
-      opacity: 0.3;
-    `};
-
-  ${({ rounded }) =>
-    rounded &&
-    css`
-      border-radius: 4px;
-      border: none !important;
-      padding: 15px !important;
-      background-color: ${({ theme }) =>
-        theme.colors.select.darkBackground} !important;
-    `};
-
-  ${({ backgroundColor }) =>
-    backgroundColor &&
-    css`
-      background-color: ${backgroundColor} !important;
-    `}
+const Container = styled.div<ContainerInterface>`
+  width: ${ ({ width }) => width || '100%' };
+  transition: all 1s;
 `;
 
 const Select = styled.div`

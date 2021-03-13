@@ -375,19 +375,18 @@ const Vulnerabilities: React.FC = () => {
                   optionsHeight="130px"
                   className="select-role"
                   rounded
-                  backgroundColors={{
+                  backgroundColor={{
                     colors: colors.vulnerabilities,
                     default: colors.vulnerabilities.DEFAULT,
                   }}
                   initialValue={row.severity}
                   options={severitiesOptions}
                   disabled={!isAdminOrSupervisorOfRepository()}
-                  onChangeValue={(value) =>
-                    handleUpdateVulnerabilitySeverity(row, value.value)
+                  onChangeValue={(value) => handleUpdateVulnerabilitySeverity(row, value?.value)
                   }
                 />
               ),
-              status: !isLoading ? (
+              status: (
                 <Select
                   keyLabel="description"
                   keyValue="value"
@@ -402,7 +401,7 @@ const Vulnerabilities: React.FC = () => {
                     handleUpdateVulnerabilityType(row, value.value)
                   }
                 />
-              ) : null,
+              ),
               details: (
                 <Icon
                   name="info"

@@ -17,8 +17,6 @@
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
 import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
-import Select from 'components/Select';
-
 interface RouterItemProps {
   isActive: boolean;
 }
@@ -134,15 +132,6 @@ const SelectWrapper = styled.div`
   margin-left: 17px;
 `;
 
-const SelectWorkspace = styled(Select)`
-  border: none !important;
-  max-width: 140px;
-
-  div.options-list {
-    width: 200px !important;
-  }
-`;
-
 export default {
   SideMenu,
   Logo,
@@ -155,6 +144,5 @@ export default {
   SubRoutesList,
   SubRouteItem,
   Option,
-  SelectWorkspace,
   SelectWrapper,
 };
