@@ -19,9 +19,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
@@ -378,18 +376,6 @@ func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
 	}
 
 	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
-}
-
-func (a *Analyser) shouldAnalysePath(projectSubPath string) bool {
-	pathToFilter := a.config.GetFilterPath()
-	if pathToFilter == "" {
-		return true
-	}
-
-	pathToFilter = path.Join(a.config.GetProjectPath(), pathToFilter)
-	fullProjectSubPath := path.Join(a.config.GetProjectPath(), projectSubPath)
-
-	return strings.HasPrefix(fullProjectSubPath, pathToFilter)
 }
 
 func (a *Analyser) logProjectSubPath(language languages.Language, subPath string) {
