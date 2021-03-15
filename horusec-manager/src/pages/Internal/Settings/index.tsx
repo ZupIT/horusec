@@ -88,11 +88,6 @@ const Settings: React.FC = () => {
               email,
               actions: [
                 {
-                  title: t('SETTINGS_SCREEN.TABLE.DELETE'),
-                  icon: 'delete',
-                  function: () => setOpenEditDialog(true),
-                },
-                {
                   title: t('SETTINGS_SCREEN.TABLE.EDIT'),
                   icon: 'edit',
                   function: () => setOpenEditDialog(true),
@@ -101,6 +96,11 @@ const Settings: React.FC = () => {
                   title: t('SETTINGS_SCREEN.TABLE.PASSWORD'),
                   icon: 'lock',
                   function: () => setOpenChangePassDialog(true),
+                },
+                {
+                  title: t('SETTINGS_SCREEN.TABLE.DELETE'),
+                  icon: 'delete',
+                  function: () => setOpenDeleteDialog(true),
                 },
               ],
             },
