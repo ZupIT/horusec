@@ -26,9 +26,9 @@ describe("Horusec tests", () => {
 function CreateEditDeleteAnWorkspace(): void {
     cy.wait(1500);
     createFirstWorkspace();
-    cy.wait(300);
+    cy.wait(500);
     editCurrentWorkspace();
-    cy.wait(300);
+    cy.wait(500);
     deleteCurrentWorkspace();
 }
 
@@ -39,9 +39,9 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
         cy.stub(win, "prompt").returns("DISABLED WINDOW PROMPT");
     });
     cy.get("button").contains("Tokens").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("button").contains("Add Token").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#description").type("Access Token");
     cy.get("button").contains("Save").click();
     cy.get("[data-testid=\"icon-copy\"").click();
@@ -56,7 +56,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
     cy.contains("Access Token").should("exist");
     cy.wait(1000);
     cy.get("button").contains("Add Token").parent().parent().contains("Delete").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("button").contains("Yes").click();
     cy.contains("Access Token").should("not.exist");
 }
@@ -73,9 +73,9 @@ function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
 
 function createFirstWorkspace(): void {
     cy.get("button").contains("Add workspace").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("button").contains("Add Workspace").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#name").type("first_workspace");
     cy.get("button").contains("Save").click();
     cy.contains("first_workspace").should("exist");
@@ -83,7 +83,7 @@ function createFirstWorkspace(): void {
 
 function editCurrentWorkspace(): void {
     cy.get("button").contains("Edit").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#name").type("_edited");
     cy.get("button").contains("Save").click();
     cy.contains("first_workspace_edited").should("exist");
@@ -91,14 +91,14 @@ function editCurrentWorkspace(): void {
 
 function deleteCurrentWorkspace(): void {
     cy.get("button").contains("Delete").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("button").contains("Yes").click();
     cy.contains("first_workspace_edited").should("not.exist");
 }
 
 function CreateWorkspace(workspaceName: string): void {
     cy.get("button").contains("Add Workspace").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#name").type(workspaceName);
     cy.get("button").contains("Save").click();
     cy.contains(workspaceName).should("exist");
@@ -108,7 +108,7 @@ function CheckIfDashboardIsEmpty(): void {
     cy.visit("http://localhost:8043/home/dashboard/repositories");
     cy.wait(1000);
     cy.get("button").contains("Apply").click();
-    cy.wait(3000);
+    cy.wait(5000);
     cy.get("h4").contains("Total developers").parent().contains("1").should("not.exist");
 }
 
@@ -125,7 +125,7 @@ function CheckIfDashboardNotIsEmpty(): void {
     cy.get("h4").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
     cy.get("span").contains("Dashboard").parent().click();
     cy.get("[data-testid=\"icon-grid\"").parent().click();
-    cy.wait(3000);
+    cy.wait(5000);
     cy.get("h4").contains("Vulnerabilities by repository").parent().contains("17").should("exist");
     cy.get("h4").contains("Vulnerabilities by repository").parent().contains("57").should("exist");
     cy.get("h4").contains("Vulnerabilities by repository").parent().contains("29").should("exist");
@@ -138,51 +138,54 @@ function CreateEditDeleteAnRepository(): void {
     cy.get("span").contains("Repositories").parent().click();
     cy.wait(1500);
     createFirstRepository();
-    cy.wait(300);
+    cy.wait(1500);
     editCurrentRepository();
-    cy.wait(300);
+    cy.wait(1500);
     deleteCurrentRepository();
 }
 
 function createFirstRepository(): void {
     cy.get("button").contains("Create repository").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#name").type("first_repository");
     cy.get("button").contains("Save").click();
     cy.contains("first_repository").should("exist");
 }
 
 function editCurrentRepository(): void {
-    cy.get("td").contains("first_repository").parent().contains("Edit").click();
-    cy.wait(300);
+    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(1)").click();
+    cy.wait(500);
     cy.get("#name").type("_edited");
     cy.get("button").contains("Save").click();
     cy.contains("first_repository_edited").should("exist");
 }
 
 function deleteCurrentRepository(): void {
-    cy.get("td").contains("first_repository_edited").parent().contains("Delete").click();
-    cy.wait(300);
+    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(2)").click();
+    cy.wait(500);
     cy.get("button").contains("Yes").click();
+    cy.wait(1000);
     cy.contains("first_repository_edited").should("not.exist");
 }
 
 function CreateRepository(repositoryName: string): void {
     cy.get("button").contains("Create repository").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#name").type(repositoryName);
     cy.get("button").contains("Save").click();
     cy.contains(repositoryName).should("exist");
 }
 
 function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: string): void {
+    cy.wait(1500);
     cy.window().then(win => {
         cy.stub(win, "prompt").returns("DISABLED WINDOW PROMPT");
     });
-    cy.get("td").contains(repositoryName).parent().contains("Tokens").click();
-    cy.wait(300);
+    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(4)").click();
+    cy.wait(500);
+    cy.contains("Add Token").should("exist");
     cy.get("button").contains("Add Token").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("#description").type("Access Token");
     cy.get("button").contains("Save").click();
     cy.get("[data-testid=\"icon-copy\"").click();
@@ -199,14 +202,14 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
     cy.contains("Access Token").should("exist");
     cy.wait(1000);
     cy.get("button").contains("Add Token").parent().parent().contains("Delete").click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("button").contains("Yes").click();
     cy.contains("Access Token").should("not.exist");
 }
 
 function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): void {
     cy.visit("http://localhost:8043/home/dashboard/repositories");
-    cy.wait(3000);
+    cy.wait(5000);
     cy.get("div").contains(repositoryName).parent().parent().click();
     cy.get("div").contains(repositoryName).click();
     cy.get("button").contains("Apply").click();
@@ -229,7 +232,7 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.get("[data-testid=\"icon-shield\"").parent().click();
     cy.wait(1500);
     cy.get("tr>td").eq(2).children().children().click();
-    cy.wait(300);
+    cy.wait(500);
     cy.get("tr>td").eq(2).contains("HIGH").click();
     cy.contains("Vulnerability status successfully changed!").should("exist");
     cy.wait(4000);
@@ -237,11 +240,13 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.get("tr>td").eq(3).contains("Risk Accepted").click();
     cy.contains("Vulnerability status successfully changed!").should("exist");
     cy.get("tr>td").eq(4).children().children().click();
-    cy.wait(300);
+    cy.wait(500);
     cy.contains("Vulnerability Details").should("exist");
 }
 
 function UpdateAndDeleteAccountLoggedUser(): void {
+    cy.visit("http://localhost:8043/");
+    cy.wait(3000);
     cy.get("[data-testid=\"icon-config\"").click();
     cy.wait(1500);
     cy.get("button").contains("Edit").click();
