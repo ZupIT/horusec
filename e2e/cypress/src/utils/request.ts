@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 export interface IServices {
     Auth: string;
@@ -30,24 +30,24 @@ export class Requests {
         return this;
     }
 
-    public get(url: string, headers?: any): Promise<any> {
+    public get(url: string, headers?: any): Promise<AxiosResponse> {
         return this._axiosInstance.get(url, headers);
     }
 
-    public post(url: string, body?: any, headers?: any): Promise<any> {
+    public post(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
         return this._axiosInstance.post(url, body, headers);
     }
 
-    public put(url: string, body?: any, headers?: any): Promise<any> {
-        return this._axiosInstance.post(url, body, headers);
+    public put(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
+        return this._axiosInstance.put(url, body, headers);
     }
 
-    public patch(url: string, body?: any, headers?: any): Promise<any> {
-        return this._axiosInstance.post(url, body, headers);
+    public patch(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
+        return this._axiosInstance.patch(url, body, headers);
     }
 
-    public delete(url: string, headers?: any): Promise<any> {
-        return this._axiosInstance.post(url, headers);
+    public delete(url: string, headers?: any): Promise<AxiosResponse> {
+        return this._axiosInstance.delete(url, headers);
     }
 
     private _axios(accessToken: string = ""): AxiosInstance {

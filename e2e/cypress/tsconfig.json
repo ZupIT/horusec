@@ -7,10 +7,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "lib": ["es6", "dom"],
-    "types": ["cypress"]
+    "types": ["cypress"],
+    "resolveJsonModule": true,
   },
   "lib": ["es2015"],
   "include": [
     "**/*.ts"
-  ]
+  ],
 }
