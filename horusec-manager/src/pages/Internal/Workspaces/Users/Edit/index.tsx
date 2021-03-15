@@ -105,11 +105,9 @@ const EditUserRole: React.FC<Props> = ({
 
       <Styled.RoleWrapper>
         <Select
-          rounded
           keyLabel="name"
           keyValue="value"
           width="340px"
-          optionsHeight="64px"
           initialValue={userToEdit?.role}
           options={roles}
           onChangeValue={(item) => setRole(item)}

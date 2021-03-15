@@ -128,11 +128,9 @@ const InviteToCompany: React.FC<Props> = ({
 
       <Styled.RoleWrapper>
         <Select
-          rounded
           keyLabel="name"
           keyValue="value"
           width="340px"
-          optionsHeight="65px"
           options={roles}
           onChangeValue={(item) => setRole(item)}
         />

@@ -275,10 +275,8 @@ const Vulnerabilities: React.FC = () => {
 
         <Styled.Select
           keyLabel="description"
-          width="180px"
-          optionsHeight="145px"
+          width="250px"
           selectText={t('VULNERABILITIES_SCREEN.ALL_SEVERITIES')}
-          rounded
           disabled={!!filters.vulnHash}
           options={severities}
           title={t('VULNERABILITIES_SCREEN.SEVERITY')}
@@ -292,11 +290,9 @@ const Vulnerabilities: React.FC = () => {
 
         <Styled.Select
           keyLabel="description"
-          width="150px"
+          width="250px"
           selectText={t('VULNERABILITIES_SCREEN.ALL_STATUS')}
-          optionsHeight="160px"
           disabled={!!filters.vulnHash}
-          rounded
           options={[
             {
               description: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
@@ -315,10 +311,8 @@ const Vulnerabilities: React.FC = () => {
 
         <Select
           keyLabel="name"
-          width="220px"
-          optionsHeight="200px"
+          width="250px"
           hasSearch
-          rounded
           initialValue={repositories[0]}
           options={repositories}
           title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
@@ -372,9 +366,7 @@ const Vulnerabilities: React.FC = () => {
                   keyLabel="description"
                   keyValue="value"
                   width="150px"
-                  optionsHeight="130px"
                   className="select-role"
-                  rounded
                   backgroundColor={{
                     colors: colors.vulnerabilities,
                     default: colors.vulnerabilities.DEFAULT,
@@ -391,9 +383,7 @@ const Vulnerabilities: React.FC = () => {
                   keyLabel="description"
                   keyValue="value"
                   width="150px"
-                  optionsHeight="130px"
                   className="select-role"
-                  rounded
                   initialValue={row.type}
                   options={vulnTypes}
                   disabled={!isAdminOrSupervisorOfRepository()}

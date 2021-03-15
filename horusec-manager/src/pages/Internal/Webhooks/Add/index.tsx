@@ -177,7 +177,6 @@ const AddWebhook: React.FC<Props> = ({
             initialValue={webhookHttpMethods[0]}
             options={webhookHttpMethods}
             onChangeValue={(item) => setHttpMethod(item.value)}
-            rounded
             disabled
             color={get(colors.methods, httpMethod.toLocaleLowerCase())}
           />

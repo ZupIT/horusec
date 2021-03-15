@@ -174,7 +174,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         <Select
           keyLabel="name"
           appearance="underline"
-          optionsHeight="200px"
           initialValue={repositories[0]}
           options={repositories}
           title={t('DASHBOARD_SCREEN.REPOSITORY')}

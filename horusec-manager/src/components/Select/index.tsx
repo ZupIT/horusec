@@ -17,15 +17,11 @@
 import React, {
   useState,
   useEffect,
-  useRef,
-  ChangeEvent,
   CSSProperties,
 } from "react";
-import Icon from "components/Icon";
 import Styled from "./styled";
 import { useTranslation } from "react-i18next";
 import { get, isObject, isString } from "lodash";
-import useOutsideClick from "helpers/hooks/useClickOutside";
 import { ObjectLiteral } from "helpers/interfaces/ObjectLiteral";
 
 import Select, { OptionType, StylesConfig } from "@atlaskit/select";
@@ -41,9 +37,7 @@ interface Props {
   className?: string;
   initialValue?: ObjectLiteral | string;
   keyValue?: string;
-  rounded?: boolean;
   width?: string;
-  optionsHeight?: string;
   selectText?: string;
   backgroundColor?: {
     colors: ObjectLiteral;
@@ -62,9 +56,8 @@ const SelectInput: React.FC<Props> = ({
   keyLabel = "label",
   keyValue = "value",
   appearance = "default",
-  rounded,
+
   width,
-  optionsHeight,
   selectText,
   fixedItemTitle,
   onClickFixedItem,
@@ -178,11 +171,11 @@ const SelectInput: React.FC<Props> = ({
         value={getValue(currentValue?.value)}
         className={className}
         isSearchable={hasSearch}
-        isDisabled={!disabled}
+        isDisabled={disabled}
         styles={selectStyles}
         options={selectOptions}
         onChange={(option) => handleSelectedValue(option)}
-        placeholder={t("GENERAL.SELECT") + "..."}
+        placeholder={selectText || t("GENERAL.SELECT") + "..."}
         noOptionsMessage={() => t("GENERAL.NO_OPTIONS")}
       />
     </Styled.Container>
