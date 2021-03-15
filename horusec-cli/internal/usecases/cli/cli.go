@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -237,8 +238,11 @@ func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string
 func (au *UseCases) validateIfExistPathInProjectToWorkDir(projectPath, internalPath string) error {
 	projectPathAbs, _ := filepath.Abs(projectPath)
 	if internalPath != "" {
-		_, err := os.Stat(projectPathAbs + "/" + internalPath)
-		return err
+		if _, err := os.Stat(path.Join(projectPathAbs, internalPath)); err != nil {
+			if os.IsNotExist(err) {
+				return err
+			}
+		}
 	}
 	return nil
 }

@@ -173,7 +173,7 @@ const Workspaces: React.FC = () => {
             }
             return data;
           })}
-          emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
+          emptyListText={t('WORKSPACES_SCREEN.NO_WORKSPACES')}
           fixed={false}
         />
       </Styled.Content>

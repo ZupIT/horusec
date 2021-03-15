@@ -99,25 +99,27 @@ const Repositories: React.FC = () => {
   useEffect(() => {
     let isCancelled = false;
 
-    setLoading(true);
-    repositoryService
-      .getAll(currentWorkspace?.companyID)
-      .then((result: AxiosResponse) => {
-        if (!isCancelled) {
-          setRepositories(result.data?.content);
-          setFilteredRepos(result.data?.content);
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (!isCancelled) {
-          dispatchMessage(err.response?.data);
-        }
-      })
-      .finally(() => {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      });
+    if (currentWorkspace) {
+      setLoading(true);
+      repositoryService
+        .getAll(currentWorkspace?.companyID)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            setRepositories(result.data?.content);
+            setFilteredRepos(result.data?.content);
+          }
+        })
+        .catch((err: AxiosError) => {
+          if (!isCancelled) {
+            dispatchMessage(err.response?.data);
+          }
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setLoading(false);
+          }
+        });
+    }
 
     return () => {
       isCancelled = true;
