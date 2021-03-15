@@ -17,14 +17,14 @@ package repository
 import (
 	"fmt"
 
-	"github.com/lib/pq"
-
 	SQL "github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	accountEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/roles"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/account"
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
+	"gorm.io/gorm"
 )
 
 type IRepository interface {
@@ -172,57 +172,61 @@ func (r *Repository) GetAllAccountsInRepository(repositoryID uuid.UUID) (*[]role
 	return accounts, response.GetError()
 }
 
-//nolint
-func (r *Repository) ListByLdapPermissions(companyID uuid.UUID, permissions []string) (*[]accountEntities.RepositoryResponse, error) {
+func (r *Repository) ListByLdapPermissions(companyID uuid.UUID,
+	permissions []string) (*[]accountEntities.RepositoryResponse, error) {
 	repositories := &[]accountEntities.RepositoryResponse{}
 
-	query := fmt.Sprintf(`
-		SELECT *
-		FROM (
-			SELECT * FROM (%[1]s) AS admin
-			UNION ALL
-			(
-				SELECT * FROM (%[2]s) AS supervisor
-				WHERE supervisor.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
-				UNION ALL
-				SELECT * FROM (%[3]s) AS member
-				WHERE member.repository_id NOT IN (SELECT repository_id FROM (%[1]s) AS admin) 
-				AND member.repository_id NOT IN (SELECT repository_id FROM (%[2]s) AS supervisor)
-			)
-		) AS repositories
-	`, r.listByLdapPermissionsWhenAdmin(companyID), r.listByLdapPermissionsWhenSupervisor(companyID),
-		r.listByLdapPermissionsWhenMember(companyID))
-
-	response := r.databaseRead.GetConnection().Raw(query, pq.Array(permissions)).Find(&repositories)
+	response := r.databaseRead.GetConnection().Raw(r.getListByLdapPermissionsQuery(),
+		r.listByLdapPermissionsWhenAdmin(companyID, permissions),
+		r.listByLdapPermissionsWhenSupervisor(companyID, permissions),
+		r.listByLdapPermissionsWhenAdmin(companyID, permissions),
+		r.listByLdapPermissionsWhenMember(companyID, permissions),
+		r.listByLdapPermissionsWhenAdmin(companyID, permissions),
+		r.listByLdapPermissionsWhenSupervisor(companyID, permissions)).Find(&repositories)
 	return repositories, response.Error
 }
 
-//nolint
-func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID) string {
-	return fmt.Sprintf(`	
-		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,
-		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
-		FROM repositories AS repo
-		WHERE repo.company_id = '%s' AND $1 && repo.authz_admin
-	`, companyID)
+func (r *Repository) getListByLdapPermissionsQuery() string {
+	return `
+		SELECT *
+		FROM (
+			SELECT * FROM (?) AS admin
+			UNION ALL
+			(
+				SELECT * FROM (?) AS supervisor
+				WHERE supervisor.repository_id NOT IN (SELECT repository_id FROM (?) AS admin) 
+				UNION ALL
+				SELECT * FROM (?) AS member
+				WHERE member.repository_id NOT IN (SELECT repository_id FROM (?) AS admin) 
+				AND member.repository_id NOT IN (SELECT repository_id FROM (?) AS supervisor)
+			)
+		) AS repositories
+	`
 }
 
-//nolint
-func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID) string {
-	return fmt.Sprintf(`	
-		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,
-		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
-		FROM repositories AS repo
-		WHERE repo.company_id = '%s' AND $1 && repo.authz_supervisor
-	`, companyID)
+func (r *Repository) listByLdapPermissionsWhenAdmin(companyID uuid.UUID, permissions []string) *gorm.DB {
+	return r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'admin' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND ? && repo.authz_admin", companyID, pq.Array(permissions))
 }
 
-//nolint
-func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID) string {
-	return fmt.Sprintf(`	
-		SELECT repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,
-		repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
-		FROM repositories AS repo
-		WHERE repo.company_id = '%s' AND $1 && repo.authz_member
-	`, companyID)
+func (r *Repository) listByLdapPermissionsWhenSupervisor(companyID uuid.UUID, permissions []string) *gorm.DB {
+	return r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'supervisor' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND ? && repo.authz_supervisor", companyID, pq.Array(permissions))
+}
+
+func (r *Repository) listByLdapPermissionsWhenMember(companyID uuid.UUID, permissions []string) *gorm.DB {
+	return r.databaseRead.
+		GetConnection().
+		Select("repo.repository_id, repo.company_id, repo.description, repo.name, 'member' AS role,"+
+			" repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at").
+		Table("repositories AS repo").
+		Where("repo.company_id = ? AND ? && repo.authz_member", companyID, pq.Array(permissions))
 }
