@@ -34,17 +34,11 @@ validateSwagger () {
             echo "Params Directory allowed: horusec-account, horusec-analytic, horusec-api, horusec-messages, horusec-auth, horusec-webhook"
             exit 1;;
     esac
-
-    swag &> /dev/null
-    RESPONSE=$?
-    if [[ "$RESPONSE" != "0" ]]
+    if ! swag &> /dev/null
     then
         go get -v github.com/swaggo/swag/cmd/swag@v1.6.7
     fi
-
-    swag &> /dev/null
-    RESPONSE=$?
-    if [[ "$RESPONSE" != "0" ]]
+    if ! swag &> /dev/null
     then
         echo "swag is not installed, please install and try again"
         exit 1
