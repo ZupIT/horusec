@@ -34,7 +34,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [chartData, setChartData] = useState<ChartBarStacked>({
     categories: [],
     series: [],
