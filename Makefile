@@ -1,3 +1,4 @@
+NPM ?= npm
 GO ?= go
 GOFMT ?= gofmt
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -74,10 +75,10 @@ test-e2e-cli:
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
-test-e2e-server-horusec: compose-e2e-server-horusec
-	$(GO) get -v ./e2e/...
-	$(GO) clean -testcache
-	$(GO) test -v ./e2e/server/horusec/... -timeout=5m -parallel=1 -failfast
+test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin
+	cd e2e/cypress
+	$(NPM) install
+	$(NPM) run test::auth-horusec::without-application-admin
 test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
@@ -147,7 +148,6 @@ compose-horusec-auth:
 compose-e2e-auth-horusec-without-application-admin:
 	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml down -v
 	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate
-	make migrate
 compose-e2e-application-admin-horusec:
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate

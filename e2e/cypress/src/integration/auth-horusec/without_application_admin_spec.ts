@@ -19,8 +19,9 @@ describe("Horusec tests", () => {
         CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
         CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
         CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
-        CreateUserAndInviteToExistingCompany();
+        CreateUserAndInviteToExistingWorkspace();
         CheckIfPermissionsIsEnableToWorkspaceMember();
+        InviteUserToRepositoryAndCheckPermissions("Core-API");
         LoginAndUpdateDeleteAccount();
     });
 });
@@ -86,7 +87,7 @@ function CreateWorkspace(workspaceName: string): void {
 function CheckIfDashboardIsEmpty(): void {
     // Go to workspace repositories and check if repositories data is empty
     cy.visit("http://localhost:8043/home/dashboard/repositories");
-    cy.wait(1000);
+    cy.wait(4000);
     cy.get("button").contains("Apply").click();
     cy.wait(5000);
     cy.get("h4").contains("Total developers").parent().contains("1").should("not.exist");
@@ -137,7 +138,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
 function CheckIfDashboardNotIsEmpty(): void {
     // Go to dashboard page
     cy.visit("http://localhost:8043/home/dashboard/repositories");
-    cy.wait(1500);
+    cy.wait(4000);
 
     // Search from begging data
     cy.get("button").contains("Apply").click();
@@ -254,7 +255,7 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
 function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): void {
     // Go to dasboard page
     cy.visit("http://localhost:8043/home/dashboard/repositories");
-    cy.wait(5000);
+    cy.wait(4000);
     // Select dashboard by repository created and search
     cy.get("div").contains(repositoryName).parent().parent().click();
     cy.get("div").contains(repositoryName).click();
@@ -310,10 +311,10 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.contains("Vulnerability Details").should("exist");
 }
 
-function CreateUserAndInviteToExistingCompany(): void {
+function CreateUserAndInviteToExistingWorkspace(): void {
     // Go to home page
     cy.visit("http://localhost:8043/");
-    cy.wait(3000);
+    cy.wait(4000);
     // Logout user
     cy.get("[data-testid=\"icon-logout\"").click();
     cy.wait(3000);
@@ -368,7 +369,7 @@ function CreateUserAndInviteToExistingCompany(): void {
 function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     // Go to home page
     cy.visit("http://localhost:8043/");
-    cy.wait(3000);
+    cy.wait(4000);
 
     // Logout user
     cy.get("[data-testid=\"icon-logout\"").click();
@@ -411,15 +412,65 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     cy.wait(500);
     cy.get("button").contains("Yes").click();
     cy.contains("Other company").should("not.exist");
+}
+
+function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void {
+    // Go to home page
+    cy.visit("http://localhost:8043/");
+    cy.wait(4000);
+
+    // Logout user
     cy.get("[data-testid=\"icon-logout\"").click();
+    cy.wait(4000);
+
+    // Login with default user
+    cy.get("#email").type("dev@example.com");
+    cy.get("#password").type("Devpass0*");
+    cy.get("button").first().click();
     cy.wait(1500);
+
+    // Go to repositories page
+    cy.get("span").contains("Repositories").parent().click();
+    cy.wait(1500);
+
+    // Invite user to repository
+    cy.get("tr").contains(repositoryName).parent().contains("Invite").click();
+    cy.wait(500);
+    cy.get("tr").contains("e2e_user").parent().children().children().children().first().click();
+    cy.wait(500);
+    cy.get("span").contains("Success in adding user to the repository!");
+
+    // Logout user
+    cy.visit("http://localhost:8043/");
+    cy.wait(4000);
+    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.wait(4000);
+
+    // Login with new user
+    cy.get("#email").type("e2e_user@example.com");
+    cy.get("#password").type("Ch@ng3m3");
+    cy.get("button").first().click();
+    cy.wait(1500);
+
+    // Check if dashboard show data to repository
+    cy.contains(repositoryName).should("exist");
+    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+
+    // Go to repositories page
+    cy.get("span").contains("Repositories").parent().click();
+    cy.wait(1500);
+    // Check if user not contains permissions
+    cy.get("tr").contains(repositoryName).parent().contains("Edit").should("not.exist");
+    cy.get("tr").contains(repositoryName).parent().contains("Delete").should("not.exist");
+    cy.get("tr").contains(repositoryName).parent().contains("Invite").should("not.exist");
+    cy.get("tr").contains(repositoryName).parent().contains("Tokens").should("not.exist");
+
+    // Logout user
+    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.wait(4000);
 }
 
 function LoginAndUpdateDeleteAccount(): void {
-    // Go to login page
-    cy.visit("http://localhost:8043/");
-    cy.wait(3000);
-
     // Login with new account
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
@@ -478,7 +529,7 @@ function LoginAndUpdateDeleteAccount(): void {
     // Delete account
     cy.get("button").contains("Delete").click();
     cy.get("button").contains("Yes").click();
-    cy.wait(3000);
+    cy.wait(5000);
 
     // Check if account not exists
     cy.get("#email").type("user_updated@example.com");
