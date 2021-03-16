@@ -163,11 +163,9 @@ func (a *Analyser) setMonitor(monitor *horusec.Monitor) {
 func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
 	for _, language := range langs {
 		for _, projectSubPath := range a.config.GetWorkDir().GetArrayByLanguage(language) {
-			if a.shouldAnalysePath(projectSubPath) {
-				a.logProjectSubPath(language, projectSubPath)
-				langFunc := a.mapDetectVulnerabilityByLanguage()[language]
-				go langFunc(projectSubPath)
-			}
+			a.logProjectSubPath(language, projectSubPath)
+			langFunc := a.mapDetectVulnerabilityByLanguage()[language]
+			go langFunc(projectSubPath)
 		}
 	}
 
