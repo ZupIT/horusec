@@ -34,7 +34,7 @@ jobs:
       - name: lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.25.0
-          ./bin/golangci-lint run -v --timeout=2m -c .golangci.yml ./development-kit/...
+          ./bin/golangci-lint run -v --timeout=5m -c .golangci.yml ./development-kit/...
       - name: test
         run: |
           go clean -testcache
