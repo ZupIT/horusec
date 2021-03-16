@@ -78,6 +78,9 @@ test-e2e-cli:
 test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin
 	cd ./e2e/cypress && $(NPM) install && cd ../..
 	cd ./e2e/cypress && $(NPM) run test::auth-horusec::without-application-admin && cd ../..
+test-e2e-auth-keycloak-without-application-admin: compose-e2e-auth-keycloak-without-application-admin
+	cd ./e2e/cypress && $(NPM) install && cd ../..
+	cd ./e2e/cypress && $(NPM) run test::auth-keycloak::without-application-admin && cd ../..
 test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
 	$(GO) get -v ./e2e/...
 	$(GO) clean -testcache
@@ -147,6 +150,9 @@ compose-horusec-auth:
 compose-e2e-auth-horusec-without-application-admin:
 	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml down -v
 	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate
+compose-e2e-auth-keycloak-without-application-admin:
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-keycloak.without-application-admin.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-keycloak.without-application-admin.yaml up -d --build --force-recreate
 compose-e2e-application-admin-horusec:
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
 	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate

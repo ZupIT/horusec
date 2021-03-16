@@ -25,8 +25,8 @@ export class Requests {
         this._axiosInstance = this._axios();
     }
 
-    public setAuthorization(accessToken: string): Requests {
-        this._axiosInstance = this._axios(accessToken);
+    public setHeadersAllRequests(headers?: any): Requests {
+        this._axiosInstance = this._axios(headers);
         return this;
     }
 
@@ -35,25 +35,25 @@ export class Requests {
     }
 
     public post(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
-        return this._axiosInstance.post(url, body, headers);
+        return this._axiosInstance.post(url, body, {"content-type": "*", ...headers});
     }
 
     public put(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
-        return this._axiosInstance.put(url, body, headers);
+        return this._axiosInstance.put(url, body, {"content-type": "*", ...headers});
     }
 
     public patch(url: string, body?: any, headers?: any): Promise<AxiosResponse> {
-        return this._axiosInstance.patch(url, body, headers);
+        return this._axiosInstance.patch(url, body, {"content-type": "*", ...headers});
     }
 
     public delete(url: string, headers?: any): Promise<AxiosResponse> {
         return this._axiosInstance.delete(url, headers);
     }
 
-    private _axios(accessToken: string = ""): AxiosInstance {
+    private _axios(headers?: any): AxiosInstance {
         return axios.create({
             timeout: 15000,
-            headers: { "X-Horusec-Authorization": accessToken },
+            headers,
         });
     }
 }

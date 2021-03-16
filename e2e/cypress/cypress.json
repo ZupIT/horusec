@@ -32,7 +32,7 @@
             "info": "Electron is the default browser that comes with Cypress. This is the default browser that runs in headless mode. Selecting this browser is useful when debugging. The version number indicates the underlying Chromium version that Electron uses."
         }
     ],
-    "chromeWebSecurity": true,
+    "chromeWebSecurity": false,
     "componentFolder": "./src/component",
     "defaultCommandTimeout": 4000,
     "downloadsFolder": "./src/downloads",

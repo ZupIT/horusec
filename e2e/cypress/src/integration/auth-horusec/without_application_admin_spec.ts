@@ -117,7 +117,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setAuthorization(content[0].innerText).post(url, body);
+        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
         expect(response.status).eq(201, "First Analysis of workspace created with sucess");
     });
     cy.get("button").contains("Ok, I got it.").click();
@@ -234,7 +234,7 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
         body.repositoryName = repositoryName;
         body.analysis.id = "802e0032-e173-4eb6-87b1-8a6a3d674503";
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setAuthorization(content[0].innerText).post(url, body);
+        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
         expect(response.status).eq(201, "First Analysis of repository created with sucess");
     });
     cy.get("button").contains("Ok, I got it.").click();
