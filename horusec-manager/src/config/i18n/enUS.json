@@ -145,7 +145,8 @@
       "REMOVE_SUCCESS": "User removed successfully!",
       "INVITE_SUCCESS": "User added successfully!",
       "EDIT_SUCCESS": "User edited successfully!"
-    }
+    },
+    "NO_WORKSPACES": "No registered workspace were found."
   },
   "DASHBOARD_SCREEN": {
     "START_DATE": "Start date",

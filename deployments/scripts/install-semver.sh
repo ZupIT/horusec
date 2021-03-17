@@ -15,9 +15,7 @@
 
 
 checkIfInstallationIsValid () {
-    semver &> /dev/null
-    RESPONSE=$?
-    if [ $RESPONSE != "0" ]
+    if ! semver &> /dev/null
     then
         LOCATION_SEMVER=$(which semver)
         echo "Semver is not installed please remove the binary in location [$LOCATION_SEMVER] and run again"
@@ -29,9 +27,7 @@ checkIfInstallationIsValid () {
 
 installSemver () {
     INSTALL_PATH="/usr/local/bin"
-    semver &> /dev/null
-    RESPONSE=$?
-    if [ $RESPONSE != "0" ]
+    if ! semver &> /dev/null;
     then
         echo "Installing semver..."
         go build -o semver ./deployments/semver/cmd/app/main.go

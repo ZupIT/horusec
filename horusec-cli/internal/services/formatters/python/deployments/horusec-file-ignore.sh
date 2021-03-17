@@ -75,7 +75,7 @@ if [ -f "$horusecFile" ]; then
 
     while IFS= read -r line; do
 
-        if isHorusecIgnore $line || isCommented $line || isEmpty $line || leavesCodePath $line || wouldRemoveCurrentWorkdir $line; then
+        if isHorusecIgnore "$line" || isCommented "$line" || isEmpty "$line" || leavesCodePath "$line" || wouldRemoveCurrentWorkdir "$line"; then
             continue
         fi
 

@@ -104,10 +104,12 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
               setFilters({
                 ...filters,
                 repositoryID: repositories[0]?.repositoryID,
+                companyID: repositories[0]?.companyID,
               });
               onApply({
                 ...filters,
                 repositoryID: repositories[0]?.repositoryID,
+                companyID: repositories[0]?.companyID,
               });
             } else {
               showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
