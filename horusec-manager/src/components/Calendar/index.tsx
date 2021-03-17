@@ -23,6 +23,31 @@ import { find } from 'lodash';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import { Field } from 'helpers/interfaces/Field';
 
+
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+
+const useStyles = makeStyles({
+  root: {
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    borderRadius: 3,
+    border: 0,
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    // $disabled is a reference to the local disabled
+    // rule within the same style sheet.
+    // By using &, we increase the specificity.
+    '&$disabled': {
+      background: 'rgba(0, 0, 0, 0.12)',
+      color: 'white',
+      boxShadow: 'none',
+    },
+  },
+  disabled: {},
+});
+
 type ModifiedField = Omit<Field, 'value'> & {
   value: Date;
 };
@@ -54,6 +79,8 @@ const Calendar: React.FC<
   const { allLanguages } = useLanguage();
   const [isInvalid, setInvalid] = useState(false);
 
+  const classes = useStyles();
+
   const ref = useRef<ReactDatePicker>();
 
   const handleSelectedDate = (date: Date) => {
@@ -82,26 +109,15 @@ const Calendar: React.FC<
 
   return (
     <Styled.Wrapper>
-      <Styled.Title>{title}</Styled.Title>
-
-      <Styled.Container>
-        <Styled.DatePicker
-          ref={ref}
-          disabled={disabled}
-          selected={currentDate}
-          onChange={(date: Date) => handleSelectedDate(date)}
-          dateFormat={dateFormat}
-          {...props}
-        />
-
-        <Icon
-          name="calendar"
-          size="18px"
-          onClick={() => ref.current.setFocus()}
-        />
-      </Styled.Container>
-
-      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
+      <TextField
+        id="date"
+        label="Birthday"
+        type="date"
+        className={classes.root}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
     </Styled.Wrapper>
   );
 };
