@@ -26,6 +26,7 @@ import (
 	hash "github.com/ZupIT/horusec/development-kit/pkg/utils/vuln_hash"
 	dockerEntities "github.com/ZupIT/horusec/horusec-cli/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/horusec-cli/internal/enums/errors"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/csharp/scs/entities"
@@ -122,12 +123,12 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *horusec.Vulnerability {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(ImageCmd, fileUtil.GetSubPathByExtension(
+		CMD: f.AddWorkDirInCmd(CMD, fileUtil.GetSubPathByExtension(
 			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
-	return analysisData.SetData(f.GetToolsConfig()[tools.SecurityCodeScan].ImagePath, ImageName, ImageTag)
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
 func (f *Formatter) verifyIsSolutionError(output string, err error) error {

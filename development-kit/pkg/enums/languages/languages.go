@@ -97,3 +97,29 @@ func (l Language) MapEnableLanguages() map[string]Language {
 func (l Language) ToString() string {
 	return string(l)
 }
+
+func (l Language) GetCustomImagesKeyByLanguage() string {
+	return l.mapConfigCustomImageJSONByLanguage()[l]
+}
+
+//nolint
+func (l Language) mapConfigCustomImageJSONByLanguage() map[Language]string {
+	return map[Language]string{
+		CSharp:     "csharp",
+		Leaks:      "leaks",
+		Go:         "go",
+		Javascript: "javascript",
+		Python:     "python",
+		Ruby:       "ruby",
+		HCL:        "hcl",
+		Generic:    "generic",
+		PHP:        "php",
+		Elixir:     "elixir",
+		Shell:      "shell",
+		C:          "c",
+		Java:       "java",
+		Kotlin:     "kotlin",
+		Yaml:       "yaml",
+		Dart:       "dart",
+	}
+}

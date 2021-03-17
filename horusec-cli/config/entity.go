@@ -16,6 +16,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 )
@@ -170,6 +171,10 @@ const (
 	// By default is false
 	// Validation: It is mandatory to be in "false", "true"
 	EnvEnableInformationSeverity = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
+	// Used to pass personalized images of horusec tools.
+	// By default is empty
+	// Validation: Value should be a valid language of horusec
+	EnvCustomImages = "HORUSEC_CLI_CUSTOM_IMAGES"
 )
 
 type Config struct {
@@ -206,4 +211,5 @@ type Config struct {
 	toolsConfig                     toolsconfig.MapToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
+	customImages                    images.Custom
 }

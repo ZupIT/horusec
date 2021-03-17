@@ -24,11 +24,16 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error) {
+func (m *Mock) CreateLanguageAnalysisContainer(_ *dockerEntities.AnalysisData) (containerOutPut string, err error) {
 	args := m.MethodCalled("CreateLanguageAnalysisContainer")
 	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
 }
 
 func (m *Mock) DeleteContainersFromAPI() {
 	m.MethodCalled("DeleteContainerFromAPI")
+}
+
+func (m *Mock) PullImage(_ string) error {
+	args := m.MethodCalled("PullImage")
+	return utilsMock.ReturnNilOrError(args, 0)
 }

@@ -16,21 +16,20 @@ package languagedetect
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec/horusec-cli/internal/enums/toignore"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/go-enry/go-enry/v2"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
 	copyUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/copy"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/file"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/horusec-cli/config"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/toignore"
 	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
 	"github.com/bmatcuk/doublestar/v2"
+	"github.com/go-enry/go-enry/v2"
 	"github.com/google/uuid"
 )
 

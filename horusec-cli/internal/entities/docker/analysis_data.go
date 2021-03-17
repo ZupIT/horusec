@@ -16,12 +16,10 @@ package docker
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
+	"github.com/ZupIT/horusec/horusec-cli/internal/enums/images"
 )
-
-const DefaultRegistry = "docker.io"
 
 type AnalysisData struct {
 	CustomImage  string
@@ -34,34 +32,17 @@ func (a *AnalysisData) IsInvalid() bool {
 	return a.DefaultImage == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetData(customImage, imageName, imageTag string) *AnalysisData {
+func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
 	a.CustomImage = customImage
-	a.DefaultImage = fmt.Sprintf("%s/%s:%s", DefaultRegistry, imageName, imageTag)
+	a.DefaultImage = fmt.Sprintf("%s/%s", images.DefaultRegistry, imageWithTag)
 
 	return a
 }
 
-func (a *AnalysisData) GetImageWithRegistry() string {
+func (a *AnalysisData) GetCustomOrDefaultImage() string {
 	if a.CustomImage != "" {
 		return a.CustomImage
 	}
 
 	return a.DefaultImage
-}
-
-func (a *AnalysisData) GetImageWithoutRegistry() string {
-	if a.CustomImage != "" {
-		return a.removeRegistry(a.CustomImage)
-	}
-
-	return a.removeRegistry(a.DefaultImage)
-}
-
-func (a *AnalysisData) removeRegistry(fullImagePath string) string {
-	index := strings.Index(fullImagePath, "/")
-	if index < 0 {
-		return fullImagePath
-	}
-
-	return fullImagePath[index+1:]
 }

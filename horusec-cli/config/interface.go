@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ZupIT/horusec/horusec-cli/internal/entities/images"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/horusec-cli/internal/entities/workdir"
 	"github.com/spf13/cobra"
@@ -54,8 +55,8 @@ type IConfig interface {
 	GetProjectPath() string
 	SetProjectPath(projectPath string)
 
-	GetFilterPath() string
-	SetFilterPath(filterPath string)
+	GetFilterPath() string           // deprecated
+	SetFilterPath(filterPath string) // deprecated
 
 	GetWorkDir() *workdir.WorkDir
 	SetWorkDir(toParse interface{})
@@ -81,8 +82,8 @@ type IConfig interface {
 	GetFalsePositiveHashes() (output []string)
 	SetFalsePositiveHashes(falsePositive []string)
 
-	GetToolsToIgnore() (output []string)
-	SetToolsToIgnore(toolsToIgnore []string)
+	GetToolsToIgnore() (output []string)     // deprecated
+	SetToolsToIgnore(toolsToIgnore []string) // deprecated
 
 	GetHeaders() (headers map[string]string)
 	SetHeaders(headers interface{})
@@ -109,4 +110,7 @@ type IConfig interface {
 	ToBytes(isMarshalIndent bool) (bytes []byte)
 	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
+
+	GetCustomImages() images.Custom
+	SetCustomImages(configData interface{})
 }

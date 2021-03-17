@@ -26,7 +26,7 @@ createMigration() {
     docker run --name migrate \
         migrate/migrate \
         -path=/migrations/ \
-        create -ext sql -dir /migrations $MIGRATION_FILE_NAME
+        create -ext sql -dir /migrations "$MIGRATION_FILE_NAME"
     docker cp migrate:/migrations $MIGRATION_PATH
     docker rm migrate
     mv $MIGRATION_PATH/migrations/* $MIGRATION_PATH/
