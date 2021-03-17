@@ -38,7 +38,7 @@ jobs:
       - name: test
         run: |
           go clean -testcache
-          go test -v ./development-kit/... -timeout=2m -parallel=1 -failfast -short
+          go test -v ./development-kit/... -timeout=5m -parallel=1 -failfast -short
       - name: coverage
         run: make coverage-development-kit
 
