@@ -26,6 +26,7 @@ import { ObjectLiteral } from "helpers/interfaces/ObjectLiteral";
 
 import Select, { OptionType, StylesConfig } from "@atlaskit/select";
 import { useTheme } from "styled-components";
+
 interface Props {
   title?: string;
   options: any[];
@@ -39,6 +40,7 @@ interface Props {
   keyValue?: string;
   width?: string;
   selectText?: string;
+  background?: string;
   backgroundColor?: {
     colors: ObjectLiteral;
     default: string;
@@ -56,11 +58,11 @@ const SelectInput: React.FC<Props> = ({
   keyLabel = "label",
   keyValue = "value",
   appearance = "default",
-
   width,
   selectText,
   fixedItemTitle,
   onClickFixedItem,
+  background,
   backgroundColor,
   disabled = false,
   hasSearch = false,
@@ -69,14 +71,27 @@ const SelectInput: React.FC<Props> = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
+  background = background || theme.colors.select.background;
+
   const selectOptions: OptionType[] = options.map((option) => ({
     label: option[keyLabel],
-    value: keyValue ? option[keyValue] : option[keyLabel],
+    value: keyValue ? option[keyValue] || option[keyLabel]: null ,
     option: option,
   }));
+  
+  if (fixedItemTitle) {
+    selectOptions.push({
+      label: fixedItemTitle,
+      value: fixedItemTitle,
+      option: fixedItemTitle
+    });
+  }
 
   const handleSelectedValue = (option: any) => {
-    if (!disabled) {
+
+    if (fixedItemTitle && option.option === fixedItemTitle) {
+      onClickFixedItem()
+    } else if (!disabled) {
       onChangeValue(option.option);
       setCurrentValue(option);
     }
@@ -89,8 +104,9 @@ const SelectInput: React.FC<Props> = ({
   useEffect(() => {
     if (initialValue) {
       setCurrentValue(() => {
+
         if (isObject(initialValue)) {
-          return getValue(initialValue[keyValue]);
+          return getValue(initialValue[keyLabel]) || getValue(initialValue[keyValue]);
         }
 
         if (isString(initialValue)) {
@@ -108,7 +124,7 @@ const SelectInput: React.FC<Props> = ({
       const { colors, default: colorDefault } = backgroundColor;
       return get(colors, currentValue.value, colorDefault);
     }
-    return "none";
+    return background;
   })();
 
   const selectStyles: Partial<StylesConfig<OptionType, false>> = {
@@ -116,8 +132,9 @@ const SelectInput: React.FC<Props> = ({
       const styles = {
         ...style,
         background: controlBackground,
+        minHeight: "auto",
         border: "none",
-        borderRadius: 0,
+        borderRadius: 4,
         ":hover": {
           background: controlBackground,
           borderColor: "#fff",
@@ -126,14 +143,11 @@ const SelectInput: React.FC<Props> = ({
 
       if (appearance === "underline") {
         styles["borderBottom"] = "1px solid #fff";
+        styles["borderRadius"] = 0;
       }
 
       return styles;
     },
-    valueContainer: (style: CSSProperties) => ({
-      ...style,
-      padding: "0px !important",
-    }),
     placeholder: (style: CSSProperties) => ({
       ...style,
       color: theme.colors.select.text,
@@ -145,22 +159,38 @@ const SelectInput: React.FC<Props> = ({
     menuList: (style: CSSProperties) => ({
       ...style,
       background: theme.colors.background.highlight,
-      color: theme.colors.select.text,
     }),
     input: (style: CSSProperties) => ({
       ...style,
       color: theme.colors.select.text,
+      fontSize: theme.metrics.fontSize.medium,
     }),
-    option: (style: CSSProperties) => ({
-      ...style,
-      background: theme.colors.background.highlight,
-      ":hover": {
-        background: theme.colors.background.primary,
-      },
-    }),
+    option: (style: CSSProperties) => {
+
+      const styles = {
+        ...style,
+        color: theme.colors.select.text,
+        fontSize: theme.metrics.fontSize.small,
+        background: theme.colors.background.highlight,
+        ":hover": {
+          background: theme.colors.background.primary,
+        },
+        ":last-child" : {},
+      };
+
+      if (fixedItemTitle) {
+        styles[":last-child"] = {
+          color: theme.colors.select.highlight,
+          textDecoration: 'underline',
+        };
+      }
+
+      return styles;
+    },
     singleValue: (style: CSSProperties) => ({
       ...style,
       color: theme.colors.select.text,
+      fontSize: theme.metrics.fontSize.medium,
     }),
   };
 

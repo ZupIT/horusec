@@ -178,6 +178,7 @@ const SideMenu: React.FC = () => {
                 keyLabel="name"
                 title="WORKSPACE"
                 hasSearch
+                background="none"
                 fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
                 onClickFixedItem={() => history.push('/home/workspaces')}
               />
