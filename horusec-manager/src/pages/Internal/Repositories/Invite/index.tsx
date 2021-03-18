@@ -57,7 +57,7 @@ const InviteToRepository: React.FC<Props> = ({
   const [accountsInRepository, setAccountsInRepository] = useState<string[]>(
     []
   );
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [permissionsIsOpen, setPermissionsOpen] = useState(false);
 
   const roles = [
