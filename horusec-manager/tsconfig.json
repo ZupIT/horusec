@@ -20,17 +20,29 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react"
   },
   "include": [
     "src"
   ],
   "paths": {
-    "components/*": ["components/*"],
-    "pages/*": ["pages/*"],
-    "assets/*": ["assets/*"],
-    "helpers/*": ["helpers/*"],
-    "services/*": ["services/*"],
-    "contexts/*": ["contexts/*"],
+    "components/*": [
+      "components/*"
+    ],
+    "pages/*": [
+      "pages/*"
+    ],
+    "assets/*": [
+      "assets/*"
+    ],
+    "helpers/*": [
+      "helpers/*"
+    ],
+    "services/*": [
+      "services/*"
+    ],
+    "contexts/*": [
+      "contexts/*"
+    ]
   }
 }
