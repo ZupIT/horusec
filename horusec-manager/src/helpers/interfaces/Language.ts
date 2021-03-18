@@ -20,4 +20,5 @@ export interface Language {
   htmlValue: string;
   icon: string;
   dateFormat: string;
+  description: string;
 }

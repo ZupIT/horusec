@@ -91,6 +91,7 @@ const Input: React.FC<InputProps> = ({
           id={name}
           onChange={handleOnChange}
           value={initialValue}
+          aria-describedby={`${name}-error`}
         />
 
         {type === 'password' ? (
@@ -106,7 +107,14 @@ const Input: React.FC<InputProps> = ({
         ) : null}
       </Styled.Wrapper>
 
-      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
+      <Styled.Error
+        id={`${name}-error`}
+        role="alert"
+        tabIndex={0}
+        isInvalid={isInvalid}
+      >
+        {invalidMessage}
+      </Styled.Error>
     </Styled.Container>
   );
 };

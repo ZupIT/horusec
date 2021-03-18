@@ -241,6 +241,17 @@
       "PAGES": "pages"
     }
   },
+  "FOOTER": {
+    "DEVELOPED": "Developed",
+    "WITH": "with",
+    "LOVE": "love",
+    "BY": "by"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Change the language,",
+    "CURRENT": "Current language: ",
+    "SELECT": "Select: "
+  },
   "PERMISSIONS": {
     "ADMIN": "Administrator",
     "MEMBER": "Member",

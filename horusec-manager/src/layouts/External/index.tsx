@@ -23,7 +23,9 @@ function ExternalLayout({ children }: { children: JSX.Element }) {
   return (
     <Styled.Wrapper>
       <Styled.LogoContent>
-        <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+        <h1>
+          <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+        </h1>
 
         <Styled.Content>{children}</Styled.Content>
       </Styled.LogoContent>

@@ -29,6 +29,7 @@ export interface Props {
   onClick?: (event: MouseEvent) => void;
   dataFor?: string;
   dataTip?: string;
+  ariaLabel?: string;
 }
 
 const Icon = React.forwardRef(
@@ -43,6 +44,7 @@ const Icon = React.forwardRef(
       title,
       dataTip,
       dataFor,
+      ariaLabel,
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
@@ -53,6 +55,7 @@ const Icon = React.forwardRef(
 
     return (
       <Styled.Icon
+        aria-label={ariaLabel || 'icon'}
         ref={iRef}
         data-testid={`icon-${name}`}
         className={className}
