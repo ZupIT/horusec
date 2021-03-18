@@ -16,7 +16,7 @@
   "author": "ZupIT",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^6.6.0",
+    "cypress": "^6.8.0",
     "tslint": "^6.1.3",
     "typescript": "^4.1.3"
   },

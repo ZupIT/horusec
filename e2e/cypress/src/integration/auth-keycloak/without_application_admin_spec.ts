@@ -2,28 +2,44 @@ import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
 import { IUserCredentialsRepresentation, IUserRepresentation, KeycloakRequests } from "./keycloak_requests_spec";
 
+/*
+COMMAND to extract backup from keycloak database:
+
+    CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
+    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
+    DB_USER="root"; \
+    docker exec $CONTAINER pg_dumpall -c -U $DB_USER -p 5433 > $OUTPUT_PATH
+*/
+
+/*
+COMMAND to insert backup keycloak backup file:
+
+    CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
+    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
+    DB_USER="root"; \
+    DB_NAME="keycloak"; \
+    cat $OUTPUT_PATH | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME -p 5433
+*/
 
 describe("Horusec tests", () => {
-    beforeEach(() => {
-        cy.exec("cd ../../ && make migrate-drop", {log: true});
-        cy.exec("cd ../../ && make migrate", {log: true});
+    before(() => {
+        cy.exec("cd ../../ && make migrate-drop", {log: true}).its("code").should("eq", 0);
+        cy.exec("cd ../../ && make migrate", {log: true}).its("code").should("eq", 0);
+        // cy.exec(`
+        //     SERVER_CONTAINER="keycloak"; \
+        //     DB_CONTAINER="postgresql_keycloak"; \
+        //     OUTPUT_PATH="./deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
+        //     DB_USER="root"; \
+        //     DB_NAME="keycloak"; \
+        //     docker stop $SERVER_CONTAINER &&
+        //     docker stop $DB_CONTAINER && sleep 10 && docker start $DB_CONTAINER
+        //     cat $OUTPUT_PATH | docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -p 5433
+        //     docker start $SERVER_CONTAINER
+        // `, {log: true}).its("code").should("eq", 0);
     });
 
-    it("Should test all operations horusec", async () => {
-        const user: IUserRepresentation = {
-            email: "e2e@example.com",
-            emailVerified: true,
-            enabled: true,
-            username: "e2e_user",
-        };
-        const credentials: IUserCredentialsRepresentation = {
-            temporary: false,
-            type: "password",
-            value: "Ch@ng3m3",
-        };
-        const keycloakRequests: KeycloakRequests = new KeycloakRequests(new Requests());
-        const clientSecret: string = await keycloakRequests.SetupKeycloakAndReturnClientSecret(user, credentials);
-        setClientSecretInServices(clientSecret);
+    it("Should test all operations horusec", () => {
+        cy.wait(15000);
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
         // CreateEditDeleteAnWorkspace();
         // CreateWorkspace("Company e2e");
@@ -42,14 +58,6 @@ describe("Horusec tests", () => {
     });
 });
 
-function setClientSecretInServices(clientSecret: string): void {
-    cy.exec("docker-compose" +
-            " -f ../../../deployments/docker-compose.auth-keycloak.without-application-admin.yaml" +
-            " up -d --build horusec-auth",
-            {log: true, env: {"HORUSEC_KEYCLOAK_CLIENT_SECRET": clientSecret}});
-    cy.wait(5000);
-}
-
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.visit("http://localhost:8043/auth");
     cy.wait(4000);
@@ -57,8 +65,8 @@ function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     // // Login with default account
     // cy.get("#email").type("dev@example.com");
     // cy.get("#password").type("Devpass0*");
-    // cy.get("button").first().click();
-    // cy.wait(1000);
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(1000);
 
     // // Check if not exists workspace
     // cy.contains("Add a new Workspace to start using Horusec.").should("exist");

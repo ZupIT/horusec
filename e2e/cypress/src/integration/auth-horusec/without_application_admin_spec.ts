@@ -2,9 +2,9 @@ import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
-    beforeEach(() => {
-        cy.exec("cd ../../ && make migrate-drop", {log: true});
-        cy.exec("cd ../../ && make migrate", {log: true});
+    before(() => {
+        cy.exec("cd ../../ && make migrate-drop", {log: true}).its("code").should("eq", 0);
+        cy.exec("cd ../../ && make migrate", {log: true}).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {

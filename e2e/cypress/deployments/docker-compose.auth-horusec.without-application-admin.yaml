@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_DB: horusec_db
     volumes:
-      - /var/lib/postgres/db/data:/var/lib/postgresql/data_e2e_auth-horusec_without-application-admin
+      - /var/lib/postgres/db/data_e2e_auth-keycloak_without-application-admin:/var/lib/postgresql/data
     tty: true
     logging:
       driver: json-file

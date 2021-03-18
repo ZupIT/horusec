@@ -22,24 +22,17 @@ export class KeycloakRequests {
 
     public async SetupKeycloakAndReturnClientSecret(
         user: IUserRepresentation, credentials: IUserCredentialsRepresentation): Promise<string> {
-        cy.log("Start setup keycloak with:");
-        cy.log("User: ", user);
-        cy.log("Credentials: ", credentials);
-        try {
-            const responseLogin: AxiosResponse = await this.loginInKeycloak("keycloak", "keycloak");
-            const bearerToken: string = "Bearer " + responseLogin?.data?.access_token;
-            this._requests.setHeadersAllRequests({
-                "content-type": "application/x-www-form-urlencoded",
-                "cache-control": "no-cache",
-                "Authorization": bearerToken,
-            });
-            await this.updateRolesToAcceptOAuth();
-            await this.deleteAllUsersInKeyCloak();
-            await this.createUserInKeyCloak(user, credentials);
-            return this.getClientSecretInAccountClient();
-        } catch (error) {
-            throw error;
-        }
+        const responseLogin: AxiosResponse = await this.loginInKeycloak("keycloak", "keycloak");
+        const bearerToken: string = "Bearer " + responseLogin?.data?.access_token;
+        this._requests.setHeadersAllRequests({
+            "content-type": "application/json",
+            "cache-control": "no-cache",
+            "Authorization": bearerToken,
+        });
+        await this.updateRolesToAcceptOAuth();
+        await this.deleteAllUsersInKeyCloak();
+        await this.createUserInKeyCloak(user, credentials);
+        return this.getClientSecretInAccountClient();
     }
 
     private async loginInKeycloak(defaultUsername: string, defaultPassword: string): Promise<AxiosResponse|null> {
@@ -57,21 +50,9 @@ export class KeycloakRequests {
         let client: any;
         allClients.forEach(actualClient => {
             if (actualClient["clientId"] === "account") {
-                client = actualClient;
+                client = this.decoratorClient(actualClient);
             }
         });
-        client["authorizationServicesEnabled"] = true;
-        client["directAccessGrantsEnabled"] = true;
-        client["enabled"] = true;
-        client["implicitFlowEnabled"] = true;
-        client["serviceAccountsEnabled"] = true;
-        client["standardFlowEnabled"] = true;
-        client["surrogateAuthRequired"] = true;
-        client["attributes"]["access.token.lifespan"] = 5940;
-        client["attributes"]["client.offline.session.idle.timeout"] = 5940;
-        client["attributes"]["client.offline.session.max.lifespan"] = 5940;
-        client["attributes"]["client.session.idle.timeout"] = 5940;
-        client["attributes"]["client.session.max.lifespan"] = 5940;
         const clientID: string = client["id"];
         const responseUpdateClient: AxiosResponse = await this._requests.put(
             `${this.baseURL}/auth/admin/realms/master/clients/${clientID}`, client);
@@ -84,6 +65,21 @@ export class KeycloakRequests {
         const responseUpdateRoleAdmin: AxiosResponse = await this._requests.post(
             `${this.baseURL}/auth/admin/realms/master/roles-by-id/${roleID}/composites`, responseAllRoles.data);
         expect(responseUpdateRoleAdmin.status).equal(204);
+    }
+    decoratorClient(actualClient: any): any {
+        actualClient["authorizationServicesEnabled"] = true;
+        actualClient["directAccessGrantsEnabled"] = true;
+        actualClient["enabled"] = true;
+        actualClient["implicitFlowEnabled"] = true;
+        actualClient["serviceAccountsEnabled"] = true;
+        actualClient["standardFlowEnabled"] = true;
+        actualClient["surrogateAuthRequired"] = true;
+        actualClient["attributes"]["access.token.lifespan"] = 5940;
+        actualClient["attributes"]["client.offline.session.idle.timeout"] = 5940;
+        actualClient["attributes"]["client.offline.session.max.lifespan"] = 5940;
+        actualClient["attributes"]["client.session.idle.timeout"] = 5940;
+        actualClient["attributes"]["client.session.max.lifespan"] = 5940;
+        return actualClient;
     }
 
     private async listAllClientsInKeycloak(): Promise<AxiosResponse> {
@@ -118,10 +114,11 @@ export class KeycloakRequests {
                 idsToRemove = idsToRemove.concat(user["id"]);
             }
         });
-        idsToRemove.map(async (id) => {
-            const responseDeleteUser: AxiosResponse = await this._requests.delete(`${this.baseURL}/auth/admin/realms/master/users/${id}`);
-            expect(responseDeleteUser.status).equal(200);
-        })
+        // tslint:disable-next-line: prefer-for-of
+        for (let i: any = 0; i < idsToRemove.length; i++) {
+            const responseDeleteUser: AxiosResponse = await this._requests.delete(`${this.baseURL}/auth/admin/realms/master/users/${idsToRemove[i]}`);
+            expect(responseDeleteUser.status).equal(204);
+        }
     }
 
     private async listAllUsersInKeycloak(): Promise<AxiosResponse> {
@@ -157,7 +154,7 @@ export class KeycloakRequests {
         const responseAllClients: AxiosResponse = await this.listAllClientsInKeycloak();
         let clientID: string;
         responseAllClients.data.forEach(client => {
-            if (client["clientId"] === "account") {
+            if (client["clientId"] === "admin-cli") {
                 clientID = client["id"];
             }
         });
