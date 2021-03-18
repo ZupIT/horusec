@@ -3,8 +3,7 @@ import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make migrate-drop", {log: true}).its("code").should("eq", 0);
-        cy.exec("cd ../../ && make migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
@@ -113,13 +112,21 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
 
     // Copy acceess token to clipboard and create first analysis with this token
     cy.get("[data-testid=\"icon-copy\"").click();
-    cy.get("h3").first().then(async (content) => {
+    cy.get("h3").first().then((content) => {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
-        expect(response.status).eq(201, "First Analysis of workspace created with sucess");
+        _requests
+            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .post(url, body)
+            .then((response) => {
+                expect(response.status).eq(201, "First Analysis of workspace created with sucess");
+            })
+            .catch((err) => {
+                cy.log("Error on send analysis in token of workspace: ", err).end();
+            });
     });
+    cy.wait(3000);
     cy.get("button").contains("Ok, I got it.").click();
 
     // Check if exists access token on list of token
@@ -228,15 +235,23 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
 
     // Copy acceess token to clipboard and create first analysis with this token into repository
     cy.get("[data-testid=\"icon-copy\"").click();
-    cy.get("h3").first().then(async (content) => {
+    cy.get("h3").first().then((content) => {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
         body.repositoryName = repositoryName;
         body.analysis.id = "802e0032-e173-4eb6-87b1-8a6a3d674503";
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
-        expect(response.status).eq(201, "First Analysis of repository created with sucess");
+        _requests
+            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .post(url, body)
+            .then((response) => {
+                expect(response.status).eq(201, "First Analysis of repository created with sucess");
+            })
+            .catch((err) => {
+                cy.log("Error on send analysis in token of repository: ", err).end();
+            });
     });
+    cy.wait(3000);
     cy.get("button").contains("Ok, I got it.").click();
 
     // Check if access token exist on list of tokens

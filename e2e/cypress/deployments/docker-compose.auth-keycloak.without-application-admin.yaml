@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root
     volumes:
-        - ./static/backup-auth-keycloak-without-application-admin:/docker-entrypoint-initdb.d
+        - ./static/auth-keycloak-without-application-admin:/docker-entrypoint-initdb.d
   postgresql:
     container_name: postgresql
     image: postgres:12
@@ -136,10 +136,6 @@ services:
     restart: always
     container_name: horusec-manager
     environment:
-      REACT_APP_HORUSEC_ENDPOINT_API: ${REACT_APP_HORUSEC_ENDPOINT_API}
-      REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: ${REACT_APP_HORUSEC_ENDPOINT_ANALYTIC}
-      REACT_APP_HORUSEC_ENDPOINT_ACCOUNT: ${REACT_APP_HORUSEC_ENDPOINT_ACCOUNT}
-      REACT_APP_HORUSEC_ENDPOINT_AUTH: ${REACT_APP_HORUSEC_ENDPOINT_AUTH}
       REACT_APP_KEYCLOAK_BASE_PATH: "http:\\/\\/127.0.0.1:8080\\/auth"
       REACT_APP_KEYCLOAK_CLIENT_ID: "horusec-public"
       REACT_APP_KEYCLOAK_REALM: "master"

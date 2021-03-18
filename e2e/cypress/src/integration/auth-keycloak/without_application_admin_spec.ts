@@ -3,19 +3,18 @@ import AnalysisMock from "../../mocks/analysis.json";
 import { IUserCredentialsRepresentation, IUserRepresentation, KeycloakRequests } from "./keycloak_requests_spec";
 
 /*
-COMMAND to extract backup from keycloak database:
+Command to extract backup from keycloak database:
 
     CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
-    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
+    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin/init.sql"; \
     DB_USER="root"; \
     docker exec $CONTAINER pg_dumpall -c -U $DB_USER -p 5433 > $OUTPUT_PATH
 */
 
 /*
-COMMAND to insert backup keycloak backup file:
-
+Command to restore backup to keycloak database:
     CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
-    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
+    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin/init.sql"; \
     DB_USER="root"; \
     DB_NAME="keycloak"; \
     cat $OUTPUT_PATH | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME -p 5433
@@ -23,58 +22,51 @@ COMMAND to insert backup keycloak backup file:
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make migrate-drop", {log: true}).its("code").should("eq", 0);
-        cy.exec("cd ../../ && make migrate", {log: true}).its("code").should("eq", 0);
-        // cy.exec(`
-        //     SERVER_CONTAINER="keycloak"; \
-        //     DB_CONTAINER="postgresql_keycloak"; \
-        //     OUTPUT_PATH="./deployments/static/backup-auth-keycloak-without-application-admin.sql"; \
-        //     DB_USER="root"; \
-        //     DB_NAME="keycloak"; \
-        //     docker stop $SERVER_CONTAINER &&
-        //     docker stop $DB_CONTAINER && sleep 10 && docker start $DB_CONTAINER
-        //     cat $OUTPUT_PATH | docker exec -i $DB_CONTAINER psql -U $DB_USER -d $DB_NAME -p 5433
-        //     docker start $SERVER_CONTAINER
-        // `, {log: true}).its("code").should("eq", 0);
+        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec(
+            `echo "DELETE FROM accounts where email='dev@example.com'" | docker exec -i postgresql psql -U root -d horusec_db -p 5432`,
+            {log: true},
+        ).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
-        cy.wait(15000);
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
-        // CreateEditDeleteAnWorkspace();
-        // CreateWorkspace("Company e2e");
-        // CheckIfDashboardIsEmpty();
-        // CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
-        // CheckIfDashboardNotIsEmpty();
-        // CreateEditDeleteAnRepository();
-        // CreateRepository("Core-API");
-        // CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
-        // CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
-        // CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
-        // CreateUserAndInviteToExistingWorkspace();
-        // CheckIfPermissionsIsEnableToWorkspaceMember();
-        // InviteUserToRepositoryAndCheckPermissions("Core-API");
+        CreateEditDeleteAnWorkspace();
+        CreateWorkspace("Company e2e");
+        CheckIfDashboardIsEmpty();
+        CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
+        CheckIfDashboardNotIsEmpty();
+        CreateEditDeleteAnRepository();
+        CreateRepository("Core-API");
+        CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
+        CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
+        CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
+        CreateUserAndInviteToExistingWorkspace();
+        CheckIfPermissionsIsEnableToWorkspaceMember();
+        InviteUserToRepositoryAndCheckPermissions("Core-API");
         // LoginAndUpdateDeleteAccount();
     });
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
-    cy.visit("http://localhost:8043/auth");
+    cy.visit("http://127.0.0.1:8043/auth");
     cy.wait(4000);
 
     // // Login with default account
-    // cy.get("#email").type("dev@example.com");
-    // cy.get("#password").type("Devpass0*");
     cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(1000);
+    cy.wait(4000);
+
+    cy.get("#username").type("dev@example.com");
+    cy.get("#password").type("Devpass0*");
+    cy.get("#kc-login").click();
+    cy.wait(4000);
 
     // // Check if not exists workspace
-    // cy.contains("Add a new Workspace to start using Horusec.").should("exist");
+    cy.contains("Add a new Workspace to start using Horusec.").should("exist");
 }
 
 function CreateEditDeleteAnWorkspace(): void {
     cy.wait(1500);
-
     // Create an workspace
     cy.get("button").contains("Add workspace").click();
     cy.wait(500);
@@ -118,7 +110,7 @@ function CreateWorkspace(workspaceName: string): void {
 
 function CheckIfDashboardIsEmpty(): void {
     // Go to workspace repositories and check if repositories data is empty
-    cy.visit("http://localhost:8043/home/dashboard/repositories");
+    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
     cy.wait(4000);
     cy.get("button").contains("Apply").click();
     cy.wait(5000);
@@ -145,13 +137,21 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
 
     // Copy acceess token to clipboard and create first analysis with this token
     cy.get("[data-testid=\"icon-copy\"").click();
-    cy.get("h3").first().then(async (content) => {
+    cy.get("h3").first().then((content) => {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
-        expect(response.status).eq(201, "First Analysis of workspace created with sucess");
+        _requests
+            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .post(url, body)
+            .then((response) => {
+                expect(response.status).eq(201, "First Analysis of workspace created with sucess");
+            })
+            .catch((err) => {
+                cy.log("Error on send analysis in token of workspace: ", err).end();
+            });
     });
+    cy.wait(3000);
     cy.get("button").contains("Ok, I got it.").click();
 
     // Check if exists access token on list of token
@@ -169,7 +169,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
 
 function CheckIfDashboardNotIsEmpty(): void {
     // Go to dashboard page
-    cy.visit("http://localhost:8043/home/dashboard/repositories");
+    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
     cy.wait(4000);
 
     // Search from begging data
@@ -260,15 +260,26 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
 
     // Copy acceess token to clipboard and create first analysis with this token into repository
     cy.get("[data-testid=\"icon-copy\"").click();
-    cy.get("h3").first().then(async (content) => {
+    cy.get("h3").first().then((content) => {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
         body.repositoryName = repositoryName;
         body.analysis.id = "802e0032-e173-4eb6-87b1-8a6a3d674503";
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        const response: any = await _requests.setHeadersAllRequests(content[0].innerText).post(url, body);
-        expect(response.status).eq(201, "First Analysis of repository created with sucess");
+        _requests.setHeadersAllRequests(content[0].innerText).post(url, body).then((response) => {
+            expect(response.status).eq(201, "");
+        });
+        _requests
+            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .post(url, body)
+            .then((response) => {
+                expect(response.status).eq(201, "First Analysis of repository created with sucess");
+            })
+            .catch((err) => {
+                cy.log("Error on send analysis in token of repository: ", err).end();
+            });
     });
+    cy.wait(3000);
     cy.get("button").contains("Ok, I got it.").click();
 
     // Check if access token exist on list of tokens
@@ -286,7 +297,7 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
 
 function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): void {
     // Go to dasboard page
-    cy.visit("http://localhost:8043/home/dashboard/repositories");
+    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
     cy.wait(4000);
     // Select dashboard by repository created and search
     cy.get("div").contains(repositoryName).parent().parent().click();
@@ -345,30 +356,19 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
 
 function CreateUserAndInviteToExistingWorkspace(): void {
     // Go to home page
-    cy.visit("http://localhost:8043/");
+    cy.visit("http://127.0.0.1:8043/");
     cy.wait(4000);
     // Logout user
     cy.get("[data-testid=\"icon-logout\"").click();
     cy.wait(3000);
 
-    // Create new account
-    cy.get("button").contains("Don't have an account? Sign up").click();
-    cy.get("#username").clear().type("e2e_user");
-    cy.get("#email").clear().type("e2e_user@example.com");
-    cy.get("button").contains("Next").click();
-    cy.get("#password").clear().type("Ch@ng3m3");
-    cy.get("#confirm-pass").clear().type("Ch@ng3m3");
-    cy.get("button").contains("Register").click();
-
-    // Check if account was created
-    cy.contains("Your Horusec account has been successfully created!");
-    cy.get("button").contains("Ok, I got it.").click();
-
     // Login with new account and check if not exists company and logout user
-    cy.get("#email").type("e2e_user@example.com");
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(4000);
+    cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
-    cy.wait(1500);
+    cy.get("#kc-login").click();
+    cy.wait(4000);
 
     // Check if not exists company to this account and logout user
     cy.contains("Add a new Workspace to start using Horusec.").should("exist");
@@ -376,9 +376,11 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     cy.wait(3000);
 
     // Login with default account
-    cy.get("#email").type("dev@example.com");
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(4000);
+    cy.get("#username").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
+    cy.get("#kc-login").click();
     cy.wait(1500);
 
     // Go to manage workspace page
@@ -400,7 +402,7 @@ function CreateUserAndInviteToExistingWorkspace(): void {
 
 function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     // Go to home page
-    cy.visit("http://localhost:8043/");
+    cy.visit("http://127.0.0.1:8043/");
     cy.wait(4000);
 
     // Logout user
@@ -408,10 +410,12 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     cy.wait(3000);
 
     // Login with new account
-    cy.get("#email").type("e2e_user@example.com");
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(4000);
+    cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
-    cy.wait(1500);
+    cy.get("#kc-login").click();
+    cy.wait(4000);
 
     // Check if not exists dashboard by workspace page
     cy.get("span").contains("Dashboard").parent().click();
@@ -448,7 +452,7 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
 
 function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void {
     // Go to home page
-    cy.visit("http://localhost:8043/");
+    cy.visit("http://127.0.0.1:8043/");
     cy.wait(4000);
 
     // Logout user
@@ -456,9 +460,11 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     cy.wait(4000);
 
     // Login with default user
-    cy.get("#email").type("dev@example.com");
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(4000);
+    cy.get("#username").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
+    cy.get("#kc-login").click();
     cy.wait(1500);
 
     // Go to repositories page
@@ -473,16 +479,18 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     cy.get("span").contains("Success in adding user to the repository!");
 
     // Logout user
-    cy.visit("http://localhost:8043/");
+    cy.visit("http://127.0.0.1:8043/");
     cy.wait(4000);
     cy.get("[data-testid=\"icon-logout\"").click();
     cy.wait(4000);
 
     // Login with new user
-    cy.get("#email").type("e2e_user@example.com");
+    cy.get("button").contains("Sign in keycloak").click();
+    cy.wait(4000);
+    cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
-    cy.wait(1500);
+    cy.get("#kc-login").click();
+    cy.wait(4000);
 
     // Check if dashboard show data to repository
     cy.contains(repositoryName).should("exist");
@@ -500,75 +508,4 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     // Logout user
     cy.get("[data-testid=\"icon-logout\"").click();
     cy.wait(4000);
-}
-
-function LoginAndUpdateDeleteAccount(): void {
-    // Login with new account
-    cy.get("#email").type("e2e_user@example.com");
-    cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
-    cy.wait(1500);
-
-    cy.get("[data-testid=\"icon-config\"").click();
-
-    // Open modal and edit user
-    cy.get("button").contains("Edit").click();
-    cy.get("#nome").clear().type("user_updated");
-    cy.get("#email").clear().type("user_updated@example.com");
-    cy.get("button").contains("Save").click();
-
-    // Check if user was edited with success
-    cy.contains("user_updated").should("exist");
-    cy.contains("user_updated@example.com").should("exist");
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
-    cy.wait(4000);
-
-    // Check if is enable login with new email
-    cy.get("#email").type("user_updated@example.com");
-    cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
-    cy.wait(1500);
-
-    // Go to config page
-    cy.get("[data-testid=\"icon-config\"").click();
-    cy.wait(1500);
-
-    // Change password of user
-    cy.get("button").contains("Password").click();
-    cy.get("#password").clear().type("Ch@ng3m3N0w");
-    cy.get("#confirm-pass").clear().type("Ch@ng3m3N0w");
-    cy.get("button").contains("Save").click();
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
-    cy.wait(4000);
-
-    // Check if is enable login with new password
-    cy.get("#email").type("user_updated@example.com");
-    cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
-    cy.wait(1500);
-
-    // When login in page check if exist "Version" o system
-    cy.contains("Version").should("exist");
-
-    // Go to config page
-    cy.get("[data-testid=\"icon-config\"").click();
-    cy.wait(1500);
-
-    // Delete account
-    cy.get("button").contains("Delete").click();
-    cy.get("button").contains("Yes").click();
-    cy.wait(5000);
-
-    // Check if account not exists
-    cy.get("#email").type("user_updated@example.com");
-    cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
-
-    // Check if login is not authorized
-    cy.get("span").contains("Check your e-mail and password and try again.");
-    cy.contains("Version").should("not.exist");
 }
