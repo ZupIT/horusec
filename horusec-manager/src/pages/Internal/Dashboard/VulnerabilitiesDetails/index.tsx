@@ -38,7 +38,7 @@ interface DatatableValue {
 
 const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [dataValues, setDataValues] = useState<DatatableValue[]>([]);
 
   const [pagination, setPagination] = useState<PaginationInfo>({
