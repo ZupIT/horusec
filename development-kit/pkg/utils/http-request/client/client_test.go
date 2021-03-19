@@ -42,7 +42,7 @@ func TestNewHTTPClient(t *testing.T) {
 
 func TestClient_DoRequest(t *testing.T) {
 	t.Run("Should not return error when call request", func(t *testing.T) {
-		urlToGet, err := url.Parse("https://zup.com.br")
+		urlToGet, err := url.Parse("https://google.com")
 		assert.NoError(t, err)
 		req := &http.Request{
 			Method: http.MethodGet,
