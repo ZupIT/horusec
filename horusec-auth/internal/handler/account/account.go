@@ -81,12 +81,14 @@ func (h *Handler) CreateAccountFromKeycloak(w http.ResponseWriter, r *http.Reque
 
 func (h *Handler) checkCreateAccountFromKeycloakErrors(
 	w http.ResponseWriter, err error, response *dto.CreateAccountFromKeycloakResponse) {
-	if err == errors.ErrorEmailAlreadyInUse || err == errors.ErrorUsernameAlreadyInUse {
+	switch err {
+	case errors.ErrorEmailAlreadyInUse, errors.ErrorUsernameAlreadyInUse:
 		httpUtil.StatusOK(w, response)
-		return
+	case errors.ErrorUnauthorized, errors.ErrorInvalidKeycloakToken:
+		httpUtil.StatusUnauthorized(w, err)
+	default:
+		httpUtil.StatusInternalServerError(w, err)
 	}
-
-	httpUtil.StatusInternalServerError(w, err)
 }
 
 // @Tags Account

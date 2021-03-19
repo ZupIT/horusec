@@ -88,7 +88,7 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Should return 200 because user already registred", func(t *testing.T) {
+	t.Run("Should return 200 because username already registred", func(t *testing.T) {
 		keycloak := &dto.KeycloakToken{
 			AccessToken: "Some token",
 		}
@@ -112,6 +112,74 @@ func TestHandler_CreateAccountFromKeycloak(t *testing.T) {
 		handler.CreateAccountFromKeycloak(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("Should return 200 because email already registred", func(t *testing.T) {
+		keycloak := &dto.KeycloakToken{
+			AccessToken: "Some token",
+		}
+
+		controllerMock := &accountController.Mock{}
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{
+			AccountID:          uuid.New(),
+			Username:           uuid.New().String(),
+			Email:              uuid.New().String(),
+			IsApplicationAdmin: false,
+		}, errorsEnum.ErrorEmailAlreadyInUse)
+
+		handler := &Handler{
+			controller: controllerMock,
+			useCases:   authUseCases.NewAuthUseCases(),
+		}
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
+		w := httptest.NewRecorder()
+
+		handler.CreateAccountFromKeycloak(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("Should return 401 because token of the keycloak is invalid", func(t *testing.T) {
+		keycloak := &dto.KeycloakToken{
+			AccessToken: "Some token",
+		}
+
+		controllerMock := &accountController.Mock{}
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{}, errorsEnum.ErrorInvalidKeycloakToken)
+
+		handler := &Handler{
+			controller: controllerMock,
+			useCases:   authUseCases.NewAuthUseCases(),
+		}
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
+		w := httptest.NewRecorder()
+
+		handler.CreateAccountFromKeycloak(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("Should return 401 because user is not authorized", func(t *testing.T) {
+		keycloak := &dto.KeycloakToken{
+			AccessToken: "Some token",
+		}
+
+		controllerMock := &accountController.Mock{}
+		controllerMock.On("CreateAccountFromKeycloak").Return(&dto.CreateAccountFromKeycloakResponse{}, errorsEnum.ErrorUnauthorized)
+
+		handler := &Handler{
+			controller: controllerMock,
+			useCases:   authUseCases.NewAuthUseCases(),
+		}
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(keycloak.ToBytes()))
+		w := httptest.NewRecorder()
+
+		handler.CreateAccountFromKeycloak(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
 
 	t.Run("Should return 500 unexpected error", func(t *testing.T) {
