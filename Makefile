@@ -166,12 +166,18 @@ compose-e2e-server-keycloak:
 # ========================================================================================= #
 
 migrate:
-	chmod +x ./deployments/scripts/migration-run.sh
-	sleep 3 && ./deployments/scripts/migration-run.sh up
+	sleep 3
+	make run-migrate-up
 
-migrate-drop:
+run-migrate-up:
+	chmod +x ./deployments/scripts/migration-run.sh
+	./deployments/scripts/migration-run.sh up
+
+run-migrate-drop:
 	chmod +x ./deployments/scripts/migration-run.sh
 	./deployments/scripts/migration-run.sh drop -f
+
+e2e-migrate: run-migrate-drop run-migrate-up
 
 # ========================================================================================= #
 
