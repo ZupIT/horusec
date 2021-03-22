@@ -19,6 +19,7 @@ import React from 'react';
 import Routes from './routes';
 import GlobalStyle from 'assets/style/global';
 import { ThemeProvider } from 'styled-components';
+import { ThemeProvider as ThemeProviderMatUi } from '@material-ui/core';
 import { FlashMessageProvider } from 'contexts/FlashMessage';
 import { AuthProvider } from 'contexts/Auth';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
@@ -30,22 +31,25 @@ import {
   keycloakInitOptions,
 } from 'config/keycloak';
 import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
+import themeMatUi from 'config/themes/material-ui';
 
 function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   const theme = getCurrentTheme();
-
+  
   setIsMicrofrontend(isMicrofrontend || false);
 
   const AppContent = () => (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
+    <ThemeProviderMatUi theme={themeMatUi}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
 
-      <FlashMessageProvider>
-        <AuthProvider>
-          <Routes />
-        </AuthProvider>
-      </FlashMessageProvider>
-    </ThemeProvider>
+        <FlashMessageProvider>
+          <AuthProvider>
+            <Routes />
+          </AuthProvider>
+        </FlashMessageProvider>
+      </ThemeProvider>
+    </ThemeProviderMatUi>
   );
 
   return keycloakConfig.clientId ? (

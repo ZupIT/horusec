@@ -14,42 +14,41 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Styled from './styled';
-import Icon from 'components/Icon';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
-import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import { Field } from 'helpers/interfaces/Field';
+import { DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import enLocale from "date-fns/locale/en-US";
+import ptBRLocale from "date-fns/locale/pt-BR";
+import format from "date-fns/format";
 
-
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-
-const useStyles = makeStyles({
-  root: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    borderRadius: 3,
-    border: 0,
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    // $disabled is a reference to the local disabled
-    // rule within the same style sheet.
-    // By using &, we increase the specificity.
-    '&$disabled': {
-      background: 'rgba(0, 0, 0, 0.12)',
-      color: 'white',
-      boxShadow: 'none',
-    },
-  },
-  disabled: {},
-});
+import DateFnsUtils from "@date-io/date-fns";
 
 type ModifiedField = Omit<Field, 'value'> & {
   value: Date;
+};
+
+class ptBrLocalizedUtils extends DateFnsUtils {
+  getCalendarHeaderText(date: number | Date) {
+    console.log('locale', this.locale);
+    return format(date, "dd/MM/yyyy", { locale: this.locale });
+  }
+
+  getDatePickerHeaderText(date: number | Date) {
+    return format(date, "dd/MM/yyyy", { locale: this.locale });
+  }
+}
+
+const localeUtilsMap = {
+    'enUS': DateFnsUtils,
+    'ptBR': ptBrLocalizedUtils,
+  };
+  
+const localeMap = {
+  'enUS': enLocale,
+  'ptBR': ptBRLocale,
 };
 
 interface CalendarProps {
@@ -59,11 +58,13 @@ interface CalendarProps {
   disabled?: boolean;
   invalidMessage?: string;
   validation?: Function;
+  minDate?: Date,
+  maxDate?: Date,
 }
 
-const Calendar: React.FC<
-  CalendarProps & Omit<ReactDatePickerProps, 'onChange'>
-> = (props) => {
+type LocaleType = 'enUS' |'ptBR';
+
+const Calendar: React.FC<CalendarProps> = (props) => {
   const {
     onChangeValue,
     initialDate,
@@ -74,18 +75,14 @@ const Calendar: React.FC<
   } = props;
 
   const [currentDate, setCurrentDate] = useState(null);
-  const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
   const { i18n } = useTranslation();
+  const [locale, setLocale] = useState<LocaleType>('enUS');
+  const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
   const { allLanguages } = useLanguage();
   const [isInvalid, setInvalid] = useState(false);
 
-  const classes = useStyles();
-
-  const ref = useRef<ReactDatePicker>();
-
   const handleSelectedDate = (date: Date) => {
     let isValid;
-
     if (validation) {
       isValid = validation(date.toDateString());
 
@@ -101,6 +98,7 @@ const Calendar: React.FC<
   useEffect(() => {
     const lang = find(allLanguages, { i18nValue: i18n.language });
     setDateFormat(lang.dateFormat);
+    setLocale(lang.i18nValue as LocaleType)
   }, [i18n.language, allLanguages]);
 
   useEffect(() => {
@@ -108,17 +106,26 @@ const Calendar: React.FC<
   }, [initialDate]);
 
   return (
-    <Styled.Wrapper>
-      <TextField
-        id="date"
-        label="Birthday"
-        type="date"
-        className={classes.root}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-    </Styled.Wrapper>
+    <MuiPickersUtilsProvider utils={localeUtilsMap[locale] || DateFnsUtils} locale={localeMap[locale]}>
+
+      <DatePicker
+        autoOk
+        defaultValue={initialDate}
+        disableToolbar
+        disabled={disabled}
+        error={isInvalid}
+        format={dateFormat}
+        helperText={invalidMessage}        
+        id={`datepicker${title}`}
+        label={title}
+        maxDate={props.maxDate}
+        minDate={props.minDate}
+        onChange={handleSelectedDate}
+        showTodayButton
+        value={currentDate}
+        variant="inline"
+        />
+        </MuiPickersUtilsProvider>
   );
 };
 
