@@ -17,7 +17,9 @@ package keycloak
 import (
 	"context"
 	"errors"
+	"fmt"
 	errorsEnum "github.com/ZupIT/horusec/development-kit/pkg/enums/errors"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"strings"
 
 	"github.com/Nerzal/gocloak/v7"
@@ -79,11 +81,20 @@ func (s *Service) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 }
 
 func (s *Service) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
-	if isActive, err := s.IsActiveToken(accessToken); err != nil || !isActive {
+	isActive, err := s.IsActiveToken(accessToken)
+	if err != nil || !isActive {
+		logger.LogError(
+			fmt.Sprintf("{Keycloak} Error on check if token is active: IsActive=%v, err=%v", isActive, err),
+			errorsEnum.ErrorUnauthorized)
 		return nil, errorsEnum.ErrorUnauthorized
 	}
 
-	return s.client.GetUserInfo(s.ctx, s.removeBearer(accessToken), s.realm)
+	userInfo, err := s.client.GetUserInfo(s.ctx, s.removeBearer(accessToken), s.realm)
+	if err != nil {
+		logger.LogError("{Keycloak} Error on get user info", err)
+		return nil, errorsEnum.ErrorInvalidKeycloakToken
+	}
+	return userInfo, nil
 }
 
 func (s *Service) removeBearer(accessToken string) string {
