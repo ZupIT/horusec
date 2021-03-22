@@ -24,6 +24,10 @@ import React, {
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { Field } from 'helpers/interfaces/Field';
+import { IconButton, InputAdornment, TextField } from '@material-ui/core';
+
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -33,6 +37,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   initialValue?: string;
   validation?: Function;
   onChangeValue?: (params: Field) => any;
+  multiline?: boolean
 }
 
 const Input: React.FC<InputProps> = ({
@@ -44,6 +49,7 @@ const Input: React.FC<InputProps> = ({
   onChangeValue,
   validation,
   type,
+  multiline = false,
   initialValue = undefined,
 }) => {
   const [isFocused, setFocused] = useState(false);
@@ -77,37 +83,55 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <Styled.Container className={className}>
-      <Styled.Wrapper>
-        <Styled.Label isFocused={isFocused} htmlFor={name}>
-          {label}
-        </Styled.Label>
 
-        <Styled.Input
-          type={inputType}
-          isInvalid={isInvalid}
-          width={width}
-          onFocus={handleFocus}
-          onBlur={handleFocus}
-          id={name}
-          onChange={handleOnChange}
-          value={initialValue}
-        />
-
-        {type === 'password' ? (
-          <Styled.EyeIcon
-            onClick={() =>
-              inputType === 'password'
-                ? setInputType('text')
-                : setInputType('password')
-            }
-            name={inputType === 'password' ? 'view' : 'no-view'}
-            size="18px"
-          />
-        ) : null}
-      </Styled.Wrapper>
-
-      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
+    <TextField
+        name={name}
+        label={label}
+        type={inputType}
+        onFocus={handleFocus}
+        onBlur={handleFocus}
+        id={name}
+        onChange={handleOnChange}
+        value={initialValue}
+        fullWidth
+        multiline={multiline}
+        error={isInvalid}
+        helperText={isInvalid && invalidMessage}
+        autoComplete="off"
+      />
     </Styled.Container>
+    // <Styled.Container className={className}>
+    //   <Styled.Wrapper>
+    //     <Styled.Label isFocused={isFocused} htmlFor={name}>
+    //       {label}
+    //     </Styled.Label>
+
+    //     <Styled.Input
+    //       type={inputType}
+    //       isInvalid={isInvalid}
+    //       width={width}
+    //       onFocus={handleFocus}
+    //       onBlur={handleFocus}
+    //       id={name}
+    //       onChange={handleOnChange}
+    //       value={initialValue}
+    //     />
+
+    //     {type === 'password' ? (
+    //       <Styled.EyeIcon
+    //         onClick={() =>
+    //           inputType === 'password'
+    //             ? setInputType('text')
+    //             : setInputType('password')
+    //         }
+    //         name={inputType === 'password' ? 'view' : 'no-view'}
+    //         size="18px"
+    //       />
+    //     ) : null}
+    //   </Styled.Wrapper>
+
+    //   <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
+    // </Styled.Container>
   );
 };
 

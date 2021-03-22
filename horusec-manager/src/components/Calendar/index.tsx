@@ -115,7 +115,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         disabled={disabled}
         error={isInvalid}
         format={dateFormat}
-        helperText={invalidMessage}        
+        helperText={isInvalid && invalidMessage}        
         id={`datepicker${title}`}
         label={title}
         maxDate={props.maxDate}
@@ -125,7 +125,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         value={currentDate}
         variant="inline"
         />
-        </MuiPickersUtilsProvider>
+    </MuiPickersUtilsProvider>
   );
 };
 

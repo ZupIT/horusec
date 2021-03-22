@@ -14,85 +14,10 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import { Icon } from 'components';
-
-interface LabelProps {
-  isFocused?: boolean;
-}
-
-interface InputProps {
-  isInvalid?: boolean;
-}
+import styled from 'styled-components';
 
 const Container = styled.div`
   display: block;
 `;
 
-const Input = styled.input<InputProps>`
-  border: none;
-  outline: none;
-  background: transparent;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.input.border};
-  color: ${({ theme }) => theme.colors.input.text};
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  padding-bottom: 5px;
-  padding-right: 20px;
-  width: ${({ width }) => width ?? '252px'};
-
-  :focus {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.input.focus};
-  }
-
-  ${({ isInvalid }) =>
-    isInvalid &&
-    css`
-      border-bottom: 1px solid ${({ theme }) => theme.colors.input.error};
-      color: ${({ theme }) => theme.colors.input.error};
-      :focus {
-        border-bottom: 1px solid ${({ theme }) => theme.colors.input.error};
-      }
-    `};
-`;
-
-const Wrapper = styled.div`
-  position: relative;
-`;
-
-const Label = styled.label<LabelProps>`
-  color: ${({ theme }) => theme.colors.input.label};
-  position: absolute;
-  cursor: text;
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  transition: top 0.3s, font-size 0.3s;
-
-  ${({ isFocused }) =>
-    isFocused &&
-    css`
-      font-size: ${({ theme }) => theme.metrics.fontSize.small};
-      color: ${({ theme }) => theme.colors.input.active};
-      top: -20px;
-    `};
-`;
-
-const EyeIcon = styled(Icon)`
-  position: absolute;
-  right: 0;
-`;
-
-const Error = styled.span<InputProps>`
-  visibility: hidden;
-  margin-top: 5px;
-  color: ${({ theme }) => theme.colors.input.error};
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  min-height: 14px;
-  position: absolute;
-
-  ${({ isInvalid }) =>
-    isInvalid &&
-    css`
-      visibility: visible;
-    `};
-`;
-
-export default { Label, Input, Wrapper, EyeIcon, Container, Error };
+export default { Container };

@@ -7,7 +7,11 @@ const themeMatUi = createMuiTheme({
   palette: {
     primary: {  // primary color
       main: theme.colors.primary,  // black
+      
     },
+    secondary:{
+      main: theme.colors.secondary
+    }
     // background: {
     //   paper: theme.colors.background.highlight
     // },
@@ -28,6 +32,10 @@ const themeMatUi = createMuiTheme({
         '&::-webkit-calendar-picker-indicator': {
           filter: 'invert(1)'
         },
+        '&:-webkit-autofill': {
+          '-webkit-text-fill-color': 'white',
+          '-webkit-box-shadow': '0 0 0 30px rgb(28 28 30) inset !important'
+        }
       },
     },
     MuiInput: {
