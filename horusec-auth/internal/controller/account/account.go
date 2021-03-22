@@ -371,7 +371,7 @@ func (a *Account) handleAccountEmailChange(
 	account, accountUpdate *authEntities.Account) (*authEntities.Account, error) {
 	if accountUpdate.Email != "" && account.Email != accountUpdate.Email {
 		account.Email = accountUpdate.Email
-		account.IsConfirmed = false
+		account.IsConfirmed = a.appConfig.IsDisabledBroker()
 		return account, a.sendValidateAccountEmail(account)
 	}
 

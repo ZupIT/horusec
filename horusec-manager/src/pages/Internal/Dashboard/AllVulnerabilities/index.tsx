@@ -34,7 +34,7 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);

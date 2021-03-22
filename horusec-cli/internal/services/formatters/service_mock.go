@@ -138,3 +138,8 @@ func (m *Mock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string 
 	args := m.MethodCalled("GetConfigCMDByFileExtension")
 	return args.Get(0).(string)
 }
+
+func (m *Mock) GetCustomImageByLanguage(_ languages.Language) string {
+	args := m.MethodCalled("GetCustomImageByLanguage")
+	return args.Get(0).(string)
+}

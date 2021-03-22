@@ -14,10 +14,7 @@
 
 package eslint
 
-const (
-	ImageName = "horuszup/horusec-js"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		eslint \
 			--no-eslintrc \
@@ -41,4 +38,3 @@ const (
 			"*/**/*.js" > /tmp/results.json
 		cat /tmp/results.json
 	`
-)

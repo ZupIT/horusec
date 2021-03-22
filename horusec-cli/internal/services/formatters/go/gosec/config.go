@@ -14,10 +14,7 @@
 
 package gosec
 
-const (
-	ImageName = "horuszup/horusec-go"
-	ImageTag  = "v1.0.0"
-	ImageCmd  = `
+const CMD = `
 		{{WORK_DIR}}
 		FILE_PATH="/tmp/result-gosec-ANALYSISID.json"
 		gosec -quiet -fmt=json -out=$FILE_PATH ./...
@@ -25,4 +22,3 @@ const (
 			cat $FILE_PATH
 		fi
 	`
-)

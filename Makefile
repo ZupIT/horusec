@@ -1,3 +1,4 @@
+NPM ?= npm
 GO ?= go
 GOFMT ?= gofmt
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -19,7 +20,7 @@ coverage-horusec-api:
 	deployments/scripts/coverage.sh 97 "./horusec-api"
 coverage-horusec-cli:
 	chmod +x deployments/scripts/coverage.sh
-	deployments/scripts/coverage.sh 89 "./horusec-cli"
+	deployments/scripts/coverage.sh 87 "./horusec-cli"
 coverage-horusec-messages:
 	chmod +x deployments/scripts/coverage.sh
 	deployments/scripts/coverage.sh 98 "./horusec-messages"
@@ -66,30 +67,17 @@ lint:
     endif
 
 # Run all tests of project but stop the execution on the first test fail
-test:
-	$(GO) clean -testcache && $(GO) test -v ./... -timeout=20m -parallel=1 -failfast -short
-
 test-e2e-cli:
 	$(GO) get -v ./e2e/...
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
-test-e2e-server-horusec: compose-e2e-server-horusec
-	$(GO) get -v ./e2e/...
-	$(GO) clean -testcache
-	$(GO) test -v ./e2e/server/horusec/... -timeout=5m -parallel=1 -failfast
-test-e2e-application-admin-horusec: compose-e2e-application-admin-horusec
-	$(GO) get -v ./e2e/...
-	$(GO) clean -testcache
-	$(GO) test -v ./e2e/application_admin/horusec/... -timeout=10m -parallel=1 -failfast
-test-e2e-messages: compose-e2e-messages
-	$(GO) get -v ./e2e/...
-	$(GO) clean -testcache
-	$(GO) test -v ./e2e/server/messages/... -timeout=5m -parallel=1 -failfast
-test-e2e-server-keycloak: compose-e2e-server-keycloak
-	$(GO) get -v ./e2e/...
-	$(GO) clean -testcache
-	$(GO) test -v ./e2e/server/keycloak/... -timeout=5m -parallel=1 -failfast
+test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin
+	cd ./e2e/cypress && $(NPM) install && cd ../..
+	cd ./e2e/cypress && $(NPM) run test::auth-horusec::without-application-admin && cd ../..
+test-e2e-auth-keycloak-without-application-admin: compose-e2e-auth-keycloak-without-application-admin
+	cd ./e2e/cypress && $(NPM) install && cd ../..
+	cd ./e2e/cypress && $(NPM) run test::auth-keycloak::without-application-admin && cd ../..
 
 # ========================================================================================= #
 
@@ -144,24 +132,28 @@ compose-horusec-analytic:
 	$(DOCKER_COMPOSE) -f horusec-analytic/deployments/docker-compose.yaml up -d --build --force-recreate
 compose-horusec-auth:
 	$(DOCKER_COMPOSE) -f horusec-auth/deployments/docker-compose.yaml up -d --build --force-recreate
-compose-e2e-server-horusec:
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.horusec.yaml up -d --build --force-recreate
-compose-e2e-application-admin-horusec:
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.application-admin.horusec.yaml up -d --build --force-recreate
-compose-e2e-messages:
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.messages.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.messages.yaml up -d --build --force-recreate
-compose-e2e-server-keycloak:
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/deployments/docker-compose.server.keycloak.yaml up -d --build --force-recreate postgresql postgresql_keycloak keycloak horusec-account horusec-analytic
+compose-e2e-auth-horusec-without-application-admin:
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate
+compose-e2e-auth-keycloak-without-application-admin:
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-keycloak.without-application-admin.yaml down -v
+	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-keycloak.without-application-admin.yaml up -d --build --force-recreate
 
 # ========================================================================================= #
 
 migrate:
+	sleep 3
+	make run-migrate-up
+
+run-migrate-up:
 	chmod +x ./deployments/scripts/migration-run.sh
-	sleep 3 && ./deployments/scripts/migration-run.sh up
+	./deployments/scripts/migration-run.sh up
+
+run-migrate-drop:
+	chmod +x ./deployments/scripts/migration-run.sh
+	./deployments/scripts/migration-run.sh drop -f
+
+e2e-migrate: run-migrate-drop run-migrate-up
 
 # ========================================================================================= #
 
@@ -177,62 +169,16 @@ install-semver:
 	./deployments/scripts/install-semver.sh
 
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
-build-install-cli:
+build-install-cli-linux:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
 	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
+	horusec version
+build-install-cli-darwin:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
+	CGO_ENABLED=0 GOOS=darwin $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./horusec-cli/cmd/horusec/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
 	horusec version
 build-install-cli-windows:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec.exe" &> /dev/null
 	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec.exe" ./horusec-cli/cmd/horusec/main.go
-
-build-install-leaks-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-leaks" ./horusec-leaks/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-leaks"
-	horusec-leaks version
-
-build-install-kotlin-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin" ./horusec-kotlin/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kotlin"
-	horusec-kotlin version
-
-build-install-java-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-java" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-java" ./horusec-java/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-java"
-	horusec-java version
-
-build-install-csharp-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-csharp" ./horusec-csharp/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-csharp"
-	horusec-csharp version
-
-build-install-kubernetes-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes" ./horusec-kubernetes/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-kubernetes"
-	horusec-kubernetes version
-
-build-install-nodejs-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs" ./horusec-nodejs/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-nodejs"
-	horusec-nodejs version
-
-build-install-dart-cli:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-dart" &> /dev/null
-	$(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-dart" ./horusec-dart/cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-dart"
-	horusec-dart version
-
-# ========================================================================================= #
-
-# HELM_SERVICE_NAME="horusec-account" make helm-upgrade
-HELM_SERVICE_NAME ?= ""
-KUBE_NAMESPACE ?= "horus-dev"
-
-helm-upgrade:
-	helm upgrade --wait -i $(HELM_SERVICE_NAME) ./$(HELM_SERVICE_NAME)/deployments/helm/$(HELM_SERVICE_NAME) -n $(KUBE_NAMESPACE) --debug

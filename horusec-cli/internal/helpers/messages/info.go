@@ -32,7 +32,7 @@ const (
 	// Fired when is setup to the output is sonarqube
 	MsgInfoStartWriteFile = "{HORUSEC_CLI} Writing output JSON to file in the path: "
 	// Fired when monitor log timeout
-	MsgInfoMonitorTimeoutIn = "Hold on! Horusec still analysis your code. Timeout in: "
+	MsgInfoMonitorTimeoutIn = "Hold on! Horusec is still analyzing your code. Timeout in: "
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFoundVulns = "[HORUSEC] %d VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, " +
 		"TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN"
