@@ -7,6 +7,7 @@ describe("Horusec tests", () => {
     });
 
     it("Should test all operations horusec", () => {
+        CreateDefaultAccount();
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
         CreateEditDeleteAnWorkspace();
         CreateWorkspace("Company e2e");
@@ -25,10 +26,25 @@ describe("Horusec tests", () => {
     });
 });
 
-function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+function CreateDefaultAccount(): void {
     cy.visit("http://localhost:8043/auth");
     cy.wait(4000);
 
+    // Create default account
+    cy.get("button").contains("Don't have an account? Sign up").click();
+    cy.get("#username").clear().type("dev");
+    cy.get("#email").clear().type("dev@example.com");
+    cy.get("button").contains("Next").click();
+    cy.get("#password").clear().type("Devpass0*");
+    cy.get("#confirm-pass").clear().type("Devpass0*");
+    cy.get("button").contains("Register").click();
+
+    // Check if account was created
+    cy.contains("Your Horusec account has been successfully created!");
+    cy.get("button").contains("Ok, I got it.").click();
+}
+
+function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     // Login with default account
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
