@@ -83,6 +83,8 @@ services:
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
       HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_ENABLE_DEFAULT_USER: "true"
+      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
   horusec-account:
     build:
       context: ../../../

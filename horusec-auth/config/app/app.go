@@ -19,9 +19,12 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
+	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 const (
+	EnvEnableDefaultUserEnv      = "HORUSEC_ENABLE_DEFAULT_USER"
+	EnvDefaultUserDataEnv        = "HORUSEC_DEFAULT_USER_DATA"
 	EnvEnableApplicationAdminEnv = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 	EnvApplicationAdminDataEnv   = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvAuthType                  = "HORUSEC_AUTH_TYPE"
@@ -32,6 +35,8 @@ const (
 type Config struct {
 	HorusecAPIURL          string
 	EnableApplicationAdmin bool
+	EnableDefaultUser      bool
+	DefaultUserData        string
 	ApplicationAdminData   string
 	AuthType               authEnums.AuthorizationType
 	DisabledBroker         bool
@@ -41,11 +46,27 @@ func NewConfig() *Config {
 	return &Config{
 		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
 		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
+		EnableDefaultUser: env.GetEnvOrDefaultBool(EnvEnableDefaultUserEnv, true),
+		DefaultUserData: env.GetEnvOrDefault(EnvDefaultUserDataEnv,
+			"{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(EnvEnableApplicationAdminEnv, false),
 		ApplicationAdminData: env.GetEnvOrDefault(EnvApplicationAdminDataEnv,
 			"{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"),
 		DisabledBroker: env.GetEnvOrDefaultBool(DisabledBrokerEnv, false),
 	}
+}
+
+func (a *Config) GetEnableDefaultUser() bool {
+	isEnable := a.EnableDefaultUser
+	if isEnable && a.GetAuthType() != authEnums.Horusec {
+		logger.LogWarnWithLevel("{HORUSEC} Is not possible create default user to auth type different of horusec")
+		return false
+	}
+	return isEnable
+}
+
+func (a *Config) GetDefaultUserData() (entity *dto.CreateAccount, err error) {
+	return entity, json.Unmarshal([]byte(a.DefaultUserData), &entity)
 }
 
 func (a *Config) GetEnableApplicationAdmin() bool {

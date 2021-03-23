@@ -80,6 +80,7 @@ services:
       HORUSEC_KEYCLOAK_CLIENT_SECRET: "f00907ba-87b7-441b-aae7-bd4c74de1938"
       HORUSEC_KEYCLOAK_REALM: "master"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
+      HORUSEC_ENABLE_DEFAULT_USER: "false"
       HORUSEC_AUTH_TYPE: "keycloak"
       HORUSEC_DISABLED_BROKER: "true"
   horusec-account:

@@ -50,3 +50,17 @@ func TestConfig_GetAuthType(t *testing.T) {
 		assert.Equal(t, authEnums.Horusec, appConfig.GetAuthType())
 	})
 }
+
+func TestConfig_GetHorusecAPIURL(t *testing.T) {
+	t.Run("Should return horusec api default url", func(t *testing.T) {
+		appConfig := NewConfig()
+		assert.Equal(t, "http://localhost:8006", appConfig.GetHorusecAPIURL())
+	})
+}
+
+func TestConfig_IsDisabledBroker(t *testing.T) {
+	t.Run("Should return default is disabled broker", func(t *testing.T) {
+		appConfig := NewConfig()
+		assert.Equal(t, false, appConfig.IsDisabledBroker())
+	})
+}

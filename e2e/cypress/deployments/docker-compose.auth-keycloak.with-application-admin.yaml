@@ -77,6 +77,7 @@ services:
       HORUSEC_KEYCLOAK_CLIENT_ID: ${HORUSEC_KEYCLOAK_CLIENT_ID}
       HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET} # Get secret inside of keycloak server
       HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM}
+      HORUSEC_ENABLE_DEFAULT_USER: "false"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
