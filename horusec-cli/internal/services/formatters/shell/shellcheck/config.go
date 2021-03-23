@@ -18,5 +18,16 @@ const CMD = `
 		{{WORK_DIR}}
 		shell_files=$(printf "$(find . -type f -name "*.sh")" | tr '\n' ' ')
 		bat_files=$(printf "$(find . -type f -name "*.bat")" | tr '\n' ' ')
-		shellcheck --format=json $shell_files $bat_files
+		if [ ! "$shell_files" ]; then
+			if [ ! "$bat_files" ]; then
+				return 0
+			fi
+			shellcheck --format=json $bat_files
+		else
+			if [ ! "$bat_files" ]; then
+				shellcheck --format=json $shell_files
+			else
+				shellcheck --format=json $shell_files $bat_files
+			fi
+		fi
   `
