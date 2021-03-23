@@ -45,6 +45,8 @@ function CreateDefaultAccount(): void {
 }
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+    cy.wait(4000);
+
     // Login with default account
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
