@@ -1,6 +1,5 @@
 import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
-import { IUserCredentialsRepresentation, IUserRepresentation, KeycloakRequests } from "./keycloak_requests_spec";
 
 /*
 Command to extract backup from keycloak database:
@@ -23,10 +22,10 @@ Command to restore backup to keycloak database:
 describe("Horusec tests", () => {
     before(() => {
         cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
-        cy.exec(
-            `echo "DELETE FROM accounts where email='dev@example.com'" | docker exec -i postgresql psql -U root -d horusec_db -p 5432`,
-            {log: true},
-        ).its("code").should("eq", 0);
+        // cy.exec(
+        //     `echo "DELETE FROM accounts where email='dev@example.com'" | docker exec -i postgresql psql -U root -d horusec_db -p 5432`,
+        //     {log: true},
+        // ).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
