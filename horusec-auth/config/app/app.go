@@ -44,8 +44,8 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		HorusecAPIURL:          env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
-		AuthType:               authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
+		HorusecAPIURL:     env.GetEnvOrDefault(EnvHorusecAPIURL, "http://localhost:8006"),
+		AuthType:          authEnums.AuthorizationType(env.GetEnvOrDefault(EnvAuthType, authEnums.Horusec.ToString())),
 		EnableDefaultUser: env.GetEnvOrDefaultBool(EnvEnableDefaultUserEnv, true),
 		DefaultUserData: env.GetEnvOrDefault(EnvDefaultUserDataEnv,
 			"{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"),

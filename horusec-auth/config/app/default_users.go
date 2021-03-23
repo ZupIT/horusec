@@ -62,7 +62,6 @@ func getDefaultAccountUser(config *Config) *authEntities.Account {
 	}
 }
 
-
 func getDefaultAccountApplicationAdmin(config *Config) *authEntities.Account {
 	entity, err := config.GetApplicationAdminData()
 	if err != nil {
