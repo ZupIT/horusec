@@ -27,8 +27,9 @@ describe("Horusec tests", () => {
 });
 
 function CreateDefaultAccount(): void {
-    cy.visit("http://localhost:8043/auth");
+    cy.visit("http://localhost:8043");
     cy.wait(4000);
+    cy.contains("Don't have an account? Sign up").should("exist");
 
     // Create default account
     cy.get("button").contains("Don't have an account? Sign up").click();
@@ -45,6 +46,7 @@ function CreateDefaultAccount(): void {
 }
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+    cy.visit("http://localhost:8043");
     cy.wait(4000);
 
     // Login with default account
