@@ -374,7 +374,8 @@ const Vulnerabilities: React.FC = () => {
                   initialValue={row.severity}
                   options={severitiesOptions}
                   disabled={!isAdminOrSupervisorOfRepository()}
-                  onChangeValue={(value) => handleUpdateVulnerabilitySeverity(row, value?.value)
+                  onChangeValue={(value) =>
+                    handleUpdateVulnerabilitySeverity(row, value?.value)
                   }
                 />
               ),

@@ -49,10 +49,10 @@ const Title = styled.span`
 
 interface ContainerInterface {
   width: string;
-} 
+}
 
 const Container = styled.div<ContainerInterface>`
-  width: ${ ({ width }) => width || '100%' };
+  width: ${({ width }) => width || '100%'};
   transition: all 1s;
 `;
 

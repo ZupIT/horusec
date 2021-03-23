@@ -172,18 +172,18 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       ) : null}
 
       {type === 'repository' ? (
-         <Styled.Wrapper>
-        <Select
-          keyLabel="name"
-          appearance="underline"
-          initialValue={repositories[0]}
-          options={repositories}
-          title={t('DASHBOARD_SCREEN.REPOSITORY')}
-          hasSearch
-          onChangeValue={(value) =>
-            setFilters({ ...filters, repositoryID: value.repositoryID })
-          }
-        />
+        <Styled.Wrapper>
+          <Select
+            keyLabel="name"
+            appearance="underline"
+            initialValue={repositories[0]}
+            options={repositories}
+            title={t('DASHBOARD_SCREEN.REPOSITORY')}
+            hasSearch
+            onChangeValue={(value) =>
+              setFilters({ ...filters, repositoryID: value.repositoryID })
+            }
+          />
         </Styled.Wrapper>
       ) : null}
 

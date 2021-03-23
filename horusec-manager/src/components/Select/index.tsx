@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import React, {
-  useState,
-  useEffect,
-  CSSProperties,
-} from "react";
-import Styled from "./styled";
-import { useTranslation } from "react-i18next";
-import { get, isObject, isString } from "lodash";
-import { ObjectLiteral } from "helpers/interfaces/ObjectLiteral";
+import React, { useState, useEffect, CSSProperties } from 'react';
+import Styled from './styled';
+import { useTranslation } from 'react-i18next';
+import { get, isObject, isString } from 'lodash';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
-import Select, { OptionType, StylesConfig } from "@atlaskit/select";
-import { useTheme } from "styled-components";
+import Select, { OptionType, StylesConfig } from '@atlaskit/select';
+import { useTheme } from 'styled-components';
 
 interface Props {
   title?: string;
@@ -46,7 +42,7 @@ interface Props {
     default: string;
   };
   hasSearch?: boolean;
-  appearance?: "default" | "underline";
+  appearance?: 'default' | 'underline';
 }
 
 const SelectInput: React.FC<Props> = ({
@@ -55,9 +51,9 @@ const SelectInput: React.FC<Props> = ({
   onChangeValue,
   className,
   initialValue,
-  keyLabel = "label",
-  keyValue = "value",
-  appearance = "default",
+  keyLabel = 'label',
+  keyValue = 'value',
+  appearance = 'default',
   width,
   selectText,
   fixedItemTitle,
@@ -75,22 +71,21 @@ const SelectInput: React.FC<Props> = ({
 
   const selectOptions: OptionType[] = options.map((option) => ({
     label: option[keyLabel],
-    value: keyValue ? option[keyValue] || option[keyLabel]: null ,
+    value: keyValue ? option[keyValue] || option[keyLabel] : null,
     option: option,
   }));
-  
+
   if (fixedItemTitle) {
     selectOptions.push({
       label: fixedItemTitle,
       value: fixedItemTitle,
-      option: fixedItemTitle
+      option: fixedItemTitle,
     });
   }
 
   const handleSelectedValue = (option: any) => {
-
     if (fixedItemTitle && option.option === fixedItemTitle) {
-      onClickFixedItem()
+      onClickFixedItem();
     } else if (!disabled) {
       onChangeValue(option.option);
       setCurrentValue(option);
@@ -104,9 +99,10 @@ const SelectInput: React.FC<Props> = ({
   useEffect(() => {
     if (initialValue) {
       setCurrentValue(() => {
-
         if (isObject(initialValue)) {
-          return getValue(initialValue[keyLabel]) || getValue(initialValue[keyValue]);
+          return (
+            getValue(initialValue[keyLabel]) || getValue(initialValue[keyValue])
+          );
         }
 
         if (isString(initialValue)) {
@@ -132,18 +128,18 @@ const SelectInput: React.FC<Props> = ({
       const styles = {
         ...style,
         background: controlBackground,
-        minHeight: "auto",
-        border: "none",
+        minHeight: 'auto',
+        border: 'none',
         borderRadius: 4,
-        ":hover": {
+        ':hover': {
           background: controlBackground,
-          borderColor: "#fff",
+          borderColor: '#fff',
         },
       };
 
-      if (appearance === "underline") {
-        styles["borderBottom"] = "1px solid #fff";
-        styles["borderRadius"] = 0;
+      if (appearance === 'underline') {
+        styles['borderBottom'] = '1px solid #fff';
+        styles['borderRadius'] = 0;
       }
 
       return styles;
@@ -166,20 +162,19 @@ const SelectInput: React.FC<Props> = ({
       fontSize: theme.metrics.fontSize.medium,
     }),
     option: (style: CSSProperties) => {
-
       const styles = {
         ...style,
         color: theme.colors.select.text,
         fontSize: theme.metrics.fontSize.small,
         background: theme.colors.background.highlight,
-        ":hover": {
+        ':hover': {
           background: theme.colors.background.primary,
         },
-        ":last-child" : {},
+        ':last-child': {},
       };
 
       if (fixedItemTitle) {
-        styles[":last-child"] = {
+        styles[':last-child'] = {
           color: theme.colors.select.highlight,
           textDecoration: 'underline',
         };
@@ -205,8 +200,8 @@ const SelectInput: React.FC<Props> = ({
         styles={selectStyles}
         options={selectOptions}
         onChange={(option) => handleSelectedValue(option)}
-        placeholder={selectText || t("GENERAL.SELECT") + "..."}
-        noOptionsMessage={() => t("GENERAL.NO_OPTIONS")}
+        placeholder={selectText || t('GENERAL.SELECT') + '...'}
+        noOptionsMessage={() => t('GENERAL.NO_OPTIONS')}
       />
     </Styled.Container>
     // <Styled.Wrapper

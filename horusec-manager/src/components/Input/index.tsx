@@ -22,12 +22,12 @@ import React, {
   useEffect,
 } from 'react';
 import isEmpty from 'lodash/isEmpty';
-import Styled from './styled';
 import { Field } from 'helpers/interfaces/Field';
 import { IconButton, InputAdornment, TextField } from '@material-ui/core';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -37,14 +37,13 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   initialValue?: string;
   validation?: Function;
   onChangeValue?: (params: Field) => any;
-  multiline?: boolean
+  multiline?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
+const InputPassword: React.FC<InputProps> = ({
   label,
   invalidMessage,
   name,
-  width,
   className,
   onChangeValue,
   validation,
@@ -55,6 +54,7 @@ const Input: React.FC<InputProps> = ({
   const [isFocused, setFocused] = useState(false);
   const [inputType, setInputType] = useState(type);
   const [isInvalid, setInvalid] = useState(false);
+  const theme = getCurrentTheme();
 
   const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     if (isEmpty(event.currentTarget.value)) {
@@ -82,9 +82,8 @@ const Input: React.FC<InputProps> = ({
   }, [initialValue]);
 
   return (
-    <Styled.Container className={className}>
-
-    <TextField
+    <div style={{ display: 'block' }} className={className}>
+      <TextField
         name={name}
         label={label}
         type={inputType}
@@ -98,8 +97,32 @@ const Input: React.FC<InputProps> = ({
         error={isInvalid}
         helperText={isInvalid && invalidMessage}
         autoComplete="off"
+        InputProps={{
+          endAdornment:
+            type === 'password' ? (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() =>
+                    inputType === 'password'
+                      ? setInputType('text')
+                      : setInputType('password')
+                  }
+                  style={{
+                    color: theme.colors.input.label,
+                  }}
+                >
+                  {inputType === 'password' ? (
+                    <Visibility />
+                  ) : (
+                    <VisibilityOff />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ) : null,
+        }}
       />
-    </Styled.Container>
+    </div>
     // <Styled.Container className={className}>
     //   <Styled.Wrapper>
     //     <Styled.Label isFocused={isFocused} htmlFor={name}>
@@ -135,4 +158,4 @@ const Input: React.FC<InputProps> = ({
   );
 };
 
-export default Input;
+export default InputPassword;

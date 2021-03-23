@@ -1,28 +1,27 @@
-import { createMuiTheme } from "@material-ui/core";
-import { getCurrentTheme } from "helpers/localStorage/currentTheme";
+import { createMuiTheme } from '@material-ui/core';
+import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
 
 const theme = getCurrentTheme();
 
 const themeMatUi = createMuiTheme({
   palette: {
-    primary: {  // primary color
-      main: theme.colors.primary,  // black
-      
+    primary: {
+      // primary color
+      main: theme.colors.primary, // black
     },
-    secondary:{
-      main: theme.colors.secondary
-    }
+    secondary: {
+      main: theme.colors.secondary,
+    },
     // background: {
     //   paper: theme.colors.background.highlight
     // },
-    
+
     // text: {
     //   primary: theme.colors.text.primary,
     //   secondary: theme.colors.text.secundary,
     // },
-    
   },
-  
+
   overrides: {
     MuiInputBase: {
       root: {
@@ -30,36 +29,36 @@ const themeMatUi = createMuiTheme({
       },
       input: {
         '&::-webkit-calendar-picker-indicator': {
-          filter: 'invert(1)'
+          filter: 'invert(1)',
         },
         '&:-webkit-autofill': {
           '-webkit-text-fill-color': 'white',
-          '-webkit-box-shadow': '0 0 0 30px rgb(28 28 30) inset !important'
-        }
+          '-webkit-box-shadow': '0 0 0 30px rgb(28 28 30) inset !important',
+        },
       },
     },
     MuiInput: {
       underline: {
         '&:$before': {
-          borderColor: theme.colors.input.border
+          borderColor: theme.colors.input.border,
         },
         '&:$after': {
-          borderColor: theme.colors.input.border
+          borderColor: theme.colors.input.border,
         },
         '&:$hover:$not(.Mui-disable):$before': {
-          borderColor: theme.colors.input.border
-        }
+          borderColor: theme.colors.input.border,
+        },
       },
     },
     MuiFormLabel: {
       root: {
-        '&$focused' : {
-          color: theme.colors.input.label
-        }
+        '&$focused': {
+          color: theme.colors.input.label,
+        },
       },
       focused: {
-        color: theme.colors.input.label
-      }
+        color: theme.colors.input.label,
+      },
     },
     MuiInputLabel: {
       root: {
@@ -74,18 +73,17 @@ const themeMatUi = createMuiTheme({
           backgroundColor: theme.colors.background.highlight,
         },
         '& .MuiPickersDay-day': {
-          color: 'white'
+          color: 'white',
         },
         '& .MuiPickersCalendarHeader-dayLabel': {
-          color: 'white'
+          color: 'white',
         },
         '& .MuiPickersCalendarHeader-iconButton': {
-          background: "none",
-          color: '#fff'
+          background: 'none',
+          color: '#fff',
         },
-        
-      }
-    }
+      },
+    },
     // MuiIconButton: {
     //   root: {
     //     color: theme.colors.icon.primary

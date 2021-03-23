@@ -35,7 +35,7 @@ import themeMatUi from 'config/themes/material-ui';
 
 function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
   const theme = getCurrentTheme();
-  
+
   setIsMicrofrontend(isMicrofrontend || false);
 
   const AppContent = () => (

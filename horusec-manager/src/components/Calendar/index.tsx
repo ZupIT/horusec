@@ -19,36 +19,36 @@ import { useTranslation } from 'react-i18next';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
 import { Field } from 'helpers/interfaces/Field';
-import { DatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
-import enLocale from "date-fns/locale/en-US";
-import ptBRLocale from "date-fns/locale/pt-BR";
-import format from "date-fns/format";
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import enLocale from 'date-fns/locale/en-US';
+import ptBRLocale from 'date-fns/locale/pt-BR';
+import format from 'date-fns/format';
 
-import DateFnsUtils from "@date-io/date-fns";
+import DateFnsUtils from '@date-io/date-fns';
 
 type ModifiedField = Omit<Field, 'value'> & {
   value: Date;
 };
 
-class ptBrLocalizedUtils extends DateFnsUtils {
+class PtBrLocalizedUtils extends DateFnsUtils {
   getCalendarHeaderText(date: number | Date) {
     console.log('locale', this.locale);
-    return format(date, "dd/MM/yyyy", { locale: this.locale });
+    return format(date, 'dd/MM/yyyy', { locale: this.locale });
   }
 
   getDatePickerHeaderText(date: number | Date) {
-    return format(date, "dd/MM/yyyy", { locale: this.locale });
+    return format(date, 'dd/MM/yyyy', { locale: this.locale });
   }
 }
 
 const localeUtilsMap = {
-    'enUS': DateFnsUtils,
-    'ptBR': ptBrLocalizedUtils,
-  };
-  
+  enUS: DateFnsUtils,
+  ptBR: PtBrLocalizedUtils,
+};
+
 const localeMap = {
-  'enUS': enLocale,
-  'ptBR': ptBRLocale,
+  enUS: enLocale,
+  ptBR: ptBRLocale,
 };
 
 interface CalendarProps {
@@ -58,11 +58,11 @@ interface CalendarProps {
   disabled?: boolean;
   invalidMessage?: string;
   validation?: Function;
-  minDate?: Date,
-  maxDate?: Date,
+  minDate?: Date;
+  maxDate?: Date;
 }
 
-type LocaleType = 'enUS' |'ptBR';
+type LocaleType = 'enUS' | 'ptBR';
 
 const Calendar: React.FC<CalendarProps> = (props) => {
   const {
@@ -98,7 +98,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   useEffect(() => {
     const lang = find(allLanguages, { i18nValue: i18n.language });
     setDateFormat(lang.dateFormat);
-    setLocale(lang.i18nValue as LocaleType)
+    setLocale(lang.i18nValue as LocaleType);
   }, [i18n.language, allLanguages]);
 
   useEffect(() => {
@@ -106,8 +106,10 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   }, [initialDate]);
 
   return (
-    <MuiPickersUtilsProvider utils={localeUtilsMap[locale] || DateFnsUtils} locale={localeMap[locale]}>
-
+    <MuiPickersUtilsProvider
+      utils={localeUtilsMap[locale] || DateFnsUtils}
+      locale={localeMap[locale]}
+    >
       <DatePicker
         autoOk
         defaultValue={initialDate}
@@ -115,7 +117,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         disabled={disabled}
         error={isInvalid}
         format={dateFormat}
-        helperText={isInvalid && invalidMessage}        
+        helperText={isInvalid && invalidMessage}
         id={`datepicker${title}`}
         label={title}
         maxDate={props.maxDate}
@@ -124,7 +126,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         showTodayButton
         value={currentDate}
         variant="inline"
-        />
+      />
     </MuiPickersUtilsProvider>
   );
 };
