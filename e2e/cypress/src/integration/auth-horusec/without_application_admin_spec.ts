@@ -3,7 +3,7 @@ import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec("npm run migrate", {log: true}).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
