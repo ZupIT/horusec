@@ -40,7 +40,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   multiline?: boolean;
 }
 
-const InputPassword: React.FC<InputProps> = ({
+const Input: React.FC<InputProps> = ({
   label,
   invalidMessage,
   name,
@@ -123,39 +123,7 @@ const InputPassword: React.FC<InputProps> = ({
         }}
       />
     </div>
-    // <Styled.Container className={className}>
-    //   <Styled.Wrapper>
-    //     <Styled.Label isFocused={isFocused} htmlFor={name}>
-    //       {label}
-    //     </Styled.Label>
-
-    //     <Styled.Input
-    //       type={inputType}
-    //       isInvalid={isInvalid}
-    //       width={width}
-    //       onFocus={handleFocus}
-    //       onBlur={handleFocus}
-    //       id={name}
-    //       onChange={handleOnChange}
-    //       value={initialValue}
-    //     />
-
-    //     {type === 'password' ? (
-    //       <Styled.EyeIcon
-    //         onClick={() =>
-    //           inputType === 'password'
-    //             ? setInputType('text')
-    //             : setInputType('password')
-    //         }
-    //         name={inputType === 'password' ? 'view' : 'no-view'}
-    //         size="18px"
-    //       />
-    //     ) : null}
-    //   </Styled.Wrapper>
-
-    //   <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
-    // </Styled.Container>
   );
 };
 
-export default InputPassword;
+export default Input;
