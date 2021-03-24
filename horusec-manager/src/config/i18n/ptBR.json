@@ -28,7 +28,7 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
@@ -52,7 +52,7 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
@@ -234,7 +234,9 @@
   "GENERAL": {
     "SELECT": "Selecione",
     "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
+    "PASS_VISIBILITY": "Visualizar ou Ocultar senha",
     "PAGINATION": {
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",

@@ -155,6 +155,7 @@ function NewPasswordScreen() {
           }
           text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
           type="submit"
+          onClick={handleSubmit}
           rounded
         />
 

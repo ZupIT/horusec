@@ -72,6 +72,7 @@ function SendEmailScreen() {
           isDisabled={!email.isValid}
           text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
           type="submit"
+          onClick={handleSubmit}
           rounded
         />
 

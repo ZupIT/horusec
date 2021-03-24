@@ -24,6 +24,7 @@ import React, {
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { Field } from 'helpers/interfaces/Field';
+import { useTranslation } from 'react-i18next';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -49,6 +50,7 @@ const Input: React.FC<InputProps> = ({
   const [isFocused, setFocused] = useState(false);
   const [inputType, setInputType] = useState(type);
   const [isInvalid, setInvalid] = useState(false);
+  const { t } = useTranslation();
 
   const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     if (isEmpty(event.currentTarget.value)) {
@@ -102,7 +104,9 @@ const Input: React.FC<InputProps> = ({
                 : setInputType('password')
             }
             name={inputType === 'password' ? 'view' : 'no-view'}
+            ariaLabel={t('GENERAL.PASS_VISIBILITY')}
             size="18px"
+            tabIndex={0}
           />
         ) : null}
       </Styled.Wrapper>

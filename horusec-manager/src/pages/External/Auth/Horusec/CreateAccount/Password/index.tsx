@@ -51,9 +51,22 @@ function PasswordForm() {
     characterSpecial: false,
   });
 
+  const forIsInvalid = () => {
+    return (
+      !confirmPass.isValid ||
+      !password.isValid ||
+      passValidations.alpha ||
+      passValidations.characterSpecial ||
+      passValidations.minCharacters ||
+      passValidations.number
+    );
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    createAccount();
+    if (!forIsInvalid()) {
+      createAccount();
+    }
   };
 
   const validateEqualsPassword = (value: string) => {
@@ -123,16 +136,9 @@ function PasswordForm() {
         />
 
         <Styled.Submit
-          isDisabled={
-            !confirmPass.isValid ||
-            !password.isValid ||
-            passValidations.alpha ||
-            passValidations.characterSpecial ||
-            passValidations.minCharacters ||
-            passValidations.number
-          }
+          isDisabled={forIsInvalid()}
           text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
-          type="submit"
+          onClick={handleSubmit}
           isLoading={isLoading}
           rounded
         />
