@@ -90,6 +90,16 @@ func TestCreateDefaultApplicationAdmin(t *testing.T) {
 			CreateDefaultApplicationAdmin(config, mockRead, mockWrite)
 		})
 	})
+	t.Run("Should not execute auto create default user with keycloak auth", func(t *testing.T) {
+		mockRead := &relational.MockRead{}
+		mockWrite := &relational.MockWrite{}
+		config := NewConfig()
+		config.EnableApplicationAdmin = true
+		config.AuthType = authEnums.Keycloak
+		assert.NotPanics(t, func() {
+			CreateDefaultApplicationAdmin(config, mockRead, mockWrite)
+		})
+	})
 	t.Run("Should execute auto create default application admin with success", func(t *testing.T) {
 		mockRead := &relational.MockRead{}
 		mockWrite := &relational.MockWrite{}

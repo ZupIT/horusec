@@ -19,7 +19,6 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/entities/auth/dto"
 	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/env"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 )
 
 const (
@@ -57,12 +56,7 @@ func NewConfig() *Config {
 }
 
 func (a *Config) GetEnableDefaultUser() bool {
-	isEnable := a.EnableDefaultUser
-	if isEnable && a.GetAuthType() != authEnums.Horusec {
-		logger.LogWarnWithLevel("{HORUSEC} Is not possible create default user to auth type different of horusec")
-		return false
-	}
-	return isEnable
+	return a.EnableDefaultUser
 }
 
 func (a *Config) GetDefaultUserData() (entity *dto.CreateAccount, err error) {

@@ -4,38 +4,57 @@ import (
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational"
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/repository/account"
 	authEntities "github.com/ZupIT/horusec/development-kit/pkg/entities/auth"
+	authEnums "github.com/ZupIT/horusec/development-kit/pkg/enums/auth"
 	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"strings"
 )
 
 func CreateDefaultUser(config *Config, read relational.InterfaceRead, write relational.InterfaceWrite) {
 	if config.GetEnableDefaultUser() {
-		err := account.NewAccountRepository(read, write).Create(getDefaultAccountUser(config).SetAccountData())
-		if err != nil {
-			if userIsDuplicated(err) {
-				logger.LogInfo("Default user already exists")
-			} else {
-				logger.LogPanic("Some error occurs when create application admin", err)
-			}
+		if config.GetAuthType() != authEnums.Horusec {
+			logger.LogWarnWithLevel("{HORUSEC} Is not possible create default user to auth type different of horusec")
 		} else {
-			logger.LogInfo("Default user created with success")
+			rowsAffected, err := createNewUser(read, write, getDefaultAccountUser(config).SetAccountData())
+			if err != nil {
+				logger.LogPanic("Some error occurs when create Default User.", err)
+			}
+			if rowsAffected > 0 {
+				logger.LogInfo("Default User created with success!")
+			} else {
+				logger.LogInfo("Default User already exists!")
+			}
 		}
 	}
 }
 
 func CreateDefaultApplicationAdmin(config *Config, read relational.InterfaceRead, write relational.InterfaceWrite) {
 	if config.GetEnableApplicationAdmin() {
-		err := account.NewAccountRepository(read, write).Create(getDefaultAccountApplicationAdmin(config).SetAccountData())
-		if err != nil {
-			if userIsDuplicated(err) {
-				logger.LogInfo("Application admin already exists")
-			} else {
-				logger.LogPanic("Some error occurs when create application admin", err)
-			}
+		if config.GetAuthType() != authEnums.Horusec {
+			logger.LogWarnWithLevel("{HORUSEC} Is not possible create default user to auth type different of horusec")
 		} else {
-			logger.LogInfo("Application admin created with success")
+			rowsAffected, err := createNewUser(read, write, getDefaultAccountApplicationAdmin(config).SetAccountData())
+			if err != nil {
+				logger.LogPanic("Some error occurs when create Application Admin.", err)
+			}
+			if rowsAffected > 0 {
+				logger.LogInfo("Application Admin created with success!")
+			} else {
+				logger.LogInfo("Application Admin already exists!")
+			}
 		}
 	}
+}
+
+func createNewUser(read relational.InterfaceRead, write relational.InterfaceWrite,
+	newUser *authEntities.Account) (rowsAffected int, err error) {
+	err = account.NewAccountRepository(read, write).Create(newUser)
+	if err != nil {
+		if userIsDuplicated(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return 1, nil
 }
 
 func userIsDuplicated(err error) bool {

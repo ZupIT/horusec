@@ -72,16 +72,11 @@ test-e2e-cli:
 	$(GO) get -v ./horusec-cli/...
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
-test-e2e-auth-horusec-without-application-admin:
-	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml down -v
-	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate postgresql
-	make e2e-migrate
-	$(DOCKER_COMPOSE) -f e2e/cypress/deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate horusec-auth horusec-account horusec-analytic horusec-api horusec-manager
+test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin
 	cd ./e2e/cypress && $(NPM) install && cd ../..
 	cd ./e2e/cypress && $(NPM) run test::auth-horusec::without-application-admin && cd ../..
 test-e2e-auth-keycloak-without-application-admin: compose-e2e-auth-keycloak-without-application-admin
 	cd ./e2e/cypress && $(NPM) install && cd ../..
-	sleep 15
 	cd ./e2e/cypress && $(NPM) run test::auth-keycloak::without-application-admin && cd ../..
 
 # ========================================================================================= #

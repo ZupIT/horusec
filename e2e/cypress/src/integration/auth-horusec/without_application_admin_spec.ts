@@ -2,6 +2,10 @@ import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
+    before(() => {
+        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+    });
+
     it("Should test all operations horusec", () => {
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
         CreateEditDeleteAnWorkspace();
@@ -22,6 +26,29 @@ describe("Horusec tests", () => {
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+    cy.visit("http://localhost:8043");
+    cy.wait(4000);
+
+    // Login with default account
+    cy.get("#email").type("dev@example.com");
+    cy.get("#password").type("Devpass0*");
+    cy.get("button").first().click();
+    cy.wait(1000);
+
+    // Check if user not found
+    cy.contains("Check your e-mail and password and try again.").should("exist");
+
+    // Create default account
+    cy.get("button").contains("Don't have an account? Sign up").click();
+    cy.get("#username").clear().type("dev");
+    cy.get("#email").clear().type("dev@example.com");
+    cy.get("button").contains("Next").click();
+    cy.get("#password").clear().type("Devpass0*");
+    cy.get("#confirm-pass").clear().type("Devpass0*");
+    cy.get("button").contains("Register").click();
+    cy.wait(2000);
+
+    // Back to login page
     cy.visit("http://localhost:8043");
     cy.wait(4000);
 
