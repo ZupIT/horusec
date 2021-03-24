@@ -36,7 +36,8 @@ function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.wait(1000);
 
     // Check if user not found
-    cy.contains("Check your e-mail and password and try again.").should("exist");
+    cy.contains("Add a new Workspace to start using Horusec.").should("not.exist");
+    cy.contains("Don't have an account? Sign up").should("exist");
 
     // Create default account
     cy.get("button").contains("Don't have an account? Sign up").click();
