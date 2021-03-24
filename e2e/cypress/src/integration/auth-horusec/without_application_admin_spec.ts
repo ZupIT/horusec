@@ -3,49 +3,23 @@ import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
     it("Should test all operations horusec", () => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0)
-            .then(() => {
-                cy.wait(4000);
-                CreateDefaultAccount();
-                LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
-                CreateEditDeleteAnWorkspace();
-                CreateWorkspace("Company e2e");
-                CheckIfDashboardIsEmpty();
-                CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
-                CheckIfDashboardNotIsEmpty();
-                CreateEditDeleteAnRepository();
-                CreateRepository("Core-API");
-                CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
-                CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
-                CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
-                CreateUserAndInviteToExistingWorkspace();
-                CheckIfPermissionsIsEnableToWorkspaceMember();
-                InviteUserToRepositoryAndCheckPermissions("Core-API");
-                LoginAndUpdateDeleteAccount();
-            })
+        LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
+        CreateEditDeleteAnWorkspace();
+        CreateWorkspace("Company e2e");
+        CheckIfDashboardIsEmpty();
+        CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
+        CheckIfDashboardNotIsEmpty();
+        CreateEditDeleteAnRepository();
+        CreateRepository("Core-API");
+        CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
+        CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
+        CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
+        CreateUserAndInviteToExistingWorkspace();
+        CheckIfPermissionsIsEnableToWorkspaceMember();
+        InviteUserToRepositoryAndCheckPermissions("Core-API");
+        LoginAndUpdateDeleteAccount();
     });
 });
-
-function CreateDefaultAccount(): void {
-    cy.visit("http://localhost:8043");
-    cy.wait(4000);
-    cy.contains("Don't have an account? Sign up").should("exist");
-
-    // Create default account
-    cy.get("button").contains("Don't have an account? Sign up").click();
-    cy.get("#username").clear().type("dev");
-    cy.get("#email").clear().type("dev@example.com");
-    cy.get("button").contains("Next").click();
-    cy.wait(2000);
-    cy.get("#password").should("exist");
-    cy.get("#password").clear().type("Devpass0*");
-    cy.get("#confirm-pass").clear().type("Devpass0*");
-    cy.get("button").contains("Register").click();
-
-    // Check if account was created
-    cy.contains("Your Horusec account has been successfully created!");
-    cy.get("button").contains("Ok, I got it.").click();
-}
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.visit("http://localhost:8043");
