@@ -4,6 +4,7 @@ import AnalysisMock from "../../mocks/analysis.json";
 describe("Horusec tests", () => {
     before(() => {
         cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+        cy.wait(4000);
     });
 
     it("Should test all operations horusec", () => {
