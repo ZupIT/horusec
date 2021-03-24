@@ -74,9 +74,11 @@ test-e2e-cli:
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
 test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin
 	cd ./e2e/cypress && $(NPM) install && cd ../..
+	sleep 15
 	cd ./e2e/cypress && $(NPM) run test::auth-horusec::without-application-admin && cd ../..
 test-e2e-auth-keycloak-without-application-admin: compose-e2e-auth-keycloak-without-application-admin
 	cd ./e2e/cypress && $(NPM) install && cd ../..
+	sleep 15
 	cd ./e2e/cypress && $(NPM) run test::auth-keycloak::without-application-admin && cd ../..
 
 # ========================================================================================= #
