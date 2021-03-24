@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import React, {
-  InputHTMLAttributes,
-  FocusEvent,
-  useState,
-  ChangeEvent,
-  useEffect,
-} from 'react';
+import React, { InputHTMLAttributes, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Field } from 'helpers/interfaces/Field';
-import { IconButton, InputAdornment, TextField } from '@material-ui/core';
+import {
+  IconButton,
+  InputAdornment,
+  TextField,
+  TextFieldProps,
+} from '@material-ui/core';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
-
+import { useField, connect } from 'formik';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
@@ -40,62 +39,33 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   multiline?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
+function Input({
   label,
-  invalidMessage,
   name,
   className,
-  onChangeValue,
-  validation,
   type,
   multiline = false,
-  initialValue = undefined,
-}) => {
-  const [isFocused, setFocused] = useState(false);
+  ...props
+}: InputProps & TextFieldProps) {
   const [inputType, setInputType] = useState(type);
-  const [isInvalid, setInvalid] = useState(false);
   const theme = getCurrentTheme();
 
-  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
-    if (isEmpty(event.currentTarget.value)) {
-      setFocused(!isFocused);
-    }
-  };
-
-  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    let isValid;
-
-    if (validation) {
-      isValid = validation(event.target.value);
-
-      setInvalid(!isValid);
-    } else {
-      isValid = true;
-    }
-
-    onChangeValue({ value: event.target.value, isValid });
-  };
-
-  useEffect(() => {
-    if (initialValue) setFocused(true);
-  }, [initialValue]);
+  const [field, { error, touched, value }] = useField(name);
 
   return (
     <div style={{ display: 'block' }} className={className}>
       <TextField
+        id={name}
         name={name}
         label={label}
         type={inputType}
-        onFocus={handleFocus}
-        onBlur={handleFocus}
-        id={name}
-        onChange={handleOnChange}
-        value={initialValue}
+        onBlur={field.onBlur(name)}
+        onChange={field.onChange(name)}
+        value={value}
         fullWidth
         multiline={multiline}
-        error={isInvalid}
-        helperText={isInvalid && invalidMessage}
+        error={touched && !!error}
+        helperText={touched && error}
         autoComplete="off"
         InputProps={{
           endAdornment:
@@ -121,9 +91,10 @@ const Input: React.FC<InputProps> = ({
               </InputAdornment>
             ) : null,
         }}
+        {...props}
       />
     </div>
   );
-};
+}
 
-export default Input;
+export default connect(Input);

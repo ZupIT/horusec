@@ -146,12 +146,9 @@ const AddToken: React.FC<Props> = ({
 
         {isExpirable ? (
           <Calendar
-            initialDate={expiresAt}
             title={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
-            onChangeValue={(field) => setExpiresAt(field.value)}
             minDate={MIN_DATE}
-            validation={validateExpiresAt}
-            invalidMessage={t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT')}
+            // invalidMessage={t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT')}
           />
         ) : null}
       </Dialog>

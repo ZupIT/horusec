@@ -16,8 +16,9 @@
 
 import styled from 'styled-components';
 import { Button } from 'components';
+import { Form } from 'formik';
 
-const Container = styled.div`
+const Container = styled(Form)`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   padding: 20px;

@@ -21,7 +21,8 @@ import { useTranslation } from 'react-i18next';
 import { isEmptyString, isValidEmail } from 'helpers/validators';
 import { Field } from 'helpers/interfaces/Field';
 import { CreateAccountContext } from 'contexts/CreateAccount';
-
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 interface UserInfoProps {
   onNextStep: Function;
 }
@@ -29,23 +30,20 @@ interface UserInfoProps {
 function UserInfoForm({ onNextStep }: UserInfoProps) {
   const { t } = useTranslation();
   const history = useHistory();
-  const {
-    email,
-    setEmail,
-    username,
-    setUsername,
-    isLoading,
-    verifyUsernameAndEmail,
-  } = useContext(CreateAccountContext);
+  const { isLoading, verifyUsernameAndEmail } = useContext(
+    CreateAccountContext
+  );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const ValidationScheme = Yup.object({
+    username: Yup.string().required(),
+    email: Yup.string().email().required(),
+  });
 
-    if (email.isValid && username.isValid) {
-      verifyUsernameAndEmail().then(() => {
-        onNextStep();
-      });
-    }
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    username: 'luqinha2',
+    email: 'luquinh2a@gmail.com',
   };
 
   return (
@@ -53,41 +51,52 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
       <Styled.SubTitle>
         {t('CREATE_ACCOUNT_SCREEN.CREATE_ACCOUNT')}
       </Styled.SubTitle>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        onSubmit={(values) => {
+          verifyUsernameAndEmail(values.email, values.username).then(() => {
+            onNextStep();
+          });
+        }}
+      >
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.NAME')}
+              name="username"
+              type="username"
+              //onChangeValue={(field: Field) => setUsername(field)}
+              // invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')}
+              // validation={isEmptyString}
+            />
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          onChangeValue={(field: Field) => setUsername(field)}
-          label={t('CREATE_ACCOUNT_SCREEN.NAME')}
-          name="username"
-          type="username"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')}
-          validation={isEmptyString}
-        />
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
+              name="email"
+              type="text"
+              //onChangeValue={(field: Field) => setEmail(field)}
+              // invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')}
+              // validation={isValidEmail}
+            />
 
-        <Styled.Field
-          label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
-          onChangeValue={(field: Field) => setEmail(field)}
-          name="email"
-          type="text"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')}
-          validation={isValidEmail}
-        />
+            <Styled.Submit
+              isDisabled={!props.isValid}
+              text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
+              type="submit"
+              isLoading={isLoading}
+              rounded
+            />
 
-        <Styled.Submit
-          isDisabled={!email.isValid || !username.isValid}
-          text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
-          type="submit"
-          isLoading={isLoading}
-          rounded
-        />
-
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          text={t('CREATE_ACCOUNT_SCREEN.BACK')}
-          outline
-          rounded
-        />
-      </Styled.Form>
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('CREATE_ACCOUNT_SCREEN.BACK')}
+              outline
+              rounded
+            />
+          </Styled.Form>
+        )}
+      </Formik>
     </>
   );
 }

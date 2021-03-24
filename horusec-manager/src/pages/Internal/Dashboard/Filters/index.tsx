@@ -25,6 +25,9 @@ import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { AxiosResponse } from 'axios';
+import { Form, Formik } from 'formik';
+import * as Yup from 'yup';
+import SearchSelect from 'components/SearchSelect';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -63,7 +66,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
 
   const [repositories, setRepositories] = useState<any[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
+  // const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
 
   const [filters, setFilters] = useState<FilterValues>({
     initialDate: null,
@@ -73,9 +76,27 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     type,
   });
 
-  const handleSelectedPeriod = (item: { label: string; value: string }) => {
-    setSelectedPeriod(item);
+  const ValidationScheme = Yup.object({
+    period: Yup.string().notRequired(),
+    initialDate: Yup.date().notRequired(),
+    finalDate: Yup.date().notRequired(),
+    repositoryID: Yup.string().required(),
+    companyID: Yup.string().required(),
+    type: Yup.string().oneOf(['workspace', 'repository']).required(),
+  });
 
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    period: fixedRanges[0].value,
+    initialDate: null,
+    finalDate: null,
+    repositoryID: repositories[0]?.repositoryID,
+    companyID: repositories[0]?.companyID,
+    type: type,
+  };
+
+  const handleSelectedPeriod = (item: { label: string; value: string }) => {
     const getRangeOfPeriod: ObjectLiteral = {
       customRange: [today, today],
       today: [today, today],
@@ -98,7 +119,12 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const repositories: Repository[] = result.data.content;
-            setRepositories(repositories);
+            setRepositories(
+              repositories.map((el) => ({
+                label: el.description,
+                value: el.repositoryID,
+              }))
+            );
 
             if (repositories.length > 0) {
               setFilters({
@@ -135,67 +161,69 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   }, [currentWorkspace]);
 
   return (
-    <Styled.Container>
-      <Styled.Wrapper>
-        <Select
-          keyLabel="label"
-          appearance="underline"
-          width="200px"
-          initialValue={selectedPeriod}
-          options={fixedRanges}
-          title={t('DASHBOARD_SCREEN.PERIOD')}
-          onChangeValue={(item) => handleSelectedPeriod(item)}
-        />
-      </Styled.Wrapper>
-
-      {selectedPeriod?.value === fixedRanges[1].value ? (
-        <>
-          <Styled.CalendarWrapper>
-            <Calendar
-              initialDate={filters.initialDate}
-              title={t('DASHBOARD_SCREEN.START_DATE')}
-              onChangeValue={(field) =>
-                setFilters({ ...filters, initialDate: field.value })
-              }
+    <Formik
+      initialValues={initialValues}
+      // validationSchema={ValidationScheme}
+      onSubmit={(values) => {}}
+    >
+      {(props) => (
+        <Styled.Container>
+          <Styled.Wrapper>
+            <SearchSelect
+              name="period"
+              label={t('DASHBOARD_SCREEN.PERIOD')}
+              options={fixedRanges}
             />
-          </Styled.CalendarWrapper>
+          </Styled.Wrapper>
+          {props.values.period === fixedRanges[1].value ? (
+            <>
+              <Styled.CalendarWrapper>
+                <Calendar
+                  name="initialDate"
+                  label={t('DASHBOARD_SCREEN.START_DATE')}
+                />
+              </Styled.CalendarWrapper>
 
-          <Styled.CalendarWrapper>
-            <Calendar
-              title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-              onChangeValue={(field) =>
-                setFilters({ ...filters, finalDate: field.value })
-              }
-            />
-          </Styled.CalendarWrapper>
-        </>
-      ) : null}
-
-      {type === 'repository' ? (
-        <Styled.Wrapper>
-          <Select
-            keyLabel="name"
-            appearance="underline"
-            initialValue={repositories[0]}
-            options={repositories}
-            title={t('DASHBOARD_SCREEN.REPOSITORY')}
-            hasSearch
-            onChangeValue={(value) =>
-              setFilters({ ...filters, repositoryID: value.repositoryID })
-            }
+              <Styled.CalendarWrapper>
+                <Calendar
+                  name="finalDate"
+                  label={t('DASHBOARD_SCREEN.FINAL_DATE')}
+                />
+              </Styled.CalendarWrapper>
+            </>
+          ) : null}
+          {type === 'repository' ? (
+            <Styled.Wrapper>
+              <Select
+                keyLabel="name"
+                appearance="underline"
+                initialValue={repositories[0]}
+                options={repositories}
+                title={t('DASHBOARD_SCREEN.REPOSITORY')}
+                hasSearch
+                onChangeValue={(value) =>
+                  setFilters({ ...filters, repositoryID: value.repositoryID })
+                }
+              />
+              <SearchSelect
+                name="repositoryID"
+                label={t('DASHBOARD_SCREEN.REPOSITORY')}
+                options={repositories}
+              />
+            </Styled.Wrapper>
+          ) : null}
+          <Styled.ApplyButton
+            text={t('DASHBOARD_SCREEN.APPLY')}
+            rounded
+            width={78}
+            type="submit"
+            // onClick={() =>
+            //   onApply({ ...filters, companyID: currentWorkspace.companyID })
+            // }
           />
-        </Styled.Wrapper>
-      ) : null}
-
-      <Styled.ApplyButton
-        text={t('DASHBOARD_SCREEN.APPLY')}
-        rounded
-        width={78}
-        onClick={() =>
-          onApply({ ...filters, companyID: currentWorkspace.companyID })
-        }
-      />
-    </Styled.Container>
+        </Styled.Container>
+      )}
+    </Formik>
   );
 };
 

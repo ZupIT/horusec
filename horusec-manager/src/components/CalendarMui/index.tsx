@@ -47,14 +47,11 @@ const localeMap = {
 };
 
 interface CalendarProps {
-  name?: string;
-  label?: string;
+  name: string;
+  label: string;
   disabled?: boolean;
   minDate?: Date;
   maxDate?: Date;
-  initialDate?: any;
-  title?: any;
-  onChangeValue?: (props: any) => any;
 }
 
 type LocaleType = 'enUS' | 'ptBR';

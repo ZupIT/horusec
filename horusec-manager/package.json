@@ -8,11 +8,13 @@
     "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.3.10",
     "@react-keycloak/web": "^3.0.0",
     "apexcharts": "^3.20.2",
     "axios": "^0.21.1",
     "date-fns": "^2.16.1",
+    "formik": "^2.2.6",
     "i18next": "^19.7.0",
     "keycloak-js": "^10.0.2",
     "lodash": "^4.17.20",
@@ -31,7 +33,8 @@
     "react-use-clipboard": "1.0.1",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.1.1",
-    "systemjs-webpack-interop": "^2.1.2"
+    "systemjs-webpack-interop": "^2.1.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",

@@ -12,14 +12,6 @@ const themeMatUi = createMuiTheme({
     secondary: {
       main: theme.colors.secondary,
     },
-    // background: {
-    //   paper: theme.colors.background.highlight
-    // },
-
-    // text: {
-    //   primary: theme.colors.text.primary,
-    //   secondary: theme.colors.text.secundary,
-    // },
   },
 
   overrides: {
@@ -52,22 +44,39 @@ const themeMatUi = createMuiTheme({
     },
     MuiFormLabel: {
       root: {
+        color: theme.colors.input.label,
         '&$focused': {
           color: theme.colors.input.label,
         },
       },
-      focused: {
-        color: theme.colors.input.label,
-      },
+      focused: {},
     },
     MuiInputLabel: {
       root: {
         color: theme.colors.input.label,
       },
     },
+    MuiIconButton: {
+      root: {
+        color: theme.colors.button.text,
+      },
+    },
+
+    MuiCheckbox: {
+      root: {
+        color: theme.colors.checkbox.border,
+      },
+      colorSecondary: {
+        '&$checked': {
+          color: theme.colors.checkbox.checked.secundary,
+        },
+      },
+      checked: {},
+    },
     MuiPaper: {
       root: {
         color: 'white',
+        backgroundColor: theme.colors.background.highlight,
 
         '& .MuiPickersBasePicker-container': {
           backgroundColor: theme.colors.background.highlight,

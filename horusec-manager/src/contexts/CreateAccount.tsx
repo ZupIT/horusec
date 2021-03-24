@@ -24,54 +24,30 @@ interface CreateAccountProps {
 }
 
 interface CreateAccountContext {
-  username: Field;
-  email: Field;
-  password: Field;
-  confirmPass: Field;
+  username: string;
+  email: string;
   isLoading: boolean;
   successDialogVisible: boolean;
-  createAccount(): void;
-  verifyUsernameAndEmail(): Promise<void>;
-  setEmail: Dispatch<SetStateAction<Field>>;
-  setPassword: Dispatch<SetStateAction<Field>>;
-  setConfirmPass: Dispatch<SetStateAction<Field>>;
-  setUsername: Dispatch<SetStateAction<Field>>;
+  createAccount(password: string): void;
+  verifyUsernameAndEmail(email: string, username: string): Promise<void>;
 }
 
-const fieldInitialValue: Field = {
-  isValid: false,
-  value: '',
-};
-
-const CreateAccountContext = React.createContext<CreateAccountContext>({
-  username: fieldInitialValue,
-  setUsername: () => '',
-  email: fieldInitialValue,
-  setEmail: () => '',
-  password: fieldInitialValue,
-  setPassword: () => '',
-  confirmPass: fieldInitialValue,
-  setConfirmPass: () => '',
-  isLoading: false,
-  createAccount: () => '',
-  successDialogVisible: false,
-  verifyUsernameAndEmail: () => null,
-});
+const CreateAccountContext = React.createContext<CreateAccountContext>(
+  {} as CreateAccountContext
+);
 
 const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
-  const [email, setEmail] = useState<Field>(fieldInitialValue);
-  const [username, setUsername] = useState<Field>(fieldInitialValue);
-  const [password, setPassword] = useState<Field>(fieldInitialValue);
-  const [confirmPass, setConfirmPass] = useState<Field>(fieldInitialValue);
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [successDialogVisible, setSuccessDialogVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
   const { dispatchMessage } = useResponseMessage();
 
-  const createAccount = () => {
+  const createAccount = (password: string) => {
     setLoading(true);
     accountService
-      .createAccount(username.value, password.value, email.value)
+      .createAccount(username, password, email)
       .then(() => {
         setSuccessDialogVisible(true);
       })
@@ -81,19 +57,23 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
       });
   };
 
-  const verifyUsernameAndEmail = (): Promise<void> => {
+  const verifyUsernameAndEmail = (
+    email: string,
+    username: string
+  ): Promise<void> => {
     setLoading(true);
-
     return new Promise((resolve, reject) => {
       accountService
-        .verifyUniqueUsernameEmail(email.value, username.value)
+        .verifyUniqueUsernameEmail(email, username)
         .then(() => {
           setLoading(false);
+          setEmail(email);
+          setUsername(username);
           resolve();
         })
         .catch((err) => {
-          dispatchMessage(err?.response?.data);
           setLoading(false);
+          dispatchMessage(err?.response?.data);
           reject(err);
         });
     });
@@ -104,12 +84,6 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
       value={{
         email,
         username,
-        password,
-        confirmPass,
-        setEmail,
-        setUsername,
-        setPassword,
-        setConfirmPass,
         isLoading,
         createAccount,
         successDialogVisible,

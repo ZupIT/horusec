@@ -30,6 +30,8 @@ import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { cloneDeep } from 'lodash';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
+import { FieldArray, Formik, FormikHelpers, FormikValues } from 'formik';
+import * as Yup from 'yup';
 
 interface Props {
   isVisible: boolean;
@@ -52,52 +54,15 @@ const HandleWorkspace: React.FC<Props> = ({
   const { applicationAdminEnable } = getCurrentConfig();
 
   const [isLoading, setLoading] = useState(false);
-  const [name, setName] = useState<Field>({ value: '', isValid: false });
-  const [description, setDescription] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
 
-  const [adminGroup, setAdminGroup] = useState<string[]>(['']);
-  const [memberGroup, setMemberGroup] = useState<string[]>(['']);
-
-  const [emailAdmin, setEmailAdmin] = useState<Field>({
-    isValid: false,
-    value: currentUser.email,
-  });
-
-  const setValues = (
-    nameToset?: string,
-    descToSet?: string,
-    adminToSet?: string[],
-    memberToSet?: string[]
+  const handleCreate = (
+    values: InitialValue,
+    actions: FormikHelpers<InitialValue>
   ) => {
-    setName({ value: nameToset, isValid: nameToset ? true : false });
-    setDescription({ value: descToSet, isValid: false });
-    setEmailAdmin({ value: currentUser?.email, isValid: false });
-
-    if (!adminToSet || adminToSet.length === 0) {
-      setAdminGroup(['']);
-    } else {
-      setAdminGroup(adminToSet);
-    }
-
-    if (!memberToSet || memberToSet.length === 0) {
-      setMemberGroup(['']);
-    } else {
-      setMemberGroup(memberToSet);
-    }
-  };
-
-  const clearInputs = () => {
-    setValues();
-  };
-
-  const handleCreate = () => {
     companyService
-      .create(name.value, description.value, emailAdmin.value, {
-        authzAdmin: adminGroup,
-        authzMember: memberGroup,
+      .create(values.name, values.description, values.emailAdmin, {
+        authzAdmin: values.authzAdmin,
+        authzMember: values.authzMember,
       })
       .then(() => {
         onConfirm();
@@ -108,20 +73,23 @@ const HandleWorkspace: React.FC<Props> = ({
       })
       .finally(() => {
         setLoading(false);
-        clearInputs();
+        actions.resetForm();
       });
   };
 
-  const handleEdit = () => {
+  const handleEdit = (
+    values: InitialValue,
+    actions: FormikHelpers<InitialValue>
+  ) => {
     companyService
       .update(
         workspaceToEdit.companyID,
-        name.value,
-        description.value,
-        emailAdmin.value,
+        values.name,
+        values.description,
+        values.emailAdmin,
         {
-          authzAdmin: adminGroup,
-          authzMember: memberGroup,
+          authzAdmin: values.authzAdmin,
+          authzMember: values.authzMember,
         }
       )
       .then(() => {
@@ -133,186 +101,163 @@ const HandleWorkspace: React.FC<Props> = ({
       })
       .finally(() => {
         setLoading(false);
-        clearInputs();
+        actions.resetForm();
       });
   };
 
-  const handleSubmit = () => {
-    if (name.isValid) {
-      setLoading(true);
+  const ValidationScheme = Yup.object({
+    name: Yup.string().required(),
+    description: Yup.string().optional(),
+    emailAdmin: Yup.string().required(),
+    authzAdmin: Yup.array<string[]>().notRequired(),
+    authzMember: Yup.array<string[]>().notRequired(),
+  });
 
-      workspaceToEdit ? handleEdit() : handleCreate();
-    }
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    name: workspaceToEdit?.name || '',
+    description: workspaceToEdit?.description || '',
+    emailAdmin: currentUser?.email || '',
+    authzAdmin: workspaceToEdit?.authzAdmin || [''],
+    authzMember: workspaceToEdit?.authzMember || [''],
   };
-
-  const handleSetGroupValue = (group: string, index: number, value: string) => {
-    const allGroups: ObjectLiteral = {
-      admin: [adminGroup, setAdminGroup],
-      member: [memberGroup, setMemberGroup],
-    };
-
-    const groupList = allGroups[group][0];
-    const groupSetter = allGroups[group][1];
-    const copyOfGroup = cloneDeep(groupList);
-
-    copyOfGroup[index] = value.trim();
-    groupSetter(copyOfGroup);
-  };
-
-  const handleRemoveGroupValue = (group: string) => {
-    const allGroups: ObjectLiteral = {
-      admin: [adminGroup, setAdminGroup],
-      member: [memberGroup, setMemberGroup],
-    };
-
-    const groupList = allGroups[group][0];
-    const groupSetter = allGroups[group][1];
-    const copyOfGroup = cloneDeep(groupList);
-
-    copyOfGroup.pop();
-    groupSetter(copyOfGroup);
-  };
-
-  useEffect(() => {
-    setValues(
-      workspaceToEdit?.name,
-      workspaceToEdit?.description,
-      workspaceToEdit?.authzAdmin,
-      workspaceToEdit?.authzMember
-    );
-
-    // eslint-disable-next-line
-  }, [workspaceToEdit]);
 
   return (
-    <Dialog
-      isVisible={isVisible}
-      message={
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize={true}
+      onSubmit={(values, actions) => {
+        setLoading(true);
         workspaceToEdit
-          ? t('WORKSPACES_SCREEN.EDIT_WORKSPACE')
-          : t('WORKSPACES_SCREEN.ADD')
-      }
-      onCancel={() => {
-        clearInputs();
-        onCancel();
+          ? handleEdit(values, actions)
+          : handleCreate(values, actions);
       }}
-      onConfirm={handleSubmit}
-      confirmText={t('WORKSPACES_SCREEN.SAVE')}
-      disableConfirm={!name.isValid}
-      disabledColor={colors.button.disableInDark}
-      loadingConfirm={isLoading}
-      width={600}
-      hasCancel
     >
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          name="name"
-          label={t('WORKSPACES_SCREEN.TABLE.NAME')}
-          width="100%"
-          onChangeValue={(field: Field) => setName(field)}
-          validation={isEmptyString}
-          invalidMessage={t('WORKSPACES_SCREEN.INVALID_WORKSPACE_NAME')}
-          initialValue={name.value}
-        />
-
-        <Styled.Field
-          name="description"
-          label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
-          width="100%"
-          onChangeValue={(field: Field) => setDescription(field)}
-          initialValue={description.value}
-        />
-
-        {applicationAdminEnable ? (
-          <Styled.Wrapper>
-            <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN_EMAIL')}</Styled.Label>
-
-            <Input
-              name="emailAdmin"
-              initialValue={emailAdmin.value}
-              label={t('WORKSPACES_SCREEN.EMAIL')}
-              onChangeValue={(field: Field) => setEmailAdmin(field)}
+      {(props) => (
+        <Dialog
+          isVisible={isVisible}
+          message={
+            workspaceToEdit
+              ? t('WORKSPACES_SCREEN.EDIT_WORKSPACE')
+              : t('WORKSPACES_SCREEN.ADD')
+          }
+          onCancel={() => {
+            props.resetForm();
+            onCancel();
+          }}
+          onConfirm={props.submitForm}
+          confirmText={t('WORKSPACES_SCREEN.SAVE')}
+          disableConfirm={!props.isValid}
+          disabledColor={colors.button.disableInDark}
+          loadingConfirm={isLoading}
+          width={600}
+          hasCancel
+        >
+          <Styled.Form>
+            <Styled.Field
+              name="name"
+              label={t('WORKSPACES_SCREEN.TABLE.NAME')}
+              width="100%"
             />
-          </Styled.Wrapper>
-        ) : null}
 
-        {getCurrentConfig().authType === authTypes.LDAP ? (
-          <>
-            <Styled.SubTitle>
-              {t('WORKSPACES_SCREEN.REFERENCE_GROUP')}
-            </Styled.SubTitle>
+            <Styled.Field
+              name="description"
+              label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
+              width="100%"
+            />
 
-            <Styled.WrapperColumn>
-              <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
-              {adminGroup?.map((_, index) => (
-                <Styled.Wrapper key={index}>
-                  <Input
-                    name={`admin-group-${index}`}
-                    initialValue={adminGroup[index]}
-                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                    onChangeValue={(field: Field) =>
-                      handleSetGroupValue('admin', index, field.value)
-                    }
-                  />
+            {applicationAdminEnable && (
+              <Styled.Wrapper>
+                <Styled.Label>
+                  {t('WORKSPACES_SCREEN.ADMIN_EMAIL')}
+                </Styled.Label>
 
-                  {index + 1 === adminGroup.length &&
-                  adminGroup.length !== 1 ? (
-                    <Styled.OptionIcon
-                      name="delete"
-                      size="20px"
-                      onClick={() => handleRemoveGroupValue('admin')}
-                    />
-                  ) : null}
+                <Input name="emailAdmin" label={t('WORKSPACES_SCREEN.EMAIL')} />
+              </Styled.Wrapper>
+            )}
 
-                  {index + 1 === adminGroup.length &&
-                  adminGroup.length !== 5 ? (
-                    <Styled.OptionIcon
-                      name="plus"
-                      size="20px"
-                      onClick={() => setAdminGroup([...adminGroup, ''])}
-                    />
-                  ) : null}
-                </Styled.Wrapper>
-              ))}
-            </Styled.WrapperColumn>
+            {getCurrentConfig().authType === authTypes.LDAP && (
+              <>
+                <Styled.SubTitle>
+                  {t('WORKSPACES_SCREEN.REFERENCE_GROUP')}
+                </Styled.SubTitle>
 
-            <Styled.WrapperColumn>
-              <Styled.Label>{t('WORKSPACES_SCREEN.MEMBER')}</Styled.Label>
-              {memberGroup?.map((_, index) => (
-                <Styled.Wrapper key={index}>
-                  <Input
-                    name={`member-group-${index}`}
-                    initialValue={memberGroup[index]}
-                    label={t('WORKSPACES_SCREEN.GROUP_NAME')}
-                    onChangeValue={(field: Field) =>
-                      handleSetGroupValue('member', index, field.value)
-                    }
-                  />
+                <Styled.WrapperColumn>
+                  <Styled.Label>{t('WORKSPACES_SCREEN.ADMIN')}</Styled.Label>
+                  <FieldArray name="authzAdmin">
+                    {({ push, remove }) => {
+                      const { authzAdmin } = props.values;
+                      return authzAdmin.map((_, index) => (
+                        <Styled.Wrapper key={index}>
+                          <Input
+                            name={`authzAdmin.${index}`}
+                            label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                          />
 
-                  {index + 1 === memberGroup.length &&
-                  memberGroup.length !== 1 ? (
-                    <Styled.OptionIcon
-                      name="delete"
-                      size="20px"
-                      onClick={() => handleRemoveGroupValue('member')}
-                    />
-                  ) : null}
+                          {index + 1 === authzAdmin.length &&
+                          authzAdmin.length !== 1 ? (
+                            <Styled.OptionIcon
+                              name="delete"
+                              size="20px"
+                              onClick={() => remove(index)}
+                            />
+                          ) : null}
 
-                  {index + 1 === memberGroup.length &&
-                  memberGroup.length !== 5 ? (
-                    <Styled.OptionIcon
-                      name="plus"
-                      size="20px"
-                      onClick={() => setMemberGroup([...memberGroup, ''])}
-                    />
-                  ) : null}
-                </Styled.Wrapper>
-              ))}
-            </Styled.WrapperColumn>
-          </>
-        ) : null}
-      </Styled.Form>
-    </Dialog>
+                          {index + 1 === authzAdmin.length &&
+                          authzAdmin.length !== 5 ? (
+                            <Styled.OptionIcon
+                              name="plus"
+                              size="20px"
+                              onClick={() => push('')}
+                            />
+                          ) : null}
+                        </Styled.Wrapper>
+                      ));
+                    }}
+                  </FieldArray>
+                </Styled.WrapperColumn>
+
+                <Styled.WrapperColumn>
+                  <Styled.Label>{t('WORKSPACES_SCREEN.MEMBER')}</Styled.Label>
+                  <FieldArray name="authzMember">
+                    {({ push, remove }) => {
+                      const { authzMember } = props.values;
+                      return authzMember.map((_, index) => (
+                        <Styled.Wrapper key={index}>
+                          <Input
+                            name={`authzMember.${index}`}
+                            label={t('WORKSPACES_SCREEN.GROUP_NAME')}
+                          />
+
+                          {index + 1 === authzMember.length &&
+                          authzMember.length !== 1 ? (
+                            <Styled.OptionIcon
+                              name="delete"
+                              size="20px"
+                              onClick={() => remove(index)}
+                            />
+                          ) : null}
+
+                          {index + 1 === authzMember.length &&
+                          authzMember.length !== 5 ? (
+                            <Styled.OptionIcon
+                              name="plus"
+                              size="20px"
+                              onClick={() => push('')}
+                            />
+                          ) : null}
+                        </Styled.Wrapper>
+                      ));
+                    }}
+                  </FieldArray>
+                </Styled.WrapperColumn>
+              </>
+            )}
+          </Styled.Form>
+        </Dialog>
+      )}
+    </Formik>
   );
 };
 

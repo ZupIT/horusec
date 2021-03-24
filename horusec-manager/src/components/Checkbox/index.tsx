@@ -14,47 +14,42 @@
  * limitations under the License.
  */
 
+import {
+  FormControl,
+  FormLabel,
+  Checkbox as CheckboxMui,
+} from '@material-ui/core';
+import { connect, useField } from 'formik';
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 
 interface Props {
-  initialValue: boolean;
-  disabled: boolean;
-  onChangeValue: (isChecked: boolean) => void;
+  initialValue?: boolean;
+  name?: string;
+  disabled?: boolean;
+  onChangeValue?: (isChecked: boolean) => void;
   label?: string;
 }
 
-const Checkbox: React.FC<Props> = ({
-  initialValue,
-  disabled,
-  onChangeValue,
-  label,
-}) => {
-  const [isChecked, setChecked] = useState(false);
-
-  const handleChangeValue = () => {
-    if (!disabled) {
-      setChecked(!isChecked);
-      onChangeValue(!isChecked);
-    }
-  };
-
-  useEffect(() => {
-    setChecked(initialValue);
-  }, [initialValue]);
+function Checkbox({ name, label, disabled = false }: Props) {
+  const [field] = useField(name);
 
   return (
-    <Styled.Container>
-      <Styled.Checkbox
+    <FormControl style={{ display: 'inline' }}>
+      {label && <FormLabel>{label}</FormLabel>}
+      <CheckboxMui
+        id={name}
+        name={name}
+        onChange={field.onChange}
+        checked={field.checked}
+        value={field.value}
+        disableRipple
+        disableTouchRipple
+        disableFocusRipple
         disabled={disabled}
-        onClick={handleChangeValue}
-        isChecked={isChecked}
       />
-      {label ? (
-        <Styled.Label onClick={handleChangeValue}>{label}</Styled.Label>
-      ) : null}
-    </Styled.Container>
+    </FormControl>
   );
-};
+}
 
-export default Checkbox;
+export default connect(Checkbox);
