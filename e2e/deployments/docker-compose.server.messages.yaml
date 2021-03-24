@@ -95,3 +95,5 @@ services:
       HORUSEC_AUTH_TYPE: "horusec"
       HORUSEC_DISABLED_BROKER: "true"
       HORUSEC_MANAGER_URL: "http://127.0.0.1:8043"
+      HORUSEC_ENABLE_DEFAULT_USER: "true"
+      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"

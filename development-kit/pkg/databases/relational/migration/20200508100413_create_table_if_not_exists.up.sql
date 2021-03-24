@@ -60,24 +60,6 @@ CREATE TABLE IF NOT EXISTS "account_repository"
     UNIQUE (repository_id, account_id)
 );
 
-INSERT INTO accounts(
-    account_id,
-    password,
-    email,
-    username,
-    is_confirmed,
-    created_at,
-    updated_at)
-VALUES (
-    '4e0bfe1b-043d-4922-8198-07d84ab49bd0',
-    '$2a$10$hWoL3d6iUUl3wFBXouGDB.p/uE/K3t1k5vVFdN981IpoZJY8wftPm', /* Devpass0* */
-    'dev@example.com',
-    'dev',
-    true,
-    '2020-07-29',
-    '2020-07-29'
-);
-
 COMMIT;
 
 

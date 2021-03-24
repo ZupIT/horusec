@@ -50,6 +50,8 @@ services:
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_AUTH_TYPE: "horusec"
       HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_ENABLE_DEFAULT_USER: "true"
+      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
   horusec-account:
     build:
       context: ../../../

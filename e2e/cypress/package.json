@@ -10,6 +10,7 @@
     "test::auth-keycloak::with-application-admin": "npx cypress run --spec ./src/integration/auth-keycloak/with_application_admin_spec.ts",
     "test::auth-ldap::without-application-admin": "npx cypress run --spec ./src/integration/auth-ldap/without_application_admin_spec.ts",
     "test::auth-ldap::with-application-admin": "npx cypress run --spec ./src/integration/auth-ldap/with_application_admin_spec.ts",
+    "migrate": "cd ../../ && make e2e-migrate && cd ./e2e/cypress",
     "lint": "npx tslint --project tsconfig.json",
     "lint::fix": "npx tslint --project tsconfig.json --fix"
   },

@@ -3,7 +3,8 @@ import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec("npm run migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec("docker restart horusec-auth", {log: true}).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
@@ -26,7 +27,7 @@ describe("Horusec tests", () => {
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
-    cy.visit("http://localhost:8043/auth");
+    cy.visit("http://localhost:8043");
     cy.wait(4000);
 
     // Login with default account
