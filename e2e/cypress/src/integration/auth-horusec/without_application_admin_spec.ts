@@ -36,6 +36,8 @@ function CreateDefaultAccount(): void {
     cy.get("#username").clear().type("dev");
     cy.get("#email").clear().type("dev@example.com");
     cy.get("button").contains("Next").click();
+    cy.wait(2000);
+    cy.get("#password").should("exist");
     cy.get("#password").clear().type("Devpass0*");
     cy.get("#confirm-pass").clear().type("Devpass0*");
     cy.get("button").contains("Register").click();
