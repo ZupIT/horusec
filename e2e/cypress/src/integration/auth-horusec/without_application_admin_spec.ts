@@ -2,28 +2,27 @@ import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
-    before(() => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
-        cy.wait(4000);
-    });
-
     it("Should test all operations horusec", () => {
-        CreateDefaultAccount();
-        LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
-        CreateEditDeleteAnWorkspace();
-        CreateWorkspace("Company e2e");
-        CheckIfDashboardIsEmpty();
-        CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
-        CheckIfDashboardNotIsEmpty();
-        CreateEditDeleteAnRepository();
-        CreateRepository("Core-API");
-        CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
-        CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
-        CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
-        CreateUserAndInviteToExistingWorkspace();
-        CheckIfPermissionsIsEnableToWorkspaceMember();
-        InviteUserToRepositoryAndCheckPermissions("Core-API");
-        LoginAndUpdateDeleteAccount();
+        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0)
+            .then(() => {
+                cy.wait(4000);
+                CreateDefaultAccount();
+                LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
+                CreateEditDeleteAnWorkspace();
+                CreateWorkspace("Company e2e");
+                CheckIfDashboardIsEmpty();
+                CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
+                CheckIfDashboardNotIsEmpty();
+                CreateEditDeleteAnRepository();
+                CreateRepository("Core-API");
+                CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
+                CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
+                CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
+                CreateUserAndInviteToExistingWorkspace();
+                CheckIfPermissionsIsEnableToWorkspaceMember();
+                InviteUserToRepositoryAndCheckPermissions("Core-API");
+                LoginAndUpdateDeleteAccount();
+            })
     });
 });
 
