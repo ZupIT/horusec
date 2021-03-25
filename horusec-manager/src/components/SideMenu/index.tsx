@@ -27,6 +27,7 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import SelectMenu from 'components/SelectMenu';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -171,16 +172,17 @@ const SideMenu: React.FC = () => {
 
           {allWorkspaces && allWorkspaces.length > 0 ? (
             <Styled.SelectWrapper>
-              <Select
-                options={allWorkspaces}
-                initialValue={currentWorkspace}
-                onChangeValue={(value) => handleSelectedWorkspace(value)}
-                keyLabel="name"
-                title="WORKSPACE"
-                hasSearch
-                background="none"
-                fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
-                onClickFixedItem={() => history.push('/home/workspaces')}
+              <SelectMenu
+                title={'WORKSPACE'}
+                value={currentWorkspace?.name}
+                options={allWorkspaces.map((el) => ({
+                  title: el.name,
+                  action: () => handleSelectedWorkspace(el),
+                }))}
+                fixItem={{
+                  title: t('SIDE_MENU.MANAGE_WORKSPACES'),
+                  action: () => history.push('/home/workspaces'),
+                }}
               />
             </Styled.SelectWrapper>
           ) : null}

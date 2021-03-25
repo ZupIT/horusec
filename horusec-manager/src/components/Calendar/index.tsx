@@ -25,6 +25,8 @@ import format from 'date-fns/format';
 
 import DateFnsUtils from '@date-io/date-fns';
 import { connect, useField } from 'formik';
+import { IconButton } from '@material-ui/core';
+import { Today } from '@material-ui/icons';
 
 class PtBrLocalizedUtils extends DateFnsUtils {
   getCalendarHeaderText(date: number | Date) {
@@ -95,12 +97,22 @@ function CalendarMui({
         value={value}
         fullWidth
         format={dateFormat}
-        error={touched && !!error}
-        helperText={touched && error}
+        error={touched && !!error && !!value}
+        helperText={touched && !!value && error}
         id={name}
         maxDate={maxDate}
         minDate={minDate}
         variant="inline"
+        size="small"
+        clearable={true}
+        InputProps={{
+          tabIndex: 0,
+          endAdornment: (
+            <IconButton size="small">
+              <Today />
+            </IconButton>
+          ),
+        }}
       />
     </MuiPickersUtilsProvider>
   );

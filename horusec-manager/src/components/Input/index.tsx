@@ -18,6 +18,8 @@ import React, { InputHTMLAttributes, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Field } from 'helpers/interfaces/Field';
 import {
+  FormControl,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   TextField,
@@ -49,7 +51,6 @@ function Input({
 }: InputProps & TextFieldProps) {
   const [inputType, setInputType] = useState(type);
   const theme = getCurrentTheme();
-
   const [field, { error, touched, value }] = useField(name);
 
   return (
@@ -66,6 +67,9 @@ function Input({
         multiline={multiline}
         error={touched && !!error}
         helperText={touched && error}
+        FormHelperTextProps={{
+          tabIndex: 0,
+        }}
         autoComplete="off"
         InputProps={{
           endAdornment:

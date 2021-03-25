@@ -65,16 +65,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
 
-  const [repositories, setRepositories] = useState<any[]>([]);
-  // const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
-
-  const [filters, setFilters] = useState<FilterValues>({
-    initialDate: null,
-    finalDate: null,
-    repositoryID: null,
-    companyID: null,
-    type,
-  });
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
   const ValidationScheme = Yup.object({
     period: Yup.string().notRequired(),
@@ -85,30 +76,13 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
 
-  type InitialValue = Yup.InferType<typeof ValidationScheme>;
-
-  const initialValues: InitialValue = {
+  const initialValues: FilterValues = {
     period: fixedRanges[0].value,
     initialDate: null,
     finalDate: null,
     repositoryID: repositories[0]?.repositoryID,
     companyID: repositories[0]?.companyID,
     type: type,
-  };
-
-  const handleSelectedPeriod = (item: { label: string; value: string }) => {
-    const getRangeOfPeriod: ObjectLiteral = {
-      customRange: [today, today],
-      today: [today, today],
-      lastWeek: [lastWeek, today],
-      lastMonth: [lastMonth, today],
-      beginning: [null, null],
-    };
-    setFilters({
-      ...filters,
-      initialDate: getRangeOfPeriod[item.value][0],
-      finalDate: getRangeOfPeriod[item.value][1],
-    });
   };
 
   useEffect(() => {
@@ -119,21 +93,11 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const repositories: Repository[] = result.data.content;
-            setRepositories(
-              repositories.map((el) => ({
-                label: el.description,
-                value: el.repositoryID,
-              }))
-            );
+            setRepositories(repositories);
 
             if (repositories.length > 0) {
-              setFilters({
-                ...filters,
-                repositoryID: repositories[0]?.repositoryID,
-                companyID: repositories[0]?.companyID,
-              });
               onApply({
-                ...filters,
+                ...initialValues,
                 repositoryID: repositories[0]?.repositoryID,
                 companyID: repositories[0]?.companyID,
               });
@@ -147,9 +111,9 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     if (currentWorkspace) {
       if (type === 'repository') {
         fetchRepositories();
-      } else if (filters) {
+      } else {
         onApply({
-          ...filters,
+          ...initialValues,
           companyID: currentWorkspace.companyID,
         });
       }
@@ -160,11 +124,30 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     // eslint-disable-next-line
   }, [currentWorkspace]);
 
+  const getRangeOfPeriod: ObjectLiteral = {
+    beginning: [null, null],
+    customRange: [today, today],
+    today: [today, today],
+    lastWeek: [lastWeek, today],
+    lastMonth: [lastMonth, today],
+  };
+
   return (
     <Formik
       initialValues={initialValues}
-      // validationSchema={ValidationScheme}
-      onSubmit={(values) => {}}
+      enableReinitialize={true}
+      validationSchema={ValidationScheme}
+      onSubmit={(values) => {
+        if (values.period !== fixedRanges[1].value) {
+          values.initialDate = getRangeOfPeriod[values.period][0];
+          values.finalDate = getRangeOfPeriod[values.period][1];
+        } else {
+          values.initialDate = new Date(values.initialDate);
+          values.finalDate = new Date(values.finalDate);
+        }
+
+        onApply(values);
+      }}
     >
       {(props) => (
         <Styled.Container>
@@ -194,21 +177,13 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           ) : null}
           {type === 'repository' ? (
             <Styled.Wrapper>
-              <Select
-                keyLabel="name"
-                appearance="underline"
-                initialValue={repositories[0]}
-                options={repositories}
-                title={t('DASHBOARD_SCREEN.REPOSITORY')}
-                hasSearch
-                onChangeValue={(value) =>
-                  setFilters({ ...filters, repositoryID: value.repositoryID })
-                }
-              />
               <SearchSelect
                 name="repositoryID"
                 label={t('DASHBOARD_SCREEN.REPOSITORY')}
-                options={repositories}
+                options={repositories.map((el) => ({
+                  label: el.name,
+                  value: el.repositoryID,
+                }))}
               />
             </Styled.Wrapper>
           ) : null}
@@ -217,9 +192,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             rounded
             width={78}
             type="submit"
-            // onClick={() =>
-            //   onApply({ ...filters, companyID: currentWorkspace.companyID })
-            // }
           />
         </Styled.Container>
       )}

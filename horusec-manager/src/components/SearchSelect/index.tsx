@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { InputHTMLAttributes, useEffect, useState } from 'react';
+import React, { InputHTMLAttributes, memo, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Field } from 'helpers/interfaces/Field';
 import {
@@ -33,6 +33,7 @@ import { useField, connect } from 'formik';
 import { string } from 'yup';
 import { Autocomplete } from '@material-ui/lab';
 import { useTranslation } from 'react-i18next';
+import { uniqueId } from 'lodash';
 
 interface Option {
   label: string;
@@ -46,35 +47,48 @@ interface InputProps {
 
 function SelectInput({ label, name, options }: InputProps & TextFieldProps) {
   const { t } = useTranslation();
-  const [field, { error, touched, value }] = useField(name);
-  const [state, setState] = useState<Option>(
-    options.find((el) => el.value === value)
-  );
+  const [field, { error, touched, value, initialValue }] = useField(name);
+  const getOption = options.find((el) => el.value === initialValue) || null;
+
+  const [state, setState] = useState<Option | null>(getOption);
 
   useEffect(() => {
-    state && field.onChange(name)(state.value);
-  }, [state]);
+    if (isEmpty(state) && options.length && initialValue) {
+      console.log(options.length);
+      setState(getOption);
+    }
+  }, [initialValue]);
 
   return (
     <div style={{ display: 'block' }}>
       <Autocomplete
         options={options}
-        renderInput={(params) => (
-          <TextField {...params} name={name} label={label} />
-        )}
-        openOnFocus
         getOptionLabel={(option) => option.label || ''}
-        onChange={(event, value: any) => {
+        getOptionSelected={(option, value) => {
+          return value !== undefined ? option.value === value.value : false;
+        }}
+        value={state}
+        onChange={(_event, value: any) => {
           setState(value);
+          field.onChange(name)(value ? value.value : '');
         }}
         onBlur={field.onBlur}
-        value={state}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            name={name}
+            label={label}
+            size="small"
+            error={touched && !!error}
+            helperText={touched && error}
+            FormHelperTextProps={{ tabIndex: 0 }}
+          />
+        )}
         disableClearable
-        disableListWrap
         noOptionsText={t('GENERAL.NO_OPTIONS')}
       />
     </div>
   );
 }
 
-export default connect(SelectInput);
+export default connect(memo(SelectInput));

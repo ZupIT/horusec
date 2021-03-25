@@ -130,7 +130,7 @@ function PasswordForm() {
       <Formik
         initialValues={initialValues}
         validationSchema={ValidationScheme}
-        validate={(props) => handlePasswordValue(props.password)}
+        validate={(values) => handlePasswordValue(values.password)}
         onSubmit={(values) => {
           createAccount(values.password);
         }}
