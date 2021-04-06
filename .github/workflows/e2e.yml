@@ -32,7 +32,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: DEBUG=cypress:* make test-e2e-auth-horusec-without-application-admin
+        run: make test-e2e-auth-horusec-without-application-admin
   e2e-auth-keycloak-without-application-admin:
     name: e2e-auth-keycloak-without-application-admin
     runs-on: ubuntu-latest
@@ -46,4 +46,4 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: DEBUG=cypress:* make test-e2e-auth-keycloak-without-application-admin
+        run: make test-e2e-auth-keycloak-without-application-admin

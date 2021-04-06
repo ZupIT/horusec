@@ -9,7 +9,7 @@
 <p></p>
 
 ## What is Horusec?
-Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. See in our [DOCUMENTATION](https://horusec.io/docs) the complete list of tools and languages that we perform analysis
+Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. See in our [DOCUMENTATION](https://horusec.io/docs/overview/) the complete list of tools and languages that we perform analysis
 
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
@@ -30,7 +30,7 @@ In order to achieve our goals, we separated in some delivery phases:
 ## Getting started
 
 ## CLI
-To see more details how install go to <a href="https://horusec.io/docs/cli/installing">HERE</a>
+To see more details how install go to <a href="https://horusec.io/docs/cli/installation/">HERE</a>
 
 #### Check the installation
 ```bash
@@ -48,7 +48,7 @@ or send with the authorization token to view the content analytically in web app
 ```bash
 horusec start -a="<YOUR_TOKEN_AUTHORIZATION>"
 ```
-To acquire the authorization token and you can see your vulnerabilities analytically on our panel see more details <a href="https://horusec.io/docs/tutorials/how-to-create-authorization-token">HERE</a>
+To acquire the authorization token and you can see your vulnerabilities analytically on our panel see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>
 
 
 **WARN:** When horusec starts an analysis it creates a folder called `.horusec`. This folder serves as the basis for not changing your code. So we recommend that you add the line `.horusec` into your `.gitignore` file so that this folder does not need to be sent to your git server!
@@ -65,7 +65,7 @@ Horusec's web applications are an extension of the CLI's functionalities in orde
 * Classificação de vulnerabilidade
 * Integração com outros tipos de oAuth
 * Integração com serviço de menssageria
-[See more details here](https://horusec.io/docs/web/introduction)
+[See more details here](https://horusec.io/docs/web/overview/)
 ## Contributing
 
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to horusec.
