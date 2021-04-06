@@ -36,6 +36,8 @@ const SubTitle = styled.h2`
 
 const PassRequirements = styled.div`
   margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Info = styled.p`
@@ -46,7 +48,7 @@ const Info = styled.p`
   font-weight: 600;
 `;
 
-const Item = styled.li<ItemProps>`
+const Item = styled.span<ItemProps>`
   color: ${({ theme }) => theme.colors.text.opaque};
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   margin: 0 0 5px 10px;

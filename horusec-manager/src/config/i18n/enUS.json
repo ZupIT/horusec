@@ -13,6 +13,7 @@
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "For your security, enter the e-mail registered to reset your password",
+    "ARIA_INPUT_EMAIL": "Input: Enter the registered email to reset the password",
     "EMAIL": "E-mail",
     "CODE": "Code",
     "INVALID_EMAIL": "Invalid e-mail",
@@ -28,7 +29,7 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It can't be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
@@ -52,7 +53,7 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It cannot be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
@@ -234,12 +235,25 @@
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "BUTTON_LOADING": "Button in loading",
+    "PASS_VISIBILITY": "View or hidden password",
     "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
       "OF": "of",
       "PAGES": "pages"
     }
+  },
+  "FOOTER": {
+    "DEVELOPED": "Developed",
+    "WITH": "with",
+    "LOVE": "love",
+    "BY": "by"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Change the language,",
+    "CURRENT": "Current language: ",
+    "SELECT": "Select: "
   },
   "PERMISSIONS": {
     "ADMIN": "Administrator",

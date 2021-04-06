@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-bottom: 50px;
-
-  ${isMicrofrontend()
-    ? css`
-        height: calc(100vh - 50px);
-      `
-    : css`
-        height: 96.3vh;
-      `}
+  height: 96.3vh;
 
   @media (max-width: 768px) {
     margin-top: 40px;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 
@@ -23,6 +23,8 @@ interface Props {
 }
 
 const Splash: React.FC<Props> = ({ isVisible }) => {
+  const splashRef = useRef(null);
+
   const [visible, setVisible] = useState(true);
   const [startAnimation, setStartAnimation] = useState(true);
 
@@ -39,7 +41,7 @@ const Splash: React.FC<Props> = ({ isVisible }) => {
   }, [isVisible]);
 
   return (
-    <Styled.Container isVisible={visible}>
+    <Styled.Container isVisible={visible} ref={splashRef}>
       <Styled.Logo
         isVisible={startAnimation}
         src={HorusecLogo}

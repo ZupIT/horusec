@@ -69,6 +69,7 @@ function LoginScreen() {
       {!disabledBroker ? (
         <Styled.ForgotPass
           onClick={() => history.push(`${path}/recovery-password`)}
+          tabIndex={0}
         >
           {t('LOGIN_SCREEN.FORGOT_PASS')}
         </Styled.ForgotPass>
@@ -78,6 +79,7 @@ function LoginScreen() {
         isDisabled={!password.isValid || !email.isValid}
         isLoading={loginInProgress}
         text={t('LOGIN_SCREEN.SUBMIT')}
+        onClick={handleSubmit}
         type="submit"
         rounded
       />

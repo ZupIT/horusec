@@ -13,6 +13,7 @@
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
+    "ARIA_INPUT_EMAIL": "Input: Digite o e-mail cadastrado para redefinir a senha",
     "EMAIL": "Email",
     "CODE": "Código",
     "INVALID_EMAIL": "Email inválido",
@@ -28,7 +29,7 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
@@ -52,7 +53,7 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
@@ -234,12 +235,25 @@
   "GENERAL": {
     "SELECT": "Selecione",
     "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
+    "PASS_VISIBILITY": "Visualizar ou Ocultar senha",
     "PAGINATION": {
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",
       "PAGES": "páginas"
     }
+  },
+  "FOOTER": {
+    "DEVELOPED": "Desenvolvido",
+    "WITH": "com",
+    "LOVE": "amor",
+    "BY": "por"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Alterar linguagem,",
+    "CURRENT": "Linguagem selecionada: ",
+    "SELECT": "Selecionar: "
   },
   "PERMISSIONS": {
     "ADMIN": "Administrador",

@@ -16,7 +16,6 @@
 
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
-import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
 import Select from 'components/Select';
 
 interface RouterItemProps {
@@ -107,14 +106,6 @@ const SubMenu = styled.div<SubMenuProps>`
   left: -165px;
   transition: left 0.6s;
   position: absolute;
-
-  ${isMicrofrontend()
-    ? css`
-        height: calc(96.3vh - 50px);
-      `
-    : css`
-        height: 96.3vh;
-      `}
 
   ${({ isActive }) =>
     isActive &&

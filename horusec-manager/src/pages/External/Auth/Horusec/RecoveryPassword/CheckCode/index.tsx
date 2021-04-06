@@ -94,6 +94,7 @@ function CheckCode() {
           isDisabled={!code.isValid}
           text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
           type="submit"
+          onClick={handleSubmit}
           rounded
         />
 
