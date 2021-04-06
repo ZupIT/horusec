@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  ariaLabel?: string;
   name: string;
   invalidMessage?: string;
   width?: string;
@@ -38,6 +39,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const Input: React.FC<InputProps> = ({
   label,
+  ariaLabel,
   invalidMessage,
   name,
   width,
@@ -93,6 +95,7 @@ const Input: React.FC<InputProps> = ({
           id={name}
           onChange={handleOnChange}
           value={initialValue}
+          aria-label={ariaLabel}
           aria-describedby={`${name}-error`}
         />
 

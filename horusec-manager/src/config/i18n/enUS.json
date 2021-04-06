@@ -13,6 +13,7 @@
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "For your security, enter the e-mail registered to reset your password",
+    "ARIA_INPUT_EMAIL": "Input: Enter the registered email to reset the password",
     "EMAIL": "E-mail",
     "CODE": "Code",
     "INVALID_EMAIL": "Invalid e-mail",

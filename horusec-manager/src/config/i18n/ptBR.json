@@ -13,6 +13,7 @@
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
+    "ARIA_INPUT_EMAIL": "Input: Digite o e-mail cadastrado para redefinir a senha",
     "EMAIL": "Email",
     "CODE": "Código",
     "INVALID_EMAIL": "Email inválido",

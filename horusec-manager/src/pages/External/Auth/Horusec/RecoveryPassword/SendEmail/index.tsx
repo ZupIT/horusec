@@ -61,6 +61,7 @@ function SendEmailScreen() {
         <Styled.Field
           onChangeValue={(field: Field) => setEmail(field)}
           label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
           name="email"
           type="email"
           invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
