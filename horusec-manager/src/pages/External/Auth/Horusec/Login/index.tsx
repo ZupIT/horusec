@@ -50,6 +50,7 @@ function LoginScreen() {
     <Styled.Form onSubmit={handleSubmit}>
       <Styled.Field
         label={t('LOGIN_SCREEN.EMAIL')}
+        ariaLabel={t('LOGIN_SCREEN.EMAIL_ARIA')}
         name="email"
         type="text"
         onChangeValue={(field: Field) => setEmail(field)}
@@ -59,6 +60,7 @@ function LoginScreen() {
 
       <Styled.Field
         label={t('LOGIN_SCREEN.PASSWORD')}
+        ariaLabel={t('LOGIN_SCREEN.PASSWORD_ARIA')}
         name="password"
         type="password"
         onChangeValue={(field: Field) => setPassword(field)}
