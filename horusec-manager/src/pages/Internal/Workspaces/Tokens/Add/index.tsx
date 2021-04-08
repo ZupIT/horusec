@@ -131,9 +131,6 @@ const AddToken: React.FC<Props> = ({
             <Styled.Form>
               <Styled.Field
                 label={t('WORKSPACES_SCREEN.DESCRIPTION')}
-                // invalidMessage={t("WORKSPACES_SCREEN.INVALID_DESCRIPTION")}
-                // onChangeValue={(field: Field) => setDescription(field)}
-                // validation={isEmptyString}
                 name="description"
               />
 

@@ -15,6 +15,14 @@ const themeMatUi = createMuiTheme({
   },
 
   overrides: {
+    MuiSelect: {
+      select: {
+        paddingLeft: '5px',
+      },
+      icon: {
+        color: theme.colors.button.text,
+      },
+    },
     MuiInputBase: {
       root: {
         color: theme.colors.input.text,
@@ -31,14 +39,14 @@ const themeMatUi = createMuiTheme({
     },
     MuiInput: {
       underline: {
-        '&:$before': {
-          borderColor: theme.colors.input.border,
+        '&:before': {
+          borderColor: `${theme.colors.input.border} !important`,
         },
-        '&:$after': {
-          borderColor: theme.colors.input.border,
+        '&:after': {
+          borderColor: `${theme.colors.input.border} !important`,
         },
-        '&:$hover:$not(.Mui-disable):$before': {
-          borderColor: theme.colors.input.border,
+        '&:hover:not($disabled):before': {
+          borderColor: `${theme.colors.input.border} !important`,
         },
       },
     },

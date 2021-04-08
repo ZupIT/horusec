@@ -124,6 +124,7 @@
       "EDIT_SUBTITLE": "Edit the user below:",
       "INVITE_SUBTITLE": "Invite a new user below:",
       "EMAIL": "E-mail",
+      "ROLE": "Role",
       "INVALID_EMAIL": "Invalid e-mail",
       "CONFIRM_DELETE": "Do you really want remove this user of workspace?",
       "YES": "Yes",

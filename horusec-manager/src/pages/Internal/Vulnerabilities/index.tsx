@@ -23,7 +23,7 @@ import repositoryService from 'services/repository';
 import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -31,6 +31,8 @@ import { useTheme } from 'styled-components';
 import { find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { AxiosError, AxiosResponse } from 'axios';
+import { Autocomplete } from '@material-ui/lab';
+import { TextField } from '@material-ui/core';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
@@ -51,10 +53,10 @@ const Vulnerabilities: React.FC = () => {
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
   const [filters, setFilters] = useState<FilterVuln>({
     companyID: currentWorkspace?.companyID,
-    repositoryID: null,
-    vulnHash: null,
-    vulnSeverity: null,
-    vulnType: null,
+    repositoryID: repositories[0]?.repositoryID,
+    vulnHash: '',
+    vulnSeverity: 'All',
+    vulnType: 'All',
   });
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: INITIAL_PAGE,
@@ -70,55 +72,57 @@ const Vulnerabilities: React.FC = () => {
 
   const vulnTypes = [
     {
+      label: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
+      value: 'All',
+    },
+    {
+      label: t('VULNERABILITIES_SCREEN.STATUS.VULNERABILITY'),
       value: 'Vulnerability',
-      description: t('VULNERABILITIES_SCREEN.STATUS.VULNERABILITY'),
     },
     {
+      label: t('VULNERABILITIES_SCREEN.STATUS.RISKACCEPTED'),
       value: 'Risk Accepted',
-      description: t('VULNERABILITIES_SCREEN.STATUS.RISKACCEPTED'),
     },
     {
+      label: t('VULNERABILITIES_SCREEN.STATUS.FALSEPOSITIVE'),
       value: 'False Positive',
-      description: t('VULNERABILITIES_SCREEN.STATUS.FALSEPOSITIVE'),
     },
     {
+      label: t('VULNERABILITIES_SCREEN.STATUS.CORRECTED'),
       value: 'Corrected',
-      description: t('VULNERABILITIES_SCREEN.STATUS.CORRECTED'),
     },
   ];
 
   const severities = [
     {
-      value: null,
-      description: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
+      label: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
+      value: 'All',
     },
     {
+      label: 'CRITICAL',
       value: 'CRITICAL',
-      description: 'CRITICAL',
     },
     {
+      label: 'HIGH',
       value: 'HIGH',
-      description: 'HIGH',
     },
     {
+      label: 'MEDIUM',
       value: 'MEDIUM',
-      description: 'MEDIUM',
     },
     {
+      label: 'LOW',
       value: 'LOW',
-      description: 'LOW',
     },
     {
+      label: 'INFO',
       value: 'INFO',
-      description: 'INFO',
     },
     {
+      label: 'UNKNOWN',
       value: 'UNKNOWN',
-      description: 'UNKNOWN',
     },
   ];
-
-  const severitiesOptions = severities.slice(1);
 
   const isAdminOrSupervisorOfRepository = () => {
     const repository = find(repositories, {
@@ -145,10 +149,16 @@ const Vulnerabilities: React.FC = () => {
         vulnerability.vulnerabilityID,
         type
       )
-      .then(() => {
+      .then((response: AxiosResponse) => {
+        const result: Vulnerability = response.data.content;
+        setVulnerabilities((state) =>
+          state.map((el) =>
+            el.vulnerabilityID === result.vulnerabilityID ? result : el
+          )
+        );
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         setRefresh((state) => state);
         dispatchMessage(err?.response?.data);
       });
@@ -165,8 +175,14 @@ const Vulnerabilities: React.FC = () => {
         vulnerability.vulnerabilityID,
         severity
       )
-      .then(() => {
+      .then((response: AxiosResponse) => {
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+        const result: Vulnerability = response.data.content;
+        setVulnerabilities((state) =>
+          state.map((el) =>
+            el.vulnerabilityID === result.vulnerabilityID ? result : el
+          )
+        );
       })
       .catch((err: AxiosError) => {
         setRefresh((state) => state);
@@ -203,7 +219,7 @@ const Vulnerabilities: React.FC = () => {
         setLoading(true);
 
         const page = refresh.page;
-        let filter = refresh.filter;
+        const filter = refresh.filter;
 
         if (page.pageSize !== pagination.pageSize) {
           page.currentPage = INITIAL_PAGE;
@@ -213,16 +229,19 @@ const Vulnerabilities: React.FC = () => {
           filter.repositoryID = repositories[0].repositoryID;
         }
 
-        setFilters(filter);
-
-        filter = {
+        const filterAux = {
           ...filter,
           vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
           vulnType: filter.vulnHash ? null : filter.vulnType,
         };
 
+        setFilters(filter);
+
+        if (filterAux.vulnSeverity === 'All') filterAux.vulnSeverity = null;
+        if (filterAux.vulnType === 'All') filterAux.vulnType = null;
+
         repositoryService
-          .getAllVulnerabilities(filter, page)
+          .getAllVulnerabilities(filterAux, page)
           .then((result: AxiosResponse) => {
             if (!isCancelled) {
               const response = result.data?.content;
@@ -263,8 +282,15 @@ const Vulnerabilities: React.FC = () => {
       isCancelled = true;
     };
     // eslint-disable-next-line
-  }, [repositories.length, refresh, pagination.pageSize]);
+  }, [refresh, repositories.length, pagination.pageSize]);
 
+  const getValueRepo = () => {
+    const repo = repositories.find(
+      (x) => x.repositoryID === filters.repositoryID
+    );
+    return repo ? { label: repo.name, value: repo.repositoryID } : null;
+  };
+  console.log(filters.vulnSeverity);
   return (
     <Styled.Wrapper>
       <Styled.Options>
@@ -273,55 +299,65 @@ const Vulnerabilities: React.FC = () => {
           onSearch={(value) => handleSearch(value)}
         />
 
-        <Styled.Select
-          keyLabel="description"
+        <Select
           width="250px"
-          selectText={t('VULNERABILITIES_SCREEN.ALL_SEVERITIES')}
+          placeholder={t('VULNERABILITIES_SCREEN.ALL_SEVERITIES')}
           disabled={!!filters.vulnHash}
           options={severities}
-          title={t('VULNERABILITIES_SCREEN.SEVERITY')}
-          onChangeValue={(item) =>
+          value={filters.vulnSeverity}
+          label={t('VULNERABILITIES_SCREEN.SEVERITY')}
+          onChangeValue={(item) => {
+            setFilters((state) => ({ ...state, vulnSeverity: item }));
             setRefresh({
-              filter: { ...filters, vulnSeverity: item.value },
+              filter: { ...filters, vulnSeverity: item },
               page: { ...pagination, currentPage: INITIAL_PAGE },
-            })
-          }
+            });
+          }}
         />
 
         <Styled.Select
-          keyLabel="description"
           width="250px"
-          selectText={t('VULNERABILITIES_SCREEN.ALL_STATUS')}
+          placeholder={t('VULNERABILITIES_SCREEN.ALL_STATUS')}
           disabled={!!filters.vulnHash}
-          options={[
-            {
-              description: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
-              value: null,
-            },
-            ...vulnTypes,
-          ]}
-          title={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
-          onChangeValue={(item) =>
+          options={vulnTypes}
+          label={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
+          value={filters.vulnType}
+          onChangeValue={(item) => {
+            setFilters((state) => ({ ...state, vulnType: item }));
             setRefresh({
-              filter: { ...filters, vulnType: item.value },
+              filter: { ...filters, vulnType: item },
               page: { ...pagination, currentPage: INITIAL_PAGE },
-            })
-          }
+            });
+          }}
         />
 
-        <Select
-          keyLabel="name"
-          width="250px"
-          hasSearch
-          initialValue={repositories[0]}
-          options={repositories}
-          title={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-          onChangeValue={(item) =>
+        <Autocomplete
+          style={{ width: '250px' }}
+          options={repositories.map((el) => ({
+            label: el.name,
+            value: el.repositoryID,
+          }))}
+          getOptionLabel={(option) => option.label || ''}
+          getOptionSelected={(option, value) => {
+            return value !== undefined ? option.value === value.value : false;
+          }}
+          value={getValueRepo()}
+          onChange={(_event, value: any) => {
             setRefresh({
-              filter: { ...filters, repositoryID: item.repositoryID },
+              filter: { ...filters, repositoryID: value.value },
               page: { ...pagination, currentPage: INITIAL_PAGE },
-            })
-          }
+            });
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t('VULNERABILITIES_SCREEN.REPOSITORY')}
+              size="small"
+              FormHelperTextProps={{ tabIndex: 0 }}
+            />
+          )}
+          disableClearable
+          noOptionsText={t('GENERAL.NO_OPTIONS')}
         />
       </Styled.Options>
 
@@ -363,33 +399,30 @@ const Vulnerabilities: React.FC = () => {
               hash: row.vulnHash,
               severity: (
                 <Select
-                  keyLabel="description"
-                  keyValue="value"
-                  width="150px"
-                  className="select-role"
-                  backgroundColor={{
-                    colors: colors.vulnerabilities,
-                    default: colors.vulnerabilities.DEFAULT,
+                  style={{
+                    backgroundColor: get(
+                      colors.vulnerabilities,
+                      row.severity,
+                      colors.vulnerabilities.DEFAULT
+                    ),
                   }}
-                  initialValue={row.severity}
-                  options={severitiesOptions}
+                  width="150px"
+                  value={row.severity}
+                  options={severities.slice(1)}
                   disabled={!isAdminOrSupervisorOfRepository()}
                   onChangeValue={(value) =>
-                    handleUpdateVulnerabilitySeverity(row, value?.value)
+                    handleUpdateVulnerabilitySeverity(row, value)
                   }
                 />
               ),
               status: (
                 <Select
-                  keyLabel="description"
-                  keyValue="value"
-                  width="150px"
-                  className="select-role"
-                  initialValue={row.type}
-                  options={vulnTypes}
+                  value={row.type}
+                  options={vulnTypes.slice(1)}
+                  width="200px"
                   disabled={!isAdminOrSupervisorOfRepository()}
                   onChangeValue={(value) =>
-                    handleUpdateVulnerabilityType(row, value.value)
+                    handleUpdateVulnerabilityType(row, value)
                   }
                 />
               ),

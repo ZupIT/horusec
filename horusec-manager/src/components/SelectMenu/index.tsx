@@ -1,10 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
 import {
   ClickAwayListener,
   Grow,
@@ -60,7 +55,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
   const prevOpen = React.useRef(open);
   React.useEffect(() => {
     if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus();
+      anchorRef.current.focus();
     }
 
     prevOpen.current = open;

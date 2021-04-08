@@ -159,11 +159,10 @@ const AddWebhook: React.FC<Props> = ({
         <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
 
         <Select
-          keyLabel="name"
           width="100%"
-          options={repositories}
-          initialValue={webhookToEdit?.repository}
-          title={t('WEBHOOK_SCREEN.REPOSITORY')}
+          options={repositories.map((el) => ({ label: el.name, value: el }))}
+          value={selectedRepository}
+          label={t('WEBHOOK_SCREEN.REPOSITORY')}
           onChangeValue={(value) => setSelectedRepository(value)}
         />
 
@@ -171,14 +170,20 @@ const AddWebhook: React.FC<Props> = ({
 
         <Styled.Wrapper>
           <Styled.URLSelect
-            keyLabel="value"
-            keyValue="value"
             width="100px"
-            initialValue={webhookHttpMethods[0]}
-            options={webhookHttpMethods}
-            onChangeValue={(item) => setHttpMethod(item.value)}
+            value={httpMethod}
+            options={webhookHttpMethods.map((el) => ({
+              label: el.value,
+              value: el.value,
+            }))}
+            onChangeValue={(item) => setHttpMethod(item)}
             disabled
-            color={get(colors.methods, httpMethod?.toLocaleLowerCase())}
+            style={{
+              backgroundColor: get(
+                colors.methods,
+                httpMethod?.toLocaleLowerCase()
+              ),
+            }}
           />
 
           <Styled.Field

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, Dispatch, SetStateAction } from 'react';
-import { Field } from 'helpers/interfaces/Field';
+import React, { useState } from 'react';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 

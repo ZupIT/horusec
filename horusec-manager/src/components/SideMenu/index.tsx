@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
-import { Icon, Language, Logout, Helper, Select } from 'components';
+import { Icon, Language, Logout, Helper } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
@@ -38,7 +38,6 @@ const SideMenu: React.FC = () => {
   } = useWorkspace();
   const { t } = useTranslation();
   const { authType, disabledBroker } = getCurrentConfig();
-
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
 

@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import queryString from 'query-string';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Dialog } from 'components';
 import {
-  isEmptyString,
   hasLowerCase,
   hasNumber,
   hasSpecialCharacter,
   hasUpperCase,
 } from 'helpers/validators';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function NewPasswordScreen() {
   const { t } = useTranslation();
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
   const [token, setToken] = useState('');
-  const [password, setPassword] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
-  const [confirmPass, setConfirmPass] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
+
   const [passValidations, setPassValidations] = useState({
     alpha: false,
     number: false,
@@ -63,12 +56,10 @@ function NewPasswordScreen() {
     }
   }, [history]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (password.isValid && confirmPass.isValid) {
+  const handleSubmit = (password: string, confirmPass: string) => {
+    if (password && confirmPass) {
       accountService
-        .changePassword(token, password.value)
+        .changePassword(token, password)
         .then(() => {
           setSuccessDialogVisisible(true);
         })
@@ -78,19 +69,43 @@ function NewPasswordScreen() {
     }
   };
 
-  const validateEqualsPassword = (value: string) => {
-    return value === password.value;
+  const ValidationScheme = Yup.object({
+    password: Yup.string()
+      .min(8, t('RECOVERY_PASS_SCREEN.MIN_CHARACTERS'))
+      .test(
+        'regex',
+        t('RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS'),
+        (value) => hasUpperCase(value) && hasLowerCase(value)
+      )
+      .test(
+        'regex',
+        t('RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER'),
+        hasSpecialCharacter
+      )
+      .test('regex', t('RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT'), hasNumber)
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_PASS')),
+    confirmPass: Yup.string()
+      .oneOf(
+        [Yup.ref('password')],
+        t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')
+      )
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    password: '',
+    confirmPass: '',
   };
 
-  const handlePasswordValue = (field: Field) => {
+  const handlePasswordValue = (field: string) => {
     setPassValidations({
-      minCharacters: field.value.length < 8,
-      alpha: !hasUpperCase(field.value) || !hasLowerCase(field.value),
-      number: !hasNumber(field.value),
-      characterSpecial: !hasSpecialCharacter(field.value),
+      minCharacters: field.length < 8,
+      alpha: !hasUpperCase(field) || !hasLowerCase(field),
+      number: !hasNumber(field),
+      characterSpecial: !hasSpecialCharacter(field),
     });
-
-    setPassword(field);
   };
 
   return (
@@ -125,46 +140,44 @@ function NewPasswordScreen() {
         <Styled.Item>{t('RECOVERY_PASS_SCREEN.USER_NAME')}</Styled.Item>
       </Styled.PassRequirements>
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          onChangeValue={(field: Field) => handlePasswordValue(field)}
-          label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
-          name="password"
-          type="password"
-          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_PASS')}
-          validation={isEmptyString}
-        />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        validate={(values) => handlePasswordValue(values.password)}
+        onSubmit={(values) => {
+          handleSubmit(values.password, values.confirmPass);
+        }}
+      >
+        {(props) => (
+          <Styled.Form onSubmit={props.submitForm}>
+            <Styled.Field
+              label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
+              name="password"
+              type="password"
+            />
 
-        <Styled.Field
-          label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
-          onChangeValue={(field: Field) => setConfirmPass(field)}
-          name="confirm-pass"
-          type="password"
-          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')}
-          validation={validateEqualsPassword}
-        />
+            <Styled.Field
+              label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
+              name="confirm-pass"
+              type="password"
+            />
 
-        <Styled.Submit
-          isDisabled={
-            !confirmPass.isValid ||
-            !password.isValid ||
-            passValidations.alpha ||
-            passValidations.characterSpecial ||
-            passValidations.minCharacters ||
-            passValidations.number
-          }
-          text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
-          type="submit"
-          rounded
-        />
+            <Styled.Submit
+              isDisabled={!props.isValid}
+              text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
+              type="submit"
+              rounded
+            />
 
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          text={t('RECOVERY_PASS_SCREEN.BACK')}
-          rounded
-          outline
-        />
-      </Styled.Form>
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('RECOVERY_PASS_SCREEN.BACK')}
+              rounded
+              outline
+            />
+          </Styled.Form>
+        )}
+      </Formik>
 
       <Dialog
         isVisible={successDialogVisible}

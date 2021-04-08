@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import { Dialog } from 'components';
 import {
-  isEmptyString,
   hasLowerCase,
   hasNumber,
   hasSpecialCharacter,
@@ -30,7 +28,7 @@ import {
 import { CreateAccountContext } from 'contexts/CreateAccount';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import * as Yup from 'yup';
-import { Formik, useField } from 'formik';
+import { Formik } from 'formik';
 
 function PasswordForm() {
   const { t } = useTranslation();
@@ -76,15 +74,6 @@ function PasswordForm() {
     password: '',
     confirmPass: '',
   };
-
-  // const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   createAccount();
-  // };
-
-  // const validateEqualsPassword = (value: string) => {
-  //   return value === password.value;
-  // };
 
   const handlePasswordValue = (field: string) => {
     setPassValidations({

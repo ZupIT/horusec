@@ -20,8 +20,7 @@ import {
   Checkbox as CheckboxMui,
 } from '@material-ui/core';
 import { connect, useField } from 'formik';
-import React, { useState, useEffect } from 'react';
-import Styled from './styled';
+import React from 'react';
 
 interface Props {
   initialValue?: boolean;

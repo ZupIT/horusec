@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next';
 import { Repository } from 'helpers/interfaces/Repository';
 import {
   SearchBar,
-  Checkbox,
   Select,
   Permissions,
   Datatable,
@@ -33,6 +32,7 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { findIndex, cloneDeep } from 'lodash';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { Checkbox } from '@material-ui/core';
 
 interface Props {
   isVisible?: boolean;
@@ -62,15 +62,15 @@ const InviteToRepository: React.FC<Props> = ({
 
   const roles = [
     {
-      name: t('PERMISSIONS.ADMIN'),
+      label: t('PERMISSIONS.ADMIN'),
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.SUPERVISOR'),
+      label: t('PERMISSIONS.SUPERVISOR'),
       value: 'supervisor',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      label: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];
@@ -174,6 +174,13 @@ const InviteToRepository: React.FC<Props> = ({
         account.accountID,
         role
       )
+      .then(() => {
+        setFilteredUserAccounts((state) =>
+          state.map((el) =>
+            el.accountID === account.accountID ? { ...el, role } : el
+          )
+        );
+      })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
       });
@@ -244,9 +251,9 @@ const InviteToRepository: React.FC<Props> = ({
               ),
               action: (
                 <Checkbox
-                  initialValue={accountsInRepository.includes(row.accountID)}
+                  value={accountsInRepository.includes(row.accountID)}
                   disabled={row.email === currentUser?.email}
-                  onChangeValue={(value) => handleInviteUser(value, row)}
+                  onChange={(_event, checked) => handleInviteUser(checked, row)}
                 />
               ),
               permission: (
@@ -255,15 +262,9 @@ const InviteToRepository: React.FC<Props> = ({
                     row.email === currentUser?.email ||
                     !accountsInRepository.includes(row.accountID)
                   }
-                  className="select-role"
-                  width="auto"
-                  keyLabel="name"
-                  keyValue="value"
-                  initialValue={row.role}
+                  value={row.role}
                   options={roles}
-                  onChangeValue={(role) =>
-                    handleChangeUserRole(role?.value, row)
-                  }
+                  onChangeValue={(value) => handleChangeUserRole(value, row)}
                 />
               ),
             };

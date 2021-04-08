@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-import React, { InputHTMLAttributes, memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
-import { Field } from 'helpers/interfaces/Field';
-import {
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  TextField,
-  TextFieldProps,
-} from '@material-ui/core';
-
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
+import { TextField, TextFieldProps } from '@material-ui/core';
 import { useField, connect } from 'formik';
-import { string } from 'yup';
 import { Autocomplete } from '@material-ui/lab';
 import { useTranslation } from 'react-i18next';
-import { uniqueId } from 'lodash';
-
 interface Option {
   label: string;
   value: any;
@@ -43,24 +28,31 @@ interface InputProps {
   label: string;
   name: string;
   options: Option[];
+  width?: string;
 }
 
-function SelectInput({ label, name, options }: InputProps & TextFieldProps) {
+function SelectInput({
+  label,
+  name,
+  options,
+  width = '100%',
+}: InputProps & TextFieldProps) {
   const { t } = useTranslation();
-  const [field, { error, touched, value, initialValue }] = useField(name);
+  const [field, { error, touched, initialValue }, { setValue }] = useField(
+    name
+  );
   const getOption = options.find((el) => el.value === initialValue) || null;
 
   const [state, setState] = useState<Option | null>(getOption);
 
   useEffect(() => {
     if (isEmpty(state) && options.length && initialValue) {
-      console.log(options.length);
       setState(getOption);
     }
-  }, [initialValue]);
+  }, [initialValue, getOption, state, options.length]);
 
   return (
-    <div style={{ display: 'block' }}>
+    <div style={{ display: 'block', width: width }}>
       <Autocomplete
         options={options}
         getOptionLabel={(option) => option.label || ''}
@@ -70,7 +62,7 @@ function SelectInput({ label, name, options }: InputProps & TextFieldProps) {
         value={state}
         onChange={(_event, value: any) => {
           setState(value);
-          field.onChange(name)(value ? value.value : '');
+          setValue(value ? value.value : '');
         }}
         onBlur={field.onBlur}
         renderInput={(params) => (

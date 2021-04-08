@@ -14,258 +14,56 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, CSSProperties } from 'react';
-import Styled from './styled';
+import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { get, isObject, isString } from 'lodash';
-import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-
-import Select, { OptionType, StylesConfig } from '@atlaskit/select';
-import { useTheme } from 'styled-components';
+import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 
 interface Props {
-  title?: string;
-  options: any[];
+  label?: string;
+  value: any;
+  options: { label: string; value: any }[];
   disabled?: boolean;
-  fixedItemTitle?: string;
-  onClickFixedItem?: () => void;
-  keyLabel: string;
   onChangeValue: (value: any) => any;
   className?: string;
-  initialValue?: ObjectLiteral | string;
-  keyValue?: string;
   width?: string;
-  selectText?: string;
-  background?: string;
-  backgroundColor?: {
-    colors: ObjectLiteral;
-    default: string;
-  };
-  hasSearch?: boolean;
-  appearance?: 'default' | 'underline';
+  placeholder?: string;
+  style?: CSSProperties;
 }
 
 const SelectInput: React.FC<Props> = ({
-  title,
+  label,
   options,
   onChangeValue,
   className,
-  initialValue,
-  keyLabel = 'label',
-  keyValue = 'value',
-  appearance = 'default',
-  width,
-  selectText,
-  fixedItemTitle,
-  onClickFixedItem,
-  background,
-  backgroundColor,
+  value,
+  width = '100%',
   disabled = false,
-  hasSearch = false,
+  placeholder,
+  style,
 }) => {
-  const [currentValue, setCurrentValue] = useState<OptionType>(null);
   const { t } = useTranslation();
-  const theme = useTheme();
-
-  background = background || theme.colors.select.background;
-
-  const selectOptions: OptionType[] = options.map((option) => ({
-    label: option[keyLabel],
-    value: keyValue ? option[keyValue] || option[keyLabel] : null,
-    option: option,
-  }));
-
-  if (fixedItemTitle) {
-    selectOptions.push({
-      label: fixedItemTitle,
-      value: fixedItemTitle,
-      option: fixedItemTitle,
-    });
-  }
-
-  const handleSelectedValue = (option: any) => {
-    if (fixedItemTitle && option.option === fixedItemTitle) {
-      onClickFixedItem();
-    } else if (!disabled) {
-      onChangeValue(option.option);
-      setCurrentValue(option);
-    }
-  };
-
-  const getValue = (currentOption: string | number) => {
-    return selectOptions.find((value) => value.value === currentOption) || null;
-  };
-
-  useEffect(() => {
-    if (initialValue) {
-      setCurrentValue(() => {
-        if (isObject(initialValue)) {
-          return (
-            getValue(initialValue[keyLabel]) || getValue(initialValue[keyValue])
-          );
-        }
-
-        if (isString(initialValue)) {
-          return getValue(initialValue);
-        }
-
-        return null;
-      });
-    }
-    // eslint-disable-next-line
-  }, [initialValue]);
-
-  const controlBackground = (() => {
-    if (backgroundColor && currentValue) {
-      const { colors, default: colorDefault } = backgroundColor;
-      return get(colors, currentValue.value, colorDefault);
-    }
-    return background;
-  })();
-
-  const selectStyles: Partial<StylesConfig<OptionType, false>> = {
-    control: (style: CSSProperties) => {
-      const styles = {
-        ...style,
-        background: controlBackground,
-        minHeight: 'auto',
-        border: 'none',
-        borderRadius: 4,
-        ':hover': {
-          background: controlBackground,
-          borderColor: '#fff',
-        },
-      };
-
-      if (appearance === 'underline') {
-        styles['borderBottom'] = '1px solid #fff';
-        styles['borderRadius'] = 0;
-      }
-
-      return styles;
-    },
-    placeholder: (style: CSSProperties) => ({
-      ...style,
-      color: theme.colors.select.text,
-    }),
-    dropdownIndicator: (style: CSSProperties) => ({
-      ...style,
-      color: theme.colors.select.text,
-    }),
-    menuList: (style: CSSProperties) => ({
-      ...style,
-      background: theme.colors.background.highlight,
-    }),
-    input: (style: CSSProperties) => ({
-      ...style,
-      color: theme.colors.select.text,
-      fontSize: theme.metrics.fontSize.medium,
-    }),
-    option: (style: CSSProperties) => {
-      const styles = {
-        ...style,
-        color: theme.colors.select.text,
-        fontSize: theme.metrics.fontSize.small,
-        background: theme.colors.background.highlight,
-        ':hover': {
-          background: theme.colors.background.primary,
-        },
-        ':last-child': {},
-      };
-
-      if (fixedItemTitle) {
-        styles[':last-child'] = {
-          color: theme.colors.select.highlight,
-          textDecoration: 'underline',
-        };
-      }
-
-      return styles;
-    },
-    singleValue: (style: CSSProperties) => ({
-      ...style,
-      color: theme.colors.select.text,
-      fontSize: theme.metrics.fontSize.medium,
-    }),
-  };
 
   return (
-    <Styled.Container width={width}>
-      {title ? <Styled.Title>{title}</Styled.Title> : null}
+    <FormControl className={className} style={{ width: width }}>
+      {label && <InputLabel id="select-label">{label}</InputLabel>}
       <Select
-        value={getValue(currentValue?.value)}
-        className={className}
-        isSearchable={hasSearch}
-        isDisabled={disabled}
-        styles={selectStyles}
-        options={selectOptions}
-        onChange={(option) => handleSelectedValue(option)}
-        placeholder={selectText || t('GENERAL.SELECT') + '...'}
-        noOptionsMessage={() => t('GENERAL.NO_OPTIONS')}
-      />
-    </Styled.Container>
-    // <Styled.Wrapper
-    //   rounded={rounded}
-    //   disabled={disabled}
-    //   width={width}
-    //   onClick={() => (disabled ? null : setOpenOptionsList(!openOptionsList))}
-    // >
-    //   {title ? <Styled.Title>{title}</Styled.Title> : null}
-
-    //   <Styled.Container
-    //     disabled={disabled}
-    //     rounded={rounded}
-    //     className={className}
-    //     width={width}
-    //     backgroundColor={
-    //       backgroundColors
-    //         ? get(
-    //             backgroundColors.colors,
-    //             currentValue,
-    //             backgroundColors.default
-    //           )
-    //         : null
-    //     }
-    //   >
-    //     <Styled.CurrentValue
-    //       disabled={!hasSearch}
-    //       type="text"
-    //       onChange={handleSearchValue}
-    //       value={currentValue}
-    //     />
-
-    //     <Styled.OptionsList
-    //       isOpen={openOptionsList}
-    //       rounded={rounded}
-    //       width={width}
-    //       height={optionsHeight}
-    //       className="options-list"
-    //       ref={optionsRef}
-    //     >
-    //       {filteredOptions.map((option, index) => (
-    //         <Styled.OptionItem
-    //           rounded={rounded}
-    //           key={index}
-    //           className="options-item"
-    //           onClick={() => handleSelectedValue(option)}
-    //         >
-    //           {option[keyLabel]}
-    //         </Styled.OptionItem>
-    //       ))}
-
-    //       {fixedItemTitle ? (
-    //         <Styled.FixedOptionItem
-    //           rounded={rounded}
-    //           onClick={onClickFixedItem}
-    //         >
-    //           {fixedItemTitle}
-    //         </Styled.FixedOptionItem>
-    //       ) : null}
-    //     </Styled.OptionsList>
-
-    //     <Icon name="down" size="12px" />
-    //   </Styled.Container>
-    // </Styled.Wrapper>
+        labelId="select-label"
+        id="select"
+        disabled={disabled}
+        value={value}
+        onChange={({ target }) => {
+          onChangeValue(target.value);
+        }}
+        placeholder={placeholder || t('GENERAL.SELECT') + '...'}
+        style={style}
+      >
+        {options.map((el, index) => (
+          <MenuItem key={index} value={el.value}>
+            {el.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 };
 

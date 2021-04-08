@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Select } from 'components';
+import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
@@ -25,7 +25,7 @@ import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { AxiosResponse } from 'axios';
-import { Form, Formik } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
 interface FilterProps {
@@ -68,10 +68,14 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
   const ValidationScheme = Yup.object({
-    period: Yup.string().notRequired(),
-    initialDate: Yup.date().notRequired(),
-    finalDate: Yup.date().notRequired(),
-    repositoryID: Yup.string().required(),
+    period: Yup.string().label(t('DASHBOARD_SCREEN.PERIOD')).notRequired(),
+    initialDate: Yup.date()
+      .label(t('DASHBOARD_SCREEN.START_DATE'))
+      .notRequired(),
+    finalDate: Yup.date().label(t('DASHBOARD_SCREEN.FINAL_DATE')).notRequired(),
+    repositoryID: Yup.string()
+      .label(t('DASHBOARD_SCREEN.REPOSITORY'))
+      .required(),
     companyID: Yup.string().required(),
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });

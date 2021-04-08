@@ -20,17 +20,17 @@ import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { Field } from 'helpers/interfaces/Field';
 import {
   getCurrentUser,
   setCurrentUser,
 } from 'helpers/localStorage/currentUser';
-import { isValidEmail } from 'helpers/validators';
 import { useTheme } from 'styled-components';
 import accountService from 'services/account';
 import useAuth from 'helpers/hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 interface Props {
   isVisible: boolean;
@@ -51,97 +51,86 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const [isLoading, setLoading] = useState(false);
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
 
-  const [nameOfUser, setNameOfUser] = useState<Field>({
-    isValid: true,
-    value: currentUser.username,
-  });
-
-  const [emailOfUser, setEmailOfUser] = useState<Field>({
-    isValid: true,
-    value: currentUser.email,
-  });
-
-  const resetFields = () => {
-    setEmailOfUser({ isValid: true, value: currentUser.email });
-    setNameOfUser({ isValid: true, value: currentUser.username });
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    resetFields();
-  };
-
-  const handleConfirmSave = () => {
-    if (nameOfUser.isValid && emailOfUser.isValid) {
-      setLoading(true);
-
-      accountService
-        .update(nameOfUser.value, emailOfUser.value)
-        .then(() => {
-          if (emailOfUser.value !== currentUser.email && !disabledBroker) {
-            setSuccessDialogIsOpen(true);
-          }
-
-          setCurrentUser({
-            ...currentUser,
-            email: emailOfUser.value,
-            username: nameOfUser.value,
-          });
-
-          showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
-
-          onConfirm();
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  };
-
   const confirmSuccessChangeEmail = () => {
     setSuccessDialogIsOpen(false);
     logout().then(() => history.replace('/auth'));
   };
 
+  const ValidationScheme = Yup.object({
+    username: Yup.string().required(),
+    email: Yup.string().email(t('SETTINGS_SCREEN.INVALID_EMAIL')).required(),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    username: currentUser?.username,
+    email: currentUser?.email,
+  };
+
   return (
     <>
-      <Dialog
-        isVisible={isVisible}
-        message={t('SETTINGS_SCREEN.EDIT_ACCOUNT')}
-        onCancel={handleCancel}
-        onConfirm={handleConfirmSave}
-        confirmText={t('SETTINGS_SCREEN.SAVE')}
-        loadingConfirm={isLoading}
-        disabledColor={colors.button.disableInDark}
-        width={450}
-        disableConfirm={!nameOfUser.isValid || !emailOfUser.isValid}
-        hasCancel
-      >
-        <Styled.Form>
-          <Styled.Field
-            label={t('SETTINGS_SCREEN.NAME')}
-            initialValue={nameOfUser.value}
-            name="nome"
-            width="100%"
-            type="text"
-            onChangeValue={(field) => setNameOfUser(field)}
-          />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        enableReinitialize
+        onSubmit={(values) => {
+          const { username, email } = values;
+          setLoading(true);
 
-          <Styled.Field
-            label={t('SETTINGS_SCREEN.EMAIL')}
-            initialValue={emailOfUser.value}
-            name="email"
-            width="100%"
-            type="email"
-            onChangeValue={(field) => setEmailOfUser(field)}
-            validation={isValidEmail}
-            invalidMessage={t('SETTINGS_SCREEN.INVALID_EMAIL')}
-          />
-        </Styled.Form>
-      </Dialog>
+          accountService
+            .update(username, email)
+            .then(() => {
+              if (email !== currentUser.email && !disabledBroker) {
+                setSuccessDialogIsOpen(true);
+              }
+
+              setCurrentUser({
+                ...currentUser,
+                email,
+                username,
+              });
+
+              showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
+
+              onConfirm();
+            })
+            .catch((err) => {
+              dispatchMessage(err?.response?.data);
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }}
+      >
+        {(props) => (
+          <Dialog
+            isVisible={isVisible}
+            message={t('SETTINGS_SCREEN.EDIT_ACCOUNT')}
+            onCancel={() => {
+              onCancel();
+              props.resetForm();
+            }}
+            onConfirm={props.submitForm}
+            confirmText={t('SETTINGS_SCREEN.SAVE')}
+            loadingConfirm={isLoading}
+            disabledColor={colors.button.disableInDark}
+            width={450}
+            disableConfirm={!props.isValid}
+            hasCancel
+          >
+            <Styled.Form>
+              <Styled.Field label={t('SETTINGS_SCREEN.NAME')} name="username" />
+
+              <Styled.Field
+                label={t('SETTINGS_SCREEN.EMAIL')}
+                name="email"
+                type="email"
+              />
+            </Styled.Form>
+          </Dialog>
+        )}
+      </Formik>
 
       <Dialog
         isVisible={successDialogIsOpen}

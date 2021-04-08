@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useState, FormEvent } from 'react';
+import React from 'react';
 import Styled from './styled';
-import { isValidEmail, isEmptyString } from 'helpers/validators';
+import { isValidEmail } from 'helpers/validators';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import useAuth from 'helpers/hooks/useAuth';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
-import Input from 'components/Input';
 import * as Yup from 'yup';
 
-import { Form, Formik } from 'formik';
+import { Formik } from 'formik';
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();
@@ -34,8 +32,8 @@ function LoginScreen() {
   const { disabledBroker } = getCurrentConfig();
 
   const ValidationScheme = Yup.object({
-    email: Yup.string().email().required(),
-    password: Yup.string().required(),
+    email: Yup.string().email(t('LOGIN_SCREEN.INVALID_EMAIL')).required(),
+    password: Yup.string().required(t('LOGIN_SCREEN.INVALID_PASS')),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
@@ -63,8 +61,6 @@ function LoginScreen() {
             label={t('LOGIN_SCREEN.EMAIL')}
             name="email"
             type="text"
-            // onChangeValue={(field: Field) => setEmail(field)}
-            // invalidMessage={t("LOGIN_SCREEN.INVALID_EMAIL")}
             validation={isValidEmail}
           />
 
@@ -72,9 +68,6 @@ function LoginScreen() {
             label={t('LOGIN_SCREEN.PASSWORD')}
             name="password"
             type="password"
-            // onChangeValue={(field: Field) => setPassword(field)}
-            // validation={isEmptyString}
-            // invalidMessage={t("LOGIN_SCREEN.INVALID_PASS")}
           />
 
           {!disabledBroker ? (

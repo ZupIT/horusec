@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useContext } from 'react';
+import React, { useContext } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isEmptyString, isValidEmail } from 'helpers/validators';
-import { Field } from 'helpers/interfaces/Field';
 import { CreateAccountContext } from 'contexts/CreateAccount';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -42,8 +40,8 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    username: 'luqinha2',
-    email: 'luquinh2a@gmail.com',
+    username: '',
+    email: '',
   };
 
   return (

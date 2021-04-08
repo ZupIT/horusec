@@ -15,11 +15,8 @@
  */
 
 import React, { InputHTMLAttributes, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import { Field } from 'helpers/interfaces/Field';
 import {
-  FormControl,
-  FormControlLabel,
   IconButton,
   InputAdornment,
   TextField,
@@ -47,6 +44,7 @@ function Input({
   className,
   type,
   multiline = false,
+  width = '100%',
   ...props
 }: InputProps & TextFieldProps) {
   const [inputType, setInputType] = useState(type);
@@ -54,7 +52,7 @@ function Input({
   const [field, { error, touched, value }] = useField(name);
 
   return (
-    <div style={{ display: 'block' }} className={className}>
+    <div style={{ display: 'block', width: width }} className={className}>
       <TextField
         id={name}
         name={name}

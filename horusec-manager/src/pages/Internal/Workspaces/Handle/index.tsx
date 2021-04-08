@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { isEmptyString } from 'helpers/validators';
-import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
@@ -28,9 +26,7 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { Workspace } from 'helpers/interfaces/Workspace';
-import { cloneDeep } from 'lodash';
-import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-import { FieldArray, Formik, FormikHelpers, FormikValues } from 'formik';
+import { FieldArray, Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 
 interface Props {
@@ -95,13 +91,13 @@ const HandleWorkspace: React.FC<Props> = ({
       .then(() => {
         onConfirm();
         showSuccessFlash(t('WORKSPACES_SCREEN.UPDATE_SUCCESS'));
+        actions.resetForm();
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
       })
       .finally(() => {
         setLoading(false);
-        actions.resetForm();
       });
   };
 
@@ -127,6 +123,7 @@ const HandleWorkspace: React.FC<Props> = ({
     <Formik
       initialValues={initialValues}
       enableReinitialize={true}
+      validationSchema={ValidationScheme}
       onSubmit={(values, actions) => {
         setLoading(true);
         workspaceToEdit
