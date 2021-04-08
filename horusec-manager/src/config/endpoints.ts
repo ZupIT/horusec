@@ -34,4 +34,20 @@ const SERVICE_ANALYTIC =
 const SERVICE_AUTH =
   window.REACT_APP_HORUSEC_ENDPOINT_AUTH || 'http://127.0.0.1:8006';
 
+const isLocalHost = (endpoint: string) =>
+  endpoint.includes('localhost') || endpoint.includes('127.0.0.1');
+
+if (
+  isLocalHost(SERVICE_AUTH) ||
+  isLocalHost(SERVICE_ACCOUNT) ||
+  isLocalHost(SERVICE_API) ||
+  isLocalHost(SERVICE_ANALYTIC)
+) {
+  console.warn(`📡 One or more addresses of Horusec services have not been defined
+or have been defined as localhost.
+If this is not the scenario for your application, visit the guide:
+How to run the web application in other host?
+https://horusec.io/docs/tutorials/how-to-run-the-web-application-on-other-host`);
+}
+
 export { SERVICE_ACCOUNT, SERVICE_API, SERVICE_ANALYTIC, SERVICE_AUTH };

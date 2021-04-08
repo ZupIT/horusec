@@ -9,7 +9,9 @@
     "INVALID_USERNAME": "Nome de usuário inválido!",
     "USERNAME": "Nome de usuário",
     "INVALID_PASS": "Informe a senha",
-    "KEYCLOAK": "Entrar com keycloak"
+    "KEYCLOAK": "Entrar com keycloak",
+    "EMAIL_ARIA": "Digite seu e-mail",
+    "PASSWORD_ARIA": "Digite sua senha"
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
