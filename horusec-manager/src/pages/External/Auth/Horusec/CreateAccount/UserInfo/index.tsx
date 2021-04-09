@@ -58,6 +58,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
         <Styled.Field
           onChangeValue={(field: Field) => setUsername(field)}
           label={t('CREATE_ACCOUNT_SCREEN.NAME')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_NAME')}
           name="username"
           type="username"
           invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')}
@@ -66,6 +67,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
 
         <Styled.Field
           label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_EMAIL')}
           onChangeValue={(field: Field) => setEmail(field)}
           name="email"
           type="text"

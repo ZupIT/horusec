@@ -72,6 +72,7 @@ function CheckCode() {
       <Styled.Form onSubmit={handleSubmit}>
         <Styled.Field
           label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
           name="email"
           type="text"
           onChangeValue={(value: Field) => setEmail(value)}
@@ -81,7 +82,8 @@ function CheckCode() {
         />
 
         <Styled.Field
-          label={t('CODE')}
+          label={t('RECOVERY_PASS_SCREEN.CODE')}
+          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_CODE')}
           name="code"
           type="text"
           onChangeValue={(value: Field) => setCode(value)}
