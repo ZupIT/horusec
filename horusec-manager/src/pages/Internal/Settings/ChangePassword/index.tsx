@@ -103,7 +103,7 @@ const ChangePassword: React.FC<Props> = ({
     accountService
       .updatePassword(password.value)
       .then(() => {
-        showSuccessFlash(t('USERS_SCREEN.EDIT_SUCCESS'));
+        showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
         onConfirm();
       })
       .catch((err) => {

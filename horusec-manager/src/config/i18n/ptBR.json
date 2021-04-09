@@ -9,13 +9,16 @@
     "INVALID_USERNAME": "Nome de usuário inválido!",
     "USERNAME": "Nome de usuário",
     "INVALID_PASS": "Informe a senha",
-    "KEYCLOAK": "Entrar com keycloak"
+    "KEYCLOAK": "Entrar com keycloak",
+    "EMAIL_ARIA": "Digite seu e-mail",
+    "PASSWORD_ARIA": "Digite sua senha"
   },
-
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
+    "ARIA_INPUT_EMAIL": "Digite seu e-mail.",
     "EMAIL": "Email",
     "CODE": "Código",
+    "ARIA_CODE": "Digite o código",
     "INVALID_EMAIL": "Email inválido",
     "INVALID_CODE": "Informe um código",
     "CHECK_CODE": "Verificar código",
@@ -29,22 +32,25 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
+    "ARIA_PASSWORD": "Digite a senha",
     "INVALID_PASS": "Informe a senha",
     "CONFIRM_PASS": "Confirmar senha",
+    "ARIA_CONFIRM_PASS": "Confirme sua nova senha",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUCCESS_ALTER_PASS": "Sua senha foi alterada com sucesso",
     "UPDATE_PASS": "Atualizar senha",
     "INVALID_RECOVERY_CODE": "Código de recuperação inválido."
   },
-
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Crie sua conta Horusec",
     "EMAIL": "Email",
+    "ARIA_EMAIL": "Digite seu e-mail",
     "NAME": "Nome",
+    "ARIA_NAME": "Digite seu nome completo ou apelido",
     "NEXT": "Avançar",
     "BACK": "Voltar para o login",
     "INVALID_NAME": "Informe o nome",
@@ -54,12 +60,14 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
+    "ARIA_PASSWORD": "Digite a senha",
     "INVALID_PASS": "Informe a senha",
     "CONFIRM_PASS": "Confirmar senha",
+    "ARIA_CONFIRM_PASS": "Digite sua senha novamente para confirmar-la.",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUBMIT": "Cadastrar",
     "CONFIRM": "Ok, entendi.",
@@ -67,7 +75,6 @@
     "SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM": "Foi enviado um email para verificação da sua conta.",
     "OLD_PASS": "Antiga senha"
   },
-
   "WORKSPACES_SCREEN": {
     "SEARCH": "Pesquisar Workspace",
     "ADD": "Adicionar Workspace",
@@ -101,15 +108,15 @@
     "TOKEN": "Token",
     "ADD_TOKEN": "Adicionar Token",
     "EXPIRES": "Expira em:",
-    "NO_TOKENS":"Não há tokens registrados para este workspace.",
+    "NO_TOKENS": "Não há tokens registrados para este workspace.",
     "DELETE": "Deletar",
-    "CONFIRM_DELETE_TOKEN":"Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
+    "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
     "CREATE_SUCCESS": "Workspace criado com sucesso!",
     "UPDATE_SUCCESS": "Workspace editado com sucesso!",
     "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
     "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
-    "TOKEN_INFO":"Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
-    "CONFIRM":"Ok, entendi.",
+    "TOKEN_INFO": "Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
+    "CONFIRM": "Ok, entendi.",
     "CREATE_NEW_TOKEN": "Adicionar novo token ",
     "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
     "INVALID_DESCRIPTION": "Descrição inválida",
@@ -148,9 +155,9 @@
       "REMOVE_SUCCESS": "Usuário removido com sucesso!",
       "INVITE_SUCCESS": "Usuário adicionado com sucesso!",
       "EDIT_SUCCESS": "Usuário editado com sucesso!"
-    }
+    },
+    "NO_WORKSPACES": "Nenhum espaço de trabalho registrado foi encontrado."
   },
-
   "DASHBOARD_SCREEN": {
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
@@ -181,7 +188,6 @@
     "PREVIOUS_PAGE": "Anterior",
     "CODE": "Código"
   },
-
   "REPOSITORIES_SCREEN": {
     "SEARCH_REPO": "Pesquisar repositórios por nome",
     "CREATE_REPO": "Criar repositório",
@@ -235,18 +241,29 @@
     "IS_EXPIRABLE": "É expirável",
     "EXPIRES_AT": "Expira em"
   },
-
   "GENERAL": {
     "SELECT": "Selecione",
     "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
+    "PASS_VISIBILITY": "Visualizar ou Ocultar senha",
     "PAGINATION": {
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",
       "PAGES": "páginas"
     }
   },
-
+  "FOOTER": {
+    "DEVELOPED": "Desenvolvido",
+    "WITH": "com",
+    "LOVE": "amor",
+    "BY": "por"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Alterar linguagem,",
+    "CURRENT": "Linguagem selecionada: ",
+    "SELECT": "Selecionar: "
+  },
   "PERMISSIONS": {
     "ADMIN": "Administrador",
     "MEMBER": "Membro",
@@ -273,7 +290,6 @@
       }
     }
   },
-
   "VULNERABILITIES_SCREEN": {
     "SEARCH": "Pesquisar vulnerabilidade por hash",
     "TITLE": "Vulnerabilidades",
@@ -311,7 +327,6 @@
       "CONFIDENCE": "Confidência"
     }
   },
-
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
     "ADD": "Adicionar webhook",
@@ -346,7 +361,6 @@
       "COPY": "Copiar"
     }
   },
-
   "SETTINGS_SCREEN": {
     "TITLE": "Configurações da conta",
     "TABLE": {
@@ -368,13 +382,12 @@
     "CONFIRM_PASS": "Confirmar senha",
     "CHANGE_PASS": "Alterar Senha",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
-    "INVALID_PASS":"Informe a senha",
+    "INVALID_PASS": "Informe a senha",
     "EDIT_SUCCESS": "Informações alteradas com sucesso!",
     "SUCCESS_UPDATE": "Foi enviado para seu e-mail uma solicitação de verificação do novo e-mail.",
     "CONFIRM": "Ok, entendi.",
     "SUCCESS_DELETE": "Sua conta foi deletada com sucesso!"
   },
-
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
@@ -386,7 +399,6 @@
     "LOGOUT": "Sair",
     "MANAGE_WORKSPACES": "Gerenciar Workspaces"
   },
-
   "API_ERRORS": {
     "GENERIC_ERROR": "Algo inesperado aconteceu, tente novamente.",
     "ERROR_LOGIN": "Verifique seu email e senha e tente novamente.",
@@ -403,7 +415,6 @@
     "LDAP_GROUP": "O grupo de usuário deve ser válido para este usuário.",
     "KEYCLOAK_LOGIN": "Houve algo inesperado ao realizar a autenticação, tente novamente."
   },
-
   "NOT_FOUND_SCREEN": {
     "ERROR": "Erro 404.",
     "MESSAGE": "Não conseguimos encontrar a página que você está procurando.",

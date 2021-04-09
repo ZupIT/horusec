@@ -34,7 +34,7 @@ const Flash: React.FC<Props> = ({ isVisible, message, type }) => {
       >
         <Icon name={type} size="16px" />
 
-        <Styled.Text>{message}</Styled.Text>
+        <Styled.Text id="flash-message">{message}</Styled.Text>
       </Styled.Wrapper>
     </>
   );

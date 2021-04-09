@@ -60,6 +60,7 @@ function KeycloakAuth() {
       <Styled.Wrapper>
         <Button
           width={200}
+          tabIndex={0}
           rounded
           text={t('LOGIN_SCREEN.KEYCLOAK')}
           onClick={() => login()}

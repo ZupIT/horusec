@@ -38,7 +38,6 @@ const Button = styled.button`
   width: 100%;
   height: 100%;
   border: none;
-  outline: none;
   border-radius: 4px;
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
@@ -56,6 +55,7 @@ const LanguagesList = styled.ul`
   );
   border-radius: 4px;
   list-style-type: none;
+  outline: 1px white solid;
 `;
 
 const LanguageItem = styled.li`

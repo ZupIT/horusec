@@ -42,11 +42,12 @@ const FlashMessageProvider = ({ children }: FlashMessageProps) => {
   const [isVisible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [type, setType] = useState(flashMessageType.SUCCESS);
-  const [time, setTime] = useState(3200);
+  const [time, setTime] = useState(4000);
 
   useEffect(() => {
     if (message) {
       setVisible(true);
+      document.getElementById('flash-message').click();
 
       setTimeout(() => {
         setVisible(false);

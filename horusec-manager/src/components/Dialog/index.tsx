@@ -56,6 +56,10 @@ const Dialog: React.FC<DialogProps> = ({
 
   useEffect(() => {
     setVisibility(isVisible);
+    setTimeout(() => {
+      const message = document.getElementById('message-dialog');
+      if (message) message.click();
+    }, 600);
   }, [isVisible]);
 
   const handleConfirm = (event: MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +72,7 @@ const Dialog: React.FC<DialogProps> = ({
       {visibility ? (
         <Styled.Background>
           <Styled.Wrapper width={width}>
-            <Styled.Message id="dialog">{message}</Styled.Message>
+            <Styled.Message id="message-dialog">{message}</Styled.Message>
 
             <Styled.Content>{children}</Styled.Content>
 
@@ -81,6 +85,7 @@ const Dialog: React.FC<DialogProps> = ({
                   rounded={roundedButton}
                   outline
                   onClick={() => onCancel()}
+                  tabIndex={0}
                 />
               ) : null}
 
@@ -94,6 +99,7 @@ const Dialog: React.FC<DialogProps> = ({
                 disabledColor={disabledColor}
                 isDisabled={disableConfirm}
                 isLoading={loadingConfirm}
+                tabIndex={0}
               />
             </Styled.ButtonsWrapper>
           </Styled.Wrapper>

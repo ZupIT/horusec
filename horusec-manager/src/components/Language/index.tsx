@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import Styled from './styled';
 import Icon from 'components/Icon';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { useTheme } from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import useOutsideClick from 'helpers/hooks/useClickOutside';
 
 const Language: React.FC = () => {
+  const { t } = useTranslation();
+  const listLanguagesRef = useRef(null);
+
   const [showList, setShowList] = useState(false);
   const [showButton, setShowButton] = useState(true);
 
@@ -31,17 +36,33 @@ const Language: React.FC = () => {
   const handleShowList = () => {
     setShowList(!showList);
     setShowButton(!showButton);
+
+    setTimeout(() => {
+      listLanguagesRef?.current?.focus();
+    }, 1000);
   };
 
-  const handleCurrentLanguage = (lang: any) => {
-    setUserLanguage(lang);
-    handleShowList();
+  const handleCurrentLanguage = (lang: any, event: React.KeyboardEvent) => {
+    if (!event || event.keyCode === 13 || event.keyCode === 32) {
+      setUserLanguage(lang);
+      handleShowList();
+    }
   };
+
+  useOutsideClick(listLanguagesRef, () => {
+    if (listLanguagesRef) handleShowList();
+  });
 
   return (
     <Styled.Wrapper>
       {!showButton || (
-        <Styled.Button id="language" onClick={handleShowList}>
+        <Styled.Button
+          onClick={handleShowList}
+          tabIndex={0}
+          aria-expanded="true"
+          aria-label={`${t('SELECT_LANGUAGE.CHANGE')}
+            ${t('SELECT_LANGUAGE.CURRENT')} ${currentLanguage?.description}`}
+        >
           <Styled.CurrentLanguage>
             {currentLanguage?.name}
           </Styled.CurrentLanguage>
@@ -51,12 +72,15 @@ const Language: React.FC = () => {
       )}
 
       {!showList || (
-        <Styled.LanguagesList>
+        <Styled.LanguagesList ref={listLanguagesRef}>
           {allLanguages.map((language, index) => (
             <Styled.LanguageItem
               key={index}
-              id={language.i18nValue}
-              onClick={() => handleCurrentLanguage(language)}
+              onClick={() => handleCurrentLanguage(language, null)}
+              onKeyDown={(e) => handleCurrentLanguage(language, e)}
+              aria-expanded="true"
+              aria-label={language.description}
+              tabIndex={0}
             >
               <Icon name={language.icon} size="30px" />
 

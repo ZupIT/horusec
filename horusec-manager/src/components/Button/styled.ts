@@ -21,6 +21,7 @@ interface ButtonProps {
   rounded?: boolean;
   opaque?: boolean;
   isLoading?: boolean;
+  isDisabled?: boolean;
   width?: number | string;
   height?: number;
   color?: string;
@@ -40,7 +41,6 @@ const Button = styled.button<ButtonProps>`
   border-radius: 4px;
   box-sizing: border-box;
   border: none;
-  outline: none;
   font-size: 12px;
   cursor: pointer;
   display: flex;
@@ -77,8 +77,8 @@ const Button = styled.button<ButtonProps>`
       opacity: 0.6;
     `};
 
-  ${({ disabled, isLoading, disabledColor }) =>
-    (disabled || isLoading) &&
+  ${({ isDisabled, isLoading, disabledColor }) =>
+    (isDisabled || isLoading) &&
     css`
       cursor: default;
       background: ${({ theme }) =>

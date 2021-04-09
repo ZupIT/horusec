@@ -11,11 +11,12 @@
     "INVALID_PASS": "Enter password",
     "KEYCLOAK": "Sign in keycloak"
   },
-
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "For your security, enter the e-mail registered to reset your password",
+    "ARIA_INPUT_EMAIL": "Type your e-mail",
     "EMAIL": "E-mail",
     "CODE": "Code",
+    "ARIA_CODE": "Type the code",
     "INVALID_EMAIL": "Invalid e-mail",
     "INVALID_CODE": "Enter a code",
     "CHECK_CODE": "Check code",
@@ -29,22 +30,25 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It can't be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
+    "ARIA_PASSWORD": "Type the password",
     "INVALID_PASS": "Enter password",
     "CONFIRM_PASS": "Confirm password",
+    "ARIA_CONFIRM_PASS": "Confirm your new password",
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUCCESS_ALTER_PASS": "Your password has been changed successfully",
     "UPDATE_PASS": "Update password",
     "INVALID_RECOVERY_CODE": "Invalid recovery code."
   },
-
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Create your Horusec account",
     "EMAIL": "E-mail",
+    "ARIA_EMAIL": "Type your e-mail",
     "NAME": "Name",
+    "ARIA_NAME": "Enter your full name or nickname",
     "NEXT": "Next",
     "BACK": "Back to login",
     "INVALID_NAME": "Enter the name",
@@ -54,12 +58,14 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It cannot be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
+    "ARIA_PASSWORD": "Type your password",
     "INVALID_PASS": "Enter password",
     "CONFIRM_PASS": "Confirm password",
+    "ARIA_CONFIRM_PASS": "Enter your password again to confirm it.",
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
@@ -67,7 +73,6 @@
     "SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM": "An e-mail has been sent to verify your account.",
     "OLD_PASS": "Old Password"
   },
-
   "WORKSPACES_SCREEN": {
     "SEARCH": "Search Workspace",
     "ADD": "Add Workspace",
@@ -101,15 +106,15 @@
     "TOKEN": "Token",
     "ADD_TOKEN": "Add Token",
     "EXPIRES": "Expires in:",
-    "NO_TOKENS":"There are no registered tokens for this workspace.",
+    "NO_TOKENS": "There are no registered tokens for this workspace.",
     "DELETE": "Delete",
-    "CONFIRM_DELETE_TOKEN":"Do you really want to delete this token? This action cannot be undone.",
+    "CONFIRM_DELETE_TOKEN": "Do you really want to delete this token? This action cannot be undone.",
     "TOKEN_SUCCESS": "Token created successfully!",
     "CREATE_SUCCESS": "Workspace successfully created!",
     "UPDATE_SUCCESS": "Workspace edited successfully!",
     "REMOVE_SUCCESS_TOKEN": "Token successfully deleted!",
     "TOKEN_INFO": "With the token, you access analyzes for the selected repository. Save in a safe place and don't share.",
-    "CONFIRM":"Ok, I got it.",
+    "CONFIRM": "Ok, I got it.",
     "CREATE_NEW_TOKEN": "Add new token",
     "CREATE_TOKEN_BELOW": "Add a new token below:",
     "INVALID_DESCRIPTION": "Invalid description",
@@ -148,9 +153,9 @@
       "REMOVE_SUCCESS": "User removed successfully!",
       "INVITE_SUCCESS": "User added successfully!",
       "EDIT_SUCCESS": "User edited successfully!"
-    }
+    },
+    "NO_WORKSPACES": "No registered workspace were found."
   },
-
   "DASHBOARD_SCREEN": {
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
@@ -181,7 +186,6 @@
     "PREVIOUS_PAGE": "Previous",
     "CODE": "Code"
   },
-
   "REPOSITORIES_SCREEN": {
     "SEARCH_REPO": "Search repositories by name",
     "CREATE_REPO": "Create repository",
@@ -235,10 +239,11 @@
     "IS_EXPIRABLE": "Is expirable",
     "EXPIRES_AT": "Expires at"
   },
-
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "BUTTON_LOADING": "Button in loading",
+    "PASS_VISIBILITY": "View or hidden password",
     "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
@@ -246,7 +251,17 @@
       "PAGES": "pages"
     }
   },
-
+  "FOOTER": {
+    "DEVELOPED": "Developed",
+    "WITH": "with",
+    "LOVE": "love",
+    "BY": "by"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Change the language,",
+    "CURRENT": "Current language: ",
+    "SELECT": "Select: "
+  },
   "PERMISSIONS": {
     "ADMIN": "Administrator",
     "MEMBER": "Member",
@@ -310,7 +325,6 @@
       "CONFIDENCE": "Confidence"
     }
   },
-
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
     "ADD": "Add webhook",
@@ -345,7 +359,6 @@
       "COPY": "Copy"
     }
   },
-
   "SETTINGS_SCREEN": {
     "TITLE": "Account configurations",
     "TABLE": {
@@ -362,7 +375,7 @@
     "SAVE": "Save",
     "EMAIL": "Email",
     "NAME": "Username",
-    "INVALID_EMAIL":"Invalid e-mail",
+    "INVALID_EMAIL": "Invalid e-mail",
     "NEW_PASS": "New Password",
     "CONFIRM_PASS": "Confirm password",
     "CHANGE_PASS": "Change Password",
@@ -370,10 +383,9 @@
     "INVALID_PASS": "Enter password",
     "EDIT_SUCCESS": "information successfully changed",
     "SUCCESS_UPDATE": "A request to verify the new email has been sent to your email.",
-    "CONFIRM":"Ok, I got it.",
+    "CONFIRM": "Ok, I got it.",
     "SUCCESS_DELETE": "Your account has been successfully deleted!"
   },
-
   "SIDE_MENU": {
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilities",
@@ -385,7 +397,6 @@
     "LOGOUT": "Logout",
     "MANAGE_WORKSPACES": "Manage Workspaces"
   },
-
   "API_ERRORS": {
     "GENERIC_ERROR": "Something unexpected happened, try again.",
     "ERROR_LOGIN": "Check your e-mail and password and try again.",
@@ -402,7 +413,6 @@
     "LDAP_GROUP": "The user group must be valid for this user.",
     "KEYCLOAK_LOGIN": "There was something unexpected when performing authentication, try again."
   },
-
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",
     "MESSAGE": "We could not find the page you are looking for.",

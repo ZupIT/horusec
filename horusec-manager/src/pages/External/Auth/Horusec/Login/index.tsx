@@ -50,6 +50,7 @@ function LoginScreen() {
     <Styled.Form onSubmit={handleSubmit}>
       <Styled.Field
         label={t('LOGIN_SCREEN.EMAIL')}
+        ariaLabel={t('LOGIN_SCREEN.EMAIL_ARIA')}
         name="email"
         type="text"
         onChangeValue={(field: Field) => setEmail(field)}
@@ -59,6 +60,7 @@ function LoginScreen() {
 
       <Styled.Field
         label={t('LOGIN_SCREEN.PASSWORD')}
+        ariaLabel={t('LOGIN_SCREEN.PASSWORD_ARIA')}
         name="password"
         type="password"
         onChangeValue={(field: Field) => setPassword(field)}
@@ -69,6 +71,7 @@ function LoginScreen() {
       {!disabledBroker ? (
         <Styled.ForgotPass
           onClick={() => history.push(`${path}/recovery-password`)}
+          tabIndex={0}
         >
           {t('LOGIN_SCREEN.FORGOT_PASS')}
         </Styled.ForgotPass>
@@ -79,6 +82,7 @@ function LoginScreen() {
         isDisabled={!password.isValid || !email.isValid}
         isLoading={loginInProgress}
         text={t('LOGIN_SCREEN.SUBMIT')}
+        onClick={handleSubmit}
         type="submit"
         rounded
       />

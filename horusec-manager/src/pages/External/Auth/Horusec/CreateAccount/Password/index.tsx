@@ -51,9 +51,22 @@ function PasswordForm() {
     characterSpecial: false,
   });
 
+  const forIsInvalid = () => {
+    return (
+      !confirmPass.isValid ||
+      !password.isValid ||
+      passValidations.alpha ||
+      passValidations.characterSpecial ||
+      passValidations.minCharacters ||
+      passValidations.number
+    );
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    createAccount();
+    if (!forIsInvalid()) {
+      createAccount();
+    }
   };
 
   const validateEqualsPassword = (value: string) => {
@@ -107,6 +120,7 @@ function PasswordForm() {
         <Styled.Field
           onChangeValue={(field: Field) => handlePasswordValue(field)}
           label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
           name="password"
           type="password"
           invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_PASS')}
@@ -115,6 +129,7 @@ function PasswordForm() {
 
         <Styled.Field
           label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
           onChangeValue={(field: Field) => setConfirmPass(field)}
           name="confirm-pass"
           type="password"
@@ -123,17 +138,9 @@ function PasswordForm() {
         />
 
         <Styled.Submit
-          isDisabled={
-            !confirmPass.isValid ||
-            !password.isValid ||
-            passValidations.alpha ||
-            passValidations.characterSpecial ||
-            passValidations.minCharacters ||
-            passValidations.number
-          }
+          isDisabled={forIsInvalid()}
           text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
-          type="submit"
-          id="register"
+          onClick={handleSubmit}
           isLoading={isLoading}
           rounded
         />

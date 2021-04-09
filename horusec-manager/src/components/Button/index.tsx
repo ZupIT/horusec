@@ -17,6 +17,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 import Styled from './styled';
 import { Icon } from 'components';
+import { useTranslation } from 'react-i18next';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
@@ -30,9 +31,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: string;
   icon?: string;
   disabledColor?: string;
+  onClick?: (event: any) => any;
 }
 
-const RoundButton: React.FC<ButtonProps> = ({
+const Button: React.FC<ButtonProps> = ({
   text,
   outline,
   rounded,
@@ -44,8 +46,15 @@ const RoundButton: React.FC<ButtonProps> = ({
   color,
   icon,
   disabledColor,
+  onClick,
   ...props
 }) => {
+  const { t } = useTranslation();
+
+  const handleClickEvent = (event: any) => {
+    if (!isDisabled && onClick) onClick(event);
+  };
+
   return (
     <Styled.Button
       {...props}
@@ -53,15 +62,21 @@ const RoundButton: React.FC<ButtonProps> = ({
       outline={outline}
       rounded={rounded}
       opaque={opaque}
-      disabled={isDisabled || isLoading}
+      aria-disabled={isDisabled || isLoading}
+      isDisabled={isDisabled || isLoading}
       type={props.type || 'button'}
       width={width}
       height={height}
       color={color}
       disabledColor={disabledColor}
+      onClick={handleClickEvent}
     >
       {isLoading ? (
-        <Icon name="loading" size="35px" />
+        <Icon
+          name="loading"
+          size="35px"
+          ariaLabel={t('GENERAL.BUTTON_LOADING')}
+        />
       ) : (
         <>
           {icon ? (
@@ -76,4 +91,4 @@ const RoundButton: React.FC<ButtonProps> = ({
   );
 };
 
-export default RoundButton;
+export default Button;

@@ -23,6 +23,4 @@ export enum localStorageKeys {
   ACCESS_TOKEN = '@HORUSEC:ACCESS_TOKEN',
   ID_TOKEN = '@HORUSEC:ID_TOKEN',
   REFRESH_TOKEN = '@HORUSEC:REFRESH_TOKEN',
-  MICROFRONTEND = 'isMicrofrontend',
-  AUTHENTICATED = 'isAuthenticated',
 }

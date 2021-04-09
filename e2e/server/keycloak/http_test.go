@@ -101,12 +101,12 @@ func TestServer(t *testing.T) {
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete company
-		companyID := RunCompanyCRUD(t, bearerToken)
-		assert.NotEmpty(t, companyID)
+		//companyID := RunCompanyCRUD(t, bearerToken)
+		//assert.NotEmpty(t, companyID)
 
 		// TESTBOOK: Authorize
 		// TESTBOOK: Create, Read, Update and Delete users in company
-		RunCRUDUserInCompany(t, bearerToken, companyID)
+		//RunCRUDUserInCompany(t, bearerToken, companyID)
 	})
 }
 

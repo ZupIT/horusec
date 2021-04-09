@@ -1,13 +1,24 @@
 {
   "extends": [
+    "react-app",
+    "plugin:jsx-a11y/strict",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:cypress/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:styled-components-a11y/recommended"
   ],
-  "plugins": ["react", "@typescript-eslint", "prettier", "testing-library", "jest-dom"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "prettier",
+    "testing-library",
+    "jest-dom",
+    "jsx-a11y",
+    "styled-components-a11y"
+  ],
   "env": {
     "browser": true,
     "node": true,
@@ -16,24 +27,34 @@
     "es6": true
   },
   "rules": {
-    "prettier/prettier": ["error", {
-      "singleQuote": true,
-      "endOfLine": "auto"
-    }],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "endOfLine": "auto"
+      }
+    ],
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-explicit-any": "off",
     "react/display-name": 0,
     "react/prop-types": "off"
   },
-  "overrides": [{
-    "files": ["*.spec.tsx", "*.spec.ts", "*/unit-test/*"],
-    "rules": {
-      "no-global-assign": "off",
-      "no-empty-function": "off",
-      "@typescript-eslint/no-explicit-any": "off"
+  "overrides": [
+    {
+      "files": [
+        "*.spec.tsx",
+        "*.spec.ts",
+        "*/unit-test/*"
+      ],
+      "rules": {
+        "no-global-assign": "off",
+        "no-empty-function": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
     }
-  }],
+  ],
   "settings": {
     "react": {
       "pragma": "React",

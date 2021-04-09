@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   display: flex;
-
-  ${isMicrofrontend()
-    ? css`
-        height: calc(96.3vh - 50px);
-      `
-    : css`
-        height: 96.3vh;
-      `}
+  height: 96.3vh;
 `;
 
 export default { Wrapper };

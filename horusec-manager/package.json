@@ -28,6 +28,7 @@
     "systemjs-webpack-interop": "^2.1.2"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.1.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/react-hooks": "^3.2.1",
@@ -55,8 +56,10 @@
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-cypress": "^2.11.2",
     "eslint-plugin-jest-dom": "^3.1.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-styled-components-a11y": "^0.0.34",
     "eslint-plugin-testing-library": "^3.3.1",
     "prettier": "^2.0.5",
     "react-scripts": "^3.4.4",
@@ -65,8 +68,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "start:microfrontend": "react-app-rewired build && npx http-serve --cors build/",
-    "build:microfrontend": "react-app-rewired build",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "test": "react-scripts test --watchAll=false",

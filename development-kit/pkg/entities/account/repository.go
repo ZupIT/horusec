@@ -30,9 +30,9 @@ type Repository struct {
 	CompanyID       uuid.UUID      `json:"companyID" swaggerignore:"true"`
 	Name            string         `json:"name"`
 	Description     string         `json:"description"`
-	AuthzMember     pq.StringArray `json:"authzMember"`
-	AuthzAdmin      pq.StringArray `json:"authzAdmin"`
-	AuthzSupervisor pq.StringArray `json:"authzSupervisor"`
+	AuthzMember     pq.StringArray `json:"authzMember" gorm:"type:text[]"`
+	AuthzAdmin      pq.StringArray `json:"authzAdmin" gorm:"type:text[]"`
+	AuthzSupervisor pq.StringArray `json:"authzSupervisor" gorm:"type:text[]"`
 	CreatedAt       time.Time      `json:"createdAt" swaggerignore:"true"`
 	UpdatedAt       time.Time      `json:"updatedAt" swaggerignore:"true"`
 }
@@ -43,9 +43,9 @@ type RepositoryResponse struct {
 	Name            string           `json:"name"`
 	Role            accountEnum.Role `json:"role"`
 	Description     string           `json:"description"`
-	AuthzMember     pq.StringArray   `json:"authzMember"`
-	AuthzAdmin      pq.StringArray   `json:"authzAdmin"`
-	AuthzSupervisor pq.StringArray   `json:"authzSupervisor"`
+	AuthzMember     pq.StringArray   `json:"authzMember" gorm:"type:text[]"`
+	AuthzAdmin      pq.StringArray   `json:"authzAdmin" gorm:"type:text[]"`
+	AuthzSupervisor pq.StringArray   `json:"authzSupervisor" gorm:"type:text[]"`
 	CreatedAt       time.Time        `json:"createdAt"`
 	UpdatedAt       time.Time        `json:"updatedAt"`
 }
