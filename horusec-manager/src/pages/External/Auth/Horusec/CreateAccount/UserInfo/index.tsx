@@ -76,6 +76,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
         />
 
         <Styled.Submit
+          id="next-step"
           isDisabled={!email.isValid || !username.isValid}
           text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
           type="submit"

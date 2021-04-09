@@ -60,6 +60,7 @@ const Icon = React.forwardRef(
         tabIndex={tabIndex}
         aria-label={ariaLabel}
         ref={iRef}
+        id={`icon-${name}`}
         data-testid={`icon-${name}`}
         className={className}
         color={isActive ? 'light' : color}
