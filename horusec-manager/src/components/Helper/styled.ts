@@ -20,6 +20,7 @@ import { Icon } from 'components';
 const HelpIcon = styled(Icon)`
   cursor: help;
   margin-left: 15px;
+  nav-index: 2;
 `;
 
 export default { HelpIcon };

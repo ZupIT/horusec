@@ -385,6 +385,7 @@
     "REPOSITORIES": "Repositories",
     "WORKSPACE": "Workspace",
     "REPOSITORY": "Repository",
+    "HELPER": "Helper",
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout",
@@ -413,6 +414,7 @@
   },
   "NEW_WORKSPACE_SCREEN": {
     "MESSAGE": "Add a new Workspace to start using Horusec.",
-    "ACTION": "Add workspace"
+    "ACTION": "Add workspace",
+    "ALT_IMG": "Drawing illustrating a landscape with clouds overhead, below a wooden bench and a white woman with red hair with orange blouse and green pants carrying a spyglass with her right hand to her left eye. She rests her left foot on the bench."
   }
 }

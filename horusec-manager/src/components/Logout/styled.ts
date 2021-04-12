@@ -20,6 +20,7 @@ import styled from 'styled-components';
 const LogoutIcon = styled(Icon)`
   cursor: pointer;
   margin: 25px 15px;
+  nav-index: 3;
 
   :hover {
     transform: scale(1.3);

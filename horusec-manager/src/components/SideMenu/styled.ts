@@ -35,11 +35,11 @@ const SideMenu = styled.div`
   z-index: 2;
 `;
 
-const WrapperLogoRoutes = styled.div`
+const WrapperLogoRoutes = styled.nav`
   flex: 1;
 `;
 
-const OptionsWrapper = styled.div`
+const OptionsList = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 20px 0px 20px 7.5px;
@@ -115,10 +115,13 @@ const SubMenu = styled.div<SubMenuProps>`
     `};
 `;
 
-const Option = styled(Icon)`
+const OptionItem = styled.li``;
+
+const Config = styled(Icon)`
   width: 30px;
   cursor: pointer;
   margin: 0 0 20px 15px;
+  nav-index: 1;
 `;
 
 const SelectWrapper = styled.div`
@@ -141,11 +144,12 @@ export default {
   RouteItem,
   RouteName,
   WrapperLogoRoutes,
-  OptionsWrapper,
+  OptionsList,
   SubMenu,
   SubRoutesList,
   SubRouteItem,
-  Option,
+  OptionItem,
+  Config,
   SelectWorkspace,
   SelectWrapper,
 };

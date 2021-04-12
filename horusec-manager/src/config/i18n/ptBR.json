@@ -387,6 +387,7 @@
     "REPOSITORIES": "Repositórios",
     "WORKSPACE": "Workspace",
     "REPOSITORY": "Repositório",
+    "HELPER": "Ajuda",
     "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair",
@@ -415,6 +416,7 @@
   },
   "NEW_WORKSPACE_SCREEN": {
     "MESSAGE": "Adicione um novo Workspace para começar a usar o Horusec.",
-    "ACTION": "Adicionar workspace"
+    "ACTION": "Adicionar workspace",
+    "ALT_IMG": "Desenho ilustrando uma paisagem com nuvens no alto, abaixo um banco de madeira e uma mulher branca de cabelo ruivo com blusa laranja e calça verde levando uma luneta com a mão direita até o olho esquerdo. Ela apoia seu pé esquerdo sobre o banco."
   }
 }

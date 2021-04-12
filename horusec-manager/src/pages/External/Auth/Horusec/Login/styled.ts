@@ -23,8 +23,7 @@ const Form = styled.form`
 `;
 
 const Field = styled(Input)`
-  margin-top: 25px;
-  margin-bottom: 15px;
+  margin: 25px 0;
 `;
 
 const ForgotPass = styled.a`

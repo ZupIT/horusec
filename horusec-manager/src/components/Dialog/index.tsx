@@ -80,7 +80,7 @@ const Dialog: React.FC<DialogProps> = ({
               {hasCancel ? (
                 <Button
                   text={t('GENERAL.CANCEL')}
-                  width={105}
+                  width={120}
                   height={35}
                   rounded={roundedButton}
                   outline
@@ -91,7 +91,7 @@ const Dialog: React.FC<DialogProps> = ({
 
               <Button
                 text={confirmText}
-                width={105}
+                width={120}
                 height={35}
                 onClick={(e) => handleConfirm(e)}
                 rounded={roundedButton}

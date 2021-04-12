@@ -190,25 +190,35 @@ const SideMenu: React.FC = () => {
           </Styled.RoutesList>
         </Styled.WrapperLogoRoutes>
 
-        <Styled.OptionsWrapper>
-          {authType === authTypes.HORUSEC ? (
-            <Styled.Option
-              dataFor="side-options"
-              dataTip={t('SIDE_MENU.CONFIG')}
-              name="config"
-              size="15"
-              onClick={goToSettings}
-            />
-          ) : null}
+        <Styled.OptionsList>
+          <Styled.OptionItem>
+            {authType === authTypes.HORUSEC ? (
+              <Styled.Config
+                dataFor="side-options"
+                dataTip={t('SIDE_MENU.CONFIG')}
+                name="config"
+                size="15"
+                onClick={goToSettings}
+                tabIndex={0}
+                ariaLabel={t('SIDE_MENU.CONFIG')}
+              />
+            ) : null}
+          </Styled.OptionItem>
 
-          <Helper />
+          <Styled.OptionItem>
+            <Helper />
+          </Styled.OptionItem>
 
-          <Logout />
+          <Styled.OptionItem>
+            <Logout />
+          </Styled.OptionItem>
 
-          <Language />
+          <Styled.OptionItem>
+            <Language />
+          </Styled.OptionItem>
 
           <ReactTooltip id="side-options" place="top" type="dark" insecure />
-        </Styled.OptionsWrapper>
+        </Styled.OptionsList>
       </Styled.SideMenu>
 
       <Styled.SubMenu isActive={!!selectedRoute?.subRoutes}>

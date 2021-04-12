@@ -44,8 +44,8 @@ export default {
     },
 
     optionButton: {
-      text: '#98989E',
-      border: '#98989E',
+      text: '#c2c2c2',
+      border: '#c2c2c2',
     },
 
     text: {
@@ -57,8 +57,8 @@ export default {
     },
 
     input: {
-      border: '#98989E',
-      label: '#98989E',
+      border: '#c2c2c2',
+      label: '#c2c2c2',
       text: '#F2F2F9',
       active: '#FFFFFF',
       error: '#EA8F8F',
@@ -71,7 +71,7 @@ export default {
         primary: '#C7C7D4',
         secundary: '#636366',
       },
-      title: '#98989E',
+      title: '#c2c2c2',
       background: '#2C2C2E',
       highlight: '#F04223',
       today: '#636366',
@@ -80,7 +80,7 @@ export default {
 
     select: {
       text: '#C7C7D4',
-      title: '#98989E',
+      title: '#c2c2c2',
       background: '#2C2C2E',
       border: '#FFFFFF',
       hover: '#444447',
@@ -144,7 +144,7 @@ export default {
       backgorund: '#2C2C2E',
       title: '#C7C7D4',
       column: {
-        text: '#98989E',
+        text: '#c2c2c2',
       },
       row: {
         text: '#F2F2F9',

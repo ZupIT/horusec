@@ -82,7 +82,7 @@ const EyeIcon = styled(Icon)`
 
 const Error = styled.span<InputProps>`
   visibility: hidden;
-  margin-top: 5px;
+  margin-top: 3px;
   color: ${({ theme }) => theme.colors.input.error};
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   min-height: 14px;
