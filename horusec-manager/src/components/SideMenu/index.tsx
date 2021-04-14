@@ -181,6 +181,9 @@ const SideMenu: React.FC = () => {
                 optionsHeight={`${allWorkspaces.length * 32 + 45}px`}
                 fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
                 onClickFixedItem={() => history.push('/home/workspaces')}
+                ariaLabel={`${t('SIDE_MENU.CURRENT_WORKSPACE')} ${
+                  currentWorkspace?.name
+                }`}
               />
             </Styled.SelectWrapper>
           ) : null}

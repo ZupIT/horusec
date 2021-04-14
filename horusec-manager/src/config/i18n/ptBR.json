@@ -236,6 +236,7 @@
   },
   "GENERAL": {
     "SELECT": "Selecione",
+    "SELECT_SEARCH": "Digite uma palavra para filtrar os resultados.",
     "CANCEL": "Cancelar",
     "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
@@ -386,6 +387,7 @@
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
     "WORKSPACE": "Workspace",
+    "CURRENT_WORKSPACE": "Alterar workspace, Workspace atual: ",
     "REPOSITORY": "Repositório",
     "HELPER": "Ajuda",
     "CONFIG": "Configurações",

@@ -234,6 +234,7 @@
   },
   "GENERAL": {
     "SELECT": "Select",
+    "SELECT_SEARCH": "Type a word to filter the results.",
     "CANCEL": "Cancel",
     "BUTTON_LOADING": "Button in loading",
     "PASS_VISIBILITY": "View or hidden password",
@@ -384,6 +385,7 @@
     "VULNERABILITIES": "Vulnerabilities",
     "REPOSITORIES": "Repositories",
     "WORKSPACE": "Workspace",
+    "CURRENT_WORKSPACE": "Change workspace, Current Workspace: ",
     "REPOSITORY": "Repository",
     "HELPER": "Helper",
     "CONFIG": "Settings",

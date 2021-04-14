@@ -42,6 +42,7 @@ interface Props {
     default: string;
   };
   hasSearch?: boolean;
+  ariaLabel?: string;
 }
 
 const Select: React.FC<Props> = ({
@@ -61,13 +62,14 @@ const Select: React.FC<Props> = ({
   onClickFixedItem,
   backgroundColors,
   hasSearch,
+  ariaLabel,
 }) => {
   const [currentValue, setCurrentValue] = useState<string>('');
   const [filteredOptions, setFilteredOptions] = useState<any[]>(options);
   const [openOptionsList, setOpenOptionsList] = useState(false);
   const { t } = useTranslation();
 
-  const optionsRef = useRef<HTMLDivElement>();
+  const optionsRef = useRef<HTMLUListElement>();
 
   useOutsideClick(optionsRef, () => {
     if (openOptionsList) setOpenOptionsList(false);
@@ -119,6 +121,12 @@ const Select: React.FC<Props> = ({
       disabled={disabled}
       width={width}
       onClick={() => (disabled ? null : setOpenOptionsList(!openOptionsList))}
+      onKeyPress={() =>
+        disabled ? null : setOpenOptionsList(!openOptionsList)
+      }
+      tabIndex={0}
+      aria-expanded={true}
+      aria-label={ariaLabel}
     >
       {title ? <Styled.Title>{title}</Styled.Title> : null}
 
@@ -138,6 +146,8 @@ const Select: React.FC<Props> = ({
         }
       >
         <Styled.CurrentValue
+          aria-label={currentValue}
+          tabIndex={0}
           disabled={!hasSearch}
           type="text"
           onChange={handleSearchValue}
@@ -154,6 +164,8 @@ const Select: React.FC<Props> = ({
         >
           {filteredOptions.map((option, index) => (
             <Styled.OptionItem
+              aria-label={option[keyLabel]}
+              tabIndex={openOptionsList ? 0 : -1}
               rounded={rounded}
               key={index}
               className="options-item"
@@ -167,6 +179,7 @@ const Select: React.FC<Props> = ({
             <Styled.FixedOptionItem
               rounded={rounded}
               onClick={onClickFixedItem}
+              tabIndex={0}
             >
               {fixedItemTitle}
             </Styled.FixedOptionItem>

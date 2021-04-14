@@ -6,7 +6,7 @@
     <g stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
         <g transform="translate(-1107.000000, -377.000000)">
             <g transform="translate(1106.000000, 374.000000)">
-                <mask id="mask-view" fill="currentColor">
+                <mask  fill="currentColor">
                     <use xlink:href="#path-view"></use>
                 </mask>
                 <use fill="currentColor" fill-rule="evenodd" xlink:href="#path-view"></use>

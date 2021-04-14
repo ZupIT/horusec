@@ -50,7 +50,7 @@ export default {
 
     text: {
       primary: '#F5F5FB',
-      secundary: '#B4B6BA',
+      secundary: '#C2C2C2',
       opaque: '#BEBEBE',
       highlight: '#00B1FF',
       link: '#0095FF',

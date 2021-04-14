@@ -42,11 +42,13 @@ const Splash: React.FC<Props> = ({ isVisible }) => {
 
   return (
     <Styled.Container isVisible={visible} ref={splashRef}>
-      <Styled.Logo
-        isVisible={startAnimation}
-        src={HorusecLogo}
-        alt="Horusec Logo"
-      />
+      <h1>
+        <Styled.Logo
+          isVisible={startAnimation}
+          src={HorusecLogo}
+          alt="Horusec Logo"
+        />
+      </h1>
     </Styled.Container>
   );
 };
