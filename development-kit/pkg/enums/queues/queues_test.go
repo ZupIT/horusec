@@ -22,13 +22,13 @@ import (
 
 func TestValues(t *testing.T) {
 	t.Run("should return all 5 queue values", func(t *testing.T) {
-		assert.Len(t, Values(), 5)
+		assert.Len(t, Values(), 2)
 	})
 }
 
 func TestIsInvalid(t *testing.T) {
 	t.Run("should return false for valid queue value", func(t *testing.T) {
-		assert.False(t, IsInvalid(HorusecAnalyser))
+		assert.False(t, IsInvalid(HorusecEmail))
 	})
 
 	t.Run("should return true for invalid queue value", func(t *testing.T) {
@@ -38,7 +38,7 @@ func TestIsInvalid(t *testing.T) {
 
 func TestIsValid(t *testing.T) {
 	t.Run("should return true for valid value", func(t *testing.T) {
-		assert.True(t, IsValid(HorusecAnalyser))
+		assert.True(t, IsValid(HorusecEmail))
 	})
 
 	t.Run("should return false for invalid value", func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestIsValid(t *testing.T) {
 
 func TestValueOf(t *testing.T) {
 	t.Run("should return value of horusec api queue", func(t *testing.T) {
-		assert.Equal(t, HorusecAPI, ValueOf("horusec-api"))
+		assert.Equal(t, HorusecEmail, ValueOf("horusec-email"))
 	})
 
 	t.Run("should return unknown for invalid value", func(t *testing.T) {
@@ -58,16 +58,16 @@ func TestValueOf(t *testing.T) {
 
 func TestIsEqual(t *testing.T) {
 	t.Run("should return true for equal value", func(t *testing.T) {
-		assert.True(t, IsEqual("horusec-api", HorusecAPI))
+		assert.True(t, IsEqual("horusec-email", HorusecEmail))
 	})
 
 	t.Run("should return false for different value", func(t *testing.T) {
-		assert.False(t, IsEqual("test", HorusecAPI))
+		assert.False(t, IsEqual("test", HorusecEmail))
 	})
 }
 
 func TestToString(t *testing.T) {
 	t.Run("should return parse queue to string", func(t *testing.T) {
-		assert.NotEmpty(t, HorusecAPI.ToString())
+		assert.NotEmpty(t, HorusecEmail.ToString())
 	})
 }

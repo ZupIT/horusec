@@ -42,7 +42,7 @@ const Tokens: React.FC<Props> = ({
   const { showSuccessFlash } = useFlashMessage();
 
   const [tokens, setTokens] = useState<RepositoryToken[]>([]);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
 
   const [tokenToDelete, setTokenToDelete] = useState<RepositoryToken>(null);

@@ -23,7 +23,6 @@ import { ThemeProvider as ThemeProviderMatUi } from '@material-ui/core';
 import { FlashMessageProvider } from 'contexts/FlashMessage';
 import { AuthProvider } from 'contexts/Auth';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
-import { setIsMicrofrontend } from 'helpers/localStorage/microfrontend';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import {
   keycloakInstance,
@@ -33,10 +32,8 @@ import {
 import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
 import themeMatUi from 'config/themes/material-ui';
 
-function App({ isMicrofrontend }: { isMicrofrontend?: boolean }) {
+function App() {
   const theme = getCurrentTheme();
-
-  setIsMicrofrontend(isMicrofrontend || false);
 
   const AppContent = () => (
     <ThemeProviderMatUi theme={themeMatUi}>

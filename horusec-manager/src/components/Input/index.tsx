@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-import React, { InputHTMLAttributes, useState } from 'react';
-import { Field } from 'helpers/interfaces/Field';
+import React, { InputHTMLAttributes, useState } from "react";
+import { Field } from "helpers/interfaces/Field";
 import {
   IconButton,
   InputAdornment,
   TextField,
   TextFieldProps,
-} from '@material-ui/core';
+} from "@material-ui/core";
 
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
-import { useField, connect } from 'formik';
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { getCurrentTheme } from "helpers/localStorage/currentTheme";
+import { useField, connect } from "formik";
+import { useTranslation } from "react-i18next";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  ariaLabel?: string;
   name: string;
   invalidMessage?: string;
   width?: string;
@@ -40,19 +42,21 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 function Input({
   label,
+  ariaLabel,
   name,
   className,
   type,
   multiline = false,
-  width = '100%',
+  width = "100%",
   ...props
 }: InputProps & TextFieldProps) {
   const [inputType, setInputType] = useState(type);
+  const { t } = useTranslation();
   const theme = getCurrentTheme();
   const [field, { error, touched, value }] = useField(name);
 
   return (
-    <div style={{ display: 'block', width: width }} className={className}>
+    <div style={{ display: "block", width: width }} className={className}>
       <TextField
         id={name}
         name={name}
@@ -63,28 +67,32 @@ function Input({
         value={value}
         fullWidth
         multiline={multiline}
+        aria-label={ariaLabel}
+        aria-describedby={`${name}-error`}
         error={touched && !!error}
         helperText={touched && error}
         FormHelperTextProps={{
           tabIndex: 0,
+          id: `${name}-error`,
+          role: "alert",
         }}
         autoComplete="off"
         InputProps={{
           endAdornment:
-            type === 'password' ? (
+            type === "password" ? (
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label={t("GENERAL.PASS_VISIBILITY")}
                   onClick={() =>
-                    inputType === 'password'
-                      ? setInputType('text')
-                      : setInputType('password')
+                    inputType === "password"
+                      ? setInputType("text")
+                      : setInputType("password")
                   }
                   style={{
                     color: theme.colors.input.label,
                   }}
                 >
-                  {inputType === 'password' ? (
+                  {inputType === "password" ? (
                     <Visibility />
                   ) : (
                     <VisibilityOff />

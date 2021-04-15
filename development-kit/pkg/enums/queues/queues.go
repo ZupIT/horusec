@@ -19,22 +19,15 @@ import "strings"
 type Queue string
 
 const (
-	HorusecAPI                  Queue = "horusec-api"
-	HorusecWriterAnalysisCreate Queue = "horusec-writer-analysis-create"
-	HorusecAnalysisFinish       Queue = "horusec-analysis-finish"
-	HorusecAnalyser             Queue = "horusec-analyser"
-	HorusecEmail                Queue = "horusec-email"
-	HorusecWebhookDispatch      Queue = "horusec-webhook-dispatch"
-	UNKNOWN                     Queue = "unknown"
+	HorusecEmail           Queue = "horusec-email"
+	HorusecWebhookDispatch Queue = "horusec-webhook-dispatch"
+	UNKNOWN                Queue = "unknown"
 )
 
 func Values() []Queue {
 	return []Queue{
-		HorusecAPI,
-		HorusecWriterAnalysisCreate,
-		HorusecAnalysisFinish,
-		HorusecAnalyser,
 		HorusecEmail,
+		HorusecWebhookDispatch,
 	}
 }
 

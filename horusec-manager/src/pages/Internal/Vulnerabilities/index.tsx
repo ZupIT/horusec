@@ -47,7 +47,7 @@ const Vulnerabilities: React.FC = () => {
 
   const { showSuccessFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);

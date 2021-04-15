@@ -63,7 +63,7 @@ export default {
       label: '#98989E',
       text: '#F2F2F9',
       active: '#FFFFFF',
-      error: '#E02020',
+      error: '#EA8F8F',
       focus: '#FFFFFF',
       disabled: '#2C2C2E',
     },
@@ -92,9 +92,9 @@ export default {
 
     flashMessage: {
       text: '#F5F5FB',
-      error: '#FF453A',
-      success: '#10AA80',
-      warning: '#5C6BC0',
+      error: '#A30D00',
+      success: '#095D45',
+      warning: '#3A499C',
     },
 
     dialog: {

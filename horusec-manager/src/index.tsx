@@ -17,11 +17,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import Axe from '@axe-core/react';
 import './config/i18n';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+if (process.env.NODE_ENV === 'production') {
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+} else {
+  Axe(React, ReactDOM, 1000);
+  ReactDOM.render(<App />, document.getElementById('root'));
+}

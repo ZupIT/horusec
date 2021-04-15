@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import Styled from './styled';
-import { useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import queryString from 'query-string';
-import accountService from 'services/account';
-import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import { Dialog } from 'components';
+import React, { useState, useEffect } from "react";
+import Styled from "./styled";
+import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import queryString from "query-string";
+import accountService from "services/account";
+import useResponseMessage from "helpers/hooks/useResponseMessage";
+import { Dialog } from "components";
 import {
   hasLowerCase,
   hasNumber,
   hasSpecialCharacter,
   hasUpperCase,
-} from 'helpers/validators';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+} from "helpers/validators";
+import * as Yup from "yup";
+import { Formik } from "formik";
 
 function NewPasswordScreen() {
   const { t } = useTranslation();
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
 
   const [passValidations, setPassValidations] = useState({
     alpha: false,
@@ -52,7 +52,7 @@ function NewPasswordScreen() {
       const value = params?.token as string;
       setToken(value);
     } else {
-      history.replace('/auth/recovery-password');
+      history.replace("/auth/recovery-password");
     }
   }, [history]);
 
@@ -71,32 +71,32 @@ function NewPasswordScreen() {
 
   const ValidationScheme = Yup.object({
     password: Yup.string()
-      .min(8, t('RECOVERY_PASS_SCREEN.MIN_CHARACTERS'))
+      .min(8, t("RECOVERY_PASS_SCREEN.MIN_CHARACTERS"))
       .test(
-        'regex',
-        t('RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS'),
+        "regex",
+        t("RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS"),
         (value) => hasUpperCase(value) && hasLowerCase(value)
       )
       .test(
-        'regex',
-        t('RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER'),
+        "regex",
+        t("RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER"),
         hasSpecialCharacter
       )
-      .test('regex', t('RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT'), hasNumber)
-      .required(t('RECOVERY_PASS_SCREEN.INVALID_PASS')),
+      .test("regex", t("RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT"), hasNumber)
+      .required(t("RECOVERY_PASS_SCREEN.INVALID_PASS")),
     confirmPass: Yup.string()
       .oneOf(
-        [Yup.ref('password')],
-        t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')
+        [Yup.ref("password")],
+        t("RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS")
       )
-      .required(t('RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS')),
+      .required(t("RECOVERY_PASS_SCREEN.INVALID_CONFIRM_PASS")),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    password: '',
-    confirmPass: '',
+    password: "",
+    confirmPass: "",
   };
 
   const handlePasswordValue = (field: string) => {
@@ -111,33 +111,33 @@ function NewPasswordScreen() {
   return (
     <Styled.Container>
       <Styled.SubTitle>
-        {t('RECOVERY_PASS_SCREEN.CREATE_NEW_PASS')}
+        {t("RECOVERY_PASS_SCREEN.CREATE_NEW_PASS")}
       </Styled.SubTitle>
 
       <Styled.PassRequirements>
         <Styled.Info>
-          {t('RECOVERY_PASS_SCREEN.PASSWORD_REQUIREMENTS')}
+          {t("RECOVERY_PASS_SCREEN.PASSWORD_REQUIREMENTS")}
         </Styled.Info>
 
         <Styled.Item isInvalid={passValidations.minCharacters}>
-          {t('RECOVERY_PASS_SCREEN.MIN_CHARACTERS')}
+          {t("RECOVERY_PASS_SCREEN.MIN_CHARACTERS")}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.alpha}>
-          {t('RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS')}
+          {t("RECOVERY_PASS_SCREEN.ALPHA_REQUIREMENTS")}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.number}>
-          {t('RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT')}
+          {t("RECOVERY_PASS_SCREEN.NUMBER_REQUIREMENT")}
         </Styled.Item>
 
         <Styled.Item isInvalid={passValidations.characterSpecial}>
-          {t('RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER')}
+          {t("RECOVERY_PASS_SCREEN.SPECIAL_CHARACTER")}
         </Styled.Item>
 
-        <Styled.Info>{t('RECOVERY_PASS_SCREEN.NO_EQUALS')}</Styled.Info>
+        <Styled.Info>{t("RECOVERY_PASS_SCREEN.NO_EQUALS")}</Styled.Info>
 
-        <Styled.Item>{t('RECOVERY_PASS_SCREEN.USER_NAME')}</Styled.Item>
+        <Styled.Item>{t("RECOVERY_PASS_SCREEN.USER_NAME")}</Styled.Item>
       </Styled.PassRequirements>
 
       <Formik
@@ -151,39 +151,40 @@ function NewPasswordScreen() {
         {(props) => (
           <Styled.Form onSubmit={props.submitForm}>
             <Styled.Field
-              label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
+              label={t("RECOVERY_PASS_SCREEN.PASSWORD")}
+              ariaLabel={t("RECOVERY_PASS_SCREEN.ARIA_PASSWORD")}
               name="password"
               type="password"
             />
 
             <Styled.Field
-              label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
+              label={t("RECOVERY_PASS_SCREEN.CONFIRM_PASS")}
+              ariaLabel={t("RECOVERY_PASS_SCREEN.ARIA_CONFIRM_PASS")}
               name="confirm-pass"
               type="password"
             />
 
             <Styled.Submit
               isDisabled={!props.isValid}
-              text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
+              text={t("RECOVERY_PASS_SCREEN.UPDATE_PASS")}
               type="submit"
               rounded
             />
 
             <Styled.BackToLogin
-              onClick={() => history.push('/auth')}
-              text={t('RECOVERY_PASS_SCREEN.BACK')}
+              onClick={() => history.push("/auth")}
+              text={t("RECOVERY_PASS_SCREEN.BACK")}
               rounded
               outline
             />
           </Styled.Form>
         )}
       </Formik>
-
       <Dialog
         isVisible={successDialogVisible}
-        confirmText={t('RECOVERY_PASS_SCREEN.BACK')}
-        message={t('RECOVERY_PASS_SCREEN.SUCCESS_ALTER_PASS')}
-        onConfirm={() => history.push('/auth')}
+        confirmText={t("RECOVERY_PASS_SCREEN.BACK")}
+        message={t("RECOVERY_PASS_SCREEN.SUCCESS_ALTER_PASS")}
+        onConfirm={() => history.push("/auth")}
       />
     </Styled.Container>
   );

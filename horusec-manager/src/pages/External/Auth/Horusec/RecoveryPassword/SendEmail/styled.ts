@@ -23,7 +23,7 @@ const Form = styled(FormMik)`
   flex-direction: column;
 `;
 
-const SubTitle = styled.h2`
+const SubTitle = styled.h1`
   color: ${({ theme }) => theme.colors.text.primary};
   font-weight: normal;
   align-self: flex-start;
