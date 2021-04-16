@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useContext } from "react";
-import Styled from "./styled";
-import { useHistory } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { CreateAccountContext } from "contexts/CreateAccount";
-import * as Yup from "yup";
-import { Formik } from "formik";
+import React, { useContext } from 'react';
+import Styled from './styled';
+import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { CreateAccountContext } from 'contexts/CreateAccount';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 interface UserInfoProps {
   onNextStep: Function;
 }
@@ -40,14 +40,14 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    username: "",
-    email: "",
+    username: '',
+    email: '',
   };
 
   return (
     <>
       <Styled.SubTitle>
-        {t("CREATE_ACCOUNT_SCREEN.CREATE_ACCOUNT")}
+        {t('CREATE_ACCOUNT_SCREEN.CREATE_ACCOUNT')}
       </Styled.SubTitle>
       <Formik
         initialValues={initialValues}
@@ -61,30 +61,30 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
         {(props) => (
           <Styled.Form>
             <Styled.Field
-              label={t("CREATE_ACCOUNT_SCREEN.NAME")}
-              ariaLabel={t("CREATE_ACCOUNT_SCREEN.ARIA_NAME")}
+              label={t('CREATE_ACCOUNT_SCREEN.NAME')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_NAME')}
               name="username"
               type="username"
             />
 
             <Styled.Field
-              label={t("CREATE_ACCOUNT_SCREEN.EMAIL")}
-              ariaLabel={t("CREATE_ACCOUNT_SCREEN.ARIA_EMAIL")}
+              label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_EMAIL')}
               name="email"
               type="text"
             />
 
             <Styled.Submit
               isDisabled={!props.isValid}
-              text={t("CREATE_ACCOUNT_SCREEN.NEXT")}
+              text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
               type="submit"
               isLoading={isLoading}
               rounded
             />
 
             <Styled.BackToLogin
-              onClick={() => history.push("/auth")}
-              text={t("CREATE_ACCOUNT_SCREEN.BACK")}
+              onClick={() => history.push('/auth')}
+              text={t('CREATE_ACCOUNT_SCREEN.BACK')}
               outline
               rounded
             />

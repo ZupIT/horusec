@@ -16,8 +16,6 @@
 
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
-import { isMicrofrontend } from 'helpers/localStorage/microfrontend';
-import Select from 'components/Select';
 
 interface RouterItemProps {
   isActive: boolean;

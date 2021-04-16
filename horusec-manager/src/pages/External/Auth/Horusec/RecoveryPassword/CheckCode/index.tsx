@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from "react";
-import Styled from "./styled";
-import { useHistory } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import accountService from "services/account";
-import useResponseMessage from "helpers/hooks/useResponseMessage";
-import queryString from "query-string";
-import * as Yup from "yup";
-import { Formik } from "formik";
+import React, { useState, useEffect } from 'react';
+import Styled from './styled';
+import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import accountService from 'services/account';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import queryString from 'query-string';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function CheckCode() {
   const { t } = useTranslation();
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
 
-  const [code, setCode] = useState("");
-  const [email, setEmail] = useState("");
+  const [code, setCode] = useState('');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const params = queryString.parse(window.location.search);
@@ -62,9 +62,9 @@ function CheckCode() {
 
   const ValidationScheme = Yup.object({
     email: Yup.string()
-      .email(t("RECOVERY_PASS_SCREEN.INVALID_EMAIL"))
+      .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
       .required(),
-    code: Yup.string().required(t("RECOVERY_PASS_SCREEN.INVALID_CODE")),
+    code: Yup.string().required(t('RECOVERY_PASS_SCREEN.INVALID_CODE')),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
@@ -77,7 +77,7 @@ function CheckCode() {
   return (
     <Styled.Container>
       <Styled.SubTitle>
-        {t("RECOVERY_PASS_SCREEN.TYPE_THE_CODE")}
+        {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
       </Styled.SubTitle>
 
       <Formik
@@ -91,29 +91,29 @@ function CheckCode() {
         {(props) => (
           <Styled.Form onSubmit={props.submitForm}>
             <Styled.Field
-              label={t("RECOVERY_PASS_SCREEN.EMAIL")}
-              ariaLabel={t("RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL")}
+              label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
               name="email"
               type="email"
             />
 
             <Styled.Field
-              label={t("CODE")}
-              ariaLabel={t("RECOVERY_PASS_SCREEN.ARIA_CODE")}
+              label={t('CODE')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_CODE')}
               name="code"
               type="text"
             />
 
             <Styled.Submit
               isDisabled={!props.isValid}
-              text={t("RECOVERY_PASS_SCREEN.CHECK_CODE")}
+              text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
               type="submit"
               rounded
             />
 
             <Styled.BackToLogin
-              onClick={() => history.push("/auth")}
-              text={t("RECOVERY_PASS_SCREEN.BACK")}
+              onClick={() => history.push('/auth')}
+              text={t('RECOVERY_PASS_SCREEN.BACK')}
               rounded
               outline
             />

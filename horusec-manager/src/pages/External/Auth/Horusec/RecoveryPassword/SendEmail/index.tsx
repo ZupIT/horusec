@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import React, { useState } from "react";
-import Styled from "./styled";
-import { useHistory } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Dialog } from "components";
-import accountService from "services/account";
-import useResponseMessage from "helpers/hooks/useResponseMessage";
-import * as Yup from "yup";
-import { Formik } from "formik";
+import React, { useState } from 'react';
+import Styled from './styled';
+import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Dialog } from 'components';
+import accountService from 'services/account';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function SendEmailScreen() {
   const { t } = useTranslation();
@@ -50,19 +50,19 @@ function SendEmailScreen() {
 
   const ValidationScheme = Yup.object({
     email: Yup.string()
-      .email(t("RECOVERY_PASS_SCREEN.INVALID_EMAIL"))
+      .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
       .required(),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    email: "",
+    email: '',
   };
 
   return (
     <>
-      <Styled.SubTitle>{t("RECOVERY_PASS_SCREEN.INPUT_EMAIL")}</Styled.SubTitle>
+      <Styled.SubTitle>{t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}</Styled.SubTitle>
 
       <Formik
         initialValues={initialValues}
@@ -72,8 +72,8 @@ function SendEmailScreen() {
         {(props) => (
           <Styled.Form>
             <Styled.Field
-              label={t("RECOVERY_PASS_SCREEN.EMAIL")}
-              ariaLabel={t("RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL")}
+              label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
               name="email"
               type="email"
             />
@@ -81,15 +81,15 @@ function SendEmailScreen() {
             <Styled.Submit
               isLoading={isLoading}
               isDisabled={!props.isValid}
-              text={t("RECOVERY_PASS_SCREEN.SUBMIT")}
+              text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
               type="submit"
               rounded
             />
 
             <Styled.BackToLogin
-              onClick={() => history.push("/auth")}
+              onClick={() => history.push('/auth')}
               outline
-              text={t("RECOVERY_PASS_SCREEN.BACK")}
+              text={t('RECOVERY_PASS_SCREEN.BACK')}
               rounded
             />
           </Styled.Form>
@@ -97,9 +97,9 @@ function SendEmailScreen() {
       </Formik>
       <Dialog
         isVisible={successDialogVisible}
-        confirmText={t("RECOVERY_PASS_SCREEN.CONFIRM")}
-        message={t("RECOVERY_PASS_SCREEN.SUCCESS")}
-        onConfirm={() => history.push("/auth")}
+        confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}
+        message={t('RECOVERY_PASS_SCREEN.SUCCESS')}
+        onConfirm={() => history.push('/auth')}
       />
     </>
   );

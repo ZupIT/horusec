@@ -45,10 +45,10 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
   };
 
   function handleListKeyDown(event: React.KeyboardEvent) {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      setOpen(false);
-    }
+    // if (event.key === "Tab") {
+    //   event.preventDefault();
+    //   setOpen(false);
+    // }
   }
 
   // return focus to the button when we transitioned from !open -> open
@@ -57,7 +57,6 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -70,6 +69,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
           aria-controls={open ? 'menu-list-grow' : undefined}
           onClick={handleToggle}
           disableRipple
+          style={{ padding: 0 }}
         >
           <ListItemText
             ref={anchorRef}
