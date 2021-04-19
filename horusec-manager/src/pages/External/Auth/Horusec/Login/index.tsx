@@ -78,6 +78,7 @@ function LoginScreen() {
       ) : null}
 
       <Styled.Submit
+        id="submit-login"
         isDisabled={!password.isValid || !email.isValid}
         isLoading={loginInProgress}
         text={t('LOGIN_SCREEN.SUBMIT')}
@@ -87,6 +88,7 @@ function LoginScreen() {
       />
 
       <Styled.Register
+        id="create-account"
         onClick={() => history.push(`${path}/create-account`)}
         outline
         text={t('LOGIN_SCREEN.NO_ACCOUNT')}

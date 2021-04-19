@@ -120,6 +120,7 @@ function PasswordForm() {
         <Styled.Field
           onChangeValue={(field: Field) => handlePasswordValue(field)}
           label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
           name="password"
           type="password"
           invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_PASS')}
@@ -128,6 +129,7 @@ function PasswordForm() {
 
         <Styled.Field
           label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
+          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
           onChangeValue={(field: Field) => setConfirmPass(field)}
           name="confirm-pass"
           type="password"

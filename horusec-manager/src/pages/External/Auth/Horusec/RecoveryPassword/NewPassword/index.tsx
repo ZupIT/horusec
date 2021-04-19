@@ -129,6 +129,7 @@ function NewPasswordScreen() {
         <Styled.Field
           onChangeValue={(field: Field) => handlePasswordValue(field)}
           label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
+          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_PASSWORD')}
           name="password"
           type="password"
           invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_PASS')}
@@ -137,6 +138,7 @@ function NewPasswordScreen() {
 
         <Styled.Field
           label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
+          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_CONFIRM_PASS')}
           onChangeValue={(field: Field) => setConfirmPass(field)}
           name="confirm-pass"
           type="password"
