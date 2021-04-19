@@ -60,7 +60,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "start:microfrontend": "react-app-rewired build && npx http-serve --cors build/",
     "build:microfrontend": "react-app-rewired build",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
