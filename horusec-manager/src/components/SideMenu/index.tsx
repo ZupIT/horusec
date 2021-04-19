@@ -106,6 +106,11 @@ const SideMenu: React.FC = () => {
 
       if (!route?.subRoutes) {
         history.push(route.path);
+      } else {
+        setTimeout(() => {
+          const firstItemSubRoute = document.getElementById('sub-route-0');
+          firstItemSubRoute?.focus();
+        }, 1000);
       }
     } else {
       setSelectedSubRoute(route);
@@ -119,8 +124,10 @@ const SideMenu: React.FC = () => {
         return (
           <Styled.RouteItem
             key={index}
+            tabIndex={0}
             isActive={route.path === selectedRoute?.path}
             onClick={() => handleSelectedRoute(route)}
+            onKeyPress={() => handleSelectedRoute(route)}
           >
             <Icon name={route.icon} size="15" />
 
@@ -144,7 +151,9 @@ const SideMenu: React.FC = () => {
     if (subRoute.roles.includes(currentWorkspace?.role)) {
       return (
         <Styled.SubRouteItem
+          id={`sub-route-${index}`}
           key={index}
+          tabIndex={0}
           isActive={subRoute.path === selectedSubRoute?.path}
           onClick={() => handleSelectedRoute(subRoute)}
         >
@@ -188,9 +197,11 @@ const SideMenu: React.FC = () => {
             </Styled.SelectWrapper>
           ) : null}
 
-          <Styled.RoutesList>
-            {routes.map((route, index) => renderRoute(route, index))}
-          </Styled.RoutesList>
+          <nav>
+            <Styled.RoutesList>
+              {routes.map((route, index) => renderRoute(route, index))}
+            </Styled.RoutesList>
+          </nav>
         </Styled.WrapperLogoRoutes>
 
         <Styled.OptionsList>

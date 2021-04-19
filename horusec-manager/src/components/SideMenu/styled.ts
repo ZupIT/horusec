@@ -99,7 +99,7 @@ const RouteName = styled.span`
   margin-left: 13px;
 `;
 
-const SubMenu = styled.div<SubMenuProps>`
+const SubMenu = styled.nav<SubMenuProps>`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   min-width: 180px;
   top: 0;
