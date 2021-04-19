@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import useAuth from 'helpers/hooks/useAuth';
-import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
-import * as Yup from 'yup';
+import React from "react";
+import Styled from "./styled";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import useAuth from "helpers/hooks/useAuth";
+import { getCurrentConfig } from "helpers/localStorage/horusecConfig";
+import * as Yup from "yup";
 
-import { Formik } from 'formik';
+import { Formik } from "formik";
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();
@@ -31,15 +31,15 @@ function LoginScreen() {
   const { disabledBroker } = getCurrentConfig();
 
   const ValidationScheme = Yup.object({
-    email: Yup.string().email(t('LOGIN_SCREEN.INVALID_EMAIL')).required(),
-    password: Yup.string().required(t('LOGIN_SCREEN.INVALID_PASS')),
+    email: Yup.string().email(t("LOGIN_SCREEN.INVALID_EMAIL")).required(),
+    password: Yup.string().required(t("LOGIN_SCREEN.INVALID_PASS")),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
 
   return (
@@ -49,7 +49,7 @@ function LoginScreen() {
       onSubmit={(values) => {
         login({ username: values.email, password: values.password }).then(
           () => {
-            history.replace('/home');
+            history.replace("/home");
           }
         );
       }}
@@ -57,14 +57,14 @@ function LoginScreen() {
       {(props) => (
         <Styled.Form>
           <Styled.Field
-            label={t('LOGIN_SCREEN.EMAIL')}
-            ariaLabel={t('LOGIN_SCREEN.EMAIL_ARIA')}
+            label={t("LOGIN_SCREEN.EMAIL")}
+            ariaLabel={t("LOGIN_SCREEN.EMAIL_ARIA")}
             name="email"
           />
 
           <Styled.Field
-            label={t('LOGIN_SCREEN.PASSWORD')}
-            ariaLabel={t('LOGIN_SCREEN.PASSWORD_ARIA')}
+            label={t("LOGIN_SCREEN.PASSWORD")}
+            ariaLabel={t("LOGIN_SCREEN.PASSWORD_ARIA")}
             name="password"
             type="password"
           />
@@ -73,22 +73,25 @@ function LoginScreen() {
             <Styled.ForgotPass
               onClick={() => history.push(`${path}/recovery-password`)}
             >
-              {t('LOGIN_SCREEN.FORGOT_PASS')}
+              {t("LOGIN_SCREEN.FORGOT_PASS")}
             </Styled.ForgotPass>
           ) : null}
 
           <Styled.Submit
+            id="submit-login"
             isDisabled={!props.isValid}
             isLoading={loginInProgress}
-            text={t('LOGIN_SCREEN.SUBMIT')}
+            text={t("LOGIN_SCREEN.SUBMIT")}
             type="submit"
+            onClick={props.submitForm}
             rounded
           />
 
           <Styled.Register
+            id="create-account"
             onClick={() => history.push(`${path}/create-account`)}
             outline
-            text={t('LOGIN_SCREEN.NO_ACCOUNT')}
+            text={t("LOGIN_SCREEN.NO_ACCOUNT")}
             rounded
           />
         </Styled.Form>

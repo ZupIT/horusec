@@ -8,7 +8,7 @@ describe('Validation the field of login create account form.', () => {
     cy.intercept(
       {
         method: 'POST',
-        url: 'api/account/verify-already-used',
+        url: 'auth/account/verify-already-used',
       },
       { fixture: 'createAccount/verifyAlreadyUsed/success', statusCode: 200 }
     ).as('verifyAlreadyUsed');
