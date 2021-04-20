@@ -21,5 +21,5 @@ type Issue struct {
 	Severity           string     `json:"severity"`
 	EffortMinutes      int        `json:"effortMinutes"`
 	PrimaryLocation    Location   `json:"primaryLocation"`
-	SecondaryLocations []Location `json:"secondaryLocations"`
+	SecondaryLocations []Location `json:"secondaryLocations,omitempty"`
 }
