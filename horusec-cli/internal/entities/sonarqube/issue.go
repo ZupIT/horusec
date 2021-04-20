@@ -15,12 +15,11 @@
 package sonarqube
 
 type Issue struct {
-	Type        string `json:"type"`
-	RuleID      string `json:"ruleId"`
-	EngineID    string `json:"engineId"`
-	Severity    string `json:"severity"`
-	EffortToFix int    `json:"effortMinutes"`
-
+	Type               string     `json:"type"`
+	RuleID             string     `json:"ruleId"`
+	EngineID           string     `json:"engineId"`
+	Severity           string     `json:"severity"`
+	EffortMinutes      int        `json:"effortMinutes"`
 	PrimaryLocation    Location   `json:"primaryLocation"`
 	SecondaryLocations []Location `json:"secondaryLocations"`
 }
