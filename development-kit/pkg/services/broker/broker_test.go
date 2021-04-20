@@ -110,4 +110,16 @@ func TestCloseMock(t *testing.T) {
 	})
 }
 
+func TestSetUpConnection(t *testing.T) {
+	t.Run("should not panic while verifying if is closed when nil connection", func(t *testing.T) {
+		broker := &Broker{
+			config: config.NewBrokerConfig(),
+		}
+
+		assert.NotPanics(t, func() {
+			_ = broker.setUpConnection()
+		})
+	})
+}
+
 func testConsumer(packet packet.IPacket) {}
