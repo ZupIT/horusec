@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import Filters from './Filters';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
+import { useTranslation } from 'react-i18next';
 
 import TotalDevelopers from './TotalDevelopers';
 import TotalRepositories from './TotalRepositories';
@@ -33,9 +34,16 @@ interface Props {
 
 const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
+  const { t } = useTranslation();
 
   return (
     <Styled.Wrapper>
+      <Styled.AriaTitle>
+        {type === 'workspace'
+          ? t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE')
+          : t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY')}
+      </Styled.AriaTitle>
+
       <Filters type={type} onApply={(values) => setFilters(values)} />
 
       <Styled.Row>

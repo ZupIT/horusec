@@ -159,6 +159,8 @@
     "NO_WORKSPACES": "Nenhum espaço de trabalho registrado foi encontrado."
   },
   "DASHBOARD_SCREEN": {
+    "ARIA_TITLE_WORKSPACE": "Tela de apresentação de gráficos referentes ao workspace",
+    "ARIA_TITLE_REPOSITORY": "Tela de apresentação de gráficos referentes ao repositório",
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
     "PERIOD": "Período",
@@ -390,6 +392,7 @@
     "SUCCESS_DELETE": "Sua conta foi deletada com sucesso!"
   },
   "SIDE_MENU": {
+    "ARIA_TITLE": "Navegação entre páginas",
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",

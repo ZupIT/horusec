@@ -28,14 +28,14 @@ const Wrapper = styled.div`
 
 const EmptyText = styled.span`
   color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  font-size: ${({ theme }) => theme.metrics.fontSize.large};
   text-align: center;
   display: block;
   line-height: 170px;
 `;
 
-const Title = styled.h4`
-  color: ${({ theme }) => theme.colors.text.secundary};
+const Title = styled.h2`
+  color: ${({ theme }) => theme.colors.chart.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
   border-radius: 4px;
   padding: 18px 10px 0px 10px;
@@ -51,8 +51,8 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const Count = styled.h5`
-  color: ${({ theme }) => theme.colors.text.primary};
+const Count = styled.span`
+  color: ${({ theme }) => theme.colors.chart.legend};
   font-size: ${({ theme }) => theme.metrics.fontSize.big};
   text-align: end;
   font-weight: normal;

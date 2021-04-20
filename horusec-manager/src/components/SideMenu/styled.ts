@@ -35,7 +35,7 @@ const SideMenu = styled.div`
   z-index: 2;
 `;
 
-const WrapperLogoRoutes = styled.nav`
+const WrapperLogoRoutes = styled.div`
   flex: 1;
 `;
 

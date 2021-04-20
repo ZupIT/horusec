@@ -16,6 +16,10 @@
 
 import styled from 'styled-components';
 
+const AriaTitle = styled.h1`
+  font-size: 0;
+`;
+
 const Wrapper = styled.div`
   width: 100%;
   padding: 35px 40px 10px 35px;
@@ -54,4 +58,4 @@ const Row = styled.div`
   }
 `;
 
-export default { Wrapper, Row };
+export default { Wrapper, Row, AriaTitle };

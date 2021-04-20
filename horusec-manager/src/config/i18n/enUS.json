@@ -157,6 +157,8 @@
     "NO_WORKSPACES": "No registered workspace were found."
   },
   "DASHBOARD_SCREEN": {
+    "ARIA_TITLE_WORKSPACE": "Graphics presentation screen for the workspace",
+    "ARIA_TITLE_REPOSITORY": "Graphics presentation screen for the repository",
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
     "PERIOD": "Period",
@@ -388,6 +390,7 @@
     "SUCCESS_DELETE": "Your account has been successfully deleted!"
   },
   "SIDE_MENU": {
+    "ARIA_TITLE": "Navigation between pages",
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilities",
     "REPOSITORIES": "Repositories",

@@ -181,6 +181,7 @@ const SideMenu: React.FC = () => {
           {allWorkspaces && allWorkspaces.length > 0 ? (
             <Styled.SelectWrapper>
               <Styled.SelectWorkspace
+                testId="workspace"
                 selectText="Selecione"
                 options={allWorkspaces}
                 initialValue={currentWorkspace}
@@ -197,7 +198,7 @@ const SideMenu: React.FC = () => {
             </Styled.SelectWrapper>
           ) : null}
 
-          <nav>
+          <nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>
               {routes.map((route, index) => renderRoute(route, index))}
             </Styled.RoutesList>

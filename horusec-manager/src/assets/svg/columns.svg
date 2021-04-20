@@ -10,7 +10,7 @@
                     <mask  fill="white">
                         <use xlink:href="#path-1"></use>
                     </mask>
-                    <use id="Icon-Kanban" fill="#98989E" transform="translate(7.500000, 6.500000) rotate(90.000000) translate(-7.500000, -6.500000) " xlink:href="#path-1"></use>
+                    <use fill="#98989E" transform="translate(7.500000, 6.500000) rotate(90.000000) translate(-7.500000, -6.500000) " xlink:href="#path-1"></use>
                 </g>
             </g>
         </g>

@@ -21,7 +21,7 @@ interface LoadingWrapperProps {
 }
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.dataTable.backgorund};
+  background-color: ${({ theme }) => theme.colors.dataTable.background};
   border-radius: 4px;
   height: auto;
   width: 100%;
@@ -48,7 +48,7 @@ const LoadingWrapper = styled.div<LoadingWrapperProps>`
     `};
 `;
 
-const Title = styled.h4`
+const Title = styled.h2`
   color: ${({ theme }) => theme.colors.dataTable.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
   border-radius: 4px;

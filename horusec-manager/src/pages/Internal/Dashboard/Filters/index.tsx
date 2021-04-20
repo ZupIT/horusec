@@ -138,6 +138,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     <Styled.Container>
       <Styled.Wrapper>
         <Select
+          testId="period"
           keyLabel="label"
           optionsHeight="160px"
           width="200px"
@@ -173,6 +174,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
       {type === 'repository' ? (
         <Select
+          testId="repository"
           keyLabel="name"
           width="200px"
           optionsHeight="200px"

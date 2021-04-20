@@ -32,7 +32,7 @@ interface Props {
 
 const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, metrics } = useTheme();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -45,6 +45,7 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
       text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
+        fontSize: metrics.fontSize.large,
       },
     },
     chart: {
@@ -62,7 +63,10 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
       },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
+      style: {
+        fontSize: metrics.fontSize.small,
+      },
     },
     stroke: {
       show: false,
@@ -70,7 +74,7 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
     plotOptions: {
       pie: {
         donut: {
-          size: '35px',
+          size: '25px',
         },
       },
     },
@@ -125,7 +129,7 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper>
+      <Styled.Wrapper tabIndex={0}>
         <Styled.Title>{t('DASHBOARD_SCREEN.ALL_VULNERABILITIES')}</Styled.Title>
 
         {isLoading ? (

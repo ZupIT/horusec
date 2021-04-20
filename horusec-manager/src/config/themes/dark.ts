@@ -103,8 +103,8 @@ export default {
     },
 
     chart: {
-      title: '#B4B6BA',
-      legend: '#ACACB2',
+      title: '#F4F4FA',
+      legend: '#F4F4FA',
     },
 
     vulnerabilities: {
@@ -141,13 +141,13 @@ export default {
     },
 
     dataTable: {
-      backgorund: '#2C2C2E',
-      title: '#C7C7D4',
+      background: '#2C2C2E',
+      title: '#F4F4FA',
       column: {
-        text: '#c2c2c2',
+        text: '#F4F4FA',
       },
       row: {
-        text: '#F2F2F9',
+        text: '#F4F4FA',
         background: '#3A3A3C',
       },
     },
