@@ -16,6 +16,6 @@ package sonarqube
 
 type Location struct {
 	Message  string    `json:"message"`
-	Filepath string    `json:"filepath"`
+	Filepath string    `json:"filePath"`
 	Range    TextRange `json:"textRange"`
 }
