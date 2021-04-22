@@ -64,7 +64,7 @@ const Select: React.FC<Props> = ({
   backgroundColors,
   hasSearch,
   ariaLabel,
-  testId
+  testId,
 }) => {
   const [currentValue, setCurrentValue] = useState<string>('');
   const [filteredOptions, setFilteredOptions] = useState<any[]>(options);
@@ -188,7 +188,11 @@ const Select: React.FC<Props> = ({
           ) : null}
         </Styled.OptionsList>
 
-        <Icon name="down" testId={testId ? `select-${testId}` : 'select'} size="12px" />
+        <Icon
+          name="down"
+          testId={testId ? `select-${testId}` : 'select'}
+          size="12px"
+        />
       </Styled.Container>
     </Styled.Wrapper>
   );
