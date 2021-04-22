@@ -129,7 +129,7 @@ const ChangePassword: React.FC<Props> = ({
             onCancel();
             props.resetForm();
           }}
-          onConfirm={handleConfirmSave}
+          onConfirm={props.submitForm}
           confirmText={t('SETTINGS_SCREEN.SAVE')}
           loadingConfirm={isLoading}
           disabledColor={colors.button.disableInDark}
