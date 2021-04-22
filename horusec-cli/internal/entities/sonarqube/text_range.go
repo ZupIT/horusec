@@ -16,7 +16,7 @@ package sonarqube
 
 type TextRange struct {
 	StartLine   int `json:"startLine"`
-	EndLine     int `json:"endLine"`
-	StartColumn int `json:"startColumn"`
-	EndColumn   int `json:"endColumn"`
+	EndLine     int `json:"endLine,omitempty"`
+	StartColumn int `json:"startColumn,omitempty"`
+	EndColumn   int `json:"endColumn,omitempty"`
 }
