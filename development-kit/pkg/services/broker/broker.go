@@ -53,7 +53,7 @@ func (b *Broker) setUpConnection() (err error) {
 		b.connection, err = b.makeConnection()
 	}
 
-	if b.connection.IsClosed() {
+	if b.connection != nil && b.connection.IsClosed() {
 		b.connection, err = b.makeConnection()
 	}
 
