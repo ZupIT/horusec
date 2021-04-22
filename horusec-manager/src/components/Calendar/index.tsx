@@ -57,6 +57,8 @@ interface CalendarProps {
   initialDate?: any;
   title?: any;
   onChangeValue?: (props: any) => any;
+  invalidMessage?: string;
+  validation?: (value: string) => boolean;
 }
 
 type LocaleType = 'enUS' | 'ptBR';

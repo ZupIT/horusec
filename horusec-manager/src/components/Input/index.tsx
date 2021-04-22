@@ -35,7 +35,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   invalidMessage?: string;
   width?: string;
   initialValue?: string;
-  validation?: Function;
+  validation?: (value: string) => boolean;
   onChangeValue?: (params: Field) => any;
   multiline?: boolean;
 }

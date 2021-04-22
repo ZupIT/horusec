@@ -22,7 +22,7 @@ import { CreateAccountContext } from 'contexts/CreateAccount';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 interface UserInfoProps {
-  onNextStep: Function;
+  onNextStep: () => void;
 }
 
 function UserInfoForm({ onNextStep }: UserInfoProps) {
