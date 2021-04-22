@@ -75,41 +75,41 @@ generateBinaries () {
     # Build for linux x86
     if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec" ./horusec-cli/cmd/horusec/main.go;
     then
-        echo "1/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec"
-    else
         echo "Error when generate Build for linux_x86"
+    else
+        echo "1/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec"
     fi
 
     # Build for linux x64
     if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec" ./horusec-cli/cmd/horusec/main.go;
     then
-        echo "2/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
-    else
         echo "Error when generate Build for linux_x64"
+    else
+        echo "2/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
     fi
 
     # Build for Windows x86
     if ! env GOOS=windows GOARCH=386 go build -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86/horusec.exe" ./horusec-cli/cmd/horusec/main.go;
     then
-        echo "3/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86/horusec.exe"
-    else
         echo "Error when generate Build for win_x86"
+    else
+        echo "3/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86/horusec.exe"
     fi
 
     # Build for Windows x64
     if ! env GOOS=windows GOARCH=amd64 go build -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x64/horusec.exe" ./horusec-cli/cmd/horusec/main.go;
     then
-        echo "4/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x64/horusec.exe"
-    else
         echo "Error when generate Build for win_x64"
+    else
+        echo "4/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x64/horusec.exe"
     fi
 
     # Build for Mac x64
     if ! env GOOS=darwin GOARCH=amd64 go build -o "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/mac_x64/horusec" ./horusec-cli/cmd/horusec/main.go;
     then
-        echo "5/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/mac_x64/horusec"
-    else
         echo "Error when generate Build for mac_x64"
+    else
+        echo "5/5 Binary generated with success in ./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/mac_x64/horusec"
     fi
 
     chmod +x "./horusec-cli/bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
