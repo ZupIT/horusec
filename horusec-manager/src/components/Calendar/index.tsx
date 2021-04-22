@@ -33,7 +33,7 @@ interface CalendarProps {
   title: string;
   disabled?: boolean;
   invalidMessage?: string;
-  validation?: Function;
+  validation?: (value: string) => boolean;
 }
 
 const Calendar: React.FC<

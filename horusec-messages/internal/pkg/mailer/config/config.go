@@ -21,8 +21,6 @@ import (
 
 type IMailerConfig interface {
 	Validate() error
-	SetAddress(address string)
-	GetAddress() string
 	SetUsername(username string)
 	GetUsername() string
 	SetPassword(password string)
@@ -36,7 +34,6 @@ type IMailerConfig interface {
 }
 
 type MailerConfig struct {
-	address  string
 	username string
 	password string
 	host     string
@@ -46,7 +43,6 @@ type MailerConfig struct {
 
 func NewMailerConfig() IMailerConfig {
 	config := &MailerConfig{}
-	config.SetAddress(env.GetEnvOrDefault("HORUSEC_SMTP_ADDRESS", ""))
 	config.SetUsername(env.GetEnvOrDefault("HORUSEC_SMTP_USERNAME", ""))
 	config.SetPassword(env.GetEnvOrDefault("HORUSEC_SMTP_PASSWORD", ""))
 	config.SetHost(env.GetEnvOrDefault("HORUSEC_SMTP_HOST", ""))
@@ -58,7 +54,6 @@ func NewMailerConfig() IMailerConfig {
 
 func (c *MailerConfig) Validate() error {
 	validations := []*validation.FieldRules{
-		validation.Field(&c.address, validation.Required),
 		validation.Field(&c.host, validation.Required),
 		validation.Field(&c.port, validation.Required),
 		validation.Field(&c.username, validation.Required),
@@ -67,14 +62,6 @@ func (c *MailerConfig) Validate() error {
 	}
 
 	return validation.ValidateStruct(c, validations...)
-}
-
-func (c *MailerConfig) SetAddress(address string) {
-	c.address = address
-}
-
-func (c *MailerConfig) GetAddress() string {
-	return c.address
 }
 
 func (c *MailerConfig) SetHost(host string) {

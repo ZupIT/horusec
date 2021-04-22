@@ -21,16 +21,29 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
   ],
   "paths": {
-    "components/*": ["components/*"],
-    "pages/*": ["pages/*"],
-    "assets/*": ["assets/*"],
-    "helpers/*": ["helpers/*"],
-    "services/*": ["services/*"],
-    "contexts/*": ["contexts/*"],
+    "components/*": [
+      "components/*"
+    ],
+    "pages/*": [
+      "pages/*"
+    ],
+    "assets/*": [
+      "assets/*"
+    ],
+    "helpers/*": [
+      "helpers/*"
+    ],
+    "services/*": [
+      "services/*"
+    ],
+    "contexts/*": [
+      "contexts/*"
+    ]
   }
 }

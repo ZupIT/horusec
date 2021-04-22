@@ -23,7 +23,7 @@ import { Field } from 'helpers/interfaces/Field';
 import { CreateAccountContext } from 'contexts/CreateAccount';
 
 interface UserInfoProps {
-  onNextStep: Function;
+  onNextStep: () => void;
 }
 
 function UserInfoForm({ onNextStep }: UserInfoProps) {
