@@ -1,8 +1,10 @@
-import { API_ERRORS } from '../../../../src/config/i18n/enUS.json';
+import { NEW_WORKSPACE_SCREEN } from '../../../../src/config/i18n/enUS.json';
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe('Show the message of invalid password when enter a invlaid password ou username.', () => {
+describe('Login in the application when a correct username and password.', () => {
   beforeEach(() => {
+    cy.restoreLocalStorage();
+
     cy.setHorusecAuthConfig();
 
     cy.intercept(
@@ -10,8 +12,16 @@ describe('Show the message of invalid password when enter a invlaid password ou 
         method: 'POST',
         url: 'auth/auth/authenticate',
       },
-      { fixture: 'login/horusec/wrong-password', statusCode: 403 }
+      { fixture: 'login/horusec/success', statusCode: 200 }
     ).as('authenticate');
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: 'account/companies',
+      },
+      { fixture: 'workspaces/empty', statusCode: 200 }
+    ).as('getWorkspaces');
   });
 
   afterEach(() => {
@@ -28,10 +38,8 @@ describe('Show the message of invalid password when enter a invlaid password ou 
 
     cy.wait('@authenticate');
 
-    cy.get('#flash-message-error').should('be.visible');
-    cy.get('#flash-message-error').should(
-      'contain.text',
-      API_ERRORS.ERROR_LOGIN
-    );
+    cy.wait('@getWorkspaces');
+
+    cy.get('h1').should('contain.text', NEW_WORKSPACE_SCREEN.MESSAGE);
   });
 });
