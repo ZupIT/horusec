@@ -16,7 +16,7 @@ describe('Validation the field of login create account form.', () => {
     cy.intercept(
       {
         method: 'POST',
-        url: 'api/account/create-account',
+        url: 'auth/account/create-account',
       },
       { fixture: 'createAccount/success', statusCode: 201 }
     ).as('createAccount');
@@ -51,9 +51,9 @@ describe('Validation the field of login create account form.', () => {
   });
 
   it('Check success message in dialog', () => {
-    cy.get('#dialog').should(
+    cy.get('#message-dialog').should(
       'contain.text',
-      CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM
+      CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT
     );
   });
 });

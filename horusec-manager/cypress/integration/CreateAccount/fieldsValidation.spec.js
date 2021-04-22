@@ -57,10 +57,12 @@ describe('Validation the field of login create account form.', () => {
     cy.wait('@verifyAlreadyUsed');
 
     cy.get('#password').should('be.visible');
-    cy.get('#register').should('be.disabled');
+    cy.get('#register').should('have.attr', 'aria-disabled');
   });
 
   it('Fill fields and check message error of password', () => {
+    
+
     cy.get('#password').click().type('invalidPassword');
     cy.get('#confirm-pass').click().type('invalidConfirmPassword');
 
@@ -78,6 +80,6 @@ describe('Validation the field of login create account form.', () => {
       CREATE_ACCOUNT_SCREEN.INVALID_PASS
     );
 
-    cy.get('#register').should('be.disabled');
+    cy.get('#register').should('have.attr', 'aria-disabled');
   });
 });

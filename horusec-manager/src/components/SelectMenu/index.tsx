@@ -44,7 +44,8 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
     setOpen(false);
   };
 
-  function handleListKeyDown(event: React.KeyboardEvent) {
+  function handleListKeyDown() {
+    // event: React.KeyboardEvent
     // if (event.key === "Tab") {
     //   event.preventDefault();
     //   setOpen(false);

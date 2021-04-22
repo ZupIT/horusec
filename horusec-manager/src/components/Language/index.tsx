@@ -59,6 +59,7 @@ const Language: React.FC = () => {
         <Styled.Button
           onClick={handleShowList}
           tabIndex={0}
+          id="language"
           aria-expanded="true"
           aria-label={`${t('SELECT_LANGUAGE.CHANGE')}
             ${t('SELECT_LANGUAGE.CURRENT')} ${currentLanguage?.description}`}
@@ -81,6 +82,7 @@ const Language: React.FC = () => {
               aria-expanded="true"
               aria-label={language.description}
               tabIndex={0}
+              id={language.i18nValue}
             >
               <Icon name={language.icon} size="30px" />
 

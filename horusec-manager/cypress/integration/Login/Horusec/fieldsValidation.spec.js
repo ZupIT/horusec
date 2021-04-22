@@ -32,7 +32,7 @@ describe('Validation the field of login form.', () => {
   });
 
   it('Check if submit button is disabled.', () => {
-    cy.get('#submit-login').should('be.disabled');
+    cy.get('#submit-login').should('have.attr', 'aria-disabled');
   });
 
   it('Submit a valid values', () => {
