@@ -64,6 +64,8 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     legend: {
       position: 'top',
       horizontalAlign: 'left',
+      formatter: (name, opts) =>
+        `${name}: ${opts?.w?.config?.series[opts?.seriesIndex]}`,
       labels: {
         colors: colors.chart.legend,
       },

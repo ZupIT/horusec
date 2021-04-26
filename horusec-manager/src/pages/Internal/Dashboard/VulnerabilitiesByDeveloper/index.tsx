@@ -41,6 +41,10 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
     series: [],
   });
 
+  const calculateTotalOfSerie = (data: number[]) => {
+    return data.reduce((total, next) => total + next);
+  };
+
   const options: ApexOptions = {
     markers: {
       size: 0,
@@ -56,6 +60,12 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
     legend: {
       position: 'top',
       horizontalAlign: 'left',
+      formatter: (name, opts) => {
+        console.log(opts);
+        return `${name}: ${calculateTotalOfSerie(
+          opts.w.config.series[opts.seriesIndex].data
+        )}`;
+      },
       offsetX: 40,
       labels: {
         colors: colors.chart.legend,
