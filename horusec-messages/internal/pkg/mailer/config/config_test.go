@@ -70,14 +70,6 @@ func TestGetFrom(t *testing.T) {
 	})
 }
 
-func TestSetAddress(t *testing.T) {
-	t.Run("should set a string", func(t *testing.T) {
-		config := NewMailerConfig()
-		config.SetAddress("test-address")
-		assert.Equal(t, config.GetAddress(), "test-address")
-	})
-}
-
 func TestSetUsername(t *testing.T) {
 	t.Run("should set a string", func(t *testing.T) {
 		config := NewMailerConfig()

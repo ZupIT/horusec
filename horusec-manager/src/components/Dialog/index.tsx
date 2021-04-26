@@ -24,8 +24,8 @@ interface DialogProps {
   message: string;
   hasCancel?: boolean;
   isVisible: boolean;
-  onConfirm: Function;
-  onCancel?: Function;
+  onConfirm: () => void;
+  onCancel?: () => void;
   confirmText: string;
   defaultButton?: boolean;
   roundedButton?: boolean;
