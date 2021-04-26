@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Nerzal/gocloak/v7 v7.11.0
-	github.com/ZupIT/horusec-engine v0.3.2
+	github.com/ZupIT/horusec-engine v0.3.4
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/auth0/go-jwt-middleware v1.0.0
 	github.com/bmatcuk/doublestar/v2 v2.0.4
