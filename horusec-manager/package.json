@@ -77,8 +77,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "CI=false react-scripts build",
-    "start:microfrontend": "react-app-rewired build && npx http-serve --cors build/",
-    "build:microfrontend": "react-app-rewired build",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "test": "react-scripts test --watchAll=false",
