@@ -60,12 +60,6 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
     legend: {
       position: 'top',
       horizontalAlign: 'left',
-      formatter: (name, opts) => {
-        console.log(opts);
-        return `${name}: ${calculateTotalOfSerie(
-          opts.w.config.series[opts.seriesIndex].data
-        )}`;
-      },
       offsetX: 40,
       labels: {
         colors: colors.chart.legend,
