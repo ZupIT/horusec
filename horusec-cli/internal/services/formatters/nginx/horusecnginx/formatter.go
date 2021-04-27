@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horuseckotlin
+package horusecnginx
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
@@ -56,7 +56,7 @@ func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
 		return err
 	}
 
-	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecNginx, languages.Kotlin)
+	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecNginx, languages.Nginx)
 }
 
 func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
