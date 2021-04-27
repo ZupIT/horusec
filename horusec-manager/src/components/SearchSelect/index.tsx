@@ -54,6 +54,7 @@ function SelectInput({
   return (
     <div style={{ display: 'block', width: width }}>
       <Autocomplete
+        id={`select-${name}`}
         options={options}
         getOptionLabel={(option) => option.label || ''}
         getOptionSelected={(option, value) => {

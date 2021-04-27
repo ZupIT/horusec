@@ -11,6 +11,7 @@ import {
   Popper,
 } from '@material-ui/core';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
+import { kebabCase } from 'lodash';
 
 interface Options {
   title: string;
@@ -76,6 +77,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
             ref={anchorRef}
             primary={title}
             secondary={value}
+            id={kebabCase(title)}
             color="secondary"
             primaryTypographyProps={{ color: 'secondary' }}
             secondaryTypographyProps={{ color: 'secondary' }}
@@ -114,6 +116,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
                         handleToggle();
                       }}
                       style={item?.style}
+                      id={kebabCase(item.title)}
                     >
                       {item.title}
                     </MenuItem>
@@ -125,6 +128,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
                         fixItem.action();
                         handleToggle();
                       }}
+                      id={kebabCase(fixItem.title)}
                       style={{
                         ...fixItem?.style,
                         color: theme.colors.select.highlight,
