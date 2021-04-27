@@ -44,6 +44,7 @@ const (
 	Sobelow           Tool = "Sobelow"
 	ShellCheck        Tool = "ShellCheck"
 	BundlerAudit      Tool = "BundlerAudit"
+	HorusecNginx      Tool = "HorusecNginx"
 )
 
 func (t Tool) ToString() string {
