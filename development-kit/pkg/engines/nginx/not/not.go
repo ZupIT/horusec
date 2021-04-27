@@ -29,7 +29,7 @@ func NewNginxNotIncludeXFrameOptionsHeader() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "87cc1073-05e2-4d91-90a6-2bd22e239b54",
 			Name:        "Improper Restriction of Rendered UI Layers or Frames",
-			Description: "A web application is expected to place restrictions on whether it is allowed to be rendered within frames, iframes, objects, embed or applet elements. Without the restrictions, users can be tricked into interacting with the application when they were not intending to. For more information checkout the CWE-918 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
+			Description: "Your Nginx file must include the X-Frame-Options header. A web application is expected to place restrictions on whether it is allowed to be rendered within frames, iframes, objects, embed or applet elements. Without the restrictions, users can be tricked into interacting with the application when they were not intending to. For more information checkout the CWE-918 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
 			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
