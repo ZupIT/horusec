@@ -56,9 +56,17 @@ func (sq *SonarQube) formatReportStruct(vulnerability *horusecEntities.Vulnerabi
 	convertedVulnerabilityLine, _ := strconv.Atoi(vulnerability.Line)
 	convertedVulnerabilityColumn, _ := strconv.Atoi(vulnerability.Column)
 
-	issue.PrimaryLocation.Range.StartLine = convertedVulnerabilityLine
-	issue.PrimaryLocation.Range.StartColumn = convertedVulnerabilityColumn
+	issue.PrimaryLocation.Range.StartLine = sq.shouldBeGreatherThanZero(convertedVulnerabilityLine)
+	issue.PrimaryLocation.Range.StartColumn = sq.shouldBeGreatherThanZero(convertedVulnerabilityColumn)
 	return issue
+}
+
+func (sq *SonarQube) shouldBeGreatherThanZero(v int) int {
+	if v > 0 {
+		return v
+	}
+
+	return 1
 }
 
 func (sq *SonarQube) newIssue(vulnerability *horusecEntities.Vulnerability) *sonarqube.Issue {
