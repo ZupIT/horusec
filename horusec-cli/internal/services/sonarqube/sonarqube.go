@@ -38,6 +38,7 @@ func NewSonarQube(analysis *horusecEntities.Analysis) Interface {
 }
 
 func (sq *SonarQube) ConvertVulnerabilityDataToSonarQube() (report sonarqube.Report) {
+	report.Issues = []sonarqube.Issue{}
 	for index := range sq.analysis.AnalysisVulnerabilities {
 		vulnerability := sq.analysis.AnalysisVulnerabilities[index].Vulnerability
 
