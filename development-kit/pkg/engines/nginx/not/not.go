@@ -39,3 +39,19 @@ func NewNginxNotIncludeXFrameOptionsHeader() text.TextRule {
 		},
 	}
 }
+
+func NewNginxNotIncludeServerTokensOff() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "840f50dd-0ceb-4f66-b425-bafc2d1c042c",
+			Name:        "Exposure of Sensitive Information",
+			Description: "Your Nginx file must include 'server_tokens off;' configuration. There are many different kinds of mistakes that introduce information exposures. The severity of the error can range widely, depending on the context in which the product operates, the type of sensitive information that is revealed, and the benefits it may provide to an attacker. For more information checkout the CWE-918 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.NotMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`server_tokens off;`),
+		},
+	}
+}
