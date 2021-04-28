@@ -40,6 +40,16 @@ jobs:
       - name: coverage
         run: make coverage
       - name: build
-        run: go build -o "./tmp/bin/cli" ./cmd/app/main.go
+        run: |
+          make build-install-cli-linux
+          make build-install-cli-darwin
+          make build-install-cli-windows
+      - name: local-security
+        run: |
+          make build-install-cli-linux
+          horusec start -p="." -e="true"
       - name: security
+        env:
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
         run: make security
