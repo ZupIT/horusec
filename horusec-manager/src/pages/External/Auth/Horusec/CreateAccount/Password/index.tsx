@@ -125,43 +125,40 @@ function PasswordForm() {
           createAccount(values.password);
         }}
       >
-        {(props) => {
-          console.log(props);
-          return (
-            <Styled.Form>
-              <Styled.Field
-                label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
-                ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
-                name="password"
-                type="password"
-              />
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
+              name="password"
+              type="password"
+            />
 
-              <Styled.Field
-                label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
-                ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
-                name="confirm-pass"
-                type="password"
-              />
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
+              name="confirm-pass"
+              type="password"
+            />
 
-              <Styled.Submit
-                id="register"
-                isDisabled={!props.isValid}
-                text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
-                type="submit"
-                isLoading={isLoading}
-                rounded
-              />
+            <Styled.Submit
+              id="register"
+              isDisabled={!props.isValid}
+              text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
+              type="submit"
+              isLoading={isLoading}
+              rounded
+            />
 
-              <Styled.BackToLogin
-                onClick={() => history.push('/auth')}
-                text={t('CREATE_ACCOUNT_SCREEN.BACK')}
-                type="button"
-                outline
-                rounded
-              />
-            </Styled.Form>
-          );
-        }}
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('CREATE_ACCOUNT_SCREEN.BACK')}
+              type="button"
+              outline
+              rounded
+            />
+          </Styled.Form>
+        )}
       </Formik>
 
       <Dialog

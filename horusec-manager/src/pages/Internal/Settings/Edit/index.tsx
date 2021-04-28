@@ -58,7 +58,9 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
 
   const ValidationScheme = Yup.object({
     username: Yup.string().required(),
-    email: Yup.string().email(t('SETTINGS_SCREEN.INVALID_EMAIL')).required(),
+    email: Yup.string()
+      .email(t('SETTINGS_SCREEN.INVALID_EMAIL'))
+      .required(t('SETTINGS_SCREEN.INVALID_EMAIL')),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;

@@ -12,6 +12,10 @@ const themeMatUi = createMuiTheme({
     secondary: {
       main: theme.colors.secondary,
     },
+
+    error: {
+      main: theme.colors.input.error,
+    },
   },
 
   overrides: {

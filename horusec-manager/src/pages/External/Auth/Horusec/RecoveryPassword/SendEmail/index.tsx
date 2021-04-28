@@ -51,7 +51,7 @@ function SendEmailScreen() {
   const ValidationScheme = Yup.object({
     email: Yup.string()
       .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
-      .required(),
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;

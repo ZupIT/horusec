@@ -66,7 +66,7 @@ const InviteToCompany: React.FC<Props> = ({
   const ValidationScheme = Yup.object({
     email: Yup.string()
       .email(t('WORKSPACES_SCREEN.USERS.INVALID_EMAIL'))
-      .required(),
+      .required(t('WORKSPACES_SCREEN.USERS.INVALID_EMAIL')),
     role: Yup.string().oneOf(['admin', 'member']).required(),
   });
 

@@ -290,7 +290,7 @@ const Vulnerabilities: React.FC = () => {
     );
     return repo ? { label: repo.name, value: repo.repositoryID } : null;
   };
-  console.log(filters.vulnSeverity);
+
   return (
     <Styled.Wrapper>
       <Styled.Options>

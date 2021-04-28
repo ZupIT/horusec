@@ -63,7 +63,7 @@ function CheckCode() {
   const ValidationScheme = Yup.object({
     email: Yup.string()
       .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
-      .required(),
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')),
     code: Yup.string().required(t('RECOVERY_PASS_SCREEN.INVALID_CODE')),
   });
 

@@ -31,7 +31,9 @@ function LoginScreen() {
   const { disabledBroker } = getCurrentConfig();
 
   const ValidationScheme = Yup.object({
-    email: Yup.string().email(t('LOGIN_SCREEN.INVALID_EMAIL')).required(),
+    email: Yup.string()
+      .email(t('LOGIN_SCREEN.INVALID_EMAIL'))
+      .required(t('LOGIN_SCREEN.INVALID_EMAIL')),
     password: Yup.string().required(t('LOGIN_SCREEN.INVALID_PASS')),
   });
 

@@ -36,7 +36,7 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
     username: Yup.string().required(t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')),
     email: Yup.string()
       .email(t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL'))
-      .required(),
+      .required(t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')),
   });
 
   type InitialValue = Yup.InferType<typeof ValidationScheme>;

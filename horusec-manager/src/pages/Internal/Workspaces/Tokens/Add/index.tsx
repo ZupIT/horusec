@@ -50,7 +50,9 @@ const AddToken: React.FC<Props> = ({
   const [tokenCreated, setTokenCreated] = useState<string>(null);
 
   const ValidationScheme = Yup.object({
-    description: Yup.string().required(),
+    description: Yup.string().required(
+      t('WORKSPACES_SCREEN.INVALID_DESCRIPTION')
+    ),
     isExpirable: Yup.boolean().optional(),
     expiresAt: Yup.date()
       .test('boolean', t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT'), (date) =>
