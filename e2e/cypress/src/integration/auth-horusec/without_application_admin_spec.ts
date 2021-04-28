@@ -27,6 +27,7 @@ describe("Horusec tests", () => {
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+    cy.wait(4000);
     cy.visit("http://localhost:8043");
     cy.wait(4000);
 
@@ -34,7 +35,9 @@ function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
     cy.get("#submit-login").first().click();
-    cy.wait(1000);
+    cy.wait(4000);
+    cy.visit("http://localhost:8043");
+    cy.wait(4000);
 
     // Check if not exists workspace
     cy.contains("Add a new Workspace to start using Horusec.").should("exist");
