@@ -40,6 +40,22 @@ func NewNginxNotIncludeXFrameOptionsHeader() text.TextRule {
 	}
 }
 
+func NewNginxNotIncludeXContentTypeOptionsHeader() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "83d379c2-15aa-4fc8-bdf4-a4ade08f1c3f",
+			Name:        "Missing X-Content-Type-Options header",
+			Description: "Setting this header will prevent the browser from interpreting files as a different MIME type to what is specified in the Content-Type HTTP header (e.g. treating text/plain as text/css). For more information checkout https://owasp.org/www-project-secure-headers/#x-content-type-options",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.NotMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`add_header X-Content-Type-Options .*(?i)(nosniff|"nosniff");`),
+		},
+	}
+}
+
 func NewNginxNotIncludeServerTokensOff() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{

@@ -62,6 +62,7 @@ func (r *Rules) getExtensions() []string {
 func allNginxNotRules() []text.TextRule {
 	return []text.TextRule{
 		not.NewNginxNotIncludeXFrameOptionsHeader(),
+		not.NewNginxNotIncludeXContentTypeOptionsHeader(),
 		not.NewNginxNotIncludeServerTokensOff(),
 	}
 }
