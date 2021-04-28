@@ -35,7 +35,7 @@ func NewNginxNotIncludeXFrameOptionsHeader() text.TextRule {
 		},
 		Type: text.NotMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`add_header X-Frame-Options .*(?i)(sameorigin|"sameorigin"|deny|"deny");`),
+			regexp.MustCompile(`add_header X-Frame-Options (?i)(sameorigin|"sameorigin"|deny|"deny");`),
 		},
 	}
 }
@@ -51,7 +51,23 @@ func NewNginxNotIncludeXContentTypeOptionsHeader() text.TextRule {
 		},
 		Type: text.NotMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`add_header X-Content-Type-Options .*(?i)(nosniff|"nosniff");`),
+			regexp.MustCompile(`add_header X-Content-Type-Options (?i)(nosniff|"nosniff");`),
+		},
+	}
+}
+
+func NewNginxNotIncludeContentSecurityPolicyHeader() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "9accd9dd-2c73-4919-86e5-0e0980601369",
+			Name:        "Missing Content-Security-Policy header",
+			Description: "A Content Security Policy (also named CSP) requires careful tuning and precise definition of the policy. If enabled, CSP has significant impact on the way browsers render pages (e.g., inline JavaScript is disabled by default and must be explicitly allowed in the policy). CSP prevents a wide range of attacks, including cross-site scripting and other cross-site injections. For more information checkout https://owasp.org/www-project-secure-headers/#content-security-policy",
+			Severity:    severity.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.NotMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`add_header Content-Security-Policy (.*);`),
 		},
 	}
 }

@@ -63,6 +63,7 @@ func allNginxNotRules() []text.TextRule {
 	return []text.TextRule{
 		not.NewNginxNotIncludeXFrameOptionsHeader(),
 		not.NewNginxNotIncludeXContentTypeOptionsHeader(),
+		not.NewNginxNotIncludeContentSecurityPolicyHeader(),
 		not.NewNginxNotIncludeServerTokensOff(),
 	}
 }
