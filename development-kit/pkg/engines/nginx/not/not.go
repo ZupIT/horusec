@@ -29,7 +29,7 @@ func NewNginxNotIncludeXFrameOptionsHeader() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "87cc1073-05e2-4d91-90a6-2bd22e239b54",
 			Name:        "Improper Restriction of Rendered UI Layers or Frames",
-			Description: "Your Nginx file must include the X-Frame-Options header. A web application is expected to place restrictions on whether it is allowed to be rendered within frames, iframes, objects, embed or applet elements. Without the restrictions, users can be tricked into interacting with the application when they were not intending to. For more information checkout the CWE-918 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
+			Description: "Your Nginx file must include the X-Frame-Options header. A web application is expected to place restrictions on whether it is allowed to be rendered within frames, iframes, objects, embed or applet elements. Without the restrictions, users can be tricked into interacting with the application when they were not intending to. For more information checkout the CWE-1021 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
 			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
@@ -45,7 +45,7 @@ func NewNginxNotIncludeServerTokensOff() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "840f50dd-0ceb-4f66-b425-bafc2d1c042c",
 			Name:        "Exposure of Sensitive Information",
-			Description: "Your Nginx file must include 'server_tokens off;' configuration. There are many different kinds of mistakes that introduce information exposures. The severity of the error can range widely, depending on the context in which the product operates, the type of sensitive information that is revealed, and the benefits it may provide to an attacker. For more information checkout the CWE-918 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
+			Description: "Your Nginx file must include 'server_tokens off;' configuration. There are many different kinds of mistakes that introduce information exposures. The severity of the error can range widely, depending on the context in which the product operates, the type of sensitive information that is revealed, and the benefits it may provide to an attacker. For more information checkout the CWE-200 (https://cwe.mitre.org/data/definitions/200.html) advisory.",
 			Severity:    severity.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
