@@ -19,6 +19,8 @@ package scan_languages
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -27,8 +29,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 		cmdArguments := []string{
 			"build",
 			fmt.Sprintf("-o=%s", horusecPath),
-			path.Join(currentPath, "..", "..", "..", "horusec-cli", "cmd", "horusec", "main.go"),
+			path.Join(currentPath, "..", "..", "..", "cmd", "app", "main.go"),
 		}
 		cmd := exec.Command("go", cmdArguments...)
 		cmd.Env = os.Environ()
@@ -92,107 +92,107 @@ func TestHorusecCLILanguages(t *testing.T) {
 func RunGitTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "leaks", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in leaks is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in leaks is not expected")
 }
 
 func RunPythonBanditTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "python", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in python-bandit is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in python-bandit is not expected")
 }
 
 func RunPythonSafetyTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "python", "example2")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in python-safety is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in python-safety is not expected")
 }
 
 func RunJavascriptNpmTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "javascript", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-npm is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-npm is not expected")
 
 }
 
 func RunJavascriptYarnTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "javascript", "example2")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-yarn is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-yarn is not expected")
 }
 
 func RunKotlinTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "kotlin", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in kotlin is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in kotlin is not expected")
 }
 
 func RunCsharpTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "csharp", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in csharp is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in csharp is not expected")
 }
 
 func RunRubyTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "ruby", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in ruby is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in ruby is not expected")
 }
 
 func RunJavaTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "java", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in java is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in java is not expected")
 }
 
 func RunGolangTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "go", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in golang is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in golang is not expected")
 }
 
 func RunHclTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "hcl", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in hcl is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in hcl is not expected")
 }
 
 func RunPHPTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "php", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
 }
 
 func RunYAMLTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "yaml", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
 }
 
 func RunDartTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "dart", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1, "Vulnerabilities in dart is not expected")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in dart is not expected")
 }
 
 func RunElixirTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "elixir", "example1")
-	analysis := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(analysis.AnalysisVulnerabilities), 1)
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1)
 }
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
@@ -228,10 +228,10 @@ func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, ot
 	return fileOutput
 }
 
-func extractVulnerabilitiesFromOutput(fileOutput string) horusec.Analysis {
+func extractVulnerabilitiesFromOutput(fileOutput string) analysis.Analysis {
 	fileContent, err := ioutil.ReadFile(fileOutput)
 	logger.LogError("Error on read file to check vulnerabilities", err)
-	horusecAnalysis := horusec.Analysis{}
+	horusecAnalysis := analysis.Analysis{}
 	logger.LogError("Error on unmarshal fileContent to horusecAnalysis", json.Unmarshal(fileContent, &horusecAnalysis))
 	return horusecAnalysis
 }

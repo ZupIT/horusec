@@ -23,7 +23,6 @@
     "**/*_test.go",
     "**/*_mock.go",
     "**/*README.md",
-    "**/ development-kit/pkg/engines/**",
     "**/horusec-lp/.cache/**",
     "**/horusec-lp/public/**",
     "**/deployments/docker-compose*",

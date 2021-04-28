@@ -1,1 +1,0 @@
-ALTER TABLE tokens ALTER COLUMN repository_id DROP NOT NULL;

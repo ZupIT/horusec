@@ -44,7 +44,7 @@
   "horusecCliSeveritiesToIgnore": [
     "INFO"
   ],
-  "horusecCliTimeoutInSecondsAnalysis": 600,
+  "horusecCliTimeoutInSecondsAnalysis": 1000,
   "horusecCliTimeoutInSecondsRequest": 300,
   "horusecCliToolsConfig": {
     "Bandit": {
@@ -63,27 +63,6 @@
       "istoignore": false
     },
     "GoSec": {
-      "istoignore": false
-    },
-    "HorusecCsharp": {
-      "istoignore": false
-    },
-    "HorusecDart": {
-      "istoignore": false
-    },
-    "HorusecJava": {
-      "istoignore": false
-    },
-    "HorusecKotlin": {
-      "istoignore": false
-    },
-    "HorusecKubernetes": {
-      "istoignore": false
-    },
-    "HorusecLeaks": {
-      "istoignore": false
-    },
-    "HorusecNodeJS": {
       "istoignore": false
     },
     "NpmAudit": {
