@@ -50,11 +50,7 @@ func TestConvertVulnerabilityDataToSonarQube(t *testing.T) {
 	})
 
 	t.Run("issues should not be nil", func(t *testing.T) {
-<<<<<<< HEAD:horusec-cli/internal/services/sonarqube/sonarqube_test.go
-		analysis := &horusec.Analysis{
-=======
 		analysis := &analysis.Analysis{
->>>>>>> 97b3f4ae08c8c3228b64c8fcc252df857c8762df:internal/services/sonarqube/sonarqube_test.go
 			ID:        uuid.New(),
 			CreatedAt: time.Now(),
 			Status:    enumHorusec.Running,

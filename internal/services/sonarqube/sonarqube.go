@@ -70,11 +70,7 @@ func (sq *SonarQube) shouldBeGreatherThanZero(v int) int {
 	return 1
 }
 
-<<<<<<< HEAD:horusec-cli/internal/services/sonarqube/sonarqube.go
-func (sq *SonarQube) newIssue(vulnerability *horusecEntities.Vulnerability) *sonarqube.Issue {
-=======
 func (sq *SonarQube) newIssue(vulnerability *vulnEntity.Vulnerability) *sonarqube.Issue {
->>>>>>> 97b3f4ae08c8c3228b64c8fcc252df857c8762df:internal/services/sonarqube/sonarqube.go
 	return &sonarqube.Issue{
 		EngineID: "horusec",
 		Type:     "VULNERABILITY",

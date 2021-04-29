@@ -18,7 +18,7 @@ package nginx
 import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/nginx/not"
+	"github.com/ZupIT/horusec/internal/services/engines/nginx/not"
 )
 
 type Interface interface {

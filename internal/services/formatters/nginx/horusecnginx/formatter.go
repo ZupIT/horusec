@@ -15,14 +15,13 @@
 package horusecnginx
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/engines/nginx"
-	engineenums "github.com/ZupIT/horusec/development-kit/pkg/enums/engine"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/development-kit/pkg/enums/tools"
-	"github.com/ZupIT/horusec/development-kit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/horusec-cli/internal/helpers/messages"
-	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/services/engines/nginx"
+	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
 type Formatter struct {
