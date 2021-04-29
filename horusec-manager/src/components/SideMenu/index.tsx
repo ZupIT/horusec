@@ -27,6 +27,7 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import SelectMenu from 'components/SelectMenu';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -37,7 +38,6 @@ const SideMenu: React.FC = () => {
   } = useWorkspace();
   const { t } = useTranslation();
   const { authType, disabledBroker } = getCurrentConfig();
-
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
 
@@ -180,20 +180,17 @@ const SideMenu: React.FC = () => {
 
           {allWorkspaces && allWorkspaces.length > 0 ? (
             <Styled.SelectWrapper>
-              <Styled.SelectWorkspace
-                testId="workspace"
-                selectText="Selecione"
-                options={allWorkspaces}
-                initialValue={currentWorkspace}
-                onChangeValue={(value) => handleSelectedWorkspace(value)}
-                keyLabel="name"
-                title="WORKSPACE"
-                optionsHeight={`${allWorkspaces.length * 32 + 45}px`}
-                fixedItemTitle={t('SIDE_MENU.MANAGE_WORKSPACES')}
-                onClickFixedItem={() => history.push('/home/workspaces')}
-                ariaLabel={`${t('SIDE_MENU.CURRENT_WORKSPACE')} ${
-                  currentWorkspace?.name
-                }`}
+              <SelectMenu
+                title={'WORKSPACE'}
+                value={currentWorkspace?.name}
+                options={allWorkspaces.map((el) => ({
+                  title: el.name,
+                  action: () => handleSelectedWorkspace(el),
+                }))}
+                fixItem={{
+                  title: t('SIDE_MENU.MANAGE_WORKSPACES'),
+                  action: () => history.push('/home/workspaces'),
+                }}
               />
             </Styled.SelectWrapper>
           ) : null}

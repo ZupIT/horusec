@@ -16,7 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import { Input, Button } from 'components';
-
+import { Form as FormMik } from 'formik';
 interface ItemProps {
   isInvalid?: boolean;
 }
@@ -60,7 +60,7 @@ const Item = styled.span<ItemProps>`
     `};
 `;
 
-const Form = styled.form`
+const Form = styled(FormMik)`
   display: flex;
   flex-direction: column;
 `;

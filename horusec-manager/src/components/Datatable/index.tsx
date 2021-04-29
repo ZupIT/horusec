@@ -19,6 +19,7 @@ import Styled from './styled';
 import { Button, Icon, Pagination } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
+import { kebabCase } from 'lodash';
 
 export interface TableColumn {
   label: string;
@@ -143,6 +144,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                                     rounded
                                     outline
                                     opaque
+                                    id={`action-${kebabCase(action.title)}`}
                                     text={action.title}
                                     width={'100%'}
                                     height={30}

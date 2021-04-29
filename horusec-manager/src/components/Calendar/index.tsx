@@ -14,96 +14,110 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Styled from './styled';
-import Icon from 'components/Icon';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
-import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
-import { Field } from 'helpers/interfaces/Field';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import enLocale from 'date-fns/locale/en-US';
+import ptBRLocale from 'date-fns/locale/pt-BR';
+import format from 'date-fns/format';
 
-type ModifiedField = Omit<Field, 'value'> & {
-  value: Date;
+import DateFnsUtils from '@date-io/date-fns';
+import { connect, useField } from 'formik';
+import { IconButton } from '@material-ui/core';
+import { Today } from '@material-ui/icons';
+
+class PtBrLocalizedUtils extends DateFnsUtils {
+  getCalendarHeaderText(date: number | Date) {
+    return format(date, 'dd/MM/yyyy', { locale: this.locale });
+  }
+
+  getDatePickerHeaderText(date: number | Date) {
+    return format(date, 'dd/MM/yyyy', { locale: this.locale });
+  }
+}
+
+const localeUtilsMap = {
+  enUS: DateFnsUtils,
+  ptBR: PtBrLocalizedUtils,
+};
+
+const localeMap = {
+  enUS: enLocale,
+  ptBR: ptBRLocale,
 };
 
 interface CalendarProps {
-  onChangeValue: (params: ModifiedField) => any;
-  initialDate?: Date;
-  title: string;
+  name?: string;
+  label?: string;
   disabled?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
+  initialDate?: any;
+  title?: any;
+  onChangeValue?: (props: any) => any;
   invalidMessage?: string;
   validation?: (value: string) => boolean;
 }
 
-const Calendar: React.FC<
-  CalendarProps & Omit<ReactDatePickerProps, 'onChange'>
-> = (props) => {
-  const {
-    onChangeValue,
-    initialDate,
-    title,
-    disabled,
-    invalidMessage,
-    validation,
-  } = props;
+type LocaleType = 'enUS' | 'ptBR';
 
-  const [currentDate, setCurrentDate] = useState(null);
-  const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
+function CalendarMui({
+  name,
+  label,
+  disabled = false,
+  minDate,
+  maxDate,
+}: CalendarProps) {
   const { i18n } = useTranslation();
+  const [locale, setLocale] = useState<LocaleType>('enUS');
+  const [dateFormat, setDateFormat] = useState('dd/MM/yyyy');
   const { allLanguages } = useLanguage();
-  const [isInvalid, setInvalid] = useState(false);
 
-  const ref = useRef<ReactDatePicker>();
-
-  const handleSelectedDate = (date: Date) => {
-    let isValid;
-
-    if (validation) {
-      isValid = validation(date.toDateString());
-
-      setInvalid(!isValid);
-    } else {
-      isValid = true;
-    }
-
-    setCurrentDate(date);
-    onChangeValue({ value: date, isValid });
-  };
+  const [field, { error, touched, value }] = useField(name);
 
   useEffect(() => {
     const lang = find(allLanguages, { i18nValue: i18n.language });
     setDateFormat(lang.dateFormat);
+    setLocale(lang.i18nValue as LocaleType);
   }, [i18n.language, allLanguages]);
 
-  useEffect(() => {
-    setCurrentDate(initialDate ? initialDate : new Date());
-  }, [initialDate]);
-
   return (
-    <Styled.Wrapper>
-      <Styled.Title>{title}</Styled.Title>
-
-      <Styled.Container>
-        <Styled.DatePicker
-          ref={ref}
-          disabled={disabled}
-          selected={currentDate}
-          onChange={(date: Date) => handleSelectedDate(date)}
-          dateFormat={dateFormat}
-          {...props}
-        />
-
-        <Icon
-          name="calendar"
-          size="18px"
-          onClick={() => ref.current.setFocus()}
-        />
-      </Styled.Container>
-
-      <Styled.Error isInvalid={isInvalid}>{invalidMessage}</Styled.Error>
-    </Styled.Wrapper>
+    <MuiPickersUtilsProvider
+      utils={localeUtilsMap[locale] || DateFnsUtils}
+      locale={localeMap[locale]}
+    >
+      <DatePicker
+        autoOk
+        disableToolbar
+        disabled={disabled}
+        name={name}
+        label={label}
+        onBlur={field.onBlur(name)}
+        onChange={(date) => field.onChange(name)(date.toString())}
+        value={value}
+        fullWidth
+        format={dateFormat}
+        error={touched && !!error && !!value}
+        helperText={touched && !!value && error}
+        id={name}
+        maxDate={maxDate}
+        minDate={minDate}
+        variant="inline"
+        size="small"
+        clearable={true}
+        InputProps={{
+          tabIndex: 0,
+          endAdornment: (
+            <IconButton size="small">
+              <Today />
+            </IconButton>
+          ),
+        }}
+      />
+    </MuiPickersUtilsProvider>
   );
-};
+}
 
-export default Calendar;
+export default connect(CalendarMui);

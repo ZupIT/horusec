@@ -14,77 +14,87 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from 'components';
-import emailValidator from 'helpers/validators/isValidEmail';
-import { Field } from 'helpers/interfaces/Field';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function SendEmailScreen() {
   const { t } = useTranslation();
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
 
-  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
   const [successDialogVisible, setSuccessDialogVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = (email: string) => {
+    setLoading(true);
 
-    if (email.isValid) {
-      setLoading(true);
+    accountService
+      .sendCode(email)
+      .then(() => {
+        setSuccessDialogVisible(true);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-      accountService
-        .sendCode(email.value)
-        .then(() => {
-          setSuccessDialogVisible(true);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+  const ValidationScheme = Yup.object({
+    email: Yup.string()
+      .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    email: '',
   };
 
   return (
     <>
       <Styled.SubTitle>{t('RECOVERY_PASS_SCREEN.INPUT_EMAIL')}</Styled.SubTitle>
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          onChangeValue={(field: Field) => setEmail(field)}
-          label={t('RECOVERY_PASS_SCREEN.EMAIL')}
-          ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
-          name="email"
-          type="email"
-          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
-          validation={emailValidator}
-        />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        onSubmit={(values) => handleSubmit(values.email)}
+      >
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
+              name="email"
+              type="email"
+            />
 
-        <Styled.Submit
-          isLoading={isLoading}
-          isDisabled={!email.isValid}
-          text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
-          type="submit"
-          onClick={handleSubmit}
-          rounded
-        />
+            <Styled.Submit
+              isLoading={isLoading}
+              isDisabled={!props.isValid}
+              text={t('RECOVERY_PASS_SCREEN.SUBMIT')}
+              type="submit"
+              rounded
+            />
 
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          outline
-          text={t('RECOVERY_PASS_SCREEN.BACK')}
-          rounded
-        />
-      </Styled.Form>
-
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              outline
+              text={t('RECOVERY_PASS_SCREEN.BACK')}
+              rounded
+            />
+          </Styled.Form>
+        )}
+      </Formik>
       <Dialog
         isVisible={successDialogVisible}
         confirmText={t('RECOVERY_PASS_SCREEN.CONFIRM')}

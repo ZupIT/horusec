@@ -17,10 +17,6 @@
 import styled from 'styled-components';
 import { Input, Select, Icon } from 'components';
 
-interface SelectProps {
-  color: string;
-}
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -43,8 +39,7 @@ const Wrapper = styled.div`
   margin-bottom: 25px;
 `;
 
-const URLSelect = styled(Select)<SelectProps>`
-  background-color: ${({ color }) => color} !important;
+const URLSelect = styled(Select)`
   opacity: 1 !important;
   margin-right: 20px;
 

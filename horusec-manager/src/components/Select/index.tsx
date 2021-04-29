@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import Icon from 'components/Icon';
-import Styled from './styled';
+import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { get, isObject, isString } from 'lodash';
-import useOutsideClick from 'helpers/hooks/useClickOutside';
+import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
-  title?: string;
-  options: any[];
+  label?: string;
+  value: any;
+  options: { label: string; value: any }[];
   disabled?: boolean;
-  fixedItemTitle?: string;
-  onClickFixedItem?: () => void;
-  keyLabel: string;
   onChangeValue: (value: any) => any;
   className?: string;
-  initialValue?: ObjectLiteral | string;
-  keyValue?: string;
-  rounded?: boolean;
   width?: string;
   optionsHeight?: string;
   selectText?: string;
@@ -44,158 +36,45 @@ interface Props {
   hasSearch?: boolean;
   ariaLabel?: string;
   testId?: string;
+  placeholder?: string;
+  style?: CSSProperties;
 }
 
-const Select: React.FC<Props> = ({
-  title,
-  keyLabel,
+const SelectInput: React.FC<Props> = ({
+  label,
   options,
   onChangeValue,
   className,
-  disabled,
-  initialValue,
-  keyValue,
-  rounded,
-  width,
-  optionsHeight,
-  selectText,
-  fixedItemTitle,
-  onClickFixedItem,
-  backgroundColors,
-  hasSearch,
-  ariaLabel,
-  testId,
+  value,
+  width = '100%',
+  disabled = false,
+  placeholder,
+  style,
 }) => {
-  const [currentValue, setCurrentValue] = useState<string>('');
-  const [filteredOptions, setFilteredOptions] = useState<any[]>(options);
-  const [openOptionsList, setOpenOptionsList] = useState(false);
   const { t } = useTranslation();
 
-  const optionsRef = useRef<HTMLUListElement>();
-
-  useOutsideClick(optionsRef, () => {
-    if (openOptionsList) setOpenOptionsList(false);
-  });
-
-  const handleSelectedValue = (option: any) => {
-    if (!disabled) {
-      onChangeValue(option);
-      setCurrentValue(option[keyLabel]);
-      setFilteredOptions(options);
-    }
-  };
-
-  const renderSelectText = () => {
-    setCurrentValue(selectText || t('GENERAL.SELECT'));
-  };
-
-  const handleSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const { value } = event.target;
-    setCurrentValue(value);
-
-    const filteredItens = options.filter((item) =>
-      item[keyLabel].toLowerCase().includes(value.toLowerCase())
-    );
-
-    setFilteredOptions(filteredItens);
-  };
-
-  useEffect(() => {
-    setFilteredOptions(options);
-
-    if (!initialValue) renderSelectText();
-
-    if (isObject(initialValue)) {
-      setCurrentValue(initialValue[keyLabel]);
-    } else if (isString(initialValue)) {
-      const initialOption = options.find(
-        (item) => item[keyValue] === initialValue
-      );
-      setCurrentValue(initialOption[keyValue]);
-    }
-    // eslint-disable-next-line
-  }, [initialValue]);
-
   return (
-    <Styled.Wrapper
-      rounded={rounded}
-      disabled={disabled}
-      width={width}
-      onClick={() => (disabled ? null : setOpenOptionsList(!openOptionsList))}
-      onKeyPress={() =>
-        disabled ? null : setOpenOptionsList(!openOptionsList)
-      }
-      tabIndex={0}
-      aria-expanded={true}
-      aria-label={ariaLabel}
-    >
-      {title ? <Styled.Title>{title}</Styled.Title> : null}
-
-      <Styled.Container
+    <FormControl className={className} style={{ width: width }}>
+      {label && <InputLabel id="select-label">{label}</InputLabel>}
+      <Select
+        labelId="select-label"
+        id="select"
         disabled={disabled}
-        rounded={rounded}
-        className={className}
-        width={width}
-        backgroundColor={
-          backgroundColors
-            ? get(
-                backgroundColors.colors,
-                currentValue,
-                backgroundColors.default
-              )
-            : null
-        }
+        value={value}
+        onChange={({ target }) => {
+          onChangeValue(target.value);
+        }}
+        placeholder={placeholder || t('GENERAL.SELECT') + '...'}
+        style={style}
       >
-        <Styled.CurrentValue
-          aria-label={currentValue}
-          tabIndex={0}
-          disabled={!hasSearch}
-          type="text"
-          onChange={handleSearchValue}
-          value={currentValue}
-        />
-
-        <Styled.OptionsList
-          isOpen={openOptionsList}
-          rounded={rounded}
-          width={width}
-          height={optionsHeight}
-          className="options-list"
-          ref={optionsRef}
-        >
-          {filteredOptions.map((option, index) => (
-            <Styled.OptionItem
-              aria-label={option[keyLabel]}
-              tabIndex={openOptionsList ? 0 : -1}
-              rounded={rounded}
-              key={index}
-              className="options-item"
-              onClick={() => handleSelectedValue(option)}
-            >
-              {option[keyLabel]}
-            </Styled.OptionItem>
-          ))}
-
-          {fixedItemTitle ? (
-            <Styled.FixedOptionItem
-              rounded={rounded}
-              onClick={onClickFixedItem}
-              tabIndex={0}
-            >
-              {fixedItemTitle}
-            </Styled.FixedOptionItem>
-          ) : null}
-        </Styled.OptionsList>
-
-        <Icon
-          name="down"
-          testId={testId ? `select-${testId}` : 'select'}
-          size="12px"
-        />
-      </Styled.Container>
-    </Styled.Wrapper>
+        {options.map((el, index) => (
+          <MenuItem key={index} value={el.value}>
+            {el.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 };
 
-export default Select;
+export default SelectInput;
