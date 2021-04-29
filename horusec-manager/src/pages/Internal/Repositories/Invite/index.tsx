@@ -82,6 +82,7 @@ const InviteToRepository: React.FC<Props> = ({
         const accountIds: string[] = [];
         const allUsers = cloneDeep(allUsersInCompany);
 
+        // eslint-disable-next-line array-callback-return
         result?.data?.content.map((account: Account) => {
           accountIds.push(account.accountID);
 
