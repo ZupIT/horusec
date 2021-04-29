@@ -32,7 +32,7 @@ interface WrapperProps {
   backgroundColor?: string;
 }
 
-interface OptionItem {
+interface OptionItemProps {
   rounded: boolean;
 }
 
@@ -106,7 +106,7 @@ const OptionsList = styled.div<OptionsListProps>`
   }
 `;
 
-const OptionItem = styled.div<OptionItem>`
+const OptionItem = styled.div<OptionItemProps>`
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   line-height: ${({ theme }) => theme.metrics.fontSize.small} !important;
   color: ${({ theme }) => theme.colors.select.text};

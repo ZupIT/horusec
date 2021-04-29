@@ -22,7 +22,7 @@ interface CreateAccountProps {
   children: JSX.Element;
 }
 
-interface CreateAccountContext {
+interface CreateAccountContextProps {
   username: string;
   email: string;
   isLoading: boolean;
@@ -31,8 +31,8 @@ interface CreateAccountContext {
   verifyUsernameAndEmail(email: string, username: string): Promise<void>;
 }
 
-const CreateAccountContext = React.createContext<CreateAccountContext>(
-  {} as CreateAccountContext
+const CreateAccountContext = React.createContext<CreateAccountContextProps>(
+  {} as CreateAccountContextProps
 );
 
 const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
