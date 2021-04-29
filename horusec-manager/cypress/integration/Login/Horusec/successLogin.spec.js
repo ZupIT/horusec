@@ -10,7 +10,7 @@ describe('Login in the application when a correct username and password.', () =>
     cy.intercept(
       {
         method: 'POST',
-        url: 'api/auth/authenticate',
+        url: 'auth/auth/authenticate',
       },
       { fixture: 'login/horusec/success', statusCode: 200 }
     ).as('authenticate');
@@ -18,7 +18,7 @@ describe('Login in the application when a correct username and password.', () =>
     cy.intercept(
       {
         method: 'GET',
-        url: 'api/companies',
+        url: 'account/companies',
       },
       { fixture: 'workspaces/empty', statusCode: 200 }
     ).as('getWorkspaces');

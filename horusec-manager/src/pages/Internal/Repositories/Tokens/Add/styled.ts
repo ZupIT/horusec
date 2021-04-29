@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import { Input } from 'components';
+import { Form as FormMik } from 'formik';
 
 const SubTitle = styled.h3`
   font-weight: normal;
@@ -23,7 +24,7 @@ const SubTitle = styled.h3`
   color: ${({ theme }) => theme.colors.text.secundary};
 `;
 
-const Form = styled.form`
+const Form = styled(FormMik)`
   display: flex;
   flex-direction: column;
 `;

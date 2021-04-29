@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import { Dialog } from 'components';
 import {
-  isEmptyString,
   hasLowerCase,
   hasNumber,
   hasSpecialCharacter,
@@ -29,20 +27,16 @@ import {
 } from 'helpers/validators';
 import { CreateAccountContext } from 'contexts/CreateAccount';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function PasswordForm() {
   const { t } = useTranslation();
   const { disabledBroker } = getCurrentConfig();
   const history = useHistory();
-  const {
-    password,
-    setPassword,
-    confirmPass,
-    setConfirmPass,
-    isLoading,
-    createAccount,
-    successDialogVisible,
-  } = useContext(CreateAccountContext);
+  const { isLoading, createAccount, successDialogVisible } = useContext(
+    CreateAccountContext
+  );
 
   const [passValidations, setPassValidations] = useState({
     alpha: false,
@@ -51,37 +45,43 @@ function PasswordForm() {
     characterSpecial: false,
   });
 
-  const forIsInvalid = () => {
-    return (
-      !confirmPass.isValid ||
-      !password.isValid ||
-      passValidations.alpha ||
-      passValidations.characterSpecial ||
-      passValidations.minCharacters ||
-      passValidations.number
-    );
+  const ValidationScheme = Yup.object({
+    password: Yup.string()
+      .required(t('CREATE_ACCOUNT_SCREEN.INVALID_PASS'))
+      .min(8, t('CREATE_ACCOUNT_SCREEN.MIN_CHARACTERS'))
+      .test(
+        'regex',
+        t('CREATE_ACCOUNT_SCREEN.ALPHA_REQUIREMENTS'),
+        (value) => hasUpperCase(value) || hasLowerCase(value)
+      )
+      .test(
+        'regex',
+        t('CREATE_ACCOUNT_SCREEN.SPECIAL_CHARACTER'),
+        hasSpecialCharacter
+      )
+      .test('regex', t('CREATE_ACCOUNT_SCREEN.NUMBER_REQUIREMENT'), hasNumber),
+    'confirm-pass': Yup.string()
+      .oneOf(
+        [Yup.ref('password')],
+        t('CREATE_ACCOUNT_SCREEN.INVALID_CONFIRM_PASS')
+      )
+      .required(t('CREATE_ACCOUNT_SCREEN.INVALID_CONFIRM_PASS')),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    password: '',
+    'confirm-pass': '',
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!forIsInvalid()) {
-      createAccount();
-    }
-  };
-
-  const validateEqualsPassword = (value: string) => {
-    return value === password.value;
-  };
-
-  const handlePasswordValue = (field: Field) => {
+  const handlePasswordValue = (field: string) => {
     setPassValidations({
-      minCharacters: field.value.length < 8,
-      alpha: !hasUpperCase(field.value) || !hasLowerCase(field.value),
-      number: !hasNumber(field.value),
-      characterSpecial: !hasSpecialCharacter(field.value),
+      minCharacters: field.length < 8,
+      alpha: !hasUpperCase(field) || !hasLowerCase(field),
+      number: !hasNumber(field),
+      characterSpecial: !hasSpecialCharacter(field),
     });
-
-    setPassword(field);
   };
 
   return (
@@ -116,42 +116,50 @@ function PasswordForm() {
         <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.USER_NAME')}</Styled.Item>
       </Styled.PassRequirements>
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          onChangeValue={(field: Field) => handlePasswordValue(field)}
-          label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
-          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
-          name="password"
-          type="password"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_PASS')}
-          validation={isEmptyString}
-        />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        validateOnMount
+        validate={(values) => handlePasswordValue(values.password)}
+        onSubmit={(values) => {
+          createAccount(values.password);
+        }}
+      >
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.PASSWORD')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_PASSWORD')}
+              name="password"
+              type="password"
+            />
 
-        <Styled.Field
-          label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
-          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
-          onChangeValue={(field: Field) => setConfirmPass(field)}
-          name="confirm-pass"
-          type="password"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_CONFIRM_PASS')}
-          validation={validateEqualsPassword}
-        />
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.CONFIRM_PASS')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_CONFIRM_PASS')}
+              name="confirm-pass"
+              type="password"
+            />
 
-        <Styled.Submit
-          isDisabled={forIsInvalid()}
-          text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
-          onClick={handleSubmit}
-          isLoading={isLoading}
-          rounded
-        />
+            <Styled.Submit
+              id="register"
+              isDisabled={!props.isValid}
+              text={t('CREATE_ACCOUNT_SCREEN.SUBMIT')}
+              type="submit"
+              isLoading={isLoading}
+              rounded
+            />
 
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          text={t('CREATE_ACCOUNT_SCREEN.BACK')}
-          outline
-          rounded
-        />
-      </Styled.Form>
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('CREATE_ACCOUNT_SCREEN.BACK')}
+              type="button"
+              outline
+              rounded
+            />
+          </Styled.Form>
+        )}
+      </Formik>
 
       <Dialog
         isVisible={successDialogVisible}

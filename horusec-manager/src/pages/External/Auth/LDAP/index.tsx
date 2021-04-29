@@ -14,68 +14,69 @@
  * limitations under the License.
  */
 
-import React, { useState, FormEvent } from 'react';
+import React from 'react';
 import Styled from './styled';
 import ExternalLayout from 'layouts/External';
 import useAuth from 'helpers/hooks/useAuth';
-import { isEmptyString } from 'helpers/validators';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import { useHistory } from 'react-router-dom';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 function LDAPAuth() {
   const { t } = useTranslation();
   const { loginInProgress, login } = useAuth();
   const history = useHistory();
 
-  const [username, setUsername] = useState<Field>({
-    value: '',
-    isValid: false,
-  });
-  const [password, setPassword] = useState<Field>({
-    value: '',
-    isValid: false,
+  const ValidationScheme = Yup.object({
+    username: Yup.string().required(t('LOGIN_SCREEN.INVALID_USERNAME')),
+    password: Yup.string().required(t('LOGIN_SCREEN.INVALID_PASS')),
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
-    if (username.isValid && password.isValid) {
-      login({ username: username.value, password: password.value }).then(() => {
-        history.push('/home');
-      });
-    }
+  const initialValues: InitialValue = {
+    username: '',
+    password: '',
   };
 
   return (
     <ExternalLayout>
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          label={t('LOGIN_SCREEN.USERNAME')}
-          name="username"
-          type="text"
-          onChangeValue={(field: Field) => setUsername(field)}
-          invalidMessage={t('LOGIN_SCREEN.INVALID_USERNAME')}
-          validation={isEmptyString}
-        />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        onSubmit={(values) => {
+          login({ username: values.username, password: values.password }).then(
+            () => {
+              history.push('/home');
+            }
+          );
+        }}
+      >
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('LOGIN_SCREEN.USERNAME')}
+              name="username"
+              type="text"
+            />
 
-        <Styled.Field
-          label={t('LOGIN_SCREEN.PASSWORD')}
-          name="password"
-          type="password"
-          onChangeValue={(field: Field) => setPassword(field)}
-          validation={isEmptyString}
-          invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
-        />
+            <Styled.Field
+              label={t('LOGIN_SCREEN.PASSWORD')}
+              name="password"
+              type="password"
+            />
 
-        <Styled.Submit
-          isDisabled={!password.isValid || !username.isValid}
-          isLoading={loginInProgress}
-          text={t('LOGIN_SCREEN.SUBMIT')}
-          type="submit"
-          rounded
-        />
-      </Styled.Form>
+            <Styled.Submit
+              isDisabled={!props.isValid}
+              isLoading={loginInProgress}
+              text={t('LOGIN_SCREEN.SUBMIT')}
+              type="submit"
+              rounded
+            />
+          </Styled.Form>
+        )}
+      </Formik>
     </ExternalLayout>
   );
 }

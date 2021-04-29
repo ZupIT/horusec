@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 interface SettingsProps {
   isVisible: boolean;

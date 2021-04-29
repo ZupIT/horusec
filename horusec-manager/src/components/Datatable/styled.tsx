@@ -72,7 +72,7 @@ const Cell = styled.td`
   color: ${({ theme }) => theme.colors.dataTable.row.text};
   font-weight: normal;
   white-space: nowrap;
-  overflow: auto;
+  overflow: overlay;
   text-overflow: ellipsis;
   width: 1%;
   padding: 10px 20px;
@@ -113,9 +113,10 @@ const Body = styled.tbody`
 const EmptyText = styled.span`
   color: ${({ theme }) => theme.colors.dataTable.column.text};
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  text-align: center;
-  display: block;
-  line-height: 170px;
+  display: flex;
+  align-items: center;
+  height: 200px;
+  justify-content: center;
 `;
 
 const LoadingWrapper = styled.div`

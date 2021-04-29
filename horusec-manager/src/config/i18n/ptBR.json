@@ -134,6 +134,7 @@
       "EDIT_SUBTITLE": "Edite o usuário abaixo:",
       "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
       "EMAIL": "Email",
+      "ROLE": "Cargo",
       "INVALID_EMAIL": "Email inválido",
       "CONFIRM_DELETE": "Deseja realmente remover este usuário do workspace?",
       "YES": "Sim",
@@ -251,7 +252,8 @@
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",
       "PAGES": "páginas"
-    }
+    },
+    "NO_OPTIONS": "Sem opções"
   },
   "FOOTER": {
     "DEVELOPED": "Desenvolvido",

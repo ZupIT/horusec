@@ -21,7 +21,7 @@ Command to restore backup to keycloak database:
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
+        cy.exec("cd ../../ && make e2e-migrate", { log: true }).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
@@ -114,8 +114,8 @@ function CheckIfDashboardIsEmpty(): void {
 
 function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
     // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
 
     // Disable alert when copy data to clipboard
     cy.window().then(win => {
@@ -137,7 +137,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
         const body: any = AnalysisMock;
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
         _requests
-            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .setHeadersAllRequests({ "X-Horusec-Authorization": content[0].innerText })
             .post(url, body)
             .then((response) => {
                 expect(response.status).eq(201, "First Analysis of workspace created with sucess");
@@ -265,7 +265,7 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
             expect(response.status).eq(201, "");
         });
         _requests
-            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .setHeadersAllRequests({ "X-Horusec-Authorization": content[0].innerText })
             .post(url, body)
             .then((response) => {
                 expect(response.status).eq(201, "First Analysis of repository created with sucess");
@@ -295,8 +295,8 @@ function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): 
     cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
     cy.wait(4000);
     // Select dashboard by repository created and search
-    cy.get("div").contains(repositoryName).parent().parent().click();
-    cy.get("div").contains(repositoryName).click();
+    cy.get("#select-repositoryID").click();
+    cy.get("#select-repositoryID-popup").find('li').contains(repositoryName).click();
     cy.get("button").contains("Apply").click();
     cy.wait(1500);
 
@@ -328,7 +328,7 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.wait(500);
 
     // Change severity to HIGH
-    cy.get("tr>td").eq(2).contains("HIGH").click();
+    cy.get("ul>li").contains("HIGH").click();
 
     // Check if severity was updated with success
     cy.contains("Vulnerability status successfully changed!").should("exist");
@@ -338,7 +338,7 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.get("tr>td").eq(3).children().children().click();
 
     // Change status to Risk Accepted
-    cy.get("tr>td").eq(3).contains("Risk Accepted").click();
+    cy.get("ul>li").contains("Risk Accepted").click();
 
     // Check if status was updated with success
     cy.contains("Vulnerability status successfully changed!").should("exist");
@@ -379,8 +379,8 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     cy.wait(1500);
 
     // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
     cy.wait(1500);
 
     // Open modal to invite user
@@ -390,8 +390,9 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     // Invite user
     cy.get("button").contains("Invite User").click();
     cy.get("#email").clear().type("e2e_user@example.com");
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").parent().parent().click();
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").click();
+
+    cy.get("#select-role").click();
+    cy.get("#select-role-popup").find('li').contains('Member').click();
     cy.get("button").contains("Save").click();
 }
 
@@ -418,8 +419,8 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     cy.get(":nth-child(2) > ul").contains("Dashboard").should("not.exist");
 
     // Go to manage workspace
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
 
     // Check if created workpspace will exists actions buttons
     cy.get("button").contains("Add Workspace").click();
@@ -488,7 +489,7 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     cy.wait(4000);
 
     // Check if dashboard show data to repository
-    cy.contains(repositoryName).should("exist");
+    cy.get("input[name=repositoryID]").should("have.value", repositoryName);
     cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
 
     // Go to repositories page

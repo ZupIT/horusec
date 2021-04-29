@@ -20,9 +20,8 @@ import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { Field } from 'helpers/interfaces/Field';
+
 import {
-  isEmptyString,
   hasLowerCase,
   hasNumber,
   hasSpecialCharacter,
@@ -30,7 +29,8 @@ import {
 } from 'helpers/validators';
 import { useTheme } from 'styled-components';
 import accountService from 'services/account';
-
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 interface Props {
   isVisible: boolean;
   onCancel: () => void;
@@ -49,16 +49,6 @@ const ChangePassword: React.FC<Props> = ({
 
   const [isLoading, setLoading] = useState(false);
 
-  const [password, setPassword] = useState<Field>({
-    isValid: false,
-    value: '',
-  });
-
-  const [confirmPass, setConfirmPass] = useState<Field>({
-    isValid: false,
-    value: '',
-  });
-
   const [passValidations, setPassValidations] = useState({
     alpha: false,
     number: false,
@@ -66,42 +56,50 @@ const ChangePassword: React.FC<Props> = ({
     characterSpecial: false,
   });
 
-  const validateEqualsPassword = (value: string) => {
-    return value === password.value;
+  const ValidationScheme = Yup.object({
+    password: Yup.string()
+      .min(8, t('CREATE_ACCOUNT_SCREEN.MIN_CHARACTERS'))
+      .test(
+        'regex',
+        t('CREATE_ACCOUNT_SCREEN.ALPHA_REQUIREMENTS'),
+        (value) => hasUpperCase(value) && hasLowerCase(value)
+      )
+      .test(
+        'regex',
+        t('CREATE_ACCOUNT_SCREEN.SPECIAL_CHARACTER'),
+        hasSpecialCharacter
+      )
+      .test('regex', t('CREATE_ACCOUNT_SCREEN.NUMBER_REQUIREMENT'), hasNumber)
+      .required(t('SETTINGS_SCREEN.INVALID_PASS')),
+    confirmPass: Yup.string()
+      .oneOf(
+        [Yup.ref('password')],
+        t('CREATE_ACCOUNT_SCREEN.INVALID_CONFIRM_PASS')
+      )
+      .required(t('SETTINGS_SCREEN.INVALID_CONFIRM_PASS')),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    password: '',
+    confirmPass: '',
   };
 
-  const resetFields = () => {
-    setConfirmPass({ isValid: false, value: '' });
-    setPassword({ isValid: false, value: '' });
+  const handlePasswordValue = (field: string) => {
     setPassValidations({
-      minCharacters: false,
-      alpha: false,
-      number: false,
-      characterSpecial: false,
+      minCharacters: field.length < 8,
+      alpha: !hasUpperCase(field) || !hasLowerCase(field),
+      number: !hasNumber(field),
+      characterSpecial: !hasSpecialCharacter(field),
     });
   };
 
-  const handleCancel = () => {
-    onCancel();
-    resetFields();
-  };
-
-  const handlePasswordValue = (field: Field) => {
-    setPassValidations({
-      minCharacters: field.value.length < 8,
-      alpha: !hasUpperCase(field.value) || !hasLowerCase(field.value),
-      number: !hasNumber(field.value),
-      characterSpecial: !hasSpecialCharacter(field.value),
-    });
-
-    setPassword(field);
-  };
-
-  const handleConfirmSave = () => {
+  const handleConfirmSave = (password: string) => {
     setLoading(true);
 
     accountService
-      .updatePassword(password.value)
+      .updatePassword(password)
       .then(() => {
         showSuccessFlash(t('SETTINGS_SCREEN.EDIT_SUCCESS'));
         onConfirm();
@@ -115,77 +113,75 @@ const ChangePassword: React.FC<Props> = ({
   };
 
   return (
-    <Dialog
-      isVisible={isVisible}
-      message={t('SETTINGS_SCREEN.CHANGE_PASS')}
-      onCancel={handleCancel}
-      onConfirm={handleConfirmSave}
-      confirmText={t('SETTINGS_SCREEN.SAVE')}
-      loadingConfirm={isLoading}
-      disabledColor={colors.button.disableInDark}
-      width={550}
-      disableConfirm={
-        !confirmPass.isValid ||
-        !password.isValid ||
-        passValidations.alpha ||
-        passValidations.characterSpecial ||
-        passValidations.minCharacters ||
-        passValidations.number
-      }
-      hasCancel
+    <Formik
+      initialValues={initialValues}
+      validationSchema={ValidationScheme}
+      validate={(values) => handlePasswordValue(values.password)}
+      onSubmit={(values) => {
+        handleConfirmSave(values.password);
+      }}
     >
-      <Styled.PassRequirements>
-        <Styled.Info>
-          {t('CREATE_ACCOUNT_SCREEN.PASSWORD_REQUIREMENTS')}
-        </Styled.Info>
+      {(props) => (
+        <Dialog
+          isVisible={isVisible}
+          message={t('SETTINGS_SCREEN.CHANGE_PASS')}
+          onCancel={() => {
+            onCancel();
+            props.resetForm();
+          }}
+          onConfirm={props.submitForm}
+          confirmText={t('SETTINGS_SCREEN.SAVE')}
+          loadingConfirm={isLoading}
+          disabledColor={colors.button.disableInDark}
+          width={550}
+          disableConfirm={!props.isValid}
+          hasCancel
+        >
+          <Styled.PassRequirements>
+            <Styled.Info>
+              {t('CREATE_ACCOUNT_SCREEN.PASSWORD_REQUIREMENTS')}
+            </Styled.Info>
 
-        <Styled.Item isInvalid={passValidations.minCharacters}>
-          {t('CREATE_ACCOUNT_SCREEN.MIN_CHARACTERS')}
-        </Styled.Item>
+            <Styled.Item isInvalid={passValidations.minCharacters}>
+              {t('CREATE_ACCOUNT_SCREEN.MIN_CHARACTERS')}
+            </Styled.Item>
 
-        <Styled.Item isInvalid={passValidations.alpha}>
-          {t('CREATE_ACCOUNT_SCREEN.ALPHA_REQUIREMENTS')}
-        </Styled.Item>
+            <Styled.Item isInvalid={passValidations.alpha}>
+              {t('CREATE_ACCOUNT_SCREEN.ALPHA_REQUIREMENTS')}
+            </Styled.Item>
 
-        <Styled.Item isInvalid={passValidations.number}>
-          {t('CREATE_ACCOUNT_SCREEN.NUMBER_REQUIREMENT')}
-        </Styled.Item>
+            <Styled.Item isInvalid={passValidations.number}>
+              {t('CREATE_ACCOUNT_SCREEN.NUMBER_REQUIREMENT')}
+            </Styled.Item>
 
-        <Styled.Item isInvalid={passValidations.characterSpecial}>
-          {t('CREATE_ACCOUNT_SCREEN.SPECIAL_CHARACTER')}
-        </Styled.Item>
+            <Styled.Item isInvalid={passValidations.characterSpecial}>
+              {t('CREATE_ACCOUNT_SCREEN.SPECIAL_CHARACTER')}
+            </Styled.Item>
 
-        <Styled.Info>{t('CREATE_ACCOUNT_SCREEN.NO_EQUALS')}</Styled.Info>
+            <Styled.Info>{t('CREATE_ACCOUNT_SCREEN.NO_EQUALS')}</Styled.Info>
 
-        <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.USER_NAME')}</Styled.Item>
+            <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.USER_NAME')}</Styled.Item>
 
-        <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.OLD_PASS')}</Styled.Item>
-      </Styled.PassRequirements>
+            <Styled.Item>{t('CREATE_ACCOUNT_SCREEN.OLD_PASS')}</Styled.Item>
+          </Styled.PassRequirements>
 
-      <Styled.Form>
-        <Styled.Field
-          label={t('SETTINGS_SCREEN.NEW_PASS')}
-          initialValue={password.value}
-          name="password"
-          width="100%"
-          type="password"
-          onChangeValue={(field) => handlePasswordValue(field)}
-          invalidMessage={t('SETTINGS_SCREEN.INVALID_PASS')}
-          validation={isEmptyString}
-        />
+          <Styled.Form>
+            <Styled.Field
+              label={t('SETTINGS_SCREEN.NEW_PASS')}
+              name="password"
+              type="password"
+            />
 
-        <Styled.Field
-          label={t('SETTINGS_SCREEN.CONFIRM_PASS')}
-          initialValue={confirmPass.value}
-          name="confirm-pass"
-          width="100%"
-          type="password"
-          onChangeValue={(field) => setConfirmPass(field)}
-          invalidMessage={t('SETTINGS_SCREEN.INVALID_CONFIRM_PASS')}
-          validation={validateEqualsPassword}
-        />
-      </Styled.Form>
-    </Dialog>
+            <Styled.Field
+              label={t('SETTINGS_SCREEN.CONFIRM_PASS')}
+              name="confirmPass"
+              width="100%"
+              type="password"
+            />
+          </Styled.Form>
+        </Dialog>
+      )}
+    </Formik>
   );
 };
 
