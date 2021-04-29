@@ -93,7 +93,7 @@ function CheckIfDashboardIsEmpty(): void {
     cy.wait(4000);
     cy.get("button").contains("Apply").click();
     cy.wait(5000);
-    cy.get("h4").contains("Total developers").parent().contains("1").should("not.exist");
+    cy.get("h1").contains("Total developers").parent().contains("1").should("not.exist");
 }
 
 function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
@@ -155,14 +155,14 @@ function CheckIfDashboardNotIsEmpty(): void {
     cy.get("button").contains("Apply").click();
 
     // Check if chart of total developers exist 1 user in selected repository
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("h1").contains("Total developers").parent().contains("1").should("exist");
     // Check if chart with all vulnerabilities of exists all vulnerabilities
-    cy.get("h4").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("INFO").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("LOW").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("INFO").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("LOW").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
 
     // Go to dashboard by workspace visualization
     cy.get("span").contains("Dashboard").parent().click();
@@ -170,12 +170,12 @@ function CheckIfDashboardNotIsEmpty(): void {
     cy.wait(5000);
 
     // Check if exists total vulnerabilities in chart of vulnerabilities by repository
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("17").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("57").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("29").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("45").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("16").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("13").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("17").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("57").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("29").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("45").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("16").should("exist");
+    cy.get("h1").contains("Vulnerabilities by repository").parent().contains("13").should("exist");
 }
 
 function CreateEditDeleteAnRepository(): void {
@@ -282,21 +282,21 @@ function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): 
     cy.wait(1500);
 
     // Check if chart of total developers exist 1 user in selected repository
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("h1").contains("Total developers").parent().contains("1").should("exist");
     // Check if chart with all vulnerabilities of exists all vulnerabilities
-    cy.get("h4").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("INFO").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("LOW").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("INFO").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("LOW").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
+    cy.get("h1").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
     // Check if exists total vulnerabilities in chart of vulnerability by developer
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("17").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("57").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("29").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("45").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("16").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("13").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("17").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("57").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("29").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("45").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("16").should("exist");
+    cy.get("h1").contains("Vulnerabilities by developer").parent().contains("13").should("exist");
 }
 
 function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
@@ -475,7 +475,7 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
 
     // Check if dashboard show data to repository
     cy.get("input[name=repositoryID]").should("have.value", repositoryName);
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("h1").contains("Total developers").parent().contains("1").should("exist");
 
     // Go to repositories page
     cy.get("span").contains("Repositories").parent().click();
