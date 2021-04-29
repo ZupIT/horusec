@@ -3,8 +3,8 @@ import AnalysisMock from "../../mocks/analysis.json";
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("npm run migrate", {log: true}).its("code").should("eq", 0);
-        cy.exec("docker restart horusec-auth", {log: true}).its("code").should("eq", 0);
+        cy.exec("npm run migrate", { log: true }).its("code").should("eq", 0);
+        cy.exec("docker restart horusec-auth", { log: true }).its("code").should("eq", 0);
     });
 
     it("Should test all operations horusec", () => {
@@ -27,14 +27,17 @@ describe("Horusec tests", () => {
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
+    cy.wait(4000);
     cy.visit("http://localhost:8043");
     cy.wait(4000);
 
     // Login with default account
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
-    cy.wait(1000);
+    cy.get("#submit-login").first().click();
+    cy.wait(4000);
+    cy.visit("http://localhost:8043");
+    cy.wait(4000);
 
     // Check if not exists workspace
     cy.contains("Add a new Workspace to start using Horusec.").should("exist");
@@ -95,8 +98,8 @@ function CheckIfDashboardIsEmpty(): void {
 
 function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
     // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
 
     // Disable alert when copy data to clipboard
     cy.window().then(win => {
@@ -118,7 +121,7 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
         const body: any = AnalysisMock;
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
         _requests
-            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .setHeadersAllRequests({ "X-Horusec-Authorization": content[0].innerText })
             .post(url, body)
             .then((response) => {
                 expect(response.status).eq(201, "First Analysis of workspace created with sucess");
@@ -243,7 +246,7 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
         body.analysis.id = "802e0032-e173-4eb6-87b1-8a6a3d674503";
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
         _requests
-            .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
+            .setHeadersAllRequests({ "X-Horusec-Authorization": content[0].innerText })
             .post(url, body)
             .then((response) => {
                 expect(response.status).eq(201, "First Analysis of repository created with sucess");
@@ -273,8 +276,8 @@ function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): 
     cy.visit("http://localhost:8043/home/dashboard/repositories");
     cy.wait(4000);
     // Select dashboard by repository created and search
-    cy.get("div").contains(repositoryName).parent().parent().click();
-    cy.get("div").contains(repositoryName).click();
+    cy.get("#select-repositoryID").click();
+    cy.get("#select-repositoryID-popup").find('li').contains(repositoryName).click();
     cy.get("button").contains("Apply").click();
     cy.wait(1500);
 
@@ -306,7 +309,7 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.wait(500);
 
     // Change severity to HIGH
-    cy.get("tr>td").eq(2).contains("HIGH").click();
+    cy.get("ul>li").contains("HIGH").click();
 
     // Check if severity was updated with success
     cy.contains("Vulnerability status successfully changed!").should("exist");
@@ -316,7 +319,7 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.get("tr>td").eq(3).children().children().click();
 
     // Change status to Risk Accepted
-    cy.get("tr>td").eq(3).contains("Risk Accepted").click();
+    cy.get("ul>li").contains("Risk Accepted").click();
 
     // Check if status was updated with success
     cy.contains("Vulnerability status successfully changed!").should("exist");
@@ -351,7 +354,7 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     // Login with new account and check if not exists company and logout user
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Check if not exists company to this account and logout user
@@ -362,12 +365,12 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     // Login with default account
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
     cy.wait(1500);
 
     // Open modal to invite user
@@ -377,8 +380,9 @@ function CreateUserAndInviteToExistingWorkspace(): void {
     // Invite user
     cy.get("button").contains("Invite User").click();
     cy.get("#email").clear().type("e2e_user@example.com");
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").parent().parent().click();
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").click();
+
+    cy.get("#select-role").click();
+    cy.get("#select-role-popup").find('li').contains('Member').click();
     cy.get("button").contains("Save").click();
 }
 
@@ -394,7 +398,7 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     // Login with new account
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Check if not exists dashboard by workspace page
@@ -403,8 +407,8 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     cy.get(":nth-child(2) > ul").contains("Dashboard").should("not.exist");
 
     // Go to manage workspace
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    cy.get("#workspace").first().click();
+    cy.get("#manage-workspaces").first().click();
 
     // Check if created workpspace will exists actions buttons
     cy.get("button").contains("Add Workspace").click();
@@ -442,7 +446,7 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     // Login with default user
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Go to repositories page
@@ -450,7 +454,8 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     cy.wait(1500);
 
     // Invite user to repository
-    cy.get("tr").contains(repositoryName).parent().contains("Invite").click();
+    // cy.get("tr").contains(repositoryName).parent().parent().children().contains("Invite").click();
+    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(3)").click();
     cy.wait(500);
     cy.get("tr").contains("e2e_user").parent().children().children().children().first().click();
     cy.wait(500);
@@ -465,11 +470,11 @@ function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void
     // Login with new user
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Check if dashboard show data to repository
-    cy.contains(repositoryName).should("exist");
+    cy.get("input[name=repositoryID]").should("have.value", repositoryName);
     cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
 
     // Go to repositories page
@@ -490,14 +495,14 @@ function LoginAndUpdateDeleteAccount(): void {
     // Login with new account
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     cy.get("[data-testid=\"icon-config\"").click();
 
     // Open modal and edit user
     cy.get("button").contains("Edit").click();
-    cy.get("#nome").clear().type("user_updated");
+    cy.get("#username").clear().type("user_updated");
     cy.get("#email").clear().type("user_updated@example.com");
     cy.get("button").contains("Save").click();
 
@@ -512,7 +517,7 @@ function LoginAndUpdateDeleteAccount(): void {
     // Check if is enable login with new email
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // Go to config page
@@ -522,7 +527,7 @@ function LoginAndUpdateDeleteAccount(): void {
     // Change password of user
     cy.get("button").contains("Password").click();
     cy.get("#password").clear().type("Ch@ng3m3N0w");
-    cy.get("#confirm-pass").clear().type("Ch@ng3m3N0w");
+    cy.get("#confirmPass").clear().type("Ch@ng3m3N0w");
     cy.get("button").contains("Save").click();
 
     // Logout user
@@ -532,7 +537,7 @@ function LoginAndUpdateDeleteAccount(): void {
     // Check if is enable login with new password
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
     cy.wait(1500);
 
     // When login in page check if exist "Version" o system
@@ -550,7 +555,7 @@ function LoginAndUpdateDeleteAccount(): void {
     // Check if account not exists
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
+    cy.get("#submit-login").first().click();
 
     // Check if login is not authorized
     cy.get("span").contains("Check your e-mail and password and try again.");

@@ -15,10 +15,12 @@
  */
 
 import * as THEME from 'config/themes';
+import { dark } from 'config/themes';
 import get from 'lodash/get';
 import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 
-const getCurrentTheme = () => {
+type currentTheme = typeof dark;
+const getCurrentTheme = (): currentTheme => {
   const currentTheme =
     window.localStorage.getItem(localStorageKeys.THEME) ||
     process.env.REACT_APP_HORUSEC_MANAGER_THEME ||

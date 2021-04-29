@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import React, { useState, FormEvent } from 'react';
+import React from 'react';
 import Styled from './styled';
-import { isValidEmail, isEmptyString } from 'helpers/validators';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Field } from 'helpers/interfaces/Field';
 import useAuth from 'helpers/hooks/useAuth';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import * as Yup from 'yup';
 
+import { Formik } from 'formik';
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();
@@ -30,71 +30,75 @@ function LoginScreen() {
   const { login, loginInProgress } = useAuth();
   const { disabledBroker } = getCurrentConfig();
 
-  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
-  const [password, setPassword] = useState<Field>({
-    value: '',
-    isValid: false,
+  const ValidationScheme = Yup.object({
+    email: Yup.string()
+      .email(t('LOGIN_SCREEN.INVALID_EMAIL'))
+      .required(t('LOGIN_SCREEN.INVALID_EMAIL')),
+    password: Yup.string().required(t('LOGIN_SCREEN.INVALID_PASS')),
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
-    if (email.isValid && password.isValid) {
-      login({ username: email.value, password: password.value }).then(() => {
-        history.replace('/home');
-      });
-    }
+  const initialValues: InitialValue = {
+    email: '',
+    password: '',
   };
 
   return (
-    <Styled.Form onSubmit={handleSubmit}>
-      <Styled.Field
-        label={t('LOGIN_SCREEN.EMAIL')}
-        ariaLabel={t('LOGIN_SCREEN.EMAIL_ARIA')}
-        name="email"
-        type="text"
-        onChangeValue={(field: Field) => setEmail(field)}
-        invalidMessage={t('LOGIN_SCREEN.INVALID_EMAIL')}
-        validation={isValidEmail}
-      />
+    <Formik
+      initialValues={initialValues}
+      validationSchema={ValidationScheme}
+      onSubmit={(values) => {
+        login({ username: values.email, password: values.password }).then(
+          () => {
+            history.replace('/home');
+          }
+        );
+      }}
+    >
+      {(props) => (
+        <Styled.Form>
+          <Styled.Field
+            label={t('LOGIN_SCREEN.EMAIL')}
+            ariaLabel={t('LOGIN_SCREEN.EMAIL_ARIA')}
+            name="email"
+          />
 
-      <Styled.Field
-        label={t('LOGIN_SCREEN.PASSWORD')}
-        ariaLabel={t('LOGIN_SCREEN.PASSWORD_ARIA')}
-        name="password"
-        type="password"
-        onChangeValue={(field: Field) => setPassword(field)}
-        validation={isEmptyString}
-        invalidMessage={t('LOGIN_SCREEN.INVALID_PASS')}
-      />
+          <Styled.Field
+            label={t('LOGIN_SCREEN.PASSWORD')}
+            ariaLabel={t('LOGIN_SCREEN.PASSWORD_ARIA')}
+            name="password"
+            type="password"
+          />
 
-      {!disabledBroker ? (
-        <Styled.ForgotPass
-          onClick={() => history.push(`${path}/recovery-password`)}
-          tabIndex={0}
-        >
-          {t('LOGIN_SCREEN.FORGOT_PASS')}
-        </Styled.ForgotPass>
-      ) : null}
+          {!disabledBroker ? (
+            <Styled.ForgotPass
+              onClick={() => history.push(`${path}/recovery-password`)}
+            >
+              {t('LOGIN_SCREEN.FORGOT_PASS')}
+            </Styled.ForgotPass>
+          ) : null}
 
-      <Styled.Submit
-        id="submit-login"
-        isDisabled={!password.isValid || !email.isValid}
-        isLoading={loginInProgress}
-        text={t('LOGIN_SCREEN.SUBMIT')}
-        onClick={handleSubmit}
-        type="submit"
-        rounded
-      />
+          <Styled.Submit
+            id="submit-login"
+            isDisabled={!props.isValid}
+            isLoading={loginInProgress}
+            text={t('LOGIN_SCREEN.SUBMIT')}
+            type="submit"
+            onClick={props.submitForm}
+            rounded
+          />
 
-      <Styled.Register
-        id="create-account"
-        onClick={() => history.push(`${path}/create-account`)}
-        outline
-        text={t('LOGIN_SCREEN.NO_ACCOUNT')}
-        rounded
-      />
-    </Styled.Form>
+          <Styled.Register
+            id="create-account"
+            onClick={() => history.push(`${path}/create-account`)}
+            outline
+            text={t('LOGIN_SCREEN.NO_ACCOUNT')}
+            rounded
+          />
+        </Styled.Form>
+      )}
+    </Formik>
   );
 }
 

@@ -3,14 +3,12 @@ import { API_ERRORS } from '../../../../src/config/i18n/enUS.json';
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Show the message of invalid password when enter a invlaid password ou username.', () => {
   beforeEach(() => {
-    cy.restoreLocalStorage();
-
     cy.setHorusecAuthConfig();
 
     cy.intercept(
       {
         method: 'POST',
-        url: 'api/auth/authenticate',
+        url: 'auth/auth/authenticate',
       },
       { fixture: 'login/horusec/wrong-password', statusCode: 403 }
     ).as('authenticate');

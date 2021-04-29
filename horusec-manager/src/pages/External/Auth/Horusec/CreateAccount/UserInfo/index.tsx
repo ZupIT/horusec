@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useContext } from 'react';
+import React, { useContext } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isEmptyString, isValidEmail } from 'helpers/validators';
-import { Field } from 'helpers/interfaces/Field';
 import { CreateAccountContext } from 'contexts/CreateAccount';
-
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 interface UserInfoProps {
   onNextStep: () => void;
 }
@@ -29,23 +28,22 @@ interface UserInfoProps {
 function UserInfoForm({ onNextStep }: UserInfoProps) {
   const { t } = useTranslation();
   const history = useHistory();
-  const {
-    email,
-    setEmail,
-    username,
-    setUsername,
-    isLoading,
-    verifyUsernameAndEmail,
-  } = useContext(CreateAccountContext);
+  const { isLoading, verifyUsernameAndEmail } = useContext(
+    CreateAccountContext
+  );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const ValidationScheme = Yup.object({
+    username: Yup.string().required(t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')),
+    email: Yup.string()
+      .email(t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL'))
+      .required(t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')),
+  });
 
-    if (email.isValid && username.isValid) {
-      verifyUsernameAndEmail().then(() => {
-        onNextStep();
-      });
-    }
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    username: '',
+    email: '',
   };
 
   return (
@@ -53,44 +51,49 @@ function UserInfoForm({ onNextStep }: UserInfoProps) {
       <Styled.SubTitle>
         {t('CREATE_ACCOUNT_SCREEN.CREATE_ACCOUNT')}
       </Styled.SubTitle>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={ValidationScheme}
+        onSubmit={(values) => {
+          verifyUsernameAndEmail(values.email, values.username).then(() => {
+            onNextStep();
+          });
+        }}
+      >
+        {(props) => (
+          <Styled.Form>
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.NAME')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_NAME')}
+              name="username"
+              type="username"
+            />
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          onChangeValue={(field: Field) => setUsername(field)}
-          label={t('CREATE_ACCOUNT_SCREEN.NAME')}
-          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_NAME')}
-          name="username"
-          type="username"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')}
-          validation={isEmptyString}
-        />
+            <Styled.Field
+              label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
+              ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_EMAIL')}
+              name="email"
+              type="text"
+            />
 
-        <Styled.Field
-          label={t('CREATE_ACCOUNT_SCREEN.EMAIL')}
-          ariaLabel={t('CREATE_ACCOUNT_SCREEN.ARIA_EMAIL')}
-          onChangeValue={(field: Field) => setEmail(field)}
-          name="email"
-          type="text"
-          invalidMessage={t('CREATE_ACCOUNT_SCREEN.INVALID_EMAIL')}
-          validation={isValidEmail}
-        />
+            <Styled.Submit
+              id="next-step"
+              isDisabled={!props.isValid}
+              text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
+              type="submit"
+              isLoading={isLoading}
+              rounded
+            />
 
-        <Styled.Submit
-          id="next-step"
-          isDisabled={!email.isValid || !username.isValid}
-          text={t('CREATE_ACCOUNT_SCREEN.NEXT')}
-          type="submit"
-          isLoading={isLoading}
-          rounded
-        />
-
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          text={t('CREATE_ACCOUNT_SCREEN.BACK')}
-          outline
-          rounded
-        />
-      </Styled.Form>
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('CREATE_ACCOUNT_SCREEN.BACK')}
+              outline
+              rounded
+            />
+          </Styled.Form>
+        )}
+      </Formik>
     </>
   );
 }

@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import { Input, Icon } from 'components';
+import { Form as FormMik } from 'formik';
 
 const Title = styled.h1`
   font-weight: normal;
@@ -33,7 +34,7 @@ const SubTitle = styled.h3`
   margin-top: 30px;
 `;
 
-const Form = styled.form`
+const Form = styled(FormMik)`
   display: block;
 `;
 

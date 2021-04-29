@@ -15,7 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
-import { Select as SelectComponent } from 'components';
+import { Button, Select as SelectComponent } from 'components';
 
 interface LoadingWrapperProps {
   isLoading: boolean;
@@ -36,6 +36,7 @@ const Options = styled.div`
   padding: 22px;
   display: flex;
   align-items: center;
+  gap: 20px;
 `;
 
 const Content = styled.div`
@@ -215,6 +216,9 @@ const Tag = styled.span<TagProps>`
   `};
 `;
 
+const ApplyButton = styled(Button)`
+  margin: 0px 15px;
+`;
 export default {
   Wrapper,
   Tag,
@@ -230,4 +234,5 @@ export default {
   Column,
   LoadingWrapper,
   EmptyText,
+  ApplyButton,
 };
