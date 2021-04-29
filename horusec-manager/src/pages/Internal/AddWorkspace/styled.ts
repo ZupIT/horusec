@@ -59,6 +59,7 @@ const Message = styled.h1`
   display: block;
   max-width: 700px;
   font-size: ${({ theme }) => theme.metrics.fontSize.big};
+  font-weight: normal;
   color: ${({ theme }) => theme.colors.text.secundary};
   text-align: center;
 `;

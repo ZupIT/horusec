@@ -32,7 +32,7 @@ interface Props {
 
 const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, metrics } = useTheme();
 
   const [isLoading, setLoading] = useState(false);
   const [chartData, setChartData] = useState<ChartBarStacked>({
@@ -49,6 +49,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
       text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
+        fontSize: metrics.fontSize.large,
       },
     },
     legend: {
@@ -78,6 +79,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
       labels: {
         style: {
           colors: colors.chart.legend,
+          fontSize: metrics.fontSize.small,
         },
       },
       categories: [],
@@ -89,6 +91,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
       labels: {
         style: {
           colors: colors.chart.legend,
+          fontSize: metrics.fontSize.small,
         },
       },
     },
@@ -121,7 +124,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper>
+      <Styled.Wrapper tabIndex={0}>
         <Styled.Title>
           {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
         </Styled.Title>

@@ -31,6 +31,7 @@ export interface Props {
   dataTip?: string;
   ariaLabel?: string;
   tabIndex?: number;
+  testId?: string;
 }
 
 const Icon = React.forwardRef(
@@ -47,6 +48,7 @@ const Icon = React.forwardRef(
       dataFor,
       ariaLabel,
       tabIndex,
+      testId,
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
@@ -60,8 +62,7 @@ const Icon = React.forwardRef(
         tabIndex={tabIndex}
         aria-label={ariaLabel}
         ref={iRef}
-        id={`icon-${name}`}
-        data-testid={`icon-${name}`}
+        data-testid={testId ? testId : `icon-${name}`}
         className={className}
         color={isActive ? 'light' : color}
         size={size}

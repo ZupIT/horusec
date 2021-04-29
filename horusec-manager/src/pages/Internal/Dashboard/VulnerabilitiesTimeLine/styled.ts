@@ -48,7 +48,7 @@ const LoadingWrapper = styled.div<LoadingWrapperProps>`
     `};
 `;
 
-const Title = styled.h4`
+const Title = styled.h2`
   color: ${({ theme }) => theme.colors.chart.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
   border-radius: 4px;

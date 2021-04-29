@@ -25,6 +25,8 @@ const Wrapper = styled.div`
 
 const CurrentLanguage = styled.span`
   margin-right: 10px;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-weight: bold;
 `;
 
 const Button = styled.button`

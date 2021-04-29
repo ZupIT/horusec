@@ -121,7 +121,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
 
   return (
     <div className="max-space">
-      <Styled.Wrapper>
+      <Styled.Wrapper tabIndex={0}>
         <Styled.Title>
           {t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}
         </Styled.Title>

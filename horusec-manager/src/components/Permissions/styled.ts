@@ -67,7 +67,7 @@ const Close = styled(Icon)`
   }
 `;
 
-const Subtitle = styled.h4`
+const Subtitle = styled.h2`
   color: ${({ theme }) => theme.colors.text.opaque};
   font-weight: 600;
   font-size: ${({ theme }) => theme.metrics.fontSize.medium};

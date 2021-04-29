@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import Filters from './Filters';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
+import { useTranslation } from 'react-i18next';
 
 import TotalDevelopers from './TotalDevelopers';
 import TotalRepositories from './TotalRepositories';
@@ -27,15 +28,25 @@ import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
+
+import NewVulnerabilitiesByDeveloper from './NewVulnerabilitiesByDeveloper';
+
 interface Props {
   type: 'workspace' | 'repository';
 }
 
 const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
+  const { t } = useTranslation();
 
   return (
     <Styled.Wrapper>
+      <Styled.AriaTitle>
+        {type === 'workspace'
+          ? t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE')
+          : t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY')}
+      </Styled.AriaTitle>
+
       <Filters type={type} onApply={(values) => setFilters(values)} />
 
       <Styled.Row>
@@ -48,6 +59,14 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
       <Styled.Row>
         <VulnerabilitiesByDeveloper filters={filters} />
+
+        {type === 'workspace' ? (
+          <VulnerabilitiesByRepository filters={filters} />
+        ) : null}
+      </Styled.Row>
+
+      <Styled.Row>
+        <NewVulnerabilitiesByDeveloper filters={filters} />
 
         {type === 'workspace' ? (
           <VulnerabilitiesByRepository filters={filters} />

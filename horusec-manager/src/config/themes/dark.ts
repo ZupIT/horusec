@@ -46,21 +46,21 @@ export default {
     },
 
     optionButton: {
-      text: '#98989E',
-      border: '#98989E',
+      text: '#c2c2c2',
+      border: '#c2c2c2',
     },
 
     text: {
       primary: '#F5F5FB',
-      secundary: '#B4B6BA',
+      secundary: '#C2C2C2',
       opaque: '#BEBEBE',
       highlight: '#00B1FF',
       link: '#0095FF',
     },
 
     input: {
-      border: '#98989E',
-      label: '#98989E',
+      border: '#c2c2c2',
+      label: '#c2c2c2',
       text: '#F2F2F9',
       active: '#FFFFFF',
       error: '#EA8F8F',
@@ -73,7 +73,7 @@ export default {
         primary: '#C7C7D4',
         secundary: '#636366',
       },
-      title: '#98989E',
+      title: '#c2c2c2',
       background: '#2C2C2E',
       highlight: '#F04223',
       today: '#636366',
@@ -82,7 +82,7 @@ export default {
 
     select: {
       text: '#C7C7D4',
-      title: '#98989E',
+      title: '#c2c2c2',
       background: '#2C2C2E',
       border: '#FFFFFF',
       hover: '#444447',
@@ -105,8 +105,9 @@ export default {
     },
 
     chart: {
-      title: '#B4B6BA',
-      legend: '#ACACB2',
+      title: '#F4F4FA',
+      legend: '#F4F4FA',
+      background: '#343437',
     },
 
     vulnerabilities: {
@@ -143,13 +144,13 @@ export default {
     },
 
     dataTable: {
-      backgorund: '#2C2C2E',
-      title: '#C7C7D4',
+      background: '#2C2C2E',
+      title: '#F4F4FA',
       column: {
-        text: '#98989E',
+        text: '#F4F4FA',
       },
       row: {
-        text: '#F2F2F9',
+        text: '#F4F4FA',
         background: '#3A3A3C',
       },
     },

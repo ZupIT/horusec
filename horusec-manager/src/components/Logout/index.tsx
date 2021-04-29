@@ -29,6 +29,8 @@ const Logout: React.FC = () => {
       <Styled.LogoutIcon
         onClick={logout}
         size="16px"
+        tabIndex={0}
+        ariaLabel={t('SIDE_MENU.LOGOUT')}
         name="logout"
         dataFor="logout"
         dataTip={t('SIDE_MENU.LOGOUT')}

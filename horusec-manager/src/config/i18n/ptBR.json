@@ -160,6 +160,8 @@
     "NO_WORKSPACES": "Nenhum espaço de trabalho registrado foi encontrado."
   },
   "DASHBOARD_SCREEN": {
+    "ARIA_TITLE_WORKSPACE": "Tela de apresentação de gráficos referentes ao workspace",
+    "ARIA_TITLE_REPOSITORY": "Tela de apresentação de gráficos referentes ao repositório",
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
     "PERIOD": "Período",
@@ -243,7 +245,9 @@
     "EXPIRES_AT": "Expira em"
   },
   "GENERAL": {
+    "BACK": "Voltar",
     "SELECT": "Selecione",
+    "SELECT_SEARCH": "Digite uma palavra para filtrar os resultados.",
     "CANCEL": "Cancelar",
     "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
@@ -391,11 +395,14 @@
     "SUCCESS_DELETE": "Sua conta foi deletada com sucesso!"
   },
   "SIDE_MENU": {
+    "ARIA_TITLE": "Navegação entre páginas",
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
     "WORKSPACE": "Workspace",
+    "CURRENT_WORKSPACE": "Alterar workspace, Workspace atual: ",
     "REPOSITORY": "Repositório",
+    "HELPER": "Ajuda",
     "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair",
@@ -424,6 +431,7 @@
   },
   "NEW_WORKSPACE_SCREEN": {
     "MESSAGE": "Adicione um novo Workspace para começar a usar o Horusec.",
-    "ACTION": "Adicionar workspace"
+    "ACTION": "Adicionar workspace",
+    "ALT_IMG": "Desenho ilustrando uma paisagem com nuvens no alto, abaixo um banco de madeira e uma mulher branca de cabelo ruivo com blusa laranja e calça verde levando uma luneta com a mão direita até o olho esquerdo. Ela apoia seu pé esquerdo sobre o banco."
   }
 }

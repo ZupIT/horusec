@@ -24,7 +24,7 @@ const Form = styled(FormMik)`
 `;
 
 const Field = styled(Input)`
-  margin-top: 20px;
+  margin: 25px 0;
 `;
 
 const ForgotPass = styled.a`

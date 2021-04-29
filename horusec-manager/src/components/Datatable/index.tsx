@@ -107,6 +107,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                         if (column.type === 'text') {
                           return (
                             <Styled.Cell
+                              tabIndex={0}
                               key={columnId}
                               className={column.cssClass?.join(' ')}
                               {...renderTooltipProps(row[column.property])}
@@ -119,6 +120,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                         if (column.type === 'custom') {
                           return (
                             <Styled.Cell
+                              tabIndex={0}
                               key={columnId}
                               className={column.cssClass?.join(' ')}
                               style={{ overflow: 'visible' }}
@@ -131,6 +133,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                         if (column.type === 'actions') {
                           return (
                             <Styled.Cell
+                              tabIndex={0}
                               key={columnId}
                               className={column.cssClass?.join(' ')}
                             >

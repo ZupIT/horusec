@@ -33,7 +33,7 @@ interface Props {
 
 const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, metrics } = useTheme();
 
   const [isLoading, setLoading] = useState(false);
   const [chartData, setChartData] = useState<ChartBarStacked>({
@@ -50,6 +50,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
       text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
+        fontSize: metrics.fontSize.large,
       },
     },
     legend: {
@@ -79,6 +80,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
       labels: {
         style: {
           colors: colors.chart.legend,
+          fontSize: metrics.fontSize.small,
         },
       },
       categories: [],
@@ -88,8 +90,10 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
         text: undefined,
       },
       labels: {
+        maxWidth: 280,
         style: {
           colors: colors.chart.legend,
+          fontSize: metrics.fontSize.small,
         },
       },
     },
@@ -122,7 +126,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper>
+      <Styled.Wrapper tabIndex={0}>
         <Styled.Title>
           {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_DEV')}
         </Styled.Title>

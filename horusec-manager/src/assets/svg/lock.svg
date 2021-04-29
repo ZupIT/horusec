@@ -7,7 +7,7 @@
         <g id="1.0-Dash-Copy-20" transform="translate(-649.000000, -418.000000)">
             <g id="Group-15-Copy" transform="translate(573.000000, 379.000000)">
                 <g id="Icon/Miscellaneous/Settings" transform="translate(76.000000, 39.000000)">
-                    <mask id="mask-2" fill="white">
+                    <mask  fill="white">
                         <use xlink:href="#path-1"></use>
                     </mask>
                     <use id="Icon-Lock" fill="#98989E" xlink:href="#path-1"></use>

@@ -1,5 +1,5 @@
-describe("My First Test", () => {
-    it("Does not do much!", () => {
+describe("Auth Keycloak with application admin", () => {
+    it("TO DO!", () => {
         expect(true).to.equal(true);
     });
 });

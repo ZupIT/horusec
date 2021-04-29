@@ -37,8 +37,8 @@ const Counter: React.FC<CounterProps> = ({ title, value, isLoading }) => {
   };
 
   return (
-    <Styled.Wrapper>
-      <Styled.Title>{title}</Styled.Title>
+    <Styled.Wrapper tabIndex={0}>
+      <Styled.Title tabIndex={-1}>{title}</Styled.Title>
 
       <Styled.Container>
         {isLoading ? <Icon name="loading" size="100px" /> : renderContent()}
