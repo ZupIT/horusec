@@ -25,7 +25,8 @@ coverage:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/coverage.sh | bash -s 91 .
 
 test:
-	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
+	$(GO) clean -testcache
+	$(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
 
 fix-imports:
     ifeq (, $(shell which $(GO_IMPORTS)))
@@ -45,17 +46,17 @@ security:
 
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 build-install-cli-linux:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec" &> /dev/null
-	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec" ./cmd/app/main.go
-	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec"
-	horusec version
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-cli" &> /dev/null
+	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-cli" ./cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-cli"
+	horusec-cli version
 build-install-cli-darwin:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-darwin" &> /dev/null
 	CGO_ENABLED=0 GOOS=darwin $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-darwin" ./cmd/app/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-darwin"
 	horusec version
 build-install-cli-windows:
-	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec.exe" &> /dev/null
-	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec.exe" ./cmd/app/main.go
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
+	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" ./cmd/app/main.go
 
 pipeline: fmt fix-imports lint test coverage build security

@@ -19,8 +19,6 @@ package scan_languages
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -28,6 +26,9 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -42,7 +43,7 @@ func TestMain(m *testing.M) {
 		cmdArguments := []string{
 			"build",
 			fmt.Sprintf("-o=%s", horusecPath),
-			path.Join(currentPath, "..", "..", "..", "cmd", "app", "main.go"),
+			path.Join(currentPath, "..", "..", "cmd", "app", "main.go"),
 		}
 		cmd := exec.Command("go", cmdArguments...)
 		cmd.Env = os.Environ()
@@ -201,7 +202,7 @@ func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, ot
 	assert.NoError(t, os.MkdirAll(path.Join(currentPath, "tmp"), 0750))
 	fakeAnalysisID := uuid.New().String()
 	fileOutput := path.Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
-	srcPath := path.Join("..", "..", "..", "examples", language, exampleName)
+	srcPath := path.Join("..", "..", "examples", language, exampleName)
 	flags := map[string]string{
 		"-p": strings.TrimSpace(srcPath),
 		"-o": strings.TrimSpace("json"),

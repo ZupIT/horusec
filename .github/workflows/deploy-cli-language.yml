@@ -1,20 +1,17 @@
-name: DeployService
+name: DeployCLITools
 
 on:
   workflow_dispatch:
     inputs:
-      service:
-        description: 'Service to deploy on dockerhub: horusec-account, horusec-analytic, horusec-api, horusec-manager, horusec-messages, horusec-auth, horusec-migration, horusec-webhook'
+      language:
+        description: 'Language to update on dockerhub: c, csharp, dart, elixir, generic, go, hcl, java, javascript, kotlin, leaks, php, python, ruby, shell, yaml'
         required: true
-        default: 'horusec-'
       update_type:
         description: 'Update Type: alpha, rc, release, minor, major'
         required: true
-        default: 'release'
       is_to_update_latest:
         description: 'Is to update latest: true, false'
         required: true
-        default: 'true'
 
 jobs:
   deploy:
@@ -41,12 +38,12 @@ jobs:
 
           UPDATE_TYPE="${{ github.event.inputs.update_type }}"
           IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
-          SERVICE="${{ github.event.inputs.service }}"
+          LANGUAGE="${{ github.event.inputs.language }}"
 
           docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
-          chmod +x ./deployments/scripts/update-image-service.sh
-          ./deployments/scripts/update-image-service.sh $SERVICE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+          chmod +x ./deployments/scripts/update-language.sh
+          ./deployments/scripts/update-language.sh $LANGUAGE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
