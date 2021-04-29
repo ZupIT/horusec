@@ -16,17 +16,21 @@
 
 import styled from 'styled-components';
 import { Button } from 'components';
+import { Form } from 'formik';
 
-const Container = styled.div`
+const Container = styled(Form)`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   padding: 20px;
   display: flex;
   width: min-content;
+  align-items: center;
 `;
 
 const Wrapper = styled.div`
+  min-width: 200px;
   margin-right: 35px;
+  transition: all 1s;
 `;
 
 const CalendarWrapper = styled(Wrapper)`

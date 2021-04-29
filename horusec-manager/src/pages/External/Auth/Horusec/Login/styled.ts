@@ -16,15 +16,15 @@
 
 import styled from 'styled-components';
 import { Input, Button } from 'components';
+import { Form as FormMik } from 'formik';
 
-const Form = styled.form`
+const Form = styled(FormMik)`
   display: flex;
   flex-direction: column;
 `;
 
 const Field = styled(Input)`
-  margin-top: 25px;
-  margin-bottom: 15px;
+  margin-top: 20px;
 `;
 
 const ForgotPass = styled.a`

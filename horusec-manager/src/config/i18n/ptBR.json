@@ -9,12 +9,16 @@
     "INVALID_USERNAME": "Nome de usuário inválido!",
     "USERNAME": "Nome de usuário",
     "INVALID_PASS": "Informe a senha",
-    "KEYCLOAK": "Entrar com keycloak"
+    "KEYCLOAK": "Entrar com keycloak",
+    "EMAIL_ARIA": "Digite seu e-mail",
+    "PASSWORD_ARIA": "Digite sua senha"
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "Para sua segurança, digite o email cadastrado para redefinir sua senha",
+    "ARIA_INPUT_EMAIL": "Digite seu e-mail.",
     "EMAIL": "Email",
     "CODE": "Código",
+    "ARIA_CODE": "Digite o código",
     "INVALID_EMAIL": "Email inválido",
     "INVALID_CODE": "Informe um código",
     "CHECK_CODE": "Verificar código",
@@ -28,12 +32,14 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
+    "ARIA_PASSWORD": "Digite a senha",
     "INVALID_PASS": "Informe a senha",
     "CONFIRM_PASS": "Confirmar senha",
+    "ARIA_CONFIRM_PASS": "Confirme sua nova senha",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUCCESS_ALTER_PASS": "Sua senha foi alterada com sucesso",
     "UPDATE_PASS": "Atualizar senha",
@@ -42,7 +48,9 @@
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Crie sua conta Horusec",
     "EMAIL": "Email",
+    "ARIA_EMAIL": "Digite seu e-mail",
     "NAME": "Nome",
+    "ARIA_NAME": "Digite seu nome completo ou apelido",
     "NEXT": "Avançar",
     "BACK": "Voltar para o login",
     "INVALID_NAME": "Informe o nome",
@@ -52,12 +60,14 @@
     "MIN_CHARACTERS": "A partir de 8 caracteres",
     "ALPHA_REQUIREMENTS": "1 letra maiúscula e 1 minúscula",
     "NUMBER_REQUIREMENT": "1 número",
-    "SPECIAL_CHARACTER": "1 caractere especial ( !@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 caractere especial",
     "NO_EQUALS": "Não pode ser igual:",
     "USER_NAME": "Usuário",
     "PASSWORD": "Senha",
+    "ARIA_PASSWORD": "Digite a senha",
     "INVALID_PASS": "Informe a senha",
     "CONFIRM_PASS": "Confirmar senha",
+    "ARIA_CONFIRM_PASS": "Digite sua senha novamente para confirmar-la.",
     "INVALID_CONFIRM_PASS": "As senhas não são iguais.",
     "SUBMIT": "Cadastrar",
     "CONFIRM": "Ok, entendi.",
@@ -124,6 +134,7 @@
       "EDIT_SUBTITLE": "Edite o usuário abaixo:",
       "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
       "EMAIL": "Email",
+      "ROLE": "Cargo",
       "INVALID_EMAIL": "Email inválido",
       "CONFIRM_DELETE": "Deseja realmente remover este usuário do workspace?",
       "YES": "Sim",
@@ -234,12 +245,26 @@
   "GENERAL": {
     "SELECT": "Selecione",
     "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "Botão em carregamento",
     "NOT_EXPIRABLE": "Não expirável",
+    "PASS_VISIBILITY": "Visualizar ou Ocultar senha",
     "PAGINATION": {
       "ITENS_PAGE": "Itens por página:",
       "OF": "de",
       "PAGES": "páginas"
-    }
+    },
+    "NO_OPTIONS": "Sem opções"
+  },
+  "FOOTER": {
+    "DEVELOPED": "Desenvolvido",
+    "WITH": "com",
+    "LOVE": "amor",
+    "BY": "por"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Alterar linguagem,",
+    "CURRENT": "Linguagem selecionada: ",
+    "SELECT": "Selecionar: "
   },
   "PERMISSIONS": {
     "ADMIN": "Administrador",

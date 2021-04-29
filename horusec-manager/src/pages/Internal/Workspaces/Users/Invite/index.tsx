@@ -15,17 +15,17 @@
  */
 
 import React, { useState } from 'react';
-import { Dialog, Select, Permissions } from 'components';
+import { Dialog, Permissions } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { isValidEmail } from 'helpers/validators';
-import { Field } from 'helpers/interfaces/Field';
 import { useTheme } from 'styled-components';
 import companyService from 'services/company';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Workspace } from 'helpers/interfaces/Workspace';
-
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import SearchSelect from 'components/SearchSelect';
 interface Props {
   isVisible: boolean;
   onCancel: () => void;
@@ -34,7 +34,7 @@ interface Props {
 }
 
 interface Role {
-  name: string;
+  label: string;
   value: string;
 }
 
@@ -51,11 +51,11 @@ const InviteToCompany: React.FC<Props> = ({
 
   const roles: Role[] = [
     {
-      name: t('PERMISSIONS.ADMIN'),
+      label: t('PERMISSIONS.ADMIN'),
       value: 'admin',
     },
     {
-      name: t('PERMISSIONS.MEMBER'),
+      label: t('PERMISSIONS.MEMBER'),
       value: 'member',
     },
   ];
@@ -63,93 +63,95 @@ const InviteToCompany: React.FC<Props> = ({
   const [isLoading, setLoading] = useState(false);
   const [permissionsIsOpen, setPermissionsIsOpen] = useState(false);
 
-  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
-  const [role, setRole] = useState<Role>(null);
+  const ValidationScheme = Yup.object({
+    email: Yup.string()
+      .email(t('WORKSPACES_SCREEN.USERS.INVALID_EMAIL'))
+      .required(t('WORKSPACES_SCREEN.USERS.INVALID_EMAIL')),
+    role: Yup.string().oneOf(['admin', 'member']).required(),
+  });
 
-  const resetFields = () => {
-    const defaultValue = { value: '', isValid: false };
-    setEmail(defaultValue);
-    setRole(null);
-  };
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
-  const handleConfirmSave = () => {
-    if (email.isValid) {
-      setLoading(true);
-
-      companyService
-        .createUserInCompany(
-          selectedWorkspace?.companyID,
-          email.value,
-          role.value
-        )
-        .then(() => {
-          showSuccessFlash(t('WORKSPACES_SCREEN.USERS.INVITE_SUCCESS'));
-          onConfirm();
-          resetFields();
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+  const initialValues: InitialValue = {
+    email: '',
+    role: '',
   };
 
   return (
-    <Dialog
-      isVisible={isVisible}
-      message={t('WORKSPACES_SCREEN.USERS.INVITE')}
-      onCancel={() => {
-        onCancel();
-        resetFields();
+    <Formik
+      initialValues={initialValues}
+      validationSchema={ValidationScheme}
+      onSubmit={(value, actions) => {
+        setLoading(true);
+
+        companyService
+          .createUserInCompany(
+            selectedWorkspace?.companyID,
+            value.email,
+            value.role
+          )
+          .then(() => {
+            showSuccessFlash(t('WORKSPACES_SCREEN.USERS.INVITE_SUCCESS'));
+            onConfirm();
+            actions.resetForm();
+          })
+          .catch((err) => {
+            dispatchMessage(err?.response?.data);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }}
-      onConfirm={handleConfirmSave}
-      confirmText={t('WORKSPACES_SCREEN.USERS.SAVE')}
-      disableConfirm={!email.isValid || !role}
-      disabledColor={colors.button.disableInDark}
-      loadingConfirm={isLoading}
-      width={450}
-      hasCancel
     >
-      <Styled.SubTitle>
-        {t('WORKSPACES_SCREEN.USERS.INVITE_SUBTITLE')}
-      </Styled.SubTitle>
+      {(props) => (
+        <Dialog
+          isVisible={isVisible}
+          message={t('WORKSPACES_SCREEN.USERS.INVITE')}
+          onCancel={() => {
+            onCancel();
+            props.resetForm();
+          }}
+          onConfirm={props.submitForm}
+          confirmText={t('WORKSPACES_SCREEN.USERS.SAVE')}
+          disableConfirm={!props.isValid}
+          disabledColor={colors.button.disableInDark}
+          loadingConfirm={isLoading}
+          width={450}
+          hasCancel
+        >
+          <Styled.SubTitle>
+            {t('WORKSPACES_SCREEN.USERS.INVITE_SUBTITLE')}
+          </Styled.SubTitle>
 
-      <Styled.Field
-        label={t('WORKSPACES_SCREEN.USERS.EMAIL')}
-        invalidMessage={t('WORKSPACES_SCREEN.USERS.INVALID_EMAIL')}
-        onChangeValue={(field: Field) => setEmail(field)}
-        validation={isValidEmail}
-        name="email"
-        type="text"
-        width="100%"
-      />
+          <Styled.Field
+            label={t('WORKSPACES_SCREEN.USERS.EMAIL')}
+            name="email"
+            type="text"
+          />
 
-      <Styled.RoleWrapper>
-        <Select
-          rounded
-          keyLabel="name"
-          keyValue="value"
-          width="340px"
-          optionsHeight="65px"
-          options={roles}
-          onChangeValue={(item) => setRole(item)}
-        />
+          <Styled.RoleWrapper>
+            <SearchSelect
+              options={roles}
+              label={t('WORKSPACES_SCREEN.USERS.ROLE')}
+              name="role"
+              width="350px"
+            />
 
-        <Styled.HelpIcon
-          name="help"
-          size="20px"
-          onClick={() => setPermissionsIsOpen(true)}
-        />
-      </Styled.RoleWrapper>
+            <Styled.HelpIcon
+              name="help"
+              size="20px"
+              onClick={() => setPermissionsIsOpen(true)}
+            />
+          </Styled.RoleWrapper>
 
-      <Permissions
-        isOpen={permissionsIsOpen}
-        onClose={() => setPermissionsIsOpen(false)}
-        rolesType="COMPANY"
-      />
-    </Dialog>
+          <Permissions
+            isOpen={permissionsIsOpen}
+            onClose={() => setPermissionsIsOpen(false)}
+            rolesType="COMPANY"
+          />
+        </Dialog>
+      )}
+    </Formik>
   );
 };
 

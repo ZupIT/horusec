@@ -29,13 +29,15 @@ const allLanguages: LanguageItem[] = [
     htmlValue: 'en',
     icon: 'united-states',
     dateFormat: 'MM/dd/yyyy',
+    description: 'English',
   },
   {
     name: 'pt - BR',
     i18nValue: 'ptBR',
-    htmlValue: 'pt-br',
+    htmlValue: 'pt-BR',
     icon: 'brazil',
     dateFormat: 'dd/MM/yyyy',
+    description: 'Português - Brazil',
   },
 ];
 

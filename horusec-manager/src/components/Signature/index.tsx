@@ -15,18 +15,28 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Styled from './styled';
 
 const Signature: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <Styled.Wrapper
       href="https://www.zup.com.br"
       rel="noopener noreferrer"
       target="_blank"
     >
-      Developed with <Styled.Icon name="heart" size="12px" />
-      by <Styled.Icon name="zup" size="35px" />
+      {t('FOOTER.DEVELOPED')} {t('FOOTER.WITH')}
+      <Styled.Icon
+        ariaLabel={t('FOOTER.LOVE')}
+        tabIndex={null}
+        name="heart"
+        size="12px"
+      />
+      {t('FOOTER.BY')}
+      <Styled.Icon ariaLabel="Zup" tabIndex={null} name="zup" size="35px" />
     </Styled.Wrapper>
   );
 };

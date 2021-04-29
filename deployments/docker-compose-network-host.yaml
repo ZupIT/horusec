@@ -116,6 +116,8 @@ services:
       HORUSEC_LDAP_ADMIN_GROUP: "admin"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
+      HORUSEC_ENABLE_DEFAULT_USER: "true"
+      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
       HORUSEC_AUTH_TYPE: "horusec"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"

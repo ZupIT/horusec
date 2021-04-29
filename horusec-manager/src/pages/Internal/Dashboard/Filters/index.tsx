@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Select } from 'components';
+import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import repositoryService from 'services/repository';
 import useWorkspace from 'helpers/hooks/useWorkspace';
@@ -25,6 +25,9 @@ import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { AxiosResponse } from 'axios';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import SearchSelect from 'components/SearchSelect';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -62,32 +65,28 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
 
-  const [repositories, setRepositories] = useState<any[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState(fixedRanges[0]);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const [filters, setFilters] = useState<FilterValues>({
-    initialDate: null,
-    finalDate: null,
-    repositoryID: null,
-    companyID: null,
-    type,
+  const ValidationScheme = Yup.object({
+    period: Yup.string().label(t('DASHBOARD_SCREEN.PERIOD')).notRequired(),
+    initialDate: Yup.date()
+      .label(t('DASHBOARD_SCREEN.START_DATE'))
+      .notRequired(),
+    finalDate: Yup.date().label(t('DASHBOARD_SCREEN.FINAL_DATE')).notRequired(),
+    repositoryID: Yup.string()
+      .label(t('DASHBOARD_SCREEN.REPOSITORY'))
+      .required(),
+    companyID: Yup.string().required(),
+    type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
 
-  const handleSelectedPeriod = (item: { label: string; value: string }) => {
-    setSelectedPeriod(item);
-
-    const getRangeOfPeriod: ObjectLiteral = {
-      customRange: [today, today],
-      today: [today, today],
-      lastWeek: [lastWeek, today],
-      lastMonth: [lastMonth, today],
-      beginning: [null, null],
-    };
-    setFilters({
-      ...filters,
-      initialDate: getRangeOfPeriod[item.value][0],
-      finalDate: getRangeOfPeriod[item.value][1],
-    });
+  const initialValues: FilterValues = {
+    period: fixedRanges[0].value,
+    initialDate: null,
+    finalDate: null,
+    repositoryID: repositories[0]?.repositoryID,
+    companyID: repositories[0]?.companyID,
+    type: type,
   };
 
   useEffect(() => {
@@ -101,13 +100,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             setRepositories(repositories);
 
             if (repositories.length > 0) {
-              setFilters({
-                ...filters,
-                repositoryID: repositories[0]?.repositoryID,
-                companyID: repositories[0]?.companyID,
-              });
               onApply({
-                ...filters,
+                ...initialValues,
                 repositoryID: repositories[0]?.repositoryID,
                 companyID: repositories[0]?.companyID,
               });
@@ -121,9 +115,9 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     if (currentWorkspace) {
       if (type === 'repository') {
         fetchRepositories();
-      } else if (filters) {
+      } else {
         onApply({
-          ...filters,
+          ...initialValues,
           companyID: currentWorkspace.companyID,
         });
       }
@@ -134,67 +128,78 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     // eslint-disable-next-line
   }, [currentWorkspace]);
 
+  const getRangeOfPeriod: ObjectLiteral = {
+    beginning: [null, null],
+    customRange: [today, today],
+    today: [today, today],
+    lastWeek: [lastWeek, today],
+    lastMonth: [lastMonth, today],
+  };
+
   return (
-    <Styled.Container>
-      <Styled.Wrapper>
-        <Select
-          keyLabel="label"
-          optionsHeight="160px"
-          width="200px"
-          initialValue={selectedPeriod}
-          options={fixedRanges}
-          title={t('DASHBOARD_SCREEN.PERIOD')}
-          onChangeValue={(item) => handleSelectedPeriod(item)}
-        />
-      </Styled.Wrapper>
-
-      {selectedPeriod?.value === fixedRanges[1].value ? (
-        <>
-          <Styled.CalendarWrapper>
-            <Calendar
-              initialDate={filters.initialDate}
-              title={t('DASHBOARD_SCREEN.START_DATE')}
-              onChangeValue={(field) =>
-                setFilters({ ...filters, initialDate: field.value })
-              }
-            />
-          </Styled.CalendarWrapper>
-
-          <Styled.CalendarWrapper>
-            <Calendar
-              title={t('DASHBOARD_SCREEN.FINAL_DATE')}
-              onChangeValue={(field) =>
-                setFilters({ ...filters, finalDate: field.value })
-              }
-            />
-          </Styled.CalendarWrapper>
-        </>
-      ) : null}
-
-      {type === 'repository' ? (
-        <Select
-          keyLabel="name"
-          width="200px"
-          optionsHeight="200px"
-          initialValue={repositories[0]}
-          options={repositories}
-          title={t('DASHBOARD_SCREEN.REPOSITORY')}
-          hasSearch
-          onChangeValue={(value) =>
-            setFilters({ ...filters, repositoryID: value.repositoryID })
-          }
-        />
-      ) : null}
-
-      <Styled.ApplyButton
-        text={t('DASHBOARD_SCREEN.APPLY')}
-        rounded
-        width={78}
-        onClick={() =>
-          onApply({ ...filters, companyID: currentWorkspace.companyID })
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize={true}
+      validationSchema={ValidationScheme}
+      onSubmit={(values) => {
+        if (values.period !== fixedRanges[1].value) {
+          values.initialDate = getRangeOfPeriod[values.period][0];
+          values.finalDate = getRangeOfPeriod[values.period][1];
+        } else {
+          values.initialDate = new Date(values.initialDate);
+          values.finalDate = new Date(values.finalDate);
         }
-      />
-    </Styled.Container>
+
+        onApply(values);
+      }}
+    >
+      {(props) => (
+        <Styled.Container>
+          <Styled.Wrapper>
+            <SearchSelect
+              name="period"
+              label={t('DASHBOARD_SCREEN.PERIOD')}
+              options={fixedRanges}
+            />
+          </Styled.Wrapper>
+          {props.values.period === fixedRanges[1].value ? (
+            <>
+              <Styled.CalendarWrapper>
+                <Calendar
+                  name="initialDate"
+                  label={t('DASHBOARD_SCREEN.START_DATE')}
+                />
+              </Styled.CalendarWrapper>
+
+              <Styled.CalendarWrapper>
+                <Calendar
+                  name="finalDate"
+                  label={t('DASHBOARD_SCREEN.FINAL_DATE')}
+                />
+              </Styled.CalendarWrapper>
+            </>
+          ) : null}
+          {type === 'repository' ? (
+            <Styled.Wrapper>
+              <SearchSelect
+                name="repositoryID"
+                label={t('DASHBOARD_SCREEN.REPOSITORY')}
+                options={repositories.map((el) => ({
+                  label: el.name,
+                  value: el.repositoryID,
+                }))}
+              />
+            </Styled.Wrapper>
+          ) : null}
+          <Styled.ApplyButton
+            text={t('DASHBOARD_SCREEN.APPLY')}
+            rounded
+            width={78}
+            type="submit"
+          />
+        </Styled.Container>
+      )}
+    </Formik>
   );
 };
 

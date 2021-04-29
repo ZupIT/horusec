@@ -8,6 +8,9 @@
       "dom.iterable",
       "esnext"
     ],
+    "types": [
+      "cypress"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,13 +21,14 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
+    "isolatedModules": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "src",
+    "cypress"
   ],
   "paths": {
     "components/*": [

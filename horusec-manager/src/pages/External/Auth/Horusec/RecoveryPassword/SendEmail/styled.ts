@@ -16,13 +16,14 @@
 
 import styled from 'styled-components';
 import { Input, Button } from 'components';
+import { Form as FormMik } from 'formik';
 
-const Form = styled.form`
+const Form = styled(FormMik)`
   display: flex;
   flex-direction: column;
 `;
 
-const SubTitle = styled.h2`
+const SubTitle = styled.h1`
   color: ${({ theme }) => theme.colors.text.primary};
   font-weight: normal;
   align-self: flex-start;

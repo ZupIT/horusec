@@ -23,7 +23,6 @@ import (
 
 	"github.com/ZupIT/horusec/development-kit/pkg/databases/relational/adapter"
 	serverUtil "github.com/ZupIT/horusec/development-kit/pkg/utils/http/server"
-	adminConfig "github.com/ZupIT/horusec/horusec-auth/config/admin"
 	"github.com/ZupIT/horusec/horusec-auth/config/app"
 	"github.com/ZupIT/horusec/horusec-auth/config/cors"
 	grpcConfig "github.com/ZupIT/horusec/horusec-auth/config/grpc"
@@ -55,7 +54,9 @@ func main() {
 	postgresWrite := adapter.NewRepositoryWrite()
 	cacheRepository := cache.NewCacheRepository(postgresRead, postgresWrite)
 
-	adminConfig.CreateApplicationAdmin(appConfig, postgresRead, postgresWrite)
+	app.CreateDefaultApplicationAdmin(appConfig, postgresRead, postgresWrite)
+
+	app.CreateDefaultUser(appConfig, postgresRead, postgresWrite)
 
 	server := serverUtil.NewServerConfig("8006", cors.NewCorsConfig()).Timeout(10)
 	chiRouter := router.NewRouter(server).GetRouter(postgresRead, postgresWrite, broker, cacheRepository, appConfig)

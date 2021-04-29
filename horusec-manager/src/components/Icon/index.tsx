@@ -26,9 +26,11 @@ export interface Props {
   title?: string;
   className?: string;
   isActive?: boolean;
-  onClick?: (event: MouseEvent) => void;
+  onClick?: (event?: MouseEvent) => void;
   dataFor?: string;
   dataTip?: string;
+  ariaLabel?: string;
+  tabIndex?: number;
 }
 
 const Icon = React.forwardRef(
@@ -43,6 +45,8 @@ const Icon = React.forwardRef(
       title,
       dataTip,
       dataFor,
+      ariaLabel,
+      tabIndex,
     }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
@@ -53,12 +57,16 @@ const Icon = React.forwardRef(
 
     return (
       <Styled.Icon
+        tabIndex={tabIndex}
+        aria-label={ariaLabel}
         ref={iRef}
+        id={`icon-${name}`}
         data-testid={`icon-${name}`}
         className={className}
         color={isActive ? 'light' : color}
         size={size}
         onClick={onClick}
+        onKeyPress={() => onClick()}
         title={title}
         data-tip={dataTip}
         data-for={dataFor}

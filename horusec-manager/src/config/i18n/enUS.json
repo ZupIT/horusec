@@ -13,8 +13,10 @@
   },
   "RECOVERY_PASS_SCREEN": {
     "INPUT_EMAIL": "For your security, enter the e-mail registered to reset your password",
+    "ARIA_INPUT_EMAIL": "Type your e-mail",
     "EMAIL": "E-mail",
     "CODE": "Code",
+    "ARIA_CODE": "Type the code",
     "INVALID_EMAIL": "Invalid e-mail",
     "INVALID_CODE": "Enter a code",
     "CHECK_CODE": "Check code",
@@ -28,12 +30,14 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It can't be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
+    "ARIA_PASSWORD": "Type the password",
     "INVALID_PASS": "Enter password",
     "CONFIRM_PASS": "Confirm password",
+    "ARIA_CONFIRM_PASS": "Confirm your new password",
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUCCESS_ALTER_PASS": "Your password has been changed successfully",
     "UPDATE_PASS": "Update password",
@@ -42,7 +46,9 @@
   "CREATE_ACCOUNT_SCREEN": {
     "CREATE_ACCOUNT": "Create your Horusec account",
     "EMAIL": "E-mail",
+    "ARIA_EMAIL": "Type your e-mail",
     "NAME": "Name",
+    "ARIA_NAME": "Enter your full name or nickname",
     "NEXT": "Next",
     "BACK": "Back to login",
     "INVALID_NAME": "Enter the name",
@@ -52,12 +58,14 @@
     "MIN_CHARACTERS": "From 8 characters",
     "ALPHA_REQUIREMENTS": "1 uppercase and 1 lowercase letter",
     "NUMBER_REQUIREMENT": "1 number",
-    "SPECIAL_CHARACTER": "1 special character (!@#$*_.-)",
+    "SPECIAL_CHARACTER": "1 special character",
     "NO_EQUALS": "It cannot be the same:",
     "USER_NAME": "User",
     "PASSWORD": "Password",
+    "ARIA_PASSWORD": "Type your password",
     "INVALID_PASS": "Enter password",
     "CONFIRM_PASS": "Confirm password",
+    "ARIA_CONFIRM_PASS": "Enter your password again to confirm it.",
     "INVALID_CONFIRM_PASS": "Passwords are not the same.",
     "SUBMIT": "Register",
     "CONFIRM": "Ok, I got it.",
@@ -124,6 +132,7 @@
       "EDIT_SUBTITLE": "Edit the user below:",
       "INVITE_SUBTITLE": "Invite a new user below:",
       "EMAIL": "E-mail",
+      "ROLE": "Role",
       "INVALID_EMAIL": "Invalid e-mail",
       "CONFIRM_DELETE": "Do you really want remove this user of workspace?",
       "YES": "Yes",
@@ -234,12 +243,26 @@
   "GENERAL": {
     "SELECT": "Select",
     "CANCEL": "Cancel",
+    "BUTTON_LOADING": "Button in loading",
+    "PASS_VISIBILITY": "View or hidden password",
     "NOT_EXPIRABLE": "Not expirable",
     "PAGINATION": {
       "ITENS_PAGE": "Items per page:",
       "OF": "of",
       "PAGES": "pages"
-    }
+    },
+    "NO_OPTIONS": "No options"
+  },
+  "FOOTER": {
+    "DEVELOPED": "Developed",
+    "WITH": "with",
+    "LOVE": "love",
+    "BY": "by"
+  },
+  "SELECT_LANGUAGE": {
+    "CHANGE": "Change the language,",
+    "CURRENT": "Current language: ",
+    "SELECT": "Select: "
   },
   "PERMISSIONS": {
     "ADMIN": "Administrator",

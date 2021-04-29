@@ -14,45 +14,42 @@
  * limitations under the License.
  */
 
-import React, { FormEvent, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import isEmptyString from 'helpers/validators/isEmptyString';
-import { Field } from 'helpers/interfaces/Field';
 import accountService from 'services/account';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import queryString from 'query-string';
-import { isValidEmail } from 'helpers/validators';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 function CheckCode() {
   const { t } = useTranslation();
   const history = useHistory();
   const { dispatchMessage } = useResponseMessage();
 
-  const [code, setCode] = useState<Field>({ value: '', isValid: false });
-  const [email, setEmail] = useState<Field>({ value: '', isValid: false });
+  const [code, setCode] = useState('');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const params = queryString.parse(window.location.search);
 
     if (params?.email) {
       const value = params?.email as string;
-      setEmail({ value, isValid: true });
+      setEmail(value);
     }
 
     if (params?.code) {
       const value = params?.code as string;
-      setCode({ value, isValid: true });
+      setCode(value);
     }
   }, []);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (code.isValid) {
+  const handleSubmit = (email: string, code: string) => {
+    if (code) {
       accountService
-        .validateCode(email.value, code.value)
+        .validateCode(email, code)
         .then((result) => {
           const token = result?.data?.content;
           history.push(`/auth/recovery-password/new-password?token=${token}`);
@@ -63,47 +60,66 @@ function CheckCode() {
     }
   };
 
+  const ValidationScheme = Yup.object({
+    email: Yup.string()
+      .email(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL'))
+      .required(t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')),
+    code: Yup.string().required(t('RECOVERY_PASS_SCREEN.INVALID_CODE')),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    email: email,
+    code: code,
+  };
+
   return (
     <Styled.Container>
       <Styled.SubTitle>
         {t('RECOVERY_PASS_SCREEN.TYPE_THE_CODE')}
       </Styled.SubTitle>
 
-      <Styled.Form onSubmit={handleSubmit}>
-        <Styled.Field
-          label={t('RECOVERY_PASS_SCREEN.EMAIL')}
-          name="email"
-          type="text"
-          onChangeValue={(value: Field) => setEmail(value)}
-          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_EMAIL')}
-          validation={isValidEmail}
-          initialValue={email.value}
-        />
+      <Formik
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={ValidationScheme}
+        onSubmit={(values) => {
+          handleSubmit(values.email, values.code);
+        }}
+      >
+        {(props) => (
+          <Styled.Form onSubmit={props.submitForm}>
+            <Styled.Field
+              label={t('RECOVERY_PASS_SCREEN.EMAIL')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_INPUT_EMAIL')}
+              name="email"
+              type="email"
+            />
 
-        <Styled.Field
-          label={t('CODE')}
-          name="code"
-          type="text"
-          onChangeValue={(value: Field) => setCode(value)}
-          invalidMessage={t('RECOVERY_PASS_SCREEN.INVALID_CODE')}
-          validation={isEmptyString}
-          initialValue={code.value}
-        />
+            <Styled.Field
+              label={t('CODE')}
+              ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_CODE')}
+              name="code"
+              type="text"
+            />
 
-        <Styled.Submit
-          isDisabled={!code.isValid}
-          text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
-          type="submit"
-          rounded
-        />
+            <Styled.Submit
+              isDisabled={!props.isValid}
+              text={t('RECOVERY_PASS_SCREEN.CHECK_CODE')}
+              type="submit"
+              rounded
+            />
 
-        <Styled.BackToLogin
-          onClick={() => history.push('/auth')}
-          text={t('RECOVERY_PASS_SCREEN.BACK')}
-          rounded
-          outline
-        />
-      </Styled.Form>
+            <Styled.BackToLogin
+              onClick={() => history.push('/auth')}
+              text={t('RECOVERY_PASS_SCREEN.BACK')}
+              rounded
+              outline
+            />
+          </Styled.Form>
+        )}
+      </Formik>
     </Styled.Container>
   );
 }
