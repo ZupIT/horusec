@@ -7,9 +7,6 @@ GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
 
-compose:
-	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.yaml up -d --build --force-recreate
-
 fmt:
 	$(GOFMT) -w $(GO_FILES)
 
