@@ -16,4 +16,4 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make e2e
+        run: make test-e2e

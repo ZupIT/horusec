@@ -28,7 +28,7 @@ test:
 	$(GO) clean -testcache
 	$(GO) test -v $(GO_LIST_TO_TEST) -timeout=5m -parallel=1 -failfast -short
 
-e2e:
+test-e2e:
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
 
