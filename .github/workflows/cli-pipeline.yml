@@ -37,13 +37,11 @@ jobs:
         run: make coverage
       - name: build
         run: |
-          make build-install-cli-linux
-          make build-install-cli-darwin
-          make build-install-cli-windows
+          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-cli" ./cmd/app/main.go
+          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
+          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
       - name: local-security
-        run: |
-          make build-install-cli-linux
-          horusec start -p="." -e="true"
+        run: tmp/horusec-cli start -p="." -e="true"
       - name: security
         env:
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
