@@ -19,6 +19,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/internal/enums/engines"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/engines/nginx"
 	"github.com/ZupIT/horusec/internal/services/formatters"
@@ -37,25 +38,25 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.HorusecNginx) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecNginx.ToString())
+	if f.ToolIsToIgnore(tools.HorusecEngine) {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecEngine.ToString())
 		return
 	}
 
-	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecNginx, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecNginx)
+	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecEngine, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecNginx)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine)
 
 	findings, err := f.execEngineAnalysis(projectSubPath)
 	if err != nil {
 		return err
 	}
 
-	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecNginx, languages.Nginx)
+	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Nginx)
 }
 
 func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
@@ -64,6 +65,6 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 		return nil, err
 	}
 
-	allRules := append(f.GetAllRules(), f.GetCustomRulesByTool(tools.HorusecNginx)...)
-	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engineenums.DefaultMaxUnitsPerAnalysis), nil
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByLanguage(tools.Nginx)...)
+	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engines.DefaultMaxUnitsPerAnalysis), nil
 }
