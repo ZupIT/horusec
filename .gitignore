@@ -1,11 +1,9 @@
 .idea
 .vscode
 coverage.out
-charts/
+coverage-run.sh
 bin
 *tmp*
-tmp/
-tmp-analysis/
 .env
 .aws/
 *.pem
@@ -14,8 +12,5 @@ deployments/certs
 *.srl
 .horusec/
 horusec-analysis-*.json
-e2e/**analysis
-horusec-cli/cmd/horusec/start/examples/
+cmd/horusec/start/examples/
 vendor
-**/e2e/cypress/src/screenshots/**
-**/e2e/cypress/src/videos/**

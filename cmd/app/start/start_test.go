@@ -510,7 +510,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		bytesFile, err := ioutil.ReadFile("./tmp-sonarqube.json")
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
-		assert.Contains(t, bytesFileString, "\"issues\": null")
+		assert.Contains(t, bytesFileString, "\"issues\": []")
 		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll("./tmp-sonarqube.json"))
 	})
