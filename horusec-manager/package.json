@@ -76,7 +76,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "react-scripts build",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "test": "react-scripts test --watchAll=false",
