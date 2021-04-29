@@ -32,9 +32,7 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
           ./bin/golangci-lint run -v --timeout=5m -c .golangci.yml ./...
       - name: test
-        run: |
-          go clean -testcache
-          go test -v ./... -timeout=5m -parallel=1 -failfast -short
+        run: make test
       - name: coverage
         run: make coverage
       - name: build

@@ -1,6 +1,7 @@
 GO ?= go
 GOFMT ?= gofmt
 GO_FILES ?= $$(find . -name '*.go' | grep -v vendor)
+GO_LIST_TO_TEST ?= $$(go list ./... | grep -v /examples/ | grep -v /e2e/)
 GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
@@ -23,7 +24,11 @@ coverage:
 
 test:
 	$(GO) clean -testcache
-	$(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
+	$(GO) test -v $(GO_LIST_TO_TEST) -timeout=5m -parallel=1 -failfast -short
+
+e2e:
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
 
 fix-imports:
     ifeq (, $(shell which $(GO_IMPORTS)))

@@ -50,7 +50,7 @@ func TestConvertVulnerabilityDataToSonarQube(t *testing.T) {
 	})
 
 	t.Run("issues should not be nil", func(t *testing.T) {
-		analysis := &horusec.Analysis{
+		analysis := &analysis.Analysis{
 			ID:        uuid.New(),
 			CreatedAt: time.Now(),
 			Status:    enumHorusec.Running,

@@ -1,8 +1,6 @@
 name: e2e
 
-on:
-  pull_request:
-    branches: [ "**" ]
+on: ["push"]
 
 jobs:
   e2e-cli:
@@ -18,7 +16,4 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: |
-          go get -v ./...
-          go clean -testcache
-          go test -v ./e2e/cli/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
+        run: make e2e
