@@ -242,6 +242,7 @@
     "EXPIRES_AT": "Expires at"
   },
   "GENERAL": {
+    "BACK": "Back",
     "SELECT": "Select",
     "SELECT_SEARCH": "Type a word to filter the results.",
     "CANCEL": "Cancel",

@@ -105,6 +105,7 @@ export default {
     chart: {
       title: '#F4F4FA',
       legend: '#F4F4FA',
+      background: '#343437',
     },
 
     vulnerabilities: {

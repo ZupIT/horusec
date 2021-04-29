@@ -244,6 +244,7 @@
     "EXPIRES_AT": "Expira em"
   },
   "GENERAL": {
+    "BACK": "Voltar",
     "SELECT": "Selecione",
     "SELECT_SEARCH": "Digite uma palavra para filtrar os resultados.",
     "CANCEL": "Cancelar",

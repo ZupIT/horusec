@@ -28,6 +28,9 @@ import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
+
+import NewVulnerabilitiesByDeveloper from './NewVulnerabilitiesByDeveloper';
+
 interface Props {
   type: 'workspace' | 'repository';
 }
@@ -56,6 +59,14 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
       <Styled.Row>
         <VulnerabilitiesByDeveloper filters={filters} />
+
+        {type === 'workspace' ? (
+          <VulnerabilitiesByRepository filters={filters} />
+        ) : null}
+      </Styled.Row>
+
+      <Styled.Row>
+        <NewVulnerabilitiesByDeveloper filters={filters} />
 
         {type === 'workspace' ? (
           <VulnerabilitiesByRepository filters={filters} />

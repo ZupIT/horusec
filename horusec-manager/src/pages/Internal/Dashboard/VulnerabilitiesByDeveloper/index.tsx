@@ -41,10 +41,6 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
     series: [],
   });
 
-  const calculateTotalOfSerie = (data: number[]) => {
-    return data.reduce((total, next) => total + next);
-  };
-
   const options: ApexOptions = {
     markers: {
       size: 0,
