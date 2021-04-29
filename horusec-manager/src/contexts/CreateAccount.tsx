@@ -94,4 +94,4 @@ const CreateAccounteProvider = ({ children }: CreateAccountProps) => {
   );
 };
 
-export { CreateAccountContextProps as CreateAccountContext, CreateAccounteProvider };
+export { CreateAccountContext, CreateAccounteProvider };
