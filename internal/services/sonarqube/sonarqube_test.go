@@ -48,4 +48,17 @@ func TestConvertVulnerabilityDataToSonarQube(t *testing.T) {
 		result := service.ConvertVulnerabilityDataToSonarQube()
 		assert.NotEmpty(t, result)
 	})
+
+	t.Run("issues should not be nil", func(t *testing.T) {
+		analysis := &horusec.Analysis{
+			ID:        uuid.New(),
+			CreatedAt: time.Now(),
+			Status:    enumHorusec.Running,
+		}
+
+		service := NewSonarQube(analysis)
+
+		result := service.ConvertVulnerabilityDataToSonarQube()
+		assert.NotNil(t, result.Issues)
+	})
 }
