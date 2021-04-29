@@ -32,7 +32,7 @@ interface Props {
 
 const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, metrics } = useTheme();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -48,6 +48,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
       text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
       style: {
         color: colors.chart.legend,
+        fontSize: metrics.fontSize.large,
       },
     },
     chart: {
@@ -63,12 +64,17 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     legend: {
       position: 'top',
       horizontalAlign: 'left',
+      formatter: (name, opts) =>
+        `${name}: ${opts?.w?.config?.series[opts?.seriesIndex]}`,
       labels: {
         colors: colors.chart.legend,
       },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
+      style: {
+        fontSize: metrics.fontSize.small,
+      },
     },
     stroke: {
       show: false,
@@ -76,7 +82,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     plotOptions: {
       pie: {
         donut: {
-          size: '35px',
+          size: '25px',
         },
       },
     },
@@ -133,7 +139,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper>
+      <Styled.Wrapper tabIndex={0}>
         <Styled.Title>
           {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG')}
         </Styled.Title>

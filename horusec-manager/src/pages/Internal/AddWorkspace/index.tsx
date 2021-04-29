@@ -27,7 +27,10 @@ const AddWorkspace: React.FC = () => {
 
   return (
     <Styled.Content>
-      <Styled.Illustration src={WorkspaceVector} />
+      <Styled.Illustration
+        alt={t('NEW_WORKSPACE_SCREEN.ALT_IMG')}
+        src={WorkspaceVector}
+      />
 
       <Styled.Message>{t('NEW_WORKSPACE_SCREEN.MESSAGE')}</Styled.Message>
 

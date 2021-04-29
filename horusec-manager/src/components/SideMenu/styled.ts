@@ -38,7 +38,7 @@ const WrapperLogoRoutes = styled.div`
   flex: 1;
 `;
 
-const OptionsWrapper = styled.div`
+const OptionsList = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 20px 0px 20px 7.5px;
@@ -98,7 +98,7 @@ const RouteName = styled.span`
   margin-left: 13px;
 `;
 
-const SubMenu = styled.div<SubMenuProps>`
+const SubMenu = styled.nav<SubMenuProps>`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   min-width: 180px;
   top: 0;
@@ -114,10 +114,13 @@ const SubMenu = styled.div<SubMenuProps>`
     `};
 `;
 
-const Option = styled(Icon)`
+const OptionItem = styled.li``;
+
+const Config = styled(Icon)`
   width: 30px;
   cursor: pointer;
   margin: 0 0 20px 15px;
+  nav-index: 1;
 `;
 
 const SelectWrapper = styled.div`
@@ -131,10 +134,11 @@ export default {
   RouteItem,
   RouteName,
   WrapperLogoRoutes,
-  OptionsWrapper,
+  OptionsList,
   SubMenu,
   SubRoutesList,
   SubRouteItem,
-  Option,
+  OptionItem,
+  Config,
   SelectWrapper,
 };

@@ -66,7 +66,7 @@ const Select = styled.div`
   color: ${({ theme }) => theme.colors.select.text};
 `;
 
-const OptionsList = styled.div<OptionsListProps>`
+const OptionsList = styled.ul<OptionsListProps>`
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 28px;
@@ -106,7 +106,7 @@ const OptionsList = styled.div<OptionsListProps>`
   }
 `;
 
-const OptionItem = styled.div<OptionItem>`
+const OptionItem = styled.li<OptionItem>`
   font-size: ${({ theme }) => theme.metrics.fontSize.small};
   line-height: ${({ theme }) => theme.metrics.fontSize.small} !important;
   color: ${({ theme }) => theme.colors.select.text};
@@ -132,7 +132,6 @@ const CurrentValue = styled.input`
   width: 100%;
   background: none;
   border: none;
-  outline: none;
   cursor: pointer;
 `;
 

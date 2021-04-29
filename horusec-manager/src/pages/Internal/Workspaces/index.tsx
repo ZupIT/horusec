@@ -104,7 +104,7 @@ const Workspaces: React.FC = () => {
         <Button
           text={t('WORKSPACES_SCREEN.ADD')}
           rounded
-          width={180}
+          width={220}
           icon="plus"
           onClick={() => setVisibleHandleModal(true)}
         />

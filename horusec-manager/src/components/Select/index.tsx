@@ -17,6 +17,7 @@
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
   label?: string;
@@ -26,6 +27,15 @@ interface Props {
   onChangeValue: (value: any) => any;
   className?: string;
   width?: string;
+  optionsHeight?: string;
+  selectText?: string;
+  backgroundColors?: {
+    colors: ObjectLiteral;
+    default: string;
+  };
+  hasSearch?: boolean;
+  ariaLabel?: string;
+  testId?: string;
   placeholder?: string;
   style?: CSSProperties;
 }

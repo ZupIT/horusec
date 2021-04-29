@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import { Icon } from 'components';
-
-const HelpIcon = styled(Icon)`
-  cursor: help;
-  margin-left: 15px;
-  nav-index: 2;
-`;
-
-export default { HelpIcon };
+export interface BarCharRow {
+  value: number;
+  legend: string;
+  color?: string;
+}

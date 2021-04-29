@@ -22,6 +22,7 @@ const Wrapper = styled.div`
   height: 300px;
   width: 100%;
   position: relative;
+  overflow: hidden;
 `;
 
 const LoadingWrapper = styled.div`
@@ -37,7 +38,7 @@ const LoadingWrapper = styled.div`
   visibility: visible;
 `;
 
-const Title = styled.h4`
+const Title = styled.h2`
   color: ${({ theme }) => theme.colors.chart.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
   border-radius: 4px;

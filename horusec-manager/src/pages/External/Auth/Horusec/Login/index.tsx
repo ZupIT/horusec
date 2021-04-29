@@ -23,6 +23,7 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import * as Yup from 'yup';
 
 import { Formik } from 'formik';
+
 function LoginScreen() {
   const { t } = useTranslation();
   const history = useHistory();

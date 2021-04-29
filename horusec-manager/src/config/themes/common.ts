@@ -17,12 +17,12 @@
 export default {
   metrics: {
     fontSize: {
-      xsmall: '10px',
-      small: '12px',
-      medium: '14px',
-      large: '16px',
-      xlarge: '18px',
-      xxlarge: '20px',
+      xsmall: '14px',
+      small: '15px',
+      medium: '16px',
+      large: '18px',
+      xlarge: '20px',
+      xxlarge: '22px',
       big: '42px',
     },
   },

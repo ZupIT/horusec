@@ -37,11 +37,11 @@ const Button = styled.button<ButtonProps>`
   width: ${({ width }) =>
     width ? (typeof width === 'string' ? width : `${width}px`) : '252px'};
   height: ${({ height }) => (height ? `${height}px` : '35px')};
-  padding: 10px;
+  padding: 0px 15px;
   border-radius: 4px;
   box-sizing: border-box;
   border: none;
-  font-size: 12px;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
   cursor: pointer;
   display: flex;
   align-items: center;

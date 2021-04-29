@@ -158,6 +158,8 @@
     "NO_WORKSPACES": "No registered workspace were found."
   },
   "DASHBOARD_SCREEN": {
+    "ARIA_TITLE_WORKSPACE": "Graphics presentation screen for the workspace",
+    "ARIA_TITLE_REPOSITORY": "Graphics presentation screen for the repository",
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
     "PERIOD": "Period",
@@ -241,7 +243,9 @@
     "EXPIRES_AT": "Expires at"
   },
   "GENERAL": {
+    "BACK": "Back",
     "SELECT": "Select",
+    "SELECT_SEARCH": "Type a word to filter the results.",
     "CANCEL": "Cancel",
     "BUTTON_LOADING": "Button in loading",
     "PASS_VISIBILITY": "View or hidden password",
@@ -389,11 +393,14 @@
     "SUCCESS_DELETE": "Your account has been successfully deleted!"
   },
   "SIDE_MENU": {
+    "ARIA_TITLE": "Navigation between pages",
     "DASHBOARD": "Dashboard",
     "VULNERABILITIES": "Vulnerabilities",
     "REPOSITORIES": "Repositories",
     "WORKSPACE": "Workspace",
+    "CURRENT_WORKSPACE": "Change workspace, Current Workspace: ",
     "REPOSITORY": "Repository",
+    "HELPER": "Helper",
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout",
@@ -422,6 +429,7 @@
   },
   "NEW_WORKSPACE_SCREEN": {
     "MESSAGE": "Add a new Workspace to start using Horusec.",
-    "ACTION": "Add workspace"
+    "ACTION": "Add workspace",
+    "ALT_IMG": "Drawing illustrating a landscape with clouds overhead, below a wooden bench and a white woman with red hair with orange blouse and green pants carrying a spyglass with her right hand to her left eye. She rests her left foot on the bench."
   }
 }
