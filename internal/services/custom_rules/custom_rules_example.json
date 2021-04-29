@@ -1,0 +1,86 @@
+[
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "C#",
+    "expressions": [
+      "test"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "Dart",
+    "expressions": [
+      "test2"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "Java",
+    "expressions": [
+      "test2"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "Kotlin",
+    "expressions": [
+      "test2"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "YAML",
+    "expressions": [
+      "test2"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "Leaks",
+    "expressions": [
+      "test2"
+    ]
+  },
+  {
+    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "name": "test",
+    "description": "test",
+    "severity": "INFO",
+    "confidence": "LOW",
+    "type": "Regular",
+    "language": "JavaScript",
+    "expressions": [
+      "test2"
+    ]
+  }
+]
