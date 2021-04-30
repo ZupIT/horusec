@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v0.0.0-20210428143841-c96b5bd5cf0a
+	github.com/ZupIT/horusec-devkit v0.0.0-20210430112820-738ae89e33d3
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/containerd/containerd v1.4.4 // indirect

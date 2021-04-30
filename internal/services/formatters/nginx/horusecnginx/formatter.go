@@ -65,6 +65,6 @@ func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding,
 		return nil, err
 	}
 
-	allRules := append(f.GetAllRules(), f.GetCustomRulesByLanguage(tools.Nginx)...)
+	allRules := append(f.GetAllRules(), f.GetCustomRulesByLanguage(languages.Nginx)...)
 	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engines.DefaultMaxUnitsPerAnalysis), nil
 }

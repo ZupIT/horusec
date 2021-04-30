@@ -30,6 +30,8 @@ github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/
 github.com/ZupIT/horusec-devkit v0.0.0-20210426200535-f65565027b4d/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
 github.com/ZupIT/horusec-devkit v0.0.0-20210428143841-c96b5bd5cf0a h1:kOB/4e3fcHAiJ/pSlDPhbJ41YV7w3itI17/voM1qbd0=
 github.com/ZupIT/horusec-devkit v0.0.0-20210428143841-c96b5bd5cf0a/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
+github.com/ZupIT/horusec-devkit v0.0.0-20210430112820-738ae89e33d3 h1:+VY4VeukbRyz4QsAvcu09GaISCaUkpUfTI8/Y5z2EYM=
+github.com/ZupIT/horusec-devkit v0.0.0-20210430112820-738ae89e33d3/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1 h1:6kCZzpEKjNeNsQzoD7Qx93KhuYLF6U4SUJThC2YLRsQ=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1/go.mod h1:J1pXu3E+r5BGW+5tcprMVWJ8JFIcFbAiGWSgqYCavJo=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=

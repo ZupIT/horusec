@@ -99,5 +99,6 @@ func (s *Service) mapCustomRulesByLanguage() {
 		languages.Yaml:       {},
 		languages.Leaks:      {},
 		languages.Javascript: {},
+		languages.Nginx:      {},
 	}
 }

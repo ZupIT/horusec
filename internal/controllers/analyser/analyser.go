@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
@@ -209,6 +211,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Dart:       a.detectVulnerabilityDart,
 		languages.Elixir:     a.detectVulnerabilityElixir,
 		languages.Shell:      a.detectVulnerabilityShell,
+		languages.Nginx:      a.detectVulnerabilityNginx,
 	}
 }
 
@@ -270,6 +273,12 @@ func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horuseckotlin.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityNginx(projectSubPath string) {
+	const TotalProcess = 1
+	a.monitor.AddProcess(TotalProcess)
+	go horusecnginx.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
