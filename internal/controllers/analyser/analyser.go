@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -86,7 +88,11 @@ type Analyser struct {
 }
 
 func NewAnalyser(config cliConfig.IConfig) Interface {
-	entity := &analysis.Analysis{ID: uuid.New()}
+	entity := &analysis.Analysis{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		Status:    enumsAnalysis.Running,
+	}
 	dockerAPI := docker.NewDockerAPI(dockerClient.NewDockerClient(), config, entity.ID)
 	return &Analyser{
 		dockerSDK:         dockerAPI,
@@ -153,6 +159,7 @@ func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
 	a.analysis = a.setupIDInAnalysisContents()
 	a.analysis = a.sortVulnerabilitiesByCriticality()
 	a.analysis = a.setDefaultVulnerabilityType()
+	a.analysis = a.setDefaultConfidence()
 	a.analysis = a.sortVulnerabilitiesByType()
 	if !a.config.GetEnableInformationSeverity() {
 		a.analysis = a.removeInfoVulnerabilities()
@@ -545,6 +552,22 @@ func (a *Analyser) getVulnerabilitiesBySeverity(
 func (a *Analyser) setDefaultVulnerabilityType() *analysis.Analysis {
 	for key := range a.analysis.AnalysisVulnerabilities {
 		a.analysis.AnalysisVulnerabilities[key].Vulnerability.Type = enumsVulnerability.Vulnerability
+	}
+	return a.analysis
+}
+
+func (a *Analyser) setDefaultConfidence() *analysis.Analysis {
+	for key := range a.analysis.AnalysisVulnerabilities {
+		valid := false
+		for _, conf := range confidence.Values() {
+			if conf == a.analysis.AnalysisVulnerabilities[key].Vulnerability.Confidence {
+				valid = true
+				break
+			}
+		}
+		if !valid {
+			a.analysis.AnalysisVulnerabilities[key].Vulnerability.Confidence = confidence.Low
+		}
 	}
 	return a.analysis
 }

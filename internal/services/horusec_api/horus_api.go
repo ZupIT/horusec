@@ -15,7 +15,6 @@
 package horusecapi
 
 import (
-	"bytes"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -99,7 +98,7 @@ func (s *Service) sendFindAnalysisRequest(analysisID uuid.UUID) (*entities.HTTPR
 
 func (s *Service) sendCreateAnalysisRequest(entity *analysis.Analysis) (*entities.HTTPResponse, error) {
 	url := s.getHorusecAPIURL()
-	body := bytes.NewReader(s.newRequestData(entity))
+	body := s.newRequestData(entity)
 	req, err := s.http.NewHTTPRequest(http.MethodPost, url, body, nil)
 	if err != nil {
 		return nil, err
@@ -184,13 +183,11 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 	return tlsConfig, nil
 }
 
-func (s *Service) newRequestData(entity *analysis.Analysis) []byte {
-	analysisData := &cli.AnalysisData{
+func (s *Service) newRequestData(entity *analysis.Analysis) *cli.AnalysisData {
+	return &cli.AnalysisData{
 		Analysis:       entity,
 		RepositoryName: s.config.GetRepositoryName(),
 	}
-
-	return analysisData.ToBytes()
 }
 
 func (s *Service) addHeaders(req *http.Request) {
