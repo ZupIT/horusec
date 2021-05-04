@@ -1,0 +1,53 @@
+name: DeployCLITools
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Language to update on dockerhub: c, csharp, dart, elixir, generic, go, hcl, java, javascript, kotlin, leaks, php, python, ruby, shell, yaml'
+        required: true
+      update_type:
+        description: 'Update Type: alpha, rc, release, minor, major'
+        required: true
+      is_to_update_latest:
+        description: 'Is to update latest: true, false'
+        required: true
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: deploy
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
+          then
+              echo "Variables DOCKER_USERNAME, DOCKER_PASSWORD is required"
+              exit 1
+          fi
+
+          UPDATE_TYPE="${{ github.event.inputs.update_type }}"
+          IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
+          LANGUAGE="${{ github.event.inputs.language }}"
+
+          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+          chmod +x ./deployments/scripts/update-language.sh
+          ./deployments/scripts/update-language.sh $LANGUAGE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        with:
+          author_name: "Horusec"
+          author_email: "horusec@zup.com.br"
+          message: "[skip ci] update versioning file"
+          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
