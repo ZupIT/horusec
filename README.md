@@ -40,17 +40,17 @@ horusec version
 ```
 
 ## Usage
-For use horusec-cli and check your vulnerabilities
+To use horusec-cli and check the application's vulnerabilities:
 ```bash
 horusec start
 ```
 
-or send with the authorization token to view the content analytically in web application.
+or you can send the authorization token in order to be able to access the report through the web application.
 
 ```bash
 horusec start -a="<YOUR_TOKEN_AUTHORIZATION>"
 ```
-To acquire the authorization token and you can see your vulnerabilities analytically on our panel see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>
+To acquire the authorization token and be able to analytically check the application's vulnerabilities on our panel, see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>.
 
 
 **WARN:** When horusec starts an analysis it creates a folder called `.horusec`. This folder serves as the basis for not changing your code. So we recommend that you add the line `.horusec` into your `.gitignore` file so that this folder does not need to be sent to your git server!
@@ -59,15 +59,17 @@ To acquire the authorization token and you can see your vulnerabilities analytic
 
 ## Web application
 
-### Which is?
-Horusec's web applications are an extension of the CLI's functionalities in order to manage the vulnerabilities contracted and be able to classify them.
-* Multitenant
-* Controle de acesso
-* Visão analítica
-* Classificação de vulnerabilidade
-* Integração com outros tipos de oAuth
-* Integração com serviço de menssageria
+### What is it?
+
+Horusec's web application is an extension of the CLI's functionalities that helps to manage and classify the existing vulnerabilities.
+* Multitenant application
+* Access Control
+* Analytical View
+* Vulnerabilities classification
+* Integration with other oAuth types
+* Integration with notification's services
 [See more details here](https://horusec.io/docs/web/overview/)
+  
 ## Contributing
 
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to horusec.
