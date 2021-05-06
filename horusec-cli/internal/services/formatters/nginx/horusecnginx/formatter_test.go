@@ -35,7 +35,7 @@ func TestStartAnalysis(t *testing.T) {
 		service.On("ToolIsToIgnore").Return(false)
 		service.On("GetProjectPathWithWorkdir").Return(".")
 		service.On("ParseFindingsToVulnerabilities").Return(nil)
-		service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
+		service.On("GetCustomRulesByTool").Return([]engine.Rule{})
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
@@ -53,7 +53,7 @@ func TestStartAnalysis(t *testing.T) {
 		service.On("ToolIsToIgnore").Return(false)
 		service.On("GetProjectPathWithWorkdir").Return("!!!")
 		service.On("ParseFindingsToVulnerabilities").Return(nil)
-		service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
+		service.On("GetCustomRulesByTool").Return([]engine.Rule{})
 
 		assert.NotPanics(t, func() {
 			NewFormatter(service).StartAnalysis("")
