@@ -36,7 +36,7 @@
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 15,
   "horusecCliPrintOutputType": "text",
-  "horusecCliProjectPath": "/home/wilian/go/src/github.com/ZupIT/horusec/examples",
+  "horusecCliProjectPath": "",
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
   "horusecCliRepositoryName": "examples",
   "horusecCliReturnErrorIfFoundVulnerability": false,
@@ -44,7 +44,7 @@
   "horusecCliSeveritiesToIgnore": [
     "INFO"
   ],
-  "horusecCliTimeoutInSecondsAnalysis": 600,
+  "horusecCliTimeoutInSecondsAnalysis": 1000,
   "horusecCliTimeoutInSecondsRequest": 300,
   "horusecCliToolsConfig": {
     "Bandit": {
@@ -63,27 +63,6 @@
       "istoignore": false
     },
     "GoSec": {
-      "istoignore": false
-    },
-    "HorusecCsharp": {
-      "istoignore": false
-    },
-    "HorusecDart": {
-      "istoignore": false
-    },
-    "HorusecJava": {
-      "istoignore": false
-    },
-    "HorusecKotlin": {
-      "istoignore": false
-    },
-    "HorusecKubernetes": {
-      "istoignore": false
-    },
-    "HorusecLeaks": {
-      "istoignore": false
-    },
-    "HorusecNodeJS": {
       "istoignore": false
     },
     "NpmAudit": {

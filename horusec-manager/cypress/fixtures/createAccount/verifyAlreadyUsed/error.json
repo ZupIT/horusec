@@ -1,5 +1,0 @@
-{
-  "code": 400,
-  "status": "Bad Request",
-  "content": "{ACCOUNT} email already in use"
-}
