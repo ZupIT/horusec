@@ -85,6 +85,7 @@
     "c": [],
     "php": [],
     "dart": [],
+    "nginx": [],
     "elixir": [],
     "shell": []
   },
@@ -138,6 +139,9 @@
       "isToIgnore": false
     },
     "HorusecLeaks": {
+      "isToIgnore": false
+    },
+    "HorusecNginx": {
       "isToIgnore": false
     },
     "HorusecNodeJS": {

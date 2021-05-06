@@ -110,7 +110,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringSliceP("risk-accept", "R", s.configs.GetRiskAcceptHashes(), "Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
 	_ = startCmd.PersistentFlags().
-		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecDart,HorusecKubernetes,Eslint,HorusecNodeJS,Flawfinder,PhpCS,MixAudit,Sobelow,ShellCheck,BundlerAudit. Example: -T=\"GoSec, Brakeman\"")
+		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecDart,HorusecKubernetes,Eslint,HorusecNodeJS,HorusecNginx,Flawfinder,PhpCS,MixAudit,Sobelow,ShellCheck,BundlerAudit. Example: -T=\"GoSec, Brakeman\"")
 	_ = startCmd.PersistentFlags().
 		StringP("container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(), "Used to pass project path in host when running horusec cli inside a container.")
 	_ = startCmd.PersistentFlags().

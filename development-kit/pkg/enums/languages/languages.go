@@ -37,6 +37,7 @@ const (
 	Yaml       Language = "YAML"
 	Elixir     Language = "Elixir"
 	Shell      Language = "Shell"
+	Nginx      Language = "Nginx"
 	Unknown    Language = "Unknown"
 )
 
@@ -68,6 +69,7 @@ func SupportedLanguages() []Language {
 		PHP,
 		Elixir,
 		Shell,
+		Nginx,
 		Unknown,
 	}
 }
@@ -91,6 +93,7 @@ func (l Language) MapEnableLanguages() map[string]Language {
 		PHP.ToString():        PHP,
 		Elixir.ToString():     Elixir,
 		Shell.ToString():      Shell,
+		Nginx.ToString():      Nginx,
 	}
 }
 
@@ -121,5 +124,6 @@ func (l Language) mapConfigCustomImageJSONByLanguage() map[Language]string {
 		Kotlin:     "kotlin",
 		Yaml:       "yaml",
 		Dart:       "dart",
+		Nginx:      "nginx",
 	}
 }

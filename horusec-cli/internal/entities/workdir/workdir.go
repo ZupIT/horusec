@@ -35,6 +35,10 @@ type WorkDir struct {
 	PHP        []string `json:"php"`
 	C          []string `json:"c"`
 	Yaml       []string `json:"yaml"`
+	Shell      []string `json:"shell"`
+	Elixir     []string `json:"elixir"`
+	Nginx      []string `json:"nginx"`
+	Dart       []string `json:"dart"`
 	Generic    []string `json:"generic"`
 }
 
@@ -54,6 +58,10 @@ func NewWorkDir() *WorkDir {
 		PHP:        []string{},
 		C:          []string{},
 		Yaml:       []string{},
+		Shell:      []string{},
+		Elixir:     []string{},
+		Dart:       []string{},
+		Nginx:      []string{},
 		Generic:    []string{},
 	}
 }
@@ -100,6 +108,10 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 		languages.Generic:    w.Generic,
 		languages.PHP:        w.PHP,
 		languages.C:          w.C,
+		languages.Shell:      w.Shell,
+		languages.Elixir:     w.Elixir,
+		languages.Dart:       w.Dart,
+		languages.Nginx:      w.Nginx,
 		languages.Yaml:       w.Yaml,
 	}
 }
@@ -156,6 +168,18 @@ func (w *WorkDir) setEmptyOrSliceEmptyInNilContent() *WorkDir {
 	}
 	if w.Generic == nil {
 		w.Generic = []string{}
+	}
+	if w.Shell == nil {
+		w.Shell = []string{}
+	}
+	if w.Elixir == nil {
+		w.Elixir = []string{}
+	}
+	if w.Dart == nil {
+		w.Dart = []string{}
+	}
+	if w.Nginx == nil {
+		w.Nginx = []string{}
 	}
 	return w
 }

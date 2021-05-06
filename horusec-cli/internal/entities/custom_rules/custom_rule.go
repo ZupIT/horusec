@@ -37,7 +37,7 @@ func (c *CustomRule) Validate() error {
 		validation.Field(&c.Type, validation.Required, validation.In(customRulesEnums.Regular,
 			customRulesEnums.OrMatch, customRulesEnums.AndMatch)),
 		validation.Field(&c.Tool, validation.Required, validation.In(tools.HorusecCsharp, tools.HorusecJava,
-			tools.HorusecKotlin, tools.HorusecKubernetes, tools.HorusecLeaks, tools.HorusecNodejs)),
+			tools.HorusecKotlin, tools.HorusecKubernetes, tools.HorusecLeaks, tools.HorusecNodejs, tools.HorusecNginx)),
 	)
 }
 
