@@ -15,19 +15,18 @@
 package horusecnginx
 
 import (
+	"github.com/ZupIT/horusec/development-kit/pkg/entities/horusec"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters"
 	"testing"
-
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
 	"github.com/stretchr/testify/assert"
 
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
 func TestStartAnalysis(t *testing.T) {
 	t.Run("should success execute analysis without errors", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &horusec.Analysis{}
 		service := &formatters.Mock{}
 
 		service.On("LogDebugWithReplace")
