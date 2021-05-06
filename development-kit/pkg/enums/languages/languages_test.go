@@ -28,7 +28,7 @@ func TestToString(t *testing.T) {
 
 func TestMapEnableLanguages(t *testing.T) {
 	t.Run("should map enable languages", func(t *testing.T) {
-		assert.Len(t, CSharp.MapEnableLanguages(), 16)
+		assert.Len(t, CSharp.MapEnableLanguages(), 17)
 	})
 }
 
@@ -44,6 +44,6 @@ func TestParseStringToLanguage(t *testing.T) {
 
 func TestSupportedLanguages(t *testing.T) {
 	t.Run("should return supported languages", func(t *testing.T) {
-		assert.Len(t, SupportedLanguages(), 17)
+		assert.Len(t, SupportedLanguages(), 18)
 	})
 }
