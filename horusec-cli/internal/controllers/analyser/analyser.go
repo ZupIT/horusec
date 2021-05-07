@@ -16,6 +16,7 @@ package analyser
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec/horusec-cli/internal/services/formatters/nginx/horusecnginx"
 	"log"
 	"os"
 	"os/signal"
@@ -205,6 +206,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Dart:       a.detectVulnerabilityDart,
 		languages.Elixir:     a.detectVulnerabilityElixir,
 		languages.Shell:      a.detectVulnerabilityShell,
+		languages.Nginx:      a.detectVulnerabilityNginx,
 	}
 }
 
@@ -374,6 +376,11 @@ func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
 	}
 
 	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+}
+
+func (a *Analyser) detectVulnerabilityNginx(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go horusecnginx.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyser) logProjectSubPath(language languages.Language, subPath string) {

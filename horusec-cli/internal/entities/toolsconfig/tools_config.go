@@ -25,6 +25,7 @@ type ToolsConfigsStruct struct {
 	HorusecKotlin     ToolConfig `json:"horuseckotlin"`
 	HorusecJava       ToolConfig `json:"horusecjava"`
 	HorusecLeaks      ToolConfig `json:"horusecleaks"`
+	HorusecNginx      ToolConfig `json:"horusecnginx"`
 	GitLeaks          ToolConfig `json:"gitleaks"`
 	TfSec             ToolConfig `json:"tfsec"`
 	Semgrep           ToolConfig `json:"semgrep"`
@@ -61,6 +62,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.Flawfinder:        t.Flawfinder,
 		tools.PhpCS:             t.PhpCS,
 		tools.HorusecDart:       t.HorusecDart,
+		tools.HorusecNginx:      t.HorusecNginx,
 		tools.ShellCheck:        t.ShellCheck,
 	}
 }

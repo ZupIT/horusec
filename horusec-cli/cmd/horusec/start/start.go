@@ -110,13 +110,13 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringSliceP("risk-accept", "R", s.configs.GetRiskAcceptHashes(), "Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"")
 	_ = startCmd.PersistentFlags().
-		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecDart,HorusecKubernetes,Eslint,HorusecNodeJS,Flawfinder,PhpCS,MixAudit,Sobelow,ShellCheck,BundlerAudit. Example: -T=\"GoSec, Brakeman\"")
+		StringSliceP("tools-ignore", "T", s.configs.GetToolsToIgnore(), "Tools to ignore in the analysis. Available are: GoSec,SecurityCodeScan,Brakeman,Safety,Bandit,NpmAudit,YarnAudit,SpotBugs,HorusecKotlin,HorusecJava,HorusecLeaks,GitLeaks,TfSec,Semgrep,HorusecCsharp,HorusecDart,HorusecKubernetes,Eslint,HorusecNodeJS,HorusecNginx,Flawfinder,PhpCS,MixAudit,Sobelow,ShellCheck,BundlerAudit. Example: -T=\"GoSec, Brakeman\"")
 	_ = startCmd.PersistentFlags().
 		StringP("container-bind-project-path", "P", s.configs.GetContainerBindProjectPath(), "Used to pass project path in host when running horusec cli inside a container.")
 	_ = startCmd.PersistentFlags().
 		StringP("custom-rules-path", "c", s.configs.GetContainerBindProjectPath(), "Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".")
 	_ = startCmd.PersistentFlags().
-		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs, horusec-dart. Example: -D=\"true\"")
+		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs, horusec-dart, horusec-nginx. Example: -D=\"true\"")
 	_ = startCmd.PersistentFlags().
 		BoolP("information-severity", "I", s.configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
 	return startCmd
