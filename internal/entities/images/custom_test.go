@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewCustomImages(t *testing.T) {
-	t.Run("Should return all languages enable and in custom expected", func(t *testing.T) {
-		assert.Equal(t, 16, len(NewCustomImages()))
+	t.Run("Should return 12 languages enable and in custom expected", func(t *testing.T) {
+		assert.Equal(t, 12, len(NewCustomImages()))
 	})
 }

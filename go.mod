@@ -4,10 +4,10 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v0.0.0-20210430112820-738ae89e33d3
+	github.com/ZupIT/horusec-devkit v0.0.0-20210507152639-edb8e286079b
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/bmatcuk/doublestar/v2 v2.0.4
-	github.com/containerd/containerd v1.4.4 // indirect
+	github.com/containerd/containerd v1.5.0 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v20.10.6+incompatible
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -39,9 +39,10 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
-	google.golang.org/genproto v0.0.0-20210427215850-f767ed18ee4d // indirect
+	golang.org/x/crypto v0.0.0-20210506145944-38f3c27a63bf // indirect
+	golang.org/x/net v0.0.0-20210510120150-4163338589ed
+	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
+	google.golang.org/genproto v0.0.0-20210506142907-4a47615972c2 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
