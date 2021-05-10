@@ -66,6 +66,14 @@ func TestGetRuleType(t *testing.T) {
 
 		assert.Equal(t, text.AndMatch, customRule.GetRuleType())
 	})
+
+	t.Run("should return not type", func(t *testing.T) {
+		customRule := CustomRule{
+			Type: customRulesEnums.NotMatch,
+		}
+
+		assert.Equal(t, text.NotMatch, customRule.GetRuleType())
+	})
 }
 
 func TestGetExpressions(t *testing.T) {
