@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/ZupIT/horusec/internal/entities/images"
+	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
@@ -112,6 +112,6 @@ type IConfig interface {
 	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
 
-	GetCustomImages() images.Custom
+	GetCustomImages() customImages.CustomImages
 	SetCustomImages(configData interface{})
 }

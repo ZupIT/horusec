@@ -33,13 +33,13 @@ func (c *CustomRule) Validate() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.ID, validation.Required, is.UUID),
 		validation.Field(&c.Language, validation.Required, validation.In(languages.CSharp, languages.Dart, languages.Java,
-			languages.Kotlin, languages.Yaml, languages.Leaks, languages.Javascript)),
+			languages.Kotlin, languages.Yaml, languages.Leaks, languages.Javascript, languages.Nginx)),
 		validation.Field(&c.Severity, validation.Required, validation.In(severities.Info, severities.Unknown,
 			severities.Low, severities.Medium, severities.High, severities.Critical)),
-		validation.Field(&c.Confidence, validation.Required, validation.In(
-			confidence.Low, confidence.Medium, confidence.High)),
+		validation.Field(&c.Confidence, validation.Required, validation.In(confidence.Low,
+			confidence.Medium, confidence.High)),
 		validation.Field(&c.Type, validation.Required, validation.In(customRulesEnums.Regular,
-			customRulesEnums.OrMatch, customRulesEnums.AndMatch)),
+			customRulesEnums.OrMatch, customRulesEnums.AndMatch, customRulesEnums.NotMatch)),
 	)
 }
 
@@ -51,6 +51,8 @@ func (c *CustomRule) GetRuleType() text.MatchType {
 		return text.OrMatch
 	case customRulesEnums.AndMatch:
 		return text.AndMatch
+	case customRulesEnums.NotMatch:
+		return text.NotMatch
 	}
 
 	return text.Regular

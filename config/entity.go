@@ -16,7 +16,7 @@
 package config
 
 import (
-	"github.com/ZupIT/horusec/internal/entities/images"
+	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
@@ -213,5 +213,5 @@ type Config struct {
 	toolsConfig                     toolsconfig.MapToolConfig
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
-	customImages                    images.Custom
+	customImages                    customImages.CustomImages
 }

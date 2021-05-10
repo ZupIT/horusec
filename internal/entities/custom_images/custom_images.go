@@ -1,11 +1,11 @@
-package images
+package customimages
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/internal/enums/images"
 )
 
-type Custom map[string]string
+type CustomImages map[string]string
 
 func NewCustomImages() map[string]string {
 	customMap := map[string]string{}

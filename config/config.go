@@ -30,7 +30,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/entities/images"
+	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
@@ -47,7 +47,7 @@ func NewConfig() IConfig {
 		headers:             map[string]string{},
 		workDir:             workdir.NewWorkDir(),
 		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
-		customImages:        images.NewCustomImages(),
+		customImages:        customImages.NewCustomImages(),
 	}
 }
 
@@ -611,21 +611,21 @@ func (c *Config) SetEnableInformationSeverity(enableInformationSeverity bool) {
 	c.enableInformationSeverity = enableInformationSeverity
 }
 
-func (c *Config) GetCustomImages() images.Custom {
+func (c *Config) GetCustomImages() customImages.CustomImages {
 	return c.customImages
 }
 
 func (c *Config) SetCustomImages(configData interface{}) {
-	customImages := images.Custom{}
+	customImg := customImages.CustomImages{}
 
 	bytes, err := json.Marshal(configData)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
 	}
 
-	if err := json.Unmarshal(bytes, &customImages); err != nil {
+	if err := json.Unmarshal(bytes, &customImg); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
 	}
 
-	c.customImages = customImages
+	c.customImages = customImg
 }
