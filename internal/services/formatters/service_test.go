@@ -16,6 +16,7 @@ package formatters
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"strconv"
 	"testing"
 
@@ -206,7 +207,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"GoSec"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -216,7 +217,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"GOSEC"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -226,7 +227,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"SecurityCodeScan", "gosEC"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}, SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -236,7 +237,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"SECURITYCODESCAN"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 

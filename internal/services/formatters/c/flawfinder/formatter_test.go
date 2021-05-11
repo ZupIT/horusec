@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"errors"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -113,7 +114,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"flawfinder"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Flawfinder: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)

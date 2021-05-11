@@ -169,13 +169,6 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
-	// TODO method GetToolsToIgnore will deprecated in future
-	for _, toolToIgnore := range s.config.GetToolsToIgnore() {
-		if strings.EqualFold(toolToIgnore, tool.ToString()) {
-			s.SetToolFinishedAnalysis()
-			return true
-		}
-	}
 	if s.config.GetToolsConfig()[tool].IsToIgnore {
 		s.SetToolFinishedAnalysis()
 		return true

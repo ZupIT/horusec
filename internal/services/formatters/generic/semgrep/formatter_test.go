@@ -16,6 +16,7 @@ package semgrep
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -138,7 +139,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"semgrep"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Semgrep: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)

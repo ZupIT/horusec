@@ -17,6 +17,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"os"
 	"path"
 	"path/filepath"
@@ -49,6 +50,7 @@ type ConfigToValidate struct {
 	certPath                        string
 	falsePositiveHashes             []string
 	riskAcceptHashes                []string
+	showVulnerabilitiesTypes        []string
 }
 
 type UseCases struct{}
@@ -81,6 +83,7 @@ func (au *UseCases) ValidateConfigs(config cliConfig.IConfig) error {
 		validation.Field(&c.certPath, validation.By(au.validateCertPath(config.GetCertPath()))),
 		validation.Field(&c.falsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
 		validation.Field(&c.riskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
+		validation.Field(&c.showVulnerabilitiesTypes, validation.By(au.checkIfIsValidVulnerabilitiesTypes(config))),
 	)
 }
 
@@ -103,6 +106,7 @@ func (au *UseCases) parseConfigsToConfigValidate(config cliConfig.IConfig) Confi
 		certPath:                        config.GetCertPath(),
 		falsePositiveHashes:             config.GetFalsePositiveHashes(),
 		riskAcceptHashes:                config.GetRiskAcceptHashes(),
+		showVulnerabilitiesTypes:        config.GetShowVulnerabilitiesTypes(),
 	}
 }
 
@@ -247,4 +251,22 @@ func (au *UseCases) validateIfExistPathInProjectToWorkDir(projectPath, internalP
 		}
 	}
 	return nil
+}
+
+func (au *UseCases) checkIfIsValidVulnerabilitiesTypes(config cliConfig.IConfig) validation.RuleFunc {
+	return func(value interface{}) error {
+		for _, vulnType := range config.GetShowVulnerabilitiesTypes() {
+			isValid := false
+			for _, valid := range vulnerability.Values() {
+				if strings.EqualFold(valid.ToString(), vulnType) {
+					isValid = true
+					break
+				}
+			}
+			if !isValid {
+				return fmt.Errorf("%s %s", messages.MsgVulnerabilityTypeToShowInvalid, vulnType)
+			}
+		}
+		return nil
+	}
 }

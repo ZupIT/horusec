@@ -16,6 +16,7 @@ package mixaudit
 
 import (
 	"errors"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/entities/monitor"
@@ -92,7 +93,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"MixAudit"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{MixAudit: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)

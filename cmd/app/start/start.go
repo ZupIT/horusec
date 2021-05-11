@@ -95,8 +95,6 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringP("project-path", "p", s.configs.GetProjectPath(), "Path to run an analysis in your project")
 	_ = startCmd.PersistentFlags().
-		StringP("filter-path", "f", s.configs.GetFilterPath(), "Filter the path to run the analysis")
-	_ = startCmd.PersistentFlags().
 		Bool("enable-git-history", s.configs.GetEnableGitHistoryAnalysis(), "When this value is \"true\" we will run tool gitleaks and search vulnerability in all git history of the project. Example --enable-git-history=\"true\"")
 	_ = startCmd.PersistentFlags().
 		BoolP("insecure-skip-verify", "S", s.configs.GetCertInsecureSkipVerify(), "Insecure skip verify cert authority. PLEASE, try not to use it. Example -S=\"true\"")
@@ -118,6 +116,8 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		BoolP("disable-docker", "D", s.configs.GetEnableCommitAuthor(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-kubernetes, horusec-leaks, horusec-nodejs, horusec-dart, horusec-nginx. Example: -D=\"true\"")
 	_ = startCmd.PersistentFlags().
 		BoolP("information-severity", "I", s.configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
+	_ = startCmd.PersistentFlags().
+		StringSliceP("show-vulnerabilities-types", "", s.configs.GetShowVulnerabilitiesTypes(), "Used to show in the output vulnerabilities of types: Vulnerability, Risk Accepted, False Positive, Corrected. Example --show-vulnerabilities-types=\"Vulnerability, Risk Accepted\"")
 	return startCmd
 }
 

@@ -1,21 +1,35 @@
 {
-  "horusecCliHorusecApiUri": "http://localhost:8000",
-  "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
-  "horusecCliFilterPath": "",
-  "horusecCliCertPath": "",
-  "horusecCliRepositoryName": "",
-  "horusecCliPrintOutputType": "text",
-  "horusecCliJsonOutputFilePath": "",
-  "horusecCliProjectPath": "./",
-  "horusecCliContainerBindProjectPath": "",
-  "horusecCliTimeoutInSecondsRequest": 300,
-  "horusecCliTimeoutInSecondsAnalysis": 800,
-  "horusecCliMonitorRetryInSeconds": 10,
-  "horusecCliReturnErrorIfFoundVulnerability": true,
-  "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliCertInsecureSkipVerify": false,
+  "horusecCliCertPath": "",
+  "horusecCliContainerBindProjectPath": "",
+  "horusecCliCustomImages": {
+    "c": "",
+    "csharp": "",
+    "elixir": "",
+    "generic": "",
+    "go": "",
+    "hcl": "",
+    "javascript": "",
+    "leaks": "",
+    "php": "",
+    "python": "",
+    "ruby": "",
+    "shell": ""
+  },
+  "horusecCliCustomRulesPath": "",
+  "horusecCliDisableDocker": false,
   "horusecCliEnableCommitAuthor": false,
-  "horusecCliSeveritiesToIgnore": [],
+  "horusecCliEnableGitHistoryAnalysis": false,
+  "horusecCliEnableInformationSeverity": false,
+  "horusecCliFalsePositiveHashes": [
+    "1dbef4655a4a2378e67acf89bf9b78c13041634a63a8ef0a84ff5e6237d17216",
+    "e09bfb33f98e86cdcf547f72c7be3e99474de1b2ec8d6ded6ad7f6caaa78cd7c",
+    "5f5397c5a451b73e73be34c7a0330ec26f00fe41df15cdb317f87df3211aa563",
+    "bfd91103f38d189f60a7080b9bae6aad940e6b7637b4218017a80c4b4c15385a",
+    "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
+    "00bf1f0dbed9d82a929b8353f093f26c48e49c3db1a5e23bfb6f6eafba808b2c",
+    "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e"
+  ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",
     "**/examples/**",
@@ -23,20 +37,78 @@
     "**/*_test.go",
     "**/*_mock.go",
     "**/*README.md",
-    "**/deployments/docker-compose*",
     "**/cmd/app/start/analysis/**",
     "**/internal/services/engines/**"
   ],
-  "horusecCliFalsePositiveHashes": [
-    "1dbef4655a4a2378e67acf89bf9b78c13041634a63a8ef0a84ff5e6237d17216",
-    "e09bfb33f98e86cdcf547f72c7be3e99474de1b2ec8d6ded6ad7f6caaa78cd7c",
-    "5f5397c5a451b73e73be34c7a0330ec26f00fe41df15cdb317f87df3211aa563",
-    "bfd91103f38d189f60a7080b9bae6aad940e6b7637b4218017a80c4b4c15385a",
-    "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
-    "07a18f210102ba56f0c3ba16da1de1028795b40a877a979161768d4d87275732",
-    "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e"
-  ],
+  "horusecCliHeaders": {},
+  "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
+  "horusecCliJsonOutputFilepath": "",
+  "horusecCliMonitorRetryInSeconds": 10,
+  "horusecCliPrintOutputType": "text",
+  "horusecCliProjectPath": "./",
+  "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
+  "horusecCliRepositoryName": "",
+  "horusecCliReturnErrorIfFoundVulnerability": true,
   "horusecCliRiskAcceptHashes": [],
+  "horusecCliSeveritiesToIgnore": [],
+  "horusecCliShowVulnerabilitiesTypes": [
+    "Vulnerability"
+  ],
+  "horusecCliTimeoutInSecondsAnalysis": 1000,
+  "horusecCliTimeoutInSecondsRequest": 300,
+  "horusecCliToolsConfig": {
+    "Bandit": {
+      "istoignore": false
+    },
+    "Brakeman": {
+      "istoignore": false
+    },
+    "BundlerAudit": {
+      "istoignore": false
+    },
+    "Flawfinder": {
+      "istoignore": false
+    },
+    "GitLeaks": {
+      "istoignore": false
+    },
+    "GoSec": {
+      "istoignore": false
+    },
+    "HorusecEngine": {
+      "istoignore": false
+    },
+    "MixAudit": {
+      "istoignore": false
+    },
+    "NpmAudit": {
+      "istoignore": false
+    },
+    "PhpCS": {
+      "istoignore": false
+    },
+    "Safety": {
+      "istoignore": false
+    },
+    "SecurityCodeScan": {
+      "istoignore": false
+    },
+    "Semgrep": {
+      "istoignore": false
+    },
+    "ShellCheck": {
+      "istoignore": false
+    },
+    "Sobelow": {
+      "istoignore": false
+    },
+    "TfSec": {
+      "istoignore": false
+    },
+    "YarnAudit": {
+      "istoignore": false
+    }
+  },
   "horusecCliWorkDir": {
     "go": [],
     "csharp": [],
@@ -47,95 +119,13 @@
     "javaScript": [],
     "leaks": [],
     "hcl": [],
-    "javascript": [],
-    "generic": [],
-    "yaml": [],
-    "c": [],
     "php": [],
-    "dart": [],
-    "nginx": [],
+    "c": [],
+    "yaml": [],
+    "generic": [],
     "elixir": [],
-    "shell": []
-  },
-  "horusecCliCustomImages": {
-    "csharp": "",
-    "leaks": "",
-    "go": "",
-    "java": "",
-    "kotlin": "",
-    "javascript": "",
-    "python": "",
-    "ruby": "",
-    "hcl": "",
-    "generic": "",
-    "yaml": "",
-    "c": "",
-    "php": "",
-    "dart": "",
-    "elixir": "",
-    "shell": ""
-  },
-  "horusecCliToolsConfig": {
-    "Bandit": {
-      "isToIgnore": false
-    },
-    "Brakeman": {
-      "isToIgnore": false
-    },
-    "Eslint": {
-      "isToIgnore": false
-    },
-    "Flawfinder": {
-      "isToIgnore": false
-    },
-    "GitLeaks": {
-      "isToIgnore": false
-    },
-    "GoSec": {
-      "isToIgnore": false
-    },
-    "HorusecCsharp": {
-      "isToIgnore": false
-    },
-    "HorusecJava": {
-      "isToIgnore": false
-    },
-    "HorusecKotlin": {
-      "isToIgnore": false
-    },
-    "HorusecKubernetes": {
-      "isToIgnore": false
-    },
-    "HorusecLeaks": {
-      "isToIgnore": false
-    },
-    "HorusecNginx": {
-      "isToIgnore": false
-    },
-    "HorusecNodeJS": {
-      "isToIgnore": false
-    },
-    "NpmAudit": {
-      "isToIgnore": false
-    },
-    "PhpCS": {
-      "isToIgnore": false
-    },
-    "Safety": {
-      "isToIgnore": false
-    },
-    "SecurityCodeScan": {
-      "isToIgnore": false
-    },
-    "Semgrep": {
-      "isToIgnore": false
-    },
-    "TfSec": {
-      "isToIgnore": false
-    },
-    "YarnAudit": {
-      "isToIgnore": false
-    }
-  },
-  "horusecCliHeaders": {}
+    "shell": [],
+    "dart": [],
+    "nginx": []
+  }
 }
