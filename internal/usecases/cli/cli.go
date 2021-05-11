@@ -17,11 +17,12 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"

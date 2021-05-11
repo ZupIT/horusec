@@ -16,11 +16,12 @@ package config
 
 import (
 	"encoding/json"
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 
 	"github.com/sirupsen/logrus"
 
@@ -41,14 +42,14 @@ import (
 
 func NewConfig() IConfig {
 	return &Config{
-		falsePositiveHashes: []string{},
-		riskAcceptHashes:    []string{},
-		severitiesToIgnore:  []string{},
+		falsePositiveHashes:      []string{},
+		riskAcceptHashes:         []string{},
+		severitiesToIgnore:       []string{},
 		showVulnerabilitiesTypes: []string{},
-		headers:             map[string]string{},
-		workDir:             workdir.NewWorkDir(),
-		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
-		customImages:        customImages.NewCustomImages(),
+		headers:                  map[string]string{},
+		workDir:                  workdir.NewWorkDir(),
+		toolsConfig:              toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		customImages:             customImages.NewCustomImages(),
 	}
 }
 

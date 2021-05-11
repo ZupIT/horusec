@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint
 package config
 
 import (
@@ -22,33 +21,33 @@ import (
 )
 
 const (
-	EnvHorusecAPIUri = "HORUSEC_CLI_HORUSEC_API_URI"
-	EnvTimeoutInSecondsRequest = "HORUSEC_CLI_TIMEOUT_IN_SECONDS_REQUEST"
-	EnvTimeoutInSecondsAnalysis = "HORUSEC_CLI_TIMEOUT_IN_SECONDS_ANALYSIS"
-	EnvMonitorRetryInSeconds = "HORUSEC_CLI_MONITOR_RETRY_IN_SECONDS"
-	EnvRepositoryAuthorization = "HORUSEC_CLI_REPOSITORY_AUTHORIZATION"
-	EnvPrintOutputType = "HORUSEC_CLI_PRINT_OUTPUT_TYPE"
-	EnvJSONOutputFilePath = "HORUSEC_CLI_JSON_OUTPUT_FILEPATH"
-	EnvSeveritiesToIgnore = "HORUSEC_CLI_SEVERITIES_TO_IGNORE"
-	EnvFilesOrPathsToIgnore = "HORUSEC_CLI_FILES_OR_PATHS_TO_IGNORE"
+	EnvHorusecAPIUri                   = "HORUSEC_CLI_HORUSEC_API_URI"
+	EnvTimeoutInSecondsRequest         = "HORUSEC_CLI_TIMEOUT_IN_SECONDS_REQUEST"
+	EnvTimeoutInSecondsAnalysis        = "HORUSEC_CLI_TIMEOUT_IN_SECONDS_ANALYSIS"
+	EnvMonitorRetryInSeconds           = "HORUSEC_CLI_MONITOR_RETRY_IN_SECONDS"
+	EnvRepositoryAuthorization         = "HORUSEC_CLI_REPOSITORY_AUTHORIZATION"
+	EnvPrintOutputType                 = "HORUSEC_CLI_PRINT_OUTPUT_TYPE"
+	EnvJSONOutputFilePath              = "HORUSEC_CLI_JSON_OUTPUT_FILEPATH"
+	EnvSeveritiesToIgnore              = "HORUSEC_CLI_SEVERITIES_TO_IGNORE"
+	EnvFilesOrPathsToIgnore            = "HORUSEC_CLI_FILES_OR_PATHS_TO_IGNORE"
 	EnvReturnErrorIfFoundVulnerability = "HORUSEC_CLI_RETURN_ERROR_IF_FOUND_VULNERABILITY"
-	EnvProjectPath = "HORUSEC_CLI_PROJECT_PATH"
-	EnvWorkDir = "HORUSEC_CLI_WORK_DIR"
-	EnvEnableGitHistoryAnalysis = "HORUSEC_CLI_ENABLE_GIT_HISTORY_ANALYSIS"
-	EnvCertInsecureSkipVerify = "HORUSEC_CLI_CERT_INSECURE_SKIP_VERIFY"
-	EnvCertPath = "HORUSEC_CLI_CERT_PATH"
-	EnvEnableCommitAuthor = "HORUSEC_CLI_ENABLE_COMMIT_AUTHOR"
-	EnvRepositoryName = "HORUSEC_CLI_REPOSITORY_NAME"
-	EnvFalsePositiveHashes = "HORUSEC_CLI_FALSE_POSITIVE_HASHES"
-	EnvRiskAcceptHashes = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
-	EnvToolsConfig = "HORUSEC_CLI_TOOLS_CONFIG"
-	EnvHeaders = "HORUSEC_CLI_HEADERS"
-	EnvContainerBindProjectPath = "HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH"
-	EnvDisableDocker = "HORUSEC_CLI_DISABLE_DOCKER"
-	EnvCustomRulesPath = "HORUSEC_CLI_CUSTOM_RULES_PATH"
-	EnvEnableInformationSeverity = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
-	EnvCustomImages = "HORUSEC_CLI_CUSTOM_IMAGES"
-	EnvShowVulnerabilitiesTypes = "HORUSEC_CLI_SHOW_VULNERABILITIES_TYPES"
+	EnvProjectPath                     = "HORUSEC_CLI_PROJECT_PATH"
+	EnvWorkDir                         = "HORUSEC_CLI_WORK_DIR"
+	EnvEnableGitHistoryAnalysis        = "HORUSEC_CLI_ENABLE_GIT_HISTORY_ANALYSIS"
+	EnvCertInsecureSkipVerify          = "HORUSEC_CLI_CERT_INSECURE_SKIP_VERIFY"
+	EnvCertPath                        = "HORUSEC_CLI_CERT_PATH"
+	EnvEnableCommitAuthor              = "HORUSEC_CLI_ENABLE_COMMIT_AUTHOR"
+	EnvRepositoryName                  = "HORUSEC_CLI_REPOSITORY_NAME"
+	EnvFalsePositiveHashes             = "HORUSEC_CLI_FALSE_POSITIVE_HASHES"
+	EnvRiskAcceptHashes                = "HORUSEC_CLI_RISK_ACCEPT_HASHES"
+	EnvToolsConfig                     = "HORUSEC_CLI_TOOLS_CONFIG"
+	EnvHeaders                         = "HORUSEC_CLI_HEADERS"
+	EnvContainerBindProjectPath        = "HORUSEC_CLI_CONTAINER_BIND_PROJECT_PATH"
+	EnvDisableDocker                   = "HORUSEC_CLI_DISABLE_DOCKER"
+	EnvCustomRulesPath                 = "HORUSEC_CLI_CUSTOM_RULES_PATH"
+	EnvEnableInformationSeverity       = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
+	EnvCustomImages                    = "HORUSEC_CLI_CUSTOM_IMAGES"
+	EnvShowVulnerabilitiesTypes        = "HORUSEC_CLI_SHOW_VULNERABILITIES_TYPES"
 )
 
 type Config struct {

@@ -16,8 +16,9 @@ package mixaudit
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"testing"
+
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	"github.com/ZupIT/horusec/internal/entities/monitor"
 

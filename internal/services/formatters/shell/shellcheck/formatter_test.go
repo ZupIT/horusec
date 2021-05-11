@@ -16,8 +16,9 @@ package shellcheck
 
 import (
 	"errors"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"testing"
+
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec/internal/entities/monitor"
