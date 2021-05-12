@@ -18,6 +18,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+
 	"github.com/stretchr/testify/assert"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -85,7 +87,8 @@ func TestStartCFlawfinder(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "phpcs"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{PhpCS: toolsconfig.ToolConfig{IsToIgnore: true}})
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)
 

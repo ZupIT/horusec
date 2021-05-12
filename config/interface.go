@@ -56,9 +56,6 @@ type IConfig interface {
 	GetProjectPath() string
 	SetProjectPath(projectPath string)
 
-	GetFilterPath() string           // deprecated
-	SetFilterPath(filterPath string) // deprecated
-
 	GetWorkDir() *workdir.WorkDir
 	SetWorkDir(toParse interface{})
 
@@ -82,9 +79,6 @@ type IConfig interface {
 
 	GetFalsePositiveHashes() (output []string)
 	SetFalsePositiveHashes(falsePositive []string)
-
-	GetToolsToIgnore() (output []string)     // deprecated
-	SetToolsToIgnore(toolsToIgnore []string) // deprecated
 
 	GetHeaders() (headers map[string]string)
 	SetHeaders(headers interface{})
@@ -114,4 +108,7 @@ type IConfig interface {
 
 	GetCustomImages() customImages.CustomImages
 	SetCustomImages(configData interface{})
+
+	SetShowVulnerabilitiesTypes(vulnerabilitiesTypes []string)
+	GetShowVulnerabilitiesTypes() []string
 }

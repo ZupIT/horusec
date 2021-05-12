@@ -143,27 +143,33 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 }
 
 func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
-	a.formatAnalysisToPrintAndSendToAPI()
+	a.formatAnalysisToSendToAPI()
 	a.horusecAPIService.SendAnalysis(a.analysis)
 	analysisSaved := a.horusecAPIService.GetAnalysis(a.analysis.ID)
 	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
 		a.analysis = analysisSaved
 	}
-	a.setFalsePositive()
+
+	a.formatAnalysisToPrint()
 	a.printController.SetAnalysis(a.analysis)
 	return a.printController.StartPrintResults()
 }
 
-func (a *Analyser) formatAnalysisToPrintAndSendToAPI() {
+func (a *Analyser) formatAnalysisToPrint() {
+	a.analysis = a.setFalsePositive()
+	if !a.config.GetEnableInformationSeverity() {
+		a.analysis = a.removeInfoVulnerabilities()
+	}
+	a.analysis = a.removeVulnerabilitiesByTypes()
+}
+
+func (a *Analyser) formatAnalysisToSendToAPI() {
 	a.analysis = a.setAnalysisFinishedData()
 	a.analysis = a.setupIDInAnalysisContents()
 	a.analysis = a.sortVulnerabilitiesByCriticality()
 	a.analysis = a.setDefaultVulnerabilityType()
 	a.analysis = a.setDefaultConfidence()
 	a.analysis = a.sortVulnerabilitiesByType()
-	if !a.config.GetEnableInformationSeverity() {
-		a.analysis = a.removeInfoVulnerabilities()
-	}
 }
 
 func (a *Analyser) setMonitor(monitorToSet *monitor.Monitor) {
@@ -435,12 +441,13 @@ func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
 	}
 }
 
-func (a *Analyser) setFalsePositive() {
+func (a *Analyser) setFalsePositive() *analysis.Analysis {
 	a.analysis = a.SetFalsePositivesAndRiskAcceptInVulnerabilities(
 		a.config.GetFalsePositiveHashes(), a.config.GetRiskAcceptHashes())
 
 	a.checkIfNoExistHashAndLog(a.config.GetFalsePositiveHashes())
 	a.checkIfNoExistHashAndLog(a.config.GetRiskAcceptHashes())
+	return a.analysis
 }
 
 func (a *Analyser) setErrorAndRemoveProcess(err error, processNumber int) {
@@ -578,6 +585,24 @@ func (a *Analyser) removeInfoVulnerabilities() *analysis.Analysis {
 	for index := range a.analysis.AnalysisVulnerabilities {
 		if a.analysis.AnalysisVulnerabilities[index].Vulnerability.Severity != severities.Info {
 			vulnerabilities = append(vulnerabilities, a.analysis.AnalysisVulnerabilities[index])
+		}
+	}
+
+	a.analysis.AnalysisVulnerabilities = vulnerabilities
+
+	return a.analysis
+}
+
+func (a *Analyser) removeVulnerabilitiesByTypes() *analysis.Analysis {
+	var vulnerabilities []analysis.AnalysisVulnerabilities
+
+	for index := range a.analysis.AnalysisVulnerabilities {
+		vulnType := a.analysis.AnalysisVulnerabilities[index].Vulnerability.Type
+		for _, acceptedType := range a.config.GetShowVulnerabilitiesTypes() {
+			if strings.EqualFold(vulnType.ToString(), acceptedType) {
+				vulnerabilities = append(vulnerabilities, a.analysis.AnalysisVulnerabilities[index])
+				break
+			}
 		}
 	}
 

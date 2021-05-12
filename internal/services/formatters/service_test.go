@@ -19,6 +19,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/entities/monitor"
@@ -206,7 +208,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"GoSec"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -216,7 +218,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"GOSEC"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -226,7 +228,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"SecurityCodeScan", "gosEC"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}, SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 
@@ -236,7 +238,7 @@ func TestToolIsToIgnore(t *testing.T) {
 		currentMonitor := monitor.NewMonitor()
 		currentMonitor.AddProcess(1)
 		configs := &config.Config{}
-		configs.SetToolsToIgnore([]string{"SECURITYCODESCAN"})
+		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs, &monitor.Monitor{})
 

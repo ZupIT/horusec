@@ -53,6 +53,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.ShellCheck:       t.ShellCheck,
 		tools.Sobelow:          t.Sobelow,
 		tools.TfSec:            t.TfSec,
+		tools.YarnAudit:        t.YarnAudit,
 	}
 }
 

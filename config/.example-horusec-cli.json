@@ -27,6 +27,10 @@
     "hash3",
     "hash4"
   ],
+  "horusecCliShowVulnerabilitiesTypes": [
+    "Vulnerability",
+    "False Positive"
+  ],
   "horusecCliContainerBindProjectPath": "test",
   "horusecCliHeaders": {
     "X-Headers": "some-other-value"
