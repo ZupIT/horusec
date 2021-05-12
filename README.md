@@ -53,6 +53,7 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src horuszup/
 
 ## Usage with Horusec-Web application
 Generate your the authorization token in order to be able to access the report through the web application.
+See more about [**Horusec web application here**](https://github.com/ZupIT/horusec-platform)
 
 ```bash
 horusec start -p="./" -a="<YOUR_TOKEN_AUTHORIZATION>"
