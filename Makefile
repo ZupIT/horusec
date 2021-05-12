@@ -54,13 +54,13 @@ build-install-cli-linux:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-linux" &> /dev/null
 	CGO_ENABLED=0 GOOS=linux $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-linux" ./cmd/app/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-linux"
-	horusec-cli version
+	horusec-linux version
 
 build-install-cli-darwin:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-mac" &> /dev/null
 	CGO_ENABLED=0 GOOS=darwin $(GO) build -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-mac" ./cmd/app/main.go
 	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-mac"
-	horusec version
+	horusec-mac version
 
 build-install-cli-windows:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
