@@ -16,10 +16,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"os"
 	"path"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
