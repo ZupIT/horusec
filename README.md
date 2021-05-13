@@ -40,7 +40,7 @@ horusec version
 ## Usage CLI
 To use horusec-cli and check the application's vulnerabilities:
 ```bash
-horusec start -p="./"
+horusec start -p .
 ```
 
 **WARN:** When horusec starts an analysis it creates a folder called `.horusec`. This folder serves as the basis for not changing your code. So we recommend that you add the line `.horusec` into your `.gitignore` file so that this folder does not need to be sent to your git server!
@@ -56,7 +56,7 @@ Generate your the authorization token in order to be able to access the report t
 See more about [**Horusec web application here**](https://github.com/ZupIT/horusec-platform)
 
 ```bash
-horusec start -p="./" -a="<YOUR_TOKEN_AUTHORIZATION>"
+horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 ```
 
 To acquire the authorization token and be able to analytically check the application's vulnerabilities on our panel, see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>.
