@@ -28,7 +28,8 @@
     "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
     "00bf1f0dbed9d82a929b8353f093f26c48e49c3db1a5e23bfb6f6eafba808b2c",
     "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e",
-    "316176f18dac308bbcfc3ece628796eb438c8387a7d0da83f583fcacab3a01c4"
+    "316176f18dac308bbcfc3ece628796eb438c8387a7d0da83f583fcacab3a01c4",
+    "1dbef4655a4a2378e67acf89bf9b78c13041634a63a8ef0a84ff5e6237d17216"
   ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",
