@@ -100,7 +100,7 @@
   "horusecCliWorkDir": {
     "go": [],
     "csharp": [],
-    "ruby": [],
+    "ruby": ["./ruby/example1"],
     "python": [],
     "java": [],
     "kotlin": [],

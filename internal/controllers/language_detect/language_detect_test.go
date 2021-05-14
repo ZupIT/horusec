@@ -223,10 +223,11 @@ func TestNewLanguageDetect(t *testing.T) {
 		langs, _ := controller.LanguageDetect("../../../examples/ruby/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
+		assert.Contains(t, langs, languages.Javascript)
 		assert.Contains(t, langs, languages.Ruby)
 		assert.Contains(t, langs, languages.Generic)
 		assert.Contains(t, langs, languages.Yaml)
 		assert.Contains(t, langs, languages.HTML)
-		assert.Len(t, langs, 5)
+		assert.Len(t, langs, 6)
 	})
 }
