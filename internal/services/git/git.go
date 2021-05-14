@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
@@ -115,11 +116,22 @@ func (s *Service) setLineAndFilePath(line, filePath string) string {
 
 func (s *Service) getLine(line string) string {
 	if !strings.Contains(line, "-") {
-		return line
+		return s.parseLineStringToNumber(line)
 	}
 
 	lines := strings.Split(line, "-")
-	return lines[0]
+	return s.parseLineStringToNumber(lines[0])
+}
+
+func (s *Service) parseLineStringToNumber(line string) string {
+	num, err := strconv.Atoi(line)
+	if err != nil {
+		return "1"
+	}
+	if num <= 0 {
+		return "1"
+	}
+	return strconv.Itoa(num)
 }
 
 func (s *Service) getCleanOutput(output []byte) string {
@@ -132,7 +144,8 @@ func (s *Service) getCleanOutput(output []byte) string {
 }
 
 func (s *Service) existsGitFolderInPath() bool {
-	if _, err := os.Stat(file.ReplacePathSeparator(s.config.GetProjectPath() + "/.git")); os.IsNotExist(err) {
+	path := fmt.Sprintf("%s/.git", s.config.GetProjectPath())
+	if _, err := os.Stat(file.ReplacePathSeparator(path)); os.IsNotExist(err) {
 		return false
 	}
 
