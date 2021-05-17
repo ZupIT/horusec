@@ -110,7 +110,7 @@ func (f *Formatter) setVulnerabilitySeverityData(scsResult entities.ScsResult) *
 	data.Details = f.removeCsprojPathFromDetails(scsResult.IssueText)
 	data.Line = scsResult.GetLine()
 	data.Column = scsResult.GetColumn()
-	data.File = f.GetFilepathFromFilename(scsResult.GetFilename())
+	data.File = f.GetFilepathFromFilename(f.RemoveSrcFolderFromPath(scsResult.GetFilename()))
 	data = vulnhash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
