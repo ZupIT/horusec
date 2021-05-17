@@ -22,13 +22,14 @@
   "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliEnableInformationSeverity": false,
   "horusecCliFalsePositiveHashes": [
-    "1dbef4655a4a2378e67acf89bf9b78c13041634a63a8ef0a84ff5e6237d17216",
     "e09bfb33f98e86cdcf547f72c7be3e99474de1b2ec8d6ded6ad7f6caaa78cd7c",
     "5f5397c5a451b73e73be34c7a0330ec26f00fe41df15cdb317f87df3211aa563",
     "bfd91103f38d189f60a7080b9bae6aad940e6b7637b4218017a80c4b4c15385a",
     "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
     "00bf1f0dbed9d82a929b8353f093f26c48e49c3db1a5e23bfb6f6eafba808b2c",
-    "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e"
+    "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e",
+    "316176f18dac308bbcfc3ece628796eb438c8387a7d0da83f583fcacab3a01c4",
+    "1dbef4655a4a2378e67acf89bf9b78c13041634a63a8ef0a84ff5e6237d17216"
   ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",

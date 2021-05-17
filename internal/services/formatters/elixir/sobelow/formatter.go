@@ -118,7 +118,7 @@ func (f *Formatter) setOutputData(output string) *entities.Output {
 func (f *Formatter) setVulnerabilityData(output *entities.Output) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Details = output.Title
-	vuln.File = output.File
+	vuln.File = f.GetFilepathFromFilename(output.File)
 	vuln.Line = output.Line
 	vuln = vulnhash.Bind(vuln)
 	return f.SetCommitAuthor(vuln)
