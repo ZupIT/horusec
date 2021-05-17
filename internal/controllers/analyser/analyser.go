@@ -170,6 +170,9 @@ func (a *Analyser) formatAnalysisToSendToAPI() {
 	a.analysis = a.setDefaultVulnerabilityType()
 	a.analysis = a.setDefaultConfidence()
 	a.analysis = a.sortVulnerabilitiesByType()
+	if !a.config.GetEnableInformationSeverity() {
+		a.analysis = a.removeInfoVulnerabilities()
+	}
 }
 
 func (a *Analyser) setMonitor(monitorToSet *monitor.Monitor) {
