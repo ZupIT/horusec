@@ -132,7 +132,8 @@ func (f *Formatter) processOutput(output *entities.Output, projectSubPath string
 	}
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue, projectSubPath string) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilitySeverityData(
+	output *entities.Issue, projectSubPath string) *vulnerability.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity(projectSubPath)
 	data.Severity = output.GetSeverity()
 	data.Details = output.Overview
