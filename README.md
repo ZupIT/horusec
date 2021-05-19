@@ -15,20 +15,6 @@ Horusec is an open source tool that performs static code analysis to identify se
 
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
-## Project roadmap 2021
-
-We started the project to aggregate within our company, but as the search grew more and more we chose to apply good practices and open it up for everyone to collaborate with this incredible project.
-
-In order to achieve our goals, we separated in some delivery phases:
-
-- **Phase 0:** Support for all horusec-cli features into [horusec-vscode](https://github.com/ZupIT/horusec-vscode-plugin) (Q1)
-- **Phase 1:** Support for the Theia(VsCode Web) (Q1)
-- **Phase 2:** Support to Flutter, Dart, Bash, Shell, Elixir, Cloujure e Scala in analysis (Q1)
-- **Phase 3:** New service to manager vulnerabilities founds (Q2)
-- **Phase 4:** Dependency analysis for all supported languages (Q3)
-- **Phase 5:** SAST with MVP Semantic Analysis (Q4)
-- **Phase 6:** DAST with MVP symbolic analysis (Q4)
-
 ## Getting started
 
 ## CLI
