@@ -196,10 +196,10 @@ func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) strin
 	basePath := file.ReplacePathSeparator(path.Join(s.GetConfigProjectPath(), projectSubPath))
 	filepath := file.GetPathIntoFilename(filename, basePath)
 	if filepath != "" {
-		return filepath[1:]
+		return path.Join(projectSubPath, filepath[1:])
 	}
 
-	return filepath
+	return path.Join(projectSubPath, filepath)
 }
 
 func (s *Service) GetProjectPathWithWorkdir(projectSubPath string) string {
