@@ -17,6 +17,7 @@ package formatters
 import (
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -102,9 +103,10 @@ func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) s
 	return strings.ReplaceAll(cmd, "{{WORK_DIR}}", "")
 }
 
-func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool) {
-	logger.LogDebugWithLevel(strings.ReplaceAll(msg, "{{0}}", tool.ToString()),
-		s.analysis.GetIDString())
+func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool, lang languages.Language) {
+	newMsg := strings.ReplaceAll(msg, "{{0}}", tool.ToString())
+	newMsg = strings.ReplaceAll(newMsg, "{{1}}", lang.ToString())
+	logger.LogDebugWithLevel(newMsg, s.analysis.GetIDString())
 }
 
 func (s *Service) GetAnalysisID() string {
@@ -190,8 +192,9 @@ func (s *Service) getAHundredCharacters(code string, column int) string {
 	return codeFromColumn
 }
 
-func (s *Service) GetFilepathFromFilename(filename string) string {
-	filepath := file.GetPathIntoFilename(filename, s.GetConfigProjectPath())
+func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) string {
+	basePath := file.ReplacePathSeparator(path.Join(s.GetConfigProjectPath(), projectSubPath))
+	filepath := file.GetPathIntoFilename(filename, basePath)
 	if filepath != "" {
 		return filepath[1:]
 	}

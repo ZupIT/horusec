@@ -49,12 +49,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startGoSec(projectSubPath), tools.GoSec, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GoSec)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GoSec, languages.Go)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startGoSec(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GoSec)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GoSec, languages.Go)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {

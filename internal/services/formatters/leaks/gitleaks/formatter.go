@@ -51,12 +51,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startGitLeaks(projectSubPath), tools.GitLeaks, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks, languages.Leaks)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startGitLeaks(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GitLeaks)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GitLeaks, languages.Leaks)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {

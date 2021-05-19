@@ -31,7 +31,7 @@ type IFormatter interface {
 }
 
 type IService interface {
-	LogDebugWithReplace(msg string, tool tools.Tool)
+	LogDebugWithReplace(msg string, tool tools.Tool, lang languages.Language)
 	GetAnalysisID() string
 	ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error)
 	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
@@ -46,7 +46,7 @@ type IService interface {
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
 	ToolIsToIgnore(tool tools.Tool) bool
-	GetFilepathFromFilename(filename string) string
+	GetFilepathFromFilename(filename, projectSubPath string) string
 	GetProjectPathWithWorkdir(projectSubPath string) string
 	SetCommitAuthor(vulnerability *vulnerability.Vulnerability) *vulnerability.Vulnerability
 	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error

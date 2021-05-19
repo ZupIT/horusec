@@ -50,12 +50,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startBrakeman(projectSubPath), tools.Brakeman, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman, languages.Ruby)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBrakeman(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman, languages.Ruby)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {

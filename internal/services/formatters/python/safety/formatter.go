@@ -56,12 +56,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startSafety(projectSubPath), tools.Safety, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety, languages.Python)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSafety(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Safety)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Safety, languages.Python)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
@@ -96,7 +96,7 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 	if err != nil {
 		return
 	}
-	f.setSafetyOutPutInHorusecAnalysis(safetyOutput.Issues)
+	f.setSafetyOutPutInHorusecAnalysis(safetyOutput.Issues, projectSubPath)
 }
 
 func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entities.SafetyOutput, err error) {
@@ -105,17 +105,17 @@ func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entit
 	return safetyOutput, err
 }
 
-func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue) {
+func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue, projectSubPath string) {
 	for index := range issues {
-		vuln := f.setupVulnerabilitiesSeveritiesSafety(issues, index)
+		vuln := f.setupVulnerabilitiesSeveritiesSafety(issues, index, projectSubPath)
 		f.AddNewVulnerabilityIntoAnalysis(vuln)
 	}
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
-	issues []entities.Issue, index int) *vulnerability.Vulnerability {
+	issues []entities.Issue, index int, projectSubPath string) *vulnerability.Vulnerability {
 	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
-	vuln := f.getDefaultVulnerabilitySeverityInSafety()
+	vuln := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
 	vuln.Details = issues[index].Description
 	vuln.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vuln.Line = f.getVulnerabilityLineByName(lineContent, vuln.File)
@@ -150,13 +150,13 @@ func (f *Formatter) getLine(name string, scanner *bufio.Scanner) string {
 	return "-"
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverityInSafety() *vulnerability.Vulnerability {
+func (f *Formatter) getDefaultVulnerabilitySeverityInSafety(projectSubPath string) *vulnerability.Vulnerability {
 	vulnerabilitySeverity := &vulnerability.Vulnerability{}
 	vulnerabilitySeverity.Language = languages.Python
 	vulnerabilitySeverity.Severity = severities.High
 	vulnerabilitySeverity.SecurityTool = tools.Safety
 	vulnerabilitySeverity.Confidence = "-"
 	vulnerabilitySeverity.Column = "0"
-	vulnerabilitySeverity.File = f.GetFilepathFromFilename("requirements.txt")
+	vulnerabilitySeverity.File = f.GetFilepathFromFilename("requirements.txt", projectSubPath)
 	return vulnerabilitySeverity
 }
