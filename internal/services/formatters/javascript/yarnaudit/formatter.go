@@ -53,19 +53,19 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startYarnAudit(projectSubPath), tools.YarnAudit, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit, languages.Javascript)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startYarnAudit(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.YarnAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.YarnAudit, languages.Javascript)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
 		return err
 	}
 
-	return f.parseOutput(output)
+	return f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -77,7 +77,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Javascript), images.Javascript)
 }
 
-func (f *Formatter) parseOutput(containerOutput string) error {
+func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 	if err := f.VerifyErrors(containerOutput); err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 		return err
 	}
 
-	f.processOutput(output)
+	f.processOutput(output, projectSubPath)
 	return nil
 }
 
@@ -125,15 +125,16 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	return output, err
 }
 
-func (f *Formatter) processOutput(output *entities.Output) {
+func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {
 	for _, advisory := range output.Advisories {
 		advisoryPointer := advisory
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer, projectSubPath))
 	}
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue) *vulnerability.Vulnerability {
-	data := f.getDefaultVulnerabilitySeverity()
+func (f *Formatter) setVulnerabilitySeverityData(
+	output *entities.Issue, projectSubPath string) *vulnerability.Vulnerability {
+	data := f.getDefaultVulnerabilitySeverity(projectSubPath)
 	data.Severity = output.GetSeverity()
 	data.Details = output.Overview
 	data.Code = output.ModuleName
@@ -142,11 +143,11 @@ func (f *Formatter) setVulnerabilitySeverityData(output *entities.Issue) *vulner
 	return f.SetCommitAuthor(data)
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
+func (f *Formatter) getDefaultVulnerabilitySeverity(projectSubPath string) *vulnerability.Vulnerability {
 	vulnerabilitySeverity := &vulnerability.Vulnerability{}
 	vulnerabilitySeverity.SecurityTool = tools.YarnAudit
 	vulnerabilitySeverity.Language = languages.Javascript
-	vulnerabilitySeverity.File = f.GetFilepathFromFilename("yarn.lock")
+	vulnerabilitySeverity.File = f.GetFilepathFromFilename("yarn.lock", projectSubPath)
 	return vulnerabilitySeverity
 }
 

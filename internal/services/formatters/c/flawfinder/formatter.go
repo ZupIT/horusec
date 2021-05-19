@@ -46,12 +46,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startFlawfinder(projectSubPath), tools.Flawfinder, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder, languages.C)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startFlawfinder(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Flawfinder)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Flawfinder, languages.C)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {

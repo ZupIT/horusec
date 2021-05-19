@@ -49,12 +49,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startMixAudit(projectSubPath), tools.MixAudit, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.MixAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.MixAudit, languages.Elixir)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startMixAudit(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.MixAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.MixAudit, languages.Elixir)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {

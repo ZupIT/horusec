@@ -153,7 +153,7 @@ func TestParseOutputNpm(t *testing.T) {
 			service,
 		}
 
-		err := formatter.parseOutput("invalid output")
+		err := formatter.parseOutput("invalid output", "")
 		assert.Error(t, err)
 		assert.Equal(t, 0, len(analysis.AnalysisVulnerabilities))
 	})

@@ -50,12 +50,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startPhpCs(projectSubPath), tools.PhpCS, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS, languages.PHP)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startPhpCs(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.PhpCS)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.PhpCS, languages.PHP)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {

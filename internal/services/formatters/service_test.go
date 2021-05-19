@@ -19,6 +19,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -52,7 +54,7 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		mock.On("SetMonitor").Return()
 		mock.On("RemoveSrcFolderFromPath").Return("")
 		mock.On("GetCodeWithMaxCharacters").Return("")
-		mock.LogDebugWithReplace("", "")
+		mock.LogDebugWithReplace("", "", "")
 		_ = mock.GetAnalysisID()
 		_, _ = mock.ExecuteContainer(&dockerEntities.AnalysisData{})
 		_ = mock.GetAnalysisIDErrorMessage("", "")
@@ -152,7 +154,7 @@ func TestLogDebugWithReplace(t *testing.T) {
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{}, &monitor.Monitor{})
 
 		assert.NotPanics(t, func() {
-			monitorController.LogDebugWithReplace("test", tools.NpmAudit)
+			monitorController.LogDebugWithReplace("test", tools.NpmAudit, languages.Javascript)
 		})
 	})
 }

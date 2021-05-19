@@ -30,9 +30,9 @@ const (
 	// Fired when analysis is finished and return error
 	MsgDebugDockerAPIFinishedError = "{HORUSEC_CLI} Docker Finished analysis with ERROR: "
 	// Fired when tool start an analysis
-	MsgDebugToolStartAnalysis = "{HORUSEC_CLI} Running {{0}} in analysisID: "
+	MsgDebugToolStartAnalysis = "{HORUSEC_CLI} Running {{0}} - {{1}} in analysisID: "
 	// Fired when tool finish an analysis
-	MsgDebugToolFinishAnalysis = "{HORUSEC_CLI} {{0}} is finished in analysisID: "
+	MsgDebugToolFinishAnalysis = "{HORUSEC_CLI} {{0}} - {{1}} is finished in analysisID: "
 	// Fired when output of the analysis was run in docker is empty
 	MsgDebugOutputEmpty              = "{HORUSEC_CLI} When format Output it's Empty!"
 	MsgDebugConfigFileRunningOnPath  = "{HORUSEC_CLI} Config file running on path: "
