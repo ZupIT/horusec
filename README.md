@@ -1,12 +1,23 @@
-<a href="https://github.com/ZupIT/horusec/releases"><img src="https://img.shields.io/github/v/tag/ZupIT/horusec?color=green&label=Version"/></a>
-<a href="https://github.com/ZupIT/horusec/actions?query=branch%3Amaster+"><img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/e2e/master?label=Build"/></a>
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<p align="center" margin="20 0"><a href="https://horusec.io/">
+    <img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
 
-<p></p>
-<p></p>
-<p align="center" margin="20 0"><a href="https://horusec.io/"><img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
-<p></p>
-<p></p>
+<p align="center">
+    <a href="https://github.com/ZupIT/horusec/releases" alt="version">
+        <img src="https://img.shields.io/github/v/release/ZupIT/horusec?label=version"/></a>
+    <a href="https://github.com/ZupIT/horusec/pulse" alt="activity">
+        <img src="https://img.shields.io/github/commit-activity/m/ZupIT/horusec?label=activity"/></a>
+    <a href="https://github.com/ZupIT/horusec/graphs/contributors" alt="contributors">
+        <img src="https://img.shields.io/github/contributors/ZupIT/horusec?label=contributors"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/lint.yml" alt="lint">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Lint?label=lint"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/test.yml" alt="test">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Test?label=test"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/security.yml" alt="security">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Security?label=security"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/coverage.yml" alt="coverage">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Coverage?label=coverage"/></a>
+    <a href="https://opensource.org/licenses/Apache-2.0" alt="license">
+        <img src="https://img.shields.io/badge/license-Apache%202-blue"/></a>
 
 
 ## What is Horusec?
@@ -21,16 +32,24 @@ Horusec is an open source tool that performs static code analysis to identify se
 ## Getting started
 
 ### Mac or Linux
+```
+make install
+```
+
+or
+
 ```sh
-curl -fsSL https://horusec.io/bin/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
 ```
 
 ### Windows
 ```sh
-curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" && ./horusec.exe version
 ```
 
-To see more details how install go to <a href="https://horusec.io/docs/cli/installation/">HERE</a>
+All binaries with versions can be found in our [releases page](https://github.com/ZupIT/horusec/releases).
+
+Click [here](https://horusec.io/docs/cli/installation) to see more details in how to install.
 
 #### Check the installation
 ```bash
@@ -47,34 +66,69 @@ horusec start -p .
 
 
 ## Usage with Docker
+It is also possible to be using the horusec through a docker image `horuszup/horusec-cli:latest.
+
+To do so, just run the following command:
 ```sh
 docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src horuszup/horusec-cli:latest horusec start -p /src -P $(pwd)
 ```
 
-## Usage with Horusec-Web application
-Generate your the authorization token in order to be able to access the report through the web application.
-See more about [**Horusec web application here**](https://github.com/ZupIT/horusec-platform)
+As you can see in the command, we created a volume containing the project `-v $(pwd):/src`.
 
+With the docker image we ended up having two paths where the project can be found.
+
+The `-p` flag will represent the project path inside the container, in our example `/src`.
+The `-P` flag will represent the project outside the container, in our example is represented by `$(pwd)`,
+will be also needed to pass the project path to mount the volume `-v $(pwd):/src`.
+
+## Oldest versions
+
+Oldster versions of v1 cli are still available.
+
+**WARN:** The endpoint with v1 will be discontinued in the future, please upgrade your cli to v2.
+
+### Mac or Linux
+``` sh
+curl -fsSL https://horusec.io/bin/install.sh | bash -s latest
+```
+
+### Windows
+```sh
+curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+```
+
+All oldster binaries can be found at this endpoint, including the latest version of v1 `v1.10.3`. 
+As of v2, binaries will no longer be distributed by this endpoint, and can be found in our 
+[releases page](https://github.com/ZupIT/horusec/releases).
+
+## Usage with Horusec-Web application
+Manage your vulnerabilities through our web interface. With it, you can have a dashboard of metrics about your
+vulnerabilities, control of false positives, authorization token, update of vulnerabilities and much more.
+See more about it [here](https://github.com/ZupIT/horusec-platform).
+
+Usage example sending an analysis to Horusec web services.
 ```bash
 horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 ```
 
-To acquire the authorization token and be able to analytically check the application's vulnerabilities on our panel, see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>.
+You can create an authorization token through the horusec manager web service, click
+[here](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) to see more details.
+
+**WARN:** Our web services have been moved to a new [repository](https://github.com/ZupIT/horusec-platform), 
+version 2 of the cli require the upgrade of web services, click [here](https://horusec.io/docs/migrate-v1-to-v2) to know more about it.
 
 ## Usage with Visual Studio Code
-You can analysis your project using the Visual Studio Code with Horusec extension.
-See [**more details Here**](https://horusec.io/docs/extensions/visual-studio-code/):
+Analyze your project using the Visual Studio Code with Horusec extension.
+See [more details Here](https://horusec.io/docs/extensions/visual-studio-code/):
 
 ## Usage with Pipeline
 You can perform an analysis of your project before you hold Deploy in your environment by ensuring maximum security in your organization.
-See [**more details Here**](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
-
+See [more details Here](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
 
 ## Features
-- Safety tools orcherator simultaneously analyzing more than 18 languages with support from other 20 security tools;
-- Idependent analysis of your project size;
+- Analyzes simultaneously 18 languages with 20 different security tools to increase accuracy;
 - Search for their historical git by secrets and other contents exposed;
-- Your analysis can be fully configurable, [see all available resources](https://horusec.io/docs/cli/resources/#3-flags);
+- Your analysis can be fully configurable, [see all cli available resources](https://horusec.io/docs/cli/resources/#3-flags);
 
 ## Contributing
 
@@ -86,8 +140,18 @@ We have a few channels for contact, feel free to reach out to us at:
 
 - [GitHub Issues](https://github.com/ZupIT/horusec/issues)
 
-## Contributors
+## Contributing
 
-This project exists thanks to all the [contributors]((https://github.com/ZupIT/horusec/graphs/contributors)). You rock!   ❤️🚀
+Feel free to use, recommend improvements, or contribute to new implementations.
 
-[Semgrep]: https://github.com/returntocorp/semgrep
+If this is our first repository that you visit, or would like to know more about Horusec,
+check out some of our other projects.
+
+- [Horusec Platform](https://github.com/ZupIT/horusec-platform)
+- [Horusec DevKit](https://github.com/ZupIT/horusec-devkit)
+- [Horusec Engine](https://github.com/ZupIT/horusec-engine)
+- [Horusec Operator](https://github.com/ZupIT/horusec-operator)
+- [Horusec Admin](https://github.com/ZupIT/horusec-admin)
+- [Horusec VsCode](https://github.com/ZupIT/horusec-vscode-plugin)
+
+This project exists thanks to all the contributors. You rock! ❤️🚀

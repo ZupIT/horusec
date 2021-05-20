@@ -1,0 +1,16 @@
+name: Run
+on: [ "push" ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: build
+        run: |
+          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-linux" ./cmd/app/main.go
+          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
+          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
+      - name: run
+        run: tmp/horusec-linux start -p ./ -e true
