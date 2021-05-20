@@ -1,12 +1,23 @@
-<a href="https://github.com/ZupIT/horusec/releases"><img src="https://img.shields.io/github/v/tag/ZupIT/horusec?color=green&label=Version"/></a>
-<a href="https://github.com/ZupIT/horusec/actions?query=branch%3Amaster+"><img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/e2e/master?label=Build"/></a>
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<p align="center" margin="20 0"><a href="https://horusec.io/">
+    <img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
 
-<p></p>
-<p></p>
-<p align="center" margin="20 0"><a href="https://horusec.io/"><img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
-<p></p>
-<p></p>
+<p align="center">
+    <a href="https://github.com/ZupIT/horusec/releases" alt="version">
+        <img src="https://img.shields.io/github/v/release/ZupIT/horusec?label=version"/></a>
+    <a href="https://github.com/ZupIT/horusec/pulse" alt="activity">
+        <img src="https://img.shields.io/github/commit-activity/m/ZupIT/horusec?label=activity"/></a>
+    <a href="https://github.com/ZupIT/horusec/graphs/contributors" alt="contributors">
+        <img src="https://img.shields.io/github/contributors/ZupIT/horusec?label=contributors"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/lint.yml" alt="lint">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Lint?label=lint"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/test.yml" alt="test">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Test?label=test"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/security.yml" alt="security">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Security?label=security"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/coverage.yml" alt="coverage">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Coverage?label=coverage"/></a>
+    <a href="https://opensource.org/licenses/Apache-2.0" alt="license">
+        <img src="https://img.shields.io/badge/license-Apache%202-blue"/></a>
 
 
 ## What is Horusec?
