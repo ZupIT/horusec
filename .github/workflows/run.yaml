@@ -13,4 +13,4 @@ jobs:
           CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
           env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
       - name: run
-        run: tmp/horusec-linux -p . -e true
+        run: tmp/horusec-linux start -p ./ -e true
