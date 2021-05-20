@@ -36,7 +36,7 @@ curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/sc
 curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" && ./horusec.exe version
 ```
 
-All binaries with versions can be found on our [releases page](https://github.com/ZupIT/horusec/releases).
+All binaries with versions can be found in our [releases page](https://github.com/ZupIT/horusec/releases).
 
 Click [here](https://horusec.io/docs/cli/installation) to see more details in how to install.
 
