@@ -65,4 +65,7 @@ build-install-cli-windows:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
 	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" ./cmd/app/main.go
 
+install:
+	./deployments/scripts/install.sh latest
+
 pipeline: fmt fix-imports lint test coverage build security

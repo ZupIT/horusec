@@ -21,16 +21,24 @@ Horusec is an open source tool that performs static code analysis to identify se
 ## Getting started
 
 ### Mac or Linux
+```
+make install
+```
+
+or
+
 ```sh
-curl -fsSL https://horusec.io/bin/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
 ```
 
 ### Windows
 ```sh
-curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" && ./horusec.exe version
 ```
 
-To see more details how install go to <a href="https://horusec.io/docs/cli/installation/">HERE</a>
+All binaries with versions can be found on our [releases page](https://github.com/ZupIT/horusec/releases).
+
+Click [here](https://horusec.io/docs/cli/installation) to see more details in how to install.
 
 #### Check the installation
 ```bash
