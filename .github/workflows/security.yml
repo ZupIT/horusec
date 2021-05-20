@@ -1,23 +1,11 @@
-name: CLI
+name: Security
 on: [ "push" ]
 jobs:
-  lint-test-coverage-build-security:
+  security:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-      - name: lint
-        run: make lint
-      - name: test
-        run: make test
-      - name: coverage
-        run: make coverage
-      - name: build
-        run: |
-          make build-install-cli-linux
-          make build-install-cli-darwin
-          make build-install-cli-windows
       - name: security
         env:
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}

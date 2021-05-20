@@ -1,0 +1,16 @@
+name: Run
+on: [ "push" ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: build
+        run: |
+          make build-install-cli-darwin
+          make build-install-cli-windows
+          make build-install-cli-linux
+      - name: run
+        run: horusec-linux -p ./examples/go -e true

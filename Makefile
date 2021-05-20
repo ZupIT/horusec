@@ -68,4 +68,4 @@ build-install-cli-windows:
 install:
 	./deployments/scripts/install.sh latest
 
-pipeline: fmt fix-imports lint test coverage build security
+pipeline: fmt fix-imports lint test coverage security
