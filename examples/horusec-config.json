@@ -5,20 +5,16 @@
   "horusecCliCustomImages": {
     "c": "",
     "csharp": "",
-    "dart": "",
     "elixir": "",
     "generic": "",
     "go": "",
     "hcl": "",
-    "java": "",
     "javascript": "",
-    "kotlin": "",
     "leaks": "",
     "php": "",
     "python": "",
     "ruby": "",
-    "shell": "",
-    "yaml": ""
+    "shell": ""
   },
   "horusecCliCustomRulesPath": "",
   "horusecCliDisableDocker": false,
@@ -30,13 +26,12 @@
     "*tmp*",
     "**/.vscode/**"
   ],
-  "horusecCliFilterPath": "",
   "horusecCliHeaders": {},
   "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 15,
   "horusecCliPrintOutputType": "text",
-  "horusecCliProjectPath": "/home/wilian/go/src/github.com/ZupIT/horusec/examples",
+  "horusecCliProjectPath": "",
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
   "horusecCliRepositoryName": "examples",
   "horusecCliReturnErrorIfFoundVulnerability": false,
@@ -44,7 +39,10 @@
   "horusecCliSeveritiesToIgnore": [
     "INFO"
   ],
-  "horusecCliTimeoutInSecondsAnalysis": 600,
+  "horusecCliShowVulnerabilitiesTypes": [
+    "Vulnerability"
+  ],
+  "horusecCliTimeoutInSecondsAnalysis": 1000,
   "horusecCliTimeoutInSecondsRequest": 300,
   "horusecCliToolsConfig": {
     "Bandit": {
@@ -53,7 +51,7 @@
     "Brakeman": {
       "istoignore": false
     },
-    "Eslint": {
+    "BundlerAudit": {
       "istoignore": false
     },
     "Flawfinder": {
@@ -65,25 +63,10 @@
     "GoSec": {
       "istoignore": false
     },
-    "HorusecCsharp": {
+    "HorusecEngine": {
       "istoignore": false
     },
-    "HorusecDart": {
-      "istoignore": false
-    },
-    "HorusecJava": {
-      "istoignore": false
-    },
-    "HorusecKotlin": {
-      "istoignore": false
-    },
-    "HorusecKubernetes": {
-      "istoignore": false
-    },
-    "HorusecLeaks": {
-      "istoignore": false
-    },
-    "HorusecNodeJS": {
+    "MixAudit": {
       "istoignore": false
     },
     "NpmAudit": {
@@ -104,6 +87,9 @@
     "ShellCheck": {
       "istoignore": false
     },
+    "Sobelow": {
+      "istoignore": false
+    },
     "TfSec": {
       "istoignore": false
     },
@@ -111,12 +97,10 @@
       "istoignore": false
     }
   },
-  "horusecCliToolsToIgnore": [],
   "horusecCliWorkDir": {
     "go": [],
-    "netCore": [],
     "csharp": [],
-    "ruby": [],
+    "ruby": ["./ruby/example1"],
     "python": [],
     "java": [],
     "kotlin": [],
@@ -126,6 +110,10 @@
     "php": [],
     "c": [],
     "yaml": [],
-    "generic": []
+    "generic": [],
+    "elixir": [],
+    "shell": [],
+    "dart": [],
+    "nginx": []
   }
 }

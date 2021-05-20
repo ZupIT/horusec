@@ -1,8 +1,6 @@
 name: e2e
 
-on:
-  pull_request:
-    branches: [ "**" ]
+on: ["push"]
 
 jobs:
   e2e-cli:
@@ -18,32 +16,4 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: e2e
-        run: make test-e2e-cli
-  e2e-auth-horusec-without-application-admin:
-    name: e2e-auth-horusec-without-application-admin
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - name: Set up Node 12
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-        id: node
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: e2e
-        run: DEBUG=cypress:* make test-e2e-auth-horusec-without-application-admin
-  e2e-auth-keycloak-without-application-admin:
-    name: e2e-auth-keycloak-without-application-admin
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - name: Set up Node 12
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-        id: node
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: e2e
-        run: DEBUG=cypress:* make test-e2e-auth-keycloak-without-application-admin
+        run: make test-e2e
