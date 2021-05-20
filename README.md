@@ -81,10 +81,30 @@ The `-p` flag will represent the project path inside the container, in our examp
 The `-P` flag will represent the project outside the container, in our example is represented by `$(pwd)`,
 will be also needed to pass the project path to mount the volume `-v $(pwd):/src`.
 
+## Oldest versions
+
+Oldster versions of v1 cli are still available.
+
+**WARN:** The endpoint with v1 will be discontinued in the future, please upgrade your cli to v2.
+
+### Mac or Linux
+``` sh
+curl -fsSL https://horusec.io/bin/install.sh | bash -s latest
+```
+
+### Windows
+```sh
+curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+```
+
+All oldster binaries can be found at this endpoint, including the latest version of v1 `v1.10.3`. 
+As of v2, binaries will no longer be distributed by this endpoint, and can be found in our 
+[releases page](https://github.com/ZupIT/horusec/releases).
+
 ## Usage with Horusec-Web application
 Manage your vulnerabilities through our web interface. With it, you can have a dashboard of metrics about your
 vulnerabilities, control of false positives, authorization token, update of vulnerabilities and much more.
-See more about it [**here**](https://github.com/ZupIT/horusec-platform).
+See more about it [here](https://github.com/ZupIT/horusec-platform).
 
 Usage example sending an analysis to Horusec web services.
 ```bash
@@ -92,15 +112,18 @@ horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 ```
 
 You can create an authorization token through the horusec manager web service, click
-[**here**](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) to see more details.
+[here](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) to see more details.
+
+**WARN:** Our web services have been moved to a new [repository](https://github.com/ZupIT/horusec-platform), 
+version 2 of the cli require the upgrade of web services, click [here](https://horusec.io/docs/migrate-v1-to-v2) to know more about it.
 
 ## Usage with Visual Studio Code
 Analyze your project using the Visual Studio Code with Horusec extension.
-See [**more details Here**](https://horusec.io/docs/extensions/visual-studio-code/):
+See [more details Here](https://horusec.io/docs/extensions/visual-studio-code/):
 
 ## Usage with Pipeline
 You can perform an analysis of your project before you hold Deploy in your environment by ensuring maximum security in your organization.
-See [**more details Here**](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
+See [more details Here](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
 
 ## Features
 - Analyzes simultaneously 18 languages with 20 different security tools to increase accuracy;
