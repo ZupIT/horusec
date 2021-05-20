@@ -9,8 +9,8 @@ jobs:
       - uses: actions/setup-go@v2
       - name: build
         run: |
-          make build-install-cli-darwin
-          make build-install-cli-windows
-          make build-install-cli-linux
+          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-linux" ./cmd/app/main.go
+          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
+          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
       - name: run
-        run: horusec-linux -p ./examples/go -e true
+        run: tmp/horusec-linux -p . -e true
