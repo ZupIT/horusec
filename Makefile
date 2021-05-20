@@ -43,7 +43,7 @@ fix-imports:
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
-		curl -fsSL https://horusec.io/bin/install.sh | bash
+		make install
 		$(HORUSEC) start -p="./" -e="true"
     else
 		$(HORUSEC) start -p="./" -e="true"
