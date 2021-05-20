@@ -7,6 +7,7 @@ GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
+PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)
@@ -47,8 +48,6 @@ security:
     else
 		$(HORUSEC) start -p="./" -e="true"
     endif
-
-PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 
 build-install-cli-linux:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-linux" &> /dev/null
