@@ -16,6 +16,10 @@
         <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Security?label=security"/></a>
     <a href="https://github.com/ZupIT/horusec/actions/workflows/coverage.yml" alt="coverage">
         <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Coverage?label=coverage"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/e2e.yml" alt="e2e">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/e2e?label=e2e"/></a>
+    <a href="https://github.com/ZupIT/horusec/actions/workflows/build.yaml" alt="build">
+        <img src="https://img.shields.io/github/workflow/status/ZupIT/horusec/Build?label=build"/></a>
     <a href="https://opensource.org/licenses/Apache-2.0" alt="license">
         <img src="https://img.shields.io/badge/license-Apache%202-blue"/></a>
 
