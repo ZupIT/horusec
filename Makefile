@@ -65,6 +65,22 @@ build-install-cli-windows:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
 	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" ./cmd/app/main.go
 
+build-install-stand-alone-cli-linux:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-linux" &> /dev/null
+	CGO_ENABLED=0 GOOS=linux $(GO) build -ldflags “-X github.com/ZupIT/horusec/config/dist.standAlone=true” -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-linux" ./cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-linux"
+	horusec-linux version
+
+build-install-stand-alone-cli-darwin:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-mac" &> /dev/null
+	CGO_ENABLED=0 GOOS=darwin $(GO) build -ldflags “-X github.com/ZupIT/horusec/config/dist.standAlone=true” -a -installsuffix cgo -o "$(PATH_BINARY_BUILD_CLI)/horusec-mac" ./cmd/app/main.go
+	chmod +x "$(PATH_BINARY_BUILD_CLI)/horusec-mac"
+	horusec-mac version
+
+build-install-stand-alone-cli-windows:
+	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
+	env GOOS=windows GOARCH=amd64 $(GO) build -ldflags “-X github.com/ZupIT/horusec/config/dist.standAlone=true” -o "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" ./cmd/app/main.go
+
 install:
 	./deployments/scripts/install.sh latest
 
