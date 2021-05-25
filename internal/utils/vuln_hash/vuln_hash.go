@@ -28,6 +28,7 @@ func Bind(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {
 		vuln.Line,
 		vuln.Details,
 		vuln.File,
+		vuln.CommitEmail,
 	)
 
 	return vuln

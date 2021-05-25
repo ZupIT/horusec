@@ -21,7 +21,7 @@ WORKDIR /horusec
 
 RUN go get -t -v -d ./...
 
-RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./horusec-cli/cmd/horusec/main.go
+RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./cmd/app/main.go
 
 FROM docker
 

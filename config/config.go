@@ -21,6 +21,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
@@ -30,7 +32,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/entities/images"
+	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
@@ -40,14 +42,14 @@ import (
 
 func NewConfig() IConfig {
 	return &Config{
-		falsePositiveHashes: []string{},
-		riskAcceptHashes:    []string{},
-		severitiesToIgnore:  []string{},
-		toolsToIgnore:       []string{},
-		headers:             map[string]string{},
-		workDir:             workdir.NewWorkDir(),
-		toolsConfig:         toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
-		customImages:        images.NewCustomImages(),
+		falsePositiveHashes:      []string{},
+		riskAcceptHashes:         []string{},
+		severitiesToIgnore:       []string{},
+		showVulnerabilitiesTypes: []string{},
+		headers:                  map[string]string{},
+		workDir:                  workdir.NewWorkDir(),
+		toolsConfig:              toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+		customImages:             customImages.NewCustomImages(),
 	}
 }
 
@@ -71,7 +73,6 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetHeaders(c.extractFlagValueStringToString(cmd, "headers", c.GetHeaders()))
 	c.SetReturnErrorIfFoundVulnerability(c.extractFlagValueBool(cmd, "return-error", c.GetReturnErrorIfFoundVulnerability()))
 	c.SetProjectPath(c.extractFlagValueString(cmd, "project-path", c.GetProjectPath()))
-	c.SetFilterPath(c.extractFlagValueString(cmd, "filter-path", c.GetFilterPath()))
 	c.SetEnableGitHistoryAnalysis(c.extractFlagValueBool(cmd, "enable-git-history", c.GetEnableGitHistoryAnalysis()))
 	c.SetCertInsecureSkipVerify(c.extractFlagValueBool(cmd, "insecure-skip-verify", c.GetCertInsecureSkipVerify()))
 	c.SetCertPath(c.extractFlagValueString(cmd, "certificate-path", c.GetCertPath()))
@@ -79,11 +80,11 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetRepositoryName(c.extractFlagValueString(cmd, "repository-name", c.GetRepositoryName()))
 	c.SetFalsePositiveHashes(c.extractFlagValueStringSlice(cmd, "false-positive", c.GetFalsePositiveHashes()))
 	c.SetRiskAcceptHashes(c.extractFlagValueStringSlice(cmd, "risk-accept", c.GetRiskAcceptHashes()))
-	c.SetToolsToIgnore(c.extractFlagValueStringSlice(cmd, "tools-ignore", c.GetToolsToIgnore()))
 	c.SetContainerBindProjectPath(c.extractFlagValueString(cmd, "container-bind-project-path", c.GetContainerBindProjectPath()))
 	c.SetDisableDocker(c.extractFlagValueBool(cmd, "disable-docker", c.GetDisableDocker()))
 	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
 	c.SetEnableInformationSeverity(c.extractFlagValueBool(cmd, "information-severity", c.GetEnableInformationSeverity()))
+	c.SetShowVulnerabilitiesTypes(c.extractFlagValueStringSlice(cmd, "show-vulnerabilities-types", c.GetShowVulnerabilitiesTypes()))
 	return c
 }
 
@@ -104,7 +105,6 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetReturnErrorIfFoundVulnerability(viper.GetBool(c.toLowerCamel(EnvReturnErrorIfFoundVulnerability)))
 	c.SetProjectPath(viper.GetString(c.toLowerCamel(EnvProjectPath)))
 	c.SetWorkDir(viper.Get(c.toLowerCamel(EnvWorkDir)))
-	c.SetFilterPath(viper.GetString(c.toLowerCamel(EnvFilterPath)))
 	c.SetEnableGitHistoryAnalysis(viper.GetBool(c.toLowerCamel(EnvEnableGitHistoryAnalysis)))
 	c.SetCertInsecureSkipVerify(viper.GetBool(c.toLowerCamel(EnvCertInsecureSkipVerify)))
 	c.SetCertPath(viper.GetString(c.toLowerCamel(EnvCertPath)))
@@ -112,7 +112,6 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetRepositoryName(viper.GetString(c.toLowerCamel(EnvRepositoryName)))
 	c.SetFalsePositiveHashes(viper.GetStringSlice(c.toLowerCamel(EnvFalsePositiveHashes)))
 	c.SetRiskAcceptHashes(viper.GetStringSlice(c.toLowerCamel(EnvRiskAcceptHashes)))
-	c.SetToolsToIgnore(viper.GetStringSlice(c.toLowerCamel(EnvToolsToIgnore)))
 	c.SetHeaders(viper.GetStringMapString(c.toLowerCamel(EnvHeaders)))
 	c.SetContainerBindProjectPath(viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)))
 	c.SetToolsConfig(viper.Get(c.toLowerCamel(EnvToolsConfig)))
@@ -120,6 +119,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetCustomRulesPath(viper.GetString(c.toLowerCamel(EnvCustomRulesPath)))
 	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
+	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
 	return c
 }
 
@@ -136,7 +136,6 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetFilesOrPathsToIgnore(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvFilesOrPathsToIgnore, c.filesOrPathsToIgnore)))
 	c.SetReturnErrorIfFoundVulnerability(env.GetEnvOrDefaultBool(EnvReturnErrorIfFoundVulnerability, c.returnErrorIfFoundVulnerability))
 	c.SetProjectPath(env.GetEnvOrDefault(EnvProjectPath, c.projectPath))
-	c.SetFilterPath(env.GetEnvOrDefault(EnvFilterPath, c.filterPath))
 	c.SetEnableGitHistoryAnalysis(env.GetEnvOrDefaultBool(EnvEnableGitHistoryAnalysis, c.enableGitHistoryAnalysis))
 	c.SetCertInsecureSkipVerify(env.GetEnvOrDefaultBool(EnvCertInsecureSkipVerify, c.certInsecureSkipVerify))
 	c.SetCertPath(env.GetEnvOrDefault(EnvCertPath, c.certPath))
@@ -144,12 +143,12 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetRepositoryName(env.GetEnvOrDefault(EnvRepositoryName, c.repositoryName))
 	c.SetFalsePositiveHashes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvFalsePositiveHashes, c.falsePositiveHashes)))
 	c.SetRiskAcceptHashes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvRiskAcceptHashes, c.riskAcceptHashes)))
-	c.SetToolsToIgnore(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvToolsToIgnore, c.toolsToIgnore)))
 	c.SetHeaders(env.GetEnvOrDefaultInterface(EnvHeaders, c.headers))
 	c.SetContainerBindProjectPath(env.GetEnvOrDefault(EnvContainerBindProjectPath, c.containerBindProjectPath))
 	c.SetDisableDocker(env.GetEnvOrDefaultBool(EnvDisableDocker, c.disableDocker))
 	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
 	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
+	c.SetShowVulnerabilitiesTypes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.showVulnerabilitiesTypes)))
 	return c
 }
 
@@ -272,14 +271,6 @@ func (c *Config) SetProjectPath(projectPath string) {
 	c.projectPath = projectPath
 }
 
-func (c *Config) GetFilterPath() string {
-	return c.filterPath
-}
-
-func (c *Config) SetFilterPath(filterPath string) {
-	c.filterPath = filterPath
-}
-
 func (c *Config) GetWorkDir() *workdir.WorkDir {
 	return valueordefault.GetInterfaceValueOrDefault(c.workDir, workdir.NewWorkDir()).(*workdir.WorkDir)
 }
@@ -351,17 +342,6 @@ func (c *Config) GetFalsePositiveHashes() (output []string) {
 
 func (c *Config) SetFalsePositiveHashes(falsePositive []string) {
 	c.falsePositiveHashes = c.factoryParseInputToSliceString(falsePositive)
-}
-
-func (c *Config) GetToolsToIgnore() (output []string) {
-	return c.toolsToIgnore
-}
-
-func (c *Config) SetToolsToIgnore(toolsToIgnore []string) {
-	if len(toolsToIgnore) > 0 {
-		logger.LogWarnWithLevel(messages.MsgWarnToolsToIgnoreDeprecated)
-	}
-	c.toolsToIgnore = c.factoryParseInputToSliceString(toolsToIgnore)
 }
 
 func (c *Config) GetHeaders() (headers map[string]string) {
@@ -467,7 +447,6 @@ func (c *Config) toMap() map[string]interface{} {
 		"configFilePath":                  c.configFilePath,
 		"horusecAPIUri":                   c.horusecAPIUri,
 		"repositoryAuthorization":         c.repositoryAuthorization,
-		"filterPath":                      c.filterPath,
 		"certPath":                        c.certPath,
 		"repositoryName":                  c.repositoryName,
 		"printOutputType":                 c.printOutputType,
@@ -486,7 +465,6 @@ func (c *Config) toMap() map[string]interface{} {
 		"filesOrPathsToIgnore":            c.filesOrPathsToIgnore,
 		"falsePositiveHashes":             c.falsePositiveHashes,
 		"riskAcceptHashes":                c.riskAcceptHashes,
-		"toolsToIgnore":                   c.toolsToIgnore,
 		"headers":                         c.headers,
 		"toolsConfig":                     c.toolsConfig,
 		"workDir":                         c.workDir,
@@ -494,6 +472,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"customRulesPath":                 c.customRulesPath,
 		"enableInformationSeverity":       c.enableInformationSeverity,
 		"customImages":                    c.customImages,
+		"showVulnerabilitiesTypes":        c.showVulnerabilitiesTypes,
 	}
 }
 
@@ -522,7 +501,6 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvReturnErrorIfFoundVulnerability): c.GetReturnErrorIfFoundVulnerability(),
 		c.toLowerCamel(EnvProjectPath):                     c.GetProjectPath(),
 		c.toLowerCamel(EnvWorkDir):                         c.GetWorkDir(),
-		c.toLowerCamel(EnvFilterPath):                      c.GetFilterPath(),
 		c.toLowerCamel(EnvEnableGitHistoryAnalysis):        c.GetEnableGitHistoryAnalysis(),
 		c.toLowerCamel(EnvCertInsecureSkipVerify):          c.GetCertInsecureSkipVerify(),
 		c.toLowerCamel(EnvCertPath):                        c.GetCertPath(),
@@ -530,7 +508,6 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvRepositoryName):                  c.GetRepositoryName(),
 		c.toLowerCamel(EnvFalsePositiveHashes):             c.GetFalsePositiveHashes(),
 		c.toLowerCamel(EnvRiskAcceptHashes):                c.GetRiskAcceptHashes(),
-		c.toLowerCamel(EnvToolsToIgnore):                   c.GetToolsToIgnore(),
 		c.toLowerCamel(EnvHeaders):                         c.GetHeaders(),
 		c.toLowerCamel(EnvContainerBindProjectPath):        c.GetContainerBindProjectPath(),
 		c.toLowerCamel(EnvToolsConfig):                     c.GetToolsConfig(),
@@ -538,6 +515,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvCustomRulesPath):                 c.GetCustomRulesPath(),
 		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
 		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
+		c.toLowerCamel(EnvShowVulnerabilitiesTypes):        c.GetShowVulnerabilitiesTypes(),
 	}
 }
 
@@ -611,21 +589,31 @@ func (c *Config) SetEnableInformationSeverity(enableInformationSeverity bool) {
 	c.enableInformationSeverity = enableInformationSeverity
 }
 
-func (c *Config) GetCustomImages() images.Custom {
+func (c *Config) GetCustomImages() customImages.CustomImages {
 	return c.customImages
 }
 
+func (c *Config) SetShowVulnerabilitiesTypes(vulnerabilitiesTypes []string) {
+	c.showVulnerabilitiesTypes = c.factoryParseInputToSliceString(vulnerabilitiesTypes)
+}
+
+func (c *Config) GetShowVulnerabilitiesTypes() []string {
+	return valueordefault.GetSliceStringValueOrDefault(c.showVulnerabilitiesTypes, []string{
+		enumsVulnerability.Vulnerability.ToString(),
+	})
+}
+
 func (c *Config) SetCustomImages(configData interface{}) {
-	customImages := images.Custom{}
+	customImg := customImages.CustomImages{}
 
 	bytes, err := json.Marshal(configData)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
 	}
 
-	if err := json.Unmarshal(bytes, &customImages); err != nil {
+	if err := json.Unmarshal(bytes, &customImg); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
 	}
 
-	c.customImages = customImages
+	c.customImages = customImg
 }

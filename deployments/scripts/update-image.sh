@@ -20,6 +20,17 @@ IS_TO_UPDATE_LATEST=$3
 ACTUAL_RELEASE_FORMATTED=""
 ACTUAL_RELEASE=""
 
+installSemver () {
+    mkdir bin
+    curl -fsSL -o ./bin/install-semver.sh https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/install-semver.sh
+    chmod +x ./bin/install-semver.sh
+    ./bin/install-semver.sh
+    if ! semver &> /dev/null
+    then
+        exit 1
+    fi
+}
+
 validateUpdateType () {
     case "$UPDATE_TYPE" in
         "alpha") # Used to update an bugfix or an new feature in develop branch
@@ -40,9 +51,6 @@ validateUpdateType () {
 }
 
 generateBinaries () {
-    chmod +x ./deployments/scripts/install-semver.sh
-    ./deployments/scripts/install-semver.sh
-
     resetAlphaRcToMaster
 
     semver up "$UPDATE_TYPE"
@@ -63,8 +71,6 @@ generateBinaries () {
         echo "$ semver --help"
         exit 1
     fi
-
-    cd ..
 
     sed -i -e "s/{{VERSION_NOT_FOUND}}/$ACTUAL_RELEASE/g" "./config/config.go"
 
@@ -160,6 +166,8 @@ rollback_binaries () {
 
 trap rollback_version_command SIGINT
 trap rollback_binaries SIGINT
+
+installSemver
 
 validateUpdateType
 

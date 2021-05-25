@@ -5,20 +5,16 @@
   "horusecCliCustomImages": {
     "c": "",
     "csharp": "",
-    "dart": "",
     "elixir": "",
     "generic": "",
     "go": "",
     "hcl": "",
-    "java": "",
     "javascript": "",
-    "kotlin": "",
     "leaks": "",
     "php": "",
     "python": "",
     "ruby": "",
-    "shell": "",
-    "yaml": ""
+    "shell": ""
   },
   "horusecCliCustomRulesPath": "",
   "horusecCliDisableDocker": false,
@@ -30,7 +26,6 @@
     "*tmp*",
     "**/.vscode/**"
   ],
-  "horusecCliFilterPath": "",
   "horusecCliHeaders": {},
   "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
   "horusecCliJsonOutputFilepath": "",
@@ -44,6 +39,9 @@
   "horusecCliSeveritiesToIgnore": [
     "INFO"
   ],
+  "horusecCliShowVulnerabilitiesTypes": [
+    "Vulnerability"
+  ],
   "horusecCliTimeoutInSecondsAnalysis": 1000,
   "horusecCliTimeoutInSecondsRequest": 300,
   "horusecCliToolsConfig": {
@@ -53,7 +51,7 @@
     "Brakeman": {
       "istoignore": false
     },
-    "Eslint": {
+    "BundlerAudit": {
       "istoignore": false
     },
     "Flawfinder": {
@@ -63,6 +61,12 @@
       "istoignore": false
     },
     "GoSec": {
+      "istoignore": false
+    },
+    "HorusecEngine": {
+      "istoignore": false
+    },
+    "MixAudit": {
       "istoignore": false
     },
     "NpmAudit": {
@@ -83,6 +87,9 @@
     "ShellCheck": {
       "istoignore": false
     },
+    "Sobelow": {
+      "istoignore": false
+    },
     "TfSec": {
       "istoignore": false
     },
@@ -90,12 +97,10 @@
       "istoignore": false
     }
   },
-  "horusecCliToolsToIgnore": [],
   "horusecCliWorkDir": {
     "go": [],
-    "netCore": [],
     "csharp": [],
-    "ruby": [],
+    "ruby": ["./ruby/example1"],
     "python": [],
     "java": [],
     "kotlin": [],
@@ -105,6 +110,10 @@
     "php": [],
     "c": [],
     "yaml": [],
-    "generic": []
+    "generic": [],
+    "elixir": [],
+    "shell": [],
+    "dart": [],
+    "nginx": []
   }
 }

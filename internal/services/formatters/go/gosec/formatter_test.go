@@ -18,6 +18,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+
 	"github.com/ZupIT/horusec/internal/entities/monitor"
 
 	"github.com/stretchr/testify/assert"
@@ -120,7 +122,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsToIgnore([]string{"GoSec"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
 
 		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)

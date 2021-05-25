@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/ZupIT/horusec/internal/entities/images"
+	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
@@ -56,9 +56,6 @@ type IConfig interface {
 	GetProjectPath() string
 	SetProjectPath(projectPath string)
 
-	GetFilterPath() string           // deprecated
-	SetFilterPath(filterPath string) // deprecated
-
 	GetWorkDir() *workdir.WorkDir
 	SetWorkDir(toParse interface{})
 
@@ -82,9 +79,6 @@ type IConfig interface {
 
 	GetFalsePositiveHashes() (output []string)
 	SetFalsePositiveHashes(falsePositive []string)
-
-	GetToolsToIgnore() (output []string)     // deprecated
-	SetToolsToIgnore(toolsToIgnore []string) // deprecated
 
 	GetHeaders() (headers map[string]string)
 	SetHeaders(headers interface{})
@@ -112,6 +106,9 @@ type IConfig interface {
 	ToMapLowerCase() map[string]interface{}
 	NormalizeConfigs() IConfig
 
-	GetCustomImages() images.Custom
+	GetCustomImages() customImages.CustomImages
 	SetCustomImages(configData interface{})
+
+	SetShowVulnerabilitiesTypes(vulnerabilitiesTypes []string)
+	GetShowVulnerabilitiesTypes() []string
 }

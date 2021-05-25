@@ -8,30 +8,28 @@
 <p></p>
 <p></p>
 
-> :warning: **We are moving the manager web application to a new repository, see the work in progress**: https://github.com/ZupIT/horusec-platform/tree/develop
 
 ## What is Horusec?
-Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. See in our [DOCUMENTATION](https://horusec.io/docs/overview/) the complete list of tools and languages that we perform analysis
+Horusec is an open source tool that performs static code analysis to identify security flaws during the development process. Currently, the languages for analysis are: C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. The tool has options to search for key leaks and security flaws in all files of your project, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. See in our [DOCUMENTATION](https://horusec.io/docs/overview/) the complete list of tools and languages that we perform analysis
 
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
-## Project roadmap 2021
+## Example Output
 
-We started the project to aggregate within our company, but as the search grew more and more we chose to apply good practices and open it up for everyone to collaborate with this incredible project.
-
-In order to achieve our goals, we separated in some delivery phases:
-
-- **Phase 0:** Support for all horusec-cli features into [horusec-vscode](https://github.com/ZupIT/horusec-vscode-plugin) (Q1)
-- **Phase 1:** Support for the Theia(VsCode Web) (Q1)
-- **Phase 2:** Support to Flutter, Dart, Bash, Shell, Elixir, Cloujure e Scala in analysis (Q1)
-- **Phase 3:** New service to manager vulnerabilities founds (Q2)
-- **Phase 4:** Dependency analysis for all supported languages (Q3)
-- **Phase 5:** SAST with MVP Semantic Analysis (Q4)
-- **Phase 6:** DAST with MVP symbolic analysis (Q4)
+<img src="assets/usage_horusec.gif" alt="usage_gif" width="100%" style="max-width:100%;"/>
 
 ## Getting started
 
-## CLI
+### Mac or Linux
+```sh
+curl -fsSL https://horusec.io/bin/install.sh | bash
+```
+
+### Windows
+```sh
+curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
+```
+
 To see more details how install go to <a href="https://horusec.io/docs/cli/installation/">HERE</a>
 
 #### Check the installation
@@ -39,35 +37,45 @@ To see more details how install go to <a href="https://horusec.io/docs/cli/insta
 horusec version
 ```
 
-## Usage
-For use horusec-cli and check your vulnerabilities
+## Usage CLI
+To use horusec-cli and check the application's vulnerabilities:
 ```bash
-horusec start
+horusec start -p .
 ```
-
-or send with the authorization token to view the content analytically in web application.
-
-```bash
-horusec start -a="<YOUR_TOKEN_AUTHORIZATION>"
-```
-To acquire the authorization token and you can see your vulnerabilities analytically on our panel see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>
-
 
 **WARN:** When horusec starts an analysis it creates a folder called `.horusec`. This folder serves as the basis for not changing your code. So we recommend that you add the line `.horusec` into your `.gitignore` file so that this folder does not need to be sent to your git server!
 
-<p align="center" margin="20 0"><img src="assets/usage_horusec.gif" alt="usage_horusec" width="100%" style="max-width:100%;"/></p>
 
-## Web application
+## Usage with Docker
+```sh
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src horuszup/horusec-cli:latest horusec start -p /src -P $(pwd)
+```
 
-### Which is?
-Horusec's web applications are an extension of the CLI's functionalities in order to manage the vulnerabilities contracted and be able to classify them.
-* Multitenant
-* Controle de acesso
-* Visão analítica
-* Classificação de vulnerabilidade
-* Integração com outros tipos de oAuth
-* Integração com serviço de menssageria
-[See more details here](https://horusec.io/docs/web/overview/)
+## Usage with Horusec-Web application
+Generate your the authorization token in order to be able to access the report through the web application.
+See more about [**Horusec web application here**](https://github.com/ZupIT/horusec-platform)
+
+```bash
+horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
+```
+
+To acquire the authorization token and be able to analytically check the application's vulnerabilities on our panel, see more details <a href="https://horusec.io/docs/tutorials/how-to-create-an-authorization-token">HERE</a>.
+
+## Usage with Visual Studio Code
+You can analysis your project using the Visual Studio Code with Horusec extension.
+See [**more details Here**](https://horusec.io/docs/extensions/visual-studio-code/):
+
+## Usage with Pipeline
+You can perform an analysis of your project before you hold Deploy in your environment by ensuring maximum security in your organization.
+See [**more details Here**](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
+
+
+## Features
+- Safety tools orcherator simultaneously analyzing more than 18 languages with support from other 20 security tools;
+- Idependent analysis of your project size;
+- Search for their historical git by secrets and other contents exposed;
+- Your analysis can be fully configurable, [see all available resources](https://horusec.io/docs/cli/resources/#3-flags);
+
 ## Contributing
 
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to horusec.

@@ -64,10 +64,8 @@ const (
 	MsgErrorGitCommitAuthorsExecute = "{HORUSEC_CLI} Error when execute commit author command: "
 	// Fired when an unexpected error occurs when try parse output commit authors to struct CommitAuthors
 	MsgErrorGitCommitAuthorsParseOutput = "{HORUSEC_CLI} Error when to parse output to commit author struct: "
-	// Fired when an unexpected error occurs when read spotbugs output
-	// and return missing classes or found errors in analysis
-	MsgSpotBugsMissingClassesOrErrors = "{HORUSEC_CLI} Error spotbugs has risen because of [{{0}}] " +
-		"missing classes and [{{1}}] errors while analyzing"
+	// Fired when validate vulnerability types to show
+	MsgVulnerabilityTypeToShowInvalid = "{HORUSEC_CLI} Error on validate vulnerability type to show, wrong type: "
 	// Fired when an unexpected error occurs when run tool in docker
 	MsgErrorRunToolInDocker = "{HORUSEC_CLI} Something error went wrong in {{0}} tool " +
 		"| analysisID -> {{1}} | output -> {{2}}"

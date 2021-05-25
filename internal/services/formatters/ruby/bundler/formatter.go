@@ -55,12 +55,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startBundlerAudit(projectSubPath), tools.BundlerAudit, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.BundlerAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.BundlerAudit, languages.Ruby)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBundlerAudit(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.BundlerAudit)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.BundlerAudit, languages.Ruby)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
@@ -71,7 +71,7 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) error {
 		return errGemLock
 	}
 
-	f.parseOutput(f.removeOutputEsc(output))
+	f.parseOutput(f.removeOutputEsc(output), projectSubPath)
 	return nil
 }
 
@@ -102,17 +102,17 @@ func (f *Formatter) removeOutputEsc(output string) string {
 	return output
 }
 
-func (f *Formatter) parseOutput(output string) {
+func (f *Formatter) parseOutput(output, projectSubPath string) {
 	if strings.Contains(output, "No vulnerabilities found") {
 		return
 	}
 
 	for _, outputSplit := range strings.Split(output, "Name:") {
-		f.setOutput(outputSplit)
+		f.setOutput(outputSplit, projectSubPath)
 	}
 }
 
-func (f *Formatter) setOutput(outputSplit string) {
+func (f *Formatter) setOutput(outputSplit, projectSubPath string) {
 	if outputSplit == "" {
 		return
 	}
@@ -126,15 +126,15 @@ func (f *Formatter) setOutput(outputSplit string) {
 		output.SetOutputData(output, value)
 	}
 
-	f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(output))
+	f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(output, projectSubPath))
 }
 
-func (f *Formatter) setVulnerabilityData(output *entities.Output) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(output *entities.Output, projectSubPath string) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Confidence = confidence.Low
 	vuln.Severity = output.GetSeverity()
 	vuln.Details = output.GetDetails()
-	vuln.File = f.GetFilepathFromFilename("Gemfile.lock")
+	vuln.File = f.GetFilepathFromFilename("Gemfile.lock", projectSubPath)
 	vuln.Code = f.GetCodeWithMaxCharacters(output.Name, 0)
 	vuln.Line = f.getVulnerabilityLineByName(vuln.Code, vuln.File)
 	vuln = vulnhash.Bind(vuln)

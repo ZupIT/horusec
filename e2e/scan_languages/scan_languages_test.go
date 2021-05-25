@@ -86,7 +86,8 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunPHPTest(t, &wg)
 	go RunYAMLTest(t, &wg)
 	go RunElixirTest(t, &wg)
-	wg.Add(15)
+	go RunNginxTest(t, &wg)
+	wg.Add(16)
 	wg.Wait()
 }
 
@@ -193,7 +194,14 @@ func RunElixirTest(t *testing.T, s *sync.WaitGroup) {
 	defer s.Done()
 	fileOutput := runHorusecCLIUsingExampleDir(t, "elixir", "example1")
 	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in elixir is not expected")
+}
+
+func RunNginxTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "nginx", "example1")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in nginx is not expected")
 }
 
 func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {

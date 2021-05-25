@@ -39,6 +39,7 @@ type WorkDir struct {
 	Elixir     []string `json:"elixir"`
 	Shell      []string `json:"shell"`
 	Dart       []string `json:"dart"`
+	Nginx      []string `json:"nginx"`
 }
 
 //nolint // parse struct is necessary > 15 lines
@@ -60,6 +61,7 @@ func NewWorkDir() *WorkDir {
 		Elixir:     []string{},
 		Shell:      []string{},
 		Dart:       []string{},
+		Nginx:      []string{},
 	}
 }
 
@@ -106,6 +108,7 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 		languages.Elixir:     w.Elixir,
 		languages.Shell:      w.Shell,
 		languages.Dart:       w.Dart,
+		languages.Nginx:      w.Nginx,
 	}
 }
 
@@ -167,6 +170,9 @@ func (w *WorkDir) setEmptyOrSliceEmptyInNilContent() *WorkDir {
 	}
 	if w.Dart == nil {
 		w.Dart = []string{}
+	}
+	if w.Nginx == nil {
+		w.Nginx = []string{}
 	}
 	return w
 }

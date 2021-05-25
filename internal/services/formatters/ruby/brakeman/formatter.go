@@ -50,22 +50,22 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startBrakeman(projectSubPath), tools.Brakeman, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman, languages.Ruby)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBrakeman(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman, languages.Ruby)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
 		return err
 	}
 
-	return f.parseOutput(output)
+	return f.parseOutput(output, projectSubPath)
 }
 
-func (f *Formatter) parseOutput(containerOutput string) error {
+func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 	if containerOutput == "" {
 		return nil
 	}
@@ -77,7 +77,7 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 
 	for _, warning := range brakemanOutput.Warnings {
 		value := warning
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&value))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&value, projectSubPath))
 	}
 
 	return nil
@@ -93,13 +93,13 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	return output, err
 }
 
-func (f *Formatter) setVulnerabilityData(output *entities.Warning) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(output *entities.Warning, projectSubPath string) *vulnerability.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = output.GetSeverity()
 	data.Confidence = output.GetConfidence()
 	data.Details = output.GetDetails()
 	data.Line = output.GetLine()
-	data.File = output.File
+	data.File = f.GetFilepathFromFilename(output.File, projectSubPath)
 	data.Code = f.GetCodeWithMaxCharacters(output.Code, 0)
 	data = vulnhash.Bind(data)
 	return f.SetCommitAuthor(data)

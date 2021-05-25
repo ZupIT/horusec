@@ -44,12 +44,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecEngine, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, languages.Yaml)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine, languages.Yaml)
 
 	findings, err := f.execEngineAnalysis(projectSubPath)
 	if err != nil {

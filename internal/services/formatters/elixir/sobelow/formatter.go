@@ -54,12 +54,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startSobelow(projectSubPath), tools.Sobelow, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Sobelow)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Sobelow, languages.Elixir)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSobelow(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Sobelow)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Sobelow, languages.Elixir)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
@@ -70,7 +70,7 @@ func (f *Formatter) startSobelow(projectSubPath string) error {
 		return ErrorNotAPhoenixApplication
 	}
 
-	return f.parseOutput(output)
+	return f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
@@ -82,7 +82,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
-func (f *Formatter) parseOutput(output string) error {
+func (f *Formatter) parseOutput(output, projectSubPath string) error {
 	const replaceDefaultMessage = "Checking Sobelow version..."
 	output = strings.ReplaceAll(strings.ReplaceAll(output, replaceDefaultMessage, ""), "\r", "")
 
@@ -92,7 +92,7 @@ func (f *Formatter) parseOutput(output string) error {
 		}
 
 		if data := f.setOutputData(value); data != nil {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(data))
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(data, projectSubPath))
 		}
 	}
 
@@ -115,10 +115,10 @@ func (f *Formatter) setOutputData(output string) *entities.Output {
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(output *entities.Output) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(output *entities.Output, projectSubPath string) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Details = output.Title
-	vuln.File = output.File
+	vuln.File = f.GetFilepathFromFilename(output.File, projectSubPath)
 	vuln.Line = output.Line
 	vuln = vulnhash.Bind(vuln)
 	return f.SetCommitAuthor(vuln)

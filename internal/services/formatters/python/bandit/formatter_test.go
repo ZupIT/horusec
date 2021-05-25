@@ -19,6 +19,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	"github.com/ZupIT/horusec/internal/entities/monitor"
@@ -155,7 +157,8 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsToIgnore([]string{"GoSec", "SecurityCodeScan", "Brakeman", "Safety", "Bandit", "NpmAudit", "YarnAudit", "SpotBugs", "HorusecKotlin", "HorusecJava", "HorusecLeaks", "GitLeaks", "TfSec", "Semgrep", "HorusecCsharp", "HorusecKubernetes", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS", "Eslint", "HorusecNodeJS", "Flawfinder", "PhpCS"})
+		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Bandit: toolsconfig.ToolConfig{IsToIgnore: true}})
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 		formatter := NewFormatter(service)
 

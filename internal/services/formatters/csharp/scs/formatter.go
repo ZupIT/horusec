@@ -50,12 +50,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startSecurityCodeScan(projectSubPath), tools.SecurityCodeScan, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan, languages.CSharp)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan, languages.CSharp)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
@@ -66,13 +66,13 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 		return errSolution
 	}
 
-	f.parseOutput(output)
+	f.parseOutput(output, projectSubPath)
 	return nil
 }
 
-func (f *Formatter) parseOutput(output string) {
+func (f *Formatter) parseOutput(output, projectSubPath string) {
 	for _, scsResult := range f.newScsResultArrayFromOutput(output) {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(scsResult))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(scsResult, projectSubPath))
 	}
 }
 
@@ -104,13 +104,14 @@ func (f *Formatter) removeDuplicatedOutputs(scsResults []entities.ScsResult) []e
 	return scsResults[0 : len(scsResults)/2]
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(scsResult entities.ScsResult) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilitySeverityData(scsResult entities.ScsResult,
+	projectSubPath string) *vulnerability.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = scsResult.GetSeverity()
 	data.Details = f.removeCsprojPathFromDetails(scsResult.IssueText)
 	data.Line = scsResult.GetLine()
 	data.Column = scsResult.GetColumn()
-	data.File = f.GetFilepathFromFilename(scsResult.GetFilename())
+	data.File = f.GetFilepathFromFilename(f.RemoveSrcFolderFromPath(scsResult.GetFilename()), projectSubPath)
 	data = vulnhash.Bind(data)
 	return f.SetCommitAuthor(data)
 }

@@ -50,12 +50,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	f.SetAnalysisError(f.startBandit(projectSubPath), tools.Bandit, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit, languages.Python)
 	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBandit(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Bandit)
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Bandit, languages.Python)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {

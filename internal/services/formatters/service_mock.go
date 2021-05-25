@@ -33,7 +33,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) LogDebugWithReplace(_ string, _ tools.Tool) {
+func (m *Mock) LogDebugWithReplace(_ string, _ tools.Tool, _ languages.Language) {
 	_ = m.MethodCalled("LogDebugWithReplace")
 }
 
@@ -99,7 +99,7 @@ func (m *Mock) ToolIsToIgnore(_ tools.Tool) bool {
 	return args.Get(0).(bool)
 }
 
-func (m *Mock) GetFilepathFromFilename(_ string) string {
+func (m *Mock) GetFilepathFromFilename(_, _ string) string {
 	args := m.MethodCalled("GetFilepathFromFilename")
 	return args.Get(0).(string)
 }

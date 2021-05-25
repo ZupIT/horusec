@@ -130,7 +130,6 @@ func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *vulnerabil
 	if vuln.Severity.ToString() != "" && !pr.isTypeVulnToSkip(vuln) {
 		if !pr.isIgnoredVulnerability(vuln.Severity.ToString()) {
 			logger.LogDebugWithLevel(messages.MsgDebugVulnHashToFix + vuln.VulnHash)
-			fmt.Println("")
 			pr.totalVulns++
 		}
 	}
