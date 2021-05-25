@@ -32,6 +32,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/config/dist"
 	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
@@ -566,7 +567,7 @@ func (c *Config) replaceCommaToSpaceSliceString(input []string) []string {
 }
 
 func (c *Config) GetDisableDocker() bool {
-	return c.disableDocker
+	return dist.IsStandAlone() || c.disableDocker
 }
 
 func (c *Config) SetDisableDocker(disableDocker bool) {

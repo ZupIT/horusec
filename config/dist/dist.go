@@ -8,7 +8,7 @@ func IsStandAlone() bool {
 	return StandAlone
 }
 
-func GetDistName() string {
+func GetVersion() string {
 	if IsStandAlone() {
 		return "stand-alone"
 	}
