@@ -7,6 +7,7 @@ GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
+PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)
@@ -42,13 +43,11 @@ fix-imports:
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
-		curl -fsSL https://horusec.io/bin/install.sh | bash
+		make install
 		$(HORUSEC) start -p="./" -e="true"
     else
 		$(HORUSEC) start -p="./" -e="true"
     endif
-
-PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 
 build-install-cli-linux:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-linux" &> /dev/null
@@ -66,4 +65,7 @@ build-install-cli-windows:
 	rm -rf "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" &> /dev/null
 	env GOOS=windows GOARCH=amd64 $(GO) build -o "$(PATH_BINARY_BUILD_CLI)/horusec-win.exe" ./cmd/app/main.go
 
-pipeline: fmt fix-imports lint test coverage build security
+install:
+	./deployments/scripts/install.sh latest
+
+pipeline: fmt fix-imports lint test coverage security

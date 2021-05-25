@@ -1,0 +1,11 @@
+name: Coverage
+on: [ "push" ]
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: coverage
+        run: make coverage
