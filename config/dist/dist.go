@@ -5,7 +5,7 @@ var (
 )
 
 func IsStandAlone() bool {
-	return standAlone == "false"
+	return standAlone != "false"
 }
 
 func GetVersion() string {

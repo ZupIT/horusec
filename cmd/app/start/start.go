@@ -118,7 +118,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	_ = startCmd.PersistentFlags().
 		StringSliceP("show-vulnerabilities-types", "", s.configs.GetShowVulnerabilitiesTypes(), "Used to show in the output vulnerabilities of types: Vulnerability, Risk Accepted, False Positive, Corrected. Example --show-vulnerabilities-types=\"Vulnerability, Risk Accepted\"")
 
-	if dist.IsStandAlone() {
+	if !dist.IsStandAlone() {
 		_ = startCmd.PersistentFlags().
 			BoolP("disable-docker", "D", s.configs.GetDisableDocker(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-java, horusec-kubernetes, horusec-leaks, horusec-nodejs, horusec-dart, horusec-nginx. Example: -D=\"true\"")
 	}

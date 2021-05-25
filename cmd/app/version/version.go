@@ -40,7 +40,7 @@ func (v *Version) CreateCobraCmd() *cobra.Command {
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.LogPrint(cmd.Short + " is: " + config.NewConfig().GetVersion())
-			logger.LogPrint("dist:" + dist.GetVersion())
+			logger.LogPrint("dist: " + dist.GetVersion())
 			return nil
 		},
 	}
