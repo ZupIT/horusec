@@ -35,6 +35,17 @@ Horusec is an open source tool that performs static code analysis to identify se
 
 ## Getting started
 
+### Requirements
+
+- Docker
+
+To run horusec with all the tools we use the docker installed on your machine. 
+If you don't have docker, we have a [flag](https://horusec.io/docs/cli/resources/#3-flags) `-D true` 
+that will disable the dependency, but it also loses much of the analysis power. 
+We recommend whenever possible using it with docker.
+
+If you enable commit authors `-G true`, there is also a `git` dependency.
+
 ### Mac or Linux
 ```
 make install
@@ -143,6 +154,7 @@ Read our [contributing guide](CONTRIBUTING.md) to learn about our development pr
 We have a few channels for contact, feel free to reach out to us at:
 
 - [GitHub Issues](https://github.com/ZupIT/horusec/issues)
+- [Zup Open Source Forum](https://forum.zup.com.br)
 
 ## Contributing
 
