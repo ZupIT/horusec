@@ -1,11 +1,13 @@
 package dist
 
+const False = "false"
+
 var (
-	standAlone = "false"
+	standAlone string = False
 )
 
 func IsStandAlone() bool {
-	return standAlone != "false"
+	return standAlone != False
 }
 
 func GetVersion() string {
