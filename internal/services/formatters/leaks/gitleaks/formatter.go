@@ -68,7 +68,7 @@ func (f *Formatter) startGitLeaks(projectSubPath string) error {
 }
 
 func (f *Formatter) formatOutputGitLeaks(output string) error {
-	if output == "" || output[:4] == "null" {
+	if output == "" || (len(output) >= 4 && output[:4] == "null") {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
 		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
