@@ -16,55 +16,10 @@ package horusecleaks
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/internal/enums/engines"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/engines/leaks"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
-type Formatter struct {
-	formatters.IService
-	leaks.Interface
-}
-
 func NewFormatter(service formatters.IService) formatters.IFormatter {
-	return &Formatter{
-		service,
-		leaks.NewRules(),
-	}
-}
-
-func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.HorusecEngine) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecEngine.ToString())
-		return
-	}
-
-	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecEngine, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, languages.Leaks)
-	f.SetToolFinishedAnalysis()
-}
-
-func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine, languages.Leaks)
-
-	findings, err := f.execEngineAnalysis(projectSubPath)
-	if err != nil {
-		return err
-	}
-
-	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Leaks)
-}
-
-func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
-	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
-	if err != nil {
-		return nil, err
-	}
-
-	allRules := append(f.GetAllRules(), f.GetCustomRulesByLanguage(languages.Leaks)...)
-	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engines.DefaultMaxUnitsPerAnalysis), nil
+	return formatters.NewDefaultFormatter(service, leaks.NewRules(), languages.Leaks)
 }

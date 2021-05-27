@@ -22,13 +22,9 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/jvm/regular"
 )
 
-type Interface interface {
-	GetAllRules(rules []engine.Rule) []engine.Rule
-}
-
 type Rules struct{}
 
-func NewRules() Interface {
+func NewRules() *Rules {
 	return &Rules{}
 }
 
