@@ -19,6 +19,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config/dist"
 )
 
 type IVersion interface {
@@ -39,6 +40,7 @@ func (v *Version) CreateCobraCmd() *cobra.Command {
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger.LogPrint(cmd.Short + " is: " + config.NewConfig().GetVersion())
+			logger.LogPrint("dist: " + dist.GetVersion())
 			return nil
 		},
 	}
