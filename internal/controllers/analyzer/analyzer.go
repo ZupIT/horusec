@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package analyser
+package analyzer
 
 import (
 	"fmt"
@@ -76,7 +76,7 @@ type Interface interface {
 	AnalysisDirectory() (totalVulns int, err error)
 }
 
-type Analyser struct {
+type Analyzer struct {
 	monitor           *monitor.Monitor
 	dockerSDK         docker.Interface
 	analysis          *analysis.Analysis
@@ -87,14 +87,14 @@ type Analyser struct {
 	formatterService  formatters.IService
 }
 
-func NewAnalyser(config cliConfig.IConfig) Interface {
+func NewAnalyzer(config cliConfig.IConfig) Interface {
 	entity := &analysis.Analysis{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		Status:    enumsAnalysis.Running,
 	}
 	dockerAPI := docker.NewDockerAPI(dockerClient.NewDockerClient(), config, entity.ID)
-	return &Analyser{
+	return &Analyzer{
 		dockerSDK:         dockerAPI,
 		analysis:          entity,
 		config:            config,
@@ -105,14 +105,14 @@ func NewAnalyser(config cliConfig.IConfig) Interface {
 	}
 }
 
-func (a *Analyser) AnalysisDirectory() (totalVulns int, err error) {
+func (a *Analyzer) AnalysisDirectory() (totalVulns int, err error) {
 	a.removeTrashByInterruptProcess()
 	totalVulns, err = a.runAnalysis()
 	a.removeHorusecFolder()
 	return totalVulns, err
 }
 
-func (a *Analyser) removeTrashByInterruptProcess() {
+func (a *Analyzer) removeTrashByInterruptProcess() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
@@ -123,7 +123,7 @@ func (a *Analyser) removeTrashByInterruptProcess() {
 	}()
 }
 
-func (a *Analyser) removeHorusecFolder() {
+func (a *Analyzer) removeHorusecFolder() {
 	err := os.RemoveAll(a.config.GetProjectPath() + file.ReplacePathSeparator("/.horusec"))
 	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err)
 	if !a.config.GetDisableDocker() {
@@ -131,7 +131,7 @@ func (a *Analyser) removeHorusecFolder() {
 	}
 }
 
-func (a *Analyser) runAnalysis() (totalVulns int, err error) {
+func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 	langs, err := a.languageDetect.LanguageDetect(a.config.GetProjectPath())
 	if err != nil {
 		return 0, err
@@ -142,7 +142,7 @@ func (a *Analyser) runAnalysis() (totalVulns int, err error) {
 	return a.sendAnalysisAndStartPrintResults()
 }
 
-func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
+func (a *Analyzer) sendAnalysisAndStartPrintResults() (int, error) {
 	a.formatAnalysisToSendToAPI()
 	a.horusecAPIService.SendAnalysis(a.analysis)
 	analysisSaved := a.horusecAPIService.GetAnalysis(a.analysis.ID)
@@ -155,7 +155,7 @@ func (a *Analyser) sendAnalysisAndStartPrintResults() (int, error) {
 	return a.printController.StartPrintResults()
 }
 
-func (a *Analyser) formatAnalysisToPrint() {
+func (a *Analyzer) formatAnalysisToPrint() {
 	a.analysis = a.setFalsePositive()
 	if !a.config.GetEnableInformationSeverity() {
 		a.analysis = a.removeInfoVulnerabilities()
@@ -163,7 +163,7 @@ func (a *Analyser) formatAnalysisToPrint() {
 	a.analysis = a.removeVulnerabilitiesByTypes()
 }
 
-func (a *Analyser) formatAnalysisToSendToAPI() {
+func (a *Analyzer) formatAnalysisToSendToAPI() {
 	a.analysis = a.setAnalysisFinishedData()
 	a.analysis = a.setupIDInAnalysisContents()
 	a.analysis = a.sortVulnerabilitiesByCriticality()
@@ -175,12 +175,12 @@ func (a *Analyser) formatAnalysisToSendToAPI() {
 	}
 }
 
-func (a *Analyser) setMonitor(monitorToSet *monitor.Monitor) {
+func (a *Analyzer) setMonitor(monitorToSet *monitor.Monitor) {
 	a.monitor = monitorToSet
 	a.formatterService.SetMonitor(monitorToSet)
 }
 
-func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
+func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	for _, language := range langs {
 		for _, projectSubPath := range a.config.GetWorkDir().GetArrayByLanguage(language) {
 			a.logProjectSubPath(language, projectSubPath)
@@ -194,7 +194,7 @@ func (a *Analyser) startDetectVulnerabilities(langs []languages.Language) {
 	a.runMonitorTimeout(a.config.GetTimeoutInSecondsAnalysis())
 }
 
-func (a *Analyser) runMonitorTimeout(monitorNumber int64) {
+func (a *Analyzer) runMonitorTimeout(monitorNumber int64) {
 	if monitorNumber <= 0 {
 		a.dockerSDK.DeleteContainersFromAPI()
 		a.config.SetIsTimeout(true)
@@ -209,7 +209,7 @@ func (a *Analyser) runMonitorTimeout(monitorNumber int64) {
 }
 
 //nolint:funlen // all Languages is greater than 15
-func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
+func (a *Analyzer) mapDetectVulnerabilityByLanguage() map[languages.Language]func(string) {
 	return map[languages.Language]func(string){
 		languages.CSharp:     a.detectVulnerabilityCsharp,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
@@ -231,7 +231,7 @@ func (a *Analyser) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 	}
 }
 
-func (a *Analyser) detectVulnerabilityCsharp(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityCsharp(projectSubPath string) {
 	const TotalProcess = 2
 	a.monitor.AddProcess(TotalProcess)
 	go horuseccsharp.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
@@ -244,14 +244,14 @@ func (a *Analyser) detectVulnerabilityCsharp(projectSubPath string) {
 	go scs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityLeaks(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityLeaks(projectSubPath string) {
 	const TotalProcess = 2
 	a.monitor.AddProcess(TotalProcess)
 	go horusecleaks.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 	a.executeGitLeaks(projectSubPath)
 }
 
-func (a *Analyser) executeGitLeaks(projectSubPath string) {
+func (a *Analyzer) executeGitLeaks(projectSubPath string) {
 	const TotalProcess = 1
 	if a.config.GetEnableGitHistoryAnalysis() {
 		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
@@ -267,7 +267,7 @@ func (a *Analyser) executeGitLeaks(projectSubPath string) {
 	}
 }
 
-func (a *Analyser) detectVulnerabilityGo(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityGo(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -279,25 +279,25 @@ func (a *Analyser) detectVulnerabilityGo(projectSubPath string) {
 	go gosec.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityJava(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityJava(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horusecjava.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityKotlin(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityKotlin(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horuseckotlin.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityNginx(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityNginx(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horusecnginx.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityJavascript(projectSubPath string) {
 	const TotalProcess = 3
 	a.monitor.AddProcess(TotalProcess)
 	go horusecnodejs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
@@ -311,7 +311,7 @@ func (a *Analyser) detectVulnerabilityJavascript(projectSubPath string) {
 	go npmaudit.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityPython(projectSubPath string) {
 	const TotalProcess = 2
 	a.monitor.AddProcess(TotalProcess)
 
@@ -324,7 +324,7 @@ func (a *Analyser) detectVulnerabilityPython(projectSubPath string) {
 	go safety.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityRuby(projectSubPath string) {
 	const TotalProcess = 2
 	a.monitor.AddProcess(TotalProcess)
 
@@ -337,7 +337,7 @@ func (a *Analyser) detectVulnerabilityRuby(projectSubPath string) {
 	go bundler.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityHCL(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -349,13 +349,13 @@ func (a *Analyser) detectVulnerabilityHCL(projectSubPath string) {
 	go hcl.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityYaml(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityYaml(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horuseckubernetes.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityC(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -367,7 +367,7 @@ func (a *Analyser) detectVulnerabilityC(projectSubPath string) {
 	go flawfinder.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityPHP(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -379,7 +379,7 @@ func (a *Analyser) detectVulnerabilityPHP(projectSubPath string) {
 	go phpcs.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityGeneric(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -391,13 +391,13 @@ func (a *Analyser) detectVulnerabilityGeneric(projectSubPath string) {
 	go semgrep.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityDart(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityDart(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 	go horusecDart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityElixir(projectSubPath string) {
 	const TotalProcess = 2
 	a.monitor.AddProcess(TotalProcess)
 
@@ -410,7 +410,7 @@ func (a *Analyser) detectVulnerabilityElixir(projectSubPath string) {
 	go sobelow.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
+func (a *Analyzer) detectVulnerabilityShell(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
 
@@ -422,14 +422,14 @@ func (a *Analyser) detectVulnerabilityShell(projectSubPath string) {
 	go shellcheck.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
-func (a *Analyser) logProjectSubPath(language languages.Language, subPath string) {
+func (a *Analyzer) logProjectSubPath(language languages.Language, subPath string) {
 	if subPath != "" {
 		msg := fmt.Sprintf("Running %s in subpath: %s", language.ToString(), subPath)
 		logger.LogDebugWithLevel(msg)
 	}
 }
 
-func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
+func (a *Analyzer) checkIfNoExistHashAndLog(list []string) {
 	for _, hash := range list {
 		existing := false
 		for keyAv := range a.analysis.AnalysisVulnerabilities {
@@ -444,7 +444,7 @@ func (a *Analyser) checkIfNoExistHashAndLog(list []string) {
 	}
 }
 
-func (a *Analyser) setFalsePositive() *analysis.Analysis {
+func (a *Analyzer) setFalsePositive() *analysis.Analysis {
 	a.analysis = a.SetFalsePositivesAndRiskAcceptInVulnerabilities(
 		a.config.GetFalsePositiveHashes(), a.config.GetRiskAcceptHashes())
 
@@ -453,12 +453,12 @@ func (a *Analyser) setFalsePositive() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) setErrorAndRemoveProcess(err error, processNumber int) {
+func (a *Analyzer) setErrorAndRemoveProcess(err error, processNumber int) {
 	a.setAnalysisError(err)
 	a.monitor.RemoveProcess(processNumber)
 }
 
-func (a *Analyser) setAnalysisError(err error) {
+func (a *Analyzer) setAnalysisError(err error) {
 	if err != nil {
 		toAppend := ""
 		if len(a.analysis.Errors) > 0 {
@@ -468,7 +468,7 @@ func (a *Analyser) setAnalysisError(err error) {
 		a.analysis.Errors += toAppend + err.Error()
 	}
 }
-func (a *Analyser) getCustomOrDefaultImage(language languages.Language) string {
+func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
 	if customImage := a.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]; customImage != "" {
 		return customImage
 	}
@@ -476,7 +476,7 @@ func (a *Analyser) getCustomOrDefaultImage(language languages.Language) string {
 	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }
 
-func (a *Analyser) SetFalsePositivesAndRiskAcceptInVulnerabilities(
+func (a *Analyzer) SetFalsePositivesAndRiskAcceptInVulnerabilities(
 	listFalsePositive, listRiskAccept []string) *analysis.Analysis {
 	for key := range a.analysis.AnalysisVulnerabilities {
 		a.setVulnerabilityType(key, listFalsePositive, enumsVulnerability.FalsePositive)
@@ -485,7 +485,7 @@ func (a *Analyser) SetFalsePositivesAndRiskAcceptInVulnerabilities(
 	return a.analysis
 }
 
-func (a *Analyser) setVulnerabilityType(keyAnalysisVulnerabilities int,
+func (a *Analyzer) setVulnerabilityType(keyAnalysisVulnerabilities int,
 	listToCheck []string, vulnerabilityType enumsVulnerability.Type) {
 	currentHash := a.analysis.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
 	for _, flagVulnerabilityHash := range listToCheck {
@@ -495,7 +495,7 @@ func (a *Analyser) setVulnerabilityType(keyAnalysisVulnerabilities int,
 	}
 }
 
-func (a *Analyser) setAnalysisFinishedData() *analysis.Analysis {
+func (a *Analyzer) setAnalysisFinishedData() *analysis.Analysis {
 	a.analysis.FinishedAt = time.Now()
 
 	if a.analysis.HasErrors() {
@@ -507,7 +507,7 @@ func (a *Analyser) setAnalysisFinishedData() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) setupIDInAnalysisContents() *analysis.Analysis {
+func (a *Analyzer) setupIDInAnalysisContents() *analysis.Analysis {
 	for key := range a.analysis.AnalysisVulnerabilities {
 		a.analysis.AnalysisVulnerabilities[key].SetCreatedAt()
 		a.analysis.AnalysisVulnerabilities[key].SetAnalysisID(a.analysis.ID)
@@ -516,7 +516,7 @@ func (a *Analyser) setupIDInAnalysisContents() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) sortVulnerabilitiesByCriticality() *analysis.Analysis {
+func (a *Analyzer) sortVulnerabilitiesByCriticality() *analysis.Analysis {
 	analysisVulnerabilities := a.getVulnerabilitiesBySeverity(severities.Critical)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severities.High)...)
 	analysisVulnerabilities = append(analysisVulnerabilities, a.getVulnerabilitiesBySeverity(severities.Medium)...)
@@ -527,7 +527,7 @@ func (a *Analyser) sortVulnerabilitiesByCriticality() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) sortVulnerabilitiesByType() *analysis.Analysis {
+func (a *Analyzer) sortVulnerabilitiesByType() *analysis.Analysis {
 	analysisVulnerabilities := a.getVulnerabilitiesByType(enumsVulnerability.Vulnerability)
 	analysisVulnerabilities = append(analysisVulnerabilities,
 		a.getVulnerabilitiesByType(enumsVulnerability.RiskAccepted)...)
@@ -539,7 +539,7 @@ func (a *Analyser) sortVulnerabilitiesByType() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) getVulnerabilitiesByType(
+func (a *Analyzer) getVulnerabilitiesByType(
 	vulnType enumsVulnerability.Type) (response []analysis.AnalysisVulnerabilities) {
 	for index := range a.analysis.AnalysisVulnerabilities {
 		if a.analysis.AnalysisVulnerabilities[index].Vulnerability.Type == vulnType {
@@ -549,7 +549,7 @@ func (a *Analyser) getVulnerabilitiesByType(
 	return response
 }
 
-func (a *Analyser) getVulnerabilitiesBySeverity(
+func (a *Analyzer) getVulnerabilitiesBySeverity(
 	search severities.Severity) (response []analysis.AnalysisVulnerabilities) {
 	for index := range a.analysis.AnalysisVulnerabilities {
 		if a.analysis.AnalysisVulnerabilities[index].Vulnerability.Severity == search {
@@ -559,14 +559,14 @@ func (a *Analyser) getVulnerabilitiesBySeverity(
 	return response
 }
 
-func (a *Analyser) setDefaultVulnerabilityType() *analysis.Analysis {
+func (a *Analyzer) setDefaultVulnerabilityType() *analysis.Analysis {
 	for key := range a.analysis.AnalysisVulnerabilities {
 		a.analysis.AnalysisVulnerabilities[key].Vulnerability.Type = enumsVulnerability.Vulnerability
 	}
 	return a.analysis
 }
 
-func (a *Analyser) setDefaultConfidence() *analysis.Analysis {
+func (a *Analyzer) setDefaultConfidence() *analysis.Analysis {
 	for key := range a.analysis.AnalysisVulnerabilities {
 		valid := false
 		for _, conf := range confidence.Values() {
@@ -582,7 +582,7 @@ func (a *Analyser) setDefaultConfidence() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) removeInfoVulnerabilities() *analysis.Analysis {
+func (a *Analyzer) removeInfoVulnerabilities() *analysis.Analysis {
 	var vulnerabilities []analysis.AnalysisVulnerabilities
 
 	for index := range a.analysis.AnalysisVulnerabilities {
@@ -596,7 +596,7 @@ func (a *Analyser) removeInfoVulnerabilities() *analysis.Analysis {
 	return a.analysis
 }
 
-func (a *Analyser) removeVulnerabilitiesByTypes() *analysis.Analysis {
+func (a *Analyzer) removeVulnerabilitiesByTypes() *analysis.Analysis {
 	var vulnerabilities []analysis.AnalysisVulnerabilities
 
 	for index := range a.analysis.AnalysisVulnerabilities {

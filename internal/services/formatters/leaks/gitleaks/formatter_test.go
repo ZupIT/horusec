@@ -71,10 +71,10 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		leaksAnalyser := NewFormatter(service)
+		leaksAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			leaksAnalyser.StartAnalysis("")
+			leaksAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -89,10 +89,10 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		leaksAnalyser := NewFormatter(service)
+		leaksAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			leaksAnalyser.StartAnalysis("")
+			leaksAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -107,10 +107,10 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		leaksAnalyser := NewFormatter(service)
+		leaksAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			leaksAnalyser.StartAnalysis("")
+			leaksAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -128,10 +128,10 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		leaksAnalyser := NewFormatter(service)
+		leaksAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			leaksAnalyser.StartAnalysis("")
+			leaksAnalyzer.StartAnalysis("")
 		})
 	})
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {

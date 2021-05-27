@@ -30,7 +30,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/controllers/analyser"
+	"github.com/ZupIT/horusec/internal/controllers/analyzer"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/usecases/cli"
 	"github.com/ZupIT/horusec/internal/utils/copy"
@@ -71,8 +71,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -82,7 +82,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			configs:                configs,
 			startPrompt:            promptMock,
 			globalCmd:              globalCmd,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -107,8 +107,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -118,7 +118,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -144,8 +144,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -155,7 +155,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -177,8 +177,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -188,7 +188,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -210,8 +210,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -221,7 +221,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -244,8 +244,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -255,7 +255,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -279,8 +279,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -291,7 +291,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -314,8 +314,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
-		analyserControllerMock := &analyser.Mock{}
-		analyserControllerMock.On("AnalysisDirectory").Return(10, nil)
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -325,7 +325,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     analyserControllerMock,
+			analyzerController:     analyzerControllerMock,
 			requirementsController: requirementsMock,
 		}
 
@@ -356,7 +356,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 
@@ -404,7 +404,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 
@@ -445,7 +445,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 
@@ -485,7 +485,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 
@@ -539,7 +539,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 
@@ -585,7 +585,7 @@ func TestStartCommand_Execute(t *testing.T) {
 			useCases:               cli.NewCLIUseCases(),
 			configs:                configs,
 			startPrompt:            promptMock,
-			analyserController:     nil,
+			analyzerController:     nil,
 			requirementsController: requirementsMock,
 		}
 

@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/controllers/analyser"
+	"github.com/ZupIT/horusec/internal/controllers/analyzer"
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 
@@ -41,7 +41,7 @@ type IStart interface {
 type Start struct {
 	useCases               cli.Interface
 	configs                config.IConfig
-	analyserController     analyser.Interface
+	analyzerController     analyzer.Interface
 	startPrompt            prompt.Interface
 	globalCmd              *cobra.Command
 	requirementsController requirements.IRequirements
@@ -193,11 +193,11 @@ func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
 }
 
 func (s *Start) executeAnalysisDirectory() (totalVulns int, err error) {
-	if s.analyserController == nil {
-		s.analyserController = analyser.NewAnalyser(s.configs)
+	if s.analyzerController == nil {
+		s.analyzerController = analyzer.NewAnalyzer(s.configs)
 	}
 
-	return s.analyserController.AnalysisDirectory()
+	return s.analyzerController.AnalysisDirectory()
 }
 
 func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
