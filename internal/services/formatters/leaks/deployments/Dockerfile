@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zricethezav/gitleaks
+FROM zricethezav/gitleaks:v7.5.0
 
-COPY ./horusec-cli/internal/services/formatters/leaks/deployments/rules.toml /rules/rules.toml
+COPY ./internal/services/formatters/leaks/deployments/rules.toml /rules/rules.toml
 
 RUN apk --no-cache add ca-certificates openssh-client jq
 

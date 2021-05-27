@@ -138,11 +138,13 @@ validateIsToUpdateLatest() {
     fi
 }
 
-installSemver() {
-    chmod +x ./deployments/scripts/install-semver.sh
-    ./deployments/scripts/install-semver.sh
 
-    if ! semver &>/dev/null;
+installSemver () {
+    mkdir -p ./bin
+    curl -fsSL -o ./bin/install-semver.sh https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/install-semver.sh
+    chmod +x ./bin/install-semver.sh
+    ./bin/install-semver.sh
+    if ! semver &> /dev/null
     then
         exit 1
     fi
