@@ -11,7 +11,7 @@ const (
 	Go              = "horuszup/horusec-go:v1.0.0"
 	HCL             = "horuszup/horusec-hcl:v1.0.0"
 	Javascript      = "horuszup/horusec-js:v1.0.0"
-	Leaks           = "horuszup/horusec-leaks:v1.0.0"
+	Leaks           = "horuszup/horusec-leaks:v1.0.1"
 	PHP             = "horuszup/horusec-php:v1.0.0"
 	Python          = "horuszup/horusec-python:v1.0.0"
 	Ruby            = "horuszup/horusec-ruby:v1.0.2"

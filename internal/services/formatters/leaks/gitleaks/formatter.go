@@ -16,6 +16,7 @@ package gitleaks
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
@@ -67,7 +68,7 @@ func (f *Formatter) startGitLeaks(projectSubPath string) error {
 }
 
 func (f *Formatter) formatOutputGitLeaks(output string) error {
-	if output == "" {
+	if output == "" || output[:4] == "null" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
 		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
@@ -86,6 +87,9 @@ func (f *Formatter) formatOutputGitLeaks(output string) error {
 func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error) {
 	var issues []entities.Issue
 	err := json.Unmarshal([]byte(output), &issues)
+	if err != nil && strings.Contains(err.Error(), "invalid character") {
+		err = errors.New(output)
+	}
 	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err)
 	return issues, err
 }
@@ -100,7 +104,7 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
 	vulnerabilitySeverity *vulnerability.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = severities.Unknown
+	vulnerabilitySeverity.Severity = severities.Critical
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File

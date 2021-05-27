@@ -15,13 +15,12 @@
 
 
 UPDATE_TYPE=$1
-SEND_NEW_VERSION_TO_S3=$2
-IS_TO_UPDATE_LATEST=$3
+IS_TO_UPDATE_LATEST=$2
 ACTUAL_RELEASE_FORMATTED=""
 ACTUAL_RELEASE=""
 
 installSemver () {
-    mkdir bin
+    mkdir -p ./bin
     curl -fsSL -o ./bin/install-semver.sh https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/install-semver.sh
     chmod +x ./bin/install-semver.sh
     ./bin/install-semver.sh
@@ -123,24 +122,17 @@ generateBinaries () {
 
     sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./config/config.go"
 
-    if [[ "$SEND_NEW_VERSION_TO_S3" == "true" ]]
-    then
-        aws s3 cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/$ACTUAL_RELEASE_FORMATTED" --recursive
-    fi
     docker build -t "horuszup/horusec-cli:$ACTUAL_RELEASE" -f deployments/Dockerfile .
     docker push "horuszup/horusec-cli:$ACTUAL_RELEASE"
 
     if [[ "$IS_TO_UPDATE_LATEST" == "true" ]]
     then
         echo "$ACTUAL_RELEASE_FORMATTED" > ./deployments/version-cli-latest.txt
-        aws s3 cp ./deployments/version-cli-latest.txt s3://horusec.io/bin/version-cli-latest.txt
-        aws s3 cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/latest" --recursive
         docker build -t "horuszup/horusec-cli:latest" -f deployments/Dockerfile .
         docker push "horuszup/horusec-cli:latest"
     fi
 
     echo "$ACTUAL_RELEASE_FORMATTED" >> ./deployments/all-version-cli.txt
-    aws s3 cp ./deployments/all-version-cli.txt s3://horusec.io/bin/all-version-cli.txt
 }
 
 resetAlphaRcToMaster () {
