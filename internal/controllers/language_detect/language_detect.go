@@ -145,6 +145,9 @@ func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 			return true
 		}
 	}
+	if !ld.configs.GetEnableGitHistoryAnalysis() {
+		return strings.Contains(path, file.ReplacePathSeparator("/.git/"))
+	}
 	return false
 }
 

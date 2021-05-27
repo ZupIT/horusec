@@ -17,12 +17,12 @@ package gitleaks
 
 const CMD = `
 		{{WORK_DIR}}
-        touch /tmp/results-ANALYSISID.json
-        gitleaks --config="/rules/rules.toml" --owner-path=. --verbose --pretty --report="/tmp/results-ANALYSISID.json" &> /tmp/errorGitleaks-ANALYSISID
-        if [ $? -eq 2 ]; then
-            echo 'ERROR_RUNNING_GITLEAKS'
-            cat /tmp/errorGitleaks-ANALYSISID
-        else
+		touch /tmp/results-ANALYSISID.json /tmp/error-ANALYSISID.txt
+		gitleaks --config-path="/rules/rules.toml" --path="./" --leaks-exit-code="0" --verbose --report="/tmp/results-ANALYSISID.json" &> /tmp/error-ANALYSISID.txt
+		if [ $? -eq 0 ];
+		then
             jq -j -M -c . /tmp/results-ANALYSISID.json
+        else
+            cat /tmp/error-ANALYSISID.txt
         fi
   `

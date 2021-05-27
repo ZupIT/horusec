@@ -15,13 +15,12 @@
 
 
 UPDATE_TYPE=$1
-SEND_NEW_VERSION_TO_S3=$2
-IS_TO_UPDATE_LATEST=$3
+IS_TO_UPDATE_LATEST=$2
 ACTUAL_RELEASE_FORMATTED=""
 ACTUAL_RELEASE=""
 
 installSemver () {
-    mkdir bin
+    mkdir -p ./bin
     curl -fsSL -o ./bin/install-semver.sh https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/install-semver.sh
     chmod +x ./bin/install-semver.sh
     ./bin/install-semver.sh
@@ -77,43 +76,43 @@ generateBinaries () {
     ACTUAL_RELEASE_FORMATTED=$(tr '.' '-' <<<"$ACTUAL_RELEASE")
 
     # Build for linux x86
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec" ./cmd/app/main.go;
+    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/app/main.go;
     then
         echo "Error when generate Build for linux_x86"
     else
-        echo "1/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec"
+        echo "1/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86"
     fi
 
     # Build for linux x64
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec" ./cmd/app/main.go;
+    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" ./cmd/app/main.go;
     then
         echo "Error when generate Build for linux_x64"
     else
-        echo "2/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
+        echo "2/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64"
     fi
 
     # Build for Windows x86
-    if ! env GOOS=windows GOARCH=386 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86/horusec.exe" ./cmd/app/main.go;
+    if ! env GOOS=windows GOARCH=386 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x86.exe" ./cmd/app/main.go;
     then
         echo "Error when generate Build for win_x86"
     else
-        echo "3/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86/horusec.exe"
+        echo "3/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x86.exe"
     fi
 
     # Build for Windows x64
-    if ! env GOOS=windows GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x64/horusec.exe" ./cmd/app/main.go;
+    if ! env GOOS=windows GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x64.exe" ./cmd/app/main.go;
     then
         echo "Error when generate Build for win_x64"
     else
-        echo "4/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/win_x64/horusec.exe"
+        echo "4/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x64.exe"
     fi
 
     # Build for Mac x64
-    if ! env GOOS=darwin GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/mac_x64/horusec" ./cmd/app/main.go;
+    if ! env GOOS=darwin GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_mac_x64" ./cmd/app/main.go;
     then
         echo "Error when generate Build for mac_x64"
     else
-        echo "5/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/mac_x64/horusec"
+        echo "5/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_mac_x64"
     fi
 
     chmod +x "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
@@ -123,24 +122,17 @@ generateBinaries () {
 
     sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./config/config.go"
 
-    if [[ "$SEND_NEW_VERSION_TO_S3" == "true" ]]
-    then
-        aws s3 cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/$ACTUAL_RELEASE_FORMATTED" --recursive
-    fi
     docker build -t "horuszup/horusec-cli:$ACTUAL_RELEASE" -f deployments/Dockerfile .
     docker push "horuszup/horusec-cli:$ACTUAL_RELEASE"
 
     if [[ "$IS_TO_UPDATE_LATEST" == "true" ]]
     then
         echo "$ACTUAL_RELEASE_FORMATTED" > ./deployments/version-cli-latest.txt
-        aws s3 cp ./deployments/version-cli-latest.txt s3://horusec.io/bin/version-cli-latest.txt
-        aws s3 cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED" "s3://horusec.io/bin/latest" --recursive
         docker build -t "horuszup/horusec-cli:latest" -f deployments/Dockerfile .
         docker push "horuszup/horusec-cli:latest"
     fi
 
     echo "$ACTUAL_RELEASE_FORMATTED" >> ./deployments/all-version-cli.txt
-    aws s3 cp ./deployments/all-version-cli.txt s3://horusec.io/bin/all-version-cli.txt
 }
 
 resetAlphaRcToMaster () {
