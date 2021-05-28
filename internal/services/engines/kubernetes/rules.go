@@ -16,73 +16,35 @@ package kubernetes
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes/and"
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes/or"
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes/regular"
 )
 
-type Rules struct{}
-
-func NewRules() *Rules {
-	return &Rules{}
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for index := range allRulesKubernetesAnd() {
-		rules = append(rules, allRulesKubernetesAnd()[index])
-	}
-
-	for index := range allRulesKubernetesOr() {
-		rules = append(rules, allRulesKubernetesOr()[index])
-	}
-
-	for index := range allRulesKubernetesRegular() {
-		rules = append(rules, allRulesKubernetesRegular()[index])
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".yaml", ".yml"}
 }
 
-func allRulesKubernetesRegular() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Regular rules
 		regular.NewKubernetesRegularHostIPC(),
 		regular.NewKubernetesRegularHostPID(),
 		regular.NewKubernetesRegularHostNetwork(),
-	}
-}
 
-func allRulesKubernetesAnd() []text.TextRule {
-	return []text.TextRule{
+		// And rules
 		and.NewKubernetesAndAllowPrivilegeEscalation(),
 		and.NewKubernetesAndHostAliases(),
 		and.NewKubernetesAndDockerSock(),
 		and.NewKubernetesAndCapabilitySystemAdmin(),
 		and.NewKubernetesAndPrivilegedContainer(),
-	}
-}
 
-func allRulesKubernetesOr() []text.TextRule {
-	return []text.TextRule{
+		// Or rules
 		or.NewKubernetesOrSeccompUnconfined(),
 	}
 }
