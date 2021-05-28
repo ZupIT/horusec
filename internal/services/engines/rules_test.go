@@ -13,6 +13,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/leaks"
 	"github.com/ZupIT/horusec/internal/services/engines/nginx"
 	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
+	"github.com/ZupIT/horusec/internal/services/engines/swift"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -62,6 +63,11 @@ func TestGetRules(t *testing.T) {
 			engine:             "Csharp",
 			manager:            csharp.NewRules(),
 			expectedTotalRules: 74,
+		},
+		{
+			engine:             "Swift",
+			manager:            swift.NewRules(),
+			expectedTotalRules: 23,
 		},
 	}
 
