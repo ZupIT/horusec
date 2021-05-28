@@ -16,55 +16,64 @@ package csharp
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp/and"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp/or"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp/regular"
 )
 
-type Rules struct{}
-
-func NewRules() *Rules {
-	return &Rules{}
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for _, rule := range allRulesCsharpAnd() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesCsharpOr() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesCsharpRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".cs", ".vb", ".cshtml", ".csproj", ".xml"}
 }
 
-func allRulesCsharpRegular() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// And rules
+		and.NewCsharpAndCommandInjection(),
+		and.NewCsharpAndXPathInjection(),
+		and.NewCsharpAndExternalEntityInjection(),
+		and.NewCsharpAndPathTraversal(),
+		and.NewCsharpAndSQLInjectionWebControls(),
+		and.NewCsharpAndFormsAuthenticationCookielessMode(),
+		and.NewCsharpAndFormsAuthenticationWeakCookieProtection(),
+		and.NewCsharpAndFormsAuthenticationCrossAppRedirects(),
+		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
+		and.NewCsharpAndFormsAuthenticationWeakTimeout(),
+		and.NewCsharpAndHeaderCheckingDisabled(),
+		and.NewCsharpAndVersionHeaderEnabled(),
+		and.NewCsharpAndEventValidationDisabled(),
+		and.NewCsharpAndWeakSessionTimeout(),
+		and.NewCsharpAndStateServerMode(),
+		and.NewCsharpAndJwtSignatureValidationDisabled(),
+		and.NewCsharpAndInsecureHttpCookieTransport(),
+		and.NewCsharpAndHttpCookieAccessibleViaScript(),
+		and.NewCsharpAndDirectoryListingEnabled(),
+		and.NewCsharpAndLdapAuthenticationDisabled(),
+		and.NewCsharpAndCertificateValidationDisabled(),
+		and.NewCsharpAndActionRequestValidationDisabled(),
+		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
+		and.NewCsharpAndLdapInjectionFilterAssignment(),
+		and.NewCsharpAndSqlInjectionDynamicNHibernateQuery(),
+		and.NewCsharpAndLdapInjectionDirectorySearcher(),
+		and.NewCsharpAndLdapInjectionPathAssignment(),
+
+		// Or rules
+		or.NewCsharpOrLDAPInjection(),
+		or.NewCsharpOrSQLInjectionLinq(),
+		or.NewCsharpOrInsecureDeserialization(),
+		or.NewCsharpOrCookieWithoutSSLFlag(),
+		or.NewCsharpOrCookieWithoutHttpOnlyFlag(),
+		or.NewCsharpOrSQLInjectionEnterpriseLibraryData(),
+		or.NewCsharpOrCQLInjectionCassandra(),
+		or.NewCsharpOrPasswordComplexity(),
+		or.NewCsharpOrNoInputVariable(),
+		or.NewCsharpOrIdentityWeakPasswordComplexity(),
+
+		// Regular rules
 		regular.NewCsharpRegularNoLogSensitiveInformationInConsole(),
 		regular.NewCsharpRegularOutputCacheConflict(),
 		regular.NewCsharpRegularOpenRedirect(),
@@ -102,52 +111,5 @@ func allRulesCsharpRegular() []text.TextRule {
 		regular.NewCsharpRegularWeakRsaKeyLength(),
 		regular.NewCsharpRegularXmlReaderExternalEntityExpansion(),
 		regular.NewCsharpRegularLdapInjectionDirectoryEntry(),
-	}
-}
-
-func allRulesCsharpAnd() []text.TextRule {
-	return []text.TextRule{
-		and.NewCsharpAndCommandInjection(),
-		and.NewCsharpAndXPathInjection(),
-		and.NewCsharpAndExternalEntityInjection(),
-		and.NewCsharpAndPathTraversal(),
-		and.NewCsharpAndSQLInjectionWebControls(),
-		and.NewCsharpAndFormsAuthenticationCookielessMode(),
-		and.NewCsharpAndFormsAuthenticationWeakCookieProtection(),
-		and.NewCsharpAndFormsAuthenticationCrossAppRedirects(),
-		and.NewCsharpAndWeakCipherOrCBCOrECBMode(),
-		and.NewCsharpAndFormsAuthenticationWeakTimeout(),
-		and.NewCsharpAndHeaderCheckingDisabled(),
-		and.NewCsharpAndVersionHeaderEnabled(),
-		and.NewCsharpAndEventValidationDisabled(),
-		and.NewCsharpAndWeakSessionTimeout(),
-		and.NewCsharpAndStateServerMode(),
-		and.NewCsharpAndJwtSignatureValidationDisabled(),
-		and.NewCsharpAndInsecureHttpCookieTransport(),
-		and.NewCsharpAndHttpCookieAccessibleViaScript(),
-		and.NewCsharpAndDirectoryListingEnabled(),
-		and.NewCsharpAndLdapAuthenticationDisabled(),
-		and.NewCsharpAndCertificateValidationDisabled(),
-		and.NewCsharpAndActionRequestValidationDisabled(),
-		and.NewCsharpAndXmlDocumentExternalEntityExpansion(),
-		and.NewCsharpAndLdapInjectionFilterAssignment(),
-		and.NewCsharpAndSqlInjectionDynamicNHibernateQuery(),
-		and.NewCsharpAndLdapInjectionDirectorySearcher(),
-		and.NewCsharpAndLdapInjectionPathAssignment(),
-	}
-}
-
-func allRulesCsharpOr() []text.TextRule {
-	return []text.TextRule{
-		or.NewCsharpOrLDAPInjection(),
-		or.NewCsharpOrSQLInjectionLinq(),
-		or.NewCsharpOrInsecureDeserialization(),
-		or.NewCsharpOrCookieWithoutSSLFlag(),
-		or.NewCsharpOrCookieWithoutHttpOnlyFlag(),
-		or.NewCsharpOrSQLInjectionEnterpriseLibraryData(),
-		or.NewCsharpOrCQLInjectionCassandra(),
-		or.NewCsharpOrPasswordComplexity(),
-		or.NewCsharpOrNoInputVariable(),
-		or.NewCsharpOrIdentityWeakPasswordComplexity(),
 	}
 }

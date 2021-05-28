@@ -16,49 +16,21 @@ package leaks
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/leaks/regular"
 )
 
-type Rules struct{}
-
-func NewRules() *Rules {
-	return &Rules{}
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	rules = r.addLeaksRules(rules)
-	return rules
-}
-
-func (r *Rules) addLeaksRules(rules []engine.Rule) []engine.Rule {
-	for _, rule := range allRulesLeaksRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	units := r.parseTextUnitsToUnits(textUnits)
-	return units, err
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{"**"}
 }
 
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-
-	return units
-}
-
-func allRulesLeaksRegular() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Regular rules
 		regular.NewLeaksRegularAWSManagerID(),
 		regular.NewLeaksRegularAWSSecretKey(),
 		regular.NewLeaksRegularAWSMWSKey(),
@@ -88,12 +60,4 @@ func allRulesLeaksRegular() []text.TextRule {
 		regular.NewLeaksRegularPasswordExposedInHardcodedURL(),
 		regular.NewLeaksRegularWPConfig(),
 	}
-}
-
-func allRulesLeaksAnd() []text.TextRule {
-	return []text.TextRule{}
-}
-
-func allRulesLeaksOr() []text.TextRule {
-	return []text.TextRule{}
 }

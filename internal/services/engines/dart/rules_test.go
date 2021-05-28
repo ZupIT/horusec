@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec-engine/text"
 )
@@ -38,23 +39,25 @@ func TestRules_GetAllRules(t *testing.T) {
 	})
 }
 func TestRulesEnum(t *testing.T) {
-	var totalRules []text.TextRule
+	totalRules := rules()
 
-	totalRules = append(totalRules, allRulesDartAnd()...)
-	totalRules = append(totalRules, allRulesDartOr()...)
-	totalRules = append(totalRules, allRulesDartRegular()...)
 	lenExpectedTotalRules := 17
 
 	t.Run("Should not exists duplicated ID in rules and return lenExpectedTotalRules in dart", func(t *testing.T) {
 		encountered := map[string]bool{}
 
-		for v := range totalRules {
-			if encountered[totalRules[v].ID] == true {
-				msg := fmt.Sprintf("This rules in dart is duplicated ID(%s) => Name: %s, Description: %s, Type: %v", totalRules[v].ID, totalRules[v].Name, totalRules[v].Description, totalRules[v].Type)
-				assert.False(t, encountered[totalRules[v].ID], msg)
+		for _, rule := range totalRules {
+			r, ok := rule.(text.TextRule)
+			require.True(t, ok, "Expected TextRule type, got %T", rule)
+
+			if encountered[r.ID] == true {
+				msg := fmt.Sprintf(
+					"This rules in dart is duplicated ID(%s) => Name: %s, Description: %s, Type: %v", r.ID, r.Name, r.Description, r.Type,
+				)
+				assert.False(t, encountered[r.ID], msg)
 			} else {
 				// Record this element as an encountered element.
-				encountered[totalRules[v].ID] = true
+				encountered[r.ID] = true
 			}
 		}
 		assert.Equal(t, len(totalRules), lenExpectedTotalRules, "totalRules in dart is not equal the expected")
