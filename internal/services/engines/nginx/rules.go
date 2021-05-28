@@ -21,14 +21,9 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/nginx/not"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
-}
-
 type Rules struct{}
 
-func NewRules() Interface {
+func NewRules() *Rules {
 	return &Rules{}
 }
 

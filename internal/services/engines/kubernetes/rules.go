@@ -22,14 +22,9 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes/regular"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
-}
-
 type Rules struct{}
 
-func NewRules() Interface {
+func NewRules() *Rules {
 	return &Rules{}
 }
 

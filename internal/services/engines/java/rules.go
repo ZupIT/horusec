@@ -23,16 +23,11 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/jvm"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
-}
-
 type Rules struct {
-	jvmRules jvm.Interface
+	jvmRules *jvm.Rules
 }
 
-func NewRules() Interface {
+func NewRules() *Rules {
 	return &Rules{
 		jvmRules: jvm.NewRules(),
 	}
