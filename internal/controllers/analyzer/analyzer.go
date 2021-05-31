@@ -49,7 +49,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/c/flawfinder"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs"
-	horusecDart "github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
+	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/mixaudit"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
@@ -394,7 +394,7 @@ func (a *Analyzer) detectVulnerabilityGeneric(projectSubPath string) {
 func (a *Analyzer) detectVulnerabilityDart(projectSubPath string) {
 	const TotalProcess = 1
 	a.monitor.AddProcess(TotalProcess)
-	go horusecDart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
+	go horusecdart.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyzer) detectVulnerabilityElixir(projectSubPath string) {
