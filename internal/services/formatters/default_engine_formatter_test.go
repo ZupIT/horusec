@@ -28,7 +28,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 
-	horusecdart "github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
+	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/stretchr/testify/assert"
 )
 
