@@ -16,57 +16,18 @@ package kotlin
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-type Rules struct {
-	jvmRules jvm.Interface
-}
-
-func NewRules() Interface {
-	return &Rules{
-		jvmRules: jvm.NewRules(),
-	}
-}
-
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	rules = r.jvmRules.GetAllRules(rules)
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".kt", ".kts"}
 }
 
-func allRulesKotlinRegular() []text.TextRule {
-	return []text.TextRule{}
-}
-
-func allRulesKotlinAnd() []text.TextRule {
-	return []text.TextRule{}
-}
-
-func allRulesKotlinOr() []text.TextRule {
-	return []text.TextRule{}
+func rules() []engine.Rule {
+	return jvm.Rules()
 }

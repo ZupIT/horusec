@@ -42,10 +42,10 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		golangAnalyser := NewFormatter(service)
+		golangAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			golangAnalyser.StartAnalysis("")
+			golangAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -74,10 +74,10 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		golangAnalyser := NewFormatter(service)
+		golangAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			golangAnalyser.StartAnalysis("")
+			golangAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -91,10 +91,10 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		golangAnalyser := NewFormatter(service)
+		golangAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			golangAnalyser.StartAnalysis("")
+			golangAnalyzer.StartAnalysis("")
 		})
 	})
 
@@ -110,10 +110,10 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config, &monitor.Monitor{})
 
-		golangAnalyser := NewFormatter(service)
+		golangAnalyzer := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
-			golangAnalyser.StartAnalysis("")
+			golangAnalyzer.StartAnalysis("")
 		})
 	})
 

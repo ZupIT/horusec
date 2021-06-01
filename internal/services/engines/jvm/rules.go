@@ -16,40 +16,14 @@ package jvm
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm/and"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm/or"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm/regular"
 )
 
-type Interface interface {
-	GetAllRules(rules []engine.Rule) []engine.Rule
-}
-
-type Rules struct{}
-
-func NewRules() Interface {
-	return &Rules{}
-}
-
-func (r *Rules) GetAllRules(rules []engine.Rule) []engine.Rule {
-	for _, rule := range allRulesJvmAnd() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesJvmOr() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesJvmRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func allRulesJvmRegular() []text.TextRule {
-	return []text.TextRule{
+func Rules() []engine.Rule {
+	return []engine.Rule{
+		// Regular rules
 		regular.NewJvmRegularHTTPRequestsConnectionsAndSessions(),
 		regular.NewJvmRegularNoUsesSafetyNetAPI(),
 		regular.NewJvmRegularNoUsesContentProvider(),
@@ -66,11 +40,8 @@ func allRulesJvmRegular() []text.TextRule {
 		regular.NewJvmRegularNoUseNSTemporaryDirectory(),
 		regular.NewJvmRegularNoCopiesDataToTheClipboard(),
 		regular.NewJvmRegularNoLogSensitiveInformation(),
-	}
-}
 
-func allRulesJvmAnd() []text.TextRule {
-	return []text.TextRule{
+		// And rules
 		and.NewJvmAndNoDownloadFileUsingAndroidDownloadManager(),
 		and.NewJvmAndSQLInjectionWithSQLite(),
 		and.NewJvmAndAndroidKeystore(),
@@ -90,11 +61,8 @@ func allRulesJvmAnd() []text.TextRule {
 		and.NewJvmAndWeakSha1HashUsing(),
 		and.NewJvmAndWeakECBEncryptionAlgorithmUsing(),
 		and.NewJvmAndUsingPtrace(),
-	}
-}
 
-func allRulesJvmOr() []text.TextRule {
-	return []text.TextRule{
+		// Or rules
 		or.NewJvmOrSuperUserPrivileges(),
 		or.NewJvmOrSendSMS(),
 		or.NewJvmOrBase64Encode(),

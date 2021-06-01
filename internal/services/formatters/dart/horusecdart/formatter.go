@@ -12,59 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package hrousecdart
+package horusecdart
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/internal/enums/engines"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
-type Formatter struct {
-	formatters.IService
-	dart.Interface
-}
-
 func NewFormatter(service formatters.IService) formatters.IFormatter {
-	return &Formatter{
-		service,
-		dart.NewRules(),
-	}
-}
-
-func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.HorusecEngine) {
-		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecEngine.ToString())
-		return
-	}
-
-	f.SetAnalysisError(f.execEngineAndParseResults(projectSubPath), tools.HorusecEngine, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, languages.Dart)
-	f.SetToolFinishedAnalysis()
-}
-
-func (f *Formatter) execEngineAndParseResults(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine, languages.Dart)
-
-	findings, err := f.execEngineAnalysis(projectSubPath)
-	if err != nil {
-		return err
-	}
-
-	return f.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Dart)
-}
-
-func (f *Formatter) execEngineAnalysis(projectSubPath string) ([]engine.Finding, error) {
-	textUnit, err := f.GetTextUnitByRulesExt(f.GetProjectPathWithWorkdir(projectSubPath))
-	if err != nil {
-		return nil, err
-	}
-
-	allRules := append(f.GetAllRules(), f.GetCustomRulesByLanguage(languages.Dart)...)
-	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engines.DefaultMaxUnitsPerAnalysis), nil
+	return formatters.NewDefaultFormatter(service, dart.NewRules(), languages.Dart)
 }

@@ -16,41 +16,29 @@ package dart
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/dart/and"
 	"github.com/ZupIT/horusec/internal/services/engines/dart/or"
 	"github.com/ZupIT/horusec/internal/services/engines/dart/regular"
 )
 
-type Interface interface {
-	GetAllRules() []engine.Rule
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-type Rules struct{}
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// And Rules
+		and.NewDartAndUsageLocalDataWithoutCryptography(),
+		and.NewDartAndNoSendSensitiveInformation(),
+		and.NewDartAndNoUseBiometricsTypeIOS(),
+		and.NewDartAndXmlReaderExternalEntityExpansion(),
 
-func NewRules() Interface {
-	return &Rules{}
-}
+		// Or rules
+		or.NewDartOrNoUseConnectionWithoutSSL(),
+		or.NewDartOrSendSMS(),
 
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for _, rule := range allRulesDartAnd() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesDartOr() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesDartRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func allRulesDartRegular() []text.TextRule {
-	return []text.TextRule{
+		// Regular rules
 		regular.NewDartRegularXSSAttack(),
 		regular.NewDartRegularNoLogSensitive(),
 		regular.NewDartRegularWeakHashingFunctionMd5OrSha1(),
@@ -65,37 +53,6 @@ func allRulesDartRegular() []text.TextRule {
 	}
 }
 
-func allRulesDartAnd() []text.TextRule {
-	return []text.TextRule{
-		and.NewDartAndUsageLocalDataWithoutCryptography(),
-		and.NewDartAndNoSendSensitiveInformation(),
-		and.NewDartAndNoUseBiometricsTypeIOS(),
-		and.NewDartAndXmlReaderExternalEntityExpansion(),
-	}
-}
-
-func allRulesDartOr() []text.TextRule {
-	return []text.TextRule{
-		or.NewDartOrNoUseConnectionWithoutSSL(),
-		or.NewDartOrSendSMS(),
-	}
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".dart"}
 }

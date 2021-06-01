@@ -17,50 +17,21 @@ package nginx
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/nginx/not"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-type Rules struct{}
-
-func NewRules() Interface {
-	return &Rules{}
-}
-
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	for _, rule := range allNginxNotRules() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".nginx", "nginxconf", ".vhost"}
 }
 
-func allNginxNotRules() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Not rules
 		not.NewNginxNotIncludeXFrameOptionsHeader(),
 		not.NewNginxNotIncludeXContentTypeOptionsHeader(),
 		not.NewNginxNotIncludeContentSecurityPolicyHeader(),
