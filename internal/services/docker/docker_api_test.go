@@ -16,12 +16,11 @@ package docker
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
-
-	goContext "golang.org/x/net/context"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -277,7 +276,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 		config.SetProjectPath("C:/Users/usr/Documents/Horusec/project")
 
 		api := &API{
-			ctx:                    goContext.Background(),
+			ctx:                    context.Background(),
 			dockerClient:           dockerAPIClient,
 			config:                 config,
 			analysisID:             uuid.New(),

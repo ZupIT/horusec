@@ -15,6 +15,7 @@
 package docker
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -32,7 +33,6 @@ import (
 	dockerTypesFilters "github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/google/uuid"
-	goContext "golang.org/x/net/context"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
@@ -50,7 +50,7 @@ type Interface interface {
 }
 
 type API struct {
-	ctx                    goContext.Context
+	ctx                    context.Context
 	dockerClient           dockerService.Interface
 	config                 cliConfig.IConfig
 	analysisID             uuid.UUID
@@ -59,7 +59,7 @@ type API struct {
 
 func NewDockerAPI(docker dockerService.Interface, config cliConfig.IConfig, analysisID uuid.UUID) Interface {
 	return &API{
-		ctx:                    goContext.Background(),
+		ctx:                    context.Background(),
 		dockerClient:           docker,
 		config:                 config,
 		analysisID:             analysisID,
