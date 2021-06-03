@@ -38,6 +38,11 @@ var (
 	ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
 )
 
+type analysisOutputJSON struct {
+	Version string `json:"version"`
+	analysis.Analysis
+}
+
 type PrintResults struct {
 	analysis         *analysis.Analysis
 	configs          config.IConfig
@@ -106,7 +111,12 @@ func (pr *PrintResults) runPrintResultsText() error {
 }
 
 func (pr *PrintResults) runPrintResultsJSON() error {
-	bytesToWrite, err := json.MarshalIndent(pr.analysis, "", "  ")
+	a := analysisOutputJSON{
+		Analysis: *pr.analysis,
+		Version:  pr.configs.GetVersion(),
+	}
+
+	bytesToWrite, err := json.MarshalIndent(a, "", "  ")
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 		return err
