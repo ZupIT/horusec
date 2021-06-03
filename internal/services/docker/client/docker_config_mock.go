@@ -21,11 +21,12 @@ import (
 
 	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 
+	"context"
+
 	"github.com/docker/docker/api/types"
 	containertypes "github.com/docker/docker/api/types/container"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/mock"
-	"golang.org/x/net/context"
 )
 
 type Mock struct {
