@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
 	"github.com/ZupIT/horusec/internal/services/formatters/leaks/horusecleaks"
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
+	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 
 	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
@@ -68,6 +69,10 @@ func TestStartAnalysis(t *testing.T) {
 		{
 			engine:    "Kubernetes",
 			formatter: horuseckubernetes.NewFormatter,
+		},
+		{
+			engine:    "Swift",
+			formatter: horusecswift.NewFormatter,
 		},
 	}
 

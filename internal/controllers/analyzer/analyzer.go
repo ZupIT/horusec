@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
+	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -228,7 +229,13 @@ func (a *Analyzer) mapDetectVulnerabilityByLanguage() map[languages.Language]fun
 		languages.Elixir:     a.detectVulnerabilityElixir,
 		languages.Shell:      a.detectVulnerabilityShell,
 		languages.Nginx:      a.detectVulnerabilityNginx,
+		languages.Swift:      a.detectVulneravilitySwift,
 	}
+}
+
+func (a *Analyzer) detectVulneravilitySwift(projectSubPath string) {
+	a.monitor.AddProcess(1)
+	go horusecswift.NewFormatter(a.formatterService).StartAnalysis(projectSubPath)
 }
 
 func (a *Analyzer) detectVulnerabilityCsharp(projectSubPath string) {
