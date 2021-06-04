@@ -56,7 +56,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startBundlerAudit(projectSubPath), tools.BundlerAudit, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.BundlerAudit, languages.Ruby)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBundlerAudit(projectSubPath string) error {

@@ -24,7 +24,6 @@ import (
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	cliConfig "github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
@@ -41,7 +40,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -60,7 +59,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
@@ -76,7 +75,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
@@ -89,7 +88,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{PhpCS: toolsconfig.ToolConfig{IsToIgnore: true}})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")

@@ -21,7 +21,6 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 
 	"github.com/stretchr/testify/assert"
 
@@ -44,7 +43,7 @@ func TestStartNpmAudit(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -63,7 +62,7 @@ func TestStartNpmAudit(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -82,7 +81,7 @@ func TestStartNpmAudit(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -102,7 +101,7 @@ func TestStartNpmAudit(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -119,7 +118,7 @@ func TestStartNpmAudit(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -131,7 +130,7 @@ func TestStartNpmAudit(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{NpmAudit: toolsconfig.ToolConfig{IsToIgnore: true}})
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -147,7 +146,7 @@ func TestParseOutputNpm(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := Formatter{
 			service,

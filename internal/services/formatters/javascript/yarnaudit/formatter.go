@@ -54,7 +54,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startYarnAudit(projectSubPath), tools.YarnAudit, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit, languages.Javascript)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startYarnAudit(projectSubPath string) error {

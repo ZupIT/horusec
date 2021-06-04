@@ -58,7 +58,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSafety(projectSubPath), tools.Safety, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety, languages.Python)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSafety(projectSubPath string) error {

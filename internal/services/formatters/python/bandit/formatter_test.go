@@ -23,7 +23,6 @@ import (
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +49,7 @@ func TestNewFormatter(t *testing.T) {
 	config := &cliConfig.Config{}
 	config.SetWorkDir(&workdir.WorkDir{})
 
-	service := formatters.NewFormatterService(nil, nil, config, &monitor.Monitor{})
+	service := formatters.NewFormatterService(nil, nil, config)
 
 	assert.IsType(t, NewFormatter(service), &Formatter{})
 }
@@ -66,7 +65,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("Error"))
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -86,7 +85,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -106,7 +105,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -126,7 +125,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -145,7 +144,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("some aleatory text", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		formatter := NewFormatter(service)
 
@@ -159,7 +158,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Bandit: toolsconfig.ToolConfig{IsToIgnore: true}})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")

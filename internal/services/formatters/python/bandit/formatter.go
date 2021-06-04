@@ -51,7 +51,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startBandit(projectSubPath), tools.Bandit, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit, languages.Python)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBandit(projectSubPath string) error {

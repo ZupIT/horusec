@@ -52,7 +52,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSemgrep(projectSubPath), tools.SecurityCodeScan, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep, languages.Generic)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSemgrep(projectSubPath string) error {
