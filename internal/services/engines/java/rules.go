@@ -16,117 +16,24 @@ package java
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/java/and"
 	"github.com/ZupIT/horusec/internal/services/engines/java/or"
 	"github.com/ZupIT/horusec/internal/services/engines/java/regular"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-type Rules struct {
-	jvmRules jvm.Interface
-}
-
-func NewRules() Interface {
-	return &Rules{
-		jvmRules: jvm.NewRules(),
-	}
-}
-
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	rules = r.addJavaRules(rules)
-	rules = r.jvmRules.GetAllRules(rules)
-	return rules
-}
-
-func (r *Rules) addJavaRules(rules []engine.Rule) []engine.Rule {
-	for _, rule := range allRulesJavaAnd() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesJavaOr() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesJavaRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	if err != nil {
-		return []engine.Unit{}, err
-	}
-	return r.parseTextUnitsToUnits(textUnits), nil
-}
-
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-	return units
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".java"}
 }
 
-func allRulesJavaRegular() []text.TextRule {
-	return []text.TextRule{
-		regular.NewJavaRegularHiddenElements(),
-		regular.NewJavaRegularWeakCypherBlockMode(),
-		regular.NewJavaRegularPossibleFileWithVulnerabilityWhenOpen(),
-		regular.NewJavaRegularWeakHash(),
-		regular.NewJavaRegularSensitiveInformationNotEncrypted(),
-		regular.NewJavaRegularInsecureRandomNumberGenerator(),
-		regular.NewJavaRegularNoDefaultJavaHash(),
-		regular.NewJavaRegularLayoutParamsFlagSecure(),
-		regular.NewJavaRegularNoUseSQLCipher(),
-		regular.NewJavaRegularPreventTapJackingAttacks(),
-		regular.NewJavaRegularPreventWriteSensitiveInformationInTmpFile(),
-		regular.NewJavaRegularGetWindowFlagSecure(),
-		regular.NewJavaRegularLoadingNativeCode(),
-		regular.NewJavaRegularDynamicClassAndDexloading(),
-		regular.NewJavaRegularCryptoImport(),
-		regular.NewJavaRegularStartingService(),
-		regular.NewJavaRegularSendingBroadcast(),
-		regular.NewJavaRegularLocalFileOperations(),
-		regular.NewJavaRegularInterProcessCommunication(),
-		regular.NewJavaRegularURLRewritingMethod(),
-		regular.NewJavaRegularOverlyPermissiveCORSPolicy(),
-		regular.NewJavaRegularHostnameVerifierThatAcceptAnySignedCertificates(),
-		regular.NewJavaRegularDefaultHttpClient(),
-		regular.NewJavaRegularWeakSSLContext(),
-		regular.NewJavaRegularSQLInjection(),
-		regular.NewJavaRegularDisablingHTMLEscaping(),
-		regular.NewJavaRegularSQLInjectionWithTurbine(),
-		regular.NewJavaRegularSQLInjectionWithHibernate(),
-		regular.NewJavaRegularSQLInjectionWithJDO(),
-		regular.NewJavaRegularSQLInjectionWithJPA(),
-		regular.NewJavaRegularSQLInjectionWithSpringJDBC(),
-		regular.NewJavaRegularSQLInjectionWithJDBC(),
-		regular.NewJavaRegularLDAPInjection(),
-		regular.NewJavaRegularUnsafeHashEquals(),
-		regular.NewJavaRegularPotentialExternalControl(),
-		regular.NewJavaRegularBadHexadecimalConcatenation(),
-		regular.NewJavaRegularNullCipherInsecure(),
-		regular.NewJavaRegularUnvalidatedRedirect(),
-		regular.NewJavaRegularRequestMappingMethodsNotPublic(),
-		regular.NewJavaRegularLDAPDeserializationNotDisabled(),
-		regular.NewJavaRegularDatabasesPasswordNotProtected(),
-	}
-}
-
-func allRulesJavaAnd() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	java := []engine.Rule{
+		// And rules
 		and.NewJavaAndMessageDigestIsCustom(),
 		and.NewJavaAndInsecureImplementationOfSSL(),
 		and.NewJavaAndWebViewLoadFilesFromExternalStorage(),
@@ -221,11 +128,8 @@ func allRulesJavaAnd() []text.TextRule {
 		and.NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass(),
 		and.NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
 		and.NewJavaAndWebApplicationsShouldHotHaveAMainMethod(),
-	}
-}
 
-func allRulesJavaOr() []text.TextRule {
-	return []text.TextRule{
+		// Or Rules
 		or.NewJavaOrFileIsWorldReadable(),
 		or.NewJavaOrFileIsWorldWritable(),
 		or.NewJavaOrNoWriteExternalContent(),
@@ -236,5 +140,49 @@ func allRulesJavaOr() []text.TextRule {
 		or.NewJavaOrMessageDigest(),
 		or.NewJavaOrOverlyPermissiveFilePermission(),
 		or.NewJavaOrCipherGetInstanceInsecure(),
+
+		// Regular rules
+		regular.NewJavaRegularHiddenElements(),
+		regular.NewJavaRegularWeakCypherBlockMode(),
+		regular.NewJavaRegularPossibleFileWithVulnerabilityWhenOpen(),
+		regular.NewJavaRegularWeakHash(),
+		regular.NewJavaRegularSensitiveInformationNotEncrypted(),
+		regular.NewJavaRegularInsecureRandomNumberGenerator(),
+		regular.NewJavaRegularNoDefaultJavaHash(),
+		regular.NewJavaRegularLayoutParamsFlagSecure(),
+		regular.NewJavaRegularNoUseSQLCipher(),
+		regular.NewJavaRegularPreventTapJackingAttacks(),
+		regular.NewJavaRegularPreventWriteSensitiveInformationInTmpFile(),
+		regular.NewJavaRegularGetWindowFlagSecure(),
+		regular.NewJavaRegularLoadingNativeCode(),
+		regular.NewJavaRegularDynamicClassAndDexloading(),
+		regular.NewJavaRegularCryptoImport(),
+		regular.NewJavaRegularStartingService(),
+		regular.NewJavaRegularSendingBroadcast(),
+		regular.NewJavaRegularLocalFileOperations(),
+		regular.NewJavaRegularInterProcessCommunication(),
+		regular.NewJavaRegularURLRewritingMethod(),
+		regular.NewJavaRegularOverlyPermissiveCORSPolicy(),
+		regular.NewJavaRegularHostnameVerifierThatAcceptAnySignedCertificates(),
+		regular.NewJavaRegularDefaultHttpClient(),
+		regular.NewJavaRegularWeakSSLContext(),
+		regular.NewJavaRegularSQLInjection(),
+		regular.NewJavaRegularDisablingHTMLEscaping(),
+		regular.NewJavaRegularSQLInjectionWithTurbine(),
+		regular.NewJavaRegularSQLInjectionWithHibernate(),
+		regular.NewJavaRegularSQLInjectionWithJDO(),
+		regular.NewJavaRegularSQLInjectionWithJPA(),
+		regular.NewJavaRegularSQLInjectionWithSpringJDBC(),
+		regular.NewJavaRegularSQLInjectionWithJDBC(),
+		regular.NewJavaRegularLDAPInjection(),
+		regular.NewJavaRegularUnsafeHashEquals(),
+		regular.NewJavaRegularPotentialExternalControl(),
+		regular.NewJavaRegularBadHexadecimalConcatenation(),
+		regular.NewJavaRegularNullCipherInsecure(),
+		regular.NewJavaRegularUnvalidatedRedirect(),
+		regular.NewJavaRegularRequestMappingMethodsNotPublic(),
+		regular.NewJavaRegularLDAPDeserializationNotDisabled(),
+		regular.NewJavaRegularDatabasesPasswordNotProtected(),
 	}
+	return append(java, jvm.Rules()...)
 }

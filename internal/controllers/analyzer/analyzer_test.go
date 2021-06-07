@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package analyser
+package analyzer
 
 import (
 	"bytes"
@@ -41,13 +41,13 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
-func TestNewAnalyser(t *testing.T) {
+func TestNewAnalyzer(t *testing.T) {
 	t.Run("Should return type os struct correctly", func(t *testing.T) {
-		assert.IsType(t, &Analyser{}, NewAnalyser(&config.Config{}))
+		assert.IsType(t, &Analyzer{}, NewAnalyzer(&config.Config{}))
 	})
 }
 
-func TestAnalyser_AnalysisDirectory(t *testing.T) {
+func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{Go: []string{"test"}})
@@ -93,7 +93,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
-		controller := &Analyser{
+		controller := &Analyzer{
 			dockerSDK:         dockerSDK,
 			config:            configs,
 			languageDetect:    languageDetectMock,
@@ -150,7 +150,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
-		controller := &Analyser{
+		controller := &Analyzer{
 			dockerSDK:         dockerSDK,
 			config:            configs,
 			languageDetect:    languageDetectMock,
@@ -192,7 +192,7 @@ func TestAnalyser_AnalysisDirectory(t *testing.T) {
 
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
-		controller := &Analyser{
+		controller := &Analyzer{
 			dockerSDK:         dockerSDK,
 			config:            configs,
 			languageDetect:    languageDetectMock,

@@ -16,64 +16,23 @@ package nodejs
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/nodejs/and"
 	"github.com/ZupIT/horusec/internal/services/engines/nodejs/or"
 	"github.com/ZupIT/horusec/internal/services/engines/nodejs/regular"
 )
 
-type Interface interface {
-	GetAllRules() (rules []engine.Rule)
-	GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error)
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
 }
 
-type Rules struct{}
-
-func NewRules() Interface {
-	return &Rules{}
-}
-
-func (r *Rules) GetAllRules() (rules []engine.Rule) {
-	rules = r.addRules(rules)
-	return rules
-}
-
-func (r *Rules) addRules(rules []engine.Rule) []engine.Rule {
-	for _, rule := range allRulesNodeJSAnd() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesNodeJSOr() {
-		rules = append(rules, rule)
-	}
-
-	for _, rule := range allRulesNodeJSRegular() {
-		rules = append(rules, rule)
-	}
-
-	return rules
-}
-
-func (r *Rules) GetTextUnitByRulesExt(projectPath string) ([]engine.Unit, error) {
-	textUnits, err := text.LoadDirIntoMultiUnit(projectPath, 5, r.getExtensions())
-	units := r.parseTextUnitsToUnits(textUnits)
-	return units, err
-}
-
-func (r *Rules) getExtensions() []string {
+func extensions() []string {
 	return []string{".js", ".ts", ".jsx", ".tsx"}
 }
 
-func (r *Rules) parseTextUnitsToUnits(textUnits []text.TextUnit) (units []engine.Unit) {
-	for index := range textUnits {
-		units = append(units, textUnits[index])
-	}
-
-	return units
-}
-
-func allRulesNodeJSRegular() []text.TextRule {
-	return []text.TextRule{
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Regular rules
 		regular.NewNodeJSRegularNoUseEval(),
 		regular.NewNodeJSRegularNoDisableTlsRejectUnauthorized(),
 		regular.NewNodeJSRegularNoUseMD5Hashing(),
@@ -95,11 +54,8 @@ func allRulesNodeJSRegular() []text.TextRule {
 		regular.NewNodeJSRegularReadingTheStandardInput(),
 		regular.NewNodeJSRegularUsingCommandLineArguments(),
 		regular.NewNodeJSRegularNoLogSensitiveInformationInConsole(),
-	}
-}
 
-func allRulesNodeJSAnd() []text.TextRule {
-	return []text.TextRule{
+		// And rules
 		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),
 		and.NewNodeJSAndNoUseRequestMethodUsingDataFromRequestOfUserInput(),
 		and.NewNodeJSAndCryptographicRsaShouldBeRobust(),
@@ -122,11 +78,8 @@ func allRulesNodeJSAnd() []text.TextRule {
 		and.NewNodeJSAndCreatingCookiesWithoutTheHttpOnlyFlag(),
 		and.NewNodeJSAndCreatingCookiesWithoutTheSecureFlag(),
 		and.NewNodeJSAndNoUseSocketManually(),
-	}
-}
 
-func allRulesNodeJSOr() []text.TextRule {
-	return []text.TextRule{
+		// Or rules
 		or.NewNodeJSOrEncryptionAlgorithmsWeak(),
 		or.NewNodeJSOrFileUploadsShouldBeRestricted(),
 		or.NewNodeJSOrAllowingRequestsWithExcessiveContentLengthSecurity(),

@@ -1,0 +1,103 @@
+package engines_test
+
+import (
+	"testing"
+
+	"github.com/ZupIT/horusec-engine/text"
+	"github.com/ZupIT/horusec/internal/services/engines"
+	"github.com/ZupIT/horusec/internal/services/engines/csharp"
+	"github.com/ZupIT/horusec/internal/services/engines/dart"
+	"github.com/ZupIT/horusec/internal/services/engines/java"
+	"github.com/ZupIT/horusec/internal/services/engines/kotlin"
+	"github.com/ZupIT/horusec/internal/services/engines/kubernetes"
+	"github.com/ZupIT/horusec/internal/services/engines/leaks"
+	"github.com/ZupIT/horusec/internal/services/engines/nginx"
+	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
+	"github.com/ZupIT/horusec/internal/services/engines/swift"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestGetRules(t *testing.T) {
+	testcases := []struct {
+		engine             string
+		manager            *engines.RuleManager
+		expectedTotalRules int
+	}{
+		{
+			engine:             "Nodejs",
+			manager:            nodejs.NewRules(),
+			expectedTotalRules: 48,
+		},
+		{
+			engine:             "Nginx",
+			manager:            nginx.NewRules(),
+			expectedTotalRules: 4,
+		},
+		{
+			engine:             "Leaks",
+			manager:            leaks.NewRules(),
+			expectedTotalRules: 28,
+		},
+		{
+			engine:             "Kubernetes",
+			manager:            kubernetes.NewRules(),
+			expectedTotalRules: 9,
+		},
+		{
+			engine:             "Kotlin",
+			manager:            kotlin.NewRules(),
+			expectedTotalRules: 40,
+		},
+		{
+			engine:             "Java",
+			manager:            java.NewRules(),
+			expectedTotalRules: 185,
+		},
+		{
+			engine:             "Dart",
+			manager:            dart.NewRules(),
+			expectedTotalRules: 17,
+		},
+		{
+			engine:             "Csharp",
+			manager:            csharp.NewRules(),
+			expectedTotalRules: 74,
+		},
+		{
+			engine:             "Swift",
+			manager:            swift.NewRules(),
+			expectedTotalRules: 23,
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.engine, func(t *testing.T) {
+			rules := tt.manager.GetAllRules()
+			expressions := 0
+			rulesID := map[string]bool{}
+
+			for _, rule := range rules {
+				r, ok := rule.(text.TextRule)
+				require.True(t, ok, "Expected rule type of text.TextRule, got %T", rule)
+				expressions += len(r.Expressions)
+
+				if rulesID[r.ID] == true {
+					t.Errorf(
+						"Rule in %s is duplicated ID(%s) => Name: %s, Description: %s, Type: %v", tt.engine, r.ID, r.Name, r.Description, r.Type,
+					)
+				} else {
+					// Record this element as an encountered element.
+					rulesID[r.ID] = true
+				}
+
+			}
+
+			assert.Greater(t, len(rules), 0)
+			assert.Greater(t, expressions, 0)
+
+			assert.Equal(t, len(rules), tt.expectedTotalRules, "Total rules is not equal the expected")
+			assert.Equal(t, len(rulesID), tt.expectedTotalRules, "Rules ID is not equal the expected")
+		})
+	}
+}

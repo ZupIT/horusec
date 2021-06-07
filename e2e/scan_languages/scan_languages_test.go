@@ -87,8 +87,16 @@ func TestHorusecCLILanguages(t *testing.T) {
 	go RunYAMLTest(t, &wg)
 	go RunElixirTest(t, &wg)
 	go RunNginxTest(t, &wg)
-	wg.Add(16)
+	go RunSwiftTest(t, &wg)
+	wg.Add(17)
 	wg.Wait()
+}
+
+func RunSwiftTest(t *testing.T, s *sync.WaitGroup) {
+	defer s.Done()
+	fileOutput := runHorusecCLIUsingExampleDir(t, "swift", "example1")
+	entity := extractVulnerabilitiesFromOutput(fileOutput)
+	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in swift is expected")
 }
 
 func RunGitTest(t *testing.T, s *sync.WaitGroup) {
