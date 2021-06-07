@@ -75,6 +75,8 @@ generateBinaries () {
 
     ACTUAL_RELEASE_FORMATTED=$(tr '.' '-' <<<"$ACTUAL_RELEASE")
 
+    mkdir -p "./bin/horusec/$ACTUAL_RELEASE_FORMATTED"
+
     # Build for linux x86
     if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/app/main.go;
     then
@@ -115,9 +117,9 @@ generateBinaries () {
         echo "5/5 Binary generated with success in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_mac_x64"
     fi
 
-    chmod +x "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec"
-    cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x64/horusec" "$GOPATH/bin/horusec"
-    echo "Binary in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/linux_x86/horusec was copied to $GOPATH/bin/horusec with success!"
+    chmod +x "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64"
+    cp "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" "$GOPATH/bin/horusec"
+    echo "Binary in ./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64 was copied to $GOPATH/bin/horusec with success!"
     echo "Please run \"horusec version\" to check installation"
 
     sed -i -e "s/$ACTUAL_RELEASE/{{VERSION_NOT_FOUND}}/g" "./config/config.go"
