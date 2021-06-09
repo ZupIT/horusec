@@ -23,9 +23,7 @@ import (
 func TestPrompt_Ask(t *testing.T) {
 	t.Run("Should run command ask without panics", func(t *testing.T) {
 		assert.NotPanics(t, func() {
-			go func() {
-				_, _ = NewPrompt().Ask("", "")
-			}()
+			_, _ = NewPrompt().Ask("", "")
 		})
 	})
 }
@@ -33,9 +31,7 @@ func TestPrompt_Ask(t *testing.T) {
 func TestPrompt_Select(t *testing.T) {
 	t.Run("Should run command select without panics", func(t *testing.T) {
 		assert.NotPanics(t, func() {
-			go func() {
-				_, _ = NewPrompt().Select("", []string{})
-			}()
+			_, _ = NewPrompt().Select("", []string{})
 		})
 	})
 }

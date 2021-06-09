@@ -51,7 +51,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSecurityCodeScan(projectSubPath), tools.SecurityCodeScan, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan, languages.CSharp)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {

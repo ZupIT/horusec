@@ -21,7 +21,6 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 
 	"github.com/stretchr/testify/assert"
 
@@ -50,7 +49,7 @@ func TestParseOutput(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -68,7 +67,7 @@ func TestParseOutput(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -84,7 +83,7 @@ func TestParseOutput(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -98,7 +97,7 @@ func TestParseOutput(t *testing.T) {
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -110,7 +109,7 @@ func TestParseStringToStruct(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		service := formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, nil, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, nil, config)
 
 		formatter := Formatter{
 			service,

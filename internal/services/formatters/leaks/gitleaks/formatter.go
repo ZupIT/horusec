@@ -53,7 +53,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startGitLeaks(projectSubPath), tools.GitLeaks, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks, languages.Leaks)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startGitLeaks(projectSubPath string) error {

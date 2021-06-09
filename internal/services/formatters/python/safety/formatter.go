@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -57,7 +58,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSafety(projectSubPath), tools.Safety, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety, languages.Python)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSafety(projectSubPath string) error {
@@ -124,7 +124,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 }
 
 func (f *Formatter) getVulnerabilityLineByName(line, fileName string) string {
-	path := fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), fileName)
+	path := filepath.Join(f.GetConfigProjectPath(), fileName)
 	fileOpened, err := os.Open(path)
 	if err != nil {
 		return "-"

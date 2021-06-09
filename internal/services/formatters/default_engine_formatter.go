@@ -50,7 +50,6 @@ func (f *DefaultFormatter) StartAnalysis(src string) {
 	}
 	f.svc.SetAnalysisError(f.execEngineAndParseResults(src), tools.HorusecEngine, src)
 	f.svc.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, f.language)
-	f.svc.SetToolFinishedAnalysis()
 }
 
 func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
