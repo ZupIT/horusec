@@ -74,6 +74,8 @@ github.com/ZupIT/horusec-devkit v1.0.2 h1:AItfaHVYgVXaaCjHcBgKkT4FrQ/XEYv7jnBiOi
 github.com/ZupIT/horusec-devkit v1.0.2/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
 github.com/ZupIT/horusec-devkit v1.0.3-0.20210601122747-70b80bd3b85a h1:OwqdhE65HJ3ofnVEEYbeatPcQyrRfIZTXiWqVkxjtA4=
 github.com/ZupIT/horusec-devkit v1.0.3-0.20210601122747-70b80bd3b85a/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
+github.com/ZupIT/horusec-devkit v1.0.4-0.20210610121339-a6e36de9097f h1:1ipUc0jwX5UOg6tgZZMsrg9B018pjh9ehtaNvaTJQPE=
+github.com/ZupIT/horusec-devkit v1.0.4-0.20210610121339-a6e36de9097f/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
 github.com/ZupIT/horusec-devkit v1.0.4 h1:SpgBiqp4AZOuMHqanwmV/Q/Ib2tAKQlfeBS1jH+mgpc=
 github.com/ZupIT/horusec-devkit v1.0.4/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1 h1:6kCZzpEKjNeNsQzoD7Qx93KhuYLF6U4SUJThC2YLRsQ=
