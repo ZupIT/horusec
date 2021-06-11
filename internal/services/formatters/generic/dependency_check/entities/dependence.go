@@ -17,7 +17,7 @@ func (d *Dependence) GetVulnerability() *Vulnerability {
 		}
 	}
 
-	if len(d.Vulnerabilities) > 1 {
+	if len(d.Vulnerabilities) >= 1 {
 		return d.Vulnerabilities[0]
 	}
 
@@ -27,8 +27,8 @@ func (d *Dependence) GetVulnerability() *Vulnerability {
 func (d *Dependence) GetFile() string {
 	index := strings.Index(d.FilePath, "?")
 	if index < 0 {
-		return d.FilePath[:index]
+		return d.FilePath
 	}
 
-	return d.FilePath
+	return d.FilePath[:index]
 }

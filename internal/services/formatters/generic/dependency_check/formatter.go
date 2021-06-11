@@ -72,12 +72,22 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var analysis dependencyCheckEntities.Analysis
+	var analysis *dependencyCheckEntities.Analysis
 
-	if err := json.Unmarshal([]byte(output[strings.Index(output, "{"):]), &analysis); err != nil {
+	index := strings.Index(output, "{")
+	if index < 0 || output == "" {
+		return nil
+	}
+
+	if err := json.Unmarshal([]byte(output[index:]), &analysis); err != nil {
 		return err
 	}
 
+	f.parseToVulnerability(analysis)
+	return nil
+}
+
+func (f *Formatter) parseToVulnerability(analysis *dependencyCheckEntities.Analysis) {
 	for _, dependence := range analysis.Dependencies {
 		vulnData := dependence.GetVulnerability()
 		if vulnData == nil {
@@ -86,8 +96,6 @@ func (f *Formatter) parseOutput(output string) error {
 
 		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(vulnData, dependence))
 	}
-
-	return nil
 }
 
 func (f *Formatter) setVulnerabilityData(vulnData *dependencyCheckEntities.Vulnerability,
@@ -95,8 +103,6 @@ func (f *Formatter) setVulnerabilityData(vulnData *dependencyCheckEntities.Vulne
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Severity = vulnData.GetSeverity()
 	vuln.Details = vulnData.GetDescription()
-	//vuln.Line = results[index].Line
-	//vuln.Column = results[index].Column
 	vuln.Code = f.GetCodeWithMaxCharacters(dependence.FileName, 0)
 	vuln.File = f.RemoveSrcFolderFromPath(dependence.GetFile())
 	vuln = vulnhash.Bind(vuln)
