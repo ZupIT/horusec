@@ -138,3 +138,8 @@ func (m *Mock) GetCustomImageByLanguage(_ languages.Language) string {
 	args := m.MethodCalled("GetCustomImageByLanguage")
 	return args.Get(0).(string)
 }
+
+func (m *Mock) IsOwaspDependencyCheckDisable() bool {
+	args := m.MethodCalled("IsOwaspDependencyCheckDisable")
+	return args.Get(0).(bool)
+}

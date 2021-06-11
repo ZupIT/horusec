@@ -68,6 +68,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
+		config.SetEnableOwaspDependencyCheck(true)
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)

@@ -42,7 +42,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.OwaspDependencyCheck) || f.IsDockerDisabled() || f.IsOwaspDependencyCheckDisable(){
+	if f.ToolIsToIgnore(tools.OwaspDependencyCheck) || f.IsDockerDisabled() || f.IsOwaspDependencyCheckDisable() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.OwaspDependencyCheck.ToString())
 		return
 	}
