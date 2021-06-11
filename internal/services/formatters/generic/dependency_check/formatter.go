@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,23 +88,23 @@ func (f *Formatter) parseOutput(output string) error {
 }
 
 func (f *Formatter) parseToVulnerability(analysis *dependencyCheckEntities.Analysis) {
-	for _, dependence := range analysis.Dependencies {
-		vulnData := dependence.GetVulnerability()
+	for _, dependency := range analysis.Dependencies {
+		vulnData := dependency.GetVulnerability()
 		if vulnData == nil {
 			continue
 		}
 
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(vulnData, dependence))
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(vulnData, dependency))
 	}
 }
 
 func (f *Formatter) setVulnerabilityData(vulnData *dependencyCheckEntities.Vulnerability,
-	dependence *dependencyCheckEntities.Dependence) *vulnerability.Vulnerability {
+	dependency *dependencyCheckEntities.Dependency) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Severity = vulnData.GetSeverity()
-	vuln.Details = vulnData.GetDescription()
-	vuln.Code = f.GetCodeWithMaxCharacters(dependence.FileName, 0)
-	vuln.File = f.RemoveSrcFolderFromPath(dependence.GetFile())
+	vuln.Details = vulnData.Description
+	vuln.Code = f.GetCodeWithMaxCharacters(dependency.FileName, 0)
+	vuln.File = f.RemoveSrcFolderFromPath(dependency.GetFile())
 	vuln = vulnhash.Bind(vuln)
 	return f.SetCommitAuthor(vuln)
 }
