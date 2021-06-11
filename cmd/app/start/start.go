@@ -117,7 +117,8 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		BoolP("information-severity", "I", s.configs.GetEnableInformationSeverity(), "Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"")
 	_ = startCmd.PersistentFlags().
 		StringSliceP("show-vulnerabilities-types", "", s.configs.GetShowVulnerabilitiesTypes(), "Used to show in the output vulnerabilities of types: Vulnerability, Risk Accepted, False Positive, Corrected. Example --show-vulnerabilities-types=\"Vulnerability, Risk Accepted\"")
-
+	_ = startCmd.PersistentFlags().
+		BoolP("enable-owasp-dependency-check", "w", s.configs.GetEnableOwaspDependencyCheck(), "Enable owasp dependency check. Example -w=\"true\". Default: false")
 	if !dist.IsStandAlone() {
 		_ = startCmd.PersistentFlags().
 			BoolP("disable-docker", "D", s.configs.GetDisableDocker(), "Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-java, horusec-kubernetes, horusec-leaks, horusec-nodejs, horusec-dart, horusec-nginx. Example: -D=\"true\"")
