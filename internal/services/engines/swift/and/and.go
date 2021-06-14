@@ -79,7 +79,7 @@ func NewSwiftAndTLS13NotUsed() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "50264a8c-c23f-11eb-a035-13ab0aa767e8",
 			Name:        "TLS 1.3 not used",
-			Description: "TLS 1.3 should be used. Detected old version - TLS 1.2.",
+			Description: "Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -114,8 +114,8 @@ func NewSwiftAndWeakMD5CryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "81e073b6-c205-11eb-a035-13ab0aa767e8",
-			Name:        "Weak Cipher Mode",
-			Description: "MD5 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Name:        "Weak MD5 hash using",
+			Description: "The MD5 hash algorithm that was used is considered weak. It can also cause hash collisions. It is always recommended to use some CHF (Cryptographic Hash Function), which is mathematically strong and not reversible. SHA512 would be the most recommended hash for storing the password and it is also important to adopt some type of Salt, so that the Hash is more secure. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -131,8 +131,8 @@ func NewSwiftAndWeakCommonDesCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "90e9196c-c205-11eb-a035-13ab0aa767e8",
-			Name:        "Weak Cipher Mode",
-			Description: "DES is a weak hash, which can generate repeated hashes",
+			Name:        "Weak DES hash using",
+			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -148,8 +148,8 @@ func NewSwiftAndWeakIDZDesCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "9b0d9d46-c205-11eb-a035-13ab0aa767e8",
-			Name:        "Weak Cipher Mode",
-			Description: "Cipher algorithms should be robust",
+			Name:        "Weak DES hash using",
+			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
