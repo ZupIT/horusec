@@ -27,8 +27,8 @@ func NewSwiftOrMD6Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "b3523bc0-c235-11eb-a035-13ab0aa767e8",
-			Name:        "MD6 collision",
-			Description: "MD6 is a weak hash known to have hash collisions.",
+			Name:        "Weak MD6 hash using",
+			Description: "MD6 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -44,8 +44,8 @@ func NewSwiftOrMD5Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "7754d218-c235-11eb-a035-13ab0aa767e8",
-			Name:        "MD5 collision",
-			Description: "MD5 is a weak hash known to have hash collisions.",
+			Name:        "Weak MD5 hash using",
+			Description: "MD5 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -61,8 +61,8 @@ func NewSwiftOrSha1Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "791eee9a-c234-11eb-a035-13ab0aa767e8",
-			Name:        "SHA1 collision",
-			Description: "SHA1 is a weak hash known to have hash collisions.",
+			Name:        "Weak SHA1 hash using",
+			Description: "SHA1 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -141,7 +141,7 @@ func NewSwiftOrLoadHTMLString() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "18447476-c231-11eb-a035-13ab0aa767e8",
 			Name:        "Javascript injection",
-			Description: `User input in "loadHTMLString" will result in JavaScript Injection.`,
+			Description: `User input not sanitized in "loadHTMLString" can result in an injection of JavaScript in the context of your application, allowing access to private data. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.`,
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -158,7 +158,7 @@ func NewSwiftOrWeakDesCryptoCipher() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "a6eec2ac-c205-11eb-a035-13ab0aa767e8",
 			Name:        "Weak Cipher Mode",
-			Description: "DES is a weak hash, which can generate repeated hashes",
+			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
