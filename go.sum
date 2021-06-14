@@ -78,6 +78,8 @@ github.com/ZupIT/horusec-devkit v1.0.4-0.20210610121339-a6e36de9097f h1:1ipUc0jw
 github.com/ZupIT/horusec-devkit v1.0.4-0.20210610121339-a6e36de9097f/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
 github.com/ZupIT/horusec-devkit v1.0.4 h1:SpgBiqp4AZOuMHqanwmV/Q/Ib2tAKQlfeBS1jH+mgpc=
 github.com/ZupIT/horusec-devkit v1.0.4/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
+github.com/ZupIT/horusec-devkit v1.0.5 h1:ElaAFRZUebqzSCF2jHLc21TeBYUCI/8Z+MIt4Rwq9uo=
+github.com/ZupIT/horusec-devkit v1.0.5/go.mod h1:0mlKsix5/t+kFlVukmOS65xpJymiYAv8bmJj5eiykZU=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1 h1:6kCZzpEKjNeNsQzoD7Qx93KhuYLF6U4SUJThC2YLRsQ=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1/go.mod h1:J1pXu3E+r5BGW+5tcprMVWJ8JFIcFbAiGWSgqYCavJo=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
