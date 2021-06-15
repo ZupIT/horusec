@@ -32,6 +32,7 @@ type ToolsConfigsStruct struct {
 	Sobelow          ToolConfig `json:"sobelow"`
 	TfSec            ToolConfig `json:"tfsec"`
 	YarnAudit        ToolConfig `json:"yarnaudit"`
+	DotnetCli        ToolConfig `json:"dotnetCli"`
 }
 
 // nolint:funlen // toMap is necessary more 15 lines
@@ -54,6 +55,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.Sobelow:          t.Sobelow,
 		tools.TfSec:            t.TfSec,
 		tools.YarnAudit:        t.YarnAudit,
+		tools.DotnetCli:        t.DotnetCli,
 	}
 }
 

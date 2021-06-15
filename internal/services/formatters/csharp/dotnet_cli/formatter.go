@@ -1,0 +1,149 @@
+// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package dotnetcli
+
+import (
+	"strings"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
+	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/enums/images"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/entities"
+	"github.com/ZupIT/horusec/internal/utils/file"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
+)
+
+type Formatter struct {
+	formatters.IService
+}
+
+func NewFormatter(service formatters.IService) formatters.IFormatter {
+	return &Formatter{
+		service,
+	}
+}
+
+func (f *Formatter) StartAnalysis(projectSubPath string) {
+	if f.ToolIsToIgnore(tools.DotnetCli) || f.IsDockerDisabled() {
+		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.DotnetCli.ToString())
+		return
+	}
+
+	f.SetAnalysisError(f.startDotnetCli(projectSubPath), tools.DotnetCli, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.DotnetCli, languages.CSharp)
+}
+
+func (f *Formatter) startDotnetCli(projectSubPath string) error {
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.DotnetCli, languages.CSharp)
+
+	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	if err != nil {
+		return err
+	}
+
+	f.parseOutput(output)
+	return nil
+}
+
+func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
+	analysisData := &dockerEntities.AnalysisData{
+		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.DotnetCli),
+		Language: languages.CSharp,
+	}
+
+	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
+}
+
+func (f *Formatter) parseOutput(output string) {
+	index := strings.Index(output, ">")
+	if index < 0 {
+		return
+	}
+
+	split := strings.Split(output[index:], ">")
+	for _, value := range split {
+		dependency := f.parseDependencyValue(value)
+		if dependency != nil && *dependency != (entities.Dependency{}) {
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(dependency))
+		}
+	}
+}
+
+func (f *Formatter) parseDependencyValue(value string) *entities.Dependency {
+	dependency := &entities.Dependency{}
+
+	for index, fieldValue := range f.formatOutput(value) {
+		if strings.TrimSpace(fieldValue) == "" || strings.TrimSpace(fieldValue) == "\n" {
+			continue
+		}
+
+		f.parseFieldByIndex(index, fieldValue, dependency)
+	}
+
+	return dependency
+}
+
+func (f *Formatter) formatOutput(value string) (result []string) {
+	value = strings.ReplaceAll(value, "\n", "")
+	value = strings.ReplaceAll(value, "\r", "")
+
+	for _, field := range strings.Split(value, "\u001B[39;49m") {
+		field = strings.TrimSpace(field)
+		if field != "" {
+			result = append(result, field)
+		}
+	}
+
+	return result
+}
+
+//nolint:gomnd // magic number
+func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *entities.Dependency) {
+	switch index {
+	case 0:
+		dependency.SetName(fieldValue)
+	case 2:
+		dependency.SetVersion(fieldValue)
+	case 3:
+		dependency.SetSeverity(fieldValue)
+	case 4:
+		dependency.SetDescription(fieldValue)
+	}
+}
+
+func (f *Formatter) setVulnerabilityData(dependency *entities.Dependency) *vulnerability.Vulnerability {
+	vuln := f.getDefaultVulnerabilityData()
+	vuln.Details = dependency.Description
+	vuln.Code = dependency.Name
+	vuln.Severity = dependency.GetSeverity()
+	vuln = vulnhash.Bind(vuln)
+	return vuln
+}
+
+func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{}
+	vuln.SecurityTool = tools.DotnetCli
+	vuln.Language = languages.CSharp
+	vuln.Confidence = confidence.High
+	return vuln
+}
