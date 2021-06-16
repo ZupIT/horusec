@@ -23,21 +23,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-
-	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
-	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-	"github.com/ZupIT/horusec/internal/utils/file"
-
-	"github.com/google/uuid"
-
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/config"
 	languagedetect "github.com/ZupIT/horusec/internal/controllers/language_detect"
 	"github.com/ZupIT/horusec/internal/controllers/printresults"
@@ -52,6 +47,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/mixaudit"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow"
+	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl"
@@ -62,14 +58,17 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
 	"github.com/ZupIT/horusec/internal/services/formatters/leaks/gitleaks"
 	"github.com/ZupIT/horusec/internal/services/formatters/leaks/horusecleaks"
+	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
 	"github.com/ZupIT/horusec/internal/services/formatters/php/phpcs"
 	"github.com/ZupIT/horusec/internal/services/formatters/python/bandit"
 	"github.com/ZupIT/horusec/internal/services/formatters/python/safety"
 	"github.com/ZupIT/horusec/internal/services/formatters/ruby/brakeman"
 	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler"
 	"github.com/ZupIT/horusec/internal/services/formatters/shell/shellcheck"
+	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
+	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
 type Interface interface {
@@ -361,7 +360,9 @@ func (a *Analyzer) detectVulnerabilityGeneric(_ *sync.WaitGroup, projectSubPath 
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
 		return err
 	}
+
 	semgrep.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	dependencycheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 

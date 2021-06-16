@@ -280,3 +280,7 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
 	return s.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]
 }
+
+func (s *Service) IsOwaspDependencyCheckDisable() bool {
+	return !s.config.GetEnableOwaspDependencyCheck()
+}
