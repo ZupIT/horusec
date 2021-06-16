@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
 )
 
 type Dependency struct {
@@ -34,13 +36,13 @@ func (d *Dependency) SetSeverity(severity string) {
 //nolint:funlen // need to have more than 11 statements
 func (d *Dependency) GetSeverity() severities.Severity {
 	switch d.Severity {
-	case "Critical":
+	case enums.Critical:
 		return severities.Critical
-	case "High":
+	case enums.High:
 		return severities.High
-	case "Moderate":
+	case enums.Moderate:
 		return severities.Medium
-	case "Low":
+	case enums.Low:
 		return severities.Low
 	default:
 		return severities.Unknown

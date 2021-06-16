@@ -106,4 +106,3 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 	})
 }
-

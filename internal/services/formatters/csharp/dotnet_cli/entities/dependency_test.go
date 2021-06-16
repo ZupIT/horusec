@@ -1,9 +1,11 @@
 package entities
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
 func TestSetName(t *testing.T) {

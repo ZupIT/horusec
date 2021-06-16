@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/entities"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
@@ -117,16 +118,15 @@ func (f *Formatter) formatOutput(value string) (result []string) {
 	return result
 }
 
-//nolint:gomnd // magic number
 func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *entities.Dependency) {
 	switch index {
-	case 0:
+	case enums.IndexDependencyName:
 		dependency.SetName(fieldValue)
-	case 2:
+	case enums.IndexDependencyVersion:
 		dependency.SetVersion(fieldValue)
-	case 3:
+	case enums.IndexDependencySeverity:
 		dependency.SetSeverity(fieldValue)
-	case 4:
+	case enums.IndexDependencyDescription:
 		dependency.SetDescription(fieldValue)
 	}
 }
