@@ -49,6 +49,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/mixaudit"
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow"
+	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl"
@@ -363,7 +364,9 @@ func (a *Analyzer) detectVulnerabilityGeneric(_ *sync.WaitGroup, projectSubPath 
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
 		return err
 	}
+
 	semgrep.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	dependencycheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 
