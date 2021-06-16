@@ -31,21 +31,50 @@ import (
 )
 
 func TestParseOutput(t *testing.T) {
-	t.Run("Should return 4 vulnerabilities with no errors", func(t *testing.T) {
+	t.Run("should return 4 vulnerabilities with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		output := "{\"Filename\": \"Vulnerabilities.cs(11,22)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS1234\", \"IssueText\": \"test/[/src/test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(33,44)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0021\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(55,66)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0012\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(77,88)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0020\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(11,22)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS1234\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(33,44)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0021\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(55,66)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0012\", \"IssueText\": \"test\"}" +
-			"{\"Filename\": \"Vulnerabilities.cs(77,88)\", \"IssueSeverity\": \"test\", \"ErrorID\": \"SCS0020\", \"IssueText\": \"test\"}"
+		output := "{ \"$schema\": \"https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json\"," +
+			" \"version\": \"2.1.0\", \"runs\": [ { \"results\": [ { \"ruleId\": \"SCS0006\", \"ruleIndex\": 0, " +
+			"\"level\": \"warning\", \"message\": { \"text\": \"Weak hashing function.\" }, \"locations\": [ " +
+			"{ \"physicalLocation\": { \"artifactLocation\": { \"uri\": " +
+			"\"file:///src/NetCoreVulnerabilities/Vulnerabilities.cs\" }, \"region\": { \"startLine\": 22, " +
+			"\"startColumn\": 32, \"endLine\": 22, \"endColumn\": 63 } } } ], \"properties\": { \"warningLevel\": " +
+			"1 } }, { \"ruleId\": \"SCS0006\", \"ruleIndex\": 0, \"level\": \"warning\", \"message\": { \"text\":" +
+			" \"Weak hashing function.\" }, \"locations\": [ { \"physicalLocation\": { \"artifactLocation\":" +
+			" { \"uri\": \"file:///src/NetCoreVulnerabilities/Vulnerabilities.cs\" }, \"region\": { \"startLine\": " +
+			"15, \"startColumn\": 32, \"endLine\": 15, \"endColumn\": 63 } } } ], \"properties\":" +
+			" { \"warningLevel\": 1 } }, { \"ruleId\": \"SCS0005\", \"ruleIndex\": 1, \"level\": \"warning\"," +
+			" \"message\": { \"text\": \"Weak random number generator.\" }, \"locations\": [ { \"physicalLocation\":" +
+			" { \"artifactLocation\": { \"uri\": \"file:///src/NetCoreVulnerabilities/Vulnerabilities.cs\" }," +
+			" \"region\": { \"startLine\": 37, \"startColumn\": 13, \"endLine\": 37, \"endColumn\": 26 } } } ]," +
+			" \"properties\": { \"warningLevel\": 1 } }, { \"ruleId\": \"\", \"ruleIndex\": 2, \"level\":" +
+			" \"warning\", \"message\": { \"text\": \"Hardcoded value in 'string password'.\" }, \"locations\": [" +
+			" { \"physicalLocation\": { \"artifactLocation\": { \"uri\": " +
+			"\"file:///src/NetCoreVulnerabilities/Vulnerabilities.cs\" }, \"region\": { \"startLine\": 28, " +
+			"\"startColumn\": 34, \"endLine\": 28, \"endColumn\": 88 } } } ], \"relatedLocations\": [ {" +
+			" \"physicalLocation\": { \"artifactLocation\": { \"uri\": " +
+			"\"file:///src/NetCoreVulnerabilities/Vulnerabilities.cs\" }, \"region\": { \"startLine\": 28," +
+			" \"startColumn\": 34, \"endLine\": 28, \"endColumn\": 88 } } } ], \"properties\": { \"warningLevel\":" +
+			" 1 } } ], \"tool\": { \"driver\": { \"name\": \"Security Code Scan\", \"version\": \"5.1.1.0\"," +
+			" \"dottedQuadFileVersion\": \"5.1.1.0\", \"semanticVersion\": \"5.1.1\", \"language\": \"\", \"rules\":" +
+			" [ { \"id\": \"SCS0006\", \"shortDescription\": { \"text\": \"Weak hashing function.\" }," +
+			" \"fullDescription\": { \"text\": \"SHA1 is no longer considered as a strong hashing algorithm.\" }," +
+			" \"helpUri\": \"https://security-code-scan.github.io/#SCS0006\", \"properties\":" +
+			" { \"category\": \"Security\" } }, { \"id\": \"SCS0005\", \"shortDescription\": { \"text\":" +
+			" \"Weak random number generator.\" }, \"fullDescription\": { \"text\": \"It is possible to predict" +
+			" the next numbers of a pseudo random generator. Use a cryptographically strong generator for security" +
+			" sensitive purposes.\" }, \"helpUri\": \"https://security-code-scan.github.io/#SCS0005\"," +
+			" \"properties\": { \"category\": \"Security\" } }, { \"id\": \"SCS0015\", \"shortDescription\":" +
+			" { \"text\": \"Hardcoded value in '{0}'.\" }, \"fullDescription\": { \"text\":" +
+			" \"The secret value to this API appears to be hardcoded. Consider moving the value" +
+			" to externalized configuration to avoid leakage of secret information.\" }, \"helpUri\": " +
+			"\"https://security-code-scan.github.io/#SCS0015\", \"properties\": { \"category\": \"Security\" " +
+			"} } ] } }, \"columnKind\": \"utf16CodeUnits\" } ] }"
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
@@ -56,7 +85,25 @@ func TestParseOutput(t *testing.T) {
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 	})
 
-	t.Run("Should error not found cs proj", func(t *testing.T) {
+	t.Run("should return error when unmarshalling output", func(t *testing.T) {
+		analysis := &entitiesAnalysis.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		output := "test"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+	})
+
+	t.Run("should return error not found solution file", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -74,14 +121,15 @@ func TestParseOutput(t *testing.T) {
 		assert.NotEmpty(t, analysis.Errors)
 	})
 
-	t.Run("Should error executing container", func(t *testing.T) {
+	t.Run("should return error executing container", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
+			Return("", errors.New("test"))
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
@@ -90,7 +138,7 @@ func TestParseOutput(t *testing.T) {
 		assert.NotEmpty(t, analysis.Errors)
 	})
 
-	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
+	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
@@ -101,21 +149,5 @@ func TestParseOutput(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
-	})
-}
-
-func TestParseStringToStruct(t *testing.T) {
-	t.Run("Should return error when unmarshall a invalid data", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-
-		service := formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, nil, config)
-
-		formatter := Formatter{
-			service,
-		}
-
-		_, err := formatter.parseStringToStruct("!!!")
-		assert.Error(t, err)
 	})
 }

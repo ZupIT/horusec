@@ -114,3 +114,21 @@ func formatExtPath(projectPath, walkPath string) string {
 
 	return extensionFileRemoved
 }
+
+func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
+	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
+	_ = filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if filepath.Ext(walkPath) == ext {
+			filename = filepath.Base(walkPath)
+			return io.EOF
+		}
+
+		return nil
+	})
+
+	return filename
+}

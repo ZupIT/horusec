@@ -16,6 +16,6 @@ package dotnetcli
 
 const CMD = `
 		{{WORK_DIR}}
-		dotnet restore --disable-parallel
+		dotnet restore > /tmp/dotnet-cli-restore-ANALYSISID.txt
 		dotnet list package --vulnerable
   `

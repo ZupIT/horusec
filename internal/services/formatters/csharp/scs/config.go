@@ -14,23 +14,10 @@
 
 package scs
 
-//nolint
 const CMD = `
 		{{WORK_DIR}}
-		dotnet build --nologo -v q > /tmp/build-output-ANALYSISID.txt
-
-    	while read -r LINE; do
-		
-			FILECODE=$(echo ${LINE} | awk -F ":" '{print $1}' | tr -d " ")
-			IDDESC=$(echo ${LINE} | awk -F ":" '{print $2}' | awk '{print $1}' | tr -d " ")
-			ID=$(echo ${LINE} | awk -F ":" '{print $2}' | awk '{print $2}' | tr -d " ")
-			DESC=$(echo ${LINE} | awk -F ":" '{print $3}' | sed 's/^ *//')
-		
-			echo "{\"Filename\" : \"${FILECODE}\", \"IssueSeverity\" : \"${IDDESC}\", \"ErrorID\" : \"${ID}\", \"IssueText\" : \"${DESC}\"}" >> /tmp/build-output-parsed-ANALYSISID.txt
-
-		done < /tmp/build-output-ANALYSISID.txt
-		
-		jq '.' /tmp/build-output-parsed-ANALYSISID.txt > /tmp/scs-result-ANALYSISID.json
-      	jq -j -M -c . /tmp/scs-result-ANALYSISID.json
+		dotnet restore > /tmp/restore-output-ANALYSISID.txt
+		security-scan {{SLN_NAME}} --export=output-ANALYSISID.json > /tmp/scs-run-output-ANALYSISID.txt
+		cat output-ANALYSISID.json
 		chmod -R 777 .
   `
