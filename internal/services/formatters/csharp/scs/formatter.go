@@ -30,6 +30,7 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
 	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
 	fileUtils "github.com/ZupIT/horusec/internal/utils/file"
 	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
@@ -66,7 +67,7 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 	}
 
 	output, err := f.ExecuteContainer(analysisData)
-	if err != nil {
+	if err := f.CheckOutputErrors(output, err); err != nil {
 		return err
 	}
 
@@ -115,16 +116,16 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerabili
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
 		CMD: f.AddWorkDirInCmd(CMD, fileUtils.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
+			f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
-	analysisData.SetSlnName(fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, ".sln"))
+	analysisData.SetSlnName(fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt))
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
 func (f *Formatter) verifyIsSolutionError(cmd string) error {
-	if strings.Contains(cmd, "solution file not found") {
+	if strings.Contains(cmd, enums.SolutionFileNotFound) {
 		return errorsEnums.ErrSolutionNotFound
 	}
 
@@ -163,4 +164,16 @@ func (f *Formatter) getVulnerabilityMap() map[string]severities.Severity {
 	}
 
 	return values
+}
+
+func (f *Formatter) CheckOutputErrors(output string, err error) error {
+	if err != nil {
+		return err
+	}
+
+	if strings.Contains(output, enums.BuildFailedOutput) {
+		return enums.ErrorFailedToBuildProject
+	}
+
+	return nil
 }

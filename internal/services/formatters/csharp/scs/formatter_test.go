@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
 )
 
 func createSlnFile() error {
@@ -116,6 +117,28 @@ func TestParseOutput(t *testing.T) {
 		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "test"
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+
+		assert.NoError(t, removeSlnFile())
+	})
+
+	t.Run("should return build error", func(t *testing.T) {
+		assert.NoError(t, createSlnFile())
+
+		analysis := &analysisEntities.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		output := enums.BuildFailedOutput
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
