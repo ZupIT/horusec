@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,21 +18,21 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
-	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
+	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
 	"github.com/ZupIT/horusec/internal/utils/file"
+	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -60,13 +60,14 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan, languages.CSharp)
 
-	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
-	if err != nil {
+	analysisData := f.getDockerConfig(projectSubPath)
+	if err := f.verifyIsSolutionError(analysisData.CMD); err != nil {
 		return err
 	}
 
-	if errSolution := f.verifyIsSolutionError(output, err); errSolution != nil {
-		return errSolution
+	output, err := f.ExecuteContainer(analysisData)
+	if err != nil {
+		return err
 	}
 
 	return f.parseOutput(output)
@@ -79,7 +80,7 @@ func (f *Formatter) parseOutput(output string) error {
 		return err
 	}
 
-	f.setSeveritiesAndVulns(analysis)
+	f.setSeveritiesAndVulnsByID(analysis)
 	for _, result := range analysis.GetRun().Results {
 		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(result))
 	}
@@ -87,7 +88,7 @@ func (f *Formatter) parseOutput(output string) error {
 	return nil
 }
 
-func (f *Formatter) setSeveritiesAndVulns(analysis *entities.Analysis) {
+func (f *Formatter) setSeveritiesAndVulnsByID(analysis *entities.Analysis) {
 	f.severities = f.getVulnerabilityMap()
 	f.vulnerabilitiesByID = analysis.MapVulnerabilitiesByID()
 }
@@ -99,7 +100,7 @@ func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability
 	data.Line = result.GetLine()
 	data.Column = result.GetColumn()
 	data.File = result.GetFile()
-	data = vulnhash.Bind(data)
+	data = vulnHash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
 
@@ -121,14 +122,12 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-func (f *Formatter) verifyIsSolutionError(output string, err error) error {
-	if strings.Contains(output, "Specify a project or solution file") {
-		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrSolutionNotFound)
+func (f *Formatter) verifyIsSolutionError(cmd string) error {
+	if strings.Contains(cmd, "solution file not found") {
 		return errorsEnums.ErrSolutionNotFound
 	}
 
-	return err
+	return nil
 }
 
 func (f *Formatter) GetSeverity(ruleID string) severities.Severity {

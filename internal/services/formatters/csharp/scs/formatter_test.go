@@ -16,25 +16,44 @@ package scs
 
 import (
 	"errors"
+	"os"
 	"testing"
-
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
 	"github.com/stretchr/testify/assert"
 
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+
 	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
+func createSlnFile() error {
+	path, _ := os.Getwd()
+
+	if err := os.MkdirAll(path+"/.horusec/00000000-0000-0000-0000-000000000000", 0755); err != nil {
+		return err
+	}
+
+	_, err := os.Create(path + "/.horusec/00000000-0000-0000-0000-000000000000/test.sln")
+	return err
+}
+
+func removeSlnFile() error {
+	path, _ := os.Getwd()
+
+	return os.RemoveAll(path + "/.horusec")
+}
+
 func TestParseOutput(t *testing.T) {
 	t.Run("should return 4 vulnerabilities with no errors", func(t *testing.T) {
+		assert.NoError(t, createSlnFile())
+
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
@@ -83,10 +102,14 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
+
+		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should return error when unmarshalling output", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		assert.NoError(t, createSlnFile())
+
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
@@ -101,18 +124,18 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
+
+		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should return error not found solution file", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		output := "Specify a project or solution file"
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
@@ -122,7 +145,9 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should return error executing container", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		assert.NoError(t, createSlnFile())
+
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
@@ -136,10 +161,12 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
+
+		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})

@@ -49,5 +49,10 @@ func (a *AnalysisData) GetCustomOrDefaultImage() string {
 }
 
 func (a *AnalysisData) SetSlnName(slnName string) {
+	if slnName == "" {
+		a.CMD = strings.ReplaceAll(a.CMD, "{{SLN_NAME}}", "solution file not found")
+		return
+	}
+
 	a.CMD = strings.ReplaceAll(a.CMD, "{{SLN_NAME}}", slnName)
 }
