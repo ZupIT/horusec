@@ -18,13 +18,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-
 	"github.com/stretchr/testify/assert"
 
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+
 	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
@@ -34,7 +33,7 @@ func TestParseOutput(t *testing.T) {
 	t.Run("should return 3 vulnerability with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
@@ -64,7 +63,7 @@ func TestParseOutput(t *testing.T) {
 	t.Run("should return no vulnerability with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
@@ -78,7 +77,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should return error executing container", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
@@ -94,7 +93,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})

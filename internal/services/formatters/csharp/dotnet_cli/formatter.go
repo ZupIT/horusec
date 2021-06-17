@@ -30,7 +30,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/entities"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
 	"github.com/ZupIT/horusec/internal/utils/file"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
+	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
@@ -39,7 +39,7 @@ type Formatter struct {
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
-		service,
+		IService: service,
 	}
 }
 
@@ -133,10 +133,10 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 
 func (f *Formatter) setVulnerabilityData(dependency *entities.Dependency) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilityData()
-	vuln.Details = dependency.Description
+	vuln.Details = dependency.GetDescription()
 	vuln.Code = dependency.Name
 	vuln.Severity = dependency.GetSeverity()
-	vuln = vulnhash.Bind(vuln)
+	vuln = vulnHash.Bind(vuln)
 	return vuln
 }
 

@@ -15,6 +15,7 @@
 package entities
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
@@ -61,4 +62,8 @@ func (d *Dependency) GetSeverity() severities.Severity {
 	default:
 		return severities.Unknown
 	}
+}
+
+func (d *Dependency) GetDescription() string {
+	return fmt.Sprintf(enums.DependencyDescription, d.Description)
 }
