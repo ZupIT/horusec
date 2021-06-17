@@ -15,10 +15,13 @@
 package file
 
 import (
+	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -131,4 +134,39 @@ func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
 	})
 
 	return filename
+}
+
+func GetCode(projectPath, filepath string, desiredLine string) string {
+	path := fmt.Sprintf("%s%s%s", projectPath, string(os.PathSeparator), filepath)
+
+	file, err := os.Open(path)
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(getCodeFromFileAndLine(file, getLine(desiredLine)))
+}
+
+func getLine(desiredLine string) int {
+	desiredLineParsed, _ := strconv.Atoi(desiredLine)
+	if desiredLineParsed <= 0 {
+		return desiredLineParsed
+	}
+
+	return desiredLineParsed - 1
+}
+
+func getCodeFromFileAndLine(file *os.File, desiredLine int) string {
+	var line int
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if line == desiredLine {
+			return scanner.Text()
+		}
+
+		line++
+	}
+
+	return ""
 }

@@ -31,7 +31,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
 	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
-	"github.com/ZupIT/horusec/internal/utils/file"
+	fileUtils "github.com/ZupIT/horusec/internal/utils/file"
 	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -100,6 +100,7 @@ func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability
 	data.Line = result.GetLine()
 	data.Column = result.GetColumn()
 	data.File = result.GetFile()
+	data.Code = fileUtils.GetCode(f.GetConfigProjectPath(), result.GetFile(), result.GetLine())
 	data = vulnHash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
@@ -113,12 +114,12 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerabili
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
+		CMD: f.AddWorkDirInCmd(CMD, fileUtils.GetSubPathByExtension(
 			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
-	analysisData.SetSlnName(file.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, ".sln"))
+	analysisData.SetSlnName(fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, ".sln"))
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
