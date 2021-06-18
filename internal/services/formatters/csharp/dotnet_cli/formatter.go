@@ -143,7 +143,7 @@ func (f *Formatter) setVulnerabilityData(
 	vuln.Line = line
 	vuln.Severity = dependency.GetSeverity()
 	vuln = vulnHash.Bind(vuln)
-	return vuln
+	return f.SetCommitAuthor(vuln)
 }
 
 func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {

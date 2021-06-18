@@ -105,8 +105,7 @@ func (f *Formatter) setVulnerabilityData(vulnData *dependencyCheckEntities.Vulne
 	vuln.Details = vulnData.Description
 	vuln.Code = f.GetCodeWithMaxCharacters(dependency.FileName, 0)
 	vuln.File = f.RemoveSrcFolderFromPath(dependency.GetFile())
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
+	return vulnhash.Bind(vuln)
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
