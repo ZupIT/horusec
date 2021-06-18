@@ -66,8 +66,8 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 		return err
 	}
 
-	output, err := f.ExecuteContainer(analysisData)
-	if err := f.CheckOutputErrors(output, err); err != nil {
+	output, err := f.CheckOutputErrors(f.ExecuteContainer(analysisData))
+	if err != nil {
 		return err
 	}
 
@@ -166,14 +166,14 @@ func (f *Formatter) getVulnerabilityMap() map[string]severities.Severity {
 	return values
 }
 
-func (f *Formatter) CheckOutputErrors(output string, err error) error {
+func (f *Formatter) CheckOutputErrors(output string, err error) (string, error) {
 	if err != nil {
-		return err
+		return output, err
 	}
 
 	if strings.Contains(output, enums.BuildFailedOutput) {
-		return enums.ErrorFailedToBuildProject
+		return output, enums.ErrorFailedToBuildProject
 	}
 
-	return nil
+	return output, nil
 }

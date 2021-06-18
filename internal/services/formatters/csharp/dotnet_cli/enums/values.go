@@ -23,4 +23,7 @@ const (
 	High                       = "High"
 	Moderate                   = "Moderate"
 	Low                        = "Low"
+	FilePathReplace            = "/.horusec/%s"
+	CsProjExt                  = ".csproj"
+	SolutionNotFound           = "A project or solution file could not be found"
 )

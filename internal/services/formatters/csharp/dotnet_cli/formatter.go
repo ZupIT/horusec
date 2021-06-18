@@ -15,6 +15,7 @@
 package dotnetcli
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -56,12 +57,12 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 func (f *Formatter) startDotnetCli(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.DotnetCli, languages.CSharp)
 
-	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
+	output, err := f.checkOutputErrors(f.ExecuteContainer(f.getConfigData(projectSubPath)))
 	if err != nil {
 		return err
 	}
 
-	f.parseOutput(output)
+	f.parseOutput(output, projectSubPath)
 	return nil
 }
 
@@ -75,7 +76,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-func (f *Formatter) parseOutput(output string) {
+func (f *Formatter) parseOutput(output, projectSubPath string) {
 	index := strings.Index(output, ">")
 	if index < 0 {
 		return
@@ -85,7 +86,7 @@ func (f *Formatter) parseOutput(output string) {
 	for _, value := range split {
 		dependency := f.parseDependencyValue(value)
 		if dependency != nil && *dependency != (entities.Dependency{}) {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(dependency))
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(dependency, projectSubPath))
 		}
 	}
 }
@@ -131,10 +132,15 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(dependency *entities.Dependency) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(
+	dependency *entities.Dependency, projectSubPath string) *vulnerability.Vulnerability {
+	code, filepath, line := file.GetDependencyCodeFilepathAndLine(
+		f.GetConfigProjectPath(), projectSubPath, enums.CsProjExt, dependency.Name)
 	vuln := f.getDefaultVulnerabilityData()
 	vuln.Details = dependency.GetDescription()
-	vuln.Code = dependency.Name
+	vuln.Code = code
+	vuln.File = strings.ReplaceAll(filepath, fmt.Sprintf(enums.FilePathReplace, f.GetAnalysisID()), "")
+	vuln.Line = line
 	vuln.Severity = dependency.GetSeverity()
 	vuln = vulnHash.Bind(vuln)
 	return vuln
@@ -146,4 +152,16 @@ func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
 	vuln.Language = languages.CSharp
 	vuln.Confidence = confidence.High
 	return vuln
+}
+
+func (f *Formatter) checkOutputErrors(output string, err error) (string, error) {
+	if err != nil {
+		return output, err
+	}
+
+	if strings.Contains(output, enums.SolutionNotFound) {
+		return output, enums.ErrorSolutionNotFound
+	}
+
+	return output, nil
 }

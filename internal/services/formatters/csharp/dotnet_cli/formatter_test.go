@@ -83,7 +83,25 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
+			"", errors.New("test"))
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		formatter := NewFormatter(service)
+
+		formatter.StartAnalysis("")
+		assert.NotEmpty(t, analysis.Errors)
+	})
+
+	t.Run("should return error when solution was not found", func(t *testing.T) {
+		analysis := &analysisEntities.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
+			"A project or solution file could not be found", nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
