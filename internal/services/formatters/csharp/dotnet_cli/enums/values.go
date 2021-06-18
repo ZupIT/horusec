@@ -26,4 +26,5 @@ const (
 	FilePathReplace            = "/.horusec/%s"
 	CsProjExt                  = ".csproj"
 	SolutionNotFound           = "A project or solution file could not be found"
+	AutoReferencedPacket       = "(A)"
 )

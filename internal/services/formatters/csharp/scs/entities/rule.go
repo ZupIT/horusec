@@ -32,6 +32,10 @@ func (r *Rule) getFullDescription() string {
 }
 
 func (r *Rule) GetDescription(vulnName string) string {
+	if r.HelpURI == "" {
+		return vulnName
+	}
+
 	return fmt.Sprintf("%s\n%s For more information, check the following url (%s).",
 		vulnName, r.getFullDescription(), r.HelpURI)
 }

@@ -111,7 +111,7 @@ func (f *Formatter) formatOutput(value string) (result []string) {
 
 	for _, field := range strings.Split(value, "\u001B[39;49m") {
 		field = strings.TrimSpace(field)
-		if field != "" {
+		if field != "" && strings.TrimSpace(field) != enums.AutoReferencedPacket {
 			result = append(result, field)
 		}
 	}
