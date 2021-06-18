@@ -77,13 +77,11 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output, projectSubPath string) {
-	index := strings.Index(output, ">")
-	if index < 0 {
+	if f.isInvalidOutput(output) {
 		return
 	}
 
-	split := strings.Split(output[index:], ">")
-	for _, value := range split {
+	for _, value := range strings.Split(output[strings.Index(output, enums.Separator):], enums.Separator) {
 		dependency := f.parseDependencyValue(value)
 		if dependency != nil && *dependency != (entities.Dependency{}) {
 			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(dependency, projectSubPath))
@@ -164,4 +162,14 @@ func (f *Formatter) checkOutputErrors(output string, err error) (string, error) 
 	}
 
 	return output, nil
+}
+
+func (f *Formatter) isInvalidOutput(output string) bool {
+	if strings.Contains(output, "Top-level Package") && strings.Contains(output, "Requested") &&
+		strings.Contains(output, "Resolved") && strings.Contains(output, "Severity") &&
+		strings.Contains(output, "Advisory URL") {
+		return false
+	}
+
+	return true
 }
