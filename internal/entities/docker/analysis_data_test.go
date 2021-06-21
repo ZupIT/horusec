@@ -64,3 +64,23 @@ func TestGetCustomOrDefaultImage(t *testing.T) {
 		assert.Equal(t, "test/default", data.GetCustomOrDefaultImage())
 	})
 }
+
+func TestSetSlnName(t *testing.T) {
+	t.Run("should success set sln name", func(t *testing.T) {
+		data := &AnalysisData{
+			CMD: "{{SLN_NAME}}",
+		}
+
+		data.SetSlnName("test")
+		assert.Equal(t, "test", data.CMD)
+	})
+
+	t.Run("should return not found sln name", func(t *testing.T) {
+		data := &AnalysisData{
+			CMD: "{{SLN_NAME}}",
+		}
+
+		data.SetSlnName("")
+		assert.Equal(t, "solution file not found", data.CMD)
+	})
+}
