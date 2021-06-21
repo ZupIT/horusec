@@ -166,8 +166,7 @@ func (f *Formatter) checkOutputErrors(output string, err error) (string, error) 
 
 func (f *Formatter) isInvalidOutput(output string) bool {
 	if strings.Contains(output, "Top-level Package") && strings.Contains(output, "Requested") &&
-		strings.Contains(output, "Resolved") && strings.Contains(output, "Severity") &&
-		strings.Contains(output, "Advisory URL") {
+		strings.Contains(output, "Resolved") && strings.Contains(output, "Severity") {
 		return false
 	}
 
