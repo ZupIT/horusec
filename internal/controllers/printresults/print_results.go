@@ -193,6 +193,7 @@ func (pr *PrintResults) parseFilePathToAbsAndCreateOutputJSON(bytesToWrite []byt
 	return pr.openJSONFileAndWriteBytes(bytesToWrite, completePath)
 }
 
+//nolint:gomnd // magic number
 func (pr *PrintResults) openJSONFileAndWriteBytes(bytesToWrite []byte, completePath string) error {
 	outputFile, err := os.OpenFile(completePath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {

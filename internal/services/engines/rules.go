@@ -23,6 +23,7 @@ func (r *RuleManager) GetAllRules() []engine.Rule {
 	return r.rules
 }
 
+//nolint:gomnd // magic number
 func (r *RuleManager) GetTextUnitByRulesExt(src string) ([]engine.Unit, error) {
 	textUnits, err := text.LoadDirIntoMultiUnit(src, 5, r.extensions)
 	if err != nil {

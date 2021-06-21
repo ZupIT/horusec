@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package scs
+package entities
 
-const CMD = `
-		{{WORK_DIR}}
-		dotnet restore > /tmp/restore-output-ANALYSISID.txt
-		security-scan {{SLN_NAME}} --export=output-ANALYSISID.json > /tmp/scs-run-output-ANALYSISID.txt
-		cat output-ANALYSISID.json
-		chmod -R 777 .
-  `
+type Tool struct {
+	Driver Driver `json:"driver"`
+}

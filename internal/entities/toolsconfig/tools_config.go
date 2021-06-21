@@ -33,6 +33,7 @@ type ToolsConfigsStruct struct {
 	TfSec                ToolConfig `json:"tfsec"`
 	YarnAudit            ToolConfig `json:"yarnaudit"`
 	OwaspDependencyCheck ToolConfig `json:"owaspDependencyCheck"`
+	DotnetCli            ToolConfig `json:"dotnetCli"`
 }
 
 // nolint:funlen // toMap is necessary more 15 lines
@@ -56,6 +57,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.TfSec:                t.TfSec,
 		tools.YarnAudit:            t.YarnAudit,
 		tools.OwaspDependencyCheck: t.OwaspDependencyCheck,
+		tools.DotnetCli:            t.DotnetCli,
 	}
 }
 

@@ -14,3 +14,4 @@ deployments/certs
 horusec-analysis-*.json
 cmd/horusec/start/examples/
 vendor
+obj/

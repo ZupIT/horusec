@@ -12,12 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package scs
+package enums
 
-const CMD = `
-		{{WORK_DIR}}
-		dotnet restore > /tmp/restore-output-ANALYSISID.txt
-		security-scan {{SLN_NAME}} --export=output-ANALYSISID.json > /tmp/scs-run-output-ANALYSISID.txt
-		cat output-ANALYSISID.json
-		chmod -R 777 .
-  `
+const (
+	IndexDependencyName        = 0
+	IndexDependencyVersion     = 2
+	IndexDependencySeverity    = 3
+	IndexDependencyDescription = 4
+	Critical                   = "Critical"
+	High                       = "High"
+	Moderate                   = "Moderate"
+	Low                        = "Low"
+	FilePathReplace            = "/.horusec/%s"
+	CsProjExt                  = ".csproj"
+	SolutionNotFound           = "A project or solution file could not be found"
+	AutoReferencedPacket       = "(A)"
+	Separator                  = ">"
+)

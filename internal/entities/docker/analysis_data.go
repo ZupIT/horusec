@@ -16,6 +16,7 @@ package docker
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/internal/enums/images"
@@ -45,4 +46,13 @@ func (a *AnalysisData) GetCustomOrDefaultImage() string {
 	}
 
 	return a.DefaultImage
+}
+
+func (a *AnalysisData) SetSlnName(slnName string) {
+	if slnName == "" {
+		a.CMD = strings.ReplaceAll(a.CMD, "{{SLN_NAME}}", "solution file not found")
+		return
+	}
+
+	a.CMD = strings.ReplaceAll(a.CMD, "{{SLN_NAME}}", slnName)
 }

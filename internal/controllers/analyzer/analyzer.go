@@ -16,6 +16,7 @@ package analyzer
 
 import (
 	"fmt"
+
 	"log"
 	"os"
 	"os/signal"
@@ -42,6 +43,7 @@ import (
 	dockerClient "github.com/ZupIT/horusec/internal/services/docker/client"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/c/flawfinder"
+	dotnetcli "github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs"
 	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
@@ -257,7 +259,9 @@ func (a *Analyzer) detectVulnerabilityCsharp(wg *sync.WaitGroup, projectSubPath 
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.CSharp)); err != nil {
 		return err
 	}
+
 	scs.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	dotnetcli.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 

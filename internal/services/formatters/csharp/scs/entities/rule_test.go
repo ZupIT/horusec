@@ -12,12 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package scs
+package entities
 
-const CMD = `
-		{{WORK_DIR}}
-		dotnet restore > /tmp/restore-output-ANALYSISID.txt
-		security-scan {{SLN_NAME}} --export=output-ANALYSISID.json > /tmp/scs-run-output-ANALYSISID.txt
-		cat output-ANALYSISID.json
-		chmod -R 777 .
-  `
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestGetDescription(t *testing.T) {
+	t.Run("should return empty string", func(t *testing.T) {
+		rule := Rule{
+			ID: "test",
+			FullDescription: Message{
+				Text: "{test}",
+			},
+			HelpURI: "test",
+		}
+
+		assert.Equal(t, "test\ntest For more information, check the following url (test).",
+			rule.GetDescription("test"))
+	})
+}
