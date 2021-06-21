@@ -18,4 +18,5 @@ const CMD = `
 		{{WORK_DIR}}
 		dotnet restore > /tmp/dotnet-cli-restore-ANALYSISID.txt
 		dotnet list package --vulnerable
-  `
+		chmod -R 777 .  
+	`
