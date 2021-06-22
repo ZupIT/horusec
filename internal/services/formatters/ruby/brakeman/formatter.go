@@ -51,7 +51,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startBrakeman(projectSubPath), tools.Brakeman, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman, languages.Ruby)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startBrakeman(projectSubPath string) error {

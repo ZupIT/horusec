@@ -21,7 +21,6 @@ import (
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
 	"github.com/ZupIT/horusec/internal/utils/mock"
 
@@ -94,12 +93,12 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
-			dockerSDK:         dockerSDK,
-			config:            configs,
-			languageDetect:    languageDetectMock,
-			printController:   printResultMock,
-			horusecAPIService: horusecAPIMock,
-			formatterService:  formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs, &monitor.Monitor{}),
+			docker:          dockerSDK,
+			config:          configs,
+			languageDetect:  languageDetectMock,
+			printController: printResultMock,
+			horusec:         horusecAPIMock,
+			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
@@ -151,12 +150,12 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
-			dockerSDK:         dockerSDK,
-			config:            configs,
-			languageDetect:    languageDetectMock,
-			printController:   printResultMock,
-			horusecAPIService: horusecAPIMock,
-			formatterService:  formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs, &monitor.Monitor{}),
+			docker:          dockerSDK,
+			config:          configs,
+			languageDetect:  languageDetectMock,
+			printController: printResultMock,
+			horusec:         horusecAPIMock,
+			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
@@ -193,12 +192,12 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
-			dockerSDK:         dockerSDK,
-			config:            configs,
-			languageDetect:    languageDetectMock,
-			printController:   printResultMock,
-			horusecAPIService: horusecAPIMock,
-			formatterService:  formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs, &monitor.Monitor{}),
+			docker:          dockerSDK,
+			config:          configs,
+			languageDetect:  languageDetectMock,
+			printController: printResultMock,
+			horusec:         horusecAPIMock,
+			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}

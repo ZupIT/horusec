@@ -51,7 +51,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startTfSec(projectSubPath), tools.TfSec, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.TfSec, languages.HCL)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startTfSec(projectSubPath string) error {

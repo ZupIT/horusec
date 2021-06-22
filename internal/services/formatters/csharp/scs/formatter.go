@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,27 +19,32 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	"github.com/ZupIT/horusec/internal/utils/file"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
+	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
+	fileUtils "github.com/ZupIT/horusec/internal/utils/file"
+	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
 	formatters.IService
+	severities          map[string]severities.Severity
+	vulnerabilitiesByID map[string]*entities.Rule
 }
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
-		service,
+		IService: service,
 	}
 }
 
@@ -51,68 +56,53 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSecurityCodeScan(projectSubPath), tools.SecurityCodeScan, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan, languages.CSharp)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan, languages.CSharp)
 
-	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
+	analysisData := f.getDockerConfig(projectSubPath)
+	if err := f.verifyIsSolutionError(analysisData.CMD); err != nil {
+		return err
+	}
+
+	output, err := f.CheckOutputErrors(f.ExecuteContainer(analysisData))
 	if err != nil {
 		return err
 	}
 
-	if errSolution := f.verifyIsSolutionError(output, err); errSolution != nil {
-		return errSolution
+	return f.parseOutput(output)
+}
+
+func (f *Formatter) parseOutput(output string) error {
+	analysis := &entities.Analysis{}
+
+	if err := json.Unmarshal([]byte(output), &analysis); err != nil {
+		return err
 	}
 
-	f.parseOutput(output, projectSubPath)
+	f.setSeveritiesAndVulnsByID(analysis)
+	for _, result := range analysis.GetRun().Results {
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(result))
+	}
+
 	return nil
 }
 
-func (f *Formatter) parseOutput(output, projectSubPath string) {
-	for _, scsResult := range f.newScsResultArrayFromOutput(output) {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(scsResult, projectSubPath))
-	}
+func (f *Formatter) setSeveritiesAndVulnsByID(analysis *entities.Analysis) {
+	f.severities = f.getVulnerabilityMap()
+	f.vulnerabilitiesByID = analysis.MapVulnerabilitiesByID()
 }
 
-func (f *Formatter) newScsResultArrayFromOutput(dockerOutput string) (outputs []entities.ScsResult) {
-	for _, output := range f.splitSCSContainerOutput(dockerOutput) {
-		if output == "" {
-			continue
-		}
-
-		if result, err := f.parseStringToStruct(output); err == nil && result.IsValid() {
-			outputs = append(outputs, result)
-		}
-	}
-
-	return f.removeDuplicatedOutputs(outputs)
-}
-
-func (f *Formatter) splitSCSContainerOutput(output string) []string {
-	return strings.SplitAfter(output, "}")
-}
-
-func (f *Formatter) parseStringToStruct(output string) (scsResult entities.ScsResult, err error) {
-	err = json.Unmarshal([]byte(output), &scsResult)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output), err)
-	return scsResult, err
-}
-
-func (f *Formatter) removeDuplicatedOutputs(scsResults []entities.ScsResult) []entities.ScsResult {
-	return scsResults[0 : len(scsResults)/2]
-}
-
-func (f *Formatter) setVulnerabilitySeverityData(scsResult entities.ScsResult,
-	projectSubPath string) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability.Vulnerability {
 	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = scsResult.GetSeverity()
-	data.Details = f.removeCsprojPathFromDetails(scsResult.IssueText)
-	data.Line = scsResult.GetLine()
-	data.Column = scsResult.GetColumn()
-	data.File = f.GetFilepathFromFilename(f.RemoveSrcFolderFromPath(scsResult.GetFilename()), projectSubPath)
-	data = vulnhash.Bind(data)
+	data.Severity = f.GetSeverity(result.RuleID)
+	data.Details = f.GetDetails(result.RuleID, result.GetVulnName())
+	data.Line = result.GetLine()
+	data.Column = result.GetColumn()
+	data.File = result.GetFile()
+	data.Code = fileUtils.GetCode(f.GetConfigProjectPath(), result.GetFile(), result.GetLine())
+	data = vulnHash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
 
@@ -125,29 +115,65 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerabili
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, "*.sln"), tools.SecurityCodeScan),
+		CMD: f.AddWorkDirInCmd(CMD, fileUtils.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
 
+	analysisData.SetSlnName(fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt))
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-func (f *Formatter) verifyIsSolutionError(output string, err error) error {
-	if strings.Contains(output, "Specify a project or solution file") {
-		msg := f.GetAnalysisIDErrorMessage(tools.SecurityCodeScan, output)
-		logger.LogErrorWithLevel(msg, errorsEnums.ErrSolutionNotFound)
+func (f *Formatter) verifyIsSolutionError(cmd string) error {
+	if strings.Contains(cmd, enums.SolutionFileNotFound) {
 		return errorsEnums.ErrSolutionNotFound
 	}
 
-	return err
+	return nil
 }
 
-func (f *Formatter) removeCsprojPathFromDetails(details string) string {
-	index := strings.Index(details, "[/src/")
-	if details == "" || index <= 0 {
-		return details
+func (f *Formatter) GetSeverity(ruleID string) severities.Severity {
+	if ruleID == "" {
+		return severities.Unknown
 	}
 
-	return details[:index]
+	return f.severities[ruleID]
+}
+
+func (f Formatter) GetDetails(ruleID, vulnName string) string {
+	if ruleID == "" {
+		return vulnName
+	}
+
+	return f.vulnerabilitiesByID[ruleID].GetDescription(vulnName)
+}
+
+func (f *Formatter) getVulnerabilityMap() map[string]severities.Severity {
+	values := map[string]severities.Severity{}
+	for key, value := range severitiesScs.MapCriticalValues() {
+		values[key] = value
+	}
+	for key, value := range severitiesScs.MapHighValues() {
+		values[key] = value
+	}
+	for key, value := range severitiesScs.MapMediumValues() {
+		values[key] = value
+	}
+	for key, value := range severitiesScs.MapLowValues() {
+		values[key] = value
+	}
+
+	return values
+}
+
+func (f *Formatter) CheckOutputErrors(output string, err error) (string, error) {
+	if err != nil {
+		return output, err
+	}
+
+	if strings.Contains(output, enums.BuildFailedOutput) {
+		return output, enums.ErrorFailedToBuildProject
+	}
+
+	return output, nil
 }

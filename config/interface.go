@@ -111,4 +111,7 @@ type IConfig interface {
 
 	SetShowVulnerabilitiesTypes(vulnerabilitiesTypes []string)
 	GetShowVulnerabilitiesTypes() []string
+
+	GetEnableOwaspDependencyCheck() bool
+	SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool)
 }

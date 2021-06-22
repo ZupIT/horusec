@@ -22,7 +22,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 )
 
@@ -40,9 +39,7 @@ type IService interface {
 	GetConfigProjectPath() string
 	GetToolsConfig() toolsconfig.MapToolConfig
 	GetAnalysis() *entitiesAnalysis.Analysis
-	SetToolFinishedAnalysis()
 	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
-	SetMonitor(monitor *monitor.Monitor)
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string
 	ToolIsToIgnore(tool tools.Tool) bool
@@ -55,4 +52,5 @@ type IService interface {
 	GetCustomRulesByLanguage(lang languages.Language) []engine.Rule
 	GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string
 	GetCustomImageByLanguage(language languages.Language) string
+	IsOwaspDependencyCheckDisable() bool
 }

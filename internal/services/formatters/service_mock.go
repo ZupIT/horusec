@@ -25,7 +25,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 )
 
@@ -72,16 +71,8 @@ func (m *Mock) GetAnalysis() *entitiesAnalysis.Analysis {
 	return args.Get(0).(*entitiesAnalysis.Analysis)
 }
 
-func (m *Mock) SetToolFinishedAnalysis() {
-	_ = m.MethodCalled("SetToolFinishedAnalysis")
-}
-
 func (m *Mock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
 	_ = m.MethodCalled("SetAnalysisError")
-}
-
-func (m *Mock) SetMonitor(_ *monitor.Monitor) {
-	_ = m.MethodCalled("SetMonitor")
 }
 
 func (m *Mock) RemoveSrcFolderFromPath(_ string) string {
@@ -146,4 +137,9 @@ func (m *Mock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string 
 func (m *Mock) GetCustomImageByLanguage(_ languages.Language) string {
 	args := m.MethodCalled("GetCustomImageByLanguage")
 	return args.Get(0).(string)
+}
+
+func (m *Mock) IsOwaspDependencyCheckDisable() bool {
+	args := m.MethodCalled("IsOwaspDependencyCheckDisable")
+	return args.Get(0).(bool)
 }

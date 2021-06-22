@@ -21,17 +21,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-
-	"github.com/sirupsen/logrus"
-
 	"github.com/google/uuid"
 	"github.com/iancoleman/strcase"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/config/dist"
 	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
@@ -86,6 +85,8 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
 	c.SetEnableInformationSeverity(c.extractFlagValueBool(cmd, "information-severity", c.GetEnableInformationSeverity()))
 	c.SetShowVulnerabilitiesTypes(c.extractFlagValueStringSlice(cmd, "show-vulnerabilities-types", c.GetShowVulnerabilitiesTypes()))
+	c.SetEnableOwaspDependencyCheck(c.extractFlagValueBool(cmd, "enable-owasp-dependency-check", c.GetDisableDocker()))
+
 	return c
 }
 
@@ -121,6 +122,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
+	c.SetEnableOwaspDependencyCheck(viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck)))
 	return c
 }
 
@@ -150,6 +152,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
 	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	c.SetShowVulnerabilitiesTypes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.showVulnerabilitiesTypes)))
+	c.SetEnableOwaspDependencyCheck(env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.enableOwaspDependencyCheck))
 	return c
 }
 
@@ -474,6 +477,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"enableInformationSeverity":       c.enableInformationSeverity,
 		"customImages":                    c.customImages,
 		"showVulnerabilitiesTypes":        c.showVulnerabilitiesTypes,
+		"enableOwaspDependencyCheck":      c.enableOwaspDependencyCheck,
 	}
 }
 
@@ -517,6 +521,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
 		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
 		c.toLowerCamel(EnvShowVulnerabilitiesTypes):        c.GetShowVulnerabilitiesTypes(),
+		c.toLowerCamel(EnvEnableOwaspDependencyCheck):      c.GetEnableOwaspDependencyCheck(),
 	}
 }
 
@@ -617,4 +622,12 @@ func (c *Config) SetCustomImages(configData interface{}) {
 	}
 
 	c.customImages = customImg
+}
+
+func (c *Config) GetEnableOwaspDependencyCheck() bool {
+	return c.enableOwaspDependencyCheck
+}
+
+func (c *Config) SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool) {
+	c.enableOwaspDependencyCheck = enableOwaspDependencyCheck
 }

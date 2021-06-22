@@ -20,12 +20,12 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
@@ -34,33 +34,32 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	customRules "github.com/ZupIT/horusec/internal/services/custom_rules"
-	dockerService "github.com/ZupIT/horusec/internal/services/docker"
+	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/git"
 )
 
 type Service struct {
-	analysis           *entitiesAnalysis.Analysis
-	docker             dockerService.Interface
+	mutex              *sync.Mutex
+	analysis           *analysis.Analysis
+	docker             docker.Interface
 	gitService         git.IService
-	monitor            *monitor.Monitor
-	config             cliConfig.IConfig
+	config             config.IConfig
 	customRulesService customRules.IService
 }
 
-func NewFormatterService(analysis *entitiesAnalysis.Analysis, docker dockerService.Interface, config cliConfig.IConfig,
-	monitorEntity *monitor.Monitor) IService {
+func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Interface, cfg config.IConfig) IService {
 	return &Service{
-		analysis:           analysis,
-		docker:             docker,
-		gitService:         git.NewGitService(config),
-		monitor:            monitorEntity,
-		config:             config,
-		customRulesService: customRules.NewCustomRulesService(config),
+		mutex:              new(sync.Mutex),
+		analysis:           analysiss,
+		docker:             dockerSvc,
+		gitService:         git.NewGitService(cfg),
+		config:             cfg,
+		customRulesService: customRules.NewCustomRulesService(cfg),
 	}
 }
 
@@ -113,12 +112,14 @@ func (s *Service) GetAnalysisID() string {
 	return s.analysis.GetIDString()
 }
 
-func (s *Service) GetAnalysis() *entitiesAnalysis.Analysis {
+func (s *Service) GetAnalysis() *analysis.Analysis {
 	return s.analysis
 }
 
 func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath string) {
 	if err != nil {
+		s.mutex.Lock()
+		defer s.mutex.Unlock()
 		s.addAnalysisError(err)
 		msg := s.GetAnalysisIDErrorMessage(tool, "")
 		if projectSubPath != "" {
@@ -139,14 +140,6 @@ func (s *Service) addAnalysisError(err error) {
 		}
 		s.analysis.Errors += toAppend + err.Error()
 	}
-}
-
-func (s *Service) SetToolFinishedAnalysis() {
-	s.monitor.RemoveProcess(1)
-}
-
-func (s *Service) SetMonitor(monitorToSet *monitor.Monitor) {
-	s.monitor = monitorToSet
 }
 
 func (s *Service) RemoveSrcFolderFromPath(filepath string) string {
@@ -171,9 +164,8 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
-	if s.config.GetToolsConfig()[tool].IsToIgnore {
-		s.SetToolFinishedAnalysis()
-		return true
+	if tool, exists := s.config.GetToolsConfig()[tool]; exists {
+		return tool.IsToIgnore
 	}
 	return false
 }
@@ -241,7 +233,7 @@ func (s *Service) setVulnerabilityDataByFindings(findings []engine.Finding, inde
 
 func (s *Service) AddNewVulnerabilityIntoAnalysis(vuln *vulnerability.Vulnerability) {
 	s.GetAnalysis().AnalysisVulnerabilities = append(s.GetAnalysis().AnalysisVulnerabilities,
-		entitiesAnalysis.AnalysisVulnerabilities{
+		analysis.AnalysisVulnerabilities{
 			Vulnerability: *vuln,
 		})
 }
@@ -267,12 +259,7 @@ func (s *Service) removeHorusecFolder(filepath string) string {
 }
 
 func (s *Service) IsDockerDisabled() bool {
-	isDisabled := s.config.GetDisableDocker()
-	if isDisabled {
-		s.SetToolFinishedAnalysis()
-	}
-
-	return isDisabled
+	return s.config.GetDisableDocker()
 }
 
 func (s *Service) GetCustomRulesByLanguage(lang languages.Language) []engine.Rule {
@@ -292,4 +279,8 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 
 func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
 	return s.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]
+}
+
+func (s *Service) IsOwaspDependencyCheckDisable() bool {
+	return !s.config.GetEnableOwaspDependencyCheck()
 }

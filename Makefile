@@ -27,7 +27,7 @@ coverage:
 
 test:
 	$(GO) clean -testcache
-	$(GO) test -v $(GO_LIST_TO_TEST) -timeout=5m -parallel=1 -failfast -short
+	$(GO) test -v $(GO_LIST_TO_TEST) -race -timeout=5m -parallel=1 -failfast -short
 
 test-e2e:
 	$(GO) clean -testcache

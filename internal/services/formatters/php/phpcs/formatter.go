@@ -51,7 +51,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startPhpCs(projectSubPath), tools.PhpCS, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS, languages.PHP)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startPhpCs(projectSubPath string) error {

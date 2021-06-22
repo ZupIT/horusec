@@ -23,7 +23,6 @@ import (
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
-	"github.com/ZupIT/horusec/internal/entities/monitor"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -69,7 +68,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		leaksAnalyzer := NewFormatter(service)
 
@@ -87,7 +86,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		leaksAnalyzer := NewFormatter(service)
 
@@ -105,7 +104,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("some error"))
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		leaksAnalyzer := NewFormatter(service)
 
@@ -126,7 +125,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
 		leaksAnalyzer := NewFormatter(service)
 
@@ -140,7 +139,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GitLeaks: toolsconfig.ToolConfig{IsToIgnore: true}})
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")

@@ -55,7 +55,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startSobelow(projectSubPath), tools.Sobelow, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Sobelow, languages.Elixir)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startSobelow(projectSubPath string) error {

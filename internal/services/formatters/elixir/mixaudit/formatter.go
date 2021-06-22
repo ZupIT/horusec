@@ -50,7 +50,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startMixAudit(projectSubPath), tools.MixAudit, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.MixAudit, languages.Elixir)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startMixAudit(projectSubPath string) error {

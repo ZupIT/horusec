@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,39 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monitor
+package entities
 
-type Monitor struct {
-	process int
-	started bool
+type Analysis struct {
+	Runs []*Run `json:"runs"`
 }
 
-func NewMonitor() *Monitor {
-	return &Monitor{
-		process: 0,
-		started: false,
+func (a *Analysis) GetRun() *Run {
+	if len(a.Runs) > 0 {
+		return a.Runs[0]
 	}
+
+	return nil
 }
 
-func (m *Monitor) AddProcess(n int) {
-	if !m.started {
-		m.started = true
+func (a *Analysis) MapVulnerabilitiesByID() map[string]*Rule {
+	vulnMap := map[string]*Rule{}
+
+	for _, rule := range a.GetRun().Tool.Driver.Rules {
+		vulnMap[rule.ID] = rule
 	}
-	m.process += n
-}
 
-func (m *Monitor) RemoveProcess(n int) {
-	m.process -= n
-}
-
-func (m *Monitor) IsFinished() bool {
-	return m.started && m.process <= 0
-}
-
-func (m *Monitor) IsRunning() bool {
-	return m.started && m.process > 0
-}
-
-func (m *Monitor) GetProcess() int {
-	return m.process
+	return vulnMap
 }

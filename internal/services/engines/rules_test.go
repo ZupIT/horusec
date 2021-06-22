@@ -3,6 +3,9 @@ package engines_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
@@ -14,8 +17,6 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/nginx"
 	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
 	"github.com/ZupIT/horusec/internal/services/engines/swift"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestGetRules(t *testing.T) {

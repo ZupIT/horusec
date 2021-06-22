@@ -53,7 +53,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startShellCheck(projectSubPath), tools.ShellCheck, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.ShellCheck, languages.Shell)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startShellCheck(projectSubPath string) error {

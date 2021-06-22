@@ -20,8 +20,6 @@ import (
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
-	"github.com/ZupIT/horusec/internal/entities/monitor"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -55,7 +53,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
@@ -74,7 +72,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
@@ -90,7 +88,7 @@ func TestStartCFlawfinder(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		assert.NotPanics(t, func() {
@@ -105,7 +103,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Sobelow: toolsconfig.ToolConfig{IsToIgnore: true}})
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config, &monitor.Monitor{})
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")

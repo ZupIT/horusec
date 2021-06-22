@@ -54,7 +54,6 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 	f.SetAnalysisError(f.startNpmAudit(projectSubPath), tools.NpmAudit, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.NpmAudit, languages.Javascript)
-	f.SetToolFinishedAnalysis()
 }
 
 func (f *Formatter) startNpmAudit(projectSubPath string) error {

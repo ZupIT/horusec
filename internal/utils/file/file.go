@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
 package file
 
 import (
+	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
-	"path/filepath"
+	filepathLib "path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -29,7 +32,7 @@ func GetAbsFilePathIntoBasePath(filePath, basePath string) string {
 	}
 	for _, path := range strings.Split(string(bytes), "\n") {
 		if strings.Contains(path, filePath) {
-			absPath, _ := filepath.Abs(path)
+			absPath, _ := filepathLib.Abs(path)
 			return absPath
 		}
 	}
@@ -52,8 +55,8 @@ func GetPathIntoFilename(filename, basePath string) string {
 }
 
 func isSameExtensions(filename, path string) bool {
-	filenameExt := filepath.Ext(filename)
-	basePathExt := filepath.Ext(path)
+	filenameExt := filepathLib.Ext(filename)
+	basePathExt := filepathLib.Ext(path)
 	return filenameExt == basePathExt
 }
 
@@ -63,7 +66,7 @@ func ReplacePathSeparator(path string) string {
 
 func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) {
 	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
-	_ = filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+	_ = filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -83,7 +86,7 @@ func setExtension(ext string) string {
 }
 
 func verifyMathAndFormat(projectPath, walkPath, ext string) string {
-	matched, err := filepath.Match(setExtension(ext), filepath.Base(walkPath))
+	matched, err := filepathLib.Match(setExtension(ext), filepathLib.Base(walkPath))
 	if err != nil {
 		return ""
 	}
@@ -106,11 +109,113 @@ func setProjectPathWithSubPath(projectPath, projectSubPath string) string {
 
 func formatExtPath(projectPath, walkPath string) string {
 	basePathRemoved := strings.ReplaceAll(walkPath, projectPath, "")
-	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepath.Base(walkPath), "")
+	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepathLib.Base(walkPath), "")
 
 	if extensionFileRemoved != "" && extensionFileRemoved[0:1] == "/" {
 		extensionFileRemoved = extensionFileRemoved[1:]
 	}
 
 	return extensionFileRemoved
+}
+
+func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
+	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
+	_ = filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if filepathLib.Ext(walkPath) == ext {
+			filename = filepathLib.Base(walkPath)
+			return io.EOF
+		}
+
+		return nil
+	})
+
+	return filename
+}
+
+func GetCode(projectPath, filepath, desiredLine string) string {
+	path := fmt.Sprintf("%s%s%s", projectPath, string(os.PathSeparator), filepath)
+
+	file, err := os.Open(path)
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(getCodeFromDesiredLine(file, getLine(desiredLine)))
+}
+
+func getLine(desiredLine string) int {
+	desiredLineParsed, _ := strconv.Atoi(desiredLine)
+	if desiredLineParsed <= 0 {
+		return desiredLineParsed
+	}
+
+	return desiredLineParsed - 1
+}
+
+func getCodeFromDesiredLine(file *os.File, desiredLine int) string {
+	var line int
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if line == desiredLine {
+			return scanner.Text()
+		}
+
+		line++
+	}
+
+	return ""
+}
+
+func GetDependencyCodeFilepathAndLine(projectPath, subPath, ext, dependency string) (code, file, line string) {
+	paths, err := getPathsByExtension(projectPath, subPath, ext)
+	if err != nil {
+		return "", "", ""
+	}
+
+	return getDependencyInfo(paths, dependency)
+}
+
+func getPathsByExtension(projectPath, subPath, ext string) ([]string, error) {
+	var paths []string
+
+	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
+	return paths, filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if filepathLib.Ext(walkPath) == ext {
+			paths = append(paths, walkPath)
+		}
+
+		return nil
+	})
+}
+
+//nolint:funlen // improve in the future
+func getDependencyInfo(paths []string, dependency string) (code, filepath, _ string) {
+	var line int
+
+	for _, path := range paths {
+		file, err := os.Open(path)
+		if err != nil {
+			return "", "", ""
+		}
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line++
+
+			if strings.Contains(scanner.Text(), dependency) {
+				return strings.TrimSpace(scanner.Text()), path, strconv.Itoa(line)
+			}
+		}
+	}
+
+	return "", "", ""
 }

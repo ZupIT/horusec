@@ -29,8 +29,9 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 
-	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 )
 
 func TestStartAnalysis(t *testing.T) {
