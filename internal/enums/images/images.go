@@ -8,7 +8,7 @@ const (
 	Csharp          = "horuszup/horusec-csharp:v1.0.1"
 	Elixir          = "horuszup/horusec-elixir:v1.0.0"
 	Generic         = "horuszup/horusec-generic:v1.0.1"
-	Go              = "horuszup/horusec-go:v1.0.0"
+	Go              = "horuszup/horusec-go:v1.0.1"
 	HCL             = "horuszup/horusec-hcl:v1.0.0"
 	Javascript      = "horuszup/horusec-js:v1.0.0"
 	Leaks           = "horuszup/horusec-leaks:v1.0.1"

@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dependencycheck
+package enums
 
-const CMD = `
-		{{WORK_DIR}}
-		/bin/dependency-check/bin/dependency-check.sh --enableExperimental \
-			--scan /src --format JSON --out /tmp/result-ANALYSISID.json >> /tmp/output-ANALYSISID.txt
-		cat /tmp/result-ANALYSISID.json
-  `
+const (
+	JSONIndex              = "{"
+	GoModulesExt           = ".mod"
+	LowScoreMin            = 0.1
+	LowScoreMax            = 3.9
+	MediumScoreMin         = 4.0
+	MediumScoreMax         = 6.9
+	HighScoreMin           = 7.0
+	HighScoreMax           = 8.9
+	CriticalScoreMin       = 9.0
+	BitSize                = 32
+	ReplaceDependencyText  = "pkg:golang/"
+	IndexDependencyVersion = "@"
+)

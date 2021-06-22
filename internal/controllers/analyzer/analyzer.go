@@ -16,7 +16,6 @@ package analyzer
 
 import (
 	"fmt"
-
 	"log"
 	"os"
 	"os/signal"
@@ -52,6 +51,7 @@ import (
 	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
+	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
@@ -283,7 +283,9 @@ func (a *Analyzer) detectVulnerabilityGo(_ *sync.WaitGroup, projectSubPath strin
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
 		return err
 	}
+
 	gosec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	nancy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 
