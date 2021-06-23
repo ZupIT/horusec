@@ -17,4 +17,3 @@ package enums
 const (
 	MessageVulnerabilityReferenceURL = "For more information, please checkout the following url"
 )
-
