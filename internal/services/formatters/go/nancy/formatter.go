@@ -16,6 +16,7 @@ package nancy
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -103,7 +104,7 @@ func (f *Formatter) setVulnerabilityData(vulnData *entities.Vulnerability,
 	vuln.Confidence = confidence.High
 	vuln.Code = code
 	vuln.Line = line
-	vuln.File = filepath
+	vuln.File = f.removeHorusecFolder(filepath)
 	vuln = vulnHash.Bind(vuln)
 	return f.SetCommitAuthor(vuln)
 }
@@ -117,9 +118,14 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerabili
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Nancy),
+		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
+			f.GetConfigProjectPath(), projectSubPath, enums.GoModulesExt), tools.Nancy),
 		Language: languages.Go,
 	}
 
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Go), images.Go)
+}
+
+func (f *Formatter) removeHorusecFolder(filepath string) string {
+	return strings.ReplaceAll(filepath, fmt.Sprintf(enums.HorusecFolder, f.GetAnalysisID()), "")
 }

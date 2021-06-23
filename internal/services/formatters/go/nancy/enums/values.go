@@ -27,4 +27,5 @@ const (
 	BitSize                = 32
 	ReplaceDependencyText  = "pkg:golang/"
 	IndexDependencyVersion = "@"
+	HorusecFolder          = ".horusec/%s/"
 )
