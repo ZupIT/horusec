@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine AS builder
-
-RUN apk add git
-
-RUN git clone https://github.com/sonatype-nexus-community/nancy.git
-
-RUN cd nancy && GO111MODULE=on CGO_ENABLED=0 go build -o /bin/nancy -v
-
 FROM golang:alpine
 
-COPY --from=builder /bin/nancy /bin/nancy
+RUN apk add curl
+
+RUN curl -fsSL https://github.com/sonatype-nexus-community/nancy/releases/download/v1.0.22/nancy-v1.0.22-linux-amd64 -o /bin/nancy
+RUN chmod +x /bin/nancy
 
 RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s latest
