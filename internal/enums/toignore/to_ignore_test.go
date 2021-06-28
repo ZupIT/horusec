@@ -21,8 +21,8 @@ import (
 )
 
 func TestGetDefaultFoldersToIgnore(t *testing.T) {
-	t.Run("should success get 10 default files to ignore", func(t *testing.T) {
-		assert.Equal(t, len(GetDefaultFoldersToIgnore()), 9)
+	t.Run("should success get 7 default files to ignore", func(t *testing.T) {
+		assert.Equal(t, 7, len(GetDefaultFoldersToIgnore()))
 	})
 }
 

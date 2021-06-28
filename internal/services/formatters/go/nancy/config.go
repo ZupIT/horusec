@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dependencycheck
+package nancy
 
 const CMD = `
 		{{WORK_DIR}}
-		/bin/dependency-check/bin/dependency-check.sh --enableExperimental \
-			--scan /src --format JSON --out /tmp/result-ANALYSISID.json >> /tmp/output-ANALYSISID.txt
-		cat /tmp/result-ANALYSISID.json
-  `
+		go list -json -m all | nancy sleuth -o json
+	`

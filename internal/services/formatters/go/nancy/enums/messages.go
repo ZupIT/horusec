@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dependencycheck
+package enums
 
-const CMD = `
-		{{WORK_DIR}}
-		/bin/dependency-check/bin/dependency-check.sh --enableExperimental \
-			--scan /src --format JSON --out /tmp/result-ANALYSISID.json >> /tmp/output-ANALYSISID.txt
-		cat /tmp/result-ANALYSISID.json
-  `
+const (
+	MessageVulnerabilityReferenceURL = "For more information, please checkout the following url"
+)
