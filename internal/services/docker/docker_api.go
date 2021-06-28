@@ -76,6 +76,10 @@ func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData)
 }
 
 func (d *API) PullImage(imageWithTagAndRegistry string) error {
+	if d.config.GetDisableDocker() {
+		return nil
+	}
+
 	if imageNotExist, err := d.checkImageNotExists(imageWithTagAndRegistry); err != nil || !imageNotExist {
 		logger.LogError(fmt.Sprintf("%s -> %s",
 			messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
