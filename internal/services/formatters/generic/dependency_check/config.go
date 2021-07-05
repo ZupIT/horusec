@@ -14,9 +14,9 @@
 
 package dependencycheck
 
+//nolint:lll // docker cmd config
 const CMD = `
 		{{WORK_DIR}}
-		/bin/dependency-check/bin/dependency-check.sh --enableExperimental \
-			--scan /src --format JSON --out /tmp/result-ANALYSISID.json >> /tmp/output-ANALYSISID.txt
+		/bin/dependency-check/bin/dependency-check.sh --scan /src --format JSON --out /tmp/result-ANALYSISID.json >> /tmp/output-ANALYSISID.txt
 		cat /tmp/result-ANALYSISID.json
   `
