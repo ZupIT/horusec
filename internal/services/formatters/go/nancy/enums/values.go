@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package toignore
+package enums
 
-import (
-	"testing"
-
-	"github.com/stretchr/testify/assert"
+const (
+	JSONIndex              = "{"
+	GoModulesExt           = ".mod"
+	LowScoreMin            = 0.1
+	LowScoreMax            = 3.9
+	MediumScoreMin         = 4.0
+	MediumScoreMax         = 6.9
+	HighScoreMin           = 7.0
+	HighScoreMax           = 8.9
+	CriticalScoreMin       = 9.0
+	BitSize                = 32
+	ReplaceDependencyText  = "pkg:golang/"
+	IndexDependencyVersion = "@"
+	HorusecFolder          = ".horusec/%s/"
 )
-
-func TestGetDefaultFoldersToIgnore(t *testing.T) {
-	t.Run("should success get 7 default files to ignore", func(t *testing.T) {
-		assert.Equal(t, 7, len(GetDefaultFoldersToIgnore()))
-	})
-}
-
-func TestGetDefaultExtensionsToIgnore(t *testing.T) {
-	t.Run("should success get 33 extensions to ignore", func(t *testing.T) {
-		assert.Len(t, GetDefaultExtensionsToIgnore(), 33)
-	})
-}

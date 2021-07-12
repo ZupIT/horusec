@@ -15,8 +15,7 @@
 package toignore
 
 func GetDefaultFoldersToIgnore() []string {
-	return []string{"/.horusec/", "/.idea/", "/.vscode/", "/tmp/", "/bin/", "/node_modules/", "/vendor/",
-		"go.mod", "go.sum"}
+	return []string{"/.horusec/", "/.idea/", "/.vscode/", "/tmp/", "/bin/", "/node_modules/", "/vendor/"}
 }
 
 func GetDefaultExtensionsToIgnore() []string {

@@ -90,7 +90,7 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 	}
 	if len(output) >= 19 && strings.EqualFold(output[:19], "ERROR_REQ_NOT_FOUND") {
 		f.SetAnalysisError(errors.New(messages.MsgErrorNotFoundRequirementsTxt), tools.Safety, projectSubPath)
-		output = ""
+		return
 	}
 	safetyOutput, err := f.parseOutputToSafetyOutput(output)
 	if err != nil {
