@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v1.0.7
+	github.com/ZupIT/horusec-devkit v1.0.8
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/containerd/containerd v1.5.1 // indirect
@@ -15,7 +15,6 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
 	github.com/google/uuid v1.2.0
 	github.com/iancoleman/strcase v0.1.3
-	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0

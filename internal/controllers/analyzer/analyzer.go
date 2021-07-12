@@ -52,6 +52,7 @@ import (
 	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
+	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
@@ -207,6 +208,9 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	timeout := a.config.GetTimeoutInSecondsAnalysis()
 	timer := time.After(time.Duration(timeout) * time.Second)
 	retry := a.config.GetMonitorRetryInSeconds()
+	tick := time.NewTicker(time.Duration(retry) * time.Second)
+	defer tick.Stop()
+	logger.LogInfoWithLevel(fmt.Sprintf("%s%ds", messages.MsgInfoMonitorTimeoutIn, timeout))
 	for {
 		select {
 		case <-done:
@@ -215,11 +219,9 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 			a.docker.DeleteContainersFromAPI()
 			a.config.SetIsTimeout(true)
 			return
-		default:
-			msg := fmt.Sprintf("%s%ds", messages.MsgInfoMonitorTimeoutIn, timeout)
-			logger.LogInfoWithLevel(msg)
-			time.Sleep(time.Duration(retry) * time.Second)
+		case <-tick.C:
 			timeout -= retry
+			logger.LogInfoWithLevel(fmt.Sprintf("%s%ds", messages.MsgInfoMonitorTimeoutIn, timeout))
 		}
 	}
 }
@@ -283,7 +285,9 @@ func (a *Analyzer) detectVulnerabilityGo(_ *sync.WaitGroup, projectSubPath strin
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
 		return err
 	}
+
 	gosec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	nancy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 
