@@ -284,3 +284,7 @@ func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
 func (s *Service) IsOwaspDependencyCheckDisable() bool {
 	return !s.config.GetEnableOwaspDependencyCheck()
 }
+
+func (s *Service) IsShellcheckDisable() bool {
+	return !s.config.GetEnableShellCheck()
+}

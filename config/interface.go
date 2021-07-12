@@ -114,4 +114,7 @@ type IConfig interface {
 
 	GetEnableOwaspDependencyCheck() bool
 	SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool)
+
+	GetEnableShellCheck() bool
+	SetEnableShellCheck(enableShellCheck bool)
 }

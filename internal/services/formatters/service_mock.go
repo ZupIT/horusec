@@ -143,3 +143,8 @@ func (m *Mock) IsOwaspDependencyCheckDisable() bool {
 	args := m.MethodCalled("IsOwaspDependencyCheckDisable")
 	return args.Get(0).(bool)
 }
+
+func (m *Mock) IsShellcheckDisable() bool {
+	args := m.MethodCalled("IsShellcheckDisable")
+	return args.Get(0).(bool)
+}
