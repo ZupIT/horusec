@@ -62,7 +62,7 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) I
 	return c
 }
 
-//nolint:lll,funlen // method need all configs
+//nolint:funlen // method need all configs
 func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig {
 	c.SetMonitorRetryInSeconds(c.extractFlagValueInt64(cmd, "monitor-retry-count", c.GetMonitorRetryInSeconds()))
 	c.SetPrintOutputType(c.extractFlagValueString(cmd, "output-format", c.GetPrintOutputType()))
@@ -129,7 +129,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	return c
 }
 
-//nolint:lll,funlen // method need all configs
+//nolint:funlen // method need all configs
 func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetHorusecAPIURI(env.GetEnvOrDefault(EnvHorusecAPIUri, c.horusecAPIUri))
 	c.SetTimeoutInSecondsRequest(env.GetEnvOrDefaultInt64(EnvTimeoutInSecondsRequest, c.timeoutInSecondsRequest))
