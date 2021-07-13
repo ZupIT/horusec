@@ -187,35 +187,35 @@ func (c *Config) SetLogLevel(logLevel string) {
 	logger.SetLogLevel(c.logLevel)
 }
 func (c *Config) SetLogFilePath(logPath string) {
-	var file *os.File
-	var fileName string
-	if logPath == "" {
-		dir, err := getDirName()
-		if err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
-		}
-		fileName = dir + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
-		file, err = os.Create(fileName)
-		if err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
-		}
-
-	} else {
-		var err error
-		if _, err := os.Stat(logPath); os.IsNotExist(err) {
-			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
-		}
-
-		fileName = logPath + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
-		file, err = os.Create(fileName)
-		file, err = os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-		if err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
-		}
-
+	file, err := getFile(logPath)
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+		return
 	}
-	logger.LogInfo("Set log file to " + fileName)
+	logger.LogInfo("Set log file to " + file.Name())
 	logger.LogSetOutput(file, os.Stdout)
+}
+
+func getFile(logPath string) (*os.File, error) {
+	var err error
+	if logPath == "" {
+		logPath, err = getDirName()
+		if err != nil {
+			return nil, err
+		}
+	} else if _, err = os.Stat(logPath); os.IsNotExist(err) {
+		return nil, err
+	}
+	return createLogFile(logPath)
+}
+
+func createLogFile(dir string) (*os.File, error) {
+	fileName := dir + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
+	file, err := os.Create(fileName)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
 func getDirName() (string, error) {
 	var dirAbsPath string
