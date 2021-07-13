@@ -500,12 +500,12 @@ func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 //nolint // parse struct is necessary > 15 lines
 func (c *Config) toMap() map[string]interface{} {
 	return map[string]interface{}{
-		"configFilePath":          c.configFilePath,
-		"horusecAPIUri":           c.horusecAPIUri,
-		"repositoryAuthorization": c.repositoryAuthorization,
-		"certPath":                c.certPath,
-		"repositoryName":          c.repositoryName,
-		"printOutputTypehttps://github.com/ZupIT/horusec/blob/main/config/config.go#L66": c.printOutputType,
+		"configFilePath":                  c.configFilePath,
+		"horusecAPIUri":                   c.horusecAPIUri,
+		"repositoryAuthorization":         c.repositoryAuthorization,
+		"certPath":                        c.certPath,
+		"repositoryName":                  c.repositoryName,
+		"printOutputType":                 c.printOutputType,
 		"jsonOutputFilePath":              c.jsonOutputFilePath,
 		"projectPath":                     c.projectPath,
 		"containerBindProjectPath":        c.containerBindProjectPath,
