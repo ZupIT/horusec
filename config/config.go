@@ -14,12 +14,14 @@
 
 package config
 
+import "C"
 import (
 	"encoding/json"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/iancoleman/strcase"
@@ -56,6 +58,7 @@ func NewConfig() IConfig {
 func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) IConfig {
 	c.SetLogLevel(c.extractFlagValueString(cmd, "log-level", c.GetLogLevel()))
 	c.SetConfigFilePath(c.extractFlagValueString(cmd, "config-file-path", c.GetConfigFilePath()))
+	c.SetLogFilePath(c.extractFlagValueString(cmd, "log-path", c.GetLogFilePath()))
 	return c
 }
 
@@ -183,6 +186,56 @@ func (c *Config) SetLogLevel(logLevel string) {
 	c.logLevel = logLevel
 	logger.SetLogLevel(c.logLevel)
 }
+func (c *Config) SetLogFilePath(logPath string) {
+	var file *os.File
+	var fileName string
+	if logPath == "" {
+		dir, err := getDirName()
+		if err != nil {
+			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+		}
+		fileName = dir + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
+		file, err = os.Create(fileName)
+		if err != nil {
+			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+		}
+
+	} else {
+		var err error
+		if _, err := os.Stat(logPath); os.IsNotExist(err) {
+			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+		}
+
+		fileName = logPath + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
+		file, err = os.Create(fileName)
+		file, err = os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+		if err != nil {
+			logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+		}
+
+	}
+	logger.LogInfo("Set log file to " + fileName)
+	logger.LogSetOutput(file, os.Stdout)
+}
+func getDirName() (string, error) {
+	var dirAbsPath string
+	ex, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+
+	exReal, err := filepath.EvalSymlinks(ex)
+	if err != nil {
+		return "", err
+	}
+	dirAbsPath = filepath.Dir(exReal)
+
+	return dirAbsPath, nil
+}
+
+func (c *Config) GetLogFilePath() string {
+	return valueordefault.GetStringValueOrDefault(c.logPath, "")
+}
 
 func (c *Config) GetHorusecAPIUri() string {
 	return valueordefault.GetStringValueOrDefault(c.horusecAPIUri, "http://0.0.0.0:8000")
@@ -214,7 +267,6 @@ func (c *Config) GetMonitorRetryInSeconds() int64 {
 	const defaultValue = 15
 	return valueordefault.GetInt64ValueOrDefault(c.monitorRetryInSeconds, int64(defaultValue))
 }
-
 func (c *Config) SetMonitorRetryInSeconds(retryInterval int64) {
 	c.monitorRetryInSeconds = retryInterval
 }
@@ -448,12 +500,12 @@ func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 //nolint // parse struct is necessary > 15 lines
 func (c *Config) toMap() map[string]interface{} {
 	return map[string]interface{}{
-		"configFilePath":                  c.configFilePath,
-		"horusecAPIUri":                   c.horusecAPIUri,
-		"repositoryAuthorization":         c.repositoryAuthorization,
-		"certPath":                        c.certPath,
-		"repositoryName":                  c.repositoryName,
-		"printOutputType":                 c.printOutputType,
+		"configFilePath":          c.configFilePath,
+		"horusecAPIUri":           c.horusecAPIUri,
+		"repositoryAuthorization": c.repositoryAuthorization,
+		"certPath":                c.certPath,
+		"repositoryName":          c.repositoryName,
+		"printOutputTypehttps://github.com/ZupIT/horusec/blob/main/config/config.go#L66": c.printOutputType,
 		"jsonOutputFilePath":              c.jsonOutputFilePath,
 		"projectPath":                     c.projectPath,
 		"containerBindProjectPath":        c.containerBindProjectPath,

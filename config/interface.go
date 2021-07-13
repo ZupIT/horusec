@@ -22,6 +22,8 @@ type IConfig interface {
 
 	GetLogLevel() string
 	SetLogLevel(logLevel string)
+	SetLogFilePath(logPath string)
+	GetLogFilePath() string
 
 	GetHorusecAPIUri() string
 	SetHorusecAPIURI(horusecAPIURI string)
