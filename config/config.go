@@ -14,7 +14,6 @@
 
 package config
 
-import "C"
 import (
 	"encoding/json"
 	"os"
@@ -126,6 +125,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
 	c.SetEnableOwaspDependencyCheck(viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck)))
+	c.SetLogFilePath(viper.GetString(EnvSetLogPath))
 	return c
 }
 
@@ -156,6 +156,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	c.SetShowVulnerabilitiesTypes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.showVulnerabilitiesTypes)))
 	c.SetEnableOwaspDependencyCheck(env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.enableOwaspDependencyCheck))
+	c.SetLogFilePath(env.GetEnvOrDefault(EnvSetLogPath, c.logPath))
 	return c
 }
 

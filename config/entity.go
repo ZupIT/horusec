@@ -49,6 +49,7 @@ const (
 	EnvCustomImages                    = "HORUSEC_CLI_CUSTOM_IMAGES"
 	EnvShowVulnerabilitiesTypes        = "HORUSEC_CLI_SHOW_VULNERABILITIES_TYPES"
 	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
+	EnvSetLogPath                      = "HORUSEC_CLI_SET_LOG_PATH"
 )
 
 type Config struct {
