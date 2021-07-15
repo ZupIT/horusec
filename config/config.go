@@ -212,7 +212,7 @@ func getFile(logPath string) (*os.File, error) {
 }
 
 func createLogFile(dir string) (*os.File, error) {
-	fileName := dir + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
+	fileName := filepath.Join(dir, "horusec-log-"+time.Now().Format("2006-01-02 15:04:05")+".log")
 	file, _ := os.Create(fileName)
 	return file, nil
 }
