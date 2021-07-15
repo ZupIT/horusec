@@ -71,7 +71,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -107,7 +107,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -144,7 +144,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
 
@@ -177,7 +177,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -210,7 +210,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -244,7 +244,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -279,7 +279,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
@@ -314,7 +314,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
+
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
 
@@ -346,7 +346,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		//logrus.SetOutput(os.Stdout)
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -377,7 +376,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
 		assert.NoError(t, err)
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NotEmpty(t, output)
@@ -400,13 +399,9 @@ func TestStartCommand_Execute(t *testing.T) {
 	t.Run("Should execute command exec without error showing info vulnerabilities", func(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
-		//
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -435,7 +430,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NoError(t, err)
@@ -453,12 +448,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(stdoutMock)
-
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -487,7 +478,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NoError(t, err)
@@ -504,12 +495,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(stdoutMock)
-
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -539,7 +526,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NoError(t, err)
@@ -568,13 +555,10 @@ func TestStartCommand_Execute(t *testing.T) {
 		}))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
 		configs.SetConfigFilePath("./not-exists.json")
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -604,7 +588,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NoError(t, err)
@@ -626,9 +610,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		}))
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
-
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(stdoutMock)
 
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
@@ -661,7 +642,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
-		os.Stdout = oldStdout // restoring the real stdout
+		os.Stdout = oldStdout
 		output := <-outC
 
 		assert.NoError(t, err)

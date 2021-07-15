@@ -61,7 +61,7 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) I
 	return c
 }
 
-//nolint:funlen // method need all configs
+//nolint:lll,funlen // method need all configs
 func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IConfig {
 	c.SetMonitorRetryInSeconds(c.extractFlagValueInt64(cmd, "monitor-retry-count", c.GetMonitorRetryInSeconds()))
 	c.SetPrintOutputType(c.extractFlagValueString(cmd, "output-format", c.GetPrintOutputType()))
@@ -129,7 +129,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	return c
 }
 
-//nolint:funlen // method need all configs
+//nolint:lll,funlen // method need all configs
 func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetHorusecAPIURI(env.GetEnvOrDefault(EnvHorusecAPIUri, c.horusecAPIUri))
 	c.SetTimeoutInSecondsRequest(env.GetEnvOrDefaultInt64(EnvTimeoutInSecondsRequest, c.timeoutInSecondsRequest))
@@ -194,6 +194,7 @@ func (c *Config) SetLogFilePath(logPath string) {
 		return
 	}
 	logger.LogInfo("Set log file to " + file.Name())
+	c.logPath = file.Name()
 	logger.LogSetOutput(file, os.Stdout)
 }
 
@@ -212,10 +213,7 @@ func getFile(logPath string) (*os.File, error) {
 
 func createLogFile(dir string) (*os.File, error) {
 	fileName := dir + "/horusec-log-" + time.Now().Format("2006-01-02 15:04:05") + ".log"
-	file, err := os.Create(fileName)
-	if err != nil {
-		return nil, err
-	}
+	file, _ := os.Create(fileName)
 	return file, nil
 }
 func getDirName() (string, error) {

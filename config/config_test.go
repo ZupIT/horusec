@@ -452,3 +452,16 @@ func TestConfig_ToBytes(t *testing.T) {
 		assert.NotEmpty(t, config.ToBytes(true))
 	})
 }
+func TestSetLogOutput(t *testing.T) {
+	t.Run("Should fail when log path is invalid", func(t *testing.T) {
+		config := &Config{}
+		config.SetLogFilePath("invalidPath")
+		assert.Equal(t, "", config.logPath)
+	})
+	t.Run("Should success when log path is empty", func(t *testing.T) {
+		config := &Config{}
+		config.SetLogFilePath("")
+		assert.NotEmpty(t, config.logPath)
+	})
+
+}
