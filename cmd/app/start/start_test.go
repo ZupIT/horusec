@@ -71,7 +71,6 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
-		//configs.NewConfigsFromEnvironments()
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -92,10 +91,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
-		//outputBytes, err := ioutil.ReadAll(stdoutMock)
-		//output := string(outputBytes)
-		//assert.NoError(t, err)
-		//assert.Empty(t, output)
 
 		promptMock.AssertCalled(t, "Ask")
 	})
@@ -129,10 +124,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", "./"})
 
 		assert.NoError(t, cobraCmd.Execute())
-		//outputBytes, err := ioutil.ReadAll(stdoutMock)
-		//output := string(outputBytes)
-		//assert.NoError(t, err)
-		//assert.Empty(t, output)
 
 		promptMock.AssertNotCalled(t, "Ask")
 	})
