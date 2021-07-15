@@ -194,7 +194,7 @@ func (c *Config) SetLogFilePath(logPath string) {
 		return
 	}
 	logger.LogInfo("Set log file to " + file.Name())
-	c.logPath = file.Name()
+	c.logPath = filepath.Dir(file.Name())
 	logger.LogSetOutput(file, os.Stdout)
 }
 

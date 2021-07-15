@@ -71,6 +71,7 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
+		//configs.NewConfigsFromEnvironments()
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)

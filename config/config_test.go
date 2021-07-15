@@ -240,6 +240,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
+		assert.NoError(t, os.Setenv(EnvSetLogPath, "test"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
