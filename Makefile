@@ -41,6 +41,14 @@ fix-imports:
 		$(GO_IMPORTS) -local $(GO_IMPORTS_LOCAL) -w $(GO_FILES)
     endif
 
+license:
+	$(GO) get -u github.com/google/addlicense
+	addlicense -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+
+license-fix:
+	$(GO) get -u github.com/google/addlicense
+	addlicense -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+
 security:
     ifeq (, $(shell which $(HORUSEC)))
 		make install
