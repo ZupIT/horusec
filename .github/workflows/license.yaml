@@ -12,7 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-alpha: 0
-beta: 0
-rc: 0
-release: v1.0.1
+name: License
+on: [ "push" ]
+jobs:
+  license:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: license
+        run: |
+          export PATH=${PATH}:`go env GOPATH`/bin
+          make license
