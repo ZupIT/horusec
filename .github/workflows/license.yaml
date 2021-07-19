@@ -22,4 +22,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
       - name: license
-        run: make license
+        run: |
+          export PATH=${PATH}:`go env GOPATH`/bin
+          make license
