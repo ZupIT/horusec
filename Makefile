@@ -5,6 +5,7 @@ GO_LIST_TO_TEST ?= $$(go list ./... | grep -v /examples/ | grep -v /e2e/)
 GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
+ADDLICENSE ?= addlicense
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
 PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
@@ -43,11 +44,11 @@ fix-imports:
 
 license:
 	$(GO) get -u github.com/google/addlicense
-	addlicense -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(GOPATH)/bin/addlicense -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
 	$(GO) get -u github.com/google/addlicense
-	addlicense -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(GOPATH)/bin/addlicense -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
