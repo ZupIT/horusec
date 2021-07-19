@@ -49,7 +49,7 @@ func init() {
 
 	_ = rootCmd.PersistentFlags().String("log-level", configs.GetLogLevel(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
 	_ = rootCmd.PersistentFlags().String("config-file-path", configs.GetConfigFilePath(), "Path of the file horusec-config.json to setup content of horusec")
-	_ = rootCmd.PersistentFlags().StringP("log-path", "l", configs.GetLogFilePath(), `set user defined log path instead of default`)
+	_ = rootCmd.PersistentFlags().StringP("log-file-path", "l", configs.GetLogFilePath(), `set user defined log file path instead of default`)
 	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())

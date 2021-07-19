@@ -44,5 +44,6 @@
   },
   "horusecCliCustomImages": {
     "go": "docker.io/company/go:latest"
-  }
+  },
+  "horusecCliLogFilePath": "./tmp"
 }

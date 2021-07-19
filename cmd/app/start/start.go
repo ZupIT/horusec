@@ -132,6 +132,10 @@ func (s *Start) setConfig(startCmd *cobra.Command) {
 	s.configs = s.configs.NewConfigsFromViper().NormalizeConfigs()
 	s.configs = s.configs.NewConfigsFromEnvironments().NormalizeConfigs()
 	s.configs = s.configs.NewConfigsFromCobraAndLoadsCmdStartFlags(startCmd).NormalizeConfigs()
+	err := s.configs.SetLogOutput()
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+	}
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {

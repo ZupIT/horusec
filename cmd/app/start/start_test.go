@@ -41,11 +41,14 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("./examples")
 
+	_ = os.RemoveAll("./examples")
+	_ = os.RemoveAll("./tmp")
+	_ = os.MkdirAll("./tmp", 0750)
 	code := m.Run()
 
 	_ = os.RemoveAll("./examples")
+	_ = os.RemoveAll("./tmp")
 	os.Exit(code)
 }
 
@@ -62,6 +65,7 @@ func TestStartCommand_Execute(t *testing.T) {
 	globalCmd := &cobra.Command{}
 	_ = globalCmd.PersistentFlags().String("log-level", "", "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
 	_ = globalCmd.PersistentFlags().String("config-file-path", "", "Path of the file horusec-config.json to setup content of horusec")
+	_ = globalCmd.PersistentFlags().StringP("log-file-path", "l", "", `set user defined log file path instead of default`)
 	t.Run("Should execute command exec without error and ask to user if is to run in current directory", func(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
