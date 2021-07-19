@@ -44,11 +44,11 @@ fix-imports:
 
 license:
 	$(GO) get -u github.com/google/addlicense
-	@$(GOPATH)/bin/addlicense -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
 	$(GO) get -u github.com/google/addlicense
-	@$(GOPATH)/bin/addlicense -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(ADDLICENSE) -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
