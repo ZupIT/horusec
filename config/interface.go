@@ -117,4 +117,6 @@ type IConfig interface {
 
 	GetEnableOwaspDependencyCheck() bool
 	SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool)
+
+	SetSystemCall(calls ISystemCalls)
 }

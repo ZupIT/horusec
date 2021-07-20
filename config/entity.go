@@ -90,4 +90,5 @@ type Config struct {
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
 	customImages                    customImages.CustomImages
+	sysCalls                        ISystemCalls
 }

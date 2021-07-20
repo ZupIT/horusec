@@ -15,10 +15,15 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+
+	mock_config "github.com/ZupIT/horusec/config/mocks"
 
 	"github.com/sirupsen/logrus"
 
@@ -34,7 +39,6 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
-
 
 func TestMain(m *testing.M) {
 	_ = os.RemoveAll("./tmp")
@@ -465,9 +469,11 @@ func TestConfig_ToBytes(t *testing.T) {
 	})
 }
 func TestSetLogOutput(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 	t.Run("Should fail when log path is invalid", func(t *testing.T) {
-		config := &Config{}
-		config.logFilePath = "invalidPath"
+		config := NewConfig()
+		config.SetLogFilePath("invalidPath")
 
 		err := config.SetLogOutput()
 
@@ -475,12 +481,12 @@ func TestSetLogOutput(t *testing.T) {
 		assert.Contains(t, err.Error(), "no such file or directory")
 	})
 	t.Run("Should fail when log path is a file", func(t *testing.T) {
-		config := &Config{}
+		config := NewConfig()
 		file, err := os.Create("./test.txt")
 		if err != nil {
 			t.Error(err)
 		}
-		config.logFilePath = file.Name()
+		config.SetLogFilePath(file.Name())
 
 		err = config.SetLogOutput()
 
@@ -490,16 +496,55 @@ func TestSetLogOutput(t *testing.T) {
 	})
 
 	t.Run("Should success when log path is empty", func(t *testing.T) {
-		config := &Config{}
-		config.logFilePath = ""
+		config := NewConfig()
 		err := config.SetLogOutput()
 		assert.NoError(t, err)
 	})
 	t.Run("Should success when log path is valid", func(t *testing.T) {
-		config := &Config{}
-		config.logFilePath = "./"
+		config := NewConfig()
+		config.SetLogFilePath("./")
 		err := config.SetLogOutput()
 		assert.NoError(t, err)
+	})
+
+	t.Run("Should fail when get working directory fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error getting working directory")
+		sysCallMock.EXPECT().Getwd().Return("", expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
+	})
+	t.Run("Should fail when make directory fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error making directory")
+		sysCallMock.EXPECT().Getwd().Return("", nil)
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, nil)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(true)
+		sysCallMock.EXPECT().MkdirAll(gomock.Any(), gomock.Any()).Return(expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
+	})
+	t.Run("Should fail when create file fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error creating file")
+		sysCallMock.EXPECT().Getwd().Return("", nil)
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, nil)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(false)
+		sysCallMock.EXPECT().Create(gomock.Any()).Return(nil, expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
 	})
 
 }

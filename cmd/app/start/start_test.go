@@ -22,6 +22,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+
+	mock_config "github.com/ZupIT/horusec/config/mocks"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+
 	"github.com/google/uuid"
 
 	"github.com/spf13/cobra"
@@ -54,7 +59,7 @@ func TestMain(m *testing.M) {
 
 func TestNewStartCommand(t *testing.T) {
 	t.Run("Should run NewStartCommand and return type correctly", func(t *testing.T) {
-		assert.IsType(t, NewStartCommand(&config.Config{}), &Start{})
+		assert.IsType(t, NewStartCommand(config.NewConfig()), &Start{})
 	})
 }
 
@@ -105,7 +110,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -138,7 +143,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -171,7 +176,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -204,7 +209,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -238,7 +243,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -273,7 +278,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -308,7 +313,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -338,9 +343,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		//stdoutMock := bytes.NewBufferString("")
-		//logrus.SetOutput(os.Stdout)
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		requirementsMock := &requirements.Mock{}
@@ -396,7 +399,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		requirementsMock := &requirements.Mock{}
@@ -444,7 +447,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		requirementsMock := &requirements.Mock{}
@@ -491,7 +494,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		requirementsMock := &requirements.Mock{}
@@ -552,7 +555,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetConfigFilePath("./not-exists.json")
 		configs.SetWorkDir(&workdir.WorkDir{})
 
@@ -607,7 +610,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 
-		configs := &config.Config{}
+		configs := config.NewConfig()
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.NewConfigsFromEnvironments()
 
@@ -653,5 +656,48 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "")
 		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstProject))
+	})
+	t.Run("Should create start command and get error on setLogOutput", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+
+		configs := &config.Config{}
+		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.SetSystemCall(sysCallMock)
+		expetedError := errors.New("error")
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, expetedError)
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, expetedError)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(true)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(false)
+
+		analyzerControllerMock := &analyzer.Mock{}
+		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
+
+		stdoutMock := bytes.NewBufferString("")
+		logrus.SetOutput(stdoutMock)
+
+		cmd := &Start{
+			useCases:               cli.NewCLIUseCases(),
+			configs:                configs,
+			startPrompt:            promptMock,
+			globalCmd:              globalCmd,
+			analyzerController:     analyzerControllerMock,
+			requirementsController: requirementsMock,
+		}
+
+		cobraCmd := cmd.CreateStartCommand()
+
+		cobraCmd.SetOut(stdoutMock)
+		assert.NoError(t, cobraCmd.Execute())
+		outputBytes, err := ioutil.ReadAll(stdoutMock)
+		output := string(outputBytes)
+		assert.NoError(t, err)
+		assert.Contains(t, output, messages.MsgErrorSettingLogFile)
+
 	})
 }

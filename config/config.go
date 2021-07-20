@@ -51,6 +51,7 @@ func NewConfig() IConfig {
 		workDir:                  workdir.NewWorkDir(),
 		toolsConfig:              toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
 		customImages:             customImages.NewCustomImages(),
+		sysCalls:                 NewSystemCall(),
 	}
 }
 
@@ -191,7 +192,7 @@ func (c *Config) SetLogFilePath(logFilePath string) {
 }
 
 func (c *Config) SetLogOutput() error {
-	file, err := getFile(c.logFilePath)
+	file, err := c.getFile(c.logFilePath)
 	if err != nil {
 		return err
 	}
@@ -200,36 +201,36 @@ func (c *Config) SetLogOutput() error {
 	return nil
 }
 
-func getFile(logPath string) (*os.File, error) {
+func (c *Config) getFile(logPath string) (*os.File, error) {
 	var err error
 	if logPath == "" {
-		logPath, err = getDirName()
+		logPath, err = c.getDirName()
 		if err != nil {
 			return nil, err
 		}
-	} else if _, err = os.Stat(logPath); os.IsNotExist(err) {
+	} else if _, err = c.sysCalls.Stat(logPath); c.sysCalls.IsNotExist(err) {
 		return nil, err
 	}
-	return createLogFile(logPath)
+	return c.createLogFile(logPath)
 }
 
-func createLogFile(dir string) (*os.File, error) {
+func (c *Config) createLogFile(dir string) (*os.File, error) {
 	dirPath := filepath.Join(dir, "tmp", "horusec")
-	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		err := os.MkdirAll(dirPath, os.ModePerm)
+	if _, err := c.sysCalls.Stat(dirPath); c.sysCalls.IsNotExist(err) {
+		err := c.sysCalls.MkdirAll(dirPath, os.ModePerm)
 		if err != nil {
 			return nil, err
 		}
 	}
 	fileName := filepath.Join(dirPath, "horusec-log-"+time.Now().Format("2006-01-02 15:04:05")+".log")
-	file, err := os.Create(fileName)
+	file, err := c.sysCalls.Create(fileName)
 	if err != nil {
 		return nil, err
 	}
 	return file, nil
 }
-func getDirName() (string, error) {
-	ex, err := os.Getwd()
+func (c *Config) getDirName() (string, error) {
+	ex, err := c.sysCalls.Getwd()
 	if err != nil {
 		return "", err
 	}
@@ -688,4 +689,7 @@ func (c *Config) GetEnableOwaspDependencyCheck() bool {
 
 func (c *Config) SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool) {
 	c.enableOwaspDependencyCheck = enableOwaspDependencyCheck
+}
+func (c *Config) SetSystemCall(calls ISystemCalls) {
+	c.sysCalls = calls
 }
