@@ -643,7 +643,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		err := w.Close()
 		os.Stdout = oldStdout
 		output := <-outC
-
 		assert.NoError(t, err)
 		assert.NotEmpty(t, output)
 

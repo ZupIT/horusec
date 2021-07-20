@@ -16,6 +16,7 @@ package config
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -191,12 +192,12 @@ func (c *Config) SetLogFilePath(logFilePath string) {
 	c.logFilePath = logFilePath
 }
 
-func (c *Config) SetLogOutput() error {
+func (c *Config) SetLogOutput(writers ...io.Writer) error {
 	file, err := c.getFile(c.logFilePath)
 	if err != nil {
 		return err
 	}
-	logger.LogSetOutput(file, os.Stdout)
+	logger.LogSetOutput(append(writers, file)...)
 	logger.LogInfo("Set log file to " + file.Name())
 	return nil
 }
@@ -204,7 +205,7 @@ func (c *Config) SetLogOutput() error {
 func (c *Config) getFile(logPath string) (*os.File, error) {
 	var err error
 	if logPath == "" {
-		logPath, err = c.getDirName()
+		logPath, err = c.sysCalls.Getwd()
 		if err != nil {
 			return nil, err
 		}
@@ -223,18 +224,7 @@ func (c *Config) createLogFile(dir string) (*os.File, error) {
 		}
 	}
 	fileName := filepath.Join(dirPath, "horusec-log-"+time.Now().Format("2006-01-02 15:04:05")+".log")
-	file, err := c.sysCalls.Create(fileName)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
-}
-func (c *Config) getDirName() (string, error) {
-	ex, err := c.sysCalls.Getwd()
-	if err != nil {
-		return "", err
-	}
-	return ex, nil
+	return c.sysCalls.Create(fileName)
 }
 
 func (c *Config) GetLogFilePath() string {

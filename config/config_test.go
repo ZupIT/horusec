@@ -483,9 +483,7 @@ func TestSetLogOutput(t *testing.T) {
 	t.Run("Should fail when log path is a file", func(t *testing.T) {
 		config := NewConfig()
 		file, err := os.Create("./test.txt")
-		if err != nil {
-			t.Error(err)
-		}
+		assert.NoError(t, err)
 		config.SetLogFilePath(file.Name())
 
 		err = config.SetLogOutput()

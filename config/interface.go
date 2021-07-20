@@ -1,6 +1,8 @@
 package config
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 
 	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
@@ -24,7 +26,7 @@ type IConfig interface {
 	SetLogLevel(logLevel string)
 	SetLogFilePath(logPath string)
 	GetLogFilePath() string
-	SetLogOutput() error
+	SetLogOutput(writers ...io.Writer) error
 
 	GetHorusecAPIUri() string
 	SetHorusecAPIURI(horusecAPIURI string)
