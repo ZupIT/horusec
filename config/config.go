@@ -126,7 +126,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
 	c.SetEnableOwaspDependencyCheck(viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck)))
-	c.SetLogFilePath(viper.GetString(EnvLogFilePath))
+	c.SetLogFilePath(viper.GetString(c.toLowerCamel(EnvLogFilePath)))
 	return c
 }
 
