@@ -170,4 +170,5 @@ check out some of our other projects.
 - [Horusec Admin](https://github.com/ZupIT/horusec-admin)
 - [Horusec VsCode](https://github.com/ZupIT/horusec-vscode-plugin)
 
-This project exists thanks to all the contributors. You rock! ❤️🚀
+This project exists thanks to all the contributors. You rock! ❤️ 🚀
+
