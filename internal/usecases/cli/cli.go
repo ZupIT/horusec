@@ -73,7 +73,7 @@ func (au *UseCases) ValidateConfigs(config cliConfig.IConfig) error {
 		validation.Field(&c.timeoutInSecondsAnalysis, validation.Required, validation.Min(10)),
 		validation.Field(&c.monitorRetryInSeconds, validation.Required, validation.Min(10)),
 		validation.Field(&c.repositoryAuthorization, validation.Required, is.UUID),
-		validation.Field(&c.printOutputType, validation.Required, au.validationOutputTypes()),
+		validation.Field(&c.printOutputType, au.validationOutputTypes()),
 		validation.Field(&c.jSONOutputFilePath, validation.By(au.checkAndValidateJSONOutputFilePath(config))),
 		validation.Field(&c.severitiesToIgnore, validation.By(au.validationSeverities(config))),
 		validation.Field(&c.filesOrPathsToIgnore),
@@ -139,8 +139,8 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.ICo
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		if config.GetPrintOutputType() == outputtype.JSON.ToString() ||
-			config.GetPrintOutputType() == outputtype.SonarQube.ToString() {
+		if config.GetPrintOutputType() == outputtype.JSON ||
+			config.GetPrintOutputType() == outputtype.SonarQube {
 			if err := au.validateJSONOutputFilePath(config); err != nil {
 				return err
 			}
@@ -168,9 +168,9 @@ func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig) error {
 
 func (au *UseCases) validationOutputTypes() validation.InRule {
 	return validation.In(
-		outputtype.JSON.ToString(),
-		outputtype.SonarQube.ToString(),
-		outputtype.Text.ToString(),
+		outputtype.JSON,
+		outputtype.SonarQube,
+		outputtype.Text,
 	)
 }
 

@@ -14,14 +14,8 @@
 
 package outputtype
 
-type OutputType string
-
 const (
-	Text      OutputType = "text"
-	JSON      OutputType = "json"
-	SonarQube OutputType = "sonarqube"
+	Text      = "text"
+	JSON      = "json"
+	SonarQube = "sonarqube"
 )
-
-func (o OutputType) ToString() string {
-	return string(o)
-}

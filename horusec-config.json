@@ -50,7 +50,7 @@
   "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 10,
-  "horusecCliPrintOutputType": "text",
+  "horusecCliPrintOutputType": "",
   "horusecCliProjectPath": "./",
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
   "horusecCliRepositoryName": "",
