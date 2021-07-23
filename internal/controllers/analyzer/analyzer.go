@@ -16,6 +16,7 @@ package analyzer
 
 import (
 	"fmt"
+
 	"log"
 	"os"
 	"os/signal"
