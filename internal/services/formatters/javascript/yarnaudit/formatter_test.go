@@ -48,7 +48,7 @@ func TestParseOutputYarn(t *testing.T) {
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
-		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
+		assert.Len(t, analysis.AnalysisVulnerabilities, 1)
 	})
 
 	t.Run("Should run analysis with output empty", func(t *testing.T) {
@@ -153,6 +153,7 @@ func TestParseOutputNpm(t *testing.T) {
 
 		formatter := Formatter{
 			service,
+			map[string]bool{},
 		}
 
 		err := formatter.parseOutput("invalid output", "")
