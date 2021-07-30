@@ -4,7 +4,7 @@ builds:
     env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
     ldflags:
-      - -X github.com/ZupIT/horusec/config.version={{ .Version }}
+      - -X github.com/ZupIT/horusec/config.version=v{{ .Version }}
     goos:
       - linux
       - windows
@@ -26,6 +26,6 @@ archives:
       darwin: mac
       windows: win
 checksum:
-  disable: true
+  name_template: 'checksums.txt'
 release:
   draft: true
