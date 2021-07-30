@@ -1,14 +1,29 @@
 project_name: horusec
 builds:
-  - env: [CGO_ENABLED=0]
-    main: ./cmd/app
+  - id: horusec
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
     goos:
       - linux
       - windows
       - darwin
     goarch:
       - amd64
-      - arm64
-    ignore:
-      - goos: darwin
-        goarch: arm64
+      - 386
+changelog:
+  skip: true
+archives:
+  - id: horusec
+    builds:
+      - horusec
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format: binary
+    replacements:
+      amd64: x64
+      386: x86
+      darwin: mac
+      windows: win
+checksum:
+  disable: true
+release:
+  draft: true
