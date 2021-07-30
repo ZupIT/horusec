@@ -40,6 +40,8 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/valueordefault"
 )
 
+var version = "{{VERSION_NOT_FOUND}}"
+
 func NewConfig() IConfig {
 	return &Config{
 		falsePositiveHashes:      []string{},
@@ -168,7 +170,7 @@ func (c *Config) GetDefaultConfigFilePath() string {
 }
 
 func (c *Config) GetVersion() string {
-	return "{{VERSION_NOT_FOUND}}"
+	return version
 }
 
 func (c *Config) GetConfigFilePath() string {

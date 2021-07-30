@@ -3,6 +3,8 @@ builds:
   - id: horusec
     env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
+    ldflags:
+      - -X github.com/ZupIT/horusec/config.version={{ .Version }}
     goos:
       - linux
       - windows
