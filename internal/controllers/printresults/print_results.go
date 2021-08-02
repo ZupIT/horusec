@@ -327,7 +327,8 @@ func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 func (pr *PrintResults) printErrors(errorMessage string) {
 	if strings.Contains(errorMessage, messages.MsgErrorPacketJSONNotFound) ||
 		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) ||
-		strings.Contains(errorMessage, messages.MsgErrorGemLockNotFound) {
+		strings.Contains(errorMessage, messages.MsgErrorGemLockNotFound) ||
+		strings.Contains(errorMessage, messages.MsgErrorNotFoundRequirementsTxt) {
 		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""))
 		return
 	}

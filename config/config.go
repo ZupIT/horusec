@@ -85,7 +85,8 @@ func (c *Config) NewConfigsFromCobraAndLoadsCmdStartFlags(cmd *cobra.Command) IC
 	c.SetCustomRulesPath(c.extractFlagValueString(cmd, "custom-rules-path", c.GetCustomRulesPath()))
 	c.SetEnableInformationSeverity(c.extractFlagValueBool(cmd, "information-severity", c.GetEnableInformationSeverity()))
 	c.SetShowVulnerabilitiesTypes(c.extractFlagValueStringSlice(cmd, "show-vulnerabilities-types", c.GetShowVulnerabilitiesTypes()))
-	c.SetEnableOwaspDependencyCheck(c.extractFlagValueBool(cmd, "enable-owasp-dependency-check", c.GetDisableDocker()))
+	c.SetEnableOwaspDependencyCheck(c.extractFlagValueBool(cmd, "enable-owasp-dependency-check", c.GetEnableOwaspDependencyCheck()))
+	c.SetEnableShellCheck(c.extractFlagValueBool(cmd, "enable-shellcheck", c.GetEnableShellCheck()))
 
 	return c
 }
@@ -123,6 +124,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
 	c.SetEnableOwaspDependencyCheck(viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck)))
+	c.SetEnableShellCheck(viper.GetBool(c.toLowerCamel(EnvEnableShellCheck)))
 	return c
 }
 
@@ -153,6 +155,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	c.SetShowVulnerabilitiesTypes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.showVulnerabilitiesTypes)))
 	c.SetEnableOwaspDependencyCheck(env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.enableOwaspDependencyCheck))
+	c.SetEnableShellCheck(env.GetEnvOrDefaultBool(EnvEnableShellCheck, c.enableShellCheck))
 	return c
 }
 
@@ -478,6 +481,7 @@ func (c *Config) toMap() map[string]interface{} {
 		"customImages":                    c.customImages,
 		"showVulnerabilitiesTypes":        c.showVulnerabilitiesTypes,
 		"enableOwaspDependencyCheck":      c.enableOwaspDependencyCheck,
+		"enableShellcheck":                c.enableShellCheck,
 	}
 }
 
@@ -522,6 +526,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
 		c.toLowerCamel(EnvShowVulnerabilitiesTypes):        c.GetShowVulnerabilitiesTypes(),
 		c.toLowerCamel(EnvEnableOwaspDependencyCheck):      c.GetEnableOwaspDependencyCheck(),
+		c.toLowerCamel(EnvEnableShellCheck):                c.GetEnableShellCheck(),
 	}
 }
 
@@ -630,4 +635,12 @@ func (c *Config) GetEnableOwaspDependencyCheck() bool {
 
 func (c *Config) SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool) {
 	c.enableOwaspDependencyCheck = enableOwaspDependencyCheck
+}
+
+func (c *Config) GetEnableShellCheck() bool {
+	return c.enableShellCheck
+}
+
+func (c *Config) SetEnableShellCheck(enableShellCheck bool) {
+	c.enableShellCheck = enableShellCheck
 }

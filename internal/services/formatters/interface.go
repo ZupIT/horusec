@@ -53,4 +53,5 @@ type IService interface {
 	GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string
 	GetCustomImageByLanguage(language languages.Language) string
 	IsOwaspDependencyCheckDisable() bool
+	IsShellcheckDisable() bool
 }

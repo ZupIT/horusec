@@ -23,26 +23,28 @@ import (
 	"strconv"
 	"strings"
 
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/yarnaudit/entities"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 type Formatter struct {
 	formatters.IService
+	modules map[string]bool
 }
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
-		service,
+		IService: service,
+		modules:  map[string]bool{},
 	}
 }
 
@@ -126,8 +128,10 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 
 func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {
 	for _, advisory := range output.Advisories {
-		advisoryPointer := advisory
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer, projectSubPath))
+		if f.notContainsModule(advisory.ModuleName) {
+			advisoryPointer := advisory
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer, projectSubPath))
+		}
 	}
 }
 
@@ -193,4 +197,13 @@ func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
 		strings.ToLower(fmt.Sprintf("%s@~%s", module, version)),
 		strings.ToLower(fmt.Sprintf("%s@^%s", module, version)),
 	}
+}
+
+func (f *Formatter) notContainsModule(module string) bool {
+	if f.modules[module] {
+		return false
+	}
+
+	f.modules[module] = true
+	return true
 }

@@ -22,7 +22,6 @@
   "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliEnableInformationSeverity": false,
   "horusecCliFalsePositiveHashes": [
-    "37fa0cfe47519c1b2b6a8e29538571b81fd8787ca4217825ae6d8dcf86d70de8",
     "85492fbc829b64336a4f858022fbe52f05e27ee18d7a8fbdf5ffd23991ebd7a9",
     "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
     "362a89c4517db256b648e9b1d21ddb0d99018e7c7b9f9b45d200ede54a49363d",
@@ -31,7 +30,6 @@
     "9c205ee4b31bea1254f4e8031958995912312a524105469cb49e757d59558496",
     "b176f4967e7b0e54faabb9688d1d9ff6f10959d4a34280b9e035bfd63c4f352e",
     "2eab7620998c54bcbdb1da9ad96f54c3b6ac7b5e0babbff8f502ec10594479ad",
-    "85d4e95cd519dda872c8da0bc50b742ef067bb9f1e5b9fea42924eb21c5e688e",
     "b9f0d3772a885673b4a968d21eb9c350d25aae332b7c1a9bf113b5af24704ff9",
     "e8c6a9744859f048a44a4eb160ce0e22df524507a288cfbfcbfcdc26d2533c63",
     "c25edc56029ba81e69515d3bca44fa5545af63cf841d8f219ac57fcd7cb95265",
@@ -45,6 +43,8 @@
     "**/*_mock.go",
     "**/*README.md",
     "**/cmd/app/start/analysis/**",
+    "**/tmp/**",
+    "**/bin/**",
     "**/internal/services/engines/**"
   ],
   "horusecCliHeaders": {},
