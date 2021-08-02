@@ -74,7 +74,7 @@ func TestValidateConfigs(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.NewConfigsFromEnvironments()
-		config.SetPrintOutputType(outputtype.JSON.ToString())
+		config.SetPrintOutputType(outputtype.JSON)
 		config.SetJSONOutputFilePath("")
 
 		err := useCases.ValidateConfigs(config)
@@ -87,7 +87,7 @@ func TestValidateConfigs(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
 		config.NewConfigsFromEnvironments()
-		config.SetPrintOutputType(outputtype.JSON.ToString())
+		config.SetPrintOutputType(outputtype.JSON)
 		config.SetJSONOutputFilePath("test.test")
 
 		err := useCases.ValidateConfigs(config)

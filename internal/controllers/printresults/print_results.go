@@ -22,16 +22,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/sonarqube"
+	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
 var (
@@ -48,6 +49,7 @@ type PrintResults struct {
 	configs          config.IConfig
 	totalVulns       int
 	sonarqubeService sonarqube.Interface
+	textOutput       string
 }
 
 type Interface interface {
@@ -85,9 +87,9 @@ func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
 
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
-	case pr.configs.GetPrintOutputType() == string(outputtype.JSON):
+	case pr.configs.GetPrintOutputType() == outputtype.JSON:
 		return pr.runPrintResultsJSON()
-	case pr.configs.GetPrintOutputType() == string(outputtype.SonarQube):
+	case pr.configs.GetPrintOutputType() == outputtype.SonarQube:
 		return pr.runPrintResultsSonarQube()
 	default:
 		return pr.runPrintResultsText()
@@ -107,7 +109,8 @@ func (pr *PrintResults) runPrintResultsText() error {
 	pr.logSeparator(true)
 
 	pr.printTextOutputVulnerability()
-	return nil
+
+	return pr.createTxtOutputFile()
 }
 
 func (pr *PrintResults) runPrintResultsJSON() error {
@@ -216,8 +219,6 @@ func (pr *PrintResults) printTextOutputVulnerability() {
 	}
 
 	pr.printTotalVulnerabilities()
-
-	pr.logSeparator(len(pr.analysis.AnalysisVulnerabilities) > 0)
 }
 
 func (pr *PrintResults) printTotalVulnerabilities() {
@@ -225,7 +226,6 @@ func (pr *PrintResults) printTotalVulnerabilities() {
 	if totalVulnerabilities > 0 {
 		pr.printLNF("In this analysis, a total of %v possible vulnerabilities "+
 			"were found and we classified them into:", totalVulnerabilities)
-		fmt.Println("")
 	}
 	totalVulnerabilitiesBySeverity := pr.GetTotalVulnsBySeverity()
 	for vulnType, countBySeverity := range totalVulnerabilitiesBySeverity {
@@ -282,8 +282,6 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerab
 	pr.printCommitAuthor(vulnerability)
 
 	pr.printLNF("ReferenceHash: %s", vulnerability.VulnHash)
-
-	fmt.Print("\n")
 
 	pr.logSeparator(true)
 }
@@ -368,5 +366,17 @@ func (pr *PrintResults) getProjectPath(path string) string {
 }
 
 func (pr *PrintResults) printLNF(text string, args ...interface{}) {
+	if pr.configs.GetPrintOutputType() == outputtype.Text {
+		pr.textOutput += fmt.Sprintln(fmt.Sprintf(text, args...))
+	}
+
 	fmt.Println(fmt.Sprintf(text, args...))
+}
+
+func (pr *PrintResults) createTxtOutputFile() error {
+	if pr.configs.GetPrintOutputType() != outputtype.Text {
+		return nil
+	}
+
+	return file.CreateAndWriteFile(pr.textOutput, pr.configs.GetJSONOutputFilePath())
 }

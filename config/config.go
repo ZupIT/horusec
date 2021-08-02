@@ -231,7 +231,7 @@ func (c *Config) SetRepositoryAuthorization(repositoryAuthorization string) {
 }
 
 func (c *Config) GetPrintOutputType() string {
-	return valueordefault.GetStringValueOrDefault(c.printOutputType, "text")
+	return valueordefault.GetStringValueOrDefault(c.printOutputType, "")
 }
 
 func (c *Config) SetPrintOutputType(printOutputType string) {

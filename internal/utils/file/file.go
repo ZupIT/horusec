@@ -219,3 +219,18 @@ func getDependencyInfo(paths []string, dependency string) (code, filepath, _ str
 
 	return "", "", ""
 }
+
+func CreateAndWriteFile(output, filepath string) error {
+	path, err := filepathLib.Abs(filepath)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write([]byte(output))
+	return err
+}
