@@ -46,7 +46,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, int64(600), configs.GetTimeoutInSecondsAnalysis())
 		assert.Equal(t, int64(15), configs.GetMonitorRetryInSeconds())
 		assert.Equal(t, uuid.Nil.String(), configs.GetRepositoryAuthorization())
-		assert.Equal(t, "text", configs.GetPrintOutputType())
+		assert.Equal(t, "", configs.GetPrintOutputType())
 		assert.Equal(t, "", configs.GetJSONOutputFilePath())
 		assert.Equal(t, 1, len(configs.GetSeveritiesToIgnore()))
 		assert.Equal(t, 2, len(configs.GetFilesOrPathsToIgnore()))
