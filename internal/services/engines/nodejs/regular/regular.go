@@ -130,7 +130,7 @@ func NewNodeJSRegularNoReadFileUsingDataFromRequest() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.readFile\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`\.(readFile|readFileSync)\(.*(?:req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
 }
@@ -361,6 +361,22 @@ func NewNodeJSRegularUsingCommandLineArguments() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(console|(?i)log|exec|spawn).(.|\n)*process.argv`),
+		},
+	}
+}
+
+func NewNodeJSRegularRedirectToUnknownPath() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "71c4c404-c796-4ce7-98f6-936b24248776",
+			Name:        "Redirect to unknown path",
+			Description: "Sanitizing untrusted URLs is an important technique for preventing attacks such as request forgeries and malicious redirections. Often, this is done by checking that the host of a URL is in a set of allowed hosts. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`redirect\((?:\w)`),
 		},
 	}
 }
