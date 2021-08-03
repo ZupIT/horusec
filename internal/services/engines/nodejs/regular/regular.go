@@ -413,3 +413,19 @@ func NewNodeJSRegularNoWriteOnDocumentContentFromRequest() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSRegularNoExposeStackTrace() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "dac52410-4a31-44ed-a713-5c5da9c2b284",
+			Name:        "Stack trace exposure",
+			Description: "Software developers often add stack traces to error messages, as a debugging aid. Whenever that error message occurs for an end user, the developer can use the stack trace to help identify how to fix the problem. For more information checkout the CWE-209 (https://cwe.mitre.org/data/definitions/209.html) advisory.",
+			Severity:    severities.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(res\.end|res\.send)\(.*(?:req\.|e\.stack|error\.stack|err\.stack)`),
+		},
+	}
+}
