@@ -696,3 +696,6 @@ func (c *Config) GetEnableShellCheck() bool {
 func (c *Config) SetEnableShellCheck(enableShellCheck bool) {
 	c.enableShellCheck = enableShellCheck
 }
+func (c *Config) SetSystemCall(calls ISystemCalls) {
+	c.sysCalls = calls
+}
