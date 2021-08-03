@@ -12,34 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-project_name: horusec
-builds:
-  - id: horusec
-    env: [ CGO_ENABLED=0 ]
-    main: ./cmd/app/main.go
-    ldflags:
-      - -X github.com/ZupIT/horusec/config.version=v{{ .Version }}
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - 386
-changelog:
-  skip: true
-archives:
-  - id: horusec
-    builds:
-      - horusec
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-    format: binary
-    replacements:
-      amd64: x64
-      386: x86
-      darwin: mac
-      windows: win
-checksum:
-  name_template: 'checksums.txt'
-release:
-  draft: true
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Set up Go"
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16'
+
+      - name: "Build and publish"
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
