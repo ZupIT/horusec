@@ -380,3 +380,19 @@ func NewNodeJSRegularRedirectToUnknownPath() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSRegularNoRenderContentFromRequest() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "11fe3d80-f8f7-4372-b631-4247aecb26bb",
+			Name:        "No render content from request",
+			Description: "User data passed untreated to the 'createReadStream' function can cause a Directory Traversal attack. This attack exploits the lack of security, with the attacker gaining unauthorized access to the file system. For more information checkout the CWE-35 (https://cwe.mitre.org/data/definitions/35.html) advisory.",
+			Severity:    severities.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.render\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+		},
+	}
+}
