@@ -57,6 +57,7 @@ func rules() []engine.Rule {
 		regular.NewNodeJSRegularRedirectToUnknownPath(),
 		regular.NewNodeJSRegularNoRenderContentFromRequest(),
 		regular.NewNodeJSRegularNoWriteOnDocumentContentFromRequest(),
+		regular.NewNodeJSRegularNoExposeStackTrace(),
 
 		// And rules
 		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),
