@@ -388,11 +388,12 @@ func NewNodeJSRegularNoRenderContentFromRequest() text.TextRule {
 			Name:        "No render content from request",
 			Description: "Directly using user-controlled objects as arguments to template engines might allow an attacker to do local file reads or even remote code execution. For more information checkout the CWE-73 (https://cwe.mitre.org/data/definitions/73.html) advisory.",
 			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`\.render\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`\.send\(.*(?:req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
 }
@@ -404,7 +405,7 @@ func NewNodeJSRegularNoWriteOnDocumentContentFromRequest() text.TextRule {
 			Name:        "No write content from request on HTML",
 			Description: "Directly writing  messages to a webpage without sanitization allows for a cross-site scripting vulnerability if parts of the message can be influenced by a user. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
 			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
