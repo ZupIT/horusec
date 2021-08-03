@@ -387,12 +387,28 @@ func NewNodeJSRegularNoRenderContentFromRequest() text.TextRule {
 			ID:          "11fe3d80-f8f7-4372-b631-4247aecb26bb",
 			Name:        "No render content from request",
 			Description: "Directly using user-controlled objects as arguments to template engines might allow an attacker to do local file reads or even remote code execution. For more information checkout the CWE-73 (https://cwe.mitre.org/data/definitions/73.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`\.render\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+		},
+	}
+}
+
+func NewNodeJSRegularNoWriteOnDocumentContentFromRequest() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1398f039-b97f-4e72-8946-5179cd62afc4",
+			Name:        "No write content from request on HTML",
+			Description: "Directly writing  messages to a webpage without sanitization allows for a cross-site scripting vulnerability if parts of the message can be influenced by a user. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(document\.write|element\.write|body\.write)\(.*(?:req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
 }
