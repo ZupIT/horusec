@@ -46,7 +46,7 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.ShellCheck) || f.IsDockerDisabled() {
+	if f.ToolIsToIgnore(tools.ShellCheck) || f.IsDockerDisabled() || f.IsShellcheckDisable() {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.ShellCheck.ToString())
 		return
 	}
@@ -70,21 +70,21 @@ func (f *Formatter) parseOutput(containerOutput string) error {
 	if containerOutput == "" {
 		return nil
 	}
-	shellCheckOutput, err := f.newContainerOutputFromString(containerOutput)
+
+	shellCheckOutput, err := f.newContainerOutputFromString(f.getOutputJSON(containerOutput))
 	if err != nil {
 		return err
 	}
 	for _, fixes := range shellCheckOutput {
-		value := fixes
-		if !f.isIgnoredFix(value.Message) {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&value))
+		if !f.isIgnoredFix(fixes.Message) {
+			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(fixes))
 		}
 	}
 
 	return nil
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (output []entities.Output, err error) {
+func (f *Formatter) newContainerOutputFromString(containerOutput string) (output []*entities.Output, err error) {
 	const NotFoundFiles = "**/*.sh: **/*.sh: openBinaryFile: does not exist (No such file or directory)"
 
 	containerOutput = strings.ReplaceAll(containerOutput, NotFoundFiles, "")
@@ -126,4 +126,13 @@ func (f *Formatter) isIgnoredFix(message string) bool {
 	const MessageNotIncludes = "Tips depend on target shell and yours is unknown"
 
 	return strings.Contains(strings.ToLower(message), strings.ToLower(MessageNotIncludes))
+}
+
+func (f *Formatter) getOutputJSON(output string) string {
+	index := strings.Index(output, "[{\"")
+	if index < 0 {
+		return output
+	}
+
+	return output[index:]
 }

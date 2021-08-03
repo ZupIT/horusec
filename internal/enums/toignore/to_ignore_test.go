@@ -21,13 +21,13 @@ import (
 )
 
 func TestGetDefaultFoldersToIgnore(t *testing.T) {
-	t.Run("should success get 7 default files to ignore", func(t *testing.T) {
-		assert.Equal(t, 7, len(GetDefaultFoldersToIgnore()))
+	t.Run("should success get 5 default paths to ignore", func(t *testing.T) {
+		assert.Equal(t, 5, len(GetDefaultFoldersToIgnore()))
 	})
 }
 
 func TestGetDefaultExtensionsToIgnore(t *testing.T) {
-	t.Run("should success get 33 extensions to ignore", func(t *testing.T) {
-		assert.Len(t, GetDefaultExtensionsToIgnore(), 33)
+	t.Run("should success get 35 extensions to ignore", func(t *testing.T) {
+		assert.Len(t, GetDefaultExtensionsToIgnore(), 35)
 	})
 }

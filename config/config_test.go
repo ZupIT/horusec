@@ -61,7 +61,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, int64(600), configs.GetTimeoutInSecondsAnalysis())
 		assert.Equal(t, int64(15), configs.GetMonitorRetryInSeconds())
 		assert.Equal(t, uuid.Nil.String(), configs.GetRepositoryAuthorization())
-		assert.Equal(t, "text", configs.GetPrintOutputType())
+		assert.Equal(t, "", configs.GetPrintOutputType())
 		assert.Equal(t, "", configs.GetJSONOutputFilePath())
 		assert.Equal(t, 1, len(configs.GetSeveritiesToIgnore()))
 		assert.Equal(t, 2, len(configs.GetFilesOrPathsToIgnore()))
@@ -85,6 +85,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 0, len(configs.GetCustomImages()))
 		assert.Equal(t, 1, len(configs.GetShowVulnerabilitiesTypes()))
 		assert.Equal(t, false, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, false, configs.GetEnableShellCheck())
 	})
 	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
 		currentPath, _ := os.Getwd()
@@ -119,6 +120,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		configs.SetCustomImages(map[languages.Language]string{languages.Go: "test/test"})
 		configs.SetShowVulnerabilitiesTypes([]string{vulnerability.Vulnerability.ToString()})
 		configs.SetEnableOwaspDependencyCheck(true)
+		configs.SetEnableShellCheck(true)
 
 		assert.NotEqual(t, configs.GetDefaultConfigFilePath(), configs.GetConfigFilePath())
 		assert.NotEqual(t, "http://0.0.0.0:8000", configs.GetHorusecAPIUri())
@@ -150,6 +152,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, []string{vulnerability.Vulnerability.ToString()}, configs.GetShowVulnerabilitiesTypes())
 		assert.NotEqual(t, map[languages.Language]string{}, configs.GetCustomImages())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 	})
 	t.Run("Should return horusec config using new viper file", func(t *testing.T) {
 		viper.Reset()
@@ -185,6 +188,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 		assert.Equal(t, []string{vulnerability.Vulnerability.ToString(), vulnerability.FalsePositive.ToString()}, configs.GetShowVulnerabilitiesTypes())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
@@ -225,6 +229,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 		}, configs.GetToolsConfig()[tools.GoSec])
@@ -252,6 +257,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvContainerBindProjectPath, "./my-path"))
 		assert.NoError(t, os.Setenv(EnvDisableDocker, "true"))
 		assert.NoError(t, os.Setenv(EnvEnableOwaspDependencyCheck, "true"))
+		assert.NoError(t, os.Setenv(EnvEnableShellCheck, "true"))
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
@@ -283,6 +289,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 		assert.Equal(t, []string{vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString()}, configs.GetShowVulnerabilitiesTypes())
 	})
 	t.Run("Should return horusec config using viper file and override by environment and override by flags", func(t *testing.T) {
@@ -320,6 +327,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetContainerBindProjectPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 		assert.Equal(t, toolsconfig.ToolConfig{
 			IsToIgnore: true,
 		}, configs.GetToolsConfig()[tools.GoSec])
@@ -349,6 +357,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(EnvEnableOwaspDependencyCheck, "true"))
+		assert.NoError(t, os.Setenv(EnvEnableShellCheck, "true"))
 		assert.NoError(t, os.Setenv(EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
@@ -378,6 +387,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "test", configs.GetCustomRulesPath())
 		assert.Equal(t, true, configs.GetEnableInformationSeverity())
 		assert.Equal(t, true, configs.GetEnableOwaspDependencyCheck())
+		assert.Equal(t, true, configs.GetEnableShellCheck())
 		cobraCmd := &cobra.Command{
 			Use:     "start",
 			Short:   "Start horusec-cli",
@@ -443,6 +453,7 @@ func TestToLowerCamel(t *testing.T) {
 		assert.Equal(t, "horusecCliCustomImages", configs.toLowerCamel(EnvCustomImages))
 		assert.Equal(t, "horusecCliShowVulnerabilitiesTypes", configs.toLowerCamel(EnvShowVulnerabilitiesTypes))
 		assert.Equal(t, "horusecCliEnableOwaspDependencyCheck", configs.toLowerCamel(EnvEnableOwaspDependencyCheck))
+		assert.Equal(t, "horusecCliEnableShellcheck", configs.toLowerCamel(EnvEnableShellCheck))
 	})
 }
 

@@ -145,10 +145,6 @@ See [more details Here](https://horusec.io/docs/cli/installation/#installation-v
 - Search for their historical git by secrets and other contents exposed;
 - Your analysis can be fully configurable, [see all cli available resources](https://horusec.io/docs/cli/resources/#3-flags);
 
-## Contributing
-
-Read our [contributing guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to horusec.
-
 ## Communication
 
 We have a few channels for contact, feel free to reach out to us at:
@@ -160,6 +156,9 @@ We have a few channels for contact, feel free to reach out to us at:
 
 Feel free to use, recommend improvements, or contribute to new implementations.
 
+Read our [contributing guide](CONTRIBUTING.md) to learn about our development process,
+how to propose bugfixes and improvements, and how to build and test your changes to horusec.
+
 If this is our first repository that you visit, or would like to know more about Horusec,
 check out some of our other projects.
 
@@ -170,4 +169,5 @@ check out some of our other projects.
 - [Horusec Admin](https://github.com/ZupIT/horusec-admin)
 - [Horusec VsCode](https://github.com/ZupIT/horusec-vscode-plugin)
 
-This project exists thanks to all the contributors. You rock! ❤️🚀
+This project exists thanks to all the contributors. You rock! ❤️ 🚀
+

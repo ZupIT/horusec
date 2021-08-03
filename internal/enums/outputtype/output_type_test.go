@@ -22,6 +22,6 @@ import (
 
 func TestToString(t *testing.T) {
 	t.Run("Should success parse to string", func(t *testing.T) {
-		assert.Equal(t, "json", JSON.ToString())
+		assert.Equal(t, "json", JSON)
 	})
 }

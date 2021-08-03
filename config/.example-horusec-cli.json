@@ -19,6 +19,7 @@
   "horusecCliRepositoryName": "horus",
   "horusecCliDisableDocker": true,
   "horusecCLiEnableOwaspDependencyCheck": true,
+  "horusecCLiEnableShellcheck": true,
   "horusecCliCustomRulesPath": "test",
   "horusecCliFalsePositiveHashes": [
     "hash1",

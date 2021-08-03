@@ -48,8 +48,9 @@ const (
 	EnvEnableInformationSeverity       = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
 	EnvCustomImages                    = "HORUSEC_CLI_CUSTOM_IMAGES"
 	EnvShowVulnerabilitiesTypes        = "HORUSEC_CLI_SHOW_VULNERABILITIES_TYPES"
-	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
 	EnvLogFilePath                     = "HORUSEC_CLI_LOG_FILE_PATH"
+	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
+	EnvEnableShellCheck                = "HORUSEC_CLI_ENABLE_SHELLCHECK"
 )
 
 type Config struct {
@@ -81,6 +82,7 @@ type Config struct {
 	disableDocker                   bool
 	enableInformationSeverity       bool
 	enableOwaspDependencyCheck      bool
+	enableShellCheck                bool
 	severitiesToIgnore              []string
 	filesOrPathsToIgnore            []string
 	falsePositiveHashes             []string

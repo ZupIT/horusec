@@ -12,17 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build
-on: [ "push" ]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-      - name: build
-        run: |
-          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-linux" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
-          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
+project_name: horusec
+builds:
+  - id: horusec
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X github.com/ZupIT/horusec/config.version=v{{ .Version }}
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - 386
+changelog:
+  skip: true
+archives:
+  - id: horusec
+    builds:
+      - horusec
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format: binary
+    replacements:
+      amd64: x64
+      386: x86
+      darwin: mac
+      windows: win
+checksum:
+  name_template: 'checksums.txt'
+release:
+  draft: true

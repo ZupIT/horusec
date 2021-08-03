@@ -16,6 +16,7 @@ package analyzer
 
 import (
 	"fmt"
+
 	"log"
 	"os"
 	"os/signal"
@@ -189,7 +190,8 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	go func() {
 		defer close(done)
 		for _, language := range langs {
-			for _, projectSubPath := range wd.GetArrayByLanguage(language) {
+			for _, subPath := range wd.GetArrayByLanguage(language) {
+				projectSubPath := subPath
 				a.logProjectSubPath(language, projectSubPath)
 
 				if fn, exist := funcs[language]; exist {
@@ -341,7 +343,6 @@ func (a *Analyzer) detectVulnerabilityHCL(_ *sync.WaitGroup, projectSubPath stri
 		return err
 	}
 	hcl.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-
 	return nil
 }
 

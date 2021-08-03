@@ -76,15 +76,14 @@ const (
 		" Returning default values"
 	// Fired when finish analysis and send to print results and exists errors in analysis
 	MsgErrorFoundErrorsInAnalysis   = "{HORUSEC_CLI} During execution we found some problems:"
-	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt " +
-		"not found in python project to start analysis"
-	MsgErrorPacketJSONNotFound = "{HORUSEC_CLI} Error It looks like your project " +
-		"doesn't have a package-lock.json file. " +
-		"If you use NPM to  handle your dependencies, " +
-		"it would be a good idea to commit it so horusec can check for vulnerabilities"
+	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt not found in python project to " +
+		"start analysis. It would be a good idea to commit it so horusec can check for vulnerabilities"
+	MsgErrorPacketJSONNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a package-lock.json " +
+		"file. If you use NPM to handle your dependencies, it would be a good idea to commit it so horusec can check " +
+		"for vulnerabilities"
 	MsgErrorYarnLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a yarn.lock file. " +
-		"If you use Yarn to handle your dependencies, " +
-		"it would be a good idea to commit it so horusec can check for vulnerabilities"
+		"If you use Yarn to handle your dependencies, it would be a good idea to commit it so horusec " +
+		"can check for vulnerabilities"
 	MsgErrorYarnProcess             = "{HORUSEC_CLI} Error Yarn returned an error: "
 	MsgErrorDeferFileClose          = "{HORUSEC_CLI} Error defer file close: "
 	MsgErrorGetCurrentPath          = "{HORUSEC-CLI} Error on get current path"
