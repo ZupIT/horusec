@@ -386,7 +386,7 @@ func NewNodeJSRegularNoRenderContentFromRequest() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "11fe3d80-f8f7-4372-b631-4247aecb26bb",
 			Name:        "No render content from request",
-			Description: "User data passed untreated to the 'createReadStream' function can cause a Directory Traversal attack. This attack exploits the lack of security, with the attacker gaining unauthorized access to the file system. For more information checkout the CWE-35 (https://cwe.mitre.org/data/definitions/35.html) advisory.",
+			Description: "Directly using user-controlled objects as arguments to template engines might allow an attacker to do local file reads or even remote code execution. For more information checkout the CWE-73 (https://cwe.mitre.org/data/definitions/73.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
