@@ -58,6 +58,7 @@ func rules() []engine.Rule {
 		regular.NewNodeJSRegularNoRenderContentFromRequest(),
 		regular.NewNodeJSRegularNoWriteOnDocumentContentFromRequest(),
 		regular.NewNodeJSRegularNoExposeStackTrace(),
+		regular.NewNodeJSRegularInsecureDownload(),
 
 		// And rules
 		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),

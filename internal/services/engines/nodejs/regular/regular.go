@@ -429,3 +429,20 @@ func NewNodeJSRegularNoExposeStackTrace() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSRegularInsecureDownload() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6c7e9f6c-f6eb-4a69-a398-d03cb23c044d",
+			Name:        "Insecure download of executable file",
+			Description: "Downloading executeables or other sensitive files over an unencrypted connection can leave a server open to man-in-the-middle attacks (MITM). Such an attack can allow an attacker to insert arbitrary content into the downloaded file, and in the worst case, allow the attacker to execute arbitrary code on the vulnerable system.. For more information checkout the CWE-829 (https://cwe.mitre.org/data/definitions/829.html) advisory.",
+			Severity:    severities.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(fetch|get|download)*\(.*(?:http:).*.(\.sh|\.exe|\.cmd|\.bat|\.dll|\.txt)`),
+		},
+	}
+}
+
