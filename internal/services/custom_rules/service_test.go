@@ -38,13 +38,13 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 		service := NewCustomRulesService(config)
 
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.CSharp), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Dart), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Java), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Kotlin), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Yaml), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Leaks), 1)
-		assert.Len(t, service.GetCustomRulesByLanguage(languages.Javascript), 1)
+		assert.Len(t, service.Load(languages.CSharp), 1)
+		assert.Len(t, service.Load(languages.Dart), 1)
+		assert.Len(t, service.Load(languages.Java), 1)
+		assert.Len(t, service.Load(languages.Kotlin), 1)
+		assert.Len(t, service.Load(languages.Yaml), 1)
+		assert.Len(t, service.Load(languages.Leaks), 1)
+		assert.Len(t, service.Load(languages.Javascript), 1)
 	})
 
 	t.Run("should return error when opening json file", func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 		service := NewCustomRulesService(config)
 
-		rules := service.GetCustomRulesByLanguage(languages.Leaks)
+		rules := service.Load(languages.Leaks)
 
 		assert.Len(t, rules, 0)
 	})
@@ -64,7 +64,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 		service := NewCustomRulesService(config)
 
-		rules := service.GetCustomRulesByLanguage(languages.Leaks)
+		rules := service.Load(languages.Leaks)
 
 		assert.Len(t, rules, 0)
 	})

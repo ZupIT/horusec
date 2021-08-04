@@ -76,27 +76,42 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
-type Interface interface {
-	AnalysisDirectory() (totalVulns int, err error)
+// LanguageDetect is the interface that detect all languages in some directory.
+type LanguageDetect interface {
+	Detect(directory string) ([]languages.Language, error)
+}
+
+// PrintResults is the interface tha print the results to stdout
+//
+// Print print the results to stdout and return the total vulnerabilities that was printed.
+type PrintResults interface {
+	Print() (int, error)
+	SetAnalysis(analysis *analysis.Analysis)
+}
+
+// HorusecService is the interface that interacts with Horusec API
+type HorusecService interface {
+	SendAnalysis(*analysis.Analysis)
+	GetAnalysis(uuid.UUID) *analysis.Analysis
 }
 
 type Analyzer struct {
-	docker          docker.Interface
+	docker          docker.Docker
 	analysis        *analysis.Analysis
 	config          config.IConfig
-	languageDetect  languagedetect.Interface
-	printController printresults.Interface
-	horusec         horusecAPI.IService
+	languageDetect  LanguageDetect
+	printController PrintResults
+	horusec         HorusecService
 	formatter       formatters.IService
 }
 
-func NewAnalyzer(cfg config.IConfig) Interface {
+func NewAnalyzer(cfg config.IConfig) *Analyzer {
 	entity := &analysis.Analysis{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		Status:    enumsAnalysis.Running,
 	}
-	dockerAPI := docker.NewDockerAPI(dockerClient.NewDockerClient(), cfg, entity.ID)
+	dockerAPI := docker.New(dockerClient.NewDockerClient(), cfg, entity.ID)
 	return &Analyzer{
 		docker:          dockerAPI,
 		analysis:        entity,
@@ -108,7 +123,7 @@ func NewAnalyzer(cfg config.IConfig) Interface {
 	}
 }
 
-func (a *Analyzer) AnalysisDirectory() (totalVulns int, err error) {
+func (a *Analyzer) Analyze() (totalVulns int, err error) {
 	a.removeTrashByInterruptProcess()
 	totalVulns, err = a.runAnalysis()
 	a.removeHorusecFolder()
@@ -135,7 +150,7 @@ func (a *Analyzer) removeHorusecFolder() {
 }
 
 func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
-	langs, err := a.languageDetect.LanguageDetect(a.config.GetProjectPath())
+	langs, err := a.languageDetect.Detect(a.config.GetProjectPath())
 	if err != nil {
 		return 0, err
 	}
@@ -153,7 +168,7 @@ func (a *Analyzer) sendAnalysisAndStartPrintResults() (int, error) {
 
 	a.formatAnalysisToPrint()
 	a.printController.SetAnalysis(a.analysis)
-	return a.printController.StartPrintResults()
+	return a.printController.Print()
 }
 
 func (a *Analyzer) formatAnalysisToPrint() {

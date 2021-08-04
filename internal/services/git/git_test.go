@@ -26,12 +26,12 @@ func TestGetCommitAuthor(t *testing.T) {
 	c := &config.Config{}
 	c.SetProjectPath("../../../../")
 	c.SetEnableCommitAuthor(true)
-	service := Service{
+	service := Git{
 		config: c,
 	}
 
 	t.Run("Should success get commit author", func(t *testing.T) {
-		author := service.GetCommitAuthor("1-2", "README.md")
+		author := service.CommitAuthor("1-2", "README.md")
 		assert.NotEmpty(t, author.Email)
 		assert.NotEmpty(t, author.Message)
 		assert.NotEmpty(t, author.Author)
@@ -40,22 +40,22 @@ func TestGetCommitAuthor(t *testing.T) {
 	})
 
 	t.Run("Should return error when something went wrong while executing cmd", func(t *testing.T) {
-		author := service.GetCommitAuthor("999999", "")
+		author := service.CommitAuthor("999999", "")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
 	t.Run("Should return error when line or path not found", func(t *testing.T) {
-		author := service.GetCommitAuthor("1", "-")
+		author := service.CommitAuthor("1", "-")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
 	t.Run("Should return error when parameters is empty", func(t *testing.T) {
-		author := service.GetCommitAuthor("", "./")
+		author := service.CommitAuthor("", "./")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
 	t.Run("Should return error when not exists path", func(t *testing.T) {
-		author := service.GetCommitAuthor("1", "./some_path")
+		author := service.CommitAuthor("1", "./some_path")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
@@ -65,6 +65,6 @@ func TestGetCommitAuthor(t *testing.T) {
 	})
 
 	t.Run("Should return a new service", func(t *testing.T) {
-		assert.NotEmpty(t, NewGitService(&config.Config{}))
+		assert.NotEmpty(t, New(&config.Config{}))
 	})
 }

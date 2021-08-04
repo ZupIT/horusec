@@ -35,23 +35,19 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/copy"
 )
 
-type Interface interface {
-	LanguageDetect(directory string) ([]languages.Language, error)
-}
-
 type LanguageDetect struct {
 	configs    config.IConfig
 	analysisID uuid.UUID
 }
 
-func NewLanguageDetect(configs config.IConfig, analysisID uuid.UUID) Interface {
+func NewLanguageDetect(configs config.IConfig, analysisID uuid.UUID) *LanguageDetect {
 	return &LanguageDetect{
 		analysisID: analysisID,
 		configs:    configs,
 	}
 }
 
-func (ld *LanguageDetect) LanguageDetect(directory string) ([]languages.Language, error) {
+func (ld *LanguageDetect) Detect(directory string) ([]languages.Language, error) {
 	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {

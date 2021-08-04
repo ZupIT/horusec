@@ -30,7 +30,7 @@ func TestStartPrintResultsMock(t *testing.T) {
 		m := &Mock{}
 		m.On("StartPrintResults").Return(0, nil)
 
-		totalVulns, err := m.StartPrintResults()
+		totalVulns, err := m.Print()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
@@ -44,7 +44,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			AnalysisVulnerabilities: []entitiesAnalysis.AnalysisVulnerabilities{},
 		}
 
-		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
+		totalVulns, err := NewPrintResults(analysis, configs).Print()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
@@ -63,7 +63,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		totalVulns, err := printResults.StartPrintResults()
+		totalVulns, err := printResults.Print()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
@@ -76,7 +76,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetPrintOutputType("JSON")
 
-		totalVulns, err := NewPrintResults(analysis, configs).StartPrintResults()
+		totalVulns, err := NewPrintResults(analysis, configs).Print()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
@@ -95,7 +95,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		_, err := printResults.StartPrintResults()
+		_, err := printResults.Print()
 
 		assert.Error(t, err)
 	})
@@ -111,7 +111,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		totalVulns, err := printResults.StartPrintResults()
+		totalVulns, err := printResults.Print()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 12, totalVulns)
@@ -127,7 +127,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  &config.Config{},
 		}
 
-		totalVulns, err := printResults.StartPrintResults()
+		totalVulns, err := printResults.Print()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 12, totalVulns)
@@ -140,7 +140,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
 
-		totalVulns, err := NewPrintResults(analysisMock, configs).StartPrintResults()
+		totalVulns, err := NewPrintResults(analysisMock, configs).Print()
 
 		assert.NoError(t, err)
 		assert.Equal(t, 12, totalVulns)
@@ -169,7 +169,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		totalVulns, err := printResults.StartPrintResults()
+		totalVulns, err := printResults.Print()
 		assert.NoError(t, err)
 		assert.Equal(t, 1, totalVulns)
 	})

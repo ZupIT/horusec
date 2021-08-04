@@ -28,8 +28,7 @@ import (
 
 	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
 
-	dockerTypes "github.com/docker/docker/api/types"
-	dockerContainer "github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types"
 	dockerTypesFilters "github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/google/uuid"
@@ -37,37 +36,65 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	cliConfig "github.com/ZupIT/horusec/config"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-	dockerService "github.com/ZupIT/horusec/internal/services/docker/client"
+
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
+	specs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 
-type Interface interface {
-	CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error)
+// Docker is the interface that abstract the Docker API.
+type Docker interface {
+	CreateLanguageAnalysisContainer(data *docker.AnalysisData) (containerOutPut string, err error)
 	PullImage(imageWithTagAndRegistry string) error
 	DeleteContainersFromAPI()
 }
 
+// Client is the interface that interact with the Docker API.
+type Client interface {
+	ContainerCreate(ctx context.Context, cfg *container.Config, hostCfg *container.HostConfig,
+		netCfg *network.NetworkingConfig, plataform *specs.Platform, name string,
+	) (container.ContainerCreateCreatedBody, error)
+
+	ContainerStart(ctx context.Context, containerID string, options types.ContainerStartOptions) error
+
+	ContainerList(ctx context.Context, options types.ContainerListOptions) ([]types.Container, error)
+
+	ContainerWait(ctx context.Context, containerID string, condition container.WaitCondition) (
+		<-chan container.ContainerWaitOKBody, <-chan error)
+
+	ContainerLogs(ctx context.Context, containerID string, options types.ContainerLogsOptions) (io.ReadCloser, error)
+
+	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
+
+	ImageList(ctx context.Context, options types.ImageListOptions) ([]types.ImageSummary, error)
+
+	ImagePull(ctx context.Context, ref string, options types.ImagePullOptions) (io.ReadCloser, error)
+
+	Ping(ctx context.Context) (types.Ping, error)
+}
+
 type API struct {
 	ctx                    context.Context
-	dockerClient           dockerService.Interface
+	dockerClient           Client
 	config                 cliConfig.IConfig
 	analysisID             uuid.UUID
 	pathDestinyInContainer string
 }
 
-func NewDockerAPI(docker dockerService.Interface, config cliConfig.IConfig, analysisID uuid.UUID) Interface {
+func New(client Client, config cliConfig.IConfig, analysisID uuid.UUID) *API {
 	return &API{
 		ctx:                    context.Background(),
-		dockerClient:           docker,
+		dockerClient:           client,
 		config:                 config,
 		analysisID:             analysisID,
 		pathDestinyInContainer: "/src",
 	}
 }
 
-func (d *API) CreateLanguageAnalysisContainer(data *dockerEntities.AnalysisData) (containerOutPut string, err error) {
+func (d *API) CreateLanguageAnalysisContainer(data *docker.AnalysisData) (containerOutPut string, err error) {
 	if data.IsInvalid() {
 		return "", enumErrors.ErrImageTagCmdRequired
 	}
@@ -102,8 +129,8 @@ func (d *API) downloadImage(imageWithTagAndRegistry string) error {
 	return d.readPullReader(imageWithTagAndRegistry, reader)
 }
 
-func (d *API) setPullOptions() dockerTypes.ImagePullOptions {
-	authConfig := dockerTypes.AuthConfig{
+func (d *API) setPullOptions() types.ImagePullOptions {
+	authConfig := types.AuthConfig{
 		Username:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_USERNAME", ""),
 		Password:      env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_PASSWORD", ""),
 		ServerAddress: env.GetEnvOrDefault("HORUSEC_CLI_REGISTRY_ADDRESS", ""),
@@ -111,10 +138,10 @@ func (d *API) setPullOptions() dockerTypes.ImagePullOptions {
 
 	if authConfig.Username != "" && authConfig.Password != "" {
 		encodedAuthConfig, _ := json.Marshal(authConfig)
-		return dockerTypes.ImagePullOptions{RegistryAuth: base64.URLEncoding.EncodeToString(encodedAuthConfig)}
+		return types.ImagePullOptions{RegistryAuth: base64.URLEncoding.EncodeToString(encodedAuthConfig)}
 	}
 
-	return dockerTypes.ImagePullOptions{}
+	return types.ImagePullOptions{}
 }
 
 func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadCloser) error {
@@ -132,7 +159,7 @@ func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadClose
 func (d *API) checkImageNotExists(imageWithTagAndRegistry string) (bool, error) {
 	args := dockerTypesFilters.NewArgs()
 	args.Add("reference", d.removeRegistry(imageWithTagAndRegistry))
-	options := dockerTypes.ImageListOptions{Filters: args}
+	options := types.ImageListOptions{Filters: args}
 
 	result, err := d.dockerClient.ImageList(d.ctx, options)
 	if err != nil {
@@ -174,7 +201,7 @@ func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput
 
 func (d *API) removeContainer(containerID string) {
 	err := d.dockerClient.ContainerRemove(d.ctx,
-		containerID, dockerTypes.ContainerRemoveOptions{Force: true})
+		containerID, types.ContainerRemoveOptions{Force: true})
 	logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 }
 
@@ -186,7 +213,7 @@ func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
 		return "", err
 	}
 
-	if err = d.dockerClient.ContainerStart(d.ctx, response.ID, dockerTypes.ContainerStartOptions{}); err != nil {
+	if err = d.dockerClient.ContainerStart(d.ctx, response.ID, types.ContainerStartOptions{}); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerStartContainer, err)
 		return "", err
 	}
@@ -210,7 +237,7 @@ func (d *API) readContainer(containerID string) (string, error) {
 		return "", errors.New(message)
 	}
 	containerOutput, err := d.dockerClient.ContainerLogs(d.ctx, containerID,
-		dockerTypes.ContainerLogsOptions{ShowStdout: true})
+		types.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		return "", err
 	}
@@ -227,22 +254,22 @@ func (d *API) getOutputString(containerOutPut io.Reader) (string, error) {
 }
 
 func (d *API) getConfigAndHostToCreateContainer(
-	imageNameWithTag, cmd string) (*dockerContainer.Config, *dockerContainer.HostConfig) {
+	imageNameWithTag, cmd string) (*container.Config, *container.HostConfig) {
 	config := d.getContainerConfig(imageNameWithTag, cmd)
 
 	return config, d.getContainerHostConfig()
 }
 
-func (d *API) getContainerConfig(imageNameWithTag, cmd string) *dockerContainer.Config {
-	return &dockerContainer.Config{
+func (d *API) getContainerConfig(imageNameWithTag, cmd string) *container.Config {
+	return &container.Config{
 		Image: imageNameWithTag,
 		Tty:   true,
 		Cmd:   []string{"/bin/sh", "-c", fmt.Sprintf(`cd %s && %s`, d.pathDestinyInContainer, cmd)},
 	}
 }
 
-func (d *API) getContainerHostConfig() *dockerContainer.HostConfig {
-	return &dockerContainer.HostConfig{
+func (d *API) getContainerHostConfig() *container.HostConfig {
+	return &container.HostConfig{
 		Mounts: []mount.Mount{
 			{
 				Type:   mount.TypeBind,
@@ -286,7 +313,7 @@ func (d *API) DeleteContainersFromAPI() {
 
 	for index := range containers {
 		err = d.dockerClient.ContainerRemove(d.ctx, containers[index].ID,
-			dockerTypes.ContainerRemoveOptions{Force: true})
+			types.ContainerRemoveOptions{Force: true})
 
 		logger.LogErrorWithLevel(messages.MsgErrorDockerRemoveContainer, err)
 	}
@@ -306,11 +333,11 @@ func (d *API) getSourceFolder() (path string) {
 	return path
 }
 
-func (d *API) listContainersByAnalysisID() ([]dockerTypes.Container, error) {
+func (d *API) listContainersByAnalysisID() ([]types.Container, error) {
 	args := dockerTypesFilters.NewArgs()
 	args.Add("name", d.analysisID.String())
 
-	return d.dockerClient.ContainerList(d.ctx, dockerTypes.ContainerListOptions{
+	return d.dockerClient.ContainerList(d.ctx, types.ContainerListOptions{
 		All:     true,
 		Filters: args,
 	})

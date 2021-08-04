@@ -25,7 +25,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) StartPrintResults() (totalVulns int, err error) {
+func (m *Mock) Print() (totalVulns int, err error) {
 	args := m.MethodCalled("StartPrintResults")
 	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 0)
 }

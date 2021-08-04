@@ -32,17 +32,12 @@ import (
 	cliConfig "github.com/ZupIT/horusec/config"
 )
 
-type IService interface {
-	SendAnalysis(entity *analysis.Analysis)
-	GetAnalysis(analysisID uuid.UUID) *analysis.Analysis
-}
-
 type Service struct {
 	http   request.IRequest
 	config cliConfig.IConfig
 }
 
-func NewHorusecAPIService(config cliConfig.IConfig) IService {
+func NewHorusecAPIService(config cliConfig.IConfig) *Service {
 	return &Service{
 		http:   request.NewHTTPRequestService(10), // nolint:gomnd // timeout default already setup
 		config: config,
