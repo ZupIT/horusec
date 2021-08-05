@@ -29,8 +29,6 @@ const (
 		"that are not considered to be analyzed. To see more details use flag --log-level=debug"
 	MsgWarnGitHistoryEnable = "{HORUSEC_CLI} Starting the analysis with git history enabled. " +
 		"ATTENTION the waiting time can be longer when this option is enabled!"
-	MsgWarnToolsToIgnoreDeprecated = "{HORUSEC_CLI} The option 'tools to ignore' key will be removed in the next release" +
-		" after 16 jan 2021, please use tools config option"
 	MsgWarnHashNotExistOnAnalysis = "{HORUSEC_CLI} Hash not found in the " +
 		"list of vulnerabilities pointed out by Horusec: "
 	MsgWarnInfoVulnerabilitiesDisabled = "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis, " +
