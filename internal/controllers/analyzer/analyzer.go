@@ -24,6 +24,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy"
+
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -370,6 +372,7 @@ func (a *Analyzer) detectVulnerabilityGeneric(_ *sync.WaitGroup, projectSubPath 
 		return err
 	}
 
+	trivy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	semgrep.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	dependencycheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
@@ -442,7 +445,6 @@ func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
 	if customImage := a.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]; customImage != "" {
 		return customImage
 	}
-
 	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }
 

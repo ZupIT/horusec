@@ -15,10 +15,17 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+
+	mock_config "github.com/ZupIT/horusec/config/mocks"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 
@@ -32,6 +39,14 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
+
+func TestMain(m *testing.M) {
+	_ = os.RemoveAll("./tmp")
+	_ = os.MkdirAll("./tmp", 0750)
+	code := m.Run()
+	_ = os.RemoveAll("./tmp")
+	os.Exit(code)
+}
 
 func TestNewHorusecConfig(t *testing.T) {
 	//	wd := &workdir.WorkDir{}
@@ -246,6 +261,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
+		assert.NoError(t, os.Setenv(EnvLogFilePath, "test"))
 		configs.NewConfigsFromEnvironments()
 		assert.Equal(t, configFilePath, configs.GetConfigFilePath())
 		assert.Equal(t, "http://horusec.com", configs.GetHorusecAPIUri())
@@ -461,5 +477,102 @@ func TestConfig_ToBytes(t *testing.T) {
 		config := &Config{}
 		config.NewConfigsFromEnvironments()
 		assert.NotEmpty(t, config.ToBytes(true))
+	})
+}
+func TestSetLogOutput(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	t.Run("Should fail when log path is invalid", func(t *testing.T) {
+		config := NewConfig()
+		config.SetLogFilePath("invalidPath")
+
+		err := config.SetLogOutput()
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "no such file or directory")
+	})
+	t.Run("Should fail when log path is a file", func(t *testing.T) {
+		config := NewConfig()
+		file, err := os.Create("./test.txt")
+		assert.NoError(t, err)
+		config.SetLogFilePath(file.Name())
+
+		err = config.SetLogOutput()
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not a directory")
+		_ = os.Remove(file.Name())
+	})
+
+	t.Run("Should success when log path is empty", func(t *testing.T) {
+		config := NewConfig()
+		err := config.SetLogOutput()
+		assert.NoError(t, err)
+	})
+	t.Run("Should success when log path is valid", func(t *testing.T) {
+		config := NewConfig()
+		config.SetLogFilePath("./")
+		err := config.SetLogOutput()
+		assert.NoError(t, err)
+	})
+
+	t.Run("Should fail when get working directory fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error getting working directory")
+		sysCallMock.EXPECT().Getwd().Return("", expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
+	})
+	t.Run("Should fail when make directory fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error making directory")
+		sysCallMock.EXPECT().Getwd().Return("", nil)
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, nil)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(true)
+		sysCallMock.EXPECT().MkdirAll(gomock.Any(), gomock.Any()).Return(expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
+	})
+	t.Run("Should fail when create file fails", func(t *testing.T) {
+		config := NewConfig()
+		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
+		config.SetSystemCall(sysCallMock)
+
+		expetedError := errors.New("error creating file")
+		sysCallMock.EXPECT().Getwd().Return("", nil)
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, nil)
+		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(false)
+		sysCallMock.EXPECT().Create(gomock.Any()).Return(nil, expetedError)
+		err := config.SetLogOutput()
+		assert.Error(t, err)
+		assert.Equal(t, expetedError, err)
+	})
+
+}
+func TestSetLogPath(t *testing.T) {
+	t.Run("Should success when log path is not empty", func(t *testing.T) {
+		config := &Config{}
+		config.SetLogFilePath("aa")
+		assert.Equal(t, "aa", config.GetLogFilePath())
+	})
+}
+
+func TestLogLevel(t *testing.T) {
+	t.Run("Should success when log level is not empty", func(t *testing.T) {
+		config := &Config{}
+		config.SetLogLevel(logrus.WarnLevel.String())
+		assert.Equal(t, logrus.WarnLevel.String(), config.GetLogLevel())
+	})
+	t.Run("Should get default when log level is empty", func(t *testing.T) {
+		config := &Config{}
+		assert.Equal(t, logrus.InfoLevel.String(), config.GetLogLevel())
 	})
 }

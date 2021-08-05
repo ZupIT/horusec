@@ -95,4 +95,5 @@ const (
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
 	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
 	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config."
+	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file."
 )

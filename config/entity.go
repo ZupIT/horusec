@@ -48,6 +48,7 @@ const (
 	EnvEnableInformationSeverity       = "HORUSEC_CLI_ENABLE_INFORMATION_SEVERITY"
 	EnvCustomImages                    = "HORUSEC_CLI_CUSTOM_IMAGES"
 	EnvShowVulnerabilitiesTypes        = "HORUSEC_CLI_SHOW_VULNERABILITIES_TYPES"
+	EnvLogFilePath                     = "HORUSEC_CLI_LOG_FILE_PATH"
 	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
 	EnvEnableShellCheck                = "HORUSEC_CLI_ENABLE_SHELLCHECK"
 )
@@ -59,6 +60,7 @@ type Config struct {
 	// Globals Command Flags
 	logLevel       string
 	configFilePath string
+	logFilePath    string
 
 	// Start Command Flags
 	horusecAPIUri                   string
@@ -90,4 +92,5 @@ type Config struct {
 	headers                         map[string]string
 	workDir                         *workdir.WorkDir
 	customImages                    customImages.CustomImages
+	sysCalls                        ISystemCalls
 }

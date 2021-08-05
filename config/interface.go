@@ -15,6 +15,8 @@
 package config
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 
 	customImages "github.com/ZupIT/horusec/internal/entities/custom_images"
@@ -36,6 +38,9 @@ type IConfig interface {
 
 	GetLogLevel() string
 	SetLogLevel(logLevel string)
+	SetLogFilePath(logPath string)
+	GetLogFilePath() string
+	SetLogOutput(writers ...io.Writer) error
 
 	GetHorusecAPIUri() string
 	SetHorusecAPIURI(horusecAPIURI string)
@@ -125,6 +130,8 @@ type IConfig interface {
 
 	SetShowVulnerabilitiesTypes(vulnerabilitiesTypes []string)
 	GetShowVulnerabilitiesTypes() []string
+
+	SetSystemCall(calls ISystemCalls)
 
 	GetEnableOwaspDependencyCheck() bool
 	SetEnableOwaspDependencyCheck(enableOwaspDependencyCheck bool)
