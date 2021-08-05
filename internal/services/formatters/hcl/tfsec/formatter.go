@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package hcl
+package tfsec
 
 import (
 	"encoding/json"
@@ -30,7 +30,7 @@ import (
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl/entities"
+	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec/entities"
 )
 
 type Formatter struct {

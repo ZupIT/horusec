@@ -53,7 +53,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl"
+	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/npmaudit"
@@ -340,7 +340,7 @@ func (a *Analyzer) detectVulnerabilityHCL(_ *sync.WaitGroup, projectSubPath stri
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.HCL)); err != nil {
 		return err
 	}
-	hcl.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	tfsec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 
