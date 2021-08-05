@@ -12,4 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM tfsec/tfsec-ci
+FROM python:3.7-alpine
+
+RUN apk add --quiet --no-cache wget
+
+RUN wget -O /usr/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v0.55.1/tfsec-linux-amd64 && chmod +x /usr/bin/tfsec
+RUN pip3 install --upgrade pip && pip3 install --upgrade setuptools && pip3 install checkov
