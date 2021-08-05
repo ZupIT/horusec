@@ -118,7 +118,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "JavascriptYarn",
 			target:        filepath.Join("javascript", "example2"),
-			vulnerabilies: 9,
+			vulnerabilies: 10,
 		},
 		{
 			name:          "HCL",
