@@ -25,8 +25,6 @@ const (
 	MsgInfoHowToInstallGit = `{HORUSEC_CLI} If your git is not installed check in docs of how to install in:
 		https://git-scm.com/downloads
 	`
-	// Fired when the user passed a configuration file and we must show where it is located
-	MsgInfoConfigFilePath = "{HORUSEC_CLI} Using config file: "
 	// Fired when is setup to the output is sonarqube
 	MsgInfoStartGenerateSonarQubeFile = "{HORUSEC_CLI} Generating SonarQube output..."
 	// Fired when is setup to the output is sonarqube
