@@ -19,215 +19,168 @@ package scan_languages
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
-	"sync"
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
 	"github.com/google/uuid"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
-	currentPath, _ := os.Getwd()
-	_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
-	horusecPath := path.Join(currentPath, "tmp-horusec")
-	if _, err := os.Stat(horusecPath); os.IsNotExist(err) {
-		fmt.Println("tmp-horusec binary not found. Building Binary to linux_x64...")
-		cmdArguments := []string{
-			"build",
-			fmt.Sprintf("-o=%s", horusecPath),
-			path.Join(currentPath, "..", "..", "cmd", "app", "main.go"),
+	wd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get current working directory: %v\n", err)
+		os.Exit(1)
+	}
+	bin := path.Join(wd, "tmp-horusec")
+
+	cmd := exec.Command("go", "build", fmt.Sprintf("-o=%s", bin), path.Join(wd, "..", "..", "cmd", "app"))
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "GOOS=linux")
+	cmd.Env = append(cmd.Env, "GOARCH=amd64")
+
+	defer func() {
+		if err := os.Remove(bin); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to remove binary file: %v\n", err)
 		}
-		cmd := exec.Command("go", cmdArguments...)
-		cmd.Env = os.Environ()
-		cmd.Env = append(cmd.Env, "GOOS=linux")
-		cmd.Env = append(cmd.Env, "GOARCH=amd64")
-		if output, err := cmd.CombinedOutput(); err != nil {
-			fmt.Println(err.Error())
-			fmt.Println(string(output))
-			os.Exit(1)
-		} else {
-			code := m.Run()
-			_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
-			os.Exit(code)
-		}
-	} else {
-		code := m.Run()
-		_ = os.RemoveAll(path.Join(currentPath, "tmp", "*"))
-		os.Exit(code)
+	}()
+
+	if output, err := cmd.CombinedOutput(); err != nil {
+		fmt.Fprintln(os.Stderr, string(output))
+		fmt.Fprintf(os.Stderr, "Failed to compile horusec: %v\n", err)
+		os.Exit(1)
 	}
 
+	os.Exit(m.Run())
 }
 
-func TestHorusecCLILanguages(t *testing.T) {
+func TestHorusecCLI(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	var wg sync.WaitGroup
-	go RunGitTest(t, &wg)
-	go RunGolangTest(t, &wg)
-	go RunCsharpTest(t, &wg)
-	go RunRubyTest(t, &wg)
-	go RunPythonBanditTest(t, &wg)
-	go RunPythonSafetyTest(t, &wg)
-	go RunJavaTest(t, &wg)
-	go RunKotlinTest(t, &wg)
-	go RunJavascriptNpmTest(t, &wg)
-	go RunJavascriptYarnTest(t, &wg)
-	go RunHclTest(t, &wg)
-	go RunDartTest(t, &wg)
-	go RunPHPTest(t, &wg)
-	go RunYAMLTest(t, &wg)
-	go RunElixirTest(t, &wg)
-	go RunNginxTest(t, &wg)
-	go RunSwiftTest(t, &wg)
-	wg.Add(17)
-	wg.Wait()
-}
-
-func RunSwiftTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "swift", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in swift is expected")
-}
-
-func RunGitTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "leaks", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in leaks is not expected")
-}
-
-func RunPythonBanditTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "python", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in python-bandit is not expected")
-}
-
-func RunPythonSafetyTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "python", "example2")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in python-safety is not expected")
-}
-
-func RunJavascriptNpmTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "javascript", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-npm is not expected")
-
-}
-
-func RunJavascriptYarnTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "javascript", "example2")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in javascript-yarn is not expected")
-}
-
-func RunKotlinTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "kotlin", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in kotlin is not expected")
-}
-
-func RunCsharpTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "csharp", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in csharp is not expected")
-}
-
-func RunRubyTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "ruby", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in ruby is not expected")
-}
-
-func RunJavaTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "java", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in java is not expected")
-}
-
-func RunGolangTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "go", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in golang is not expected")
-}
-
-func RunHclTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "hcl", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in hcl is not expected")
-}
-
-func RunPHPTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "php", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
-}
-
-func RunYAMLTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "yaml", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in php is not expected")
-}
-
-func RunDartTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "dart", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in dart is not expected")
-}
-
-func RunElixirTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "elixir", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in elixir is not expected")
-}
-
-func RunNginxTest(t *testing.T, s *sync.WaitGroup) {
-	defer s.Done()
-	fileOutput := runHorusecCLIUsingExampleDir(t, "nginx", "example1")
-	entity := extractVulnerabilitiesFromOutput(fileOutput)
-	assert.GreaterOrEqual(t, len(entity.AnalysisVulnerabilities), 1, "Vulnerabilities in nginx is not expected")
-}
-
-func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, othersFlags ...map[string]string) string {
-	currentPath, _ := os.Getwd()
-	horusecPath := path.Join(currentPath, "tmp-horusec")
-	assert.NoError(t, os.MkdirAll(path.Join(currentPath, "tmp"), 0750))
-	fakeAnalysisID := uuid.New().String()
-	fileOutput := path.Join(currentPath, "tmp", fmt.Sprintf("horusec-analysis-%s.json", fakeAnalysisID))
-	srcPath := path.Join("..", "..", "examples", language, exampleName)
-	flags := map[string]string{
-		"-p": strings.TrimSpace(srcPath),
-		"-o": strings.TrimSpace("json"),
-		"-O": strings.TrimSpace(fileOutput),
+	testcases := []struct {
+		name          string
+		target        string
+		vulnerabilies int
+	}{
+		{
+			name:          "Leaks",
+			target:        filepath.Join("leaks", "example1"),
+			vulnerabilies: 6,
+		},
+		{
+			name:          "Go",
+			target:        filepath.Join("go", "example1"),
+			vulnerabilies: 9,
+		},
+		{
+			name:          "Csharp",
+			target:        filepath.Join("csharp", "example1"),
+			vulnerabilies: 13,
+		},
+		{
+			name:          "Ruby",
+			target:        filepath.Join("ruby", "example1"),
+			vulnerabilies: 21,
+		},
+		{
+			name:          "PythonBandit",
+			target:        filepath.Join("python", "example1"),
+			vulnerabilies: 6,
+		},
+		{
+			name:          "PythonSafety",
+			target:        filepath.Join("python", "example2"),
+			vulnerabilies: 19,
+		},
+		{
+			name:          "Java",
+			target:        filepath.Join("java", "example1"),
+			vulnerabilies: 1,
+		},
+		{
+			name:          "Kotlin",
+			target:        filepath.Join("kotlin", "example1"),
+			vulnerabilies: 1,
+		},
+		{
+			name:          "JavascriptNPM",
+			target:        filepath.Join("javascript", "example1"),
+			vulnerabilies: 12,
+		},
+		{
+			name:          "JavascriptYarn",
+			target:        filepath.Join("javascript", "example2"),
+			vulnerabilies: 9,
+		},
+		{
+			name:          "HCL",
+			target:        filepath.Join("hcl", "example1"),
+			vulnerabilies: 5,
+		},
+		{
+			name:          "Dart",
+			target:        filepath.Join("dart", "example1"),
+			vulnerabilies: 3,
+		},
+		{
+			name:          "PHP",
+			target:        filepath.Join("php", "example1"),
+			vulnerabilies: 12,
+		},
+		{
+			name:          "Yaml",
+			target:        filepath.Join("yaml", "example1"),
+			vulnerabilies: 1,
+		},
+		{
+			name:          "Elixir",
+			target:        filepath.Join("elixir", "example1"),
+			vulnerabilies: 3,
+		},
+		{
+			name:          "Nginx",
+			target:        filepath.Join("nginx", "example1"),
+			vulnerabilies: 4,
+		},
+		{
+			name:          "Swift",
+			target:        filepath.Join("swift", "example1"),
+			vulnerabilies: 17,
+		},
 	}
-	for _, otherFlag := range othersFlags {
-		for flag, value := range otherFlag {
-			flags[flag] = value
-		}
+
+	for _, tt := range testcases {
+		t.Run(tt.name, func(t *testing.T) {
+			outFile := execCLI(t, tt.target)
+			entity := parseOutputFile(t, outFile)
+			assert.Equal(
+				t, tt.vulnerabilies, len(entity.AnalysisVulnerabilities),
+				"Vulnerabilities in %s is not expected", tt.name,
+			)
+		})
+	}
+}
+
+func execCLI(t *testing.T, target string) string {
+	wd, err := os.Getwd()
+	require.Nil(t, err, "Expected nil error to get current working directory: %v", err)
+
+	bin := path.Join(wd, "tmp-horusec")
+	output := path.Join(os.TempDir(), fmt.Sprintf("horusec-analysis-%s.json", uuid.New().String()))
+	srcPath := path.Join(wd, "..", "..", "examples", target)
+
+	flags := map[string]string{
+		"-p": srcPath,
+		"-o": "json",
+		"-O": output,
 	}
 	cmdArguments := []string{
 		"start",
@@ -235,20 +188,22 @@ func runHorusecCLIUsingExampleDir(t *testing.T, language, exampleName string, ot
 	for flag, value := range flags {
 		cmdArguments = append(cmdArguments, fmt.Sprintf("%s=%s", flag, value))
 	}
-	logger.LogInfo(fmt.Sprintf("Running command: %s %s", horusecPath, strings.Join(cmdArguments, " ")))
-	output, err := exec.Command(horusecPath, cmdArguments...).CombinedOutput()
-	if err != nil {
-		fmt.Println("ERROR ON RUN COMMAND: ", err.Error())
-		fmt.Println("Output: ", string(output))
+	if output, err := exec.Command(bin, cmdArguments...).CombinedOutput(); err != nil {
+		cmd := fmt.Sprintf("%s %s", bin, strings.Join(cmdArguments, " "))
+		fmt.Fprintln(os.Stderr, string(output))
+		t.Fatalf("Error on run command %s: %v\n", cmd, err)
 	}
 
-	return fileOutput
+	return output
 }
 
-func extractVulnerabilitiesFromOutput(fileOutput string) analysis.Analysis {
-	fileContent, err := ioutil.ReadFile(fileOutput)
-	logger.LogError("Error on read file to check vulnerabilities", err)
-	horusecAnalysis := analysis.Analysis{}
-	logger.LogError("Error on unmarshal fileContent to horusecAnalysis", json.Unmarshal(fileContent, &horusecAnalysis))
+func parseOutputFile(t *testing.T, file string) analysis.Analysis {
+	fileContent, err := os.ReadFile(file)
+	require.Nil(t, err, "Error on read file to check vulnerabilities", err)
+
+	var horusecAnalysis analysis.Analysis
+	err = json.Unmarshal(fileContent, &horusecAnalysis)
+	require.Nil(t, err, "Unexpected error to unmarshal file content to analysis.Analysis: %v", err)
+
 	return horusecAnalysis
 }
