@@ -25,6 +25,13 @@ app.get('/', (req, res) => {
     })
   });
 
+app.get('/any/path', (req, res) => {
+    let url = req.param('url');
+    if (url) {
+        res.redirect(url);
+    }
+});
+
 app.get('/healthcheck', (req, res) => {
     res.status(200).send('WORKING')
   });

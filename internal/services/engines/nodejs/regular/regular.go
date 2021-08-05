@@ -130,7 +130,7 @@ func NewNodeJSRegularNoReadFileUsingDataFromRequest() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.readFile\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`\.(readFile|readFileSync)\(.*(?:req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
 }
@@ -364,3 +364,85 @@ func NewNodeJSRegularUsingCommandLineArguments() text.TextRule {
 		},
 	}
 }
+
+func NewNodeJSRegularRedirectToUnknownPath() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "71c4c404-c796-4ce7-98f6-936b24248776",
+			Name:        "Redirect to unknown path",
+			Description: "Sanitizing untrusted URLs is an important technique for preventing attacks such as request forgeries and malicious redirections. Often, this is done by checking that the host of a URL is in a set of allowed hosts. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`redirect\((?:\w)`),
+		},
+	}
+}
+
+func NewNodeJSRegularNoRenderContentFromRequest() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "11fe3d80-f8f7-4372-b631-4247aecb26bb",
+			Name:        "No render content from request",
+			Description: "Directly using user-controlled objects as arguments to template engines might allow an attacker to do local file reads or even remote code execution. For more information checkout the CWE-73 (https://cwe.mitre.org/data/definitions/73.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.render\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`\.send\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+		},
+	}
+}
+
+func NewNodeJSRegularNoWriteOnDocumentContentFromRequest() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "1398f039-b97f-4e72-8946-5179cd62afc4",
+			Name:        "No write content from request on HTML",
+			Description: "Directly writing  messages to a webpage without sanitization allows for a cross-site scripting vulnerability if parts of the message can be influenced by a user. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(document\.write|element\.write|body\.write)\(.*(?:req\.|req\.query|req\.body|req\.param)`),
+		},
+	}
+}
+
+func NewNodeJSRegularNoExposeStackTrace() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "dac52410-4a31-44ed-a713-5c5da9c2b284",
+			Name:        "Stack trace exposure",
+			Description: "Software developers often add stack traces to error messages, as a debugging aid. Whenever that error message occurs for an end user, the developer can use the stack trace to help identify how to fix the problem. For more information checkout the CWE-209 (https://cwe.mitre.org/data/definitions/209.html) advisory.",
+			Severity:    severities.Medium.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(res\.end|res\.send)\(.*(?:req\.|e\.stack|error\.stack|err\.stack)`),
+		},
+	}
+}
+
+func NewNodeJSRegularInsecureDownload() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "6c7e9f6c-f6eb-4a69-a398-d03cb23c044d",
+			Name:        "Insecure download of executable file",
+			Description: "Downloading executeables or other sensitive files over an unencrypted connection can leave a server open to man-in-the-middle attacks (MITM). Such an attack can allow an attacker to insert arbitrary content into the downloaded file, and in the worst case, allow the attacker to execute arbitrary code on the vulnerable system.. For more information checkout the CWE-829 (https://cwe.mitre.org/data/definitions/829.html) advisory.",
+			Severity:    severities.Medium.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(fetch|get|download)*\(.*(?:http:).*.(\.sh|\.exe|\.cmd|\.bat|\.dll|\.txt)`),
+		},
+	}
+}
+

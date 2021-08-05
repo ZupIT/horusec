@@ -54,6 +54,11 @@ func rules() []engine.Rule {
 		regular.NewNodeJSRegularReadingTheStandardInput(),
 		regular.NewNodeJSRegularUsingCommandLineArguments(),
 		regular.NewNodeJSRegularNoLogSensitiveInformationInConsole(),
+		regular.NewNodeJSRegularRedirectToUnknownPath(),
+		regular.NewNodeJSRegularNoRenderContentFromRequest(),
+		regular.NewNodeJSRegularNoWriteOnDocumentContentFromRequest(),
+		regular.NewNodeJSRegularNoExposeStackTrace(),
+		regular.NewNodeJSRegularInsecureDownload(),
 
 		// And rules
 		and.NewNodeJSAndNoUseGetMethodUsingDataFromRequestOfUserInput(),
