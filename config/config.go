@@ -16,10 +16,12 @@ package config
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/iancoleman/strcase"
@@ -52,12 +54,14 @@ func NewConfig() IConfig {
 		workDir:                  workdir.NewWorkDir(),
 		toolsConfig:              toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
 		customImages:             customImages.NewCustomImages(),
+		sysCalls:                 NewSystemCall(),
 	}
 }
 
 func (c *Config) NewConfigsFromCobraAndLoadsCmdGlobalFlags(cmd *cobra.Command) IConfig {
 	c.SetLogLevel(c.extractFlagValueString(cmd, "log-level", c.GetLogLevel()))
 	c.SetConfigFilePath(c.extractFlagValueString(cmd, "config-file-path", c.GetConfigFilePath()))
+	c.SetLogFilePath(c.extractFlagValueString(cmd, "log-file-path", c.GetLogFilePath()))
 	return c
 }
 
@@ -125,6 +129,7 @@ func (c *Config) NewConfigsFromViper() IConfig {
 	c.SetEnableInformationSeverity(viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity)))
 	c.SetCustomImages(viper.Get(c.toLowerCamel(EnvCustomImages)))
 	c.SetShowVulnerabilitiesTypes(viper.GetStringSlice(c.toLowerCamel(EnvShowVulnerabilitiesTypes)))
+	c.SetLogFilePath(viper.GetString(c.toLowerCamel(EnvLogFilePath)))
 	c.SetEnableOwaspDependencyCheck(viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck)))
 	c.SetEnableShellCheck(viper.GetBool(c.toLowerCamel(EnvEnableShellCheck)))
 	return c
@@ -156,6 +161,7 @@ func (c *Config) NewConfigsFromEnvironments() IConfig {
 	c.SetCustomRulesPath(env.GetEnvOrDefault(EnvCustomRulesPath, c.customRulesPath))
 	c.SetEnableInformationSeverity(env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.enableInformationSeverity))
 	c.SetShowVulnerabilitiesTypes(c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.showVulnerabilitiesTypes)))
+	c.SetLogFilePath(env.GetEnvOrDefault(EnvLogFilePath, c.logFilePath))
 	c.SetEnableOwaspDependencyCheck(env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.enableOwaspDependencyCheck))
 	c.SetEnableShellCheck(env.GetEnvOrDefaultBool(EnvEnableShellCheck, c.enableShellCheck))
 	return c
@@ -188,6 +194,48 @@ func (c *Config) SetLogLevel(logLevel string) {
 	c.logLevel = logLevel
 	logger.SetLogLevel(c.logLevel)
 }
+func (c *Config) SetLogFilePath(logFilePath string) {
+	c.logFilePath = logFilePath
+}
+
+func (c *Config) SetLogOutput(writers ...io.Writer) error {
+	file, err := c.getFile(c.logFilePath)
+	if err != nil {
+		return err
+	}
+	logger.LogSetOutput(append(writers, file)...)
+	logger.LogInfo("Set log file to " + file.Name())
+	return nil
+}
+
+func (c *Config) getFile(logPath string) (*os.File, error) {
+	var err error
+	if logPath == "" {
+		logPath, err = c.sysCalls.Getwd()
+		if err != nil {
+			return nil, err
+		}
+	} else if _, err = c.sysCalls.Stat(logPath); c.sysCalls.IsNotExist(err) {
+		return nil, err
+	}
+	return c.createLogFile(logPath)
+}
+
+func (c *Config) createLogFile(dir string) (*os.File, error) {
+	dirPath := filepath.Join(dir, "tmp", "horusec")
+	if _, err := c.sysCalls.Stat(dirPath); c.sysCalls.IsNotExist(err) {
+		err := c.sysCalls.MkdirAll(dirPath, os.ModePerm)
+		if err != nil {
+			return nil, err
+		}
+	}
+	fileName := filepath.Join(dirPath, "horusec-log-"+time.Now().Format("2006-01-02 15:04:05")+".log")
+	return c.sysCalls.Create(fileName)
+}
+
+func (c *Config) GetLogFilePath() string {
+	return valueordefault.GetStringValueOrDefault(c.logFilePath, "")
+}
 
 func (c *Config) GetHorusecAPIUri() string {
 	return valueordefault.GetStringValueOrDefault(c.horusecAPIUri, "http://0.0.0.0:8000")
@@ -219,7 +267,6 @@ func (c *Config) GetMonitorRetryInSeconds() int64 {
 	const defaultValue = 15
 	return valueordefault.GetInt64ValueOrDefault(c.monitorRetryInSeconds, int64(defaultValue))
 }
-
 func (c *Config) SetMonitorRetryInSeconds(retryInterval int64) {
 	c.monitorRetryInSeconds = retryInterval
 }
@@ -527,6 +574,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvEnableInformationSeverity):       c.GetEnableInformationSeverity(),
 		c.toLowerCamel(EnvCustomImages):                    c.GetCustomImages(),
 		c.toLowerCamel(EnvShowVulnerabilitiesTypes):        c.GetShowVulnerabilitiesTypes(),
+		c.toLowerCamel(EnvLogFilePath):                     c.GetLogFilePath(),
 		c.toLowerCamel(EnvEnableOwaspDependencyCheck):      c.GetEnableOwaspDependencyCheck(),
 		c.toLowerCamel(EnvEnableShellCheck):                c.GetEnableShellCheck(),
 	}
@@ -541,6 +589,8 @@ func (c *Config) NormalizeConfigs() IConfig {
 	c.SetProjectPath(projectPath)
 	configFilePath, _ := filepath.Abs(c.GetConfigFilePath())
 	c.SetConfigFilePath(configFilePath)
+	logFilePath, _ := filepath.Abs(c.GetLogFilePath())
+	c.SetLogFilePath(logFilePath)
 	return c
 }
 
@@ -645,4 +695,7 @@ func (c *Config) GetEnableShellCheck() bool {
 
 func (c *Config) SetEnableShellCheck(enableShellCheck bool) {
 	c.enableShellCheck = enableShellCheck
+}
+func (c *Config) SetSystemCall(calls ISystemCalls) {
+	c.sysCalls = calls
 }

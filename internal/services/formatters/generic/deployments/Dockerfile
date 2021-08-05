@@ -34,3 +34,7 @@ RUN curl -o /bin/dependency-check-6.2.2-release.zip -LO https://github.com/jerem
 RUN unzip /bin/dependency-check-6.2.2-release.zip -d  /bin
 
 RUN rm /bin/dependency-check-6.2.2-release.zip
+
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.19.2
+
+
