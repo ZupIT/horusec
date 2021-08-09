@@ -25,7 +25,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
@@ -35,35 +35,45 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/config"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-	customRules "github.com/ZupIT/horusec/internal/services/custom_rules"
+	custonrules "github.com/ZupIT/horusec/internal/services/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/git"
 )
 
-type Service struct {
-	mutex              *sync.Mutex
-	analysis           *analysis.Analysis
-	docker             docker.Interface
-	gitService         git.IService
-	config             config.IConfig
-	customRulesService customRules.IService
+// CustomRules is the interface that load custom rules to a given language
+type CustomRules interface {
+	Load(languages.Language) []engine.Rule
 }
 
-func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Interface, cfg config.IConfig) IService {
+// Git is the interface that handle Git operations
+type Git interface {
+	CommitAuthor(line string, file string) commitauthor.CommitAuthor
+}
+
+type Service struct {
+	mutex       *sync.Mutex
+	analysis    *analysis.Analysis
+	docker      docker.Docker
+	git         Git
+	config      config.IConfig
+	customRules CustomRules
+}
+
+func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Docker, cfg config.IConfig) IService {
 	return &Service{
-		mutex:              new(sync.Mutex),
-		analysis:           analysiss,
-		docker:             dockerSvc,
-		gitService:         git.NewGitService(cfg),
-		config:             cfg,
-		customRulesService: customRules.NewCustomRulesService(cfg),
+		mutex:       new(sync.Mutex),
+		analysis:    analysiss,
+		docker:      dockerSvc,
+		git:         git.New(cfg),
+		config:      cfg,
+		customRules: custonrules.NewCustomRulesService(cfg),
 	}
 }
 
-func (s *Service) ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error) {
+func (s *Service) ExecuteContainer(data *dockerentity.AnalysisData) (output string, err error) {
 	return s.docker.CreateLanguageAnalysisContainer(data)
 }
 
@@ -74,8 +84,8 @@ func (s *Service) GetAnalysisIDErrorMessage(tool tools.Tool, output string) stri
 	return msg
 }
 
-func (s *Service) GetCommitAuthor(line, filePath string) commitAuthor.CommitAuthor {
-	return s.gitService.GetCommitAuthor(line, filePath)
+func (s *Service) GetCommitAuthor(line, filePath string) commitauthor.CommitAuthor {
+	return s.git.CommitAuthor(line, filePath)
 }
 
 func (s *Service) GetConfigProjectPath() string {
@@ -263,7 +273,7 @@ func (s *Service) IsDockerDisabled() bool {
 }
 
 func (s *Service) GetCustomRulesByLanguage(lang languages.Language) []engine.Rule {
-	return s.customRulesService.GetCustomRulesByLanguage(lang)
+	return s.customRules.Load(lang)
 }
 
 func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string {

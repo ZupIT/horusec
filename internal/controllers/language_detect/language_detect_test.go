@@ -45,7 +45,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		monitor, err := controller.LanguageDetect("./NOT-EXIST-PATH")
+		monitor, err := controller.Detect("./NOT-EXIST-PATH")
 
 		assert.Error(t, err)
 		assert.Nil(t, monitor)
@@ -60,7 +60,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.NoError(t, err)
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, err := controller.LanguageDetect(srcPath)
+		langs, err := controller.Detect(srcPath)
 		assert.NoError(t, err)
 
 		assert.Contains(t, langs, languages.Leaks)
@@ -75,7 +75,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/go/example1")
+		langs, _ := controller.Detect("../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
@@ -89,7 +89,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/go/example1")
+		langs, _ := controller.Detect("../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
@@ -101,7 +101,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/go/example1")
+		langs, _ := controller.Detect("../../../examples/go/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Go)
@@ -114,7 +114,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/leaks/example1")
+		langs, _ := controller.Detect("../../../examples/leaks/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Generic)
@@ -126,7 +126,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/java/example1")
+		langs, _ := controller.Detect("../../../examples/java/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Java)
@@ -140,7 +140,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/javascript/example1")
+		langs, _ := controller.Detect("../../../examples/javascript/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)
@@ -153,7 +153,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/javascript/example2")
+		langs, _ := controller.Detect("../../../examples/javascript/example2")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)
@@ -167,7 +167,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/kotlin/example1")
+		langs, _ := controller.Detect("../../../examples/kotlin/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Kotlin)
@@ -180,7 +180,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/csharp/example1")
+		langs, _ := controller.Detect("../../../examples/csharp/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.CSharp)
@@ -193,7 +193,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/python/example1")
+		langs, _ := controller.Detect("../../../examples/python/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
@@ -207,7 +207,7 @@ func TestNewLanguageDetect(t *testing.T) {
 
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/python/example2")
+		langs, _ := controller.Detect("../../../examples/python/example2")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Python)
@@ -220,7 +220,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		analysis := mock.CreateAnalysisMock()
 		controller := NewLanguageDetect(configs, analysis.ID)
 
-		langs, _ := controller.LanguageDetect("../../../examples/ruby/example1")
+		langs, _ := controller.Detect("../../../examples/ruby/example1")
 
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Javascript)

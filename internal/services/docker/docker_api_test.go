@@ -62,7 +62,7 @@ const (
 
 func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	t.Run("Should return return error when ImagePath is empty", func(t *testing.T) {
-		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
+		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "",
 			CMD:          "cmd",
@@ -72,7 +72,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should return return error when cmd is empty", func(t *testing.T) {
-		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
+		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "image",
 			CMD:          "",
@@ -82,7 +82,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should return error when pull image aleatory", func(t *testing.T) {
-		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
+		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "john:doe",
 			CMD:          "command",
@@ -92,7 +92,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should create valid canonical image path", func(t *testing.T) {
-		api := NewDockerAPI(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
+		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "docker.io/dockercloud/hello-world:latest",
 			CMD:          "cmd",
@@ -106,7 +106,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient := &client.Mock{}
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, ErrGeneric)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		err := api.PullImage("")
 		assert.Error(t, err)
@@ -118,7 +118,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, nil)
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), ErrGeneric)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		err := api.PullImage("")
 
@@ -135,7 +135,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, ErrGeneric)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
@@ -156,7 +156,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
 		dockerAPIClient.On("ContainerStart").Return(ErrGeneric)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
@@ -183,7 +183,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		}, nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
@@ -208,7 +208,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader(nil)), ErrGeneric)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
@@ -233,7 +233,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		dockerAPIClient.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte("{}"))), nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
@@ -251,7 +251,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 		dockerAPIClient.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		assert.NotPanics(t, func() {
 			api.DeleteContainersFromAPI()
@@ -262,7 +262,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 		dockerAPIClient := &client.Mock{}
 		dockerAPIClient.On("ContainerList").Return([]types.Container{}, errors.New("test"))
 
-		api := NewDockerAPI(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
 
 		assert.NotPanics(t, func() {
 			api.DeleteContainersFromAPI()

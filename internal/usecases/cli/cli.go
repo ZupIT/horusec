@@ -56,11 +56,7 @@ type ConfigToValidate struct {
 
 type UseCases struct{}
 
-type Interface interface {
-	ValidateConfigs(config cliConfig.IConfig) error
-}
-
-func NewCLIUseCases() Interface {
+func NewCLIUseCases() *UseCases {
 	return &UseCases{}
 }
 

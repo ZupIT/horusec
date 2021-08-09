@@ -25,7 +25,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) LanguageDetect(_ string) ([]languages.Language, error) {
+func (m *Mock) Detect(_ string) ([]languages.Language, error) {
 	args := m.MethodCalled("LanguageDetect")
 	return args.Get(0).([]languages.Language), mock2.ReturnNilOrError(args, 1)
 }

@@ -29,16 +29,12 @@ import (
 	customRulesEntities "github.com/ZupIT/horusec/internal/entities/custom_rules"
 )
 
-type IService interface {
-	GetCustomRulesByLanguage(tool languages.Language) []engine.Rule
-}
-
 type Service struct {
 	config            cliConfig.IConfig
 	customRulesByTool map[languages.Language][]engine.Rule
 }
 
-func NewCustomRulesService(config cliConfig.IConfig) IService {
+func NewCustomRulesService(config cliConfig.IConfig) *Service {
 	service := &Service{
 		config: config,
 	}
@@ -49,7 +45,7 @@ func NewCustomRulesService(config cliConfig.IConfig) IService {
 	return service
 }
 
-func (s *Service) GetCustomRulesByLanguage(lang languages.Language) []engine.Rule {
+func (s *Service) Load(lang languages.Language) []engine.Rule {
 	return s.customRulesByTool[lang]
 }
 

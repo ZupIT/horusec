@@ -88,12 +88,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			globalCmd:              globalCmd,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			globalCmd:    globalCmd,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -120,12 +120,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -153,12 +153,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -186,12 +186,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -219,12 +219,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -253,12 +253,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -289,12 +289,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateGit")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -323,12 +323,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
@@ -350,12 +350,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -406,12 +406,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 		oldStdout := os.Stdout
 
@@ -454,12 +454,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 		oldStdout := os.Stdout
 
@@ -501,12 +501,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -563,12 +563,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -618,12 +618,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			globalCmd:              globalCmd,
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			analyzerController:     nil,
-			requirementsController: requirementsMock,
+			globalCmd:    globalCmd,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			analyzer:     nil,
+			requirements: requirementsMock,
 		}
 		oldStdout := os.Stdout
 
@@ -681,12 +681,12 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		cmd := &Start{
-			useCases:               cli.NewCLIUseCases(),
-			configs:                configs,
-			startPrompt:            promptMock,
-			globalCmd:              globalCmd,
-			analyzerController:     analyzerControllerMock,
-			requirementsController: requirementsMock,
+			useCases:     cli.NewCLIUseCases(),
+			configs:      configs,
+			prompt:       promptMock,
+			globalCmd:    globalCmd,
+			analyzer:     analyzerControllerMock,
+			requirements: requirementsMock,
 		}
 
 		cobraCmd := cmd.CreateStartCommand()
