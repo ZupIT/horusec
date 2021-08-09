@@ -54,6 +54,9 @@
     "BundlerAudit": {
       "istoignore": false
     },
+    "Checkov": {
+      "istoignore": false
+    },
     "Flawfinder": {
       "istoignore": false
     },
