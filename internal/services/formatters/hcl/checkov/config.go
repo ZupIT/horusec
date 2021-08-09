@@ -14,7 +14,4 @@
 
 package checkov
 
-const CMD = `
-			{{WORK_DIR}}
-        	horusec -o json 
-  `
+const CMD = `{{WORK_DIR}} checkov --quiet --framework terraform -d . -o json 2> /dev/null`

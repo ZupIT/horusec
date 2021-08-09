@@ -17,6 +17,8 @@ package checkov
 import (
 	"encoding/json"
 
+	"github.com/pborman/ansi"
+
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
 	"github.com/ZupIT/horusec/internal/enums/images"
@@ -72,20 +74,15 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var vulnerabilities []*entities.Vulnerability
+	var vulnerability *entities.Vulnerability
 
-	if err := json.Unmarshal([]byte(output), &vulnerabilities); err != nil {
+	binary, _ := ansi.Strip([]byte(output))
+	if err := json.Unmarshal(binary, &vulnerability); err != nil {
 		return err
 	}
 
-	for _, vuln := range vulnerabilities {
-		if vuln.CheckType != "terraform" {
-			continue
-		}
-
-		for _, check := range vuln.Results.FailedChecks {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(check))
-		}
+	for _, check := range vulnerability.Results.FailedChecks {
+		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(check))
 	}
 
 	return nil
