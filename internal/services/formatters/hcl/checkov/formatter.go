@@ -74,21 +74,21 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var vulnerability *entities.Vulnerability
+	var vuln *entities.Vulnerability
 
 	binary, _ := ansi.Strip([]byte(output))
-	if err := json.Unmarshal(binary, &vulnerability); err != nil {
+	if err := json.Unmarshal(binary, &vuln); err != nil {
 		return err
 	}
 
-	for _, check := range vulnerability.Results.FailedChecks {
+	for _, check := range vuln.Results.FailedChecks {
 		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(check))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(check entities.Check) *vulnerability.Vulnerability {
+func (f *Formatter) setVulnerabilityData(check *entities.Check) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilityData()
 	vuln.Severity = check.GetSeverity()
 	vuln.Details = check.GetDetails()

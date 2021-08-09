@@ -15,8 +15,8 @@
 package entities
 
 type Result struct {
-	PassedChecks  []Check `json:"passed_checks"` // ignore results other than vulnerabilities
-	FailedChecks  []Check `json:"failed_checks"`
-	SkippedChecks []Check `json:"skipped_checks"` // ignore results other than vulnerabilities
-	ParsingErrors []Check `json:"parsing_errors"` // ignore results other than vulnerabilities
+	PassedChecks  []*Check `json:"passed_checks"` // ignore results other than vulnerabilities
+	FailedChecks  []*Check `json:"failed_checks"`
+	SkippedChecks []*Check `json:"skipped_checks"` // ignore results other than vulnerabilities
+	ParsingErrors []*Check `json:"parsing_errors"` // ignore results other than vulnerabilities
 }
