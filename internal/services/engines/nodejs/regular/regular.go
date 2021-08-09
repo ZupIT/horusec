@@ -445,4 +445,3 @@ func NewNodeJSRegularInsecureDownload() text.TextRule {
 		},
 	}
 }
-
