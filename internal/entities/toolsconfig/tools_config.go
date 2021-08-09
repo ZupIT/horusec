@@ -32,6 +32,7 @@ type ToolsConfigsStruct struct {
 	Bandit               ToolConfig `json:"bandit"`
 	BundlerAudit         ToolConfig `json:"bundleraudit"`
 	Brakeman             ToolConfig `json:"brakeman"`
+	Checkov              ToolConfig `json:"checkov"`
 	Flawfinder           ToolConfig `json:"flawfinder"`
 	GitLeaks             ToolConfig `json:"gitleaks"`
 	GoSec                ToolConfig `json:"gosec"`
@@ -57,6 +58,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.Bandit:               t.Bandit,
 		tools.BundlerAudit:         t.BundlerAudit,
 		tools.Brakeman:             t.Brakeman,
+		tools.Checkov:              t.Checkov,
 		tools.Flawfinder:           t.Flawfinder,
 		tools.GitLeaks:             t.GitLeaks,
 		tools.GoSec:                t.GoSec,

@@ -55,6 +55,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
+	"github.com/ZupIT/horusec/internal/services/formatters/hcl/checkov"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
@@ -358,6 +359,7 @@ func (a *Analyzer) detectVulnerabilityHCL(_ *sync.WaitGroup, projectSubPath stri
 		return err
 	}
 	tfsec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	checkov.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
 

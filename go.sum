@@ -158,10 +158,8 @@ github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6/go.mod h1:3eOhrU
 github.com/VividCortex/ewma v1.1.1/go.mod h1:2Tkkvm3sRDVXaiyucHiACn4cqf7DpdyLvmxzcbUokwA=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/ZupIT/horusec-devkit v0.0.0-20210426200535-f65565027b4d/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
-github.com/ZupIT/horusec-devkit v1.0.10-0.20210729154228-eb97743197f2 h1:r5mhr4rPa4etFNVm6QCGHXY2cUDPWhCt4wvWBIGZeys=
-github.com/ZupIT/horusec-devkit v1.0.10-0.20210729154228-eb97743197f2/go.mod h1:2kHmsFDYvqLQ9n4Hf2M8RJdc8tU6WLrYZ7XyWfmWYnQ=
-github.com/ZupIT/horusec-devkit v1.0.10-0.20210803162336-462ea7dedb5e h1:AcHSufAuRE70GYpZNn0QECyTrdxP6+8jzURJBwuAOME=
-github.com/ZupIT/horusec-devkit v1.0.10-0.20210803162336-462ea7dedb5e/go.mod h1:e1o33un3uYm2RlfkKA+4vDTR3Z8w+zdGbnZ826IVdBA=
+github.com/ZupIT/horusec-devkit v1.0.11 h1:wO8erj2lmcWPJpRjA8RiIy5ewU3HHd29IA7fQS4iP4E=
+github.com/ZupIT/horusec-devkit v1.0.11/go.mod h1:e1o33un3uYm2RlfkKA+4vDTR3Z8w+zdGbnZ826IVdBA=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1 h1:6kCZzpEKjNeNsQzoD7Qx93KhuYLF6U4SUJThC2YLRsQ=
 github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1/go.mod h1:J1pXu3E+r5BGW+5tcprMVWJ8JFIcFbAiGWSgqYCavJo=
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
@@ -682,7 +680,6 @@ github.com/golangci/prealloc v0.0.0-20180630174525-215b22d4de21/go.mod h1:tf5+bz
 github.com/golangci/revgrep v0.0.0-20180526074752-d9c87f5ffaf0/go.mod h1:qOQCunEYvmd/TLamH+7LlVccLvUH5kZNhbCgTHoBbp4=
 github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039/go.mod h1:qOQCunEYvmd/TLamH+7LlVccLvUH5kZNhbCgTHoBbp4=
 github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4/go.mod h1:Izgrg8RkN3rCIMLGE9CyYmU9pY2Jer6DgANEnZ/L/cQ=
-github.com/google/addlicense v0.0.0-20210428195630-6d92264d7170/go.mod h1:EMjYTRimagHs1FwlIqKyX3wAM0u3rA+McvlIIWmSamA=
 github.com/google/btree v0.0.0-20180124185431-e89373fe6b4a/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
 github.com/google/btree v1.0.0/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
@@ -1189,6 +1186,8 @@ github.com/pact-foundation/pact-go v1.0.4/go.mod h1:uExwJY4kCzNPcHRj+hCR/HBbOOIw
 github.com/parnurzeal/gorequest v0.2.16/go.mod h1:3Kh2QUMJoqw3icWAecsyzkpY7UzRfDhbRdTjtNwNiUE=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
+github.com/pborman/ansi v1.0.0 h1:OqjHMhvlSuCCV5JT07yqPuJPQzQl+WXsiZ14gZsqOrQ=
+github.com/pborman/ansi v1.0.0/go.mod h1:SgWzwMAx1X/Ez7i90VqF8LRiQtx52pWDiQP+x3iGnzw=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pelletier/go-toml v1.8.0/go.mod h1:D6yutnOGMveHEPV7VQOuvI/gXY61bv+9bAOTRnLElKs=

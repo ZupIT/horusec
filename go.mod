@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v1.0.10-0.20210803162336-462ea7dedb5e
+	github.com/ZupIT/horusec-devkit v1.0.11
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/aquasecurity/fanal v0.0.0-20210726073605-7a1d96d086ee
 	github.com/aquasecurity/trivy v0.19.2
@@ -16,13 +16,13 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
 	github.com/golang/mock v1.5.0
-	github.com/google/addlicense v0.0.0-20210428195630-6d92264d7170 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/opencontainers/image-spec v1.0.2-0.20190823105129-775207bd45b6
+	github.com/pborman/ansi v1.0.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
