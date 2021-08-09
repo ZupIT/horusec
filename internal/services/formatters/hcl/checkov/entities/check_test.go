@@ -26,7 +26,7 @@ func checkMock() *Check {
 		CheckID:       "CKV_AWS_41",
 		CheckName:     "test",
 		Guideline:     &guideline,
-		FilePath:      "test",
+		FileAbsPath:   "test",
 		FileLineRange: [2]int{1, 1},
 	}
 
