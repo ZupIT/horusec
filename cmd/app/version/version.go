@@ -22,14 +22,10 @@ import (
 	"github.com/ZupIT/horusec/config/dist"
 )
 
-type IVersion interface {
-	CreateCobraCmd() *cobra.Command
-}
-
 type Version struct {
 }
 
-func NewVersionCommand() IVersion {
+func NewVersionCommand() *Version {
 	return &Version{}
 }
 

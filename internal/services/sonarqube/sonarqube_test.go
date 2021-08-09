@@ -45,7 +45,7 @@ func TestConvertVulnerabilityDataToSonarQube(t *testing.T) {
 
 		service := NewSonarQube(entity)
 
-		result := service.ConvertVulnerabilityDataToSonarQube()
+		result := service.ConvertVulnerabilityToSonarQube()
 		assert.NotEmpty(t, result)
 	})
 
@@ -58,7 +58,7 @@ func TestConvertVulnerabilityDataToSonarQube(t *testing.T) {
 
 		service := NewSonarQube(analysis)
 
-		result := service.ConvertVulnerabilityDataToSonarQube()
+		result := service.ConvertVulnerabilityToSonarQube()
 		assert.NotNil(t, result.Issues)
 	})
 }

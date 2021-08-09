@@ -28,14 +28,6 @@ func TestPrompt_Ask(t *testing.T) {
 	})
 }
 
-func TestPrompt_Select(t *testing.T) {
-	t.Run("Should run command select without panics", func(t *testing.T) {
-		assert.NotPanics(t, func() {
-			_, _ = NewPrompt().Select("", []string{})
-		})
-	})
-}
-
 func TestMock_Ask(t *testing.T) {
 	mock := &Mock{}
 	mock.On("Ask").Return("", nil)

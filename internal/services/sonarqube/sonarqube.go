@@ -24,21 +24,17 @@ import (
 	horusecSeverity "github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Interface interface {
-	ConvertVulnerabilityDataToSonarQube() sonarqube.Report
-}
-
 type SonarQube struct {
 	analysis *horusecEntities.Analysis
 }
 
-func NewSonarQube(analysis *horusecEntities.Analysis) Interface {
+func NewSonarQube(analysis *horusecEntities.Analysis) *SonarQube {
 	return &SonarQube{
 		analysis: analysis,
 	}
 }
 
-func (sq *SonarQube) ConvertVulnerabilityDataToSonarQube() (report sonarqube.Report) {
+func (sq *SonarQube) ConvertVulnerabilityToSonarQube() (report sonarqube.Report) {
 	report.Issues = []sonarqube.Issue{}
 	for index := range sq.analysis.AnalysisVulnerabilities {
 		vulnerability := sq.analysis.AnalysisVulnerabilities[index].Vulnerability

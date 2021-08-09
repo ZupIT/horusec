@@ -26,17 +26,12 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-type IGenerate interface {
-	SetGlobalCmd(globalCmd *cobra.Command)
-	CreateCobraCmd() *cobra.Command
-}
-
 type Generate struct {
 	globalCmd *cobra.Command
 	configs   config.IConfig
 }
 
-func NewGenerateCommand() IGenerate {
+func NewGenerateCommand() *Generate {
 	return &Generate{
 		configs: config.NewConfig(),
 	}

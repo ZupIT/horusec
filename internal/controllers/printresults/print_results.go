@@ -29,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/config"
+	sq "github.com/ZupIT/horusec/internal/entities/sonarqube"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/sonarqube"
@@ -39,6 +40,10 @@ var (
 	ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
 )
 
+type SonarQubeConverter interface {
+	ConvertVulnerabilityToSonarQube() sq.Report
+}
+
 type analysisOutputJSON struct {
 	Version string `json:"version"`
 	analysis.Analysis
@@ -48,16 +53,11 @@ type PrintResults struct {
 	analysis         *analysis.Analysis
 	configs          config.IConfig
 	totalVulns       int
-	sonarqubeService sonarqube.Interface
+	sonarqubeService SonarQubeConverter
 	textOutput       string
 }
 
-type Interface interface {
-	StartPrintResults() (totalVulns int, err error)
-	SetAnalysis(analysis *analysis.Analysis)
-}
-
-func NewPrintResults(entity *analysis.Analysis, configs config.IConfig) Interface {
+func NewPrintResults(entity *analysis.Analysis, configs config.IConfig) *PrintResults {
 	return &PrintResults{
 		analysis:         entity,
 		configs:          configs,
@@ -69,7 +69,7 @@ func (pr *PrintResults) SetAnalysis(entity *analysis.Analysis) {
 	pr.analysis = entity
 }
 
-func (pr *PrintResults) StartPrintResults() (totalVulns int, err error) {
+func (pr *PrintResults) Print() (totalVulns int, err error) {
 	if err := pr.factoryPrintByType(); err != nil {
 		return 0, err
 	}
@@ -170,7 +170,7 @@ func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore
 
 func (pr *PrintResults) saveSonarQubeFormatResults() error {
 	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSonarQubeFile)
-	report := pr.sonarqubeService.ConvertVulnerabilityDataToSonarQube()
+	report := pr.sonarqubeService.ConvertVulnerabilityToSonarQube()
 	bytesToWrite, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)

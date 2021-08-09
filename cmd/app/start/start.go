@@ -34,27 +34,48 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 
-type IStart interface {
-	SetGlobalCmd(globalCmd *cobra.Command)
-	CreateStartCommand() *cobra.Command
+// Analyzer is the interface that execute the analysis on some directory.
+//
+// Analyze returns the total of vulnerabilies founded on directory
+type Analyzer interface {
+	Analyze() (int, error)
+}
+
+// Prompt is the interface that interact with use terminal prompt
+//
+// Ask read from stdin and return the user input
+type Prompt interface {
+	Ask(label, defaultValue string) (string, error)
+}
+
+// UseCase is the interface that validate the configurations
+type UseCase interface {
+	ValidateConfigs(config config.IConfig) error
+}
+
+// Requirements is the interface that validate Horusec dynamic
+// requirements to execute analysis
+type Requirements interface {
+	ValidateDocker()
+	ValidateGit()
 }
 
 type Start struct {
-	useCases               cli.Interface
-	configs                config.IConfig
-	analyzerController     analyzer.Interface
-	startPrompt            prompt.Interface
-	globalCmd              *cobra.Command
-	requirementsController requirements.IRequirements
+	useCases     UseCase
+	configs      config.IConfig
+	analyzer     Analyzer
+	prompt       Prompt
+	globalCmd    *cobra.Command
+	requirements Requirements
 }
 
-func NewStartCommand(configs config.IConfig) IStart {
+func NewStartCommand(configs config.IConfig) *Start {
 	return &Start{
-		configs:                configs,
-		globalCmd:              &cobra.Command{},
-		useCases:               cli.NewCLIUseCases(),
-		startPrompt:            prompt.NewPrompt(),
-		requirementsController: requirements.NewRequirements(),
+		configs:      configs,
+		globalCmd:    &cobra.Command{},
+		useCases:     cli.NewCLIUseCases(),
+		prompt:       prompt.NewPrompt(),
+		requirements: requirements.NewRequirements(),
 	}
 }
 
@@ -183,11 +204,11 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 
 func (s *Start) validateRequirements() {
 	if s.configs.GetEnableGitHistoryAnalysis() {
-		s.requirementsController.ValidateGit()
+		s.requirements.ValidateGit()
 	}
 
 	if !s.configs.GetDisableDocker() {
-		s.requirementsController.ValidateDocker()
+		s.requirements.ValidateDocker()
 	}
 }
 
@@ -204,16 +225,16 @@ func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
 }
 
 func (s *Start) executeAnalysisDirectory() (totalVulns int, err error) {
-	if s.analyzerController == nil {
-		s.analyzerController = analyzer.NewAnalyzer(s.configs)
+	if s.analyzer == nil {
+		s.analyzer = analyzer.NewAnalyzer(s.configs)
 	}
 
-	return s.analyzerController.AnalysisDirectory()
+	return s.analyzer.Analyze()
 }
 
 func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 	if shouldAsk {
-		response, err := s.startPrompt.Ask(
+		response, err := s.prompt.Ask(
 			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.GetProjectPath()),
 			"Y")
 		if err != nil {

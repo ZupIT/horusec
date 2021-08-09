@@ -90,7 +90,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
+		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
 			docker:          dockerSDK,
@@ -102,7 +102,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.AnalysisDirectory()
+		totalVulns, err := controller.Analyze()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
@@ -147,7 +147,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
+		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
 			docker:          dockerSDK,
@@ -159,7 +159,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.AnalysisDirectory()
+		totalVulns, err := controller.Analyze()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
@@ -189,7 +189,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.NewDockerAPI(dockerMocker, configs, uuid.New())
+		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
 
 		controller := &Analyzer{
 			docker:          dockerSDK,
@@ -201,7 +201,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.AnalysisDirectory()
+		totalVulns, err := controller.Analyze()
 		assert.Error(t, err)
 		assert.Equal(t, 0, totalVulns)
 	})
