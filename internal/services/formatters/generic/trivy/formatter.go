@@ -65,7 +65,6 @@ func (f *Formatter) startTrivy(projectSubPath string) error {
 	if err != nil {
 		return err
 	}
-
 	return f.parse(projectSubPath, configOutput, fileSystemOutput)
 }
 
