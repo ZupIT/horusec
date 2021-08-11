@@ -125,55 +125,81 @@ func (f *Formatter) setVulnerabilities(cmd Cmd, result *entities.Result, path st
 	}
 }
 
-// nolint:funlen // setVulnerabilitiesOutput is necessary more 15 lines
 func (f *Formatter) setVulnerabilitiesOutput(result []*types.DetectedVulnerability, target string) {
 	for _, vuln := range result {
-		addVuln := &vulnerability.Vulnerability{
-			VulnerabilityID: uuid.New(),
-			Line:            "0",
-			Column:          "0",
-			Confidence:      confidence.Medium,
-			File:            target,
-			Code:            vuln.PkgName,
-			Details:         fmt.Sprintf("%s\n%s\n%s", vuln.Description, vuln.PrimaryURL, getDetails(vuln)),
-			SecurityTool:    tools.Trivy,
-			Language:        languages.Generic,
-			Severity:        severities.GetSeverityByString(vuln.Severity),
-			Type:            enumsVulnerability.Vulnerability,
-		}
+		addVuln := f.getVulnBase()
+		addVuln.File = target
+		addVuln.Code = vuln.PkgName
+		addVuln.Details = f.getDetails(vuln)
+		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
 	}
 }
 
-func getDetails(vuln *types.DetectedVulnerability) string {
+func (f *Formatter) getDetails(vuln *types.DetectedVulnerability) string {
 	basePath := "https://cwe.mitre.org/data/definitions/"
-	var result string
+	details := f.getBaseDetailsWithoutCWEs(vuln)
 
-	for _, id := range vuln.CweIDs {
-		idAfterSplit := strings.SplitAfter(id, "-")
-		result = result + basePath + idAfterSplit[1] + ".html\n"
+	if len(vuln.CweIDs) > 0 {
+		return f.getDetailsWithCWEs(details, basePath, vuln)
 	}
-	return result
+
+	return details
 }
 
-// nolint:funlen // setMisconfigurationOutput is necessary more 15 lines
+func (f *Formatter) getBaseDetailsWithoutCWEs(vuln *types.DetectedVulnerability) (details string) {
+	if vuln.Description != "" {
+		details += vuln.Description + "\n"
+	}
+	if vuln.InstalledVersion != "" && vuln.FixedVersion != "" {
+		details += fmt.Sprintf("Installed Version: \"%s\", Update to Version: \"%s\" for fix this issue.\n",
+			vuln.InstalledVersion, vuln.FixedVersion)
+	}
+	if vuln.PrimaryURL != "" {
+		details += fmt.Sprintf("PrimaryURL: %s.\n", vuln.PrimaryURL)
+	}
+	return details
+}
+
+// nolint:gomnd // magic number "2" is not necessary to check
+func (f *Formatter) getDetailsWithCWEs(baseDetails, basePath string,
+	vuln *types.DetectedVulnerability) (details string) {
+	details += baseDetails + "Cwe Links: "
+	for idx, ID := range vuln.CweIDs {
+		idAfterSplit := strings.SplitAfter(ID, "-")
+		if len(idAfterSplit) >= 2 {
+			cweNumber := idAfterSplit[1] + ".html"
+			comma := ","
+			if idx == len(vuln.CweIDs)-1 {
+				comma = ""
+			}
+			details += fmt.Sprintf("(%s%s)%s", basePath, cweNumber, comma)
+		}
+	}
+	return details
+}
+
 func (f *Formatter) setMisconfigurationOutput(result []*types.DetectedMisconfiguration, target string) {
 	for _, vuln := range result {
-		addVuln := &vulnerability.Vulnerability{
-			VulnerabilityID: uuid.New(),
-			Line:            "0",
-			Column:          "0",
-			Confidence:      confidence.Medium,
-			File:            target,
-			Code:            vuln.Title,
-			Details:         fmt.Sprintf("%s - %s - %s", vuln.Description, vuln.Resolution, vuln.References),
-			SecurityTool:    tools.Trivy,
-			Language:        languages.Generic,
-			Severity:        severities.GetSeverityByString(vuln.Severity),
-			Type:            enumsVulnerability.Vulnerability,
-		}
+		addVuln := f.getVulnBase()
+		addVuln.File = target
+		addVuln.Code = vuln.Title
+		addVuln.Details = fmt.Sprintf("%s - %s - %s - %s", vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
+		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
+	}
+}
+
+func (f *Formatter) getVulnBase() *vulnerability.Vulnerability {
+	return &vulnerability.Vulnerability{
+		VulnerabilityID: uuid.New(),
+		Line:            "0",
+		Column:          "0",
+		Confidence:      confidence.Medium,
+		SecurityTool:    tools.Trivy,
+		Language:        languages.Generic,
+		Type:            enumsVulnerability.Vulnerability,
 	}
 }
