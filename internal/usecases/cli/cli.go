@@ -137,7 +137,12 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig)
 	return func(value interface{}) error {
 		if config.GetPrintOutputType() == outputtype.JSON ||
 			config.GetPrintOutputType() == outputtype.SonarQube {
-			if err := au.validateJSONOutputFilePath(config); err != nil {
+			if err := au.validateJSONOutputFilePath(config, "json"); err != nil {
+				return err
+			}
+		}
+		if config.GetPrintOutputType() == outputtype.Text {
+			if err := au.validateJSONOutputFilePath(config, "txt"); err != nil {
 				return err
 			}
 		}
@@ -145,15 +150,9 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig)
 	}
 }
 
-func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig) error {
-	const MinOutputText = 5
-	if len(config.GetJSONOutputFilePath()) < MinOutputText {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + ".json file path is required")
-	}
-	totalChars := len(config.GetJSONOutputFilePath()) - 1
-	ext := config.GetJSONOutputFilePath()[totalChars-4:]
-	if ext != ".json" {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid .json file")
+func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig, suffix string) error {
+	if !strings.HasSuffix(config.GetJSONOutputFilePath(), suffix) {
+		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid file of type " + suffix)
 	}
 
 	if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
