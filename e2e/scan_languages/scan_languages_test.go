@@ -26,8 +26,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/google/uuid"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
