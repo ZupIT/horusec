@@ -151,12 +151,14 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig)
 }
 
 func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig, suffix string) error {
-	if !strings.HasSuffix(config.GetJSONOutputFilePath(), suffix) {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid file of type " + suffix)
-	}
+	if config.GetJSONOutputFilePath() != "" {
+		if !strings.HasSuffix(config.GetJSONOutputFilePath(), suffix) {
+			return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid file of type " + suffix)
+		}
 
-	if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
+		if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
+			return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
+		}
 	}
 	return nil
 }
