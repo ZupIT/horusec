@@ -16,6 +16,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
 	github.com/golang/mock v1.5.0
+	github.com/google/addlicense v0.0.0-20210810170408-9cc7ec3e36ab // indirect
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
