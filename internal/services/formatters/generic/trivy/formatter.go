@@ -65,11 +65,7 @@ func (f *Formatter) startTrivy(projectSubPath string) error {
 	if err != nil {
 		return err
 	}
-	err = f.parse(projectSubPath, configOutput, fileSystemOutput)
-	if err != nil {
-		return err
-	}
-	return err
+	return f.parse(projectSubPath, configOutput, fileSystemOutput)
 }
 
 func (f *Formatter) executeContainers(projectSubPath string) (string, string, error) {
@@ -89,11 +85,7 @@ func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string)
 	if err != nil {
 		return err
 	}
-	err = f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
-	if err != nil {
-		return err
-	}
-	return nil
+	return f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
 func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
@@ -143,6 +135,8 @@ func (f *Formatter) getDetails(vuln *types.DetectedVulnerability) string {
 
 	if len(vuln.CweIDs) > 0 {
 		return f.getDetailsWithCWEs(details, basePath, vuln)
+	} else {
+		details = strings.TrimRight(details, "\n")
 	}
 
 	return details

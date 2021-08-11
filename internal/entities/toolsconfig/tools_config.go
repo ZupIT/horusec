@@ -50,6 +50,7 @@ type ToolsConfigsStruct struct {
 	OwaspDependencyCheck ToolConfig `json:"owaspDependencyCheck"`
 	DotnetCli            ToolConfig `json:"dotnetCli"`
 	Nancy                ToolConfig `json:"nancy"`
+	Trivy                ToolConfig `json:"trivy"`
 }
 
 // nolint:funlen // toMap is necessary more 15 lines
@@ -76,6 +77,7 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 		tools.OwaspDependencyCheck: t.OwaspDependencyCheck,
 		tools.DotnetCli:            t.DotnetCli,
 		tools.Nancy:                t.Nancy,
+		tools.Trivy:                t.Trivy,
 	}
 }
 
