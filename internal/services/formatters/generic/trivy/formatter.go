@@ -130,16 +130,13 @@ func (f *Formatter) setVulnerabilitiesOutput(result []*types.DetectedVulnerabili
 }
 
 func (f *Formatter) getDetails(vuln *types.DetectedVulnerability) string {
-	basePath := "https://cwe.mitre.org/data/definitions/"
 	details := f.getBaseDetailsWithoutCWEs(vuln)
 
 	if len(vuln.CweIDs) > 0 {
-		return f.getDetailsWithCWEs(details, basePath, vuln)
-	} else {
-		details = strings.TrimRight(details, "\n")
+		return f.getDetailsWithCWEs(details, vuln)
 	}
 
-	return details
+	return strings.TrimRight(details, "\n")
 }
 
 func (f *Formatter) getBaseDetailsWithoutCWEs(vuln *types.DetectedVulnerability) (details string) {
@@ -157,21 +154,24 @@ func (f *Formatter) getBaseDetailsWithoutCWEs(vuln *types.DetectedVulnerability)
 }
 
 // nolint:gomnd // magic number "2" is not necessary to check
-func (f *Formatter) getDetailsWithCWEs(baseDetails, basePath string,
-	vuln *types.DetectedVulnerability) (details string) {
-	details += baseDetails + "Cwe Links: "
-	for idx, ID := range vuln.CweIDs {
+func (f *Formatter) getDetailsWithCWEs(details string, vuln *types.DetectedVulnerability) string {
+	details += "Cwe Links: "
+	for _, ID := range vuln.CweIDs {
 		idAfterSplit := strings.SplitAfter(ID, "-")
 		if len(idAfterSplit) >= 2 {
-			cweNumber := idAfterSplit[1] + ".html"
-			comma := ","
-			if idx == len(vuln.CweIDs)-1 {
-				comma = ""
-			}
-			details += fmt.Sprintf("(%s%s)%s", basePath, cweNumber, comma)
+			details += f.addCWELinkInDetails(details, idAfterSplit[1])
 		}
 	}
-	return details
+	return strings.TrimRight(details, ",")
+}
+
+func (f *Formatter) addCWELinkInDetails(details, cweID string) string {
+	basePath := "https://cwe.mitre.org/data/definitions/"
+	cweLink := basePath + cweID + ".html"
+	if !strings.Contains(details, cweLink) {
+		return fmt.Sprintf("(%s),", cweLink)
+	}
+	return ""
 }
 
 func (f *Formatter) setMisconfigurationOutput(result []*types.DetectedMisconfiguration, target string) {
