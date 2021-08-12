@@ -48,7 +48,7 @@ func TestNewAnalyzer(t *testing.T) {
 
 func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
-		configs := &config.Config{}
+		configs := config.New()
 		configs.SetWorkDir(&workdir.WorkDir{Go: []string{"test"}})
 		configs.SetEnableCommitAuthor(true)
 		configs.SetEnableGitHistoryAnalysis(true)
@@ -107,7 +107,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		assert.Equal(t, 0, totalVulns)
 	})
 	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
-		configs := &config.Config{}
+		configs := config.New()
 		configs.SetWorkDir(&workdir.WorkDir{Go: []string{"test"}})
 		configs.SetFalsePositiveHashes([]string{"test"})
 
@@ -164,7 +164,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		assert.Equal(t, 0, totalVulns)
 	})
 	t.Run("Should run error in language detect", func(t *testing.T) {
-		configs := &config.Config{}
+		configs := config.New()
 		configs.SetWorkDir(&workdir.WorkDir{})
 
 		languageDetectMock := &languageDetect.Mock{}

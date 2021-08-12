@@ -23,10 +23,13 @@ import (
 )
 
 type Version struct {
+	config *config.Config
 }
 
-func NewVersionCommand() *Version {
-	return &Version{}
+func NewVersionCommand(cfg *config.Config) *Version {
+	return &Version{
+		config: cfg,
+	}
 }
 
 func (v *Version) CreateCobraCmd() *cobra.Command {
@@ -35,7 +38,7 @@ func (v *Version) CreateCobraCmd() *cobra.Command {
 		Short:   "Actual version installed of the horusec",
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.LogPrint(cmd.Short + " is: " + config.NewConfig().GetVersion())
+			logger.LogPrint(cmd.Short + " is: " + v.config.GetVersion())
 			logger.LogPrint("dist: " + dist.GetVersion())
 			return nil
 		},

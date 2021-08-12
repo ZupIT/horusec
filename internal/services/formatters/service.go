@@ -58,11 +58,11 @@ type Service struct {
 	analysis    *analysis.Analysis
 	docker      docker.Docker
 	git         Git
-	config      config.IConfig
+	config      *config.Config
 	customRules CustomRules
 }
 
-func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Docker, cfg config.IConfig) IService {
+func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Docker, cfg *config.Config) IService {
 	return &Service{
 		mutex:       new(sync.Mutex),
 		analysis:    analysiss,

@@ -29,18 +29,18 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/request"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/request/entities"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 )
 
 type Service struct {
 	http   request.IRequest
-	config cliConfig.IConfig
+	config *config.Config
 }
 
-func NewHorusecAPIService(config cliConfig.IConfig) *Service {
+func NewHorusecAPIService(cfg *config.Config) *Service {
 	return &Service{
 		http:   request.NewHTTPRequestService(10), // nolint:gomnd // timeout default already setup
-		config: config,
+		config: cfg,
 	}
 }
 
