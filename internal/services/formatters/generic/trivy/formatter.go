@@ -65,11 +65,7 @@ func (f *Formatter) startTrivy(projectSubPath string) error {
 	if err != nil {
 		return err
 	}
-	err = f.parse(projectSubPath, configOutput, fileSystemOutput)
-	if err != nil {
-		return err
-	}
-	return err
+	return f.parse(projectSubPath, configOutput, fileSystemOutput)
 }
 
 func (f *Formatter) executeContainers(projectSubPath string) (string, string, error) {
@@ -89,11 +85,7 @@ func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string)
 	if err != nil {
 		return err
 	}
-	err = f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
-	if err != nil {
-		return err
-	}
-	return nil
+	return f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
 func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
@@ -125,55 +117,83 @@ func (f *Formatter) setVulnerabilities(cmd Cmd, result *entities.Result, path st
 	}
 }
 
-// nolint:funlen // setVulnerabilitiesOutput is necessary more 15 lines
 func (f *Formatter) setVulnerabilitiesOutput(result []*types.DetectedVulnerability, target string) {
 	for _, vuln := range result {
-		addVuln := &vulnerability.Vulnerability{
-			VulnerabilityID: uuid.New(),
-			Line:            "0",
-			Column:          "0",
-			Confidence:      confidence.Medium,
-			File:            target,
-			Code:            vuln.PkgName,
-			Details:         fmt.Sprintf("%s\n%s\n%s", vuln.Description, vuln.PrimaryURL, getDetails(vuln)),
-			SecurityTool:    tools.Trivy,
-			Language:        languages.Generic,
-			Severity:        severities.GetSeverityByString(vuln.Severity),
-			Type:            enumsVulnerability.Vulnerability,
-		}
+		addVuln := f.getVulnBase()
+		addVuln.File = target
+		addVuln.Code = vuln.PkgName
+		addVuln.Details = f.getDetails(vuln)
+		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
 	}
 }
 
-func getDetails(vuln *types.DetectedVulnerability) string {
-	basePath := "https://cwe.mitre.org/data/definitions/"
-	var result string
+func (f *Formatter) getDetails(vuln *types.DetectedVulnerability) string {
+	details := f.getBaseDetailsWithoutCWEs(vuln)
 
-	for _, id := range vuln.CweIDs {
-		idAfterSplit := strings.SplitAfter(id, "-")
-		result = result + basePath + idAfterSplit[1] + ".html\n"
+	if len(vuln.CweIDs) > 0 {
+		return f.getDetailsWithCWEs(details, vuln)
 	}
-	return result
+
+	return strings.TrimRight(details, "\n")
 }
 
-// nolint:funlen // setMisconfigurationOutput is necessary more 15 lines
+func (f *Formatter) getBaseDetailsWithoutCWEs(vuln *types.DetectedVulnerability) (details string) {
+	if vuln.Description != "" {
+		details += vuln.Description + "\n"
+	}
+	if vuln.InstalledVersion != "" && vuln.FixedVersion != "" {
+		details += fmt.Sprintf("Installed Version: \"%s\", Update to Version: \"%s\" for fix this issue.\n",
+			vuln.InstalledVersion, vuln.FixedVersion)
+	}
+	if vuln.PrimaryURL != "" {
+		details += fmt.Sprintf("PrimaryURL: %s.\n", vuln.PrimaryURL)
+	}
+	return details
+}
+
+// nolint:gomnd // magic number "2" is not necessary to check
+func (f *Formatter) getDetailsWithCWEs(details string, vuln *types.DetectedVulnerability) string {
+	details += "Cwe Links: "
+	for _, ID := range vuln.CweIDs {
+		idAfterSplit := strings.SplitAfter(ID, "-")
+		if len(idAfterSplit) >= 2 {
+			details += f.addCWELinkInDetails(details, idAfterSplit[1])
+		}
+	}
+	return strings.TrimRight(details, ",")
+}
+
+func (f *Formatter) addCWELinkInDetails(details, cweID string) string {
+	basePath := "https://cwe.mitre.org/data/definitions/"
+	cweLink := basePath + cweID + ".html"
+	if !strings.Contains(details, cweLink) {
+		return fmt.Sprintf("(%s),", cweLink)
+	}
+	return ""
+}
+
 func (f *Formatter) setMisconfigurationOutput(result []*types.DetectedMisconfiguration, target string) {
 	for _, vuln := range result {
-		addVuln := &vulnerability.Vulnerability{
-			VulnerabilityID: uuid.New(),
-			Line:            "0",
-			Column:          "0",
-			Confidence:      confidence.Medium,
-			File:            target,
-			Code:            vuln.Title,
-			Details:         fmt.Sprintf("%s - %s - %s", vuln.Description, vuln.Resolution, vuln.References),
-			SecurityTool:    tools.Trivy,
-			Language:        languages.Generic,
-			Severity:        severities.GetSeverityByString(vuln.Severity),
-			Type:            enumsVulnerability.Vulnerability,
-		}
+		addVuln := f.getVulnBase()
+		addVuln.File = target
+		addVuln.Code = vuln.Title
+		addVuln.Details = fmt.Sprintf("%s - %s - %s - %s", vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
+		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
+	}
+}
+
+func (f *Formatter) getVulnBase() *vulnerability.Vulnerability {
+	return &vulnerability.Vulnerability{
+		VulnerabilityID: uuid.New(),
+		Line:            "0",
+		Column:          "0",
+		Confidence:      confidence.Medium,
+		SecurityTool:    tools.Trivy,
+		Language:        languages.Generic,
+		Type:            enumsVulnerability.Vulnerability,
 	}
 }
