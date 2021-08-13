@@ -374,7 +374,7 @@ func (pr *PrintResults) printLNF(text string, args ...interface{}) {
 }
 
 func (pr *PrintResults) createTxtOutputFile() error {
-	if pr.configs.GetPrintOutputType() != outputtype.Text {
+	if pr.configs.GetPrintOutputType() != outputtype.Text || pr.configs.GetJSONOutputFilePath() == "" {
 		return nil
 	}
 

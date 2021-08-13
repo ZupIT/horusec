@@ -21,7 +21,7 @@ const (
 	// USED IN USE CASES: Fired when the project path is invalid
 	MsgErrorProjectPathNotValid = "project path is invalid: "
 	// USED IN USE CASES: Fired when an path of json is not valid in configs
-	MsgErrorJSONOutputFilePathNotValid = "JSON File path is required or is invalid: "
+	MsgErrorJSONOutputFilePathNotValid = "Output File path is required or is invalid: "
 	// USED IN USE CASES: Fired when an severity is not allowed in configs
 	MsgErrorSeverityNotValid = "Type of severity not valid: "
 	// USED IN USE CASES: Fired when an false positive is not allowed in configs
