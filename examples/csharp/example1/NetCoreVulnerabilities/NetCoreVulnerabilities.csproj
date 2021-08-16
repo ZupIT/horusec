@@ -7,7 +7,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2"/>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5"/>
     <PackageReference Include="Wire" Version="1.0.0"/>
-    <PackageReference Include="Microsoft.ChakraCore" Version="1.11.13"/>
+    <PackageReference Include="Microsoft.ChakraCore" Version="1.11.24"/>
     <PackageReference Include="adplug" Version="2.3.1"/>
     <PackageReference Include="HtmlSanitizer" Version="4.0.217"/>
     <PackageReference Include="Sustainsys.Saml2" Version="2.0.0"/>
