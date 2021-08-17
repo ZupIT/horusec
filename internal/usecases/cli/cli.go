@@ -135,27 +135,27 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.ICo
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig) func(value interface{}) error {
 	return func(value interface{}) error {
-		if config.GetPrintOutputType() == outputtype.JSON ||
-			config.GetPrintOutputType() == outputtype.SonarQube {
-			if err := au.validateJSONOutputFilePath(config); err != nil {
-				return err
-			}
+		switch config.GetPrintOutputType() {
+		case outputtype.JSON, outputtype.SonarQube:
+			return au.validateFilePathAndExtension(config, ".json")
+		case outputtype.Text:
+			return au.validateTextOutputFilePath(config)
 		}
 		return nil
 	}
 }
 
-func (au *UseCases) validateJSONOutputFilePath(config cliConfig.IConfig) error {
-	const MinOutputText = 5
-	if len(config.GetJSONOutputFilePath()) < MinOutputText {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + ".json file path is required")
+func (au *UseCases) validateTextOutputFilePath(config cliConfig.IConfig) error {
+	if config.GetJSONOutputFilePath() == "" {
+		return nil
 	}
-	totalChars := len(config.GetJSONOutputFilePath()) - 1
-	ext := config.GetJSONOutputFilePath()[totalChars-4:]
-	if ext != ".json" {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + "is not valid .json file")
-	}
+	return au.validateFilePathAndExtension(config, ".txt")
+}
 
+func (au *UseCases) validateFilePathAndExtension(config cliConfig.IConfig, extension string) error {
+	if filepath.Ext(config.GetJSONOutputFilePath()) != extension {
+		return fmt.Errorf("%snot valid file of type %s", messages.MsgErrorJSONOutputFilePathNotValid, extension)
+	}
 	if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
 	}

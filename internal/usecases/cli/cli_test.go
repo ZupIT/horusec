@@ -36,7 +36,6 @@ func TestValidateConfigs(t *testing.T) {
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
-
 	t.Run("Should return no errors when is not valid path", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
@@ -47,7 +46,6 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "projectPath: project path is invalid: .")
 	})
-
 	t.Run("Should return no errors when valid config with ignore", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
@@ -57,7 +55,6 @@ func TestValidateConfigs(t *testing.T) {
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
-
 	t.Run("Should return error when invalid ignore value", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
@@ -69,7 +66,6 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Equal(t, "severitiesToIgnore: Type of severity not valid:  test. "+
 			"See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO].", err.Error())
 	})
-
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
@@ -79,10 +75,9 @@ func TestValidateConfigs(t *testing.T) {
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
-		assert.Equal(t, "jSONOutputFilePath: JSON File path is required or is invalid: .json file path is required.",
+		assert.Equal(t, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .json.",
 			err.Error())
 	})
-
 	t.Run("Should return error when invalid json output file is invalid", func(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.SetWorkDir(&workdir.WorkDir{})
@@ -92,8 +87,29 @@ func TestValidateConfigs(t *testing.T) {
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
-		assert.Equal(t, "jSONOutputFilePath: JSON File path is required or is invalid: is not valid .json file.",
+		assert.Equal(t, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .json.",
 			err.Error())
+	})
+	t.Run("Should return error when the text output file is invalid", func(t *testing.T) {
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+		config.NewConfigsFromEnvironments()
+		config.SetPrintOutputType(outputtype.Text)
+		config.SetJSONOutputFilePath("test.test")
+
+		err := useCases.ValidateConfigs(config)
+		assert.Error(t, err)
+		assert.EqualError(t, err, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .txt.")
+	})
+	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
+		config := &cliConfig.Config{}
+		config.SetWorkDir(&workdir.WorkDir{})
+		config.NewConfigsFromEnvironments()
+		config.SetPrintOutputType(outputtype.Text)
+		config.SetJSONOutputFilePath("test.txt")
+
+		err := useCases.ValidateConfigs(config)
+		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
 		config := &cliConfig.Config{}
