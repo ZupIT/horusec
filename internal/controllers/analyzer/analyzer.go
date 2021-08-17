@@ -178,6 +178,7 @@ func (a *Analyzer) formatAnalysisToPrint() {
 		a.analysis = a.removeInfoVulnerabilities()
 	}
 	a.analysis = a.removeVulnerabilitiesByTypes()
+	a.analysis = a.removeVulnerabilitiesBySeverity()
 }
 
 func (a *Analyzer) formatAnalysisToSendToAPI() {
@@ -582,6 +583,24 @@ func (a *Analyzer) removeInfoVulnerabilities() *analysis.Analysis {
 
 	a.analysis.AnalysisVulnerabilities = vulnerabilities
 
+	return a.analysis
+}
+
+func (a *Analyzer) removeVulnerabilitiesBySeverity() *analysis.Analysis {
+	var vulnerabilities []analysis.AnalysisVulnerabilities
+	severitiesToIgnore := a.config.GetSeveritiesToIgnore()
+
+outer:
+	for index := range a.analysis.AnalysisVulnerabilities {
+		vuln := a.analysis.AnalysisVulnerabilities[index]
+		for _, severity := range severitiesToIgnore {
+			if strings.EqualFold(string(vuln.Vulnerability.Severity), severity) {
+				continue outer
+			}
+		}
+		vulnerabilities = append(vulnerabilities, vuln)
+	}
+	a.analysis.AnalysisVulnerabilities = vulnerabilities
 	return a.analysis
 }
 
