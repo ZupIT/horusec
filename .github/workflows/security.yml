@@ -22,6 +22,8 @@ jobs:
       - name: security
         env:
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
+          HORUSEC_CLI_REPOSITORY_NAME: ${{ secrets.HORUSEC_CLI_REPOSITORY_NAME }}
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-          horusec start -p . -e true -u "https://api-horusec.zup.com.br" -G true -n "${GITHUB_REPOSITORY}_${GITHUB_REF##*/}"
+          horusec start -p . -e true -G true
