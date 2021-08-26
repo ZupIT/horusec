@@ -152,12 +152,16 @@ We have a few channels for contact, feel free to reach out to us at:
 - [GitHub Issues](https://github.com/ZupIT/horusec/issues)
 - [Zup Open Source Forum](https://forum.zup.com.br)
 
+
 ## Contributing
 
 Feel free to use, recommend improvements, or contribute to new implementations.
 
 Read our [contributing guide](CONTRIBUTING.md) to learn about our development process,
 how to propose bugfixes and improvements, and how to build and test your changes to horusec.
+
+#### Roadmap
+We have a [page to talk about our roadmap](ROADMAP.md), come contribute with us!
 
 If this is our first repository that you visit, or would like to know more about Horusec,
 check out some of our other projects.

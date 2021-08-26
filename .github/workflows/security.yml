@@ -17,11 +17,13 @@ on: [ "push" ]
 jobs:
   security:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v2
       - name: security
         env:
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
           HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
-        run: make security
+          HORUSEC_CLI_REPOSITORY_NAME: ${{ secrets.HORUSEC_CLI_REPOSITORY_NAME }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -e true -G true
