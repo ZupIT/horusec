@@ -22,6 +22,7 @@
   "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliEnableInformationSeverity": false,
   "horusecCliFalsePositiveHashes": [
+    "daf141d66c2b98a3c579726372fbd91957d3e51c00b3a6ec18e5b40ca98fcbe6"
   ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",
