@@ -11,7 +11,7 @@ require (
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
 	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/containerd/containerd v1.5.5 // indirect
-	github.com/docker/docker v20.10.6+incompatible
+	github.com/docker/docker v20.10.8+incompatible
 	github.com/go-enry/go-enry/v2 v2.7.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
