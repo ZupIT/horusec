@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM mcr.microsoft.com/dotnet/runtime:5.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime:6.0-alpine
 
 RUN apk add jq
 
