@@ -23,7 +23,7 @@ import (
 
 	"github.com/ZupIT/horusec/internal/utils/file"
 
-	"github.com/bmatcuk/doublestar/v2"
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/go-enry/go-enry/v2"
 	"github.com/google/uuid"
 
