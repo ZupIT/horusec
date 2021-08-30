@@ -652,7 +652,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: ")
 		assert.Contains(t, output, "Hold on! Horusec is still analyzing your code. Timeout in: 600s")
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
-		assert.Contains(t, output, "[HORUSEC] 6 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
+		assert.Contains(t, output, "[HORUSEC] 25 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 		assert.Contains(t, output, "")
 		promptMock.AssertNotCalled(t, "Ask")
@@ -660,6 +660,8 @@ func TestStartCommand_Execute(t *testing.T) {
 	})
 	t.Run("Should create start command and get error on setLogOutput", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
 		promptMock := &prompt.Mock{}
 		promptMock.On("Ask").Return("Y", nil)
 		sysCallMock := mock_config.NewMockISystemCalls(ctrl)
@@ -667,20 +669,15 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs := &config.Config{}
 		configs.SetWorkDir(&workdir.WorkDir{})
 		configs.SetSystemCall(sysCallMock)
-		expetedError := errors.New("error")
-		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, expetedError)
-		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, expetedError)
+
+		sysCallMock.EXPECT().Stat(gomock.Any()).Return(nil, errors.New("error"))
 		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(true)
-		sysCallMock.EXPECT().IsNotExist(gomock.Any()).Return(false)
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
@@ -693,12 +690,12 @@ func TestStartCommand_Execute(t *testing.T) {
 
 		cobraCmd := cmd.CreateStartCommand()
 
-		cobraCmd.SetOut(stdoutMock)
+		stdout := bytes.NewBufferString("")
+		logrus.SetOutput(stdout)
+		cobraCmd.SetOut(stdout)
+
 		assert.NoError(t, cobraCmd.Execute())
-		outputBytes, err := ioutil.ReadAll(stdoutMock)
-		output := string(outputBytes)
-		assert.NoError(t, err)
-		assert.Contains(t, output, messages.MsgErrorSettingLogFile)
+		assert.Contains(t, stdout.String(), messages.MsgErrorSettingLogFile)
 
 	})
 }
