@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v1.0.11
+	github.com/ZupIT/horusec-devkit v1.0.15
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/aquasecurity/fanal v0.0.0-20210824112623-152431c047fe
 	github.com/aquasecurity/trivy v0.19.2
@@ -27,8 +27,5 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/sys v0.0.0-20210816183151-1e6c022a8912 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20210816143620-e15ff196659d // indirect
 )
