@@ -9,7 +9,7 @@ require (
 	github.com/aquasecurity/fanal v0.0.0-20210726073605-7a1d96d086ee
 	github.com/aquasecurity/trivy v0.19.2
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
-	github.com/bmatcuk/doublestar/v2 v2.0.4
+	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/docker v20.10.6+incompatible
 	github.com/go-enry/go-enry/v2 v2.7.0
