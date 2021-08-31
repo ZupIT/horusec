@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine
+FROM alpine:3.14.2
 
 RUN apk add shellcheck
