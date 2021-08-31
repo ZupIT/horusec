@@ -96,10 +96,6 @@ func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntit
 }
 
 func (f *Formatter) parseOutput(output string, cmd Cmd, projectsubpath string) error {
-	if output == "" {
-		return nil
-	}
-
 	report := &entities.Report{}
 	if err := json.Unmarshal([]byte(output), report); err != nil {
 		return err
