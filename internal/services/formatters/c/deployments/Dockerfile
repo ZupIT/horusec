@@ -14,4 +14,4 @@
 
 FROM python:3.9.6-alpine
 
-RUN pip install flawfinder
+RUN pip install flawfinder==2.0.19

@@ -15,7 +15,7 @@
 FROM python:3.9.6-alpine
 
 RUN apk add jq
-RUN pip install safety
-RUN pip install bandit
+RUN pip install safety==1.10.3
+RUN pip install bandit==1.7.0
 
 COPY ./horusec-cli/internal/services/formatters/python/deployments/horusec-file-ignore.sh /usr/local/bin/horusec-file-ignore.sh

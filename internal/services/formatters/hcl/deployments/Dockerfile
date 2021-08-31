@@ -17,4 +17,4 @@ FROM python:3.9.6-alpine
 RUN apk add --quiet --no-cache wget
 
 RUN wget -O /usr/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v0.55.1/tfsec-linux-amd64 && chmod +x /usr/bin/tfsec
-RUN pip3 install --upgrade pip && pip3 install --upgrade setuptools && pip3 install checkov
+RUN pip3 install --upgrade pip==21.2.4 && pip3 install --upgrade setuptools==57.4.0 && pip3 install checkov==2.0.387

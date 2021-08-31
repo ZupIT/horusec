@@ -14,11 +14,11 @@
 
 FROM alpine:3.14.2
 
-RUN apk add elixir
+RUN apk add elixir>1.12.2-r0
 
 RUN mix local.hex --force
 RUN mix local.rebar --force
-RUN mix escript.install hex mix_audit --force
-RUN mix archive.install hex sobelow --force
+RUN mix escript.install hex mix_audit 1.0.0 --force
+RUN mix archive.install hex sobelow 0.8.0 --force
 
 RUN mv ./root/.mix/escripts/mix_audit ./bin/

@@ -19,9 +19,9 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
     --add-modules java.base,java.compiler,java.datatransfer,jdk.crypto.ec,java.desktop,java.instrument,java.logging,java.management,java.naming,java.rmi,java.scripting,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.unsupported \
     --output /jlinked
 
-FROM python:alpine
+FROM python:3.9.6-alpine
 
-RUN pip install semgrep
+RUN pip install semgrep==v0.63.0
 
 COPY --from=jlink /jlinked /opt/jdk/
 
@@ -36,5 +36,3 @@ RUN unzip /bin/dependency-check-6.2.2-release.zip -d  /bin
 RUN rm /bin/dependency-check-6.2.2-release.zip
 
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.19.2
-
-

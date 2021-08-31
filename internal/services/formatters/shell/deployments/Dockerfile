@@ -14,4 +14,4 @@
 
 FROM alpine:3.14.2
 
-RUN apk add shellcheck
+RUN apk add shellcheck>0.7.2
