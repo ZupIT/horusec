@@ -23,7 +23,7 @@ import (
 
 	"github.com/ZupIT/horusec/internal/utils/file"
 
-	"github.com/bmatcuk/doublestar/v2"
+	doubleStar "github.com/bmatcuk/doublestar/v4"
 	"github.com/go-enry/go-enry/v2"
 	"github.com/google/uuid"
 
@@ -149,7 +149,7 @@ func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 
 func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
 	for _, value := range ld.configs.GetFilesOrPathsToIgnore() {
-		matched, _ := doublestar.Match(strings.TrimSpace(value), path)
+		matched, _ := doubleStar.Match(strings.TrimSpace(value), path)
 		if matched {
 			return true
 		}
