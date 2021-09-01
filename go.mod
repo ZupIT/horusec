@@ -3,14 +3,15 @@ module github.com/ZupIT/horusec
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.15
-	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
+	github.com/ZupIT/horusec-devkit v1.0.16
+	github.com/ZupIT/horusec-engine v0.3.5
 	github.com/aquasecurity/fanal v0.0.0-20210824112623-152431c047fe
 	github.com/aquasecurity/trivy v0.19.2
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/docker v20.10.8+incompatible
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-enry/go-enry/v2 v2.7.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
@@ -25,4 +26,7 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
+	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
+	google.golang.org/genproto v0.0.0-20210825212027-de86158e7fda // indirect
 )
