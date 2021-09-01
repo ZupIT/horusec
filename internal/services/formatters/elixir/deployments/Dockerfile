@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine:latest
+FROM elixir:1.12.2-alpine
 
-RUN apk add elixir
+RUN apk add git
 
 RUN mix local.hex --force
 RUN mix local.rebar --force
-RUN mix escript.install hex mix_audit --force
-RUN mix archive.install hex sobelow --force
+RUN mix escript.install hex mix_audit 1.0.0 --force
+RUN mix archive.install hex sobelow 0.11.1 --force
 
 RUN mv ./root/.mix/escripts/mix_audit ./bin/
