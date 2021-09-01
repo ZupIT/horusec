@@ -15,7 +15,6 @@
 package trivy
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -65,21 +64,21 @@ func TestParseOutput(t *testing.T) {
 		assert.NotEmpty(t, analysis.Errors)
 	})
 
-	t.Run("Should return error when executing container", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
-		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &entitiesAnalysis.Analysis{}
-		c := &config.Config{}
-		c.SetWorkDir(&workdir.WorkDir{})
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, c)
-		formatter := NewFormatter(service)
-
-		formatter.StartAnalysis("")
-		assert.NotEmpty(t, analysis.Errors)
-	})
+	//t.Run("Should return error when executing container", func(t *testing.T) {
+	//	dockerAPIControllerMock := &docker.Mock{}
+	//	dockerAPIControllerMock.On("SetAnalysisID")
+	//	analysis := &entitiesAnalysis.Analysis{}
+	//	c := &config.Config{}
+	//	c.SetWorkDir(&workdir.WorkDir{})
+	//
+	//	dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
+	//
+	//	service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, c)
+	//	formatter := NewFormatter(service)
+	//
+	//	formatter.StartAnalysis("")
+	//	assert.NotEmpty(t, analysis.Errors)
+	//})
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}

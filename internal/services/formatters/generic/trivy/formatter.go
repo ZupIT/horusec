@@ -54,7 +54,7 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startTrivy(projectSubPath), tools.ShellCheck, projectSubPath)
+	f.SetAnalysisError(f.startTrivy(projectSubPath), tools.Trivy, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Trivy, images.Generic)
 }
 
@@ -65,6 +65,7 @@ func (f *Formatter) startTrivy(projectSubPath string) error {
 	if err != nil {
 		return err
 	}
+
 	return f.parse(projectSubPath, configOutput, fileSystemOutput)
 }
 
@@ -73,18 +74,20 @@ func (f *Formatter) executeContainers(projectSubPath string) (string, string, er
 	if err != nil {
 		return "", "", nil
 	}
+
 	fileSystemOutput, err := f.ExecuteContainer(f.getDockerConfig(CmdFs, projectSubPath))
 	if err != nil {
 		return "", "", nil
 	}
+
 	return configOutput, fileSystemOutput, err
 }
 
 func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string) error {
-	err := f.parseOutput(configOutput, CmdConfig, projectSubPath)
-	if err != nil {
+	if err := f.parseOutput(configOutput, CmdConfig, projectSubPath); err != nil {
 		return err
 	}
+
 	return f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
 func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntities.AnalysisData {
@@ -92,18 +95,25 @@ func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntit
 		CMD:      f.AddWorkDirInCmd(cmd.ToString(), projectSubPath, tools.Trivy),
 		Language: languages.Generic,
 	}
+
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
-func (f *Formatter) parseOutput(output string, cmd Cmd, projectsubpath string) error {
+func (f *Formatter) parseOutput(output string, cmd Cmd, projectSubPath string) error {
 	report := &entities.Report{}
+
+	if output == "" {
+		return nil
+	}
+
 	if err := json.Unmarshal([]byte(output), report); err != nil {
 		return err
 	}
+
 	for _, result := range report.Results {
-		path := filepath.Join(projectsubpath, result.Target)
-		f.setVulnerabilities(cmd, result, path)
+		f.setVulnerabilities(cmd, result, filepath.Join(projectSubPath, result.Target))
 	}
+
 	return nil
 }
 
