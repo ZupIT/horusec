@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
-	github.com/ZupIT/horusec-devkit v1.0.11
+	github.com/ZupIT/horusec-devkit v1.0.16
 	github.com/ZupIT/horusec-engine v0.3.3-0.20210428113330-765b5cfcf9b1
 	github.com/aquasecurity/fanal v0.0.0-20210726073605-7a1d96d086ee
 	github.com/aquasecurity/trivy v0.19.2
