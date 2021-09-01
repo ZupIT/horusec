@@ -16,6 +16,8 @@ name: Security
 on: [ "push" ]
 jobs:
   security:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
