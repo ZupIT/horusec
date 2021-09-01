@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine
+FROM golang:1.17.0-alpine
 
 RUN apk add curl
 
 RUN curl -fsSL https://github.com/sonatype-nexus-community/nancy/releases/download/v1.0.22/nancy-v1.0.22-linux-amd64 -o /bin/nancy
 RUN chmod +x /bin/nancy
 
-RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s latest
+RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.8.1

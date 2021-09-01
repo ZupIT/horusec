@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM mcr.microsoft.com/dotnet/runtime:6.0-alpine
+FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine
 
 RUN apk add jq
 
-RUN dotnet tool install --global security-scan
+RUN dotnet tool install --global security-scan --version 5.2.2
 
 ENV PATH="$PATH:/root/.dotnet/tools"

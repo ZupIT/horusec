@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine AS builder
+FROM golang:1.17-alpine AS builder
 
 RUN apk update && apk add --no-cache git
 
@@ -23,7 +23,7 @@ RUN go get -t -v -d ./...
 
 RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./cmd/app/main.go
 
-FROM docker
+FROM docker:20.10.8
 
 RUN apk add git
 
