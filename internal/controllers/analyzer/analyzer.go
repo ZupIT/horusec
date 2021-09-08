@@ -632,8 +632,8 @@ func spawn(wg *sync.WaitGroup, f formatters.IFormatter, src string) {
 }
 
 func newSpinnerLoading() *spinner.Spinner {
-	loading := spinner.New(spinner.CharSets[35], 200*time.Millisecond, spinner.WithWriter(os.Stderr))
-	loading.Prefix = messages.LoadingMessage
+	loading := spinner.New(spinner.CharSets[11], 200*time.Millisecond, spinner.WithWriter(os.Stderr))
+	loading.Suffix = messages.LoadingMessage
 
 	return loading
 }

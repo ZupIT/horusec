@@ -31,7 +31,7 @@ const (
 	MsgInfoStartWriteFile = "{HORUSEC_CLI} Writing output JSON to file in the path: "
 	// Fired when monitor log timeout
 	MsgInfoMonitorTimeoutIn = "Horusec will return a timeout in %d seconds. This time can be increased in the settings."
-	LoadingMessage          = "Scanning code "
+	LoadingMessage          = " Scanning code..."
 	// Fired in print results service when analysis is finished
 	MsgAnalysisFoundVulns = "[HORUSEC] %d VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, " +
 		"TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN"
