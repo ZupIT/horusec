@@ -99,14 +99,14 @@ type HorusecService interface {
 type Analyzer struct {
 	docker          docker.Docker
 	analysis        *analysis.Analysis
-	config          config.IConfig
+	config          *config.Config
 	languageDetect  LanguageDetect
 	printController PrintResults
 	horusec         HorusecService
 	formatter       formatters.IService
 }
 
-func NewAnalyzer(cfg config.IConfig) *Analyzer {
+func NewAnalyzer(cfg *config.Config) *Analyzer {
 	entity := &analysis.Analysis{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
@@ -237,7 +237,7 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 			return
 		case <-timer:
 			a.docker.DeleteContainersFromAPI()
-			a.config.SetIsTimeout(true)
+			a.config.IsTimeout = true
 			return
 		case <-tick.C:
 			timeout -= retry

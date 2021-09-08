@@ -31,12 +31,12 @@ import (
 )
 
 type Git struct {
-	config config.IConfig
+	config *config.Config
 }
 
-func New(configs config.IConfig) *Git {
+func New(cfg *config.Config) *Git {
 	return &Git{
-		config: configs,
+		config: cfg,
 	}
 }
 
