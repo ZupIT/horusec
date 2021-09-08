@@ -29,17 +29,15 @@ func TestValidateConfigs(t *testing.T) {
 	useCases := NewCLIUseCases()
 
 	t.Run("Should return no errors when valid", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return no errors when is not valid path", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 		config.SetProjectPath("./not-exist-path")
 
 		err := useCases.ValidateConfigs(config)
@@ -47,18 +45,16 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Equal(t, err.Error(), "projectPath: project path is invalid: .")
 	})
 	t.Run("Should return no errors when valid config with ignore", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 		config.SetSeveritiesToIgnore([]string{"LOW"})
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid ignore value", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 		config.SetSeveritiesToIgnore([]string{"test"})
 
 		err := useCases.ValidateConfigs(config)
@@ -67,9 +63,8 @@ func TestValidateConfigs(t *testing.T) {
 			"See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO].", err.Error())
 	})
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 		config.SetPrintOutputType(outputtype.JSON)
 		config.SetJSONOutputFilePath("")
 
@@ -79,9 +74,8 @@ func TestValidateConfigs(t *testing.T) {
 			err.Error())
 	})
 	t.Run("Should return error when invalid json output file is invalid", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
 		config.SetPrintOutputType(outputtype.JSON)
 		config.SetJSONOutputFilePath("test.test")
 
@@ -91,9 +85,9 @@ func TestValidateConfigs(t *testing.T) {
 			err.Error())
 	})
 	t.Run("Should return error when the text output file is invalid", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
+		config.MergeFromEnvironmentVariables()
 		config.SetPrintOutputType(outputtype.Text)
 		config.SetJSONOutputFilePath("test.test")
 
@@ -102,9 +96,9 @@ func TestValidateConfigs(t *testing.T) {
 		assert.EqualError(t, err, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .txt.")
 	})
 	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
-		config.NewConfigsFromEnvironments()
+		config.MergeFromEnvironmentVariables()
 		config.SetPrintOutputType(outputtype.Text)
 		config.SetJSONOutputFilePath("test.txt")
 
@@ -118,7 +112,7 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("Should return success because exists path in workdir", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{
 			Go:         []string{"./"},
 			CSharp:     []string{""},
@@ -130,7 +124,6 @@ func TestValidateConfigs(t *testing.T) {
 			Leaks:      []string{},
 			HCL:        []string{},
 		})
-		config.NewConfigsFromEnvironments()
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
@@ -148,7 +141,6 @@ func TestValidateConfigs(t *testing.T) {
 			Leaks:      []string{},
 			HCL:        []string{},
 		})
-		config.NewConfigsFromEnvironments()
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -156,7 +148,7 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Contains(t, err.Error(), "internal/usecases/cli/NOT EXISTS PATH: no such file or directory.")
 	})
 	t.Run("Should return error because cert path is not valid", func(t *testing.T) {
-		config := cliConfig.NewConfig()
+		config := cliConfig.New()
 		config.SetCertPath("INVALID PATH")
 
 		err := useCases.ValidateConfigs(config)
@@ -166,7 +158,7 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when is duplicated false positive and risk accepted", func(t *testing.T) {
 		hash := "1e836029-4e90-4151-bb4a-d86ef47f96b6"
-		config := cliConfig.NewConfig()
+		config := cliConfig.New()
 		config.SetFalsePositiveHashes([]string{hash})
 		config.SetRiskAcceptHashes([]string{hash})
 
@@ -175,7 +167,7 @@ func TestValidateConfigs(t *testing.T) {
 			err.Error())
 	})
 	t.Run("Should return not error when validate false positive and risk accepted", func(t *testing.T) {
-		config := cliConfig.NewConfig()
+		config := cliConfig.New()
 		config.SetFalsePositiveHashes([]string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"})
 		config.SetRiskAcceptHashes([]string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"})
 

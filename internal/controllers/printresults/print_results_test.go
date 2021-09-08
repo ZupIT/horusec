@@ -105,7 +105,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
 		configs := &config.Config{}
-		configs.SetIsTimeout(true)
+		configs.IsTimeout = true
 		printResults := &PrintResults{
 			analysis: analysisMock,
 			configs:  configs,

@@ -51,13 +51,13 @@ type analysisOutputJSON struct {
 
 type PrintResults struct {
 	analysis         *analysis.Analysis
-	configs          config.IConfig
+	configs          *config.Config
 	totalVulns       int
 	sonarqubeService SonarQubeConverter
 	textOutput       string
 }
 
-func NewPrintResults(entity *analysis.Analysis, configs config.IConfig) *PrintResults {
+func NewPrintResults(entity *analysis.Analysis, configs *config.Config) *PrintResults {
 	return &PrintResults{
 		analysis:         entity,
 		configs:          configs,

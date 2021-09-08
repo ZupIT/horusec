@@ -55,7 +55,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
-		config := &cliConfig.Config{}
+		config := cliConfig.New()
 		config.SetWorkDir(&workdir.WorkDir{})
 
 		output := "{ \"$schema\": \"https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json\"," +

@@ -61,7 +61,7 @@ func NewCLIUseCases() *UseCases {
 }
 
 //nolint
-func (au *UseCases) ValidateConfigs(config cliConfig.IConfig) error {
+func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 	c := au.parseConfigsToConfigValidate(config)
 	return validation.ValidateStruct(&c,
 		validation.Field(&c.horusecAPIUri, validation.Required),
@@ -85,7 +85,7 @@ func (au *UseCases) ValidateConfigs(config cliConfig.IConfig) error {
 }
 
 //nolint // parse struct is necessary > 15 lines
-func (au *UseCases) parseConfigsToConfigValidate(config cliConfig.IConfig) ConfigToValidate {
+func (au *UseCases) parseConfigsToConfigValidate(config *cliConfig.Config) ConfigToValidate {
 	return ConfigToValidate{
 		horusecAPIUri:                   config.GetHorusecAPIUri(),
 		timeoutInSecondsRequest:         config.GetTimeoutInSecondsRequest(),
@@ -107,7 +107,7 @@ func (au *UseCases) parseConfigsToConfigValidate(config cliConfig.IConfig) Confi
 	}
 }
 
-func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config cliConfig.IConfig) func(value interface{}) error {
+func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
 		for _, falsePositive := range config.GetFalsePositiveHashes() {
 			for _, riskAccept := range config.GetRiskAcceptHashes() {
@@ -120,7 +120,7 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config cliConfig.
 	}
 }
 
-func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.IConfig) func(value interface{}) error {
+func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
 		for _, riskAccept := range config.GetRiskAcceptHashes() {
 			for _, falsePositive := range config.GetFalsePositiveHashes() {
@@ -133,7 +133,7 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config cliConfig.ICo
 	}
 }
 
-func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig) func(value interface{}) error {
+func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
 		switch config.GetPrintOutputType() {
 		case outputtype.JSON, outputtype.SonarQube:
@@ -145,14 +145,14 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config cliConfig.IConfig)
 	}
 }
 
-func (au *UseCases) validateTextOutputFilePath(config cliConfig.IConfig) error {
+func (au *UseCases) validateTextOutputFilePath(config *cliConfig.Config) error {
 	if config.GetJSONOutputFilePath() == "" {
 		return nil
 	}
 	return au.validateFilePathAndExtension(config, ".txt")
 }
 
-func (au *UseCases) validateFilePathAndExtension(config cliConfig.IConfig, extension string) error {
+func (au *UseCases) validateFilePathAndExtension(config *cliConfig.Config, extension string) error {
 	if filepath.Ext(config.GetJSONOutputFilePath()) != extension {
 		return fmt.Errorf("%snot valid file of type %s", messages.MsgErrorJSONOutputFilePathNotValid, extension)
 	}
@@ -170,7 +170,7 @@ func (au *UseCases) validationOutputTypes() validation.InRule {
 	)
 }
 
-func (au *UseCases) validationSeverities(config cliConfig.IConfig) func(value interface{}) error {
+func (au *UseCases) validationSeverities(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
 		for _, item := range config.GetSeveritiesToIgnore() {
 			if !au.checkIfExistItemInSliceOfSeverity(strings.TrimSpace(item)) {
@@ -250,7 +250,7 @@ func (au *UseCases) validateIfExistPathInProjectToWorkDir(projectPath, internalP
 	return nil
 }
 
-func (au *UseCases) checkIfIsValidVulnerabilitiesTypes(config cliConfig.IConfig) validation.RuleFunc {
+func (au *UseCases) checkIfIsValidVulnerabilitiesTypes(config *cliConfig.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		for _, vulnType := range config.GetShowVulnerabilitiesTypes() {
 			isValid := false
