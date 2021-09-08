@@ -30,9 +30,7 @@ on:
 jobs:
   deploy:
     permissions:
-      contents: read
-      packages: write
-      repository-projects: write
+      contents: write
     name: deploy
     runs-on: ubuntu-latest
     steps:
