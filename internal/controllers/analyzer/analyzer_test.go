@@ -99,6 +99,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
 			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
+			loading:         newScanLoading(),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
@@ -156,6 +157,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
 			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
+			loading:         newScanLoading(),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
@@ -198,6 +200,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
 			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
+			loading:         newScanLoading(),
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}

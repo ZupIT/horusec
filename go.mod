@@ -9,6 +9,7 @@ require (
 	github.com/aquasecurity/trivy v0.19.2
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.0.2
+	github.com/briandowns/spinner v1.16.0
 	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/docker v20.10.8+incompatible
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -26,7 +27,5 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
-	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
 	google.golang.org/genproto v0.0.0-20210825212027-de86158e7fda // indirect
 )
