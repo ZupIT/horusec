@@ -19,7 +19,7 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
     --add-modules java.base,java.compiler,java.datatransfer,jdk.crypto.ec,java.desktop,java.instrument,java.logging,java.management,java.naming,java.rmi,java.scripting,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.unsupported \
     --output /jlinked
 
-FROM python:3.9.6-alpine
+FROM python:3.9.7-alpine
 
 RUN pip install semgrep==v0.63.0
 

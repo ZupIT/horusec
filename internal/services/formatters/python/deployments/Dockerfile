@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.9.6-alpine
+FROM python:3.9.7-alpine
 
 RUN apk add jq
 RUN pip install safety==1.10.3
