@@ -24,8 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy"
-
+	"github.com/briandowns/spinner"
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -53,6 +52,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow"
 	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
+	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
 	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl/checkov"
@@ -76,6 +76,8 @@ import (
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
 	"github.com/ZupIT/horusec/internal/utils/file"
 )
+
+const LoadingDelay = 200 * time.Millisecond
 
 // LanguageDetect is the interface that detect all languages in some directory.
 type LanguageDetect interface {
@@ -104,8 +106,10 @@ type Analyzer struct {
 	printController PrintResults
 	horusec         HorusecService
 	formatter       formatters.IService
+	loading         *spinner.Spinner
 }
 
+//nolint:funlen
 func NewAnalyzer(cfg *config.Config) *Analyzer {
 	entity := &analysis.Analysis{
 		ID:        uuid.New(),
@@ -121,6 +125,7 @@ func NewAnalyzer(cfg *config.Config) *Analyzer {
 		printController: printresults.NewPrintResults(entity, cfg),
 		horusec:         horusecAPI.NewHorusecAPIService(cfg),
 		formatter:       formatters.NewFormatterService(entity, dockerAPI, cfg),
+		loading:         newScanLoading(),
 	}
 }
 
@@ -204,6 +209,8 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	wd := a.config.GetWorkDir()
 	funcs := a.mapDetectVulnerabilityByLanguage()
 
+	a.loading.Start()
+
 	go func() {
 		defer close(done)
 		for _, language := range langs {
@@ -230,18 +237,18 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	retry := a.config.GetMonitorRetryInSeconds()
 	tick := time.NewTicker(time.Duration(retry) * time.Second)
 	defer tick.Stop()
-	logger.LogInfoWithLevel(fmt.Sprintf("%s%ds", messages.MsgInfoMonitorTimeoutIn, timeout))
 	for {
 		select {
 		case <-done:
+			a.loading.Stop()
 			return
 		case <-timer:
 			a.docker.DeleteContainersFromAPI()
 			a.config.IsTimeout = true
+			a.loading.Stop()
 			return
 		case <-tick.C:
 			timeout -= retry
-			logger.LogInfoWithLevel(fmt.Sprintf("%s%ds", messages.MsgInfoMonitorTimeoutIn, timeout))
 		}
 	}
 }
@@ -628,4 +635,11 @@ func spawn(wg *sync.WaitGroup, f formatters.IFormatter, src string) {
 		defer wg.Done()
 		f.StartAnalysis(src)
 	}()
+}
+
+func newScanLoading() *spinner.Spinner {
+	loading := spinner.New(spinner.CharSets[11], LoadingDelay)
+	loading.Suffix = messages.MsgInfoAnalysisLoading
+
+	return loading
 }
