@@ -92,7 +92,7 @@ func (s *Service) GetConfigProjectPath() string {
 	return file.ReplacePathSeparator(
 		fmt.Sprintf(
 			"%s/%s/%s",
-			s.config.GetProjectPath(),
+			s.config.ProjectPath,
 			".horusec",
 			s.analysis.ID.String(),
 		),
@@ -100,7 +100,7 @@ func (s *Service) GetConfigProjectPath() string {
 }
 
 func (s *Service) GetToolsConfig() toolsconfig.MapToolConfig {
-	return s.config.GetToolsConfig()
+	return s.config.ToolsConfig
 }
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
@@ -174,7 +174,7 @@ func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
 }
 
 func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
-	if tool, exists := s.config.GetToolsConfig()[tool]; exists {
+	if tool, exists := s.config.ToolsConfig[tool]; exists {
 		return tool.IsToIgnore
 	}
 	return false
@@ -269,7 +269,7 @@ func (s *Service) removeHorusecFolder(filepath string) string {
 }
 
 func (s *Service) IsDockerDisabled() bool {
-	return s.config.GetDisableDocker()
+	return s.config.DisableDocker
 }
 
 func (s *Service) GetCustomRulesByLanguage(lang languages.Language) []engine.Rule {
@@ -288,13 +288,13 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 }
 
 func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
-	return s.config.GetCustomImages()[language.GetCustomImagesKeyByLanguage()]
+	return s.config.CustomImages[language.GetCustomImagesKeyByLanguage()]
 }
 
 func (s *Service) IsOwaspDependencyCheckDisable() bool {
-	return !s.config.GetEnableOwaspDependencyCheck()
+	return !s.config.EnableOwaspDependencyCheck
 }
 
 func (s *Service) IsShellcheckDisable() bool {
-	return !s.config.GetEnableShellCheck()
+	return !s.config.EnableShellCheck
 }

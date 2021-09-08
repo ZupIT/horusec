@@ -36,7 +36,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
 
@@ -52,7 +52,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		outputAnalysis := `{
 		"Golang errors":{
@@ -85,7 +85,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("some error"))
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
 
@@ -102,7 +102,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		outputAnalysis := "is some a text aleatory"
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)
 
@@ -119,8 +119,10 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		entity := &analysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

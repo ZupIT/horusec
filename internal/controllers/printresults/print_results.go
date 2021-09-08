@@ -78,7 +78,7 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
-	if pr.configs.GetIsTimeout() {
+	if pr.configs.IsTimeout {
 		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs)
 	}
 
@@ -87,9 +87,9 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
-	case pr.configs.GetPrintOutputType() == outputtype.JSON:
+	case pr.configs.PrintOutputType == outputtype.JSON:
 		return pr.runPrintResultsJSON()
-	case pr.configs.GetPrintOutputType() == outputtype.SonarQube:
+	case pr.configs.PrintOutputType == outputtype.SonarQube:
 		return pr.runPrintResultsSonarQube()
 	default:
 		return pr.runPrintResultsText()
@@ -117,7 +117,7 @@ func (pr *PrintResults) runPrintResultsText() error {
 func (pr *PrintResults) runPrintResultsJSON() error {
 	a := analysisOutputJSON{
 		Analysis: *pr.analysis,
-		Version:  pr.configs.GetVersion(),
+		Version:  pr.configs.Version,
 	}
 
 	bytesToWrite, err := json.MarshalIndent(a, "", "  ")
@@ -158,7 +158,7 @@ func (pr *PrintResults) isTypeVulnToSkip(vuln *vulnerability.Vulnerability) bool
 func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
 	ignore = false
 
-	for _, typeToIgnore := range pr.configs.GetSeveritiesToIgnore() {
+	for _, typeToIgnore := range pr.configs.SeveritiesToIgnore {
 		if strings.EqualFold(vulnerabilityType, strings.TrimSpace(typeToIgnore)) ||
 			vulnerabilityType == string(severities.Info) {
 			ignore = true
@@ -186,7 +186,7 @@ func (pr *PrintResults) returnDefaultErrOutputJSON(err error) error {
 }
 
 func (pr *PrintResults) parseFilePathToAbsAndCreateOutputJSON(bytesToWrite []byte) error {
-	completePath, err := filepath.Abs(pr.configs.GetJSONOutputFilePath())
+	completePath, err := filepath.Abs(pr.configs.JSONOutputFilePath)
 	if err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
@@ -289,7 +289,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerab
 
 // nolint
 func (pr *PrintResults) printCommitAuthor(vulnerability *vulnerability.Vulnerability) {
-	if !pr.configs.GetEnableCommitAuthor() {
+	if !pr.configs.EnableCommitAuthor {
 		return
 	}
 	pr.printLNF("Commit Author: %s", vulnerability.CommitAuthor)
@@ -309,7 +309,7 @@ func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
 }
 
 func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
-	if !pr.configs.GetEnableInformationSeverity() {
+	if !pr.configs.EnableInformationSeverity {
 		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
 	}
 	if pr.analysis.HasErrors() {
@@ -355,19 +355,19 @@ func (pr *PrintResults) logSeparator(isToShow bool) {
 }
 
 func (pr *PrintResults) getProjectPath(path string) string {
-	if strings.Contains(path, pr.configs.GetProjectPath()) {
+	if strings.Contains(path, pr.configs.ProjectPath) {
 		return path
 	}
 
-	if pr.configs.GetContainerBindProjectPath() != "" {
-		return fmt.Sprintf("%s/%s", pr.configs.GetContainerBindProjectPath(), path)
+	if pr.configs.ContainerBindProjectPath != "" {
+		return fmt.Sprintf("%s/%s", pr.configs.ContainerBindProjectPath, path)
 	}
 
-	return fmt.Sprintf("%s/%s", pr.configs.GetProjectPath(), path)
+	return fmt.Sprintf("%s/%s", pr.configs.ProjectPath, path)
 }
 
 func (pr *PrintResults) printLNF(text string, args ...interface{}) {
-	if pr.configs.GetPrintOutputType() == outputtype.Text {
+	if pr.configs.PrintOutputType == outputtype.Text {
 		pr.textOutput += fmt.Sprintln(fmt.Sprintf(text, args...))
 	}
 
@@ -375,9 +375,9 @@ func (pr *PrintResults) printLNF(text string, args ...interface{}) {
 }
 
 func (pr *PrintResults) createTxtOutputFile() error {
-	if pr.configs.GetPrintOutputType() != outputtype.Text || pr.configs.GetJSONOutputFilePath() == "" {
+	if pr.configs.PrintOutputType != outputtype.Text || pr.configs.JSONOutputFilePath == "" {
 		return nil
 	}
 
-	return file.CreateAndWriteFile(pr.textOutput, pr.configs.GetJSONOutputFilePath())
+	return file.CreateAndWriteFile(pr.textOutput, pr.configs.JSONOutputFilePath)
 }

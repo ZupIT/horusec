@@ -49,8 +49,8 @@ func TestSendAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{StatusCode: 201}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
-		config.SetHeaders(map[string]string{"some-header": "some-value"})
+		config.RepositoryAuthorization = "test"
+		config.Headers = map[string]string{"some-header": "some-value"}
 
 		service := Service{
 			http:   httpMock,
@@ -80,7 +80,7 @@ func TestSendAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: response}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
+		config.RepositoryAuthorization = "test"
 
 		service := Service{
 			http:   httpMock,
@@ -104,7 +104,7 @@ func TestSendAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: response}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
+		config.RepositoryAuthorization = "test"
 
 		service := Service{
 			http:   httpMock,
@@ -137,9 +137,9 @@ func TestSendAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
-		config.SetCertPath("./horus_api.go")
-		config.SetCertInsecureSkipVerify(true)
+		config.RepositoryAuthorization = "test"
+		config.CertPath = "./horus_api.go"
+		config.CertInsecureSkipVerify = true
 
 		service := Service{
 			http:   httpMock,
@@ -157,9 +157,9 @@ func TestSendAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
-		config.SetCertPath("./invalid_path")
-		config.SetCertInsecureSkipVerify(true)
+		config.RepositoryAuthorization = "test"
+		config.CertPath = "./invalid_path"
+		config.CertInsecureSkipVerify = true
 
 		service := Service{
 			http:   httpMock,
@@ -189,7 +189,7 @@ func TestService_GetAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{StatusCode: 200, Body: body}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
+		config.RepositoryAuthorization = "test"
 
 		service := Service{
 			http:   httpMock,
@@ -209,7 +209,7 @@ func TestService_GetAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{StatusCode: 400, Body: body}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
+		config.RepositoryAuthorization = "test"
 
 		service := Service{
 			http:   httpMock,
@@ -226,7 +226,7 @@ func TestService_GetAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{}}, errors.New("some error"))
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
+		config.RepositoryAuthorization = "test"
 
 		service := Service{
 			http:   httpMock,
@@ -243,9 +243,9 @@ func TestService_GetAnalysis(t *testing.T) {
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, errors.New("some error"))
 		httpMock.On("DoRequest").Return(&httpResponse.HTTPResponse{Response: &http.Response{}}, nil)
 		config := &cliConfig.Config{}
-		config.SetRepositoryAuthorization("test")
-		config.SetCertPath("./invalid_path")
-		config.SetCertInsecureSkipVerify(true)
+		config.RepositoryAuthorization = "test"
+		config.CertPath = "./invalid_path"
+		config.CertInsecureSkipVerify = true
 
 		service := Service{
 			http:   httpMock,

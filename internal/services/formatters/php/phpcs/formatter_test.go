@@ -34,7 +34,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{ \"files\":{ \"\\/src\\/XSS\\/XSS_level5.php\":{ \"errors\":1, \"warnings\":4, \"messages\":[ { \"message\":\"User input detetected with $_SERVER.\", \"source\":\"PHPCS_SecurityAudit.Drupal7.UserInputWatch.D7UserInWaWarn\", \"severity\":5, \"fixable\":false, \"type\":\"WARNING\", \"line\":14, \"column\":39 }, { \"message\":\"Easy XSS detected because of direct user input with $_SERVER on echo\", \"source\":\"PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSerr\", \"severity\":5, \"fixable\":false, \"type\":\"ERROR\", \"line\":14, \"column\":39 } ] } } }"
 
@@ -53,7 +53,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := ""
 
@@ -71,7 +71,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -86,7 +86,9 @@ func TestStartCFlawfinder(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{PhpCS: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{PhpCS: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

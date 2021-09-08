@@ -273,7 +273,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 		dockerAPIClient := &client.Mock{}
 		dockerAPIClient.On("ContainerList").Return([]types.Container{}, errors.New("test"))
 		config := &cliConfig.Config{}
-		config.SetProjectPath("C:/Users/usr/Documents/Horusec/project")
+		config.ProjectPath = "C:/Users/usr/Documents/Horusec/project"
 
 		api := &API{
 			ctx:                    context.Background(),

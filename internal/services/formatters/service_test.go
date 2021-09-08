@@ -108,7 +108,7 @@ func TestGetCommitAuthor(t *testing.T) {
 func TestGetConfigProjectPath(t *testing.T) {
 	t.Run("should success get project path", func(t *testing.T) {
 		cliConfig := &config.Config{}
-		cliConfig.SetProjectPath("test")
+		cliConfig.ProjectPath = "test"
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
 
@@ -122,9 +122,9 @@ func TestGetConfigProjectPath(t *testing.T) {
 func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
 		cliConfig := &config.Config{}
-		cliConfig.SetWorkDir(&workdir.WorkDir{
+		cliConfig.WorkDir = &workdir.WorkDir{
 			CSharp: []string{"test"},
-		})
+		}
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
 
@@ -135,9 +135,9 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 	t.Run("should return cmd with no workdir", func(t *testing.T) {
 		cliConfig := &config.Config{}
-		cliConfig.SetWorkDir(&workdir.WorkDir{
+		cliConfig.WorkDir = &workdir.WorkDir{
 			CSharp: []string{"test"},
-		})
+		}
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
 
@@ -193,7 +193,9 @@ func TestLogAnalysisError(t *testing.T) {
 func TestToolIsToIgnore(t *testing.T) {
 	t.Run("should return true when language is match", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
+		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -201,7 +203,9 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return true when language is match uppercase", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}})
+		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -209,7 +213,12 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return true when language is match lowercase and multi tools", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}, SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
+		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{
+				GoSec:            toolsconfig.ToolConfig{IsToIgnore: true},
+				SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true},
+			},
+		)
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -217,7 +226,9 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return false when language is not match", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetToolsConfig(toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
+		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
 

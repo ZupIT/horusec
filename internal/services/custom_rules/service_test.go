@@ -34,7 +34,7 @@ func TestNewCustomRulesService(t *testing.T) {
 func TestGetCustomRulesByTool(t *testing.T) {
 	t.Run("should success get rules by tool", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetCustomRulesPath("./custom_rules_example.json")
+		config.CustomRulesPath = "./custom_rules_example.json"
 
 		service := NewCustomRulesService(config)
 
@@ -49,7 +49,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 	t.Run("should return error when opening json file", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetCustomRulesPath("./test.json")
+		config.CustomRulesPath = "./test.json"
 
 		service := NewCustomRulesService(config)
 
@@ -60,7 +60,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 	t.Run("should success return invalid custom rule", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetCustomRulesPath("./custom_rules_example_invalid.json")
+		config.CustomRulesPath = "./custom_rules_example_invalid.json"
 
 		service := NewCustomRulesService(config)
 

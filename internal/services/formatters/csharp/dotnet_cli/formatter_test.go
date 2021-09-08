@@ -35,7 +35,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "The following sources were used:\n   https://api.nuget.org/v3/index.json\n\nProject " +
 			"`NetCoreVulnerabilities` has the following vulnerable packages\n\u001B[39;49m\u001B[34m  " +
@@ -65,7 +65,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
@@ -81,7 +81,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
 			"", errors.New("test"))
@@ -98,7 +98,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
 			"A project or solution file could not be found", nil)
@@ -114,8 +114,10 @@ func TestParseOutput(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{DotnetCli: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{DotnetCli: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

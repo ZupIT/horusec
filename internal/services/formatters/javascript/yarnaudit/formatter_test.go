@@ -37,7 +37,7 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{\"advisories\":[{\"findings\":[{\"version\":\"4.0.0\",\"paths\":[\"express\"]}],\"id\":8,\"created\":\"2015-10-17T19:41:46.382Z\",\"updated\":\"2018-02-22T21:55:47.925Z\",\"deleted\":null,\"title\":\"No Charset in Content-Type Header\",\"found_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"reported_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"module_name\":\"express\",\"cves\":[\"CVE-2014-6393\"],\"vulnerable_versions\":\"<3.11 || >= 4 <4.5\",\"patched_versions\":\">=3.11 <4 || >=4.5\",\"overview\":\"Vulnerable versions of express do not specify a charset field in the content-type header while displaying 400 level response messages. The lack of enforcing user's browser to set correct charset, could be leveraged by an attacker to perform a cross-site scripting attack, using non-standard encodings, like UTF-7.\",\"recommendation\":\"For express 3.x, update express to version 3.11 or later.\\nFor express 4.x, update express to version 4.5 or later. \",\"references\":\"\",\"access\":\"public\",\"severity\":\"low\",\"cwe\":\"CWE-79\",\"metadata\":{\"module_type\":\"Network.Library\",\"exploitability\":2,\"affected_components\":\"\"},\"url\":\"https://npmjs.com/advisories/8\"},{\"findings\":[{\"version\":\"4.0.0\",\"paths\":[\"express\"]}],\"id\":8,\"created\":\"2015-10-17T19:41:46.382Z\",\"updated\":\"2018-02-22T21:55:47.925Z\",\"deleted\":null,\"title\":\"No Charset in Content-Type Header\",\"found_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"reported_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"module_name\":\"express\",\"cves\":[\"CVE-2014-6393\"],\"vulnerable_versions\":\"<3.11 || >= 4 <4.5\",\"patched_versions\":\">=3.11 <4 || >=4.5\",\"overview\":\"Vulnerable versions of express do not specify a charset field in the content-type header while displaying 400 level response messages. The lack of enforcing user's browser to set correct charset, could be leveraged by an attacker to perform a cross-site scripting attack, using non-standard encodings, like UTF-7.\",\"recommendation\":\"For express 3.x, update express to version 3.11 or later.\\nFor express 4.x, update express to version 4.5 or later. \",\"references\":\"\",\"access\":\"public\",\"severity\":\"moderate\",\"cwe\":\"CWE-79\",\"metadata\":{\"module_type\":\"Network.Library\",\"exploitability\":2,\"affected_components\":\"\"},\"url\":\"https://npmjs.com/advisories/8\"},{\"findings\":[{\"version\":\"4.0.0\",\"paths\":[\"express\"]}],\"id\":8,\"created\":\"2015-10-17T19:41:46.382Z\",\"updated\":\"2018-02-22T21:55:47.925Z\",\"deleted\":null,\"title\":\"No Charset in Content-Type Header\",\"found_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"reported_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"module_name\":\"express\",\"cves\":[\"CVE-2014-6393\"],\"vulnerable_versions\":\"<3.11 || >= 4 <4.5\",\"patched_versions\":\">=3.11 <4 || >=4.5\",\"overview\":\"Vulnerable versions of express do not specify a charset field in the content-type header while displaying 400 level response messages. The lack of enforcing user's browser to set correct charset, could be leveraged by an attacker to perform a cross-site scripting attack, using non-standard encodings, like UTF-7.\",\"recommendation\":\"For express 3.x, update express to version 3.11 or later.\\nFor express 4.x, update express to version 4.5 or later. \",\"references\":\"\",\"access\":\"public\",\"severity\":\"high\",\"cwe\":\"CWE-79\",\"metadata\":{\"module_type\":\"Network.Library\",\"exploitability\":2,\"affected_components\":\"\"},\"url\":\"https://npmjs.com/advisories/8\"},{\"findings\":[{\"version\":\"4.0.0\",\"paths\":[\"express\"]}],\"id\":8,\"created\":\"2015-10-17T19:41:46.382Z\",\"updated\":\"2018-02-22T21:55:47.925Z\",\"deleted\":null,\"title\":\"No Charset in Content-Type Header\",\"found_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"reported_by\":{\"name\":\"Pawe\u0142 Ha\u0142drzy\u0144ski\"},\"module_name\":\"express\",\"cves\":[\"CVE-2014-6393\"],\"vulnerable_versions\":\"<3.11 || >= 4 <4.5\",\"patched_versions\":\">=3.11 <4 || >=4.5\",\"overview\":\"Vulnerable versions of express do not specify a charset field in the content-type header while displaying 400 level response messages. The lack of enforcing user's browser to set correct charset, could be leveraged by an attacker to perform a cross-site scripting attack, using non-standard encodings, like UTF-7.\",\"recommendation\":\"For express 3.x, update express to version 3.11 or later.\\nFor express 4.x, update express to version 4.5 or later. \",\"references\":\"\",\"access\":\"public\",\"severity\":\"test\",\"cwe\":\"CWE-79\",\"metadata\":{\"module_type\":\"Network.Library\",\"exploitability\":2,\"affected_components\":\"\"},\"url\":\"https://npmjs.com/advisories/8\"}],\"metadata\":{\"vulnerabilities\":{\"info\":0,\"low\":6,\"moderate\":6,\"high\":7,\"critical\":0},\"dependencies\":27,\"devDependencies\":0,\"optionalDependencies\":0,\"totalDependencies\":27}}"
 
@@ -57,7 +57,7 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := ""
 
@@ -77,7 +77,7 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "ERROR_YARN_LOCK_NOT_FOUND"
 
@@ -97,7 +97,7 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "ERROR_RUNNING_YARN_AUDIT"
 
@@ -118,7 +118,7 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
@@ -132,7 +132,9 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 
 		config := &cliConfig.Config{}
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{YarnAudit: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{YarnAudit: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
@@ -147,7 +149,7 @@ func TestParseOutputNpm(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 

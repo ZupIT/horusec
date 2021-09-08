@@ -47,7 +47,7 @@ func getAnalysis() *entitiesAnalysis.Analysis {
 
 func TestNewFormatter(t *testing.T) {
 	config := &cliConfig.Config{}
-	config.SetWorkDir(&workdir.WorkDir{})
+	config.WorkDir = &workdir.WorkDir{}
 
 	service := formatters.NewFormatterService(nil, nil, config)
 
@@ -59,7 +59,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := getAnalysis()
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -78,7 +78,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := getAnalysis()
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -98,7 +98,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := getAnalysis()
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -118,7 +118,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := getAnalysis()
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"issue_text": "Use of assert detected. The enclosed code will be removed when compiling to optimized byte code."}]}`
 		dockerAPIControllerMock := &docker.Mock{}
@@ -138,7 +138,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := getAnalysis()
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -156,7 +156,9 @@ func TestFormatter_StartSafety(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Bandit: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{Bandit: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

@@ -38,7 +38,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		entity := &analysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := getOutputString()
 
@@ -57,7 +57,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		entity := &analysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := ""
 
@@ -75,7 +75,7 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		entity := &analysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -91,8 +91,10 @@ func TestStartCFlawfinder(t *testing.T) {
 		entity := &analysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{MixAudit: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{MixAudit: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

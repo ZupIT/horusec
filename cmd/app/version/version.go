@@ -38,7 +38,7 @@ func (v *Version) CreateCobraCmd() *cobra.Command {
 		Short:   "Actual version installed of the horusec",
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.LogPrint(cmd.Short + " is: " + v.config.GetVersion())
+			logger.LogPrint(cmd.Short + " is: " + v.config.Version)
 			logger.LogPrint("dist: " + dist.GetVersion())
 			return nil
 		},

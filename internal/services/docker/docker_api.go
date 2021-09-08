@@ -103,7 +103,7 @@ func (d *API) CreateLanguageAnalysisContainer(data *docker.AnalysisData) (contai
 }
 
 func (d *API) PullImage(imageWithTagAndRegistry string) error {
-	if d.config.GetDisableDocker() {
+	if d.config.DisableDocker {
 		return nil
 	}
 
@@ -320,10 +320,10 @@ func (d *API) DeleteContainersFromAPI() {
 }
 
 func (d *API) getSourceFolder() (path string) {
-	if d.config.GetContainerBindProjectPath() != "" {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.GetContainerBindProjectPath(), d.analysisID.String())
+	if d.config.ContainerBindProjectPath != "" {
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.ContainerBindProjectPath, d.analysisID.String())
 	} else {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.GetProjectPath(), d.analysisID.String())
+		path = fmt.Sprintf("%s/.horusec/%s", d.config.ProjectPath, d.analysisID.String())
 	}
 
 	separator := path[1:2]

@@ -72,7 +72,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -103,7 +103,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -135,7 +135,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
@@ -167,7 +167,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -199,7 +199,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -232,7 +232,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New().MergeFromEnvironmentVariables()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -266,7 +266,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
@@ -300,7 +300,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
 		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
@@ -329,7 +329,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -388,7 +388,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -439,7 +439,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -489,7 +489,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -553,8 +553,8 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetConfigFilePath("./not-exists.json")
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.ConfigFilePath = "./not-exists.json"
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -613,7 +613,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		promptMock.On("Ask").Return("Y", nil)
 
 		configs := config.New()
-		configs.SetWorkDir(&workdir.WorkDir{})
+		configs.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")

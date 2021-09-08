@@ -66,9 +66,9 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
-		config.SetEnableOwaspDependencyCheck(true)
+		config.EnableOwaspDependencyCheck = true
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
@@ -84,7 +84,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("{", nil)
 
@@ -100,7 +100,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -116,7 +116,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
@@ -132,8 +132,10 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{OwaspDependencyCheck: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{OwaspDependencyCheck: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

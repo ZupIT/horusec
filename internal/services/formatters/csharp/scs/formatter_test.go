@@ -56,7 +56,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{ \"$schema\": \"https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json\"," +
 			" \"version\": \"2.1.0\", \"runs\": [ { \"results\": [ { \"ruleId\": \"SCS0006\", \"ruleIndex\": 0, " +
@@ -114,7 +114,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "test"
 
@@ -136,7 +136,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := enums.BuildFailedOutput
 
@@ -156,7 +156,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
@@ -174,7 +174,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
 			Return("", errors.New("test"))
@@ -192,8 +192,10 @@ func TestParseOutput(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

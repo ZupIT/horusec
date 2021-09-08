@@ -36,7 +36,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
 			" \"path\":\"bad/vulpy.py\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
@@ -59,7 +59,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
 			" \"path\":\"bad/vulpy.py\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
@@ -82,7 +82,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "{ \"results\":[ { \"check_id\":\"python.lang.correctness.useless-comparison.no-strings-as-booleans\"," +
 			" \"path\":\"bad\", \"start\":{ \"line\":36, \"col\":1 }, \"end\":{ \"line\":37, \"col\":23 }, " +
@@ -105,7 +105,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		output := "!!"
 
@@ -123,7 +123,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -138,8 +138,10 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Semgrep: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.WorkDir = &workdir.WorkDir{}
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{Semgrep: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
