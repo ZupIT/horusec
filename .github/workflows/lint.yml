@@ -14,10 +14,10 @@
 
 name: Lint
 on: [ "push" ]
+permissions: read-all
+
 jobs:
   lint:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

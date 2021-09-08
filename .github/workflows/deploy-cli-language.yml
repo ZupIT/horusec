@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: DeployCLITools
-
+permissions: read-all
 on:
   workflow_dispatch:
     inputs:
@@ -31,6 +31,8 @@ jobs:
   deploy:
     permissions:
       contents: read
+      packages: write
+      repository-projects: write
     name: deploy
     runs-on: ubuntu-latest
     steps:
