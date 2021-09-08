@@ -9,6 +9,7 @@ require (
 	github.com/aquasecurity/trivy v0.19.2
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.0.2
+	github.com/briandowns/spinner v1.16.0 // indirect
 	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/docker v20.10.8+incompatible
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
