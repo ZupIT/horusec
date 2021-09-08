@@ -97,6 +97,7 @@ func (pr *PrintResults) factoryPrintByType() error {
 }
 
 func (pr *PrintResults) runPrintResultsText() error {
+	fmt.Print("\n")
 	pr.logSeparator(true)
 
 	pr.printLNF("HORUSEC ENDED THE ANALYSIS WITH STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status)

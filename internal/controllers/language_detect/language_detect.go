@@ -173,6 +173,8 @@ func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
 	} else {
 		fmt.Print("\n")
+		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgInfoMonitorTimeoutIn, ld.configs.TimeoutInSecondsAnalysis))
+		fmt.Print("\n")
 		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, folderDstName)
 		fmt.Print("\n")
 	}
