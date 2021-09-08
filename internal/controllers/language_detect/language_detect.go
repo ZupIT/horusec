@@ -36,11 +36,11 @@ import (
 )
 
 type LanguageDetect struct {
-	configs    config.IConfig
+	configs    *config.Config
 	analysisID uuid.UUID
 }
 
-func NewLanguageDetect(configs config.IConfig, analysisID uuid.UUID) *LanguageDetect {
+func NewLanguageDetect(configs *config.Config, analysisID uuid.UUID) *LanguageDetect {
 	return &LanguageDetect{
 		analysisID: analysisID,
 		configs:    configs,
@@ -57,7 +57,6 @@ func (ld *LanguageDetect) Detect(directory string) ([]languages.Language, error)
 
 	langs = ld.appendLanguagesFound(langs, languagesFound)
 
-	ld.configs.SetProjectPath(directory)
 	err = ld.copyProjectToHorusecFolder(directory)
 	return ld.filterSupportedLanguages(langs), err
 }

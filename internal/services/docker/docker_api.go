@@ -35,7 +35,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
@@ -79,16 +79,16 @@ type Client interface {
 type API struct {
 	ctx                    context.Context
 	dockerClient           Client
-	config                 cliConfig.IConfig
+	config                 *config.Config
 	analysisID             uuid.UUID
 	pathDestinyInContainer string
 }
 
-func New(client Client, config cliConfig.IConfig, analysisID uuid.UUID) *API {
+func New(client Client, cfg *config.Config, analysisID uuid.UUID) *API {
 	return &API{
 		ctx:                    context.Background(),
 		dockerClient:           client,
-		config:                 config,
+		config:                 cfg,
 		analysisID:             analysisID,
 		pathDestinyInContainer: "/src",
 	}
@@ -206,8 +206,8 @@ func (d *API) removeContainer(containerID string) {
 }
 
 func (d *API) createContainer(imageNameWithTag, cmd string) (string, error) {
-	config, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
-	response, err := d.dockerClient.ContainerCreate(d.ctx, config, host, nil, nil, d.getImageID())
+	cfg, host := d.getConfigAndHostToCreateContainer(imageNameWithTag, cmd)
+	response, err := d.dockerClient.ContainerCreate(d.ctx, cfg, host, nil, nil, d.getImageID())
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerCreateContainer, err)
 		return "", err
@@ -255,9 +255,9 @@ func (d *API) getOutputString(containerOutPut io.Reader) (string, error) {
 
 func (d *API) getConfigAndHostToCreateContainer(
 	imageNameWithTag, cmd string) (*container.Config, *container.HostConfig) {
-	config := d.getContainerConfig(imageNameWithTag, cmd)
+	cfg := d.getContainerConfig(imageNameWithTag, cmd)
 
-	return config, d.getContainerHostConfig()
+	return cfg, d.getContainerHostConfig()
 }
 
 func (d *API) getContainerConfig(imageNameWithTag, cmd string) *container.Config {

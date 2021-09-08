@@ -25,18 +25,18 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	customRulesEntities "github.com/ZupIT/horusec/internal/entities/custom_rules"
 )
 
 type Service struct {
-	config            cliConfig.IConfig
+	config            *config.Config
 	customRulesByTool map[languages.Language][]engine.Rule
 }
 
-func NewCustomRulesService(config cliConfig.IConfig) *Service {
+func NewCustomRulesService(cfg *config.Config) *Service {
 	service := &Service{
-		config: config,
+		config: cfg,
 	}
 
 	service.mapCustomRulesByLanguage()

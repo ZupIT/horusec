@@ -15,6 +15,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -25,46 +26,72 @@ import (
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/cmd/app/version"
 	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-var configs = config.NewConfig()
-var rootCmd = &cobra.Command{
-	Use:   "horusec",
-	Short: "Horusec CLI prepares packages to be analyzed by the Horusec Analysis API",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		logger.LogPrint("Horusec Command Line is an orchestrates security," +
-			"tests and centralizes all results into a database for further analysis and metrics.")
-		return cmd.Help()
-	},
-	Example: `
+// nolint:funlen,lll
+func main() {
+	cfg := config.New()
+
+	rootCmd := &cobra.Command{
+		Use:   "horusec",
+		Short: "Horusec CLI prepares packages to be analyzed by the Horusec Analysis API",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger.LogPrint("Horusec Command Line is an orchestrates security," +
+				"tests and centralizes all results into a database for further analysis and metrics.")
+			return cmd.Help()
+		},
+		Example: `
 horusec start
 horusec start -p="/home/user/projects/my-project"
 `,
-}
+	}
 
-// nolint
-func init() {
-	startCmd := start.NewStartCommand(configs)
-	generateCmd := generate.NewGenerateCommand()
+	startCmd := start.NewStartCommand(cfg)
+	generateCmd := generate.NewGenerateCommand(cfg)
 
-	_ = rootCmd.PersistentFlags().String("log-level", configs.GetLogLevel(), "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
-	_ = rootCmd.PersistentFlags().String("config-file-path", configs.GetConfigFilePath(), "Path of the file horusec-config.json to setup content of horusec")
-	_ = rootCmd.PersistentFlags().StringP("log-file-path", "l", configs.GetLogFilePath(), `set user defined log file path instead of default`)
-	rootCmd.AddCommand(version.NewVersionCommand().CreateCobraCmd())
+	rootCmd.PersistentFlags().
+		StringVar(
+			&cfg.LogLevel,
+			"log-level",
+			cfg.LogLevel,
+			"Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"",
+		)
+
+	rootCmd.PersistentFlags().
+		StringVar(
+			&cfg.ConfigFilePath,
+			"config-file-path",
+			cfg.ConfigFilePath,
+			"Path of the file horusec-config.json to setup content of horusec",
+		)
+
+	rootCmd.PersistentFlags().
+		StringVarP(
+			&cfg.LogFilePath,
+			"log-file-path", "l",
+			cfg.LogFilePath,
+			`set user defined log file path instead of default`,
+		)
+
+	rootCmd.AddCommand(version.NewVersionCommand(cfg).CreateCobraCmd())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
 
 	cobra.OnInitialize(func() {
-		startCmd.SetGlobalCmd(rootCmd)
-		generateCmd.SetGlobalCmd(rootCmd)
-		engine.SetLogLevel(configs.GetLogLevel())
-	})
-}
+		err := cfg.MergeFromConfigFile().
+			MergeFromEnvironmentVariables().
+			Normalize().
+			Eval()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s: %v\n", messages.MsgErrorSettingLogFile, err)
+			os.Exit(1)
+		}
 
-func main() {
+		engine.SetLogLevel(cfg.LogLevel)
+	})
+
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
-	} else {
-		os.Exit(0)
 	}
 }
