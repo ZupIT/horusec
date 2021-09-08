@@ -16,7 +16,6 @@ package generate
 
 import (
 	"encoding/json"
-	"errors"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -27,18 +26,13 @@ import (
 )
 
 type Generate struct {
-	globalCmd *cobra.Command
-	configs   config.IConfig
+	configs *config.Config
 }
 
-func NewGenerateCommand() *Generate {
+func NewGenerateCommand(cfg *config.Config) *Generate {
 	return &Generate{
-		configs: config.NewConfig(),
+		configs: cfg,
 	}
-}
-
-func (g *Generate) SetGlobalCmd(globalCmd *cobra.Command) {
-	g.globalCmd = globalCmd
 }
 
 func (g *Generate) CreateCobraCmd() *cobra.Command {
@@ -90,14 +84,8 @@ func (g *Generate) createAndOpenFile() (outputFile *os.File, err error) {
 func (g *Generate) writeConfigOnFile(outputFile *os.File) error {
 	configMap := g.configs.ToMapLowerCase()
 	configBytes, _ := json.MarshalIndent(configMap, "", "  ")
-	bytesWritten, err := outputFile.Write(configBytes)
-	if err != nil {
-		return err
-	}
-	if bytesWritten != len(configBytes) {
-		return errors.New("bytesWritten is not equals in ConfigBytes")
-	}
-	return nil
+	_, err := outputFile.Write(configBytes)
+	return err
 }
 
 //nolint:gomnd // magic number
@@ -111,6 +99,5 @@ func (g *Generate) readFileAndCreateNewKeys() error {
 		logger.LogError(
 			messages.MsgErrorErrorOnReadConfigFile+g.configs.GetConfigFilePath(), configFile.Close())
 	}()
-	g.configs = g.configs.NewConfigsFromViper()
 	return g.writeConfigOnFile(configFile)
 }

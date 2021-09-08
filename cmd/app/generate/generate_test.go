@@ -38,28 +38,14 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestGenerate_SetGlobalCmd(t *testing.T) {
-	t.Run("Should set global command when run generate config", func(t *testing.T) {
-		globalCmd := &cobra.Command{}
-		_ = globalCmd.PersistentFlags().String("log-level", "", "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
-		_ = globalCmd.PersistentFlags().String("config-file-path", "", "Path of the file horusec-config.json to setup content of horusec")
-		assert.NotPanics(t, func() {
-			NewGenerateCommand().SetGlobalCmd(globalCmd)
-		})
-	})
-}
-
 func TestGenerate_CreateCobraCmd(t *testing.T) {
 	globalCmd := &cobra.Command{}
 	_ = globalCmd.PersistentFlags().String("log-level", "", "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
 	_ = globalCmd.PersistentFlags().String("config-file-path", "./tmp/horusec-config.json", "Path of the file horusec-config.json to setup content of horusec")
 	t.Run("Should create file with default configuration", func(t *testing.T) {
-		configs := config.NewConfig()
+		configs := config.New()
 		configs.SetConfigFilePath("./tmp/horusec-config1.json")
-		cmd := &Generate{
-			configs:   configs,
-			globalCmd: globalCmd,
-		}
+		cmd := NewGenerateCommand(configs)
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 		cobraCmd := cmd.CreateCobraCmd()
@@ -79,12 +65,9 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 	})
 	t.Run("Should update file already exists with default configuration", func(t *testing.T) {
 		// Create configuration
-		configs := config.NewConfig()
+		configs := config.New()
 		configs.SetConfigFilePath("./tmp/horusec-config2.json")
-		cmd := &Generate{
-			configs:   configs,
-			globalCmd: globalCmd,
-		}
+		cmd := NewGenerateCommand(configs)
 
 		// Create existing file and write empry object
 		_, err := os.Create(configs.GetConfigFilePath())
