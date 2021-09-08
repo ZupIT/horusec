@@ -140,14 +140,14 @@ func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 			return true
 		}
 	}
-	if !ld.configs.GetEnableGitHistoryAnalysis() {
+	if !ld.configs.EnableGitHistoryAnalysis {
 		return strings.Contains(path, file.ReplacePathSeparator("/.git/"))
 	}
 	return false
 }
 
 func (ld *LanguageDetect) checkAdditionalPathsToIgnore(path string) bool {
-	for _, value := range ld.configs.GetFilesOrPathsToIgnore() {
+	for _, value := range ld.configs.FilesOrPathsToIgnore {
 		matched, _ := doubleStar.Match(strings.TrimSpace(value), path)
 		if matched {
 			return true

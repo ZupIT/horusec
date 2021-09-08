@@ -24,8 +24,8 @@ import (
 
 func TestGetCommitAuthor(t *testing.T) {
 	c := &config.Config{}
-	c.SetProjectPath("../../../../")
-	c.SetEnableCommitAuthor(true)
+	c.ProjectPath = "../../../../"
+	c.EnableCommitAuthor = true
 	service := Git{
 		config: c,
 	}

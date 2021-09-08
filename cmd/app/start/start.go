@@ -308,7 +308,7 @@ func (s *Start) runE(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	if totalVulns > 0 && s.configs.GetReturnErrorIfFoundVulnerability() {
+	if totalVulns > 0 && s.configs.ReturnErrorIfFoundVulnerability {
 		cmd.SetUsageFunc(func(command *cobra.Command) error {
 			return nil
 		})
@@ -343,11 +343,11 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 }
 
 func (s *Start) validateRequirements() {
-	if s.configs.GetEnableGitHistoryAnalysis() {
+	if s.configs.EnableGitHistoryAnalysis {
 		s.requirements.ValidateGit()
 	}
 
-	if !s.configs.GetDisableDocker() {
+	if !s.configs.DisableDocker {
 		s.requirements.ValidateDocker()
 	}
 }
@@ -358,7 +358,7 @@ func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
 		return false
 	}
 	currentPath, err := os.Getwd()
-	if err == nil && s.configs.GetProjectPath() != currentPath {
+	if err == nil && s.configs.ProjectPath != currentPath {
 		return false
 	}
 	return true
@@ -375,7 +375,7 @@ func (s *Start) executeAnalysisDirectory() (totalVulns int, err error) {
 func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 	if shouldAsk {
 		response, err := s.prompt.Ask(
-			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.GetProjectPath()),
+			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.ProjectPath),
 			"Y")
 		if err != nil {
 			logger.LogWarnWithLevel(messages.MsgErrorWhenAskDirToRun+`

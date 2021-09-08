@@ -48,7 +48,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		outputAnalysis := `[
 			{"line":"-----BEGIN RSA PRIVATE KEY----- # nohorus","offender":"-----BEGIN RSA PRIVATE KEY-----","commit":"736d81a5a1dc3a14a88a526c01c99a9ba50b7af7","repo":"code","rule":"Asymmetric Private Key","commitMessage":"Adding gitleaks\n","author":"Wilian Gabriel","email":"wilian.silva@zup.com.br","file":"deployments/certs/ca-key.pem","date":"2020-05-06T16:15:25-03:00","tags":"key, AsymmetricPrivateKey"},
@@ -80,7 +80,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 	t.Run("Should run no error when empty output", func(t *testing.T) {
 		analysis := AnalysisMock()
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -98,7 +98,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
 		analysis := AnalysisMock()
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -116,7 +116,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
 		analysis := AnalysisMock()
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -137,7 +137,9 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{GitLeaks: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{GitLeaks: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

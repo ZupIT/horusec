@@ -56,7 +56,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.SetJSONOutputFilePath("/tmp/horusec.json")
+		configs.JSONOutputFilePath = "/tmp/horusec.json"
 
 		printResults := &PrintResults{
 			analysis: analysis,
@@ -74,7 +74,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.SetPrintOutputType("JSON")
+		configs.PrintOutputType = "JSON"
 
 		totalVulns, err := NewPrintResults(analysis, configs).Print()
 
@@ -88,7 +88,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		analysis.Errors += "ERROR GET REPOSITORY"
 
 		configs := &config.Config{}
-		configs.SetPrintOutputType("json")
+		configs.PrintOutputType = "json"
 
 		printResults := &PrintResults{
 			analysis: analysis,
@@ -135,7 +135,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 
 	t.Run("Should return 12 vulnerabilities with commit authors", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.SetEnableCommitAuthor(true)
+		configs.EnableCommitAuthor = true
 		analysisMock := mock.CreateAnalysisMock()
 
 		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
@@ -162,7 +162,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		}
 
 		configs := &config.Config{}
-		configs.SetSeveritiesToIgnore([]string{"MEDIUM", "LOW"})
+		configs.SeveritiesToIgnore = []string{"MEDIUM", "LOW"}
 
 		printResults := &PrintResults{
 			analysis: analysisMock,

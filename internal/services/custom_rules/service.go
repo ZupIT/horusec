@@ -50,7 +50,7 @@ func (s *Service) Load(lang languages.Language) []engine.Rule {
 }
 
 func (s *Service) setCustomRules() {
-	if s.config.GetCustomRulesPath() == "" {
+	if s.config.CustomRulesPath == "" {
 		return
 	}
 
@@ -77,7 +77,7 @@ func (s *Service) validateAndParseCustomRule(index int, customRules []customRule
 }
 
 func (s *Service) openCustomRulesJSONFile() (customRules []customRulesEntities.CustomRule, err error) {
-	file, err := os.Open(s.config.GetCustomRulesPath())
+	file, err := os.Open(s.config.CustomRulesPath)
 	if err != nil {
 		return nil, err
 	}

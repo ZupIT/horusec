@@ -35,7 +35,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -59,7 +59,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -83,7 +83,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -107,7 +107,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -127,7 +127,7 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 
@@ -140,7 +140,9 @@ func TestParseOutput(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.SetToolsConfig(toolsconfig.ToolsConfigsStruct{Brakeman: toolsconfig.ToolConfig{IsToIgnore: true}})
+		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
+			toolsconfig.ToolsConfigsStruct{Brakeman: toolsconfig.ToolConfig{IsToIgnore: true}},
+		)
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

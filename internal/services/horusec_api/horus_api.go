@@ -45,7 +45,7 @@ func NewHorusecAPIService(cfg *config.Config) *Service {
 }
 
 func (s *Service) SendAnalysis(entity *analysis.Analysis) {
-	if s.config.IsEmptyRepositoryAuthorization() || s.config.GetIsTimeout() {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
 		return
 	}
 
@@ -60,7 +60,7 @@ func (s *Service) SendAnalysis(entity *analysis.Analysis) {
 }
 
 func (s *Service) GetAnalysis(analysisID uuid.UUID) *analysis.Analysis {
-	if s.config.IsEmptyRepositoryAuthorization() || s.config.GetIsTimeout() {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
 		return nil
 	}
 
@@ -150,7 +150,7 @@ func (s *Service) parseResponseBytesToAnalysis(body []byte) (entity *analysis.An
 }
 
 func (s *Service) getHorusecAPIURL() string {
-	return fmt.Sprintf("%s/api/analysis", s.config.GetHorusecAPIUri())
+	return fmt.Sprintf("%s/api/analysis", s.config.HorusecAPIUri)
 }
 
 func (s *Service) loggerSendError(err error) {
@@ -162,10 +162,10 @@ func (s *Service) loggerSendError(err error) {
 
 func (s *Service) setTLSConfig() (*tls.Config, error) {
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify: s.config.GetCertInsecureSkipVerify(), // nolint:gosec // skip dynamic
+		InsecureSkipVerify: s.config.CertInsecureSkipVerify, // nolint:gosec // skip dynamic
 	}
-	if s.config.GetCertPath() != "" {
-		caCert, err := ioutil.ReadFile(s.config.GetCertPath())
+	if s.config.CertPath != "" {
+		caCert, err := ioutil.ReadFile(s.config.CertPath)
 		if err != nil {
 			return tlsConfig, err
 		}
@@ -181,7 +181,7 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 func (s *Service) newRequestData(entity *analysis.Analysis) *cli.AnalysisData {
 	return &cli.AnalysisData{
 		Analysis:       entity,
-		RepositoryName: s.config.GetRepositoryName(),
+		RepositoryName: s.config.RepositoryName,
 	}
 }
 
@@ -189,9 +189,9 @@ func (s *Service) addHeaders(req *http.Request) {
 	if req.Header == nil {
 		req.Header = http.Header{}
 	}
-	req.Header.Add("X-Horusec-CLI-Version", s.config.GetVersion())
-	req.Header.Add("X-Horusec-Authorization", s.config.GetRepositoryAuthorization())
-	for key, value := range s.config.GetHeaders() {
+	req.Header.Add("X-Horusec-CLI-Version", s.config.Version)
+	req.Header.Add("X-Horusec-Authorization", s.config.RepositoryAuthorization)
+	for key, value := range s.config.Headers {
 		req.Header.Add(key, value)
 	}
 }

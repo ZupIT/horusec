@@ -44,7 +44,7 @@ func (g *Git) CommitAuthor(line, filePath string) commitAuthor.CommitAuthor {
 	if !g.existsGitFolderInPath() {
 		return g.getCommitAuthorNotFound()
 	}
-	if g.config.GetEnableCommitAuthor() {
+	if g.config.EnableCommitAuthor {
 		return g.executeGitBlame(line, filePath)
 	}
 
@@ -86,7 +86,7 @@ func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
 		" ^^^^^date^^^^^: ^^^^^%ci^^^^^,%n  ^^^^^commitHash^^^^^:"+
 		" ^^^^^%H^^^^^%n }\"", lineAndPath)
 
-	cmd.Dir = g.config.GetProjectPath()
+	cmd.Dir = g.config.ProjectPath
 	response, err := cmd.Output()
 	if err != nil {
 		logger.LogErrorWithLevel(
@@ -140,7 +140,7 @@ func (g *Git) getCleanOutput(output []byte) string {
 }
 
 func (g *Git) existsGitFolderInPath() bool {
-	path := fmt.Sprintf("%s/.git", g.config.GetProjectPath())
+	path := fmt.Sprintf("%s/.git", g.config.ProjectPath)
 	if _, err := os.Stat(file.ReplacePathSeparator(path)); os.IsNotExist(err) {
 		return false
 	}

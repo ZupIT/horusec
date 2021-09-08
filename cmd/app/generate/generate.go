@@ -47,15 +47,15 @@ func (g *Generate) CreateCobraCmd() *cobra.Command {
 }
 
 func (g *Generate) runE(_ *cobra.Command, _ []string) error {
-	if _, err := os.Stat(g.configs.GetConfigFilePath()); os.IsNotExist(err) {
+	if _, err := os.Stat(g.configs.ConfigFilePath); os.IsNotExist(err) {
 		if err := g.createAndWriteOnFile(); err != nil {
 			logger.LogError(messages.MsgErrorErrorOnCreateConfigFile, err)
 			return err
 		}
-		logger.LogInfoWithLevel(messages.MsgInfoConfigFileCreatedSuccess, g.configs.GetConfigFilePath())
+		logger.LogInfoWithLevel(messages.MsgInfoConfigFileCreatedSuccess, g.configs.ConfigFilePath)
 		return nil
 	}
-	logger.LogInfo(messages.MsgInfoConfigAlreadyExist, g.configs.GetConfigFilePath())
+	logger.LogInfo(messages.MsgInfoConfigAlreadyExist, g.configs.ConfigFilePath)
 	return g.readFileAndCreateNewKeys()
 }
 
@@ -72,10 +72,10 @@ func (g *Generate) createAndWriteOnFile() error {
 
 //nolint:gomnd // magic number
 func (g *Generate) createAndOpenFile() (outputFile *os.File, err error) {
-	if _, err = os.Create(g.configs.GetConfigFilePath()); err != nil {
+	if _, err = os.Create(g.configs.ConfigFilePath); err != nil {
 		return nil, err
 	}
-	outputFile, err = os.OpenFile(g.configs.GetConfigFilePath(), os.O_CREATE|os.O_WRONLY, 0600)
+	outputFile, err = os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		return nil, err
 	}
@@ -91,14 +91,14 @@ func (g *Generate) writeConfigOnFile(outputFile *os.File) error {
 
 //nolint:gomnd // magic number
 func (g *Generate) readFileAndCreateNewKeys() error {
-	configFile, err := os.OpenFile(g.configs.GetConfigFilePath(), os.O_CREATE|os.O_WRONLY, 0600)
+	configFile, err := os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
-		logger.LogError(messages.MsgErrorErrorOnReadConfigFile+g.configs.GetConfigFilePath(), err)
+		logger.LogError(messages.MsgErrorErrorOnReadConfigFile+g.configs.ConfigFilePath, err)
 		return err
 	}
 	defer func() {
 		logger.LogError(
-			messages.MsgErrorErrorOnReadConfigFile+g.configs.GetConfigFilePath(), configFile.Close())
+			messages.MsgErrorErrorOnReadConfigFile+g.configs.ConfigFilePath, configFile.Close())
 	}()
 	return g.writeConfigOnFile(configFile)
 }

@@ -74,10 +74,10 @@ func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 		validation.Field(&c.severitiesToIgnore, validation.By(au.validationSeverities(config))),
 		validation.Field(&c.filesOrPathsToIgnore),
 		validation.Field(&c.returnErrorIfFoundVulnerability, validation.In(true, false)),
-		validation.Field(&c.projectPath, validation.By(au.validateIfIsValidPath(config.GetProjectPath()))),
-		validation.Field(&c.workDir, validation.By(au.validateWorkDir(config.GetWorkDir(), config.GetProjectPath()))),
+		validation.Field(&c.projectPath, validation.By(au.validateIfIsValidPath(config.ProjectPath))),
+		validation.Field(&c.workDir, validation.By(au.validateWorkDir(config.WorkDir, config.ProjectPath))),
 		validation.Field(&c.certInsecureSkipVerify, validation.In(true, false)),
-		validation.Field(&c.certPath, validation.By(au.validateCertPath(config.GetCertPath()))),
+		validation.Field(&c.certPath, validation.By(au.validateCertPath(config.CertPath))),
 		validation.Field(&c.falsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(config))),
 		validation.Field(&c.riskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(config))),
 		validation.Field(&c.showVulnerabilitiesTypes, validation.By(au.checkIfIsValidVulnerabilitiesTypes(config))),
@@ -87,30 +87,30 @@ func (au *UseCases) ValidateConfigs(config *cliConfig.Config) error {
 //nolint // parse struct is necessary > 15 lines
 func (au *UseCases) parseConfigsToConfigValidate(config *cliConfig.Config) ConfigToValidate {
 	return ConfigToValidate{
-		horusecAPIUri:                   config.GetHorusecAPIUri(),
-		timeoutInSecondsRequest:         config.GetTimeoutInSecondsRequest(),
-		timeoutInSecondsAnalysis:        config.GetTimeoutInSecondsAnalysis(),
-		monitorRetryInSeconds:           config.GetMonitorRetryInSeconds(),
-		repositoryAuthorization:         config.GetRepositoryAuthorization(),
-		printOutputType:                 config.GetPrintOutputType(),
-		jSONOutputFilePath:              config.GetJSONOutputFilePath(),
-		severitiesToIgnore:              config.GetSeveritiesToIgnore(),
-		filesOrPathsToIgnore:            config.GetFilesOrPathsToIgnore(),
-		returnErrorIfFoundVulnerability: config.GetReturnErrorIfFoundVulnerability(),
-		projectPath:                     config.GetProjectPath(),
-		workDir:                         config.GetWorkDir(),
-		certInsecureSkipVerify:          config.GetCertInsecureSkipVerify(),
-		certPath:                        config.GetCertPath(),
-		falsePositiveHashes:             config.GetFalsePositiveHashes(),
-		riskAcceptHashes:                config.GetRiskAcceptHashes(),
-		showVulnerabilitiesTypes:        config.GetShowVulnerabilitiesTypes(),
+		horusecAPIUri:                   config.HorusecAPIUri,
+		timeoutInSecondsRequest:         config.TimeoutInSecondsRequest,
+		timeoutInSecondsAnalysis:        config.TimeoutInSecondsAnalysis,
+		monitorRetryInSeconds:           config.MonitorRetryInSeconds,
+		repositoryAuthorization:         config.RepositoryAuthorization,
+		printOutputType:                 config.PrintOutputType,
+		jSONOutputFilePath:              config.JSONOutputFilePath,
+		severitiesToIgnore:              config.SeveritiesToIgnore,
+		filesOrPathsToIgnore:            config.FilesOrPathsToIgnore,
+		returnErrorIfFoundVulnerability: config.ReturnErrorIfFoundVulnerability,
+		projectPath:                     config.ProjectPath,
+		workDir:                         config.WorkDir,
+		certInsecureSkipVerify:          config.CertInsecureSkipVerify,
+		certPath:                        config.CertPath,
+		falsePositiveHashes:             config.FalsePositiveHashes,
+		riskAcceptHashes:                config.RiskAcceptHashes,
+		showVulnerabilitiesTypes:        config.ShowVulnerabilitiesTypes,
 	}
 }
 
 func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, falsePositive := range config.GetFalsePositiveHashes() {
-			for _, riskAccept := range config.GetRiskAcceptHashes() {
+		for _, falsePositive := range config.FalsePositiveHashes {
+			for _, riskAccept := range config.RiskAcceptHashes {
 				if falsePositive == riskAccept {
 					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
 				}
@@ -122,8 +122,8 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig
 
 func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, riskAccept := range config.GetRiskAcceptHashes() {
-			for _, falsePositive := range config.GetFalsePositiveHashes() {
+		for _, riskAccept := range config.RiskAcceptHashes {
+			for _, falsePositive := range config.FalsePositiveHashes {
 				if riskAccept == falsePositive {
 					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
 				}
@@ -135,7 +135,7 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Co
 
 func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		switch config.GetPrintOutputType() {
+		switch config.PrintOutputType {
 		case outputtype.JSON, outputtype.SonarQube:
 			return au.validateFilePathAndExtension(config, ".json")
 		case outputtype.Text:
@@ -146,17 +146,17 @@ func (au *UseCases) checkAndValidateJSONOutputFilePath(config *cliConfig.Config)
 }
 
 func (au *UseCases) validateTextOutputFilePath(config *cliConfig.Config) error {
-	if config.GetJSONOutputFilePath() == "" {
+	if config.JSONOutputFilePath == "" {
 		return nil
 	}
 	return au.validateFilePathAndExtension(config, ".txt")
 }
 
 func (au *UseCases) validateFilePathAndExtension(config *cliConfig.Config, extension string) error {
-	if filepath.Ext(config.GetJSONOutputFilePath()) != extension {
+	if filepath.Ext(config.JSONOutputFilePath) != extension {
 		return fmt.Errorf("%snot valid file of type %s", messages.MsgErrorJSONOutputFilePathNotValid, extension)
 	}
-	if output, err := filepath.Abs(config.GetJSONOutputFilePath()); err != nil || output == "" {
+	if output, err := filepath.Abs(config.JSONOutputFilePath); err != nil || output == "" {
 		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
 	}
 	return nil
@@ -172,7 +172,7 @@ func (au *UseCases) validationOutputTypes() validation.InRule {
 
 func (au *UseCases) validationSeverities(config *cliConfig.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, item := range config.GetSeveritiesToIgnore() {
+		for _, item := range config.SeveritiesToIgnore {
 			if !au.checkIfExistItemInSliceOfSeverity(strings.TrimSpace(item)) {
 				return fmt.Errorf("%s %s. See severities enable: %v",
 					messages.MsgErrorSeverityNotValid, item, au.sliceSeverityEnable())
@@ -252,7 +252,7 @@ func (au *UseCases) validateIfExistPathInProjectToWorkDir(projectPath, internalP
 
 func (au *UseCases) checkIfIsValidVulnerabilitiesTypes(config *cliConfig.Config) validation.RuleFunc {
 	return func(value interface{}) error {
-		for _, vulnType := range config.GetShowVulnerabilitiesTypes() {
+		for _, vulnType := range config.ShowVulnerabilitiesTypes {
 			isValid := false
 			for _, valid := range vulnerability.Values() {
 				if strings.EqualFold(valid.ToString(), vulnType) {

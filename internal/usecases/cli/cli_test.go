@@ -30,15 +30,15 @@ func TestValidateConfigs(t *testing.T) {
 
 	t.Run("Should return no errors when valid", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return no errors when is not valid path", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetProjectPath("./not-exist-path")
+		config.WorkDir = &workdir.WorkDir{}
+		config.ProjectPath = "./not-exist-path"
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -46,16 +46,16 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return no errors when valid config with ignore", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetSeveritiesToIgnore([]string{"LOW"})
+		config.WorkDir = &workdir.WorkDir{}
+		config.SeveritiesToIgnore = []string{"LOW"}
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid ignore value", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetSeveritiesToIgnore([]string{"test"})
+		config.WorkDir = &workdir.WorkDir{}
+		config.SeveritiesToIgnore = []string{"test"}
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -64,9 +64,9 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetPrintOutputType(outputtype.JSON)
-		config.SetJSONOutputFilePath("")
+		config.WorkDir = &workdir.WorkDir{}
+		config.PrintOutputType = outputtype.JSON
+		config.JSONOutputFilePath = ""
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -75,9 +75,9 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when invalid json output file is invalid", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
-		config.SetPrintOutputType(outputtype.JSON)
-		config.SetJSONOutputFilePath("test.test")
+		config.WorkDir = &workdir.WorkDir{}
+		config.PrintOutputType = outputtype.JSON
+		config.JSONOutputFilePath = "test.test"
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -86,10 +86,10 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error when the text output file is invalid", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 		config.MergeFromEnvironmentVariables()
-		config.SetPrintOutputType(outputtype.Text)
-		config.SetJSONOutputFilePath("test.test")
+		config.PrintOutputType = outputtype.Text
+		config.JSONOutputFilePath = "test.test"
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -97,10 +97,10 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{})
+		config.WorkDir = &workdir.WorkDir{}
 		config.MergeFromEnvironmentVariables()
-		config.SetPrintOutputType(outputtype.Text)
-		config.SetJSONOutputFilePath("test.txt")
+		config.PrintOutputType = (outputtype.Text)
+		config.JSONOutputFilePath = "test.txt"
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
@@ -113,7 +113,7 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return success because exists path in workdir", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetWorkDir(&workdir.WorkDir{
+		config.WorkDir = &workdir.WorkDir{
 			Go:         []string{"./"},
 			CSharp:     []string{""},
 			Ruby:       []string{},
@@ -123,14 +123,14 @@ func TestValidateConfigs(t *testing.T) {
 			JavaScript: []string{},
 			Leaks:      []string{},
 			HCL:        []string{},
-		})
+		}
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error because not exists path in workdir", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.SetWorkDir(&workdir.WorkDir{
+		config.WorkDir = &workdir.WorkDir{
 			Go:         []string{"NOT EXISTS PATH"},
 			CSharp:     []string{},
 			Ruby:       []string{},
@@ -140,7 +140,7 @@ func TestValidateConfigs(t *testing.T) {
 			JavaScript: []string{},
 			Leaks:      []string{},
 			HCL:        []string{},
-		})
+		}
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -149,7 +149,7 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return error because cert path is not valid", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetCertPath("INVALID PATH")
+		config.CertPath = "INVALID PATH"
 
 		err := useCases.ValidateConfigs(config)
 		assert.Error(t, err)
@@ -159,8 +159,8 @@ func TestValidateConfigs(t *testing.T) {
 	t.Run("Should return error when is duplicated false positive and risk accepted", func(t *testing.T) {
 		hash := "1e836029-4e90-4151-bb4a-d86ef47f96b6"
 		config := cliConfig.New()
-		config.SetFalsePositiveHashes([]string{hash})
-		config.SetRiskAcceptHashes([]string{hash})
+		config.FalsePositiveHashes = []string{hash}
+		config.RiskAcceptHashes = []string{hash}
 
 		err := useCases.ValidateConfigs(config)
 		assert.Equal(t, "falsePositiveHashes: False positive is not valid because is duplicated in risk accept: 1e836029-4e90-4151-bb4a-d86ef47f96b6; riskAcceptHashes: Risk Accept is not valid because is duplicated in false positive: 1e836029-4e90-4151-bb4a-d86ef47f96b6.",
@@ -168,8 +168,8 @@ func TestValidateConfigs(t *testing.T) {
 	})
 	t.Run("Should return not error when validate false positive and risk accepted", func(t *testing.T) {
 		config := cliConfig.New()
-		config.SetFalsePositiveHashes([]string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"})
-		config.SetRiskAcceptHashes([]string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"})
+		config.FalsePositiveHashes = []string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"}
+		config.RiskAcceptHashes = []string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"}
 
 		err := useCases.ValidateConfigs(config)
 		assert.NoError(t, err)
