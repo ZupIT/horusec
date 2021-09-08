@@ -15,11 +15,10 @@
 name: e2e
 
 on: ["push"]
+permissions: read-all
 
 jobs:
   e2e-cli:
-    permissions:
-      contents: read
     name: e2e-cli
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
