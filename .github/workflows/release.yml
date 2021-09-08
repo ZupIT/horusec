@@ -18,9 +18,12 @@ on:
   push:
     tags:
       - '*'
+permissions: read-all
 
 jobs:
   build:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
