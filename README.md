@@ -82,7 +82,7 @@ horusec start -p .
 
 
 ## Usage with Docker
-It is also possible to be using the horusec through a docker image `horuszup/horusec-cli:latest.
+It is also possible to be using the horusec through a docker image `horuszup/horusec-cli:latest`.
 
 To do so, just run the following command:
 ```sh
