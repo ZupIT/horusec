@@ -202,6 +202,8 @@ github.com/aquasecurity/fanal v0.0.0-20210824112623-152431c047fe h1:2t8aaexMdMdo
 github.com/aquasecurity/fanal v0.0.0-20210824112623-152431c047fe/go.mod h1:7Ggt+NxwY7h/1h4Hr+lR3vj9zKQzlYv7W1KfrtvNRXk=
 github.com/aquasecurity/fanal v0.0.0-20210907104344-f558ffefc6d1 h1:/DLpCwFOaGBVR+INwVlZpJ4fzKo2KYcpyt/MYQeL5tQ=
 github.com/aquasecurity/fanal v0.0.0-20210907104344-f558ffefc6d1/go.mod h1:JLHAqER00hoaL7QU2j1Ed8fH/ryh9ylhNZ792tjuaRk=
+github.com/aquasecurity/fanal v0.0.0-20210913111417-fc6254a00519 h1:5F9oLnbGNR/NxTFiMk+C3tBsAAfq2EUpxhDCsuEDRVI=
+github.com/aquasecurity/fanal v0.0.0-20210913111417-fc6254a00519/go.mod h1:zm7pgAfSLjYHDMBz/wrEusyYmkeio38pMjIW+OIdvZw=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210520015931-0dd56983cc62/go.mod h1:Cv/FOCXy6gwvDbz/KX48+y//SmbnKroFwW5hquXn5G4=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210815084204-d04b52052c28 h1:xE4LUymDMpWi+O3IvnM4aotaiuqg+eBCcyt5WnJGaaA=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210815084204-d04b52052c28/go.mod h1:Cv/FOCXy6gwvDbz/KX48+y//SmbnKroFwW5hquXn5G4=
@@ -719,6 +721,7 @@ github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Z
 github.com/google/btree v1.0.0/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
 github.com/google/crfs v0.0.0-20191108021818-71d77da419c9/go.mod h1:etGhoOqfwPkooV6aqoX3eBGQOJblqdoc9XvWOeuxpPw=
 github.com/google/flatbuffers v1.12.0/go.mod h1:1AeVuKshWv4vARoZatz6mlQ0JxURH0Kv5+zNeJKJCa8=
+github.com/google/flatbuffers v1.12.1/go.mod h1:1AeVuKshWv4vARoZatz6mlQ0JxURH0Kv5+zNeJKJCa8=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
@@ -997,6 +1000,7 @@ github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f/go.mod h1:
 github.com/knqyf263/go-deb-version v0.0.0-20190517075300-09fca494f03d/go.mod h1:o8sgWoz3JADecfc/cTYD92/Et1yMqMy0utV1z+VaZao=
 github.com/knqyf263/go-rpm-version v0.0.0-20170716094938-74609b86c936/go.mod h1:i4sF0l1fFnY1aiw08QQSwVAFxHEm311Me3WsU/X7nL0=
 github.com/knqyf263/go-rpmdb v0.0.0-20201215100354-a9e3110d8ee1/go.mod h1:RDPNeIkU5NWXtt0OMEoILyxwUC/DyXeRtK295wpqSi0=
+github.com/knqyf263/go-rpmdb v0.0.0-20210911072402-73bd0ce46c49/go.mod h1:RDPNeIkU5NWXtt0OMEoILyxwUC/DyXeRtK295wpqSi0=
 github.com/knqyf263/nested v0.0.1/go.mod h1:zwhsIhMkBg90DTOJQvxPkKIypEHPYkgWHs4gybdlUmk=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=

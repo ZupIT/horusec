@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/ZupIT/horusec-devkit v1.0.16
 	github.com/ZupIT/horusec-engine v0.3.5
-	github.com/aquasecurity/fanal v0.0.0-20210907104344-f558ffefc6d1
+	github.com/aquasecurity/fanal v0.0.0-20210913111417-fc6254a00519
 	github.com/aquasecurity/trivy v0.19.2
 	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.0.2
