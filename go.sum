@@ -202,6 +202,8 @@ github.com/aquasecurity/fanal v0.0.0-20210907104344-f558ffefc6d1 h1:/DLpCwFOaGBV
 github.com/aquasecurity/fanal v0.0.0-20210907104344-f558ffefc6d1/go.mod h1:JLHAqER00hoaL7QU2j1Ed8fH/ryh9ylhNZ792tjuaRk=
 github.com/aquasecurity/fanal v0.0.0-20210913111417-fc6254a00519 h1:5F9oLnbGNR/NxTFiMk+C3tBsAAfq2EUpxhDCsuEDRVI=
 github.com/aquasecurity/fanal v0.0.0-20210913111417-fc6254a00519/go.mod h1:zm7pgAfSLjYHDMBz/wrEusyYmkeio38pMjIW+OIdvZw=
+github.com/aquasecurity/fanal v0.0.0-20210915104214-95382456f047 h1:SmwcaPrdCxxQLlzhVwhZNOs7H4IIICpzEk/3oKwpGts=
+github.com/aquasecurity/fanal v0.0.0-20210915104214-95382456f047/go.mod h1:pkPj0NkblwiXdg7Q5RnNlekcJ935StxImiLsU3tCvno=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210520015931-0dd56983cc62/go.mod h1:Cv/FOCXy6gwvDbz/KX48+y//SmbnKroFwW5hquXn5G4=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210905090655-b95c2c079bbb h1:RYx2+0fUc/3nR4SywvLAs+Sm3dtLhpBw2IeBE8+w1Po=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210905090655-b95c2c079bbb/go.mod h1:Zc7Eo6tFl9l4XcqsWeabD7jHnXRBK/LdgZuu9GTSVLU=
@@ -212,6 +214,7 @@ github.com/aquasecurity/go-version v0.0.0-20201107203531-5e48ac5d022a/go.mod h1:
 github.com/aquasecurity/go-version v0.0.0-20210121072130-637058cfe492/go.mod h1:9Beu8XsUNNfzml7WBf3QmyPToP1wm1Gj/Vc5UJKqTzU=
 github.com/aquasecurity/testdocker v0.0.0-20210106133225-0b17fe083674/go.mod h1:psfu0MVaiTDLpNxCoNsTeILSKY2EICBwv345f3M+Ffs=
 github.com/aquasecurity/testdocker v0.0.0-20210815094158-097d418f8cdb/go.mod h1:gTd97VdQ0rg8Mkiic3rPgNOQdprZ7feTAhiD5mGQjgM=
+github.com/aquasecurity/testdocker v0.0.0-20210911155206-e1e85f5a1516/go.mod h1:gTd97VdQ0rg8Mkiic3rPgNOQdprZ7feTAhiD5mGQjgM=
 github.com/aquasecurity/tfsec v0.46.0/go.mod h1:Dafx5dX/1QV1d5en62shpzEXfq5F31IG6oNNxhleV5Y=
 github.com/aquasecurity/trivy v0.19.2 h1:EXjy/ORo874wPvB9ZSVmaswMW7fl5YOuSIxnWEeap8g=
 github.com/aquasecurity/trivy v0.19.2/go.mod h1:JGC0n1KIFhaknAuGnYt+kCuiFUaLV/HvprdN1j1+sV4=
@@ -734,6 +737,7 @@ github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-containerregistry v0.0.0-20191010200024-a3d713f9b7f8/go.mod h1:KyKXa9ciM8+lgMXwOVsXi7UxGrsf9mM61Mzs+xKUrKE=
 github.com/google/go-containerregistry v0.0.0-20200331213917-3d03ed9b1ca2/go.mod h1:pD1UFYs7MCAx+ZLShBdttcaOSbyc8F9Na/9IZLNwJeA=
 github.com/google/go-containerregistry v0.1.2/go.mod h1:GPivBPgdAyd2SU+vf6EpsgOtWDuPqjW0hJZt4rNdTZ4=
+github.com/google/go-containerregistry v0.6.0 h1:niQ+8XD//kKgArIFwDVBXsWVWbde16LPdHMyNwSC8h4=
 github.com/google/go-containerregistry v0.6.0/go.mod h1:euCCtNbZ6tKqi1E72vwDj2xZcN5ttKpZLfa/wSo5iLw=
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-github/v28 v28.1.1/go.mod h1:bsqJWQX05omyWVmc00nEUql9mhQyv38lDZ8kPZcQVoM=
