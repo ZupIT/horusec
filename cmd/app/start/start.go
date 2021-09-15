@@ -84,6 +84,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		Short:   "Start horusec-cli",
 		Long:    "Start the Horusec' analysis in the current path",
 		Example: "horusec start",
+		PreRunE: s.configs.PreRun,
 		RunE:    s.runE,
 	}
 
