@@ -41,6 +41,7 @@ func (g *Generate) CreateCobraCmd() *cobra.Command {
 		Short:   "Generate horusec configuration",
 		Long:    "Generate the Horusec configuration",
 		Example: "horusec generate",
+		PreRunE: g.configs.PreRun,
 		RunE:    g.runE,
 	}
 }
