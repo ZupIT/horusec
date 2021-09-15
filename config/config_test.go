@@ -359,6 +359,8 @@ func TestNewHorusecConfig(t *testing.T) {
 		startCmd := start.NewStartCommand(configs)
 
 		cobraCmd := startCmd.CreateStartCommand()
+		// Remove the pre run hook to override the output
+		cobraCmd.PreRunE = nil
 
 		target, err := os.MkdirTemp(os.TempDir(), "testing-target")
 		assert.NoError(t, err)

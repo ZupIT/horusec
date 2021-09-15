@@ -15,7 +15,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -26,7 +25,6 @@ import (
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/cmd/app/version"
 	"github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
 // nolint:funlen,lll
@@ -79,15 +77,6 @@ horusec start -p="/home/user/projects/my-project"
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
 
 	cobra.OnInitialize(func() {
-		err := cfg.MergeFromConfigFile().
-			MergeFromEnvironmentVariables().
-			Normalize().
-			Eval()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s: %v\n", messages.MsgErrorSettingLogFile, err)
-			os.Exit(1)
-		}
-
 		engine.SetLogLevel(cfg.LogLevel)
 	})
 

@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
@@ -330,6 +331,18 @@ func (c *Config) MergeFromEnvironmentVariables() *Config {
 	c.EnableOwaspDependencyCheck = env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.EnableOwaspDependencyCheck)
 	c.EnableShellCheck = env.GetEnvOrDefaultBool(EnvEnableShellCheck, c.EnableShellCheck)
 	return c
+}
+
+// PreRun is a hook that load config values from config
+// file/environment variables, merge them with default values and
+// command line args and create the log file.
+//
+// This hook is used as a PreRun on cobra commands.
+func (c *Config) PreRun(_ *cobra.Command, _ []string) error {
+	return c.MergeFromConfigFile().
+		MergeFromEnvironmentVariables().
+		Normalize().
+		Eval()
 }
 
 // Eval evaluate user config input
