@@ -81,10 +81,10 @@ func (g *Git) getCommitAuthorNotFound() commitAuthor.CommitAuthor {
 
 func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
 	lineAndPath := g.setLineAndFilePath(g.getLine(line), filePath)
-	cmd := exec.Command("git", "log", "-1", "--format={ %n  ^^^^^author^^^^^: ^^^^^%an^^^^^,%n"+
+	cmd := exec.Command("git", "log", "-1", "--format=\"{ %n  ^^^^^author^^^^^: ^^^^^%an^^^^^,%n"+
 		"  ^^^^^email^^^^^:^^^^^%ae^^^^^,%n  ^^^^^message^^^^^: ^^^^^%s^^^^^,%n "+
 		" ^^^^^date^^^^^: ^^^^^%ci^^^^^,%n  ^^^^^commitHash^^^^^:"+
-		" ^^^^^%H^^^^^%n }", lineAndPath)
+		" ^^^^^%H^^^^^%n }\"", lineAndPath)
 
 	cmd.Dir = g.config.GetProjectPath()
 	response, err := cmd.Output()
