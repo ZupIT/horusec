@@ -23,7 +23,6 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec/config"
@@ -39,9 +38,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestGenerate_CreateCobraCmd(t *testing.T) {
-	globalCmd := &cobra.Command{}
-	_ = globalCmd.PersistentFlags().String("log-level", "", "Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"")
-	_ = globalCmd.PersistentFlags().String("config-file-path", "./tmp/horusec-config.json", "Path of the file horusec-config.json to setup content of horusec")
 	t.Run("Should create file with default configuration", func(t *testing.T) {
 		configs := config.New()
 		configs.SetConfigFilePath("./tmp/horusec-config1.json")
@@ -49,13 +45,12 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 		cobraCmd := cmd.CreateCobraCmd()
+		// Remove the pre run hook to override the output
+		cobraCmd.PreRunE = nil
 		cobraCmd.SetOut(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
-		outputBytes, err := ioutil.ReadAll(stdoutMock)
-		output := string(outputBytes)
-		assert.NoError(t, err)
-		assert.Contains(t, output, messages.MsgInfoConfigFileCreatedSuccess)
+		assert.Contains(t, stdoutMock.String(), messages.MsgInfoConfigFileCreatedSuccess)
 		file, _ := os.Open(configs.GetConfigFilePath())
 		defer func() {
 			_ = file.Close()
@@ -87,14 +82,14 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 		cobraCmd := cmd.CreateCobraCmd()
+		// Remove the pre run hook to override the output
+		cobraCmd.PreRunE = nil
 		cobraCmd.SetOut(stdoutMock)
 		assert.NoError(t, cobraCmd.Execute())
 
 		// Validate ouput from cobra
-		outputBytes, err := ioutil.ReadAll(stdoutMock)
-		output := string(outputBytes)
 		assert.NoError(t, err)
-		assert.Contains(t, output, messages.MsgInfoConfigAlreadyExist)
+		assert.Contains(t, stdoutMock.String(), messages.MsgInfoConfigAlreadyExist)
 
 		// Check content on file created
 		file, _ := os.Open(configs.GetConfigFilePath())
