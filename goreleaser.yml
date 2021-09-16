@@ -43,3 +43,25 @@ checksum:
   name_template: 'checksums.txt'
 release:
   draft: true
+
+nfpms:
+  - id: horusec
+    package_name: horusec
+    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      amd64: 64-bit
+      386: 32-bit
+      darwin: mac
+      windows: win
+    homepage: https://horusec.io/
+    maintainer: ZupIT <horusec@zup.com.br>
+    description: Horusec is an open source tool that improves identification of vulnerabilities in your project with just one command.
+    license: Apache 2.0
+    formats:
+      - deb
+      - rpm
+    suggests:
+      - git
+      - docker
+    bindir: /usr/local/bin
+    priority: extra
