@@ -31,5 +31,7 @@ jobs:
         id: go
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: e2e
         run: make test-e2e
