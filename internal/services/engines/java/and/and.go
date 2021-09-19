@@ -287,6 +287,23 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakarta
 	}
 }
 
+func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "90ee28f2-d622-4a5e-9d9d-13fb53ea5ca7",
+			Name:        "Server hostnames should be verified during SSL/TLS connections With JavaMail's",
+			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjakarta\.mail\.Authenticator\()`),
+			regexp.MustCompile(`put\(.*mail.smtp`),
+		},
+	}
+}
+
 func NewJavaAndTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
