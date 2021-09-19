@@ -1664,6 +1664,7 @@ func NewJavaAndLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 	}
 }
 
+//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
