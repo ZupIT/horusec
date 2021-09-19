@@ -1734,6 +1734,23 @@ func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	}
 }
 
+func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "3b02a174-58a8-47da-b732-444899361a24",
+			Name:        "Web applications should not have a main method",
+			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`import jakarta.servlet.*`),
+			regexp.MustCompile(`public static void main\(String\[\] args\)`),
+		},
+	}
+}
+
 func NewJavaAndSecureRandomSeedsShouldNotBePredictable() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
