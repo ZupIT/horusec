@@ -129,6 +129,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization(),
 		and.NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass(),
 		and.NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
+		and.NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
 		and.NewJavaAndWebApplicationsShouldHotHaveAMainMethod(),
 
 		// Or Rules
