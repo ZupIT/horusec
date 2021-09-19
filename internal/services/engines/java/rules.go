@@ -73,6 +73,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndGetSIMOperatorName(),
 		and.NewJavaAndQueryDatabaseOfSMSContacts(),
 		and.NewJavaAndPotentialPathTraversal(),
+		and.NewJakartaAndPotentialPathTraversal(),
 		and.NewJavaAndPotentialPathTraversalUsingScalaAPI(),
 		and.NewJavaAndSMTPHeaderInjection(),
 		and.NewJavaAndInsecureSMTPSSLConnection(),
