@@ -1613,6 +1613,7 @@ func NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.T
 		},
 	}
 }
+//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1625,6 +1626,23 @@ func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.Tex
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`import javax.servlet.http.HttpServletRequest`),
+			regexp.MustCompile(`getRequestedSessionId\(\)`),
+		},
+	}
+}
+
+func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "fa0ccc8d-f6bd-4be2-8764-f38194fd9185",
+			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
+			Description: "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`import jakarta.servlet.http.HttpServletRequest`),
 			regexp.MustCompile(`getRequestedSessionId\(\)`),
 		},
 	}
