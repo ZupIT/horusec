@@ -953,6 +953,23 @@ func NewJavaAndPotentialPathTraversal() text.TextRule {
 	}
 }
 
+func NewJakartaAndPotentialPathTraversal() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "8b8acafb-b4e5-45d2-aa8a-2a297c2c7856",
+			Name:        "Potential Path Traversal (file read)",
+			Description: "A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: \"new File(\"resources/images/\", FilenameUtils.getName(value_received_in_params))\". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(.*\@jakarta\.ws\.rs\.PathParam\(['|"]?\w+[[:print:]]['|"]?\).*)`),
+			regexp.MustCompile(`(.*new File\(['|"]?.*,\s?\w+\).*)`),
+		},
+	}
+}
+
 func NewJavaAndPotentialPathTraversalUsingScalaAPI() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
