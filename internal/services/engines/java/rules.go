@@ -131,6 +131,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
 		and.NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
 		and.NewJavaAndWebApplicationsShouldHotHaveAMainMethod(),
+		and.NewJakartaAndWebApplicationsShouldHotHaveAMainMethod(),
 
 		// Or Rules
 		or.NewJavaOrFileIsWorldReadable(),
