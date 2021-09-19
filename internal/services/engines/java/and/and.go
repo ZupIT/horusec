@@ -94,7 +94,7 @@ func NewJavaAndXMLParsingVulnerableToXXEWithSAXParserFactory() text.TextRule {
 		},
 	}
 }
-//Deprecated The javax package is deprecated. We'll keep "jakarta" package instead
+
 func NewJavaAndXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
