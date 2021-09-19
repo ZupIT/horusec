@@ -1647,6 +1647,7 @@ func NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.T
 		},
 	}
 }
+
 //Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
