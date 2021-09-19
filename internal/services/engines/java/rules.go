@@ -120,6 +120,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail(),
 		and.NewJavaAndFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks(),
 		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMail(),
+		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail(),
 		and.NewJavaAndHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks(),
 		and.NewJavaAndLDAPAuthenticatedAnalyzeYourCode(),
 		and.NewJavaAndSecureRandomSeedsShouldNotBePredictable(),
