@@ -252,7 +252,7 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleE
 	}
 }
 
-//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMail() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -935,7 +935,7 @@ func NewJavaAndQueryDatabaseOfSMSContacts() text.TextRule {
 	}
 }
 
-//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndPotentialPathTraversal() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1613,7 +1613,7 @@ func NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.T
 		},
 	}
 }
-//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1664,7 +1664,7 @@ func NewJavaAndLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 	}
 }
 
-//Deprecated the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
