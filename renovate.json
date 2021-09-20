@@ -2,5 +2,8 @@
   "baseBranches": ["main"],
   "extends": [
     "config:base"
+  ],
+  "schedule": [
+    "every weekend"
   ]
 }
