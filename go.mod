@@ -25,7 +25,6 @@ require (
 	github.com/pborman/ansi v1.0.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.8.1
+	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
-	google.golang.org/genproto v0.0.0-20210825212027-de86158e7fda // indirect
 )
