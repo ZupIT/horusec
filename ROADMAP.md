@@ -1,46 +1,57 @@
-# Roadmap Público Horusec
-Nosso planejamento focado no produto do Open Source, leva em consideração uma visão de doze meses, apresentando os próximos passos que temos pensado e contribuído para a evolução do Horusec. Deixamos claro que prezamos qualidade durante o nosso processo, por isso, aqui será o principal local em relação as últimas atualizações, onde vamos atualizar e ajustar de acordo com a realidade do time e prioridades para manter a qualidade. Nessa página, você ficará por dentro das evoluções dessas áreas: **Engenharia, produtos, comunicação**, além disso, temos um espaço para novas visões, então **descubra conosco**.
+# Horusec Public Roadmap
 
-## Engenharia de software open source
+Our planning focused on the Open Source product and considered a twelve-month vision, presenting the next steps that we have thought about and contributed to the evolution of Horusec. We value quality and transparency during our process, and this will be the primary place to follow Horusec roadmap latest updates. We will keep you informed and adjust our roadmap according to the team's capacity and priorities to maintain quality. On this page, you will follow and be part of Horusec's growth in these areas: **Engineering and product management**. Besides, we have a space for new ideas, **so find out with us**.
 
-### Análise Semântica
-- Estudo sobre tree-sitter
-- Aplicação de uma regras em Javascript
-- Aplicação de uma regras em Java
+## Open source software engineering
+
+### Semantic Analysis
+
+- Study on tree-sitter
+- Applying rules in Javascript
+- Applying rules in Java
 
 ### Playground
-- Widget para utilizar horusec em qualquer página web
-- Criar motor de análise para playground importando códigos do horusec dentro da página usando web assembly 
 
-### Plugin para IDE JetBrains
-- Estudo sobre viabilidade para plugin de IDE Jetbrains
-- Implementação do plugin de IDE Jetbrains 
+- Widget to use Horusec on any web page
+- Create playground analysis engine importing Horusec codes into the page using web assembly
 
-### Gestão de Vulnerabilidades
-- Criar base para relatórios de segurança
-- Realizar gestão vulnerabilidades com relatórios mais completos de segurança sobre análises realizadas em projetos
+### Plugin for JetBrains IDE
 
-### Descubra conosco
-- Introduzir o Horusec em lojas, como Ubuntu Store, apt-get, aur, Windows store, chocollatey
-- Correções automáticas de falhas de segurança comuns
-- Criar uma interface para usar o horusec no windows 
+- Feasibility study to produce  a JetBrains IDE plugin 
+- Implementation of the plugin
 
+### Vulnerability Management
 
-## Produtos open source
-### Experiência 
-- Identificação das personas que utilizam o produto 
-- Verificação de uma identidade visual para o produto mantendo sinergia com os outros
-- Site novo mantendo identidade visual externa de acordo com o produto
+- Create a basis for security reports
+- Carry out vulnerability management with more complete security reports on analyzes performed on projects
 
-### Documentação
-- Avaliar todas documentações presentes na wiki em ciclos de 6 em 6 meses
-- Acompanhamento das atividades junto com os cargos de lideranças do Horusec
-- Identificação de melhorias em base de documentos de maturidade para garantir uma evolução mantendo qualidade
+### Discover with us
+
+- Introduce Horusec in app stores such as Ubuntu Store, apt-get, aur, Windows Store, and chocollatey
+- Automatic fixes for common security flaws
+- Create an interface to use Horusec on Microsoft Windows
+
+## Open source product management
+
+### Experience
+
+- Identify the personas using the product
+- Verify  the product’s visual identity while maintaining synergy with others
+- Sit and new maintaining external visual identity according to the product
+
+### Documentation
+
+- Evaluate all documentation present on the wiki in cycles of 6 months
+- Monitoring the  activities alongside Horusec’s leadership 
+- Identification of improvements in the product maturity document to ensure an evolution while maintaining quality
 
 ### Feedbacks
-- Processo de ouvir em nossos canais site e produtos para colher feedbacks de melhorias 
-- Análise e direcionamento para correções em base dos feedbacks
-- Mensurar efetividade através de tagueamento as jornadas nos canais do Horusec
 
-## Descubra conosco
-Dedicamos essa parte para pensarmos em inovações e visões para criarmos novidades fora da caixa! Acompanhe essas novas ideias, inclusive, nos diga se faz sentido e se fizer, faça parte dessa descoberta!
+- Process of listening in our channels, website, and products to gather feedback on improvements
+- Analysis and direction for corrections based on feedbacks
+- Measuring  the journeys effectiveness through tagging in Horusec channels
+
+
+## Discover with us
+
+We dedicate this part to get your vision and innovative ideas to create better Horusec features and to improve your developer experience.  Let us know if these new ideas make sense and be part of this discovery! 
