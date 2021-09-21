@@ -109,20 +109,11 @@ func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
 }
 
 func (f *Formatter) getLanguageByFile(file string) languages.Language {
-	languagesMap := f.getLanguagesMap()
-	return languagesMap[f.getExtension(file)]
-}
-
-func (f *Formatter) getExtension(file string) string {
-	ext := filepath.Ext(file)
-
-	for _, item := range f.getExtensionList() {
-		if item == ext {
-			return ext
-		}
+	if language, ok := f.getLanguagesMap()[filepath.Ext(file)]; ok {
+		return language
 	}
 
-	return ""
+	return languages.Unknown
 }
 
 func (f *Formatter) getLanguagesMap() map[string]languages.Language {
@@ -130,27 +121,13 @@ func (f *Formatter) getLanguagesMap() map[string]languages.Language {
 		".go":   languages.Go,
 		".java": languages.Java,
 		".js":   languages.Javascript,
+		".jsx":  languages.Javascript,
 		".tsx":  languages.Typescript,
 		".ts":   languages.Typescript,
 		".py":   languages.Python,
 		".rb":   languages.Ruby,
 		".c":    languages.C,
 		".html": languages.HTML,
-		"":      languages.Unknown,
-	}
-}
-
-func (f *Formatter) getExtensionList() []string {
-	return []string{
-		".go",
-		".java",
-		".js",
-		".tsx",
-		".ts",
-		".py",
-		".rb",
-		".c",
-		".html",
 	}
 }
 
