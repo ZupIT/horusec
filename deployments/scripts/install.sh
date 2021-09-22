@@ -86,7 +86,7 @@ horusecDownloadAndInstall () {
 
     chmod +x ./horusec
 
-    sudo mv ./horusec "$INSTALL_PATH"
+    mv ./horusec "$INSTALL_PATH"
 
     echo "Horusec was downloaded and moved to $INSTALL_PATH/horusec"
 
