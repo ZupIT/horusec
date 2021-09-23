@@ -252,6 +252,7 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleE
 	}
 }
 
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMail() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -264,6 +265,23 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMai
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjavax\.mail\.Authenticator\()`),
+			regexp.MustCompile(`put\(.*mail.smtp`),
+		},
+	}
+}
+
+func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "a6a2ae16-8ca5-46e1-bed4-822068a41a01",
+			Name:        "Server hostnames should be verified during SSL/TLS connections With JavaMail's",
+			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjakarta\.mail\.Authenticator\()`),
 			regexp.MustCompile(`put\(.*mail.smtp`),
 		},
 	}
@@ -917,6 +935,7 @@ func NewJavaAndQueryDatabaseOfSMSContacts() text.TextRule {
 	}
 }
 
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndPotentialPathTraversal() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -933,6 +952,24 @@ func NewJavaAndPotentialPathTraversal() text.TextRule {
 		},
 	}
 }
+
+func NewJakartaAndPotentialPathTraversal() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "2ed3def4-780f-4076-9cbc-d1943cd9adc2",
+			Name:        "Potential Path Traversal (file read)",
+			Description: "A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: \"new File(\"resources/images/\", FilenameUtils.getName(value_received_in_params))\". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.High.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(.*\@jakarta\.ws\.rs\.PathParam\(['|"]?\w+[[:print:]]['|"]?\).*)`),
+			regexp.MustCompile(`(.*new File\(['|"]?.*,\s?\w+\).*)`),
+		},
+	}
+}
+
 
 func NewJavaAndPotentialPathTraversalUsingScalaAPI() text.TextRule {
 	return text.TextRule{
@@ -1577,6 +1614,8 @@ func NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.T
 		},
 	}
 }
+
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1589,6 +1628,23 @@ func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.Tex
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`import javax.servlet.http.HttpServletRequest`),
+			regexp.MustCompile(`getRequestedSessionId\(\)`),
+		},
+	}
+}
+
+func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "2e301a1e-d2eb-4505-9dff-26341e159bdf",
+			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
+			Description: "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`import jakarta.servlet.http.HttpServletRequest`),
 			regexp.MustCompile(`getRequestedSessionId\(\)`),
 		},
 	}
@@ -1610,6 +1666,7 @@ func NewJavaAndLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 	}
 }
 
+//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1622,6 +1679,23 @@ func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`import javax.servlet.*`),
+			regexp.MustCompile(`public static void main\(String\[\] args\)`),
+		},
+	}
+}
+
+func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "84f60119-53e7-4ca2-beca-504891712b80",
+			Name:        "Web applications should not have a main method",
+			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`import jakarta.servlet.*`),
 			regexp.MustCompile(`public static void main\(String\[\] args\)`),
 		},
 	}

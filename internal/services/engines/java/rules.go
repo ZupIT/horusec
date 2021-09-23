@@ -73,6 +73,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndGetSIMOperatorName(),
 		and.NewJavaAndQueryDatabaseOfSMSContacts(),
 		and.NewJavaAndPotentialPathTraversal(),
+		and.NewJakartaAndPotentialPathTraversal(),
 		and.NewJavaAndPotentialPathTraversalUsingScalaAPI(),
 		and.NewJavaAndSMTPHeaderInjection(),
 		and.NewJavaAndInsecureSMTPSSLConnection(),
@@ -120,6 +121,7 @@ func rules() []engine.Rule {
 		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail(),
 		and.NewJavaAndFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks(),
 		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMail(),
+		and.NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail(),
 		and.NewJavaAndHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks(),
 		and.NewJavaAndLDAPAuthenticatedAnalyzeYourCode(),
 		and.NewJavaAndSecureRandomSeedsShouldNotBePredictable(),
@@ -127,7 +129,9 @@ func rules() []engine.Rule {
 		and.NewJavaAndActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization(),
 		and.NewJavaAndOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass(),
 		and.NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
+		and.NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed(),
 		and.NewJavaAndWebApplicationsShouldHotHaveAMainMethod(),
+		and.NewJakartaAndWebApplicationsShouldHotHaveAMainMethod(),
 
 		// Or Rules
 		or.NewJavaOrFileIsWorldReadable(),
