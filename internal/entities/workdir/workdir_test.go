@@ -57,7 +57,7 @@ func TestType(t *testing.T) {
 func TestMap(t *testing.T) {
 	t.Run("should success return a new map of workdir", func(t *testing.T) {
 		workDir := &WorkDir{}
-		assert.NotEmpty(t, workDir.Map())
+		assert.NotEmpty(t, workDir.LanguagePaths())
 	})
 }
 
@@ -66,6 +66,6 @@ func TestGetArrayByLanguage(t *testing.T) {
 		workDir := &WorkDir{
 			JavaScript: []string{"frontend"},
 		}
-		assert.NotEmpty(t, workDir.GetArrayByLanguage(languages.Javascript))
+		assert.NotEmpty(t, workDir.PathsOfLanguage(languages.Javascript))
 	})
 }

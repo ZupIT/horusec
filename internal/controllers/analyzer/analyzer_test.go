@@ -17,10 +17,14 @@ package analyzer
 import (
 	"bytes"
 	"errors"
+	"io"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
 	"github.com/ZupIT/horusec/internal/utils/mock"
 
@@ -30,6 +34,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/config"
@@ -39,6 +44,27 @@ import (
 	dockerClient "github.com/ZupIT/horusec/internal/services/docker/client"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
+
+func BenchmarkAnalyzerAnalyze(b *testing.B) {
+	b.ReportAllocs()
+	wd, err := os.Getwd()
+	require.Nil(b, err)
+
+	logger.LogSetOutput(io.Discard)
+	// Hack to not print analysis result and make benchmark clean
+	_, w, _ := os.Pipe()
+	os.Stdout = w
+
+	cfg := config.New()
+	cfg.ProjectPath = filepath.Join(wd, "..", "..", "..", "examples", "go")
+	analyzer := NewAnalyzer(cfg)
+
+	for i := 0; i < b.N; i++ {
+		if _, err := analyzer.Analyze(); err != nil {
+			b.Fatalf("Unexepcted error to analyze on benchmark: %v\n", err)
+		}
+	}
+}
 
 func TestNewAnalyzer(t *testing.T) {
 	t.Run("Should return type os struct correctly", func(t *testing.T) {

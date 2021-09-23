@@ -79,6 +79,14 @@ import (
 
 const LoadingDelay = 200 * time.Millisecond
 
+// detectVulnerabilityFn is a func that detect vulnerabilities on path.
+// detectVulnerabilityFn funcs run all in parallel, so a WaitGroup is required
+// to synchronize states of running analysis.
+//
+// detectVulnerabilityFn funcs can also spawn other detectVulnerabilityFn funcs
+// just passing the received WaitGroup to underlying funcs.
+type detectVulnerabilityFn func(wg *sync.WaitGroup, path string) error
+
 // LanguageDetect is the interface that detect all languages in some directory.
 type LanguageDetect interface {
 	Detect(directory string) ([]languages.Language, error)
@@ -198,23 +206,22 @@ func (a *Analyzer) formatAnalysisToSendToAPI() {
 	}
 }
 
-// nolint:funlen,gocyclo
-// NOTE: We ignore the funlen and gocyclo lint here because concurrency code is complicated
-//
 // startDetectVulnerabilities handle execution of all analysis in parallel
+//
+// We ignore the funlen and gocyclo lint here because concurrency code is complicated
+// nolint:funlen,gocyclo
 func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	var wg sync.WaitGroup
 	done := make(chan struct{})
 
-	wd := a.config.WorkDir
-	funcs := a.mapDetectVulnerabilityByLanguage()
+	funcs := a.detectVulnerabilityFuncs()
 
 	a.loading.Start()
 
 	go func() {
 		defer close(done)
 		for _, language := range langs {
-			for _, subPath := range wd.GetArrayByLanguage(language) {
+			for _, subPath := range a.config.WorkDir.PathsOfLanguage(language) {
 				projectSubPath := subPath
 				a.logProjectSubPath(language, projectSubPath)
 
@@ -253,9 +260,13 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 	}
 }
 
-//nolint:funlen // all Languages is greater than 15
-func (a *Analyzer) mapDetectVulnerabilityByLanguage() map[languages.Language]func(*sync.WaitGroup, string) error {
-	return map[languages.Language]func(*sync.WaitGroup, string) error{
+// detectVulnerabilityFuncs returns a map of language and functions
+// that detect vulnerabilities on some path.
+//
+// All Languages is greater than 15
+//nolint:funlen
+func (a *Analyzer) detectVulnerabilityFuncs() map[languages.Language]detectVulnerabilityFn {
+	return map[languages.Language]detectVulnerabilityFn{
 		languages.CSharp:     a.detectVulnerabilityCsharp,
 		languages.Leaks:      a.detectVulnerabilityLeaks,
 		languages.Go:         a.detectVulnerabilityGo,
@@ -289,7 +300,7 @@ func (a *Analyzer) detectVulnerabilityCsharp(wg *sync.WaitGroup, projectSubPath 
 		return err
 	}
 
-	scs.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	spawn(wg, scs.NewFormatter(a.formatter), projectSubPath)
 	dotnetcli.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
@@ -308,12 +319,12 @@ func (a *Analyzer) detectVulnerabilityLeaks(wg *sync.WaitGroup, projectSubPath s
 	return nil
 }
 
-func (a *Analyzer) detectVulnerabilityGo(_ *sync.WaitGroup, projectSubPath string) error {
+func (a *Analyzer) detectVulnerabilityGo(wg *sync.WaitGroup, projectSubPath string) error {
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
 		return err
 	}
 
-	gosec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	spawn(wg, gosec.NewFormatter(a.formatter), projectSubPath)
 	nancy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
@@ -362,11 +373,11 @@ func (a *Analyzer) detectVulnerabilityRuby(wg *sync.WaitGroup, projectSubPath st
 	return nil
 }
 
-func (a *Analyzer) detectVulnerabilityHCL(_ *sync.WaitGroup, projectSubPath string) error {
+func (a *Analyzer) detectVulnerabilityHCL(wg *sync.WaitGroup, projectSubPath string) error {
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.HCL)); err != nil {
 		return err
 	}
-	tfsec.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	spawn(wg, tfsec.NewFormatter(a.formatter), projectSubPath)
 	checkov.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }
@@ -392,13 +403,13 @@ func (a *Analyzer) detectVulnerabilityPHP(_ *sync.WaitGroup, projectSubPath stri
 	return nil
 }
 
-func (a *Analyzer) detectVulnerabilityGeneric(_ *sync.WaitGroup, projectSubPath string) error {
+func (a *Analyzer) detectVulnerabilityGeneric(wg *sync.WaitGroup, projectSubPath string) error {
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
 		return err
 	}
 
-	trivy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	semgrep.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
+	spawn(wg, trivy.NewFormatter(a.formatter), projectSubPath)
+	spawn(wg, semgrep.NewFormatter(a.formatter), projectSubPath)
 	dependencycheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	return nil
 }

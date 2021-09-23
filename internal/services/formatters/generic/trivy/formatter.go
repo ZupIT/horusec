@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/aquasecurity/trivy/pkg/types"
 	"github.com/google/uuid"
@@ -37,6 +38,13 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
+
+// trivyResult represents the results after execute Trivy commands.
+type trivyResult struct {
+	config string // Result of misconfigurations files.
+	fs     string // Result of filesystem vulnerabilities and misconfigurations.
+	err    error  // Error if exists.
+}
 
 type Formatter struct {
 	formatters.IService
@@ -69,18 +77,44 @@ func (f *Formatter) startTrivy(projectSubPath string) error {
 	return f.parse(projectSubPath, configOutput, fileSystemOutput)
 }
 
+// nolint:funlen
 func (f *Formatter) executeContainers(projectSubPath string) (string, string, error) {
-	configOutput, err := f.ExecuteContainer(f.getDockerConfig(CmdConfig, projectSubPath))
-	if err != nil {
-		return "", "", nil
-	}
+	var (
+		result     trivyResult
+		configDone = make(chan bool)
+		fsDone     = make(chan bool)
+		mutex      = new(sync.Mutex)
+	)
 
-	fileSystemOutput, err := f.ExecuteContainer(f.getDockerConfig(CmdFs, projectSubPath))
-	if err != nil {
-		return "", "", nil
-	}
+	// Scan Directory for Misconfigurations
+	go func() {
+		config, err := f.ExecuteContainer(f.getDockerConfig(CmdConfig, projectSubPath))
+		if err != nil {
+			mutex.Lock()
+			result.err = fmt.Errorf("trivy config cmd: %w", err)
+			mutex.Unlock()
+		}
+		result.config = config
+		configDone <- true
+	}()
 
-	return configOutput, fileSystemOutput, err
+	// Scan Filesystem for Vulnerabilities and Misconfigurations
+	go func() {
+		fs, err := f.ExecuteContainer(f.getDockerConfig(CmdFs, projectSubPath))
+		if err != nil {
+			mutex.Lock()
+			result.err = fmt.Errorf("trivy filesystem cmd: %w", err)
+			mutex.Unlock()
+		}
+		result.fs = fs
+		fsDone <- true
+	}()
+
+	// Wait for go routines to finish
+	<-configDone
+	<-fsDone
+
+	return result.config, result.fs, result.err
 }
 
 func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string) error {
@@ -90,6 +124,7 @@ func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string)
 
 	return f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
+
 func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(cmd.ToString(), projectSubPath, tools.Trivy),

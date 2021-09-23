@@ -89,8 +89,10 @@ func (w *WorkDir) Type() string {
 	return ""
 }
 
+// LanguagePaths returns a map of language and paths that should be analysed.
+//
 //nolint
-func (w *WorkDir) Map() map[languages.Language][]string {
+func (w *WorkDir) LanguagePaths() map[languages.Language][]string {
 	return map[languages.Language][]string{
 		languages.Go:         w.Go,
 		languages.CSharp:     w.CSharp,
@@ -112,8 +114,12 @@ func (w *WorkDir) Map() map[languages.Language][]string {
 	}
 }
 
-func (w *WorkDir) GetArrayByLanguage(language languages.Language) []string {
-	allPaths := w.Map()[language]
+// PathsOfLanguage return the paths of language that should be analyzed.
+//
+// Return the paths configured if has at least one, otherwise return an
+// slice with an empty path string.
+func (w *WorkDir) PathsOfLanguage(language languages.Language) []string {
+	allPaths := w.LanguagePaths()[language]
 	if len(allPaths) > 0 {
 		return allPaths
 	}
