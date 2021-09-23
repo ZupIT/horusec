@@ -287,23 +287,6 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakarta
 	}
 }
 
-func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "90ee28f2-d622-4a5e-9d9d-13fb53ea5ca7",
-			Name:        "Server hostnames should be verified during SSL/TLS connections With JavaMail's",
-			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjakarta\.mail\.Authenticator\()`),
-			regexp.MustCompile(`put\(.*mail.smtp`),
-		},
-	}
-}
-
 func NewJavaAndTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -987,22 +970,6 @@ func NewJakartaAndPotentialPathTraversal() text.TextRule {
 	}
 }
 
-func NewJakartaAndPotentialPathTraversal() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "8b8acafb-b4e5-45d2-aa8a-2a297c2c7856",
-			Name:        "Potential Path Traversal (file read)",
-			Description: "A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: \"new File(\"resources/images/\", FilenameUtils.getName(value_received_in_params))\". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(.*\@jakarta\.ws\.rs\.PathParam\(['|"]?\w+[[:print:]]['|"]?\).*)`),
-			regexp.MustCompile(`(.*new File\(['|"]?.*,\s?\w+\).*)`),
-		},
-	}
-}
 
 func NewJavaAndPotentialPathTraversalUsingScalaAPI() text.TextRule {
 	return text.TextRule{
@@ -1712,23 +1679,6 @@ func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`import javax.servlet.*`),
-			regexp.MustCompile(`public static void main\(String\[\] args\)`),
-		},
-	}
-}
-
-func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "3b02a174-58a8-47da-b732-444899361a24",
-			Name:        "Web applications should not have a main method",
-			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import jakarta.servlet.*`),
 			regexp.MustCompile(`public static void main\(String\[\] args\)`),
 		},
 	}
