@@ -273,7 +273,7 @@ func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJavaMai
 func NewJavaAndServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "90ee28f2-d622-4a5e-9d9d-13fb53ea5ca7",
+			ID:          "a6a2ae16-8ca5-46e1-bed4-822068a41a01",
 			Name:        "Server hostnames should be verified during SSL/TLS connections With JavaMail's",
 			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
 			Severity:    severities.High.ToString(),
@@ -956,7 +956,7 @@ func NewJavaAndPotentialPathTraversal() text.TextRule {
 func NewJakartaAndPotentialPathTraversal() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "8b8acafb-b4e5-45d2-aa8a-2a297c2c7856",
+			ID:          "2ed3def4-780f-4076-9cbc-d1943cd9adc2",
 			Name:        "Potential Path Traversal (file read)",
 			Description: "A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: \"new File(\"resources/images/\", FilenameUtils.getName(value_received_in_params))\". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.",
 			Severity:    severities.High.ToString(),
@@ -1636,7 +1636,7 @@ func NewJavaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.Tex
 func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "fa0ccc8d-f6bd-4be2-8764-f38194fd9185",
+			ID:          "2e301a1e-d2eb-4505-9dff-26341e159bdf",
 			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
 			Description: "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
 			Severity:    severities.High.ToString(),
@@ -1687,7 +1687,7 @@ func NewJavaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "3b02a174-58a8-47da-b732-444899361a24",
+			ID:          "84f60119-53e7-4ca2-beca-504891712b80",
 			Name:        "Web applications should not have a main method",
 			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
 			Severity:    severities.High.ToString(),
