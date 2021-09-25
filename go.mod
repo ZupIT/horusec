@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.16
+	github.com/ZupIT/horusec-devkit v1.0.17
 	github.com/ZupIT/horusec-engine v0.3.5
 	github.com/aquasecurity/fanal v0.0.0-20210919175846-461bc0c5a251
 	github.com/aquasecurity/trivy v0.19.2
