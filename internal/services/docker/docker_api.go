@@ -24,7 +24,6 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
-	"time"
 
 	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
 
@@ -192,11 +191,12 @@ func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput
 	}
 
 	containerOutput, err = d.readContainer(containerID)
+	if err != nil {
+		return "", err
+	}
 	d.loggerAPIStatus(messages.MsgDebugDockerAPIContainerRead, imageNameWithTag)
-	const maxTimeWaitToRemoveContainer = 5
-	time.Sleep(maxTimeWaitToRemoveContainer * time.Second)
 	d.removeContainer(containerID)
-	return containerOutput, err
+	return containerOutput, nil
 }
 
 func (d *API) removeContainer(containerID string) {
