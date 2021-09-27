@@ -19,6 +19,8 @@ builds:
     main: ./cmd/app/main.go
     ldflags:
       - -X github.com/ZupIT/horusec/config.version=v{{ .Version }}
+      - -X github.com/ZupIT/horusec/config.commit={{ .Commit }}
+      - -X github.com/ZupIT/horusec/config.date={{ .Date }}
     goos:
       - linux
       - windows
@@ -43,7 +45,8 @@ checksum:
   name_template: 'checksums.txt'
 release:
   draft: true
-
+  extra_files:
+    - glob: deployments/cosign.pub
 nfpms:
   - id: horusec
     package_name: horusec
@@ -65,3 +68,34 @@ nfpms:
       - docker
     bindir: /usr/local/bin
     priority: extra
+signs:
+  - cmd: cosign
+    stdin: '{{ .Env.COSIGN_PWD }}'
+    args: ["sign-blob", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "-output=${signature}", "${artifact}"]
+    artifacts: all
+docker_signs:
+  - cmd: cosign
+    args: ["sign", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "${artifact}"]
+    artifacts: all
+    stdin: '{{ .Env.COSIGN_PWD }}'
+dockers:
+  - id: horusec
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec
+    image_templates:
+      - "horuszup/horusec-cli:latest"
+      - "horuszup/horusec-cli:{{ .Tag }}"
+      - "horuszup/horusec-cli:v{{ .Major }}"
+    skip_push: false
+    dockerfile: ./deployments/Dockerfile-gorelease
+    use: docker
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    push_flags:
+      - --tls-verify=false
