@@ -75,7 +75,7 @@ jobs:
           args: release --snapshot --skip-publish
         env:
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          GORELEASER_CURRENT_TAG: alpha
+          GORELEASER_CURRENT_TAG: v0.0.0-alpha
 
       - name: Update alpha release
         uses: meeDamian/github-release@2.0
