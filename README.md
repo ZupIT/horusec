@@ -104,9 +104,7 @@ To use horusec-cli and check the application's vulnerabilities, use the followin
 ```bash
 horusec start -p .
 ```
-{{% alert color="warning" %}}
-When horusec starts an analysis, it creates a folder called **`.horusec`**. This folder is the basis for not changing your code. We recommend you to add the line **`.horusec`** into your **`.gitignore`** file so that this folder does not need to be sent to your git server.
-{{% /alert %}}
+> When horusec starts an analysis, it creates a folder called **`.horusec`**. This folder is the basis for not changing your code. We recommend you to add the line **`.horusec`** into your **`.gitignore`** file so that this folder does not need to be sent to your git server.
 
 ### **Using Docker**
 It is possible to use Horusec through a docker image **`horuszup/horusec-cli:latest`**.
