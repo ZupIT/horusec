@@ -13,8 +13,9 @@
 # limitations under the License.
 
 name: DCO Validator
-on: [ "pull_request" ]
-
+on:
+  pull_request:
+    types: [opened, synchronize]
 jobs:
   dco-gpg-validator:
     runs-on: ubuntu-latest
