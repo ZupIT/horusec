@@ -14,10 +14,9 @@
 
 name: Coverage
 on: [ "push" ]
+permissions: read-all
 jobs:
   coverage:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:

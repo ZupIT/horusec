@@ -14,7 +14,7 @@
 
 name: DCO Validator
 on: [ "push" ]
-
+permissions: read-all
 jobs:
   dco-gpg-validator:
     runs-on: ubuntu-latest

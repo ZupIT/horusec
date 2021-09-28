@@ -14,10 +14,9 @@
 
 name: Security
 on: [ "push" ]
+permissions: read-all
 jobs:
   security:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,4 +27,5 @@ jobs:
           HORUSEC_CLI_REPOSITORY_NAME: ${{ secrets.HORUSEC_CLI_REPOSITORY_NAME }}
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-          horusec start -p . -e true -G true
+          horusec start -p . -e true -G true --show-vulnerabilities-types="Vulnerability, Risk Accepted"
+

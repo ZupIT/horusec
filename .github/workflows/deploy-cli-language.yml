@@ -1,69 +1,70 @@
-# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+## Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#name: DeployCLITools
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#permissions: read-all
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      language:
+#        description: 'Language to update on dockerhub: c, csharp, dart, elixir, generic, go, hcl, java, javascript, kotlin, leaks, php, python, ruby, shell, yaml'
+#        required: true
+#      update_type:
+#        description: 'Update Type: alpha, rc, release, minor, major'
+#        required: true
+#      is_to_update_latest:
+#        description: 'Is to update latest: true, false'
+#        required: true
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-name: DeployCLITools
-
-on:
-  workflow_dispatch:
-    inputs:
-      language:
-        description: 'Language to update on dockerhub: c, csharp, dart, elixir, generic, go, hcl, java, javascript, kotlin, leaks, php, python, ruby, shell, yaml'
-        required: true
-      update_type:
-        description: 'Update Type: alpha, rc, release, minor, major'
-        required: true
-      is_to_update_latest:
-        description: 'Is to update latest: true, false'
-        required: true
-
-jobs:
-  deploy:
-    permissions:
-      contents: read
-    name: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
-        id: go
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: deploy
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
-          then
-              echo "Variables DOCKER_USERNAME, DOCKER_PASSWORD is required"
-              exit 1
-          fi
-
-          UPDATE_TYPE="${{ github.event.inputs.update_type }}"
-          IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
-          LANGUAGE="${{ github.event.inputs.language }}"
-
-          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-
-          chmod +x ./deployments/scripts/update-language.sh
-          ./deployments/scripts/update-language.sh $LANGUAGE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v7
-        with:
-          author_name: "Horusec"
-          author_email: "horusec@zup.com.br"
-          message: "[skip ci] update versioning file"
-          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+#jobs:
+#  deploy:
+#    permissions:
+#      contents: write
+#    name: deploy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Set up Go
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: 1.17
+#        id: go
+#      - name: Check out code
+#        uses: actions/checkout@v2
+#      - name: deploy
+#        env:
+#          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#        run: |
+#          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
+#          then
+#              echo "Variables DOCKER_USERNAME, DOCKER_PASSWORD is required"
+#              exit 1
+#          fi
+#
+#          UPDATE_TYPE="${{ github.event.inputs.update_type }}"
+#          IS_TO_UPDATE_LATEST="${{ github.event.inputs.is_to_update_latest }}"
+#          LANGUAGE="${{ github.event.inputs.language }}"
+#
+#          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+#
+#          chmod +x ./deployments/scripts/update-language.sh
+#          ./deployments/scripts/update-language.sh $LANGUAGE $UPDATE_TYPE $IS_TO_UPDATE_LATEST
+#      - name: Commit changes
+#        uses: EndBug/add-and-commit@v7
+#        with:
+#          author_name: "Horusec"
+#          author_email: "horusec@zup.com.br"
+#          message: "[skip ci] update versioning file"
+#          GITHUB_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
