@@ -226,7 +226,7 @@ func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string
 		if workDir == nil {
 			return errors.New(messages.MsgErrorParseStringToWorkDir)
 		}
-		for _, pathsByLanguage := range workDir.Map() {
+		for _, pathsByLanguage := range workDir.LanguagePaths() {
 			for _, projectSubPath := range pathsByLanguage {
 				err := au.validateIfExistPathInProjectToWorkDir(projectPath, projectSubPath)
 				if err != nil {
