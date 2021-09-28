@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: Lint
-on: [ "push" ]
+on: [ "pull_request" ]
 jobs:
   lint:
     permissions:
