@@ -205,7 +205,7 @@ Note: For this option, your e-mail must be the same in registered in GitHub.
 ## **Roadmap**
 We have a project [**roadmap**](ROADMAP.md), you can come contribute with us!
 
-Horus also have other repositories, check out some of our other projects:
+Horusec also have other repositories, check out some of our other projects:
 
 - [**Horusec Platform**](https://github.com/ZupIT/horusec-platform)
 - [**Horusec DevKit**](https://github.com/ZupIT/horusec-devkit)
