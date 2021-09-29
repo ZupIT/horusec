@@ -152,7 +152,7 @@ horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 
 Check out [**the tutorial on how to create an authorization token through Horusec Manager Web Service**](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token).
 
-**WARNING:** Our web services was moved to a new [**repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://horusec.io/docs/migrate-v1-to-v2).
+**WARNING:** Our web services was moved to a [** new repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://horusec.io/docs/migrate-v1-to-v2).
 
 ### **Using Visual Studio Code**
 You can analyze your project using Horusec's Visual Studio Code extension.
