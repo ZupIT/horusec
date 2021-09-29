@@ -66,7 +66,7 @@ Check out our [**Documentation**](https://horusec.io/docs/overview/), you will s
 
 - Docker
 
-To run Horusec with all the tools we use, you need Docker installed in your machine. 
+You need Docker installed in your machine in order to run Horusec with all the tools we use.
 If you don't have Docker, we have a [**flag**](https://horusec.io/docs/cli/resources/#3-flags) `-D true` that will disable the dependency, but it also loses much of the analysis power. 
 We recommend using it with Docker.
 
