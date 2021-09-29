@@ -143,7 +143,7 @@ curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && .
 
 ### **Using Horusec-Web application**
 Manage your vulnerabilities through our web interface. You can have a dashboard of metrics about your vulnerabilities, control of false positives, authorization token, update of vulnerabilities and much more.
-See more about the [**web application**](https://github.com/ZupIT/horusec-platform).
+See the [**web application**](https://github.com/ZupIT/horusec-platform) section to keep reading about it.
 
 Check out the example below, it is sending an analysis to Horusec web services:
 ```bash
