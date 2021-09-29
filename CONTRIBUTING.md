@@ -90,7 +90,7 @@ Horusec has other repositories and you can check the README for each one of them
 ### **First contribution**
 Contributing to a new feature is only allowed in the [**main repository**](https://github.com/ZupIT/horusec).
 
-Before contributing to this repository, please discuss the changes you wish to make via email or [**forum**](https://forum.zup.com.br/c/en/horusec/14). 
+Before contributing to this repository, please discuss the changes you wish to make via e-mail or [**forum**](https://forum.zup.com.br/c/en/horusec/14). 
 
 ### **Add new feature, bugfixing or improvement**
 If you want to add an improvement, a new feature or bugfix, follow the steps to contribute: 
