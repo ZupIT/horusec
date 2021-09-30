@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec/cmd/app/license"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -73,6 +74,7 @@ horusec start -p="/home/user/projects/my-project"
 		)
 
 	rootCmd.AddCommand(version.NewVersionCommand(cfg).CreateCobraCmd())
+	rootCmd.AddCommand(license.NewLicenseCommand(cfg).CreateLicenseCommand())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
 

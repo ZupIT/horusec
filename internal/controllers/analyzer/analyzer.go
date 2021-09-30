@@ -124,7 +124,7 @@ func NewAnalyzer(cfg *config.Config) *Analyzer {
 		CreatedAt: time.Now(),
 		Status:    enumsAnalysis.Running,
 	}
-	dockerAPI := docker.New(dockerClient.NewDockerClient(), cfg, entity.ID)
+	dockerAPI := docker.New(dockerClient.NewDockerClient(), cfg, entity.ID, false)
 	return &Analyzer{
 		docker:          dockerAPI,
 		analysis:        entity,

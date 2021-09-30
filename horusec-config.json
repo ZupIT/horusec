@@ -1,4 +1,8 @@
 {
+  "horusecCliPermittedLicenses": [
+    "MIT"
+  ],
+  "horusecCliPermittedDependencies": [],
   "horusecCliCertInsecureSkipVerify": false,
   "horusecCliCertPath": "",
   "horusecCliContainerBindProjectPath": "",
@@ -57,7 +61,7 @@
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 10,
   "horusecCliPrintOutputType": "",
-  "horusecCliProjectPath": "./",
+  "horusecCliProjectPath": "",
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
   "horusecCliRepositoryName": "",
   "horusecCliReturnErrorIfFoundVulnerability": true,

@@ -81,15 +81,17 @@ type API struct {
 	config                 *config.Config
 	analysisID             uuid.UUID
 	pathDestinyInContainer string
+	ignoredAnalysisID      bool
 }
 
-func New(client Client, cfg *config.Config, analysisID uuid.UUID) *API {
+func New(client Client, cfg *config.Config, analysisID uuid.UUID, ignoreAnalysisID bool) *API {
 	return &API{
 		ctx:                    context.Background(),
 		dockerClient:           client,
 		config:                 cfg,
 		analysisID:             analysisID,
 		pathDestinyInContainer: "/src",
+		ignoredAnalysisID:      ignoreAnalysisID,
 	}
 }
 
@@ -273,7 +275,7 @@ func (d *API) getContainerHostConfig() *container.HostConfig {
 		Mounts: []mount.Mount{
 			{
 				Type:   mount.TypeBind,
-				Source: d.getSourceFolder(),
+				Source: d.removeHorusecFolderAndIDIfIgnoreActive(d.getSourceFolder()),
 				Target: d.pathDestinyInContainer,
 				BindOptions: &mount.BindOptions{
 					Propagation: mount.PropagationPrivate,
@@ -330,6 +332,15 @@ func (d *API) getSourceFolder() (path string) {
 	if separator == ":" {
 		return d.getSourceFolderFromWindows(path)
 	}
+	return path
+}
+
+func (d *API) removeHorusecFolderAndIDIfIgnoreActive(path string) string {
+	if d.ignoredAnalysisID {
+		return strings.ReplaceAll(path, fmt.Sprintf("/.horusec/%s", d.analysisID.String()), "")
+
+	}
+
 	return path
 }
 

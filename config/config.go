@@ -75,6 +75,8 @@ const (
 	EnvLogFilePath                     = "HORUSEC_CLI_LOG_FILE_PATH"
 	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
 	EnvEnableShellCheck                = "HORUSEC_CLI_ENABLE_SHELLCHECK"
+	EnvPermittedDependencies           = "HORUSEC_CLI_PERMITTED_DEPENDENCIES"
+	EnvPermittedLicenses               = "HORUSEC_CLI_PERMITTED_LICENSES"
 )
 
 type GlobalOptions struct {
@@ -119,6 +121,8 @@ type StartOptions struct {
 	Headers                         map[string]string         `json:"headers"`
 	WorkDir                         *workdir.WorkDir          `json:"work_dir"`
 	CustomImages                    customimages.CustomImages `json:"custom_images"`
+	PermittedLicenses               []string                  `json:"permittedLicenses"`
+	PermittedDependencies           []string                  `json:"permittedDependencies"`
 }
 
 type Config struct {
@@ -176,6 +180,8 @@ func New() *Config {
 			EnableInformationSeverity:       false,
 			EnableOwaspDependencyCheck:      false,
 			EnableShellCheck:                false,
+			PermittedDependencies:           make([]string, 0),
+			PermittedLicenses:               make([]string, 0),
 		},
 	}
 }
@@ -282,6 +288,12 @@ func (c *Config) MergeFromConfigFile() *Config {
 	)
 	c.EnableOwaspDependencyCheck = viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck))
 	c.EnableShellCheck = viper.GetBool(c.toLowerCamel(EnvEnableShellCheck))
+	c.PermittedDependencies = valueordefault.GetSliceStringValueOrDefault(
+		viper.GetStringSlice(c.toLowerCamel(EnvPermittedDependencies)), c.PermittedDependencies,
+	)
+	c.PermittedLicenses = valueordefault.GetSliceStringValueOrDefault(
+		viper.GetStringSlice(c.toLowerCamel(EnvPermittedLicenses)), c.PermittedLicenses,
+	)
 	return c
 }
 
@@ -326,6 +338,8 @@ func (c *Config) MergeFromEnvironmentVariables() *Config {
 	c.EnableInformationSeverity = env.GetEnvOrDefaultBool(EnvEnableInformationSeverity, c.EnableInformationSeverity)
 
 	c.ShowVulnerabilitiesTypes = c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvShowVulnerabilitiesTypes, c.ShowVulnerabilitiesTypes))
+	c.PermittedDependencies = c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvPermittedDependencies, c.PermittedDependencies))
+	c.PermittedLicenses = c.factoryParseInputToSliceString(env.GetEnvOrDefaultInterface(EnvPermittedLicenses, c.PermittedLicenses))
 
 	c.LogFilePath = env.GetEnvOrDefault(EnvLogFilePath, c.LogFilePath)
 	c.EnableOwaspDependencyCheck = env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.EnableOwaspDependencyCheck)
@@ -409,6 +423,8 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvLogFilePath):                     c.LogFilePath,
 		c.toLowerCamel(EnvEnableOwaspDependencyCheck):      c.EnableOwaspDependencyCheck,
 		c.toLowerCamel(EnvEnableShellCheck):                c.EnableShellCheck,
+		c.toLowerCamel(EnvPermittedDependencies):           c.PermittedDependencies,
+		c.toLowerCamel(EnvPermittedLicenses):               c.PermittedLicenses,
 	}
 }
 
