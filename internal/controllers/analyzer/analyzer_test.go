@@ -59,7 +59,7 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	analyzer := NewAnalyzer(cfg)
 
 	for i := 0; i < b.N; i++ {
-		if _, err := analyzer.Analyze(); err != nil {
+		if err := analyzer.Analyze(); err != nil {
 			b.Fatalf("Unexepcted error to analyze on benchmark: %v\n", err)
 		}
 	}
@@ -97,7 +97,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}, nil)
 
 		printResultMock := &printresults.Mock{}
-		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("StartPrintResults").Return(nil)
 		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
@@ -128,9 +128,8 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.Analyze()
+		err := controller.Analyze()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
 		configs := config.New()
@@ -155,7 +154,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}, nil)
 
 		printResultMock := &printresults.Mock{}
-		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("StartPrintResults").Return(nil)
 		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
@@ -186,9 +185,8 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.Analyze()
+		err := controller.Analyze()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 	t.Run("Should run error in language detect", func(t *testing.T) {
 		configs := config.New()
@@ -198,7 +196,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{}, errors.New("test"))
 
 		printResultMock := &printresults.Mock{}
-		printResultMock.On("StartPrintResults").Return(0, nil)
+		printResultMock.On("StartPrintResults").Return(nil)
 		printResultMock.On("SetAnalysis")
 
 		horusecAPIMock := &horusecAPI.Mock{}
@@ -229,8 +227,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		}
 
 		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
-		totalVulns, err := controller.Analyze()
+		err := controller.Analyze()
 		assert.Error(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 }

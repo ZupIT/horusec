@@ -37,7 +37,8 @@ import (
 )
 
 var (
-	ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
+	ErrOutputJSON                    = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
+	ErrorUnknownVulnerabilitiesFound = errors.New("unknown vulnerabilities found")
 )
 
 type SonarQubeConverter interface {
@@ -69,9 +70,9 @@ func (pr *PrintResults) SetAnalysis(entity *analysis.Analysis) {
 	pr.analysis = entity
 }
 
-func (pr *PrintResults) Print() (totalVulns int, err error) {
+func (pr *PrintResults) Print() error {
 	if err := pr.factoryPrintByType(); err != nil {
-		return 0, err
+		return err
 	}
 
 	pr.checkIfExistVulnerabilityOrNoSec()
@@ -82,9 +83,16 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs)
 	}
 
-	return pr.totalVulns, nil
+	return pr.checkIfHasUnkownVulnerabilities()
 }
-
+func (pr *PrintResults) checkIfHasUnkownVulnerabilities() error {
+	for i := range pr.analysis.AnalysisVulnerabilities {
+		if pr.analysis.AnalysisVulnerabilities[i].Vulnerability.Type == enumsVulnerability.Vulnerability {
+			return ErrorUnknownVulnerabilitiesFound
+		}
+	}
+	return nil
+}
 func (pr *PrintResults) factoryPrintByType() error {
 	switch {
 	case pr.configs.PrintOutputType == outputtype.JSON:

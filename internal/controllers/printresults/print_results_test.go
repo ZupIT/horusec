@@ -18,21 +18,19 @@ import (
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/utils/mock"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/ZupIT/horusec/config"
 )
 
 func TestStartPrintResultsMock(t *testing.T) {
 	t.Run("Should return correctly mock", func(t *testing.T) {
 		m := &Mock{}
-		m.On("StartPrintResults").Return(0, nil)
+		m.On("StartPrintResults").Return(0, false, nil)
 
-		totalVulns, err := m.Print()
+		err := m.Print()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 }
 
@@ -44,10 +42,9 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			AnalysisVulnerabilities: []entitiesAnalysis.AnalysisVulnerabilities{},
 		}
 
-		totalVulns, err := NewPrintResults(analysis, configs).Print()
+		err := NewPrintResults(analysis, configs).Print()
 
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 
 	t.Run("Should not return errors with type JSON", func(t *testing.T) {
@@ -63,9 +60,8 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		totalVulns, err := printResults.Print()
+		err := printResults.Print()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 
 	t.Run("Should return not errors because exists error in analysis", func(t *testing.T) {
@@ -76,10 +72,9 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 		configs := &config.Config{}
 		configs.PrintOutputType = "JSON"
 
-		totalVulns, err := NewPrintResults(analysis, configs).Print()
+		err := NewPrintResults(analysis, configs).Print()
 
 		assert.NoError(t, err)
-		assert.Equal(t, 0, totalVulns)
 	})
 
 	t.Run("Should return errors with type JSON", func(t *testing.T) {
@@ -95,55 +90,9 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		_, err := printResults.Print()
+		err := printResults.Print()
 
 		assert.Error(t, err)
-	})
-
-	t.Run("Should return 12 vulnerabilities with timeout occurs", func(t *testing.T) {
-		analysisMock := mock.CreateAnalysisMock()
-
-		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
-		configs := &config.Config{}
-		configs.IsTimeout = true
-		printResults := &PrintResults{
-			analysis: analysisMock,
-			configs:  configs,
-		}
-
-		totalVulns, err := printResults.Print()
-
-		assert.NoError(t, err)
-		assert.Equal(t, 12, totalVulns)
-	})
-
-	t.Run("Should return 12 vulnerabilities", func(t *testing.T) {
-		analysisMock := mock.CreateAnalysisMock()
-
-		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
-
-		printResults := &PrintResults{
-			analysis: analysisMock,
-			configs:  &config.Config{},
-		}
-
-		totalVulns, err := printResults.Print()
-
-		assert.NoError(t, err)
-		assert.Equal(t, 12, totalVulns)
-	})
-
-	t.Run("Should return 12 vulnerabilities with commit authors", func(t *testing.T) {
-		configs := &config.Config{}
-		configs.EnableCommitAuthor = true
-		analysisMock := mock.CreateAnalysisMock()
-
-		analysisMock.AnalysisVulnerabilities = append(analysisMock.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{Vulnerability: mock.CreateAnalysisMock().AnalysisVulnerabilities[0].Vulnerability})
-
-		totalVulns, err := NewPrintResults(analysisMock, configs).Print()
-
-		assert.NoError(t, err)
-		assert.Equal(t, 12, totalVulns)
 	})
 
 	t.Run("Should not return errors when configured to ignore vulnerabilities with severity LOW and MEDIUM", func(t *testing.T) {
@@ -169,8 +118,7 @@ func TestPrintResults_StartPrintResults(t *testing.T) {
 			configs:  configs,
 		}
 
-		totalVulns, err := printResults.Print()
-		assert.NoError(t, err)
-		assert.Equal(t, 1, totalVulns)
+		err := printResults.Print()
+		assert.ErrorIs(t, err, ErrorUnknownVulnerabilitiesFound)
 	})
 }

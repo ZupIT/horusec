@@ -96,7 +96,7 @@ type LanguageDetect interface {
 //
 // Print print the results to stdout and return the total vulnerabilities that was printed.
 type PrintResults interface {
-	Print() (int, error)
+	Print() error
 	SetAnalysis(analysis *analysis.Analysis)
 }
 
@@ -137,11 +137,11 @@ func NewAnalyzer(cfg *config.Config) *Analyzer {
 	}
 }
 
-func (a *Analyzer) Analyze() (totalVulns int, err error) {
+func (a *Analyzer) Analyze() error {
 	a.removeTrashByInterruptProcess()
-	totalVulns, err = a.runAnalysis()
+	err := a.runAnalysis()
 	a.removeHorusecFolder()
-	return totalVulns, err
+	return err
 }
 
 func (a *Analyzer) removeTrashByInterruptProcess() {
@@ -163,16 +163,16 @@ func (a *Analyzer) removeHorusecFolder() {
 	}
 }
 
-func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
+func (a *Analyzer) runAnalysis() error {
 	langs, err := a.languageDetect.Detect(a.config.ProjectPath)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	a.startDetectVulnerabilities(langs)
 	return a.sendAnalysisAndStartPrintResults()
 }
 
-func (a *Analyzer) sendAnalysisAndStartPrintResults() (int, error) {
+func (a *Analyzer) sendAnalysisAndStartPrintResults() error {
 	a.formatAnalysisToSendToAPI()
 	a.horusec.SendAnalysis(a.analysis)
 	analysisSaved := a.horusec.GetAnalysis(a.analysis.ID)

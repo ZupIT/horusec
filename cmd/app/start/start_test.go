@@ -21,6 +21,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/controllers/printresults"
+
 	"github.com/google/uuid"
 
 	"github.com/spf13/cobra"
@@ -74,8 +76,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
 
@@ -105,7 +106,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -137,7 +138,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(printresults.ErrorUnknownVulnerabilitiesFound)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -169,7 +170,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -201,7 +202,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -234,7 +235,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -268,7 +269,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")
@@ -302,7 +303,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
+		analyzerControllerMock.On("AnalysisDirectory").Return(nil)
 
 		requirementsMock := &requirements.Mock{}
 		requirementsMock.On("ValidateDocker")

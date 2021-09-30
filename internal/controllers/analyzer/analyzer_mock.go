@@ -24,7 +24,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Analyze() (int, error) {
+func (m *Mock) Analyze() error {
 	args := m.MethodCalled("AnalysisDirectory")
-	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 0)
+	return utilsMock.ReturnNilOrError(args, 0)
 }

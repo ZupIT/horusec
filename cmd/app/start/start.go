@@ -20,6 +20,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ZupIT/horusec/internal/controllers/printresults"
+
 	"github.com/ZupIT/horusec/internal/controllers/requirements"
 
 	"github.com/ZupIT/horusec/config"
@@ -38,7 +40,7 @@ import (
 //
 // Analyze returns the total of vulnerabilies founded on directory
 type Analyzer interface {
-	Analyze() (int, error)
+	Analyze() error
 }
 
 // Prompt is the interface that interact with use terminal prompt
@@ -303,28 +305,28 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
-	totalVulns, err := s.startAnalysis(cmd)
-	if err != nil {
-		return err
-	}
-
-	if totalVulns > 0 && s.configs.ReturnErrorIfFoundVulnerability {
-		cmd.SetUsageFunc(func(command *cobra.Command) error {
+	if err := s.startAnalysis(cmd); err != nil {
+		if errors.Is(err, printresults.ErrorUnknownVulnerabilitiesFound) {
+			if s.configs.ReturnErrorIfFoundVulnerability {
+				cmd.SetUsageFunc(func(command *cobra.Command) error {
+					return nil
+				})
+				return errors.New("analysis finished with blocking vulnerabilities")
+			}
 			return nil
-		})
-
-		return errors.New("analysis finished with blocking vulnerabilities")
+		}
+		return err
 	}
 	return nil
 }
 
-func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
+func (s *Start) startAnalysis(cmd *cobra.Command) error {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err)
-		return 0, err
+		return err
 	}
 	if err := s.configsValidations(cmd); err != nil {
-		return 0, err
+		return err
 	}
 	return s.executeAnalysisDirectory()
 }
@@ -364,7 +366,7 @@ func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
 	return true
 }
 
-func (s *Start) executeAnalysisDirectory() (totalVulns int, err error) {
+func (s *Start) executeAnalysisDirectory() error {
 	if s.analyzer == nil {
 		s.analyzer = analyzer.NewAnalyzer(s.configs)
 	}

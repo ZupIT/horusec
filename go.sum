@@ -165,12 +165,8 @@ github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMx
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/VividCortex/ewma v1.1.1/go.mod h1:2Tkkvm3sRDVXaiyucHiACn4cqf7DpdyLvmxzcbUokwA=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
-github.com/ZupIT/horusec-devkit v1.0.16 h1:MBO1RjochmJfrWYm0Jr6qC9c5x6t/5LwjVDhZvdzOnE=
-github.com/ZupIT/horusec-devkit v1.0.16/go.mod h1:SEzhqEWkXrJ5/N+tGfQVvIsBsuWaU0x0g7wVl6fqlmc=
 github.com/ZupIT/horusec-devkit v1.0.17 h1:j4KtyP3bV7eAWNZtk/2ZB9TIZYaD7QyUv0zRDPuKWiA=
 github.com/ZupIT/horusec-devkit v1.0.17/go.mod h1:wTsXrXTD1YrChTQEng8EvVg+zL9nMUIQkhUG85sQwuQ=
-github.com/ZupIT/horusec-engine v0.3.5 h1:RwjMuogcG/rO0UQ4Ci1qvmOOWDPW/W4bgCJQAZ1EnHg=
-github.com/ZupIT/horusec-engine v0.3.5/go.mod h1:8IoM2BGMJ7jHThgkTIWHD/S4YeEgLD0j3tsxy6nwyd0=
 github.com/ZupIT/horusec-engine v0.3.6 h1:m/kL9K8+OVAaYjagoDmNFFDEA3BnyJbcx0DfNYGyaDM=
 github.com/ZupIT/horusec-engine v0.3.6/go.mod h1:s3SZQ9gXXlEcIagEuopZJga+Dw6RBFWMD7Rh5A+tIys=
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
@@ -553,8 +549,6 @@ github.com/go-chi/chi v4.1.2+incompatible/go.mod h1:eB3wogJHnLi3x/kFX2A+IbTBlXxm
 github.com/go-chi/cors v1.2.0/go.mod h1:sSbTewc+6wYHBBCW7ytsFSn836hqM7JxpglAy2Vzc58=
 github.com/go-critic/go-critic v0.4.1/go.mod h1:7/14rZGnZbY6E38VEGk2kVhoq6itzc1E68facVDK23g=
 github.com/go-critic/go-critic v0.4.3/go.mod h1:j4O3D4RoIwRqlZw5jJpx0BNfXWWbpcJoKu5cYSe4YmQ=
-github.com/go-enry/go-enry/v2 v2.7.1 h1:WCqtfyteIz61GYk9lRVy8HblvIv4cP9GIiwm/6txCbU=
-github.com/go-enry/go-enry/v2 v2.7.1/go.mod h1:GVzIiAytiS5uT/QiuakK7TF1u4xDab87Y8V5EJRpsIQ=
 github.com/go-enry/go-enry/v2 v2.7.2 h1:IBtFo783PgL7oyd/TL1/8HQFMNzOAl4NaLPbzNOvbwM=
 github.com/go-enry/go-enry/v2 v2.7.2/go.mod h1:GVzIiAytiS5uT/QiuakK7TF1u4xDab87Y8V5EJRpsIQ=
 github.com/go-enry/go-oniguruma v1.2.1 h1:k8aAMuJfMrqm/56SG2lV9Cfti6tC4x8673aHCcBk+eo=
@@ -1649,10 +1643,10 @@ golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b/go.mod h1:T9bdIzuCu7OtxOm
 golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
 golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
-golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 h1:HWj/xjIHfjYU5nVXpTM0s39J9CbLn7Cc5a7IC5rwsMQ=
 golang.org/x/crypto v0.0.0-20210817164053-32db794688a5/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
-golang.org/x/crypto v0.0.0-20210920023735-84f357641f63 h1:kETrAMYZq6WVGPa8IIixL0CaEcIUNi+1WX7grUoi3y8=
 golang.org/x/crypto v0.0.0-20210920023735-84f357641f63/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
