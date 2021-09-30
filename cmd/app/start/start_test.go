@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -376,7 +375,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 
-		bytesFile, err := ioutil.ReadFile("./tmp-json.json")
+		bytesFile, err := os.ReadFile("./tmp-json.json")
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"analysisVulnerabilities\": null")
@@ -536,7 +535,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 
-		bytesFile, err := ioutil.ReadFile("./tmp-sonarqube.json")
+		bytesFile, err := os.ReadFile("./tmp-sonarqube.json")
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"issues\": []")

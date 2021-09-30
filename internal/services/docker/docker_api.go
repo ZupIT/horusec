@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strconv"
 	"strings"
 
@@ -144,7 +143,7 @@ func (d *API) setPullOptions() types.ImagePullOptions {
 }
 
 func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadCloser) error {
-	readResult, err := ioutil.ReadAll(reader)
+	readResult, err := io.ReadAll(reader)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorDockerPullImage, err)
 		logger.LogDebugWithLevel(string(readResult))
@@ -245,7 +244,7 @@ func (d *API) readContainer(containerID string) (string, error) {
 }
 
 func (d *API) getOutputString(containerOutPut io.Reader) (string, error) {
-	containerOutPutBytes, err := ioutil.ReadAll(containerOutPut)
+	containerOutPutBytes, err := io.ReadAll(containerOutPut)
 	if err != nil {
 		return "", err
 	}
