@@ -99,7 +99,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "PythonSafety",
 			target:        filepath.Join("python", "example2"),
-			vulnerabilies: 19,
+			vulnerabilies: 20,
 		},
 		{
 			name:          "Java",
