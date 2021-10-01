@@ -17,7 +17,7 @@ package generate
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 
@@ -55,7 +55,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		defer func() {
 			_ = file.Close()
 		}()
-		fileBytes, _ := ioutil.ReadAll(file)
+		fileBytes, _ := io.ReadAll(file)
 		assert.Contains(t, string(fileBytes), fmt.Sprintf("\"%s\": 600", strcase.ToLowerCamel(strcase.ToSnake(config.EnvTimeoutInSecondsAnalysis))))
 	})
 	t.Run("Should update file already exists with default configuration", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		_ = fileExisting.Close()
 		fileExisting, err = os.Open(configs.ConfigFilePath)
 		assert.NoError(t, err)
-		fileExistingBytes, err := ioutil.ReadAll(fileExisting)
+		fileExistingBytes, err := io.ReadAll(fileExisting)
 		assert.NoError(t, err)
 		assert.Equal(t, "{}", string(fileExistingBytes))
 
@@ -93,7 +93,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 
 		// Check content on file created
 		file, _ := os.Open(configs.ConfigFilePath)
-		fileBytes, _ := ioutil.ReadAll(file)
+		fileBytes, _ := io.ReadAll(file)
 		assert.NotEmpty(t, string(fileBytes))
 		assert.NotEqual(t, "{}", string(fileBytes))
 		assert.Contains(t, string(fileBytes), fmt.Sprintf("\"%s\": 600", strcase.ToLowerCamel(strcase.ToSnake(config.EnvTimeoutInSecondsAnalysis))))

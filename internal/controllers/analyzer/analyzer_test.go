@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -108,11 +107,11 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker := &dockerClient.Mock{}
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
-		dockerMocker.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
 		dockerMocker.On("ContainerStart").Return(nil)
 		dockerMocker.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
-		dockerMocker.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerLogs").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
@@ -166,11 +165,11 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker := &dockerClient.Mock{}
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
-		dockerMocker.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
 		dockerMocker.On("ContainerStart").Return(nil)
 		dockerMocker.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
-		dockerMocker.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerLogs").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
@@ -209,11 +208,11 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		dockerMocker := &dockerClient.Mock{}
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
-		dockerMocker.On("ImagePull").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{}, nil)
 		dockerMocker.On("ContainerStart").Return(nil)
 		dockerMocker.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
-		dockerMocker.On("ContainerLogs").Return(ioutil.NopCloser(bytes.NewReader([]byte(""))), nil)
+		dockerMocker.On("ContainerLogs").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 

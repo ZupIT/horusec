@@ -17,7 +17,7 @@ package customrules
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -82,7 +82,7 @@ func (s *Service) openCustomRulesJSONFile() (customRules []customRulesEntities.C
 		return nil, err
 	}
 
-	byteValue, _ := ioutil.ReadAll(file)
+	byteValue, _ := io.ReadAll(file)
 	return customRules, json.Unmarshal(byteValue, &customRules)
 }
 

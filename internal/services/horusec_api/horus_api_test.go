@@ -17,7 +17,7 @@ package horusecapi
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -69,7 +69,7 @@ func TestSendAnalysis(t *testing.T) {
 			Status:    enumHorusec.Running,
 		}
 
-		readCloser := ioutil.NopCloser(strings.NewReader("test"))
+		readCloser := io.NopCloser(strings.NewReader("test"))
 
 		response := &http.Response{
 			StatusCode: 401,
@@ -183,7 +183,7 @@ func TestService_GetAnalysis(t *testing.T) {
 			Status:  http.StatusText(http.StatusOK),
 			Content: analysisContent,
 		}
-		body := ioutil.NopCloser(bytes.NewReader(entity.ToBytes()))
+		body := io.NopCloser(bytes.NewReader(entity.ToBytes()))
 
 		httpMock := &request.Mock{}
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)
@@ -203,7 +203,7 @@ func TestService_GetAnalysis(t *testing.T) {
 	})
 	t.Run("should get analysis with error because response is 400", func(t *testing.T) {
 		entity := mock.CreateAnalysisMock()
-		body := ioutil.NopCloser(bytes.NewReader([]byte("uuid not valid in path")))
+		body := io.NopCloser(bytes.NewReader([]byte("uuid not valid in path")))
 
 		httpMock := &request.Mock{}
 		httpMock.On("NewHTTPRequest").Return(&http.Request{}, nil)

@@ -15,7 +15,7 @@
 package client
 
 import (
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 
@@ -54,7 +54,7 @@ func TestMock(t *testing.T) {
 	t.Run("Should return expected data to ContainerLogs", func(t *testing.T) {
 		m := &Mock{}
 
-		m.On("ContainerLogs").Return(ioutil.NopCloser(strings.NewReader("some text")), nil)
+		m.On("ContainerLogs").Return(io.NopCloser(strings.NewReader("some text")), nil)
 		_, err := m.ContainerLogs(nil, "", dockerTypes.ContainerLogsOptions{})
 		assert.NoError(t, err)
 	})
@@ -72,7 +72,7 @@ func TestMock(t *testing.T) {
 	})
 	t.Run("Should return expected data to ImagePull", func(t *testing.T) {
 		m := &Mock{}
-		m.On("ImagePull").Return(ioutil.NopCloser(strings.NewReader("some text")), nil)
+		m.On("ImagePull").Return(io.NopCloser(strings.NewReader("some text")), nil)
 		_, err := m.ImagePull(nil, "", dockerTypes.ImagePullOptions{})
 		assert.NoError(t, err)
 	})

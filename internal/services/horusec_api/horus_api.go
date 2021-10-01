@@ -19,8 +19,8 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 
@@ -165,7 +165,7 @@ func (s *Service) setTLSConfig() (*tls.Config, error) {
 		InsecureSkipVerify: s.config.CertInsecureSkipVerify, // nolint:gosec // skip dynamic
 	}
 	if s.config.CertPath != "" {
-		caCert, err := ioutil.ReadFile(s.config.CertPath)
+		caCert, err := os.ReadFile(s.config.CertPath)
 		if err != nil {
 			return tlsConfig, err
 		}
