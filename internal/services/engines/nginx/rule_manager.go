@@ -12,4 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package and
+package nginx
+
+import (
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/internal/services/engines"
+)
+
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
+}
+
+func extensions() []string {
+	return []string{".nginx", "nginxconf", ".vhost"}
+}
+
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Not rules
+		NewIncludeXFrameOptionsHeader(),
+		NewIncludeXContentTypeOptionsHeader(),
+		NewIncludeContentSecurityPolicyHeader(),
+		NewIncludeServerTokensOff(),
+	}
+}
