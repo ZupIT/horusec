@@ -19,7 +19,7 @@ const (
 	Apache License = "Apache 2.0"
 	NewBSD License = "New BSD"
 
-	image = "xablue"
+	image = "license_finder_poc"
 	cmd   = "license_finder report --format json --quiet > result.json \n cat result.json"
 )
 
@@ -33,12 +33,30 @@ type Dependency struct {
 	Licenses []License
 }
 
-func (d *Dependency) IsInvalidDependency(permittedLicenses []string) bool {
+func (l License) ContainsLicense(permittedLicenses []string) bool {
 	for _, permittedLicense := range permittedLicenses {
-		for _, depLicense := range d.Licenses {
-			if License(permittedLicense) != depLicense {
-				return true
-			}
+		if string(l) == permittedLicense {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (d *Dependency) IsInvalidDependency(permittedLicenses []string) bool {
+	if len(d.Licenses) == 1 {
+		if d.Licenses[0].ContainsLicense(permittedLicenses) {
+			return false
+		}
+
+		return true
+	}
+
+	for _, depLicense := range d.Licenses {
+		if depLicense.ContainsLicense(permittedLicenses) {
+			continue
+		} else {
+			return true
 		}
 	}
 
@@ -46,10 +64,9 @@ func (d *Dependency) IsInvalidDependency(permittedLicenses []string) bool {
 }
 
 type Service struct {
-	config                 *config.Config
-	docker                 docker.Docker
-	invalidDependencies    []*Dependency
-	alreadyMarkedAsInvalid map[string]bool
+	config              *config.Config
+	docker              docker.Docker
+	invalidDependencies []*Dependency
 }
 
 func NewLicenseService(cfg *config.Config) *Service {
@@ -90,32 +107,26 @@ func (s *Service) checkForInvalidDependencies(result *Result) {
 	}
 
 	for _, dependency := range result.Dependencies {
-		if s.isNotAlreadyValidated(dependency) && dependency.IsInvalidDependency(s.config.PermittedLicenses) {
+		if dependency.IsInvalidDependency(s.config.PermittedLicenses) {
 			s.invalidDependencies = append(s.invalidDependencies, dependency)
 		}
 	}
 }
 
-func (s *Service) isNotAlreadyValidated(dependency *Dependency) bool {
-	if _, ok := s.alreadyMarkedAsInvalid[dependency.Name+dependency.Version]; ok {
-		return false
-	}
-
-	return true
-}
-
 func (s *Service) printInvalidDependencies() {
 	if len(s.invalidDependencies) != 0 {
 		s.logSeparator()
-		logger.LogPrint("-> LIST OF INVALID DEPENDENCIES")
+		logger.LogPrint("LIST OF INVALID DEPENDENCIES")
 	} else {
 		s.logSeparator()
-		logger.LogPrint("-> NO INVALID DEPENDENCIES WERE FOUND")
+		logger.LogPrint("NO INVALID DEPENDENCIES WERE FOUND")
 	}
 
 	for _, dep := range s.invalidDependencies {
 		s.logSeparator()
-		logger.LogPrint(fmt.Sprintf("DEPENDENCY: %s, VERSION: %s, LICENSES: %s", dep.Name, dep.Version, dep.Licenses))
+		logger.LogPrint(fmt.Sprintf("DEPENDENCY: %s", dep.Name))
+		logger.LogPrint(fmt.Sprintf("VERSION: %s", dep.Version))
+		logger.LogPrint(fmt.Sprintf("LICENSES: %s", dep.Licenses))
 	}
 
 	s.logSeparator()
@@ -126,5 +137,5 @@ func (s *Service) printInvalidDependencies() {
 }
 
 func (s *Service) logSeparator() {
-	print("=========================================================================================================\n")
+	print("\n=========================================================================================================\n\n")
 }
