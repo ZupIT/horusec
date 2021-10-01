@@ -12,4 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package and
+package kubernetes
+
+import (
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec/internal/services/engines"
+)
+
+func NewRules() *engines.RuleManager {
+	return engines.NewRuleManager(rules(), extensions())
+}
+
+func extensions() []string {
+	return []string{".yaml", ".yml"}
+}
+
+func rules() []engine.Rule {
+	return []engine.Rule{
+		// Regular rules
+		NewHostIPC(),
+		NewHostPID(),
+		NewHostNetwork(),
+
+		// And rules
+		NewAllowPrivilegeEscalation(),
+		NewHostAliases(),
+		NewDockerSock(),
+		NewCapabilitySystemAdmin(),
+		NewPrivilegedContainer(),
+
+		// Or rules
+		NewSeccompUnconfined(),
+	}
+}
