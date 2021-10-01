@@ -26,7 +26,7 @@ import (
 func NewAWSManagerID() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "18332543-1ec3-47c7-b064-2a159359bc73",
+			ID:          "HS-LEAKS-1",
 			Name:        "AWS Manager ID",
 			Description: "When use AWS Manager ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -42,7 +42,7 @@ func NewAWSManagerID() text.TextRule {
 func NewAWSSecretKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "ea46d798-5042-45f7-8909-4af5a1e5a2e7",
+			ID:          "HS-LEAKS-2",
 			Name:        "AWS Secret Key",
 			Description: "When use AWS Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -59,7 +59,7 @@ func NewAWSSecretKey() text.TextRule {
 func NewAWSMWSKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "0dc1ba76-3d27-400d-9d2f-b9f29e1f5bfb",
+			ID:          "HS-LEAKS-3",
 			Name:        "AWS MWS key",
 			Description: "When use AWS MWS key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -75,7 +75,7 @@ func NewAWSMWSKey() text.TextRule {
 func NewFacebookSecretKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "d2f7d0ba-3924-465f-ab3b-cc982716be28",
+			ID:          "HS-LEAKS-4",
 			Name:        "Facebook Secret Key",
 			Description: "When use Facebook Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -91,7 +91,7 @@ func NewFacebookSecretKey() text.TextRule {
 func NewFacebookClientID() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "14b76fce-787e-4455-b0fe-07b1f7439e44",
+			ID:          "HS-LEAKS-5",
 			Name:        "Facebook Client ID",
 			Description: "When use Facebook Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -107,7 +107,7 @@ func NewFacebookClientID() text.TextRule {
 func NewTwitterSecretKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "f385deb6-61de-4469-92e1-53a587022dd3",
+			ID:          "HS-LEAKS-6",
 			Name:        "Twitter Secret Key",
 			Description: "When use Twitter Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -123,7 +123,7 @@ func NewTwitterSecretKey() text.TextRule {
 func NewTwitterClientID() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "1519a250-9e23-4b4e-941e-a0bfd2386e19",
+			ID:          "HS-LEAKS-7",
 			Name:        "Twitter Client ID",
 			Description: "When use Twitter Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -139,7 +139,7 @@ func NewTwitterClientID() text.TextRule {
 func NewGithub() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "894980a0-808a-4e6b-871a-6afe40f43005",
+			ID:          "HS-LEAKS-8",
 			Name:        "Github",
 			Description: "A GitHub access token was found. This pose a critical threat against your organization since it can give access not only to the platform itself and all the members of your (perhaps private) organization to feed more accurate spear phishing attacks but also to actual source code from your applications. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -155,7 +155,7 @@ func NewGithub() text.TextRule {
 func NewLinkedInClientID() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "6d71ebbc-4d52-4a7b-a4fb-d09145c2abdd",
+			ID:          "HS-LEAKS-9",
 			Name:        "LinkedIn Client ID",
 			Description: "When use LinkedIn Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -171,7 +171,7 @@ func NewLinkedInClientID() text.TextRule {
 func NewLinkedInSecretKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "78556a58-0ff6-420f-8e42-63e6330cc76e",
+			ID:          "HS-LEAKS-10",
 			Name:        "LinkedIn Secret Key",
 			Description: "When use LinkedIn Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -187,7 +187,7 @@ func NewLinkedInSecretKey() text.TextRule {
 func NewSlack() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "3122329f-91f9-4e95-a3aa-045e3cc73932",
+			ID:          "HS-LEAKS-11",
 			Name:        "Slack",
 			Description: "A hardcoded credential for your company's Slack can pose a huge threat to the safety and image of your company, since, in the wrong hands, this could lead to data leaking, a high chance of a successful spear phishing attacks and even access to logs and other development related conversations that could leverage a more critical attack. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -204,7 +204,7 @@ func NewSlack() text.TextRule {
 func NewAsymmetricPrivateKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "51d26605-42bc-4700-9f7e-8017b7fe5927",
+			ID:          "HS-LEAKS-12",
 			Name:        "Asymmetric Private Key",
 			Description: "Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -221,7 +221,7 @@ func NewAsymmetricPrivateKey() text.TextRule {
 func NewGoogleAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "e793da8a-20b4-4295-b1e7-761031441dbc",
+			ID:          "HS-LEAKS-13",
 			Name:        "Google API key",
 			Description: "When use Google API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -238,7 +238,7 @@ func NewGoogleAPIKey() text.TextRule {
 func NewGoogleGCPServiceAccount() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "1ca0e0e6-da90-460a-abe3-46a829a7cc7b",
+			ID:          "HS-LEAKS-14",
 			Name:        "Google (GCP) Service Account",
 			Description: "When use Google (GCP) Service Account is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -256,7 +256,7 @@ func NewGoogleGCPServiceAccount() text.TextRule {
 func NewHerokuAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "87255d86-a271-45ea-8fc5-88cb47957563",
+			ID:          "HS-LEAKS-15",
 			Name:        "Heroku API key",
 			Description: "Hardcoded credentials pose a huge threat to your cloud provider account since you can lose control over who can access some resources, which can lead not only to data access violation but also to improper usage of resources leading to a financial loss. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -272,7 +272,7 @@ func NewHerokuAPIKey() text.TextRule {
 func NewMailChimpAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "8d52c328-d955-4d4d-bbc4-d495176d5aa2",
+			ID:          "HS-LEAKS-16",
 			Name:        "MailChimp API key",
 			Description: "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -288,7 +288,7 @@ func NewMailChimpAPIKey() text.TextRule {
 func NewMailgunAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "3c806272-b40a-4e74-8b79-8ea0b1d8e580",
+			ID:          "HS-LEAKS-17",
 			Name:        "Mailgun API key",
 			Description: "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -304,7 +304,7 @@ func NewMailgunAPIKey() text.TextRule {
 func NewPayPalBraintreeAccessToken() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "574dbf14-1f08-46a7-8ea6-93a38c884620",
+			ID:          "HS-LEAKS-18",
 			Name:        "PayPal Braintree access token",
 			Description: "Payment providers are the barebones of your companies monetization so it is a absolutely disaster if any of this tokens fall in wrong hands since they can provide access to crucial information about your company, and in worst case scenarios even lead to big financial loss. It's important to keep this kind of info in some form of secret manager, e.g Hashicorp's Vault. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -320,7 +320,7 @@ func NewPayPalBraintreeAccessToken() text.TextRule {
 func NewPicaticAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "9bbd94af-2c25-4184-a03c-9fa4b5199210",
+			ID:          "HS-LEAKS-19",
 			Name:        "Picatic API key",
 			Description: "When use Picatic API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -336,7 +336,7 @@ func NewPicaticAPIKey() text.TextRule {
 func NewSendGridAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "65c6903a-3020-42e7-b472-b2278410a438",
+			ID:          "HS-LEAKS-20",
 			Name:        "SendGrid API Key",
 			Description: "When use SendGrid API Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -352,7 +352,7 @@ func NewSendGridAPIKey() text.TextRule {
 func NewStripeAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "646ce9f8-3081-4df8-b175-1f0c2c754ccd",
+			ID:          "HS-LEAKS-21",
 			Name:        "Stripe API key",
 			Description: "When use Stripe API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -368,7 +368,7 @@ func NewStripeAPIKey() text.TextRule {
 func NewSquareAccessToken() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "b6cb61aa-fc61-41eb-9859-780e3b059f10",
+			ID:          "HS-LEAKS-22",
 			Name:        "Square access token",
 			Description: "When use Square access token is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -384,7 +384,7 @@ func NewSquareAccessToken() text.TextRule {
 func NewSquareOAuthSecret() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "0ce81561-6e85-4c11-a2fd-a133e752e946",
+			ID:          "HS-LEAKS-23",
 			Name:        "Square OAuth secret",
 			Description: "When use Square OAuth secret is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -400,7 +400,7 @@ func NewSquareOAuthSecret() text.TextRule {
 func NewTwilioAPIKey() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "81dd9f27-d333-4f49-be07-11823b8876db",
+			ID:          "HS-LEAKS-24",
 			Name:        "Twilio API key",
 			Description: "When use Twilio API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
 			Severity:    severities.High.ToString(),
@@ -416,7 +416,7 @@ func NewTwilioAPIKey() text.TextRule {
 func NewHardCodedCredentialGeneric() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "00db8b1e-a9ef-4533-803e-66514dabdf28",
+			ID:          "HS-LEAKS-25",
 			Name:        "Potential Hard-coded credential",
 			Description: "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -432,7 +432,7 @@ func NewHardCodedCredentialGeneric() text.TextRule {
 func NewHardCodedPassword() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "3dfb3624-e218-4e2b-a7e9-814b64aaa43e",
+			ID:          "HS-LEAKS-26",
 			Name:        "Hard-coded password",
 			Description: "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
 			Severity:    severities.Critical.ToString(),
@@ -452,7 +452,7 @@ func NewHardCodedPassword() text.TextRule {
 func NewPasswordExposedInHardcodedURL() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "b4c300cd-1cdd-4039-9b19-8163acd91bac",
+			ID:          "HS-LEAKS-27",
 			Name:        "Password found in a hardcoded URL",
 			Description: "A password was found in a hardcoded URL, this can lead to not only the leak of this password but also a failure point to some more sophisticated CSRF and SSRF attacks. Check CWE-352 (https://cwe.mitre.org/data/definitions/352.html) and CWE-918 (https://cwe.mitre.org/data/definitions/918.html) for more details.",
 			Severity:    severities.Critical.ToString(),
@@ -468,7 +468,7 @@ func NewPasswordExposedInHardcodedURL() text.TextRule {
 func NewWPConfig() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "5332204a-0d3d-4fe3-a73b-29525101afa0",
+			ID:          "HS-LEAKS-28",
 			Name:        "Wordpress configuration file disclosure",
 			Description: "Wordpress configuration file exposed, this can lead to the leak of admin passwords, database credentials and a lot of sensitive data about the system. Check CWE-200 (https://cwe.mitre.org/data/definitions/200.html) for more details.",
 			Severity:    severities.High.ToString(),

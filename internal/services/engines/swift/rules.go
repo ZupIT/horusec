@@ -26,7 +26,7 @@ import (
 func NewSQLiteDatabase() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "80f1ff7a-c2db-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-1",
 			Name:        "SQLite Database",
 			Description: "App uses SQLite Database. Sensitive Information should be encrypted.",
 			Severity:    severities.Medium.ToString(),
@@ -43,7 +43,7 @@ func NewSQLiteDatabase() text.TextRule {
 func NewCoreDataDatabase() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "a2394cb6-c2da-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-2",
 			Name:        "CoreData Database",
 			Description: "App uses CoreData Database. Sensitive Information should be encrypted.",
 			Severity:    severities.Medium.ToString(),
@@ -60,7 +60,7 @@ func NewCoreDataDatabase() text.TextRule {
 func NewDTLS12NotUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "fa479b38-c23f-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-3",
 			Name:        "DTLS 1.2 not used",
 			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0.",
 			Severity:    severities.Medium.ToString(),
@@ -77,7 +77,7 @@ func NewDTLS12NotUsed() text.TextRule {
 func NewTLS13NotUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "50264a8c-c23f-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-4",
 			Name:        "TLS 1.3 not used",
 			Description: "Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -94,7 +94,7 @@ func NewTLS13NotUsed() text.TextRule {
 func NewReverseEngineering() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "36e370d6-c23a-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-5",
 			Name:        "Reverse engineering",
 			Description: "This App may have Reverse engineering detection capabilities.",
 			Severity:    severities.Medium.ToString(),
@@ -113,7 +113,7 @@ func NewReverseEngineering() text.TextRule {
 func NewWeakMD5CryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "81e073b6-c205-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-6",
 			Name:        "Weak MD5 hash using",
 			Description: "The MD5 hash algorithm that was used is considered weak. It can also cause hash collisions. It is always recommended to use some CHF (Cryptographic Hash Function), which is mathematically strong and not reversible. SHA512 would be the most recommended hash for storing the password and it is also important to adopt some type of Salt, so that the Hash is more secure. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -130,7 +130,7 @@ func NewWeakMD5CryptoCipher() text.TextRule {
 func NewWeakCommonDesCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "90e9196c-c205-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-7",
 			Name:        "Weak DES hash using",
 			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
@@ -147,7 +147,7 @@ func NewWeakCommonDesCryptoCipher() text.TextRule {
 func NewWeakIDZDesCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "9b0d9d46-c205-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-8",
 			Name:        "Weak DES hash using",
 			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
@@ -164,7 +164,7 @@ func NewWeakIDZDesCryptoCipher() text.TextRule {
 func NewWeakBlowfishCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "a07288dc-c205-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-9",
 			Name:        "Weak Cipher Mode",
 			Description: "Cipher algorithms should be robust",
 			Severity:    severities.Medium.ToString(),
@@ -181,7 +181,7 @@ func NewWeakBlowfishCryptoCipher() text.TextRule {
 func NewMD6Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "b3523bc0-c235-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-10",
 			Name:        "Weak MD6 hash using",
 			Description: "MD6 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -198,7 +198,7 @@ func NewMD6Collision() text.TextRule {
 func NewMD5Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "7754d218-c235-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-11",
 			Name:        "Weak MD5 hash using",
 			Description: "MD5 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -215,7 +215,7 @@ func NewMD5Collision() text.TextRule {
 func NewSha1Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "791eee9a-c234-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-12",
 			Name:        "Weak SHA1 hash using",
 			Description: "SHA1 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -232,7 +232,7 @@ func NewSha1Collision() text.TextRule {
 func NewJailbreakDetect() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "4ecac5b6-c233-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-13",
 			Name:        "Jailbreak detection",
 			Description: "This App may have Jailbreak detection capabilities.",
 			Severity:    severities.Medium.ToString(),
@@ -294,9 +294,9 @@ func NewJailbreakDetect() text.TextRule {
 func NewLoadHTMLString() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "18447476-c231-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-14",
 			Name:        "Javascript injection",
-			Description: `User input not sanitized in "loadHTMLString" can result in an injection of JavaScript in the context of your application, allowing access to private data. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.`,
+			Description: "User input not sanitized in \"loadHTMLString\" can result in an injection of JavaScript in the context of your application, allowing access to private data. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -311,7 +311,7 @@ func NewLoadHTMLString() text.TextRule {
 func NewWeakDesCryptoCipher() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "a6eec2ac-c205-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-15",
 			Name:        "Weak Cipher Mode",
 			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
 			Severity:    severities.Medium.ToString(),
@@ -328,7 +328,7 @@ func NewWeakDesCryptoCipher() text.TextRule {
 func NewRealmDatabase() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "4bbe89c6-c2dc-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-16",
 			Name:        "Realm Database",
 			Description: "App uses Realm Database. Sensitive Information should be encrypted.",
 			Severity:    severities.Medium.ToString(),
@@ -344,7 +344,7 @@ func NewRealmDatabase() text.TextRule {
 func NewTLSMinimum() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "26aa8e92-c240-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-17",
 			Name:        "Deperected tls property",
 			Description: "Use of deprecated property tlsMinimumSupportedProtocol. To avoid potential security risks, use tlsMinimumSupportedProtocolVersion",
 			Severity:    severities.Medium.ToString(),
@@ -360,7 +360,7 @@ func NewTLSMinimum() text.TextRule {
 func NewUIPasteboard() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "65ae22c4-c23c-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-18",
 			Name:        "UIPasteboard",
 			Description: "This application uses UIPasteboard, improper use of this class can lead to security issues.",
 			Severity:    severities.Medium.ToString(),
@@ -376,7 +376,7 @@ func NewUIPasteboard() text.TextRule {
 func NewFileProtection() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "37870fe6-c23c-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-19",
 			Name:        "File protection",
 			Description: "The file has no special protections associated with it.",
 			Severity:    severities.Medium.ToString(),
@@ -392,7 +392,7 @@ func NewFileProtection() text.TextRule {
 func NewWebViewSafari() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "88c1786e-c238-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-20",
 			Name:        "WebView Safari",
 			Description: "It is recommended to use WKWebView instead of SFSafariViewController or UIWebView to prevent navigating to arbitrary URLs.",
 			Severity:    severities.Medium.ToString(),
@@ -408,7 +408,7 @@ func NewWebViewSafari() text.TextRule {
 func NewKeyboardCache() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "5efb173e-c237-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-21",
 			Name:        "Keyboard cache",
 			Description: "Keyboard cache should be disabled for all sensitive data inputs.",
 			Severity:    severities.Medium.ToString(),
@@ -424,7 +424,7 @@ func NewKeyboardCache() text.TextRule {
 func NewMD4Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "32d631d6-c235-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-22",
 			Name:        "Weak MD4 hash using",
 			Description: "MD4 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
@@ -440,7 +440,7 @@ func NewMD4Collision() text.TextRule {
 func NewMD2Collision() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "363a5186-c235-11eb-a035-13ab0aa767e8",
+			ID:          "HS-SWIFT-23",
 			Name:        "Weak MD2 hash using",
 			Description: "MD2 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
