@@ -248,12 +248,11 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 			"Used to pass project path in host when running horusec cli inside a container.",
 		)
 
-	// TODO: This flag may have a bug
 	startCmd.PersistentFlags().
 		StringVarP(
-			&s.configs.ContainerBindProjectPath,
+			&s.configs.CustomRulesPath,
 			"custom-rules-path", "c",
-			s.configs.ContainerBindProjectPath,
+			s.configs.CustomRulesPath,
 			"Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".",
 		)
 
