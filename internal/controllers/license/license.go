@@ -6,10 +6,13 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	dockerClient "github.com/ZupIT/horusec/internal/services/docker/client"
+	"github.com/briandowns/spinner"
 	"github.com/google/uuid"
 	"os"
+	"time"
 )
 
 type License string
@@ -63,20 +66,34 @@ func (d *Dependency) IsInvalidDependency(permittedLicenses []string) bool {
 	return false
 }
 
+const LoadingDelay = 200 * time.Millisecond
+
 type Service struct {
 	config              *config.Config
 	docker              docker.Docker
 	invalidDependencies []*Dependency
+	loading             *spinner.Spinner
+}
+
+func newScanLoading() *spinner.Spinner {
+	loading := spinner.New(spinner.CharSets[11], LoadingDelay)
+	loading.Suffix = messages.MsgInfoAnalysisLoading
+
+	return loading
 }
 
 func NewLicenseService(cfg *config.Config) *Service {
 	return &Service{
-		config: cfg,
-		docker: docker.New(dockerClient.NewDockerClient(), cfg, uuid.New(), true),
+		config:  cfg,
+		docker:  docker.New(dockerClient.NewDockerClient(), cfg, uuid.New(), true),
+		loading: newScanLoading(),
 	}
 }
 
 func (s *Service) StartLicenseAnalysis() error {
+	print("\n")
+	s.loading.Start()
+
 	if err := s.docker.PullImage(image); err != nil {
 		return err
 	}
@@ -97,6 +114,9 @@ func (s *Service) StartLicenseAnalysis() error {
 	}
 
 	s.checkForInvalidDependencies(result)
+
+	s.loading.Stop()
+
 	s.printInvalidDependencies()
 	return nil
 }
