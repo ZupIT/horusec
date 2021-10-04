@@ -77,6 +77,14 @@ jobs:
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: v0.0.0-alpha
 
+      - name: Delete outdate release
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          delete_release: true
+          tag_name: alpha
+
       - name: Update alpha release
         uses: meeDamian/github-release@2.0
         with:
