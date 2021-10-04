@@ -114,7 +114,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "JavascriptNPM",
 			target:        filepath.Join("javascript", "example1"),
-			vulnerabilies: 29,
+			vulnerabilies: 31,
 		},
 		{
 			name:          "JavascriptYarn",
