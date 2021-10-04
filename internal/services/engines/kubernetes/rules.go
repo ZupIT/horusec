@@ -26,7 +26,7 @@ import (
 func NewAllowPrivilegeEscalation() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "1e0be755-5333-4a74-ade4-d23a95d58b54",
+			ID:          "HS-KUBERNETES-1",
 			Name:        "Allow Privilege Escalation",
 			Description: "Privileged containers share namespaces with the host system, eschew cgroup restrictions, and do not offer any security. They should be used exclusively as a bundling and distribution mechanism for the code in the container, and not for isolation.",
 			Severity:    severities.Medium.ToString(),
@@ -44,7 +44,7 @@ func NewAllowPrivilegeEscalation() text.TextRule {
 func NewHostAliases() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "fc601f5a-0dd9-472f-9476-24f12ef8e990",
+			ID:          "HS-KUBERNETES-2",
 			Name:        "Host Aliases",
 			Description: "Managing /etc/hosts aliases can prevent the container from modifying the file after a pod's containers have already been started. DNS should be managed by the orchestrator.",
 			Severity:    severities.Low.ToString(),
@@ -62,7 +62,7 @@ func NewHostAliases() text.TextRule {
 func NewDockerSock() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "89b452df-dfbd-487c-a6c6-9e002aac0823",
+			ID:          "HS-KUBERNETES-3",
 			Name:        "Docker Sock",
 			Description: "Mounting the docker.socket leaks information about other containers and can allow container breakout.",
 			Severity:    severities.Medium.ToString(),
@@ -80,7 +80,7 @@ func NewDockerSock() text.TextRule {
 func NewCapabilitySystemAdmin() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "3e68d755-e860-49db-84b4-65f323edb1f1",
+			ID:          "HS-KUBERNETES-4",
 			Name:        "Capability System Admin",
 			Description: "CAP_SYS_ADMIN is the most privileged capability and should always be avoided.",
 			Severity:    severities.Critical.ToString(),
@@ -100,7 +100,7 @@ func NewCapabilitySystemAdmin() text.TextRule {
 func NewPrivilegedContainer() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "6deb1d82-7579-4e1b-9f1e-ed287e0eaccb",
+			ID:          "HS-KUBERNETES-5",
 			Name:        "Privileged Container",
 			Description: "Privileged containers can allow almost completely unrestricted host access.",
 			Severity:    severities.High.ToString(),
@@ -118,7 +118,7 @@ func NewPrivilegedContainer() text.TextRule {
 func NewSeccompUnconfined() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "9b26b361-7a92-465a-ae77-1c7122266823",
+			ID:          "HS-KUBERNETES-6",
 			Name:        "Seccomp Unconfined",
 			Description: "Unconfined Seccomp profiles have full system call access.",
 			Severity:    severities.Low.ToString(),
@@ -135,7 +135,7 @@ func NewSeccompUnconfined() text.TextRule {
 func NewHostIPC() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "36255af0-2d6f-49c3-a2e7-e1f91d6c7652",
+			ID:          "HS-KUBERNETES-7",
 			Name:        "Host IPC",
 			Description: "Sharing the host's IPC namespace allows container processes to communicate with processes on the host.",
 			Severity:    severities.Medium.ToString(),
@@ -151,7 +151,7 @@ func NewHostIPC() text.TextRule {
 func NewHostPID() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "8408e039-b8d1-4104-bfc7-b58705843793",
+			ID:          "HS-KUBERNETES-8",
 			Name:        "Host PID",
 			Description: "Sharing the host's PID namespace allows visibility of processes on the host, potentially leaking information such as environment variables and configuration.",
 			Severity:    severities.Medium.ToString(),
@@ -167,7 +167,7 @@ func NewHostPID() text.TextRule {
 func NewHostNetwork() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "db2df11f-9e58-45ce-94ef-861c6a8af361",
+			ID:          "HS-KUBERNETES-9",
 			Name:        "Host Network",
 			Description: "Sharing the host's network namespace permits processes in the pod to communicate with processes bound to the host's loopback adapter.",
 			Severity:    severities.Medium.ToString(),
