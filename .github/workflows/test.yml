@@ -14,10 +14,9 @@
 
 name: Test
 on: [ "pull_request" ]
+permissions: read-all
 jobs:
   test:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:

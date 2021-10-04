@@ -22,23 +22,6 @@
   "horusecCliEnableGitHistoryAnalysis": false,
   "horusecCliEnableInformationSeverity": false,
   "horusecCliFalsePositiveHashes": [
-    "2eab7620998c54bcbdb1da9ad96f54c3b6ac7b5e0babbff8f502ec10594479ad",
-    "52ccbcd6c0d13a6af137ba7d5fc6c66a466f7e746256558550e660c82449851b",
-    "b9f0d3772a885673b4a968d21eb9c350d25aae332b7c1a9bf113b5af24704ff9",
-    "e8c6a9744859f048a44a4eb160ce0e22df524507a288cfbfcbfcdc26d2533c63",
-    "9c205ee4b31bea1254f4e8031958995912312a524105469cb49e757d59558496",
-    "3e64eb0ec371e5ef7d97adec60d3b94cb7dd5a1189951f2a45ed1827e6781d30",
-    "5fc8f08b377cdc0c92913da73a2d8d8acd85896993e04ae4c15e34ecb829d8b5",
-    "362a89c4517db256b648e9b1d21ddb0d99018e7c7b9f9b45d200ede54a49363d",
-    "06f6ce2402e20f1e885e5d59f66db4dde44dfdd2eaf821d86b1d066a707c9fff",
-    "85492fbc829b64336a4f858022fbe52f05e27ee18d7a8fbdf5ffd23991ebd7a9",
-    "36f41965e929e9763260c61451ce0a5ca572f8a1a8979390b7c694e54e3dce29",
-    "c25edc56029ba81e69515d3bca44fa5545af63cf841d8f219ac57fcd7cb95265",
-    "daf141d66c2b98a3c579726372fbd91957d3e51c00b3a6ec18e5b40ca98fcbe6",
-    "10415a9f27493234fc73226fd2697c7a4af6ae48bfa8b733ba8fb6693ed44f90",
-    "8ff7424e06c66ce6264da9c160de02d05c644672de9ec9420a9c1f6f7d632ea0",
-    "a49902aabb86572896df9baba7d15a5b6db7e968ccd59b88c371bccaefc8fcf2",
-    "f1721f8345e395a894e4341442a9e22c46eafc4fdf777a8d30ed1cf4f5ea22c1"
   ],
   "horusecCliFilesOrPathsToIgnore": [
     "**/e2e/**",
@@ -64,7 +47,6 @@
   "horusecCliRiskAcceptHashes": [],
   "horusecCliSeveritiesToIgnore": [],
   "horusecCliShowVulnerabilitiesTypes": [
-    "Vulnerability"
   ],
   "horusecCliTimeoutInSecondsAnalysis": 1000,
   "horusecCliTimeoutInSecondsRequest": 300,
