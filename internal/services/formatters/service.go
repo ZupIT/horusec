@@ -227,39 +227,34 @@ func (s *Service) SetCommitAuthor(vuln *vulnerability.Vulnerability) *vulnerabil
 func (s *Service) ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool,
 	language languages.Language) error {
 	for index := range findings {
-		s.setVulnerabilityDataByFindings(findings, index, tool, language)
+		vuln := s.newVulnerabilityFromFinding(&findings[index], tool, language)
+		vuln = s.SetCommitAuthor(vuln)
+		vuln = vulnhash.Bind(vuln)
+		s.AddNewVulnerabilityIntoAnalysis(vuln)
 	}
 
 	return nil
 }
 
-func (s *Service) setVulnerabilityDataByFindings(findings []engine.Finding, index int, tool tools.Tool,
-	language languages.Language) {
-	vuln := s.setVulnerabilityDataByFindingIndex(findings, index, tool, language)
-	vuln = s.SetCommitAuthor(vuln)
-	vuln = vulnhash.Bind(vuln)
-	s.AddNewVulnerabilityIntoAnalysis(vuln)
-}
-
 func (s *Service) AddNewVulnerabilityIntoAnalysis(vuln *vulnerability.Vulnerability) {
-	s.GetAnalysis().AnalysisVulnerabilities = append(s.GetAnalysis().AnalysisVulnerabilities,
+	s.analysis.AnalysisVulnerabilities = append(s.analysis.AnalysisVulnerabilities,
 		analysis.AnalysisVulnerabilities{
 			Vulnerability: *vuln,
 		})
 }
 
-func (s *Service) setVulnerabilityDataByFindingIndex(findings []engine.Finding, index int, tool tools.Tool,
+func (s *Service) newVulnerabilityFromFinding(finding *engine.Finding, tool tools.Tool,
 	language languages.Language) *vulnerability.Vulnerability {
 	return &vulnerability.Vulnerability{
-		Line:         strconv.Itoa(findings[index].SourceLocation.Line),
-		Column:       strconv.Itoa(findings[index].SourceLocation.Column),
-		Confidence:   confidence.Confidence(findings[index].Confidence),
-		File:         s.removeHorusecFolder(findings[index].SourceLocation.Filename),
-		Code:         s.GetCodeWithMaxCharacters(findings[index].CodeSample, findings[index].SourceLocation.Column),
-		Details:      findings[index].Name + "\n" + findings[index].Description,
+		Line:         strconv.Itoa(finding.SourceLocation.Line),
+		Column:       strconv.Itoa(finding.SourceLocation.Column),
+		Confidence:   confidence.Confidence(finding.Confidence),
+		File:         s.removeHorusecFolder(finding.SourceLocation.Filename),
+		Code:         s.GetCodeWithMaxCharacters(finding.CodeSample, finding.SourceLocation.Column),
+		Details:      fmt.Sprintf("%s: %s\n%s", finding.ID, finding.Name, finding.Description),
 		SecurityTool: tool,
 		Language:     language,
-		Severity:     severities.GetSeverityByString(findings[index].Severity),
+		Severity:     severities.GetSeverityByString(finding.Severity),
 	}
 }
 
