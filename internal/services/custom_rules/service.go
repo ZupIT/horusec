@@ -66,7 +66,7 @@ func (s *Service) setCustomRules() {
 
 func (s *Service) validateAndParseCustomRule(index int, customRules []customRulesEntities.CustomRule) {
 	if err := customRules[index].Validate(); err != nil {
-		errMsg := fmt.Sprintf("{HORUSEC_CLI} invalid custom rule: %s", customRules[index].ToString())
+		errMsg := fmt.Sprintf("{HORUSEC_CLI} invalid custom rule: %s", customRules[index].String())
 		logger.LogError(errMsg, err)
 		return
 	}
@@ -89,7 +89,7 @@ func (s *Service) openCustomRulesJSONFile() (customRules []customRulesEntities.C
 func (s *Service) parseCustomRuleToTextRule(index int, customRules []customRulesEntities.CustomRule) text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          customRules[index].ID.String(),
+			ID:          customRules[index].ID,
 			Name:        customRules[index].Name,
 			Description: customRules[index].Description,
 			Severity:    customRules[index].Severity.ToString(),

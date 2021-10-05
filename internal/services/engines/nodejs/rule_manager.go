@@ -20,14 +20,15 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".js", ".ts", ".jsx", ".tsx"}
 }
 
-func rules() []engine.Rule {
+// Rules return all rules registred to Javascript engine.
+func Rules() []engine.Rule {
 	return []engine.Rule{
 		// Regular rules
 		NewNoUseEval(),

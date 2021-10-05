@@ -21,14 +21,15 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".java"}
 }
 
-func rules() []engine.Rule {
+// Rules return all rules registred to Java engine.
+func Rules() []engine.Rule {
 	java := []engine.Rule{
 		// And rules
 		NewMessageDigestIsCustom(),

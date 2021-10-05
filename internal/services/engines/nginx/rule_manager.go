@@ -20,14 +20,15 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".nginx", "nginxconf", ".vhost"}
 }
 
-func rules() []engine.Rule {
+// Rules return all rules registred to Nginx engine.
+func Rules() []engine.Rule {
 	return []engine.Rule{
 		// Not rules
 		NewIncludeXFrameOptionsHeader(),

@@ -18,22 +18,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	engine "github.com/ZupIT/horusec-engine"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec-engine/text"
 	customRulesEnums "github.com/ZupIT/horusec/internal/enums/custom_rules"
+	"github.com/ZupIT/horusec/internal/services/engines/csharp"
+	"github.com/ZupIT/horusec/internal/services/engines/dart"
+	"github.com/ZupIT/horusec/internal/services/engines/java"
+	"github.com/ZupIT/horusec/internal/services/engines/kotlin"
+	"github.com/ZupIT/horusec/internal/services/engines/kubernetes"
+	"github.com/ZupIT/horusec/internal/services/engines/leaks"
+	"github.com/ZupIT/horusec/internal/services/engines/nginx"
+	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
 )
 
 type CustomRule struct {
-	ID          uuid.UUID                 `json:"id"`
+	ID          string                    `json:"id"`
 	Name        string                    `json:"name"`
 	Description string                    `json:"description"`
 	Language    languages.Language        `json:"language"`
@@ -45,7 +53,9 @@ type CustomRule struct {
 
 func (c *CustomRule) Validate() error {
 	return validation.ValidateStruct(c,
-		validation.Field(&c.ID, validation.Required, is.UUID),
+		validation.Field(&c.ID, validation.Required, ruleIDValidator{
+			language: c.Language,
+		}),
 		validation.Field(&c.Language, validation.Required, validation.In(languages.CSharp, languages.Dart, languages.Java,
 			languages.Kotlin, languages.Yaml, languages.Leaks, languages.Javascript, languages.Nginx)),
 		validation.Field(&c.Severity, validation.Required, validation.In(severities.Info, severities.Unknown,
@@ -85,7 +95,71 @@ func (c *CustomRule) GetExpressions() (expressions []*regexp.Regexp) {
 	return expressions
 }
 
-func (c *CustomRule) ToString() string {
+func (c *CustomRule) String() string {
 	bytes, _ := json.Marshal(c)
 	return string(bytes)
+}
+
+// ruleIDValidator implements validation.Rule interface.
+type ruleIDValidator struct {
+	language languages.Language
+}
+
+// Validate implements validation.Rule.Validate.
+// nolint:funlen,exhaustive,gocyclo
+func (r ruleIDValidator) Validate(value interface{}) error {
+	id, ok := value.(string)
+	if !ok {
+		return fmt.Errorf("must be a string")
+	}
+
+	language := strings.ToUpper(r.language.ToString())
+	// TODO(matheus): Remove this. This is a terrible hack to convert C# to CSHARP.
+	// The C# rules id use the prefix CHSARP but the enum value language.CSharp is
+	// C#, so we need to convert to CSHARP nomenclature to follow already existed rules.
+	if r.language == languages.CSharp {
+		language = "CSHARP"
+	}
+
+	if match, _ := regexp.MatchString(fmt.Sprintf(`HS-%s-\d+`, language), id); !match {
+		return fmt.Errorf("%s should match language name %s", value, r.language)
+	}
+
+	var rules []engine.Rule
+
+	switch r.language {
+	case languages.CSharp:
+		rules = csharp.Rules()
+	case languages.Dart:
+		rules = dart.Rules()
+	case languages.Java:
+		rules = java.Rules()
+	case languages.Kotlin:
+		rules = kotlin.Rules()
+	case languages.Yaml:
+		rules = kubernetes.Rules()
+	case languages.Leaks:
+		rules = leaks.Rules()
+	case languages.Javascript:
+		rules = nodejs.Rules()
+	case languages.Nginx:
+		rules = nginx.Rules()
+	default:
+		return fmt.Errorf("unsupported language %s", r.language)
+	}
+
+	return r.valiteDuplicates(id, rules)
+}
+
+func (r ruleIDValidator) valiteDuplicates(id string, rules []engine.Rule) error {
+	for _, rule := range rules {
+		// Custom rules is converted to text.TextRule, so we only need
+		// to check duplicates in text.TextRule rules.
+		if r, ok := rule.(text.TextRule); ok {
+			if r.ID == id {
+				return fmt.Errorf("duplicate rule id %s", id)
+			}
+		}
+	}
+	return nil
 }

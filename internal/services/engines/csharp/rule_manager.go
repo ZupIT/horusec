@@ -20,14 +20,15 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".cs", ".vb", ".cshtml", ".csproj", ".xml"}
 }
 
-func rules() []engine.Rule {
+// Rules return all rules registred to C# engine.
+func Rules() []engine.Rule {
 	return []engine.Rule{
 		// And rules
 		NewCommandInjection(),

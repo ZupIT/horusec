@@ -19,7 +19,6 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
@@ -31,7 +30,7 @@ import (
 func TestValidate(t *testing.T) {
 	t.Run("should return no errors when valid custom rule", func(t *testing.T) {
 		customRule := CustomRule{
-			ID:          uuid.New(),
+			ID:          "HS-LEAKS-1000",
 			Name:        "test",
 			Description: "test",
 			Severity:    severities.Low,
@@ -46,6 +45,46 @@ func TestValidate(t *testing.T) {
 
 	t.Run("should return error when invalid custom", func(t *testing.T) {
 		customRule := CustomRule{}
+		assert.Error(t, customRule.Validate())
+	})
+
+	t.Run("should return error when invalid ID", func(t *testing.T) {
+		customRule := CustomRule{
+			ID:          "HS-INVALID-1",
+			Name:        "test",
+			Description: "test",
+			Severity:    severities.Low,
+			Confidence:  confidence.Low,
+			Type:        customRulesEnums.Regular,
+			Expressions: []string{""},
+			Language:    languages.Java,
+		}
+		assert.Error(t, customRule.Validate())
+	})
+	t.Run("should return error when duplicated ID", func(t *testing.T) {
+		customRule := CustomRule{
+			ID:          "HS-LEAKS-1",
+			Name:        "test",
+			Description: "test",
+			Severity:    severities.Low,
+			Confidence:  confidence.Low,
+			Type:        customRulesEnums.Regular,
+			Expressions: []string{""},
+			Language:    languages.Java,
+		}
+		assert.Error(t, customRule.Validate())
+	})
+	t.Run("should return error when not supported language", func(t *testing.T) {
+		customRule := CustomRule{
+			ID:          "HS-PYTHON-1",
+			Name:        "test",
+			Description: "test",
+			Severity:    severities.Low,
+			Confidence:  confidence.Low,
+			Type:        customRulesEnums.Regular,
+			Expressions: []string{""},
+			Language:    languages.Python,
+		}
 		assert.Error(t, customRule.Validate())
 	})
 }
@@ -110,8 +149,8 @@ func TestGetExpressions(t *testing.T) {
 
 func TestToString(t *testing.T) {
 	t.Run("should log error when failed to compile expression", func(t *testing.T) {
-		customRule := CustomRule{ID: uuid.New()}
+		customRule := CustomRule{ID: ""}
 
-		assert.NotEmpty(t, customRule.ToString())
+		assert.NotEmpty(t, customRule.String())
 	})
 }

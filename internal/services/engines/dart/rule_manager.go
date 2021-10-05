@@ -20,10 +20,11 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
-func rules() []engine.Rule {
+// Rules return all rules registred to Dart engine.
+func Rules() []engine.Rule {
 	return []engine.Rule{
 		// And Rules
 		NewUsageLocalDataWithoutCryptography(),
