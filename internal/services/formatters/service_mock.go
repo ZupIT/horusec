@@ -17,7 +17,6 @@ package formatters
 import (
 	"github.com/stretchr/testify/mock"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
@@ -25,7 +24,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 )
 
 type Mock struct {
@@ -64,11 +62,6 @@ func (m *Mock) AddWorkDirInCmd(_ string, _ string, _ tools.Tool) string {
 func (m *Mock) GetConfigProjectPath() string {
 	args := m.MethodCalled("GetConfigProjectPath")
 	return args.Get(0).(string)
-}
-
-func (m *Mock) GetAnalysis() *entitiesAnalysis.Analysis {
-	args := m.MethodCalled("GetAnalysis")
-	return args.Get(0).(*entitiesAnalysis.Analysis)
 }
 
 func (m *Mock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
@@ -112,11 +105,6 @@ func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, 
 
 func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *vulnerability.Vulnerability) {
 	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
-}
-
-func (m *Mock) GetToolsConfig() toolsconfig.MapToolConfig {
-	args := m.MethodCalled("GetToolsConfig")
-	return args.Get(0).(toolsconfig.MapToolConfig)
 }
 
 func (m *Mock) IsDockerDisabled() bool {
