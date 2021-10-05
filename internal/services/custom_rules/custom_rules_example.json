@@ -1,6 +1,6 @@
 [
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-CSHARP-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -12,7 +12,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-DART-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-JAVA-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -36,7 +36,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-KOTLIN-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-YAML-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -60,7 +60,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-LEAKS-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "id": "01755d83-d974-4839-7304-6b611b319638",
+    "id": "HS-JAVASCRIPT-1000",
     "name": "test",
     "description": "test",
     "severity": "INFO",

@@ -20,14 +20,15 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(rules(), extensions())
+	return engines.NewRuleManager(Rules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".yaml", ".yml"}
 }
 
-func rules() []engine.Rule {
+// Rules return all Rules registred to Kubernetes engine.
+func Rules() []engine.Rule {
 	return []engine.Rule{
 		// Regular rules
 		NewHostIPC(),
