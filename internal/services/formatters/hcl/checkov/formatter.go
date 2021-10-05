@@ -15,6 +15,7 @@
 package checkov
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/pborman/ansi"
@@ -75,16 +76,18 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 
 func (f *Formatter) parseOutput(output string) error {
 	var vuln *entities.Vulnerability
-
 	binary, _ := ansi.Strip([]byte(output))
+	// For some reason checkov returns an empty list when no vulnerabilities are found
+	// and an object if vulnerabitilies are found, this checks ignores result when we have no vulnerabilities
+	if bytes.Equal(binary, CheckovEmptyValue) {
+		return nil
+	}
 	if err := json.Unmarshal(binary, &vuln); err != nil {
 		return err
 	}
-
 	for _, check := range vuln.Results.FailedChecks {
 		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(check))
 	}
-
 	return nil
 }
 
