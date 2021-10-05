@@ -356,7 +356,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "json", "-O", "./tmp-json.json"})
 
 		cobra.OnInitialize(func() {
-			assert.NoError(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			assert.NoError(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -414,7 +414,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", "./", "--information-severity", "true"})
 
 		cobra.OnInitialize(func() {
-			require.Nil(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -465,7 +465,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", "./", "-u", "https://google.com", "-a", uuid.NewString()})
 
 		cobra.OnInitialize(func() {
-			require.Nil(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -516,7 +516,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "sonarqube", "-O", "./tmp-sonarqube.json"})
 
 		cobra.OnInitialize(func() {
-			require.Nil(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -581,7 +581,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", dstProject, "-s", "CRITICAL, LOW"})
 
 		cobra.OnInitialize(func() {
-			require.Nil(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -639,7 +639,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetArgs([]string{"-p", dstProject})
 
 		cobra.OnInitialize(func() {
-			require.Nil(t, configs.Normalize().Eval(), "Expected nil error to eval config")
+			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
 		})
 
 		assert.NoError(t, cobraCmd.Execute())

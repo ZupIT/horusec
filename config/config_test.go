@@ -414,7 +414,7 @@ func TestConfig_ToBytes(t *testing.T) {
 func TestSetLogOutput(t *testing.T) {
 	t.Run("Should success when log path is empty", func(t *testing.T) {
 		config := config.New()
-		err := config.Eval()
+		err := config.PreRun(nil, nil)
 		assert.NoError(t, err)
 	})
 	t.Run("Should success when log path is valid", func(t *testing.T) {
@@ -423,7 +423,7 @@ func TestSetLogOutput(t *testing.T) {
 
 		config := config.New()
 		config.LogFilePath = file.Name()
-		err = config.Eval()
+		err = config.PreRun(nil, nil)
 		assert.NoError(t, err)
 	})
 

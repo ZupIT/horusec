@@ -77,8 +77,14 @@ func NewStartCommand(configs *config.Config) *Start {
 	}
 }
 
-// nolint:funlen,lll // method is not necessary funlen
+// CreateStartCommand load the config values from config file
+// and environment variable and create the cobra command to parse
+// command line flags.
+//
+// nolint:funlen,lll
 func (s *Start) CreateStartCommand() *cobra.Command {
+	s.configs.MergeFromConfigFile().MergeFromEnvironmentVariables()
+
 	startCmd := &cobra.Command{
 		Use:     "start",
 		Short:   "Start horusec-cli",

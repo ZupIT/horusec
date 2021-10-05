@@ -64,7 +64,6 @@ func (ld *LanguageDetect) Detect(directory string) ([]languages.Language, error)
 func (ld *LanguageDetect) getLanguages(directory string) (languagesFound []string, err error) {
 	filesToSkip, languagesFound, err := ld.walkInPathAndReturnTotalToSkip(directory)
 	if filesToSkip > 0 {
-		print("\n")
 		msg := strings.ReplaceAll(messages.MsgWarnTotalFolderOrFileWasIgnored, "{{0}}", strconv.Itoa(filesToSkip))
 		logger.LogWarnWithLevel(msg)
 	}
