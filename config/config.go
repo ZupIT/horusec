@@ -333,26 +333,20 @@ func (c *Config) MergeFromEnvironmentVariables() *Config {
 	return c
 }
 
-// PreRun is a hook that load config values from config
-// file/environment variables, merge them with default values and
-// command line args and create the log file.
-//
+// PreRun is a hook that normalize config values and create the log file.
 // This hook is used as a PreRun on cobra commands.
 func (c *Config) PreRun(_ *cobra.Command, _ []string) error {
-	return c.MergeFromConfigFile().
-		MergeFromEnvironmentVariables().
-		Normalize().
-		Eval()
+	return c.Normalize().configureLogger()
 }
 
-// Eval evaluate user config input
-func (c *Config) Eval() error {
+// configureLogger create the log file and configure the log output.
+func (c *Config) configureLogger() error {
 	log, err := os.OpenFile(c.LogFilePath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err
 	}
 	logger.LogSetOutput(log, os.Stdout)
-	logger.LogInfo("Set log file to " + log.Name())
+	logger.LogDebugWithLevel("Set log file to " + log.Name())
 	return nil
 }
 
@@ -412,6 +406,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 	}
 }
 
+// Normalize transforms relative paths of files to absolute.
 func (c *Config) Normalize() *Config {
 	if c.JSONOutputFilePath != "" {
 		c.JSONOutputFilePath, _ = filepath.Abs(c.JSONOutputFilePath)
