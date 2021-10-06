@@ -15,16 +15,16 @@
 package formatters
 
 import (
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	engine "github.com/ZupIT/horusec-engine"
-	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 )
 
+// IFormatter is the interface that tools implement to run an
+// analysis and convert its results to Horusec results.
 type IFormatter interface {
 	StartAnalysis(projectSubPath string)
 }
@@ -32,13 +32,11 @@ type IFormatter interface {
 type IService interface {
 	LogDebugWithReplace(msg string, tool tools.Tool, lang languages.Language)
 	GetAnalysisID() string
-	ExecuteContainer(data *dockerEntities.AnalysisData) (output string, err error)
+	ExecuteContainer(data *docker.AnalysisData) (output string, err error)
 	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
-	GetCommitAuthor(line, filePath string) (commitAuthor commitAuthor.CommitAuthor)
+	GetCommitAuthor(line, filePath string) (commitAuthor commitauthor.CommitAuthor)
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 	GetConfigProjectPath() string
-	GetToolsConfig() toolsconfig.MapToolConfig
-	GetAnalysis() *entitiesAnalysis.Analysis
 	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
 	RemoveSrcFolderFromPath(filepath string) string
 	GetCodeWithMaxCharacters(code string, column int) string

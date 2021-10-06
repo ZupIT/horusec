@@ -60,7 +60,6 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		_ = mock.GetCommitAuthor("", "")
 		_ = mock.AddWorkDirInCmd("", "", "")
 		_ = mock.GetConfigProjectPath()
-		_ = mock.GetAnalysis()
 		mock.SetAnalysisError(errors.New(""), "", "")
 		_ = mock.RemoveSrcFolderFromPath("")
 		_ = mock.GetCodeWithMaxCharacters("", 0)
@@ -162,14 +161,6 @@ func TestGetAnalysisID(t *testing.T) {
 		id := uuid.New()
 		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{ID: id}, &docker.Mock{}, &config.Config{})
 		assert.Equal(t, id.String(), monitorController.GetAnalysisID())
-	})
-}
-
-func TestGetAnalysis(t *testing.T) {
-	t.Run("should success get analysis", func(t *testing.T) {
-		id := uuid.New()
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{ID: id}, &docker.Mock{}, &config.Config{})
-		assert.NotEmpty(t, monitorController.GetAnalysis())
 	})
 }
 

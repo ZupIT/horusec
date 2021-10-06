@@ -36,7 +36,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/config"
 	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	custonrules "github.com/ZupIT/horusec/internal/services/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/docker"
@@ -99,10 +98,6 @@ func (s *Service) GetConfigProjectPath() string {
 	)
 }
 
-func (s *Service) GetToolsConfig() toolsconfig.MapToolConfig {
-	return s.config.ToolsConfig
-}
-
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
 	if projectSubPath != "" {
 		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, tool.ToString(), projectSubPath)
@@ -120,10 +115,6 @@ func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool, lang language
 
 func (s *Service) GetAnalysisID() string {
 	return s.analysis.GetIDString()
-}
-
-func (s *Service) GetAnalysis() *analysis.Analysis {
-	return s.analysis
 }
 
 func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath string) {
