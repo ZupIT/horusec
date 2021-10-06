@@ -111,6 +111,7 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(config *cliConfig
 	return func(value interface{}) error {
 		for _, falsePositive := range config.FalsePositiveHashes {
 			for _, riskAccept := range config.RiskAcceptHashes {
+				riskAccept = strings.TrimSpace(riskAccept)
 				if falsePositive == riskAccept {
 					return errors.New(messages.MsgErrorFalsePositiveNotValid + falsePositive)
 				}
@@ -124,6 +125,7 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(config *cliConfig.Co
 	return func(value interface{}) error {
 		for _, riskAccept := range config.RiskAcceptHashes {
 			for _, falsePositive := range config.FalsePositiveHashes {
+				falsePositive = strings.TrimSpace(falsePositive)
 				if riskAccept == falsePositive {
 					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
 				}
@@ -253,17 +255,19 @@ func (au *UseCases) validateIfExistPathInProjectToWorkDir(projectPath, internalP
 func (au *UseCases) checkIfIsValidVulnerabilitiesTypes(config *cliConfig.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		for _, vulnType := range config.ShowVulnerabilitiesTypes {
-			isValid := false
-			for _, valid := range vulnerability.Values() {
-				if strings.EqualFold(valid.ToString(), vulnType) {
-					isValid = true
-					break
-				}
-			}
-			if !isValid {
+			if !au.isVulnerabilityValid(strings.TrimSpace(vulnType)) {
 				return fmt.Errorf("%s %s", messages.MsgVulnerabilityTypeToShowInvalid, vulnType)
 			}
 		}
 		return nil
 	}
+}
+
+func (au *UseCases) isVulnerabilityValid(vulnType string) bool {
+	for _, valid := range vulnerability.Values() {
+		if strings.EqualFold(valid.ToString(), vulnType) {
+			return true
+		}
+	}
+	return false
 }
