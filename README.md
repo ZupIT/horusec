@@ -215,7 +215,7 @@ Horusec also have other repositories, check out some of our other projects:
 - [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
 
 ## **License**
- [**Apache License 2.0**](https://github.com/ZupIT/charlescd/blob/main/LICENSE).
+ [**Apache License 2.0**](LICENSE).
 
 ## **Community**
 
