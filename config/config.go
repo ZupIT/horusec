@@ -142,7 +142,7 @@ func New() *Config {
 			ConfigFilePath: filepath.Join(wd, "horusec-config.json"),
 			LogLevel:       logrus.InfoLevel.String(),
 			LogFilePath: filepath.Join(
-				os.TempDir(), fmt.Sprintf("horusec-log-%s.log", time.Now().Format("2006-01-02 15:04:05")),
+				os.TempDir(), fmt.Sprintf("horusec-%s.log", time.Now().Format("2006-01-02-15-04-05")),
 			),
 			IsTimeout: false,
 		},
