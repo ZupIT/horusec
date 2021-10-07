@@ -1,0 +1,66 @@
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Update-Horusec-Js
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Set the next version. Ex: (v0.0.1)'
+        required: true
+
+jobs:
+  UpdateTool:
+    runs-on: ubuntu-latest
+    env:
+      COSIGN_KEY_LOCATION: /tmp/cosign.key
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cosign Installer
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.2.0'
+
+      - name: Install cosign private key
+        run: 'echo "$COSIGN_KEY" > $COSIGN_KEY_LOCATION'
+        shell: bash
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+
+      - name: Docker Login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: .
+          file: ./internal/services/formatters/javascript/deployments/Dockerfile
+          tags: |
+            horuszup/horusec-js:${{ github.event.inputs.version }}
+            horuszup/horusec-js:latest
+
+      - name: Sign image
+        run: |
+          cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-js:${{ github.event.inputs.version }}
+          cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-js:latest
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
