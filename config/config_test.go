@@ -134,7 +134,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, err)
 		configs := config.New()
 		configs.ConfigFilePath = configFilePath
-		configs.MergeFromConfigFile()
+		configs.LoadFromConfigFile()
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
 		assert.Equal(t, "http://new-viper.horusec.com", configs.HorusecAPIUri)
 		assert.Equal(t, int64(20), configs.TimeoutInSecondsRequest)
@@ -176,7 +176,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, err)
 		configs := config.New()
 		configs.ConfigFilePath = configFilePath
-		configs.MergeFromConfigFile()
+		configs.LoadFromConfigFile()
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
 		assert.Equal(t, "http://new-viper.horusec.com", configs.HorusecAPIUri)
 		assert.Equal(t, int64(20), configs.TimeoutInSecondsRequest)
@@ -234,7 +234,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(config.EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(config.EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(config.EnvLogFilePath, "test"))
-		configs.MergeFromEnvironmentVariables()
+		configs.LoadFromEnvironmentVariables()
 
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
 		assert.Equal(t, "http://horusec.com", configs.HorusecAPIUri)
@@ -277,7 +277,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, err)
 		configs := config.New()
 		configs.ConfigFilePath = configFilePath
-		configs.MergeFromConfigFile()
+		configs.LoadFromConfigFile()
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
 		assert.Equal(t, "http://new-viper.horusec.com", configs.HorusecAPIUri)
 		assert.Equal(t, int64(20), configs.TimeoutInSecondsRequest)
@@ -333,7 +333,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(config.EnvEnableOwaspDependencyCheck, "true"))
 		assert.NoError(t, os.Setenv(config.EnvEnableShellCheck, "true"))
 		assert.NoError(t, os.Setenv(config.EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
-		configs.MergeFromEnvironmentVariables()
+		configs.LoadFromEnvironmentVariables()
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
 		assert.Equal(t, int64(99), configs.TimeoutInSecondsRequest)
 		assert.Equal(t, int64(999), configs.TimeoutInSecondsAnalysis)
@@ -365,8 +365,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		startCmd := start.NewStartCommand(configs)
 
 		cobraCmd := startCmd.CreateStartCommand()
-		// Remove the pre run hook to override the output
-		cobraCmd.PreRunE = nil
+		cobraCmd.PersistentPreRunE = configs.PersistentPreRun
 
 		target, err := os.MkdirTemp(os.TempDir(), "testing-target")
 		assert.NoError(t, err)
@@ -403,18 +402,19 @@ func TestNormalizeConfigs(t *testing.T) {
 
 func TestConfig_ToBytes(t *testing.T) {
 	t.Run("Should success when parse config to json bytes without indent", func(t *testing.T) {
-		config := config.New().MergeFromEnvironmentVariables()
+		config := config.New().LoadFromEnvironmentVariables()
 		assert.NotEmpty(t, config.ToBytes(false))
 	})
 	t.Run("Should success when parse config to json bytes with indent", func(t *testing.T) {
-		config := config.New().MergeFromEnvironmentVariables()
+		config := config.New().LoadFromEnvironmentVariables()
 		assert.NotEmpty(t, config.ToBytes(true))
 	})
 }
+
 func TestSetLogOutput(t *testing.T) {
 	t.Run("Should success when log path is empty", func(t *testing.T) {
 		config := config.New()
-		err := config.PreRun(nil, nil)
+		err := config.ConfigureLogger()
 		assert.NoError(t, err)
 	})
 	t.Run("Should success when log path is valid", func(t *testing.T) {
@@ -423,7 +423,7 @@ func TestSetLogOutput(t *testing.T) {
 
 		config := config.New()
 		config.LogFilePath = file.Name()
-		err = config.PreRun(nil, nil)
+		err = config.ConfigureLogger()
 		assert.NoError(t, err)
 	})
 

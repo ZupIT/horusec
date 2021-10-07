@@ -46,7 +46,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 		cobraCmd := cmd.CreateCobraCmd()
 		// Remove the pre run hook to override the output
-		cobraCmd.PreRunE = nil
+		cobraCmd.PersistentPreRunE = nil
 		cobraCmd.SetOut(stdoutMock)
 
 		assert.NoError(t, cobraCmd.Execute())
@@ -83,7 +83,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		logrus.SetOutput(stdoutMock)
 		cobraCmd := cmd.CreateCobraCmd()
 		// Remove the pre run hook to override the output
-		cobraCmd.PreRunE = nil
+		cobraCmd.PersistentPreRunE = nil
 		cobraCmd.SetOut(stdoutMock)
 		assert.NoError(t, cobraCmd.Execute())
 

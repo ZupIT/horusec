@@ -87,7 +87,7 @@ func TestValidateConfigs(t *testing.T) {
 	t.Run("Should return error when the text output file is invalid", func(t *testing.T) {
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
-		cfg.MergeFromEnvironmentVariables()
+		cfg.LoadFromEnvironmentVariables()
 		cfg.PrintOutputType = outputtype.Text
 		cfg.JSONOutputFilePath = "test.test"
 
@@ -98,7 +98,7 @@ func TestValidateConfigs(t *testing.T) {
 	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
-		cfg.MergeFromEnvironmentVariables()
+		cfg.LoadFromEnvironmentVariables()
 		cfg.PrintOutputType = (outputtype.Text)
 		cfg.JSONOutputFilePath = "test.txt"
 
