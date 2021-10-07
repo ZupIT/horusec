@@ -30,7 +30,7 @@
     "**/*_test.go",
     "**/*_mock.go",
     "**/*README.md",
-    "**/cmd/app/start/analysis/**",
+    "**/cmd/horusec/start/analysis/**",
     "**/tmp/**",
     "**/bin/**",
     "**/internal/services/engines/**"

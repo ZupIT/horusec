@@ -35,7 +35,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/sirupsen/logrus"
 
-	"github.com/ZupIT/horusec/cmd/app/version"
+	"github.com/ZupIT/horusec/cmd/horusec/version"
 	"github.com/ZupIT/horusec/config/dist"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"

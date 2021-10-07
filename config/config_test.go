@@ -31,7 +31,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec/cmd/app/start"
+	"github.com/ZupIT/horusec/cmd/horusec/start"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"

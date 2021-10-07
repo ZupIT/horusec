@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 	}
 	bin := path.Join(wd, "tmp-horusec")
 
-	cmd := exec.Command("go", "build", fmt.Sprintf("-o=%s", bin), path.Join(wd, "..", "..", "cmd", "app"))
+	cmd := exec.Command("go", "build", fmt.Sprintf("-o=%s", bin), path.Join(wd, "..", "..", "cmd", "horusec"))
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "GOOS=linux")
 	cmd.Env = append(cmd.Env, "GOARCH=amd64")

@@ -21,9 +21,9 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec/cmd/app/generate"
-	"github.com/ZupIT/horusec/cmd/app/start"
-	"github.com/ZupIT/horusec/cmd/app/version"
+	"github.com/ZupIT/horusec/cmd/horusec/generate"
+	"github.com/ZupIT/horusec/cmd/horusec/start"
+	"github.com/ZupIT/horusec/cmd/horusec/version"
 	"github.com/ZupIT/horusec/config"
 )
 

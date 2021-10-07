@@ -78,7 +78,7 @@ generateBinaries () {
     mkdir -p "./bin/horusec/$ACTUAL_RELEASE_FORMATTED"
 
     # Build for linux x86
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/app/main.go;
+    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/horusec/main.go;
     then
         echo "Error when generate Build for linux_x86"
     else
@@ -86,7 +86,7 @@ generateBinaries () {
     fi
 
     # Build for linux x64
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" ./cmd/app/main.go;
+    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" ./cmd/horusec/main.go;
     then
         echo "Error when generate Build for linux_x64"
     else
@@ -94,7 +94,7 @@ generateBinaries () {
     fi
 
     # Build for Windows x86
-    if ! env GOOS=windows GOARCH=386 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x86.exe" ./cmd/app/main.go;
+    if ! env GOOS=windows GOARCH=386 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x86.exe" ./cmd/horusec/main.go;
     then
         echo "Error when generate Build for win_x86"
     else
@@ -102,7 +102,7 @@ generateBinaries () {
     fi
 
     # Build for Windows x64
-    if ! env GOOS=windows GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x64.exe" ./cmd/app/main.go;
+    if ! env GOOS=windows GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_win_x64.exe" ./cmd/horusec/main.go;
     then
         echo "Error when generate Build for win_x64"
     else
@@ -110,7 +110,7 @@ generateBinaries () {
     fi
 
     # Build for Mac x64
-    if ! env GOOS=darwin GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_mac_x64" ./cmd/app/main.go;
+    if ! env GOOS=darwin GOARCH=amd64 go build -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_mac_x64" ./cmd/horusec/main.go;
     then
         echo "Error when generate Build for mac_x64"
     else

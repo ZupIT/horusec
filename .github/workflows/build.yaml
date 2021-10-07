@@ -26,6 +26,6 @@ jobs:
           go-version: 1.17
       - name: build
         run: |
-          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-linux" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/app/main.go
-          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/app/main.go
+          CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "tmp/horusec-linux" ./cmd/horusec/main.go
+          CGO_ENABLED=0 GOOS=darwin go build -a -installsuffix cgo -o "tmp/horusec-darwin" ./cmd/horusec/main.go
+          env GOOS=windows GOARCH=amd64 go build -o "tmp/horusec-win.exe" ./cmd/horusec/main.go
