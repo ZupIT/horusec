@@ -71,6 +71,10 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
 
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date "+%a %b %d %H:%M:%S %Y")"
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -80,6 +84,62 @@ jobs:
         env:
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: v0.0.0-alpha
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+          CLI_VERSION: alpha
+
+      - name: Build stand alone cli
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=alpha' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_linux_x86_stand_alone  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_linux_x86_stand_alone.sig ./tmp/horusec_linux_x86_stand_alone
+
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=alpha' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_linux_x64_stand_alone  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_linux_x64_stand_alone.sig ./tmp/horusec_linux_x64_stand_alone
+
+          CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=alpha' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_windows_x86_stand_alone.exe  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_windows_x86_stand_alone.exe.sig ./tmp/horusec_windows_x86_stand_alone.exe
+
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=alpha' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_windows_x64_stand_alone.exe  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_windows_x64_stand_alone.exe.sig ./tmp/horusec_windows_x64_stand_alone.exe
+
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=alpha' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_mac_x64_stand_alone  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_mac_x64_stand_alone.sig ./tmp/horusec_mac_x64_stand_alone
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
 
       - name: Delete outdate release
         uses: dev-drprasad/delete-tag-and-release@v0.2.0
@@ -114,6 +174,16 @@ jobs:
             horusec_win_x64.exe.sig:./dist/horusec_windows_amd64/horusec.exe.sig
             horusec_win_x86.exe:./dist/horusec_windows_386/horusec.exe
             horusec_win_x86.exe.sig:./dist/horusec_windows_386/horusec.exe.sig
+            horusec_linux_x86_stand_alone:./tmp/horusec_linux_x86_stand_alone
+            horusec_linux_x86_stand_alone.sig:./tmp/horusec_linux_x86_stand_alone.sig
+            horusec_linux_x64_stand_alone:./tmp/horusec_linux_x64_stand_alone
+            horusec_linux_x64_stand_alone.sig:./tmp/horusec_linux_x64_stand_alone.sig
+            horusec_windows_x86_stand_alone.exe:./tmp/horusec_windows_x86_stand_alone.exe
+            horusec_windows_x86_stand_alone.exe.sig:./tmp/horusec_windows_x86_stand_alone.exe.sig
+            horusec_windows_x64_stand_alone.exe:./tmp/horusec_windows_x64_stand_alone.exe
+            horusec_windows_x64_stand_alone.exe.sig:./tmp/horusec_windows_x64_stand_alone.exe.sig
+            horusec_mac_x64_stand_alone:./tmp/horusec_mac_x64_stand_alone
+            horusec_mac_x64_stand_alone.sig:./tmp/horusec_mac_x64_stand_alone.sig
           body: |
             ## Docker images
 

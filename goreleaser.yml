@@ -18,9 +18,9 @@ builds:
     env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
     ldflags:
-      - -X github.com/ZupIT/horusec/config.version=v{{ .Version }}
-      - -X github.com/ZupIT/horusec/config.commit={{ .Commit }}
-      - -X github.com/ZupIT/horusec/config.date={{ .Date }}
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
     goos:
       - linux
       - windows
@@ -47,6 +47,16 @@ release:
   draft: true
   extra_files:
     - glob: deployments/cosign.pub
+    - glob: ./tmp/horusec_linux_x86_stand_alone
+    - glob: ./tmp/horusec_linux_x86_stand_alone.sig
+    - glob: ./tmp/horusec_linux_x64_stand_alone
+    - glob: ./tmp/horusec_linux_x64_stand_alone.sig
+    - glob: ./tmp/horusec_windows_x86_stand_alone.exe
+    - glob: ./tmp/horusec_windows_x86_stand_alone.exe.sig
+    - glob: ./tmp/horusec_windows_x64_stand_alone.exe
+    - glob: ./tmp/horusec_windows_x64_stand_alone.exe.sig
+    - glob: ./tmp/horusec_mac_x64_stand_alone
+    - glob: ./tmp/horusec_mac_x64_stand_alone.sig
 nfpms:
   - id: horusec
     package_name: horusec
