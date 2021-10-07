@@ -19,7 +19,7 @@ const (
 	MsgErrorTimeoutOccurs = "{HORUSEC_CLI} Some analysis was not completed due to the timeout, " +
 		"increase the time with -t flag and try again."
 	// USED IN USE CASES: Fired when the project path is invalid
-	MsgErrorProjectPathNotValid = "project path is invalid: "
+	MsgErrorPathNotValid = "invalid path: "
 	// USED IN USE CASES: Fired when an path of json is not valid in configs
 	MsgErrorJSONOutputFilePathNotValid = "Output File path is required or is invalid: "
 	// USED IN USE CASES: Fired when an severity is not allowed in configs

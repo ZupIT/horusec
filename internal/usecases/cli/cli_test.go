@@ -21,7 +21,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 )
 
@@ -29,91 +29,91 @@ func TestValidateConfigs(t *testing.T) {
 	useCases := NewCLIUseCases()
 
 	t.Run("Should return no errors when valid", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return no errors when is not valid path", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.ProjectPath = "./not-exist-path"
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.ProjectPath = "./not-exist-path"
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "projectPath: project path is invalid: .")
+		assert.Equal(t, "project_path: invalid path: .", err.Error())
 	})
 	t.Run("Should return no errors when valid config with ignore", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.SeveritiesToIgnore = []string{"LOW"}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.SeveritiesToIgnore = []string{"LOW"}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid ignore value", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.SeveritiesToIgnore = []string{"test"}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.SeveritiesToIgnore = []string{"test"}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "severitiesToIgnore: Type of severity not valid:  test. "+
-			"See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO].", err.Error())
+		expected := "severities_to_ignore: Type of severity not valid:  test. See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO]."
+		assert.Equal(t, expected, err.Error())
 	})
 	t.Run("Should return error when invalid json output file is empty", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.PrintOutputType = outputtype.JSON
-		config.JSONOutputFilePath = ""
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.PrintOutputType = outputtype.JSON
+		cfg.JSONOutputFilePath = ""
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .json.",
+		assert.Equal(t, "json_output_file_path: Output File path is required or is invalid: not valid file of type .json.",
 			err.Error())
 	})
 	t.Run("Should return error when invalid json output file is invalid", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.PrintOutputType = outputtype.JSON
-		config.JSONOutputFilePath = "test.test"
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.PrintOutputType = outputtype.JSON
+		cfg.JSONOutputFilePath = "test.test"
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .json.",
+		assert.Equal(t, "json_output_file_path: Output File path is required or is invalid: not valid file of type .json.",
 			err.Error())
 	})
 	t.Run("Should return error when the text output file is invalid", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.MergeFromEnvironmentVariables()
-		config.PrintOutputType = outputtype.Text
-		config.JSONOutputFilePath = "test.test"
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.MergeFromEnvironmentVariables()
+		cfg.PrintOutputType = outputtype.Text
+		cfg.JSONOutputFilePath = "test.test"
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.EqualError(t, err, "jSONOutputFilePath: Output File path is required or is invalid: not valid file of type .txt.")
+		assert.EqualError(t, err, "json_output_file_path: Output File path is required or is invalid: not valid file of type .txt.")
 	})
 	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{}
-		config.MergeFromEnvironmentVariables()
-		config.PrintOutputType = (outputtype.Text)
-		config.JSONOutputFilePath = "test.txt"
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+		cfg.MergeFromEnvironmentVariables()
+		cfg.PrintOutputType = (outputtype.Text)
+		cfg.JSONOutputFilePath = "test.txt"
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
-		config := &cliConfig.Config{}
+		cfg := &config.Config{}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
 	})
 	t.Run("Should return success because exists path in workdir", func(t *testing.T) {
-		config := cliConfig.New()
-		config.WorkDir = &workdir.WorkDir{
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{
 			Go:         []string{"./"},
 			CSharp:     []string{""},
 			Ruby:       []string{},
@@ -125,12 +125,12 @@ func TestValidateConfigs(t *testing.T) {
 			HCL:        []string{},
 		}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error because not exists path in workdir", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{
+		cfg := &config.Config{}
+		cfg.WorkDir = &workdir.WorkDir{
 			Go:         []string{"NOT EXISTS PATH"},
 			CSharp:     []string{},
 			Ruby:       []string{},
@@ -142,36 +142,35 @@ func TestValidateConfigs(t *testing.T) {
 			HCL:        []string{},
 		}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "workDir: stat ")
+		assert.Contains(t, err.Error(), "work_dir: stat ")
 		assert.Contains(t, err.Error(), "internal/usecases/cli/NOT EXISTS PATH: no such file or directory.")
 	})
 	t.Run("Should return error because cert path is not valid", func(t *testing.T) {
-		config := cliConfig.New()
-		config.CertPath = "INVALID PATH"
+		cfg := config.New()
+		cfg.CertPath = "INVALID PATH"
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "certPath: project path is invalid: .",
-			err.Error())
+		assert.Equal(t, "cert_path: invalid path: .", err.Error())
 	})
 	t.Run("Should return error when is duplicated false positive and risk accepted", func(t *testing.T) {
 		hash := "1e836029-4e90-4151-bb4a-d86ef47f96b6"
-		config := cliConfig.New()
-		config.FalsePositiveHashes = []string{hash}
-		config.RiskAcceptHashes = []string{hash}
+		cfg := config.New()
+		cfg.FalsePositiveHashes = []string{hash}
+		cfg.RiskAcceptHashes = []string{hash}
 
-		err := useCases.ValidateConfigs(config)
-		assert.Equal(t, "falsePositiveHashes: False positive is not valid because is duplicated in risk accept: 1e836029-4e90-4151-bb4a-d86ef47f96b6; riskAcceptHashes: Risk Accept is not valid because is duplicated in false positive: 1e836029-4e90-4151-bb4a-d86ef47f96b6.",
-			err.Error())
+		err := useCases.ValidateConfig(cfg)
+		expected := "false_positive_hashes: False positive is not valid because is duplicated in risk accept: 1e836029-4e90-4151-bb4a-d86ef47f96b6; risk_accept_hashes: Risk Accept is not valid because is duplicated in false positive: 1e836029-4e90-4151-bb4a-d86ef47f96b6."
+		assert.Equal(t, expected, err.Error())
 	})
 	t.Run("Should return not error when validate false positive and risk accepted", func(t *testing.T) {
-		config := cliConfig.New()
-		config.FalsePositiveHashes = []string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"}
-		config.RiskAcceptHashes = []string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"}
+		cfg := config.New()
+		cfg.FalsePositiveHashes = []string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"}
+		cfg.RiskAcceptHashes = []string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"}
 
-		err := useCases.ValidateConfigs(config)
+		err := useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 }
