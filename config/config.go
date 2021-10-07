@@ -35,14 +35,13 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/sirupsen/logrus"
 
+	"github.com/ZupIT/horusec/cmd/app/version"
 	"github.com/ZupIT/horusec/config/dist"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	jsonutils "github.com/ZupIT/horusec/internal/utils/json"
 	"github.com/ZupIT/horusec/internal/utils/valueordefault"
 )
-
-var version = "{{VERSION_NOT_FOUND}}"
 
 const (
 	EnvHorusecAPIUri                   = "HORUSEC_CLI_HORUSEC_API_URI"
@@ -137,7 +136,7 @@ func New() *Config {
 	}
 
 	return &Config{
-		Version: version,
+		Version: version.Version,
 		GlobalOptions: GlobalOptions{
 			ConfigFilePath: filepath.Join(wd, "horusec-config.json"),
 			LogLevel:       logrus.InfoLevel.String(),

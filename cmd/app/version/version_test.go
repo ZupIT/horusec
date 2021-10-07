@@ -19,24 +19,16 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/ZupIT/horusec/config"
 )
 
 func TestVersionCommand_Execute(t *testing.T) {
-	cfg := config.New()
-
-	t.Run("Should execute command exec without error", func(t *testing.T) {
+	t.Run("should not panic when creating the version command", func(t *testing.T) {
 		assert.NotPanics(t, func() {
-			cobraCmd := NewVersionCommand(cfg)
-			cobraCmd.CreateCobraCmd()
+			CreateCobraCmd()
 		})
 	})
-	t.Run("Should execute command exec without error", func(t *testing.T) {
-		root := &cobra.Command{}
-		cobraCmd := NewVersionCommand(cfg)
-		cmd := cobraCmd.CreateCobraCmd()
-		err := cmd.RunE(root, []string{})
-		assert.NoError(t, err)
+
+	t.Run("should success execute the version command without errors", func(t *testing.T) {
+		assert.NoError(t, CreateCobraCmd().RunE(&cobra.Command{}, []string{}))
 	})
 }

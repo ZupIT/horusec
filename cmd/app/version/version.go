@@ -18,29 +18,31 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/config"
+
 	"github.com/ZupIT/horusec/config/dist"
 )
 
-type Version struct {
-	config *config.Config
-}
+var (
+	Version = "{{VERSION_NOT_FOUND}}"
+	Commit  = "{{COMMIT_NOT_FOUND}}"
+	Date    = "{{DATE_NOT_FOUND}}"
+)
 
-func NewVersionCommand(cfg *config.Config) *Version {
-	return &Version{
-		config: cfg,
-	}
-}
-
-func (v *Version) CreateCobraCmd() *cobra.Command {
+func CreateCobraCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:     "version",
-		Short:   "Actual version installed of the horusec",
+		Short:   "Shows the current version of installed Horusec",
 		Example: "horusec version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.LogPrint(cmd.Short + " is: " + v.config.Version)
-			logger.LogPrint("dist: " + dist.GetVersion())
+			printVersionInfo()
 			return nil
 		},
 	}
+}
+
+func printVersionInfo() {
+	logger.LogPrint("Version:          " + Version)
+	logger.LogPrint("Git commit:       " + Commit)
+	logger.LogPrint("Built:            " + Date)
+	logger.LogPrint("Distribution:     " + dist.GetVersion())
 }

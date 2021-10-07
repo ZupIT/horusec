@@ -72,7 +72,7 @@ horusec start -p="/home/user/projects/my-project"
 			`set user defined log file path instead of default`,
 		)
 
-	rootCmd.AddCommand(version.NewVersionCommand(cfg).CreateCobraCmd())
+	rootCmd.AddCommand(version.CreateCobraCmd())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
 
