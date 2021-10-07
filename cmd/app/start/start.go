@@ -50,7 +50,7 @@ type Prompt interface {
 
 // UseCase is the interface that validate the configurations
 type UseCase interface {
-	ValidateConfigs(config *config.Config) error
+	ValidateConfig(config *config.Config) error
 }
 
 // Requirements is the interface that validate Horusec dynamic
@@ -335,7 +335,7 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 }
 
 func (s *Start) configsValidations(cmd *cobra.Command) error {
-	if err := s.useCases.ValidateConfigs(s.configs); err != nil {
+	if err := s.useCases.ValidateConfig(s.configs); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err
