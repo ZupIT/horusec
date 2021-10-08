@@ -179,14 +179,59 @@ func New() *Config {
 	}
 }
 
-// MergeFromConfigFile merge current instance of config with values
-// configured on configuration file.
+// LoadGlobalFlags load global flags into current config instance.
+func (c *Config) LoadGlobalFlags(cmd *cobra.Command) *Config {
+	c.LogLevel = c.extractFlagValueString(cmd, "log-level", c.LogLevel)
+	c.ConfigFilePath = c.extractFlagValueString(cmd, "config-file-path", c.ConfigFilePath)
+	c.LogFilePath = c.extractFlagValueString(cmd, "log-file-path", c.LogFilePath)
+	return c
+}
+
+// LoadGlobalFlags load start command flags into current config instance.
 //
-// The config file path used here is the default or the value used in
-// command line args.
+//nolint:funlen
+func (c *Config) LoadStartFlags(cmd *cobra.Command) *Config {
+	c.MonitorRetryInSeconds = c.extractFlagValueInt64(cmd, "monitor-retry-count", c.MonitorRetryInSeconds)
+	c.PrintOutputType = c.extractFlagValueString(cmd, "output-format", c.PrintOutputType)
+	c.JSONOutputFilePath = c.extractFlagValueString(cmd, "json-output-file", c.JSONOutputFilePath)
+	c.SeveritiesToIgnore = c.extractFlagValueStringSlice(cmd, "ignore-severity", c.SeveritiesToIgnore)
+	c.FilesOrPathsToIgnore = c.extractFlagValueStringSlice(cmd, "ignore", c.FilesOrPathsToIgnore)
+	c.HorusecAPIUri = c.extractFlagValueString(cmd, "horusec-url", c.HorusecAPIUri)
+	c.TimeoutInSecondsRequest = c.extractFlagValueInt64(cmd, "request-timeout", c.TimeoutInSecondsRequest)
+	c.TimeoutInSecondsAnalysis = c.extractFlagValueInt64(cmd, "analysis-timeout", c.TimeoutInSecondsAnalysis)
+	c.RepositoryAuthorization = c.extractFlagValueString(cmd, "authorization", c.RepositoryAuthorization)
+	c.Headers = c.extractFlagValueStringToString(cmd, "headers", c.Headers)
+	c.ReturnErrorIfFoundVulnerability = c.extractFlagValueBool(cmd, "return-error", c.ReturnErrorIfFoundVulnerability)
+	c.ProjectPath = c.extractFlagValueString(cmd, "project-path", c.ProjectPath)
+	c.EnableGitHistoryAnalysis = c.extractFlagValueBool(cmd, "enable-git-history", c.EnableGitHistoryAnalysis)
+	c.CertInsecureSkipVerify = c.extractFlagValueBool(cmd, "insecure-skip-verify", c.CertInsecureSkipVerify)
+	c.CertPath = c.extractFlagValueString(cmd, "certificate-path", c.CertPath)
+	c.EnableCommitAuthor = c.extractFlagValueBool(cmd, "enable-commit-author", c.EnableCommitAuthor)
+	c.RepositoryName = c.extractFlagValueString(cmd, "repository-name", c.RepositoryName)
+	c.FalsePositiveHashes = c.extractFlagValueStringSlice(cmd, "false-positive", c.FalsePositiveHashes)
+	c.RiskAcceptHashes = c.extractFlagValueStringSlice(cmd, "risk-accept", c.RiskAcceptHashes)
+	c.ContainerBindProjectPath = c.extractFlagValueString(
+		cmd, "container-bind-project-path", c.ContainerBindProjectPath,
+	)
+	c.DisableDocker = c.extractFlagValueBool(cmd, "disable-docker", c.DisableDocker)
+	c.CustomRulesPath = c.extractFlagValueString(cmd, "custom-rules-path", c.CustomRulesPath)
+	c.EnableInformationSeverity = c.extractFlagValueBool(cmd, "information-severity", c.EnableInformationSeverity)
+	c.ShowVulnerabilitiesTypes = c.extractFlagValueStringSlice(
+		cmd, "show-vulnerabilities-types", c.ShowVulnerabilitiesTypes,
+	)
+	c.EnableOwaspDependencyCheck = c.extractFlagValueBool(
+		cmd, "enable-owasp-dependency-check", c.EnableOwaspDependencyCheck,
+	)
+	c.EnableShellCheck = c.extractFlagValueBool(cmd, "enable-shellcheck", c.EnableShellCheck)
+	return c
+}
+
+// LoadFromConfigFile load config values from config file into current
+// config instance. Note the values loaded from config file will override
+// current config instance.
 //
 //nolint:funlen,gocyclo
-func (c *Config) MergeFromConfigFile() *Config {
+func (c *Config) LoadFromConfigFile() *Config {
 	if !c.setViperConfigsAndReturnIfExistFile() {
 		return c
 	}
@@ -284,11 +329,12 @@ func (c *Config) MergeFromConfigFile() *Config {
 	return c
 }
 
-// MergeFromEnvironmentVariables merge current instance of config with values
-// configured on environment variables.
+// LoadFromEnvironmentVariables load config values from environment variables into
+// current config instance. Note the values loaded from environemtn variables will
+// override current config instance.
 //
 //nolint:lll,funlen
-func (c *Config) MergeFromEnvironmentVariables() *Config {
+func (c *Config) LoadFromEnvironmentVariables() *Config {
 	c.HorusecAPIUri = env.GetEnvOrDefault(EnvHorusecAPIUri, c.HorusecAPIUri)
 	c.TimeoutInSecondsRequest = env.GetEnvOrDefaultInt64(EnvTimeoutInSecondsRequest, c.TimeoutInSecondsRequest)
 	c.TimeoutInSecondsAnalysis = env.GetEnvOrDefaultInt64(EnvTimeoutInSecondsAnalysis, c.TimeoutInSecondsAnalysis)
@@ -332,14 +378,30 @@ func (c *Config) MergeFromEnvironmentVariables() *Config {
 	return c
 }
 
-// PreRun is a hook that normalize config values and create the log file.
-// This hook is used as a PreRun on cobra commands.
-func (c *Config) PreRun(_ *cobra.Command, _ []string) error {
-	return c.Normalize().configureLogger()
+// PersistentPreRun is a hook that load user input from command line, config file
+// and environment variable.
+// We need first read global flags from command line, and them read the config file.
+// since the user can manipulate the path. Then we read environment variables if they
+// exists (will override the values from config file). Finally we read the flags from
+// start command that can override values from config file and environment variables.
+//
+// After each read values step we normalize the paths from relative to absolute and
+// finally configure and create the log file.
+func (c *Config) PersistentPreRun(cmd *cobra.Command, _ []string) error {
+	return c.
+		LoadGlobalFlags(cmd).
+		Normalize().
+		LoadFromConfigFile().
+		Normalize().
+		LoadFromEnvironmentVariables().
+		Normalize().
+		LoadStartFlags(cmd).
+		Normalize().
+		ConfigureLogger()
 }
 
-// configureLogger create the log file and configure the log output.
-func (c *Config) configureLogger() error {
+// ConfigureLogger create the log file and configure the log output.
+func (c *Config) ConfigureLogger() error {
 	log, err := os.OpenFile(c.LogFilePath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err
@@ -356,7 +418,7 @@ func (c *Config) IsEmptyRepositoryAuthorization() bool {
 func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath + c.ConfigFilePath)
 	if _, err := os.Stat(c.ConfigFilePath); os.IsNotExist(err) {
-		logger.LogDebugWithLevel(messages.MsgDebugConfigFileNotFoundOnPath)
+		logger.LogWarn(messages.MsgDebugConfigFileNotFoundOnPath)
 		return false
 	}
 	viper.SetConfigFile(c.ConfigFilePath)
@@ -448,4 +510,51 @@ func (c *Config) replaceCommaToSpaceSliceString(input []string) []string {
 		response = append(response, newItem)
 	}
 	return response
+}
+
+func (c *Config) extractFlagValueString(cmd *cobra.Command, name, defaultValue string) string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetString(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueInt64(cmd *cobra.Command, name string, defaultValue int64) int64 {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetInt64(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueBool(cmd *cobra.Command, name string, defaultValue bool) bool {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetBool(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
+
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueStringSlice(cmd *cobra.Command, name string, defaultValue []string) []string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetStringSlice(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
+		return flagValue
+	}
+	return defaultValue
+}
+
+func (c *Config) extractFlagValueStringToString(
+	cmd *cobra.Command, name string, defaultValue map[string]string) map[string]string {
+	if cmd.PersistentFlags().Changed(name) {
+		flagValue, err := cmd.PersistentFlags().GetStringToString(name)
+		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
+		return flagValue
+	}
+	return defaultValue
 }

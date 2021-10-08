@@ -37,12 +37,12 @@ func NewGenerateCommand(cfg *config.Config) *Generate {
 
 func (g *Generate) CreateCobraCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:     "generate",
-		Short:   "Generate horusec configuration",
-		Long:    "Generate the Horusec configuration",
-		Example: "horusec generate",
-		PreRunE: g.configs.PreRun,
-		RunE:    g.runE,
+		Use:               "generate",
+		Short:             "Generate horusec configuration",
+		Long:              "Generate the Horusec configuration",
+		Example:           "horusec generate",
+		PersistentPreRunE: g.configs.PersistentPreRun,
+		RunE:              g.runE,
 	}
 }
 

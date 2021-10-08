@@ -23,8 +23,6 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/spf13/cobra"
-
 	"github.com/ZupIT/horusec/internal/controllers/requirements"
 
 	"github.com/sirupsen/logrus"
@@ -37,7 +35,6 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
@@ -230,7 +227,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		stdoutMock := bytes.NewBufferString("")
 		logrus.SetOutput(stdoutMock)
 
-		configs := config.New().MergeFromEnvironmentVariables()
+		configs := config.New().LoadFromEnvironmentVariables()
 		configs.WorkDir = &workdir.WorkDir{}
 
 		analyzerControllerMock := &analyzer.Mock{}
@@ -355,10 +352,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "json", "-O", "./tmp-json.json"})
 
-		cobra.OnInitialize(func() {
-			assert.NoError(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
-
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
 		assert.NoError(t, err)
@@ -413,10 +406,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", "./", "--information-severity", "true"})
 
-		cobra.OnInitialize(func() {
-			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
-
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
 		os.Stdout = oldStdout
@@ -464,10 +453,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", "./", "-u", "https://google.com", "-a", uuid.NewString()})
 
-		cobra.OnInitialize(func() {
-			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
-
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
 		os.Stdout = oldStdout
@@ -514,10 +499,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", "./", "-o", "sonarqube", "-O", "./tmp-sonarqube.json"})
-
-		cobra.OnInitialize(func() {
-			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
@@ -580,10 +561,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", dstProject, "-s", "CRITICAL, LOW"})
 
-		cobra.OnInitialize(func() {
-			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
-
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
 		os.Stdout = oldStdout
@@ -637,10 +614,6 @@ func TestStartCommand_Execute(t *testing.T) {
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(w)
 		cobraCmd.SetArgs([]string{"-p", dstProject})
-
-		cobra.OnInitialize(func() {
-			require.Nil(t, configs.PreRun(nil, nil), "Expected nil error to pre run config")
-		})
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
