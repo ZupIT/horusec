@@ -27,6 +27,7 @@ builds:
       - darwin
     goarch:
       - amd64
+      - arm64
       - 386
 changelog:
   skip: true
@@ -39,6 +40,7 @@ archives:
     replacements:
       amd64: x64
       386: x86
+      aarch64: arm64
       darwin: mac
       windows: win
 checksum:
@@ -64,6 +66,7 @@ nfpms:
     replacements:
       amd64: 64-bit
       386: 32-bit
+      arm64: arm64
       darwin: mac
       windows: win
     homepage: https://horusec.io/
@@ -91,7 +94,9 @@ docker_signs:
 dockers:
   - id: horusec
     goos: linux
-    goarch: amd64
+    goarch: 
+      - amd64
+      - arm64
     ids:
       - horusec
     image_templates:
