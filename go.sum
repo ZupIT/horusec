@@ -207,6 +207,7 @@ github.com/aquasecurity/bolt-fixtures v0.0.0-20200903104109-d34e7f983986/go.mod 
 github.com/aquasecurity/fanal v0.0.0-20210719144537-c73c1e9f21bf/go.mod h1:zl2aczB7UrczEeMgKTRH6Xp/Lf+gxf0W7kXRjaOubrU=
 github.com/aquasecurity/fanal v0.0.0-20211004144717-124d5e3ef398 h1:D2/7fMPN4qG54w2Baw6odXfO/Itojjl9ZWjTwegqj3A=
 github.com/aquasecurity/fanal v0.0.0-20211004144717-124d5e3ef398/go.mod h1:nXdCM1C89phZEkn/sHQ6S5IjcvxdTnXLSKcftmhFodg=
+github.com/aquasecurity/fanal v0.0.0-20211005172059-69527b46560c/go.mod h1:nXdCM1C89phZEkn/sHQ6S5IjcvxdTnXLSKcftmhFodg=
 github.com/aquasecurity/fanal v0.0.0-20211007060930-f7efd1b3357e h1:SoOAaEMLjW7S9wnxH6c24bVdhfX+wty1o3XQF0bhp6o=
 github.com/aquasecurity/fanal v0.0.0-20211007060930-f7efd1b3357e/go.mod h1:nXdCM1C89phZEkn/sHQ6S5IjcvxdTnXLSKcftmhFodg=
 github.com/aquasecurity/go-dep-parser v0.0.0-20210520015931-0dd56983cc62/go.mod h1:Cv/FOCXy6gwvDbz/KX48+y//SmbnKroFwW5hquXn5G4=
@@ -222,9 +223,13 @@ github.com/aquasecurity/testdocker v0.0.0-20210911155206-e1e85f5a1516/go.mod h1:
 github.com/aquasecurity/tfsec v0.58.11/go.mod h1:RcgH8QFJSE+p7Sf/WAF7chGTL/xULi7muiNdqIsUkOE=
 github.com/aquasecurity/trivy v0.19.2 h1:EXjy/ORo874wPvB9ZSVmaswMW7fl5YOuSIxnWEeap8g=
 github.com/aquasecurity/trivy v0.19.2/go.mod h1:JGC0n1KIFhaknAuGnYt+kCuiFUaLV/HvprdN1j1+sV4=
+github.com/aquasecurity/trivy v0.20.0 h1:WqKdfMhddx/3+U9egGkh2CyTldOf2PYQUYoxSzNZzGo=
+github.com/aquasecurity/trivy v0.20.0/go.mod h1:AxK9ngsc2DchN5ayVETGZ6Cmne0SPsjsFIIL6AxHFKM=
 github.com/aquasecurity/trivy-db v0.0.0-20210531102723-aaab62dec6ee/go.mod h1:N7CWA/vjVw78GWAdCJGhFQVqNGEA4e47a6eIWm+C/Bc=
 github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 h1:CtIZdnwGbTLsRysp04r5KjgztsFXXNiJ6vkyjuoyP5g=
 github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27/go.mod h1:N7CWA/vjVw78GWAdCJGhFQVqNGEA4e47a6eIWm+C/Bc=
+github.com/aquasecurity/trivy-db v0.0.0-20210916043317-726b7b72a47b h1:RaS93vlHzgreZk3CYqcNgoqukwbsBEYhAiE6qmhLwB0=
+github.com/aquasecurity/trivy-db v0.0.0-20210916043317-726b7b72a47b/go.mod h1:5h8GV7Qxp/SMJ4awWHs0KRxwVkKzcwOnRkORWOnCXRU=
 github.com/aquasecurity/vuln-list-update v0.0.0-20191016075347-3d158c2bf9a2/go.mod h1:6NhOP0CjZJL27bZZcaHECtzWdwDDm2g6yCY0QgXEGQQ=
 github.com/araddon/dateparse v0.0.0-20190426192744-0d74ffceef83/go.mod h1:SLqhdZcd+dF3TEVL2RMoob5bBP5R1P1qkox+HtCBgGI=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
@@ -368,6 +373,7 @@ github.com/containerd/containerd v1.5.0-beta.4/go.mod h1:GmdgZd2zA2GYIBZ0w09Zvgq
 github.com/containerd/containerd v1.5.0-rc.0/go.mod h1:V/IXoMqNGgBlabz3tHD2TWDoTJseu1FGOKuoA4nNb2s=
 github.com/containerd/containerd v1.5.1/go.mod h1:0DOxVqwDy2iZvrZp2JUx/E+hS0UNTVn7dJnIOwtYR4g=
 github.com/containerd/containerd v1.5.2/go.mod h1:0DOxVqwDy2iZvrZp2JUx/E+hS0UNTVn7dJnIOwtYR4g=
+github.com/containerd/containerd v1.5.4/go.mod h1:sx18RgvW6ABJ4iYUw7Q5x7bgFOAB9B6G7+yO0XBc4zw=
 github.com/containerd/containerd v1.5.5 h1:q1gxsZsGZ8ddVe98yO6pR21b5xQSMiR61lD0W96pgQo=
 github.com/containerd/containerd v1.5.5/go.mod h1:oSTh0QpT1w6jYcGmbiSbxv9OSQYaa88mPyWIuU79zyo=
 github.com/containerd/containerd v1.5.7 h1:rQyoYtj4KddB3bxG6SAqd4+08gePNyJjRqvOIfV3rkM=
@@ -761,6 +767,7 @@ github.com/google/go-containerregistry v0.6.0/go.mod h1:euCCtNbZ6tKqi1E72vwDj2xZ
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-github/v28 v28.1.1/go.mod h1:bsqJWQX05omyWVmc00nEUql9mhQyv38lDZ8kPZcQVoM=
 github.com/google/go-github/v33 v33.0.0/go.mod h1:GMdDnVZY/2TsWgp/lkYnpSAh6TrzhANBBwm6k6TTEXg=
+github.com/google/go-github/v38 v38.1.0/go.mod h1:cStvrz/7nFr0FoENgG6GLbp53WaelXucT+BBz/3VKx4=
 github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
 github.com/google/go-replayers/grpcreplay v0.1.0/go.mod h1:8Ig2Idjpr6gifRd6pNVggX6TC1Zw6Jx74AKp7QNH2QE=
 github.com/google/go-replayers/httpreplay v0.1.0/go.mod h1:YKZViNhiGgqdBlUbI2MwGpq4pXxNmhJLPHQ7cv2b5no=

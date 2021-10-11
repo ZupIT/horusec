@@ -6,8 +6,7 @@ require (
 	github.com/ZupIT/horusec-devkit v1.0.17
 	github.com/ZupIT/horusec-engine v0.3.6
 	github.com/aquasecurity/fanal v0.0.0-20211007060930-f7efd1b3357e
-	github.com/aquasecurity/trivy v0.19.2
-	github.com/aquasecurity/trivy-db v0.0.0-20210615172119-4c76bb580b27 // indirect
+	github.com/aquasecurity/trivy v0.20.0
 	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/briandowns/spinner v1.16.0
 	github.com/containerd/containerd v1.5.7 // indirect
