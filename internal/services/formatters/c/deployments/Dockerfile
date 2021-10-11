@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.9.7-alpine
+FROM python:3.10.0-alpine
 
 RUN pip install flawfinder==2.0.19
