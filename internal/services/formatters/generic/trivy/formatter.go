@@ -18,10 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"strings"
 	"sync"
 
-	"github.com/aquasecurity/trivy/pkg/types"
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -31,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
@@ -135,7 +134,7 @@ func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntit
 }
 
 func (f *Formatter) parseOutput(output string, cmd Cmd, projectSubPath string) error {
-	report := &entities.Report{}
+	report := &entities.Output{}
 
 	if output == "" {
 		return nil
@@ -162,69 +161,25 @@ func (f *Formatter) setVulnerabilities(cmd Cmd, result *entities.Result, path st
 	}
 }
 
-func (f *Formatter) setVulnerabilitiesOutput(result []*types.DetectedVulnerability, target string) {
-	for _, vuln := range result {
+func (f *Formatter) setVulnerabilitiesOutput(vulnerabilities []*entities.Vulnerability, target string) {
+	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
 		addVuln.File = target
 		addVuln.Code = vuln.PkgName
-		addVuln.Details = f.getDetails(vuln)
+		addVuln.Details = vuln.GetDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
 	}
 }
 
-func (f *Formatter) getDetails(vuln *types.DetectedVulnerability) string {
-	details := f.getBaseDetailsWithoutCWEs(vuln)
-
-	if len(vuln.CweIDs) > 0 {
-		return f.getDetailsWithCWEs(details, vuln)
-	}
-
-	return strings.TrimRight(details, "\n")
-}
-
-func (f *Formatter) getBaseDetailsWithoutCWEs(vuln *types.DetectedVulnerability) (details string) {
-	if vuln.Description != "" {
-		details += vuln.Description + "\n"
-	}
-	if vuln.InstalledVersion != "" && vuln.FixedVersion != "" {
-		details += fmt.Sprintf("Installed Version: \"%s\", Update to Version: \"%s\" for fix this issue.\n",
-			vuln.InstalledVersion, vuln.FixedVersion)
-	}
-	if vuln.PrimaryURL != "" {
-		details += fmt.Sprintf("PrimaryURL: %s.\n", vuln.PrimaryURL)
-	}
-	return details
-}
-
-// nolint:gomnd // magic number "2" is not necessary to check
-func (f *Formatter) getDetailsWithCWEs(details string, vuln *types.DetectedVulnerability) string {
-	details += "Cwe Links: "
-	for _, ID := range vuln.CweIDs {
-		idAfterSplit := strings.SplitAfter(ID, "-")
-		if len(idAfterSplit) >= 2 {
-			details += f.addCWELinkInDetails(details, idAfterSplit[1])
-		}
-	}
-	return strings.TrimRight(details, ",")
-}
-
-func (f *Formatter) addCWELinkInDetails(details, cweID string) string {
-	basePath := "https://cwe.mitre.org/data/definitions/"
-	cweLink := basePath + cweID + ".html"
-	if !strings.Contains(details, cweLink) {
-		return fmt.Sprintf("(%s),", cweLink)
-	}
-	return ""
-}
-
-func (f *Formatter) setMisconfigurationOutput(result []*types.DetectedMisconfiguration, target string) {
+func (f *Formatter) setMisconfigurationOutput(result []*entities.Misconfiguration, target string) {
 	for _, vuln := range result {
 		addVuln := f.getVulnBase()
 		addVuln.File = target
 		addVuln.Code = vuln.Title
-		addVuln.Details = fmt.Sprintf("%s - %s - %s - %s", vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
+		addVuln.Details = fmt.Sprintf("%s - %s - %s - %s",
+			vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)

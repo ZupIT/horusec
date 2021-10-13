@@ -14,8 +14,11 @@
 
 package entities
 
-type Output struct {
-	ArtifactName string    `json:"artifactName"`
-	ArtifactType string    `json:"artifactType"`
-	Results      []*Result `json:"results"`
+type Misconfiguration struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Message     string   `json:"message"`
+	Resolution  string   `json:"resolution"`
+	References  []string `json:"references"`
+	Severity    string   `json:"severity"`
 }
