@@ -41,14 +41,14 @@ import (
 )
 
 type CustomRule struct {
-	ID          string                    `json:"id"`
-	Name        string                    `json:"name"`
-	Description string                    `json:"description"`
-	Language    languages.Language        `json:"language"`
-	Severity    severities.Severity       `json:"severity"`
-	Confidence  confidence.Confidence     `json:"confidence"`
-	Type        customRulesEnums.MathType `json:"type"`
-	Expressions []string                  `json:"expressions"`
+	ID          string                     `json:"id"`
+	Name        string                     `json:"name"`
+	Description string                     `json:"description"`
+	Language    languages.Language         `json:"language"`
+	Severity    severities.Severity        `json:"severity"`
+	Confidence  confidence.Confidence      `json:"confidence"`
+	Type        customRulesEnums.MatchType `json:"type"`
+	Expressions []string                   `json:"expressions"`
 }
 
 func (c *CustomRule) Validate() error {
