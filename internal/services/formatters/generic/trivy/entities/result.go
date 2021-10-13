@@ -14,8 +14,10 @@
 
 package entities
 
-type Output struct {
-	ArtifactName string    `json:"artifactName"`
-	ArtifactType string    `json:"artifactType"`
-	Results      []*Result `json:"results"`
+type Result struct {
+	Target            string              `json:"target"`
+	Class             string              `json:"class"`
+	Type              string              `json:"type"`
+	Vulnerabilities   []*Vulnerability    `json:"vulnerabilities"`
+	Misconfigurations []*Misconfiguration `json:"misconfigurations"`
 }
