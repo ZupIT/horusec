@@ -14,11 +14,11 @@
 
 package customrules
 
-type MathType string
+type MatchType string
 
 const (
-	Regular  MathType = "Regular"
-	OrMatch  MathType = "OrMatch"
-	AndMatch MathType = "AndMatch"
-	NotMatch MathType = "NotMatch"
+	Regular  MatchType = "Regular"
+	OrMatch  MatchType = "OrMatch"
+	AndMatch MatchType = "AndMatch"
+	NotMatch MatchType = "NotMatch"
 )
