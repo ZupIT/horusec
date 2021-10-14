@@ -12,7 +12,7 @@ This is Horusec contributing guide. Please read the following sections to learn 
    2. [**Code Review**](#Code-Review)
    3. [**Pull Requests**](#Pull-Requests)    
 3. [**How to contribute?**](#How-to-contribute?)
-      1. [**Prepare your development environment**](#Using-Docker)
+      1. [**Prepare your development environment**](#Prepare-your-development-environment)
       2. [**First contribution**](#First-contribution)
       4. [**Add new feature, bugfixing or improvement**](#Add-new-feature-bugfixing-or-improvement)
       5. [**Pull Request's approval**](#Pull-Request's-approval)
@@ -74,6 +74,34 @@ When opening a PR:
 See the guidelines to submit your changes: 
 
 ### **Prepare your development environment**
+To start contributing with Horusec you first need to install [Go](https://golang.org/dl/). The minimal version required to build is 1.17.
+[GNU Make](https://www.gnu.org/software/make/) is also required to development.
+
+After installing Go you can build using `make build-dev`.
+
+
+#### Testing
+Horusec has a suite of unit and end-to-end tests you can run them using the following commands. 
+
+```
+make test
+
+make test-e2e
+```
+
+Make sure all the tests pass before you commit and push :)
+
+#### Coverage
+You can get the test coverage using the following command.
+
+```bash
+make coverage
+
+go tool cover -html=coverage.out # Open coverage status in your browser
+``` 
+
+---
+
 Horusec has other repositories and you can check the README for each one of them: 
 
 - [**Admin**](https://github.com/ZupIT/horusec-admin)
