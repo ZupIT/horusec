@@ -17,15 +17,20 @@ package analyzer
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
 	"github.com/ZupIT/horusec/internal/utils/mock"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 
@@ -62,6 +67,84 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 		if _, err := analyzer.Analyze(); err != nil {
 			b.Fatalf("Unexepcted error to analyze on benchmark: %v\n", err)
 		}
+	}
+}
+
+func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
+	vuln := vulnerability.Vulnerability{
+		RuleID:  "HS-TEST-1",
+		Line:    "10",
+		Column:  "20",
+		File:    "testing",
+		Code:    "testing",
+		Details: fmt.Sprintf("Test\nDescription testing"),
+	}
+	vulnhash.Bind(&vuln)
+
+	testcases := []struct {
+		name          string
+		vulnerability vulnerability.Vulnerability
+		hashes        []string
+		expectedType  vulnerabilityenum.Type
+	}{
+		{
+			name:          "ChangeCorrectHashToFalsePositive",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHash},
+			expectedType:  vulnerabilityenum.FalsePositive,
+		},
+		{
+			name:          "ChangeBreakingHashToFalsePositive",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHashInvalid},
+			expectedType:  vulnerabilityenum.FalsePositive,
+		},
+		{
+			name:          "ChangeCorrectHashToRiskAccept",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHash},
+			expectedType:  vulnerabilityenum.RiskAccepted,
+		},
+		{
+			name:          "ChangeBreakingHashToRiskAccept",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHashInvalid},
+			expectedType:  vulnerabilityenum.RiskAccepted,
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.name, func(t *testing.T) {
+			analyzer := NewAnalyzer(config.New())
+
+			analyzer.analysis.AnalysisVulnerabilities = append(
+				analyzer.analysis.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
+					AnalysisID:    uuid.New(),
+					Vulnerability: tt.vulnerability,
+				},
+			)
+			var (
+				falsePositiveHashes []string
+				riskAcceptHashes    []string
+			)
+
+			switch tt.expectedType {
+			case vulnerabilityenum.FalsePositive:
+				falsePositiveHashes = tt.hashes
+			case vulnerabilityenum.RiskAccepted:
+				riskAcceptHashes = tt.hashes
+			default:
+				t.Fatalf("invalid type %s", tt.expectedType)
+			}
+
+			analyzer.SetFalsePositivesAndRiskAcceptInVulnerabilities(falsePositiveHashes, riskAcceptHashes)
+
+			require.Len(t, analyzer.analysis.AnalysisVulnerabilities, len(tt.hashes))
+			for _, vuln := range analyzer.analysis.AnalysisVulnerabilities {
+				assert.Equal(t, tt.expectedType, vuln.Vulnerability.Type)
+			}
+
+		})
 	}
 }
 

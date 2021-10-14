@@ -16,25 +16,85 @@ package formatters
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	engine "github.com/ZupIT/horusec-engine"
 
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/config"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
+	"github.com/ZupIT/horusec/internal/services/engines/java"
 )
+
+func TestParseFindingsToVulnerabilities(t *testing.T) {
+	analysis := new(analysis.Analysis)
+	svc := NewFormatterService(analysis, &docker.Mock{}, config.New())
+
+	rule := java.NewAWSQueryInjection()
+	findings := []engine.Finding{
+		{
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Severity:    rule.Severity,
+			CodeSample:  "testing",
+			Confidence:  rule.Confidence,
+			Description: rule.Description,
+			SourceLocation: engine.Location{
+				Filename: "Test.java",
+				Line:     10,
+				Column:   20,
+			},
+		},
+	}
+	err := svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Java)
+	require.Nil(t, err, "Expected nil error to parse finding to vulnerabilities")
+
+	expectedVulnerabilities := []vulnerability.Vulnerability{
+		{
+			RuleID:        rule.ID,
+			Line:          "10",
+			Column:        "20",
+			Confidence:    confidence.Confidence(rule.Confidence),
+			File:          "Test.java",
+			Code:          "testing",
+			Details:       fmt.Sprintf("%s\n%s", rule.Name, rule.Description),
+			SecurityTool:  tools.HorusecEngine,
+			Language:      languages.Java,
+			Severity:      severities.GetSeverityByString(rule.Severity),
+			CommitAuthor:  "-",
+			CommitDate:    "-",
+			CommitEmail:   "-",
+			CommitHash:    "-",
+			CommitMessage: "-",
+			// NOTE: We hard coded vulnerability hash here to assert that we are not breaking existing hashes
+			VulnHash:        "b9ffd6959275a840254c9ddc9ab0cc5edd6f7950f1b71103d772ac5a17ca988d",
+			VulnHashInvalid: "7ebe9a1e2b39735edcae2f576f31ea4779b5eb9300064e3ebb351069fdd01ed3",
+		},
+	}
+
+	require.Len(t, analysis.AnalysisVulnerabilities, len(expectedVulnerabilities))
+	for idx := range expectedVulnerabilities {
+		assert.Equal(t, expectedVulnerabilities[idx], analysis.AnalysisVulnerabilities[idx].Vulnerability)
+
+	}
+}
 
 func TestMock_AddWorkDirInCmd(t *testing.T) {
 	mock := &Mock{}
@@ -44,10 +104,10 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		mock.On("SetAnalysisError").Return()
 		mock.On("ExecuteContainer").Return("", nil)
 		mock.On("GetAnalysisIDErrorMessage").Return("")
-		mock.On("GetCommitAuthor").Return(commitAuthor.CommitAuthor{})
+		mock.On("GetCommitAuthor").Return(commitauthor.CommitAuthor{})
 		mock.On("AddWorkDirInCmd").Return("")
 		mock.On("GetConfigProjectPath").Return("")
-		mock.On("GetAnalysis").Return(&entitiesAnalysis.Analysis{})
+		mock.On("GetAnalysis").Return(&analysis.Analysis{})
 		mock.On("SetToolFinishedAnalysis").Return()
 		mock.On("LogAnalysisError").Return()
 		mock.On("SetMonitor").Return()
@@ -55,7 +115,7 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		mock.On("GetCodeWithMaxCharacters").Return("")
 		mock.LogDebugWithReplace("", "", "")
 		_ = mock.GetAnalysisID()
-		_, _ = mock.ExecuteContainer(&dockerEntities.AnalysisData{})
+		_, _ = mock.ExecuteContainer(&dockerentities.AnalysisData{})
 		_ = mock.GetAnalysisIDErrorMessage("", "")
 		_ = mock.GetCommitAuthor("", "")
 		_ = mock.AddWorkDirInCmd("", "", "")
@@ -68,14 +128,14 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 
 func TestExecuteContainer(t *testing.T) {
 	t.Run("should return no error when success set is finished", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := &analysis.Analysis{}
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("test", nil)
 
 		monitorController := NewFormatterService(analysis, dockerAPIControllerMock, &config.Config{})
-		result, err := monitorController.ExecuteContainer(&dockerEntities.AnalysisData{})
+		result, err := monitorController.ExecuteContainer(&dockerentities.AnalysisData{})
 
 		assert.NoError(t, err)
 		assert.Equal(t, "test", result)
@@ -84,7 +144,7 @@ func TestExecuteContainer(t *testing.T) {
 
 func TestGetAnalysisIDErrorMessage(t *testing.T) {
 	t.Run("should success get error message with replaces", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		result := monitorController.GetAnalysisIDErrorMessage(tools.Bandit, "test")
 
@@ -96,7 +156,7 @@ func TestGetAnalysisIDErrorMessage(t *testing.T) {
 
 func TestGetCommitAuthor(t *testing.T) {
 	t.Run("should get commit author", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		result := monitorController.GetCommitAuthor("", "")
 
@@ -109,7 +169,7 @@ func TestGetConfigProjectPath(t *testing.T) {
 		cliConfig := &config.Config{}
 		cliConfig.ProjectPath = "test"
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
 
 		result := monitorController.GetConfigProjectPath()
 
@@ -125,7 +185,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 			CSharp: []string{"test"},
 		}
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
 
 		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
@@ -138,7 +198,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 			CSharp: []string{"test"},
 		}
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, cliConfig)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
 
 		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
 
@@ -148,7 +208,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 func TestLogDebugWithReplace(t *testing.T) {
 	t.Run("should log debug and not panics", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		assert.NotPanics(t, func() {
 			monitorController.LogDebugWithReplace("test", tools.NpmAudit, languages.Javascript)
@@ -159,21 +219,21 @@ func TestLogDebugWithReplace(t *testing.T) {
 func TestGetAnalysisID(t *testing.T) {
 	t.Run("should success get analysis id", func(t *testing.T) {
 		id := uuid.New()
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{ID: id}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{ID: id}, &docker.Mock{}, &config.Config{})
 		assert.Equal(t, id.String(), monitorController.GetAnalysisID())
 	})
 }
 
 func TestLogAnalysisError(t *testing.T) {
 	t.Run("should not panic when logging error", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		assert.NotPanics(t, func() {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "")
 		})
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		assert.NotPanics(t, func() {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "/tmp")
@@ -188,7 +248,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
 		)
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -198,7 +258,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
 		)
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -211,7 +271,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			},
 		)
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -221,7 +281,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}},
 		)
 
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
 		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -229,21 +289,21 @@ func TestToolIsToIgnore(t *testing.T) {
 
 func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 	t.Run("should return default code", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		column := 0
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Equal(t, "text", newCode)
 	})
 	t.Run("should return default code if column is negative", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		column := -1
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Equal(t, "text", newCode)
 	})
 	t.Run("should return 4:105 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		for i := 0; i < 10; i++ {
 			for i := 0; i <= 9; i++ {
@@ -255,7 +315,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789", newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		for i := 0; i < 10; i++ {
 			for i := 0; i <= 9; i++ {
@@ -267,7 +327,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "text012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345", newCode)
 	})
 	t.Run("should return first 100 characters when text contains breaking lines", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := `22: func GetMD5(s string) string {
 23:     h := md5.New()
 24:     io.WriteString(h, s) // #nohorus
@@ -280,7 +340,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 	`, newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		for i := 0; i <= 200; i++ {
 			code += strconv.Itoa(i)
@@ -290,7 +350,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "4041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889", newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&entitiesAnalysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 		code := "text"
 		for i := 0; i <= 200; i++ {
 			code += strconv.Itoa(i)

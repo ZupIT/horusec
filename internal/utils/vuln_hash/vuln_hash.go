@@ -15,6 +15,7 @@
 package vulnhash
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -22,11 +23,24 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 )
 
+// Bind generate and set the vulnerability hash on vuln. Note that Bind
+// generate the valid and invalid vulnerability hashes.
+//
+// nolint:funlen
 func Bind(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {
 	vuln.VulnHash = crypto.GenerateSHA256(
 		toOneLine(vuln.Code),
 		vuln.Line,
 		vuln.Details,
+		vuln.File,
+		vuln.CommitEmail,
+	)
+
+	// See vulnerability.Vulnerability.VulnHashInvalid docs for more info.
+	vuln.VulnHashInvalid = crypto.GenerateSHA256(
+		toOneLine(vuln.Code),
+		vuln.Line,
+		fmt.Sprintf("%s: %s", vuln.RuleID, vuln.Details),
 		vuln.File,
 		vuln.CommitEmail,
 	)

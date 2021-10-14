@@ -277,6 +277,9 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerab
 	pr.printLNF("Confidence: %s", vulnerability.Confidence)
 	pr.printLNF("File: %s", pr.getProjectPath(vulnerability.File))
 	pr.printLNF("Code: %s", vulnerability.Code)
+	if vulnerability.RuleID != "" {
+		pr.printLNF("RuleID: %s", vulnerability.RuleID)
+	}
 	pr.printLNF("Details: %s", vulnerability.Details)
 	pr.printLNF("Type: %s", vulnerability.Type)
 

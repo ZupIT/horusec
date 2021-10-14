@@ -92,8 +92,8 @@ github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWX
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/ZupIT/horusec-devkit v1.0.17/go.mod h1:wTsXrXTD1YrChTQEng8EvVg+zL9nMUIQkhUG85sQwuQ=
-github.com/ZupIT/horusec-devkit v1.0.18 h1:Nbl7YQTBnwPFRmIEn0LKINN5u2SwvCu6Jt8wmlhHTO8=
-github.com/ZupIT/horusec-devkit v1.0.18/go.mod h1:8rEUFNoFOGeAIG1unUfaF5qP6agHPnf9WsMtGfQR/iU=
+github.com/ZupIT/horusec-devkit v1.0.19 h1:eQNzst0a91YkAzSWy+1A/brBR9Lon2dMmzs0vZ3dUzQ=
+github.com/ZupIT/horusec-devkit v1.0.19/go.mod h1:8rEUFNoFOGeAIG1unUfaF5qP6agHPnf9WsMtGfQR/iU=
 github.com/ZupIT/horusec-engine v0.3.6 h1:m/kL9K8+OVAaYjagoDmNFFDEA3BnyJbcx0DfNYGyaDM=
 github.com/ZupIT/horusec-engine v0.3.6/go.mod h1:s3SZQ9gXXlEcIagEuopZJga+Dw6RBFWMD7Rh5A+tIys=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
