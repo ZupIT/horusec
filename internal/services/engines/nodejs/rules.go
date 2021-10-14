@@ -66,7 +66,7 @@ func NewNoDisableTlsRejectUnauthorized() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?:\[|)(?:'|\")NODE_TLS_REJECT_UNAUTHORIZED(?:'|\")(?:\]|)\s*=\s*(?:'|\")*0(?:'|\")`),
+			regexp.MustCompile(`NODE_TLS_REJECT_UNAUTHORIZED\s*=\s*(?:'|\")*0(?:'|\")`),
 		},
 	}
 }
