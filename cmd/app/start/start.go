@@ -96,9 +96,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 	f:= startCmd.Flags()
 	startFlags(f)
 
-	if err:=viper.BindPFlags(f);err!= nil{
-		return nil
-	}
+
 	return startCmd
 }
 func DecoderConfigOptions(config *mapstructure.DecoderConfig) {
@@ -109,10 +107,7 @@ func DecoderConfigOptions(config *mapstructure.DecoderConfig) {
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
-	var config NewConfig
-	if err := viper.Unmarshal(&config, DecoderConfigOptions); err != nil {
-		return fmt.Errorf("parse config: %v", err)
-	}
+	fmt.Println(viper.AllSettings())
 	totalVulns, err := s.startAnalysis(cmd)
 	if err != nil {
 		return err

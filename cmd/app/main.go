@@ -153,7 +153,7 @@ func initConfig() error{
 	}
 
 	rep := strings.NewReplacer(".", "_", "-", "_")
-	viper.SetEnvPrefix("")
+	viper.SetEnvPrefix("HORUSEC_CLI")
 	viper.SetEnvKeyReplacer(rep)
 	viper.AutomaticEnv() // read in environment variables that match
 
