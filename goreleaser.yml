@@ -53,12 +53,18 @@ release:
     - glob: ./tmp/horusec_linux_x86_stand_alone.sig
     - glob: ./tmp/horusec_linux_x64_stand_alone
     - glob: ./tmp/horusec_linux_x64_stand_alone.sig
+    - glob: ./tmp/horusec_linux_arm64_stand_alone
+    - glob: ./tmp/horusec_linux_arm64_stand_alone.sig
     - glob: ./tmp/horusec_windows_x86_stand_alone.exe
     - glob: ./tmp/horusec_windows_x86_stand_alone.exe.sig
     - glob: ./tmp/horusec_windows_x64_stand_alone.exe
     - glob: ./tmp/horusec_windows_x64_stand_alone.exe.sig
+    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe
+    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe.sig
     - glob: ./tmp/horusec_mac_x64_stand_alone
     - glob: ./tmp/horusec_mac_x64_stand_alone.sig
+    - glob: ./tmp/horusec_mac_arm64_stand_alone
+    - glob: ./tmp/horusec_mac_arm64_stand_alone.sig
 nfpms:
   - id: horusec
     package_name: horusec

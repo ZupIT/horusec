@@ -121,6 +121,16 @@ jobs:
           cosign sign-blob -key=$COSIGN_KEY_LOCATION \
           -output=./tmp/horusec_windows_x64_stand_alone.exe.sig ./tmp/horusec_windows_x64_stand_alone.exe
 
+          CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -ldflags \
+          "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Version=${{ steps.updated-version.outputs.version }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Commit=${{ github.sha }}' \
+          -X 'github.com/ZupIT/horusec/cmd/app/version.Date=${{ steps.date.outputs.date }}'" \
+          -o ./tmp/horusec_windows_arm64_stand_alone.exe  ./cmd/app/main.go
+
+          cosign sign-blob -key=$COSIGN_KEY_LOCATION \
+          -output=./tmp/horusec_windows_arm64_stand_alone.exe.sig ./tmp/horusec_windows_x64_stand_alone.exe
+
           CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags \
           "-X 'github.com/ZupIT/horusec/config/dist.standAlone=true' \
           -X 'github.com/ZupIT/horusec/cmd/app/version.Version=${{ steps.updated-version.outputs.version }}' \
