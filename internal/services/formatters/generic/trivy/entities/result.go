@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package customrules
+package entities
 
-type MatchType string
-
-const (
-	Regular  MatchType = "Regular"
-	OrMatch  MatchType = "OrMatch"
-	AndMatch MatchType = "AndMatch"
-	NotMatch MatchType = "NotMatch"
-)
+type Result struct {
+	Target            string              `json:"target"`
+	Class             string              `json:"class"`
+	Type              string              `json:"type"`
+	Vulnerabilities   []*Vulnerability    `json:"vulnerabilities"`
+	Misconfigurations []*Misconfiguration `json:"misconfigurations"`
+}

@@ -15,6 +15,7 @@
 package git
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ import (
 
 func TestGetCommitAuthor(t *testing.T) {
 	c := &config.Config{}
-	c.ProjectPath = "../../../../"
+	c.ProjectPath = filepath.Join("..", "..", "..")
 	c.EnableCommitAuthor = true
 	service := Git{
 		config: c,
@@ -33,33 +34,38 @@ func TestGetCommitAuthor(t *testing.T) {
 	t.Run("Should success get commit author", func(t *testing.T) {
 		author := service.CommitAuthor("1-2", "README.md")
 		assert.NotEmpty(t, author.Email)
+		assert.NotEqual(t, "-", author.Email)
 		assert.NotEmpty(t, author.Message)
+		assert.NotEqual(t, "-", author.Message)
 		assert.NotEmpty(t, author.Author)
+		assert.NotEqual(t, "-", author.Author)
 		assert.NotEmpty(t, author.CommitHash)
+		assert.NotEqual(t, "-", author.CommitHash)
 		assert.NotEmpty(t, author.Date)
+		assert.NotEqual(t, "-", author.Date)
 	})
 
-	t.Run("Should return error when something went wrong while executing cmd", func(t *testing.T) {
+	t.Run("Should return commit author not found when something went wrong while executing cmd", func(t *testing.T) {
 		author := service.CommitAuthor("999999", "")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
-	t.Run("Should return error when line or path not found", func(t *testing.T) {
+	t.Run("Should return commit author not found when line or path not found", func(t *testing.T) {
 		author := service.CommitAuthor("1", "-")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
-	t.Run("Should return error when parameters is empty", func(t *testing.T) {
+	t.Run("Should return commit author not found when parameters is empty", func(t *testing.T) {
 		author := service.CommitAuthor("", "./")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
-	t.Run("Should return error when not exists path", func(t *testing.T) {
+	t.Run("Should return commit author not found when not exists path", func(t *testing.T) {
 		author := service.CommitAuthor("1", "./some_path")
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
 
-	t.Run("Should return empty commit author when invalid output", func(t *testing.T) {
+	t.Run("Should return commit author not found invalid output", func(t *testing.T) {
 		author := service.parseOutputToStruct([]byte("test"))
 		assert.Equal(t, author, service.getCommitAuthorNotFound())
 	})
