@@ -4,6 +4,9 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config/dist"
+	customimages "github.com/ZupIT/horusec/internal/entities/custom_images"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/spf13/pflag"
 	"os"
 	"path/filepath"
@@ -201,118 +204,31 @@ func startFlags(flags *pflag.FlagSet) {
 }
 
 type NewConfig struct {
-	HorusecCliCertInsecureSkipVerify   bool   `json:"horusecCliCertInsecureSkipVerify"`
-	HorusecCliCertPath                 string `json:"horusecCliCertPath"`
-	HorusecCliContainerBindProjectPath string `json:"horusecCliContainerBindProjectPath"`
-	HorusecCliCustomImages             struct {
-		C          string `json:"c"`
-		Csharp     string `json:"csharp"`
-		Elixir     string `json:"elixir"`
-		Generic    string `json:"generic"`
-		Go         string `json:"go"`
-		Hcl        string `json:"hcl"`
-		Javascript string `json:"javascript"`
-		Leaks      string `json:"leaks"`
-		Php        string `json:"php"`
-		Python     string `json:"python"`
-		Ruby       string `json:"ruby"`
-		Shell      string `json:"shell"`
-	} `json:"horusecCliCustomImages"`
-	HorusecCliCustomRulesPath           string        `json:"horusecCliCustomRulesPath"`
-	HorusecCliDisableDocker             bool          `json:"horusecCliDisableDocker"`
-	HorusecCliEnableCommitAuthor        bool          `json:"horusecCliEnableCommitAuthor"`
-	HorusecCliEnableGitHistoryAnalysis  bool          `json:"horusecCliEnableGitHistoryAnalysis"`
-	HorusecCliEnableInformationSeverity bool          `json:"horusecCliEnableInformationSeverity"`
-	HorusecCliFalsePositiveHashes       []interface{} `json:"horusecCliFalsePositiveHashes"`
-	HorusecCliFilesOrPathsToIgnore      []string      `json:"horusecCliFilesOrPathsToIgnore"`
-	HorusecCliHeaders                   struct {
-	} `json:"horusecCliHeaders"`
-	HorusecCliHorusecAPIURI                   string        `json:"horusecCliHorusecApiUri"`
-	HorusecCliJSONOutputFilepath              string        `json:"horusecCliJsonOutputFilepath"`
-	HorusecCliMonitorRetryInSeconds           int           `json:"horusecCliMonitorRetryInSeconds"`
-	HorusecCliPrintOutputType                 string        `json:"horusecCliPrintOutputType"`
-	HorusecCliProjectPath                     string        `json:"horusecCliProjectPath"`
-	HorusecCliRepositoryAuthorization         string        `json:"horusecCliRepositoryAuthorization"`
-	HorusecCliRepositoryName                  string        `json:"horusecCliRepositoryName"`
-	HorusecCliReturnErrorIfFoundVulnerability bool          `json:"horusecCliReturnErrorIfFoundVulnerability"`
-	HorusecCliRiskAcceptHashes                []interface{} `json:"horusecCliRiskAcceptHashes"`
-	HorusecCliSeveritiesToIgnore              []interface{} `json:"horusecCliSeveritiesToIgnore"`
-	HorusecCliShowVulnerabilitiesTypes        []interface{} `json:"horusecCliShowVulnerabilitiesTypes"`
-	HorusecCliTimeoutInSecondsAnalysis        int           `json:"horusecCliTimeoutInSecondsAnalysis"`
-	HorusecCliTimeoutInSecondsRequest         int           `json:"horusecCliTimeoutInSecondsRequest"`
-	HorusecCliToolsConfig                     struct {
-		Bandit struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Bandit"`
-		Brakeman struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Brakeman"`
-		BundlerAudit struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"BundlerAudit"`
-		Checkov struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Checkov"`
-		Flawfinder struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Flawfinder"`
-		GitLeaks struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"GitLeaks"`
-		GoSec struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"GoSec"`
-		HorusecEngine struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"HorusecEngine"`
-		MixAudit struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"MixAudit"`
-		NpmAudit struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"NpmAudit"`
-		PhpCS struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"PhpCS"`
-		Safety struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Safety"`
-		SecurityCodeScan struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"SecurityCodeScan"`
-		Semgrep struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Semgrep"`
-		ShellCheck struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"ShellCheck"`
-		Sobelow struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"Sobelow"`
-		TfSec struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"TfSec"`
-		YarnAudit struct {
-			Istoignore bool `json:"istoignore"`
-		} `json:"YarnAudit"`
-	} `json:"horusecCliToolsConfig"`
-	HorusecCliWorkDir struct {
-		Go         []interface{} `json:"go"`
-		Csharp     []interface{} `json:"csharp"`
-		Ruby       []interface{} `json:"ruby"`
-		Python     []interface{} `json:"python"`
-		Java       []interface{} `json:"java"`
-		Kotlin     []interface{} `json:"kotlin"`
-		JavaScript []interface{} `json:"javaScript"`
-		Leaks      []interface{} `json:"leaks"`
-		Hcl        []interface{} `json:"hcl"`
-		Php        []interface{} `json:"php"`
-		C          []interface{} `json:"c"`
-		Yaml       []interface{} `json:"yaml"`
-		Generic    []interface{} `json:"generic"`
-		Elixir     []interface{} `json:"elixir"`
-		Shell      []interface{} `json:"shell"`
-		Dart       []interface{} `json:"dart"`
-		Nginx      []interface{} `json:"nginx"`
-	} `json:"horusecCliWorkDir"`
+	HorusecCliCertInsecureSkipVerify          bool
+	HorusecCliCertPath                        string
+	HorusecCliContainerBindProjectPath        string
+	HorusecCliCustomImages                    customimages.CustomImages
+	HorusecCliCustomRulesPath                 string
+	HorusecCliDisableDocker                   bool
+	HorusecCliEnableCommitAuthor              bool
+	HorusecCliEnableGitHistoryAnalysis        bool
+	HorusecCliEnableInformationSeverity       bool
+	HorusecCliFalsePositiveHashes             []string
+	HorusecCliFilesOrPathsToIgnore            []string
+	HorusecCliHeaders                         map[string]string
+	HorusecCliHorusecAPIURI                   string
+	HorusecCliJSONOutputFilepath              string
+	HorusecCliMonitorRetryInSeconds           int64
+	HorusecCliPrintOutputType                 string
+	HorusecCliProjectPath                     string
+	HorusecCliRepositoryAuthorization         string
+	HorusecCliRepositoryName                  string
+	HorusecCliReturnErrorIfFoundVulnerability bool
+	HorusecCliRiskAcceptHashes                []string
+	HorusecCliSeveritiesToIgnore              []string
+	HorusecCliShowVulnerabilitiesTypes        []string
+	HorusecCliTimeoutInSecondsAnalysis        int64
+	HorusecCliTimeoutInSecondsRequest         int64
+	HorusecCliToolsConfig                     toolsconfig.MapToolConfig
+	HorusecCliWorkDir                         *workdir.WorkDir
 }

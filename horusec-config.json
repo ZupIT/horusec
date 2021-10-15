@@ -1,6 +1,6 @@
 {
   "horusecCliCertInsecureSkipVerify": false,
-  "horusecCliCertPath": "",
+  "horusecCliCertPath": "aaa",
   "horusecCliContainerBindProjectPath": "",
   "horusecCliCustomImages": {
     "c": "",
@@ -36,7 +36,7 @@
     "**/internal/services/engines/**"
   ],
   "horusecCliHeaders": {},
-  "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
+  "horusecCliHorusecApiUri": "12345",
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 10,
   "horusecCliPrintOutputType": "",

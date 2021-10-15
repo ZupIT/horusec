@@ -17,15 +17,14 @@ package start
 import (
 	"errors"
 	"fmt"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/controllers/requirements"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/usecases/cli"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 	"os"
 	"strings"
-
-	"github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-	"github.com/ZupIT/horusec/internal/usecases/cli"
 
 	"github.com/spf13/cobra"
 
@@ -68,9 +67,8 @@ type Start struct {
 	requirements Requirements
 }
 
-func NewStartCommand(configs *config.Config) *Start {
+func NewStartCommand(c *config.Config) *Start {
 	return &Start{
-		configs:      configs,
 		useCases:     cli.NewCLIUseCases(),
 		prompt:       prompt.NewPrompt(),
 		requirements: requirements.NewRequirements(),
@@ -86,18 +84,78 @@ func NewStartCommand(configs *config.Config) *Start {
 // nolint:funlen,lll
 func (s *Start) CreateStartCommand() *cobra.Command {
 	startCmd := &cobra.Command{
-		Use:               "start",
-		Short:             "Start horusec-cli",
-		Long:              "Start the Horusec' analysis in the current path",
-		Example:           "horusec start",
-		RunE:              s.runE,
+		Use:     "start",
+		Short:   "Start horusec-cli",
+		Long:    "Start the Horusec' analysis in the current path",
+		Example: "horusec start",
+		PreRunE: s.PreRunE,
+		RunE:    s.runE,
 	}
 
-	f:= startCmd.Flags()
+	f := startCmd.Flags()
 	startFlags(f)
 
-
 	return startCmd
+}
+func (s *Start) PreRunE(cmd *cobra.Command, _ []string) error {
+	var configuration NewConfig
+	if err := viper.Unmarshal(&configuration, DecoderConfigOptions); err != nil {
+		return fmt.Errorf("parse config: %v", err)
+	}
+	//wd, err := os.Getwd()
+	//if err != nil {
+	//	logger.LogWarn("Error to get current working directory: %v", err)
+	//}
+	//j, err := json.MarshalIndent(viper.AllKeys(), " ", " ")
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//fmt.Println(string(j))
+	//cfg := &config.Config{
+	//	GlobalOptions: config.GlobalOptions{
+	//		IsTimeout:      false,
+	//		LogLevel:       "INFO",
+	//		ConfigFilePath: filepath.Join(wd, "horusec-config.json"),
+	//		LogFilePath: filepath.Join(
+	//			os.TempDir(), fmt.Sprintf("horusec-%s.log", time.Now().Format("2006-01-02-15-04-05"))),
+	//	},
+	//	StartOptions: config.StartOptions{
+	//		HorusecAPIUri:                   configuration.HorusecCliHorusecAPIURI,
+	//		RepositoryAuthorization:         configuration.HorusecCliRepositoryAuthorization,
+	//		CertPath:                        configuration.HorusecCliCertPath,
+	//		RepositoryName:                  configuration.HorusecCliRepositoryName,
+	//		PrintOutputType:                 configuration.HorusecCliPrintOutputType,
+	//		JSONOutputFilePath:              configuration.HorusecCliJSONOutputFilepath,
+	//		ProjectPath:                     configuration.HorusecCliProjectPath,
+	//		CustomRulesPath:                 configuration.HorusecCliCustomRulesPath,
+	//		ContainerBindProjectPath:        configuration.HorusecCliContainerBindProjectPath,
+	//		TimeoutInSecondsRequest:         configuration.HorusecCliTimeoutInSecondsRequest,
+	//		TimeoutInSecondsAnalysis:        configuration.HorusecCliTimeoutInSecondsRequest,
+	//		MonitorRetryInSeconds:           configuration.HorusecCliMonitorRetryInSeconds,
+	//		ReturnErrorIfFoundVulnerability: configuration.HorusecCliReturnErrorIfFoundVulnerability,
+	//		EnableGitHistoryAnalysis:        configuration.HorusecCliEnableGitHistoryAnalysis,
+	//		CertInsecureSkipVerify:          configuration.HorusecCliCertInsecureSkipVerify,
+	//		EnableCommitAuthor:              configuration.HorusecCliEnableCommitAuthor,
+	//		DisableDocker:                   configuration.HorusecCliDisableDocker,
+	//		EnableInformationSeverity:       configuration.HorusecCliEnableInformationSeverity,
+	//		EnableOwaspDependencyCheck:      false,
+	//		EnableShellCheck:                false,
+	//		SeveritiesToIgnore:              configuration.HorusecCliSeveritiesToIgnore,
+	//		FilesOrPathsToIgnore:            configuration.HorusecCliFilesOrPathsToIgnore,
+	//		FalsePositiveHashes:             configuration.HorusecCliFalsePositiveHashes,
+	//		RiskAcceptHashes:                configuration.HorusecCliRiskAcceptHashes,
+	//		ShowVulnerabilitiesTypes:        configuration.HorusecCliShowVulnerabilitiesTypes,
+	//		ToolsConfig:                     configuration.HorusecCliToolsConfig,
+	//		Headers:                         configuration.HorusecCliHeaders,
+	//		WorkDir:                         configuration.HorusecCliWorkDir,
+	//		CustomImages:                    configuration.HorusecCliCustomImages,
+	//	},
+	//	Version: version.Version,
+	//}
+	//s.configs = cfg
+	viper.WriteConfigAs("./viperConfig.json")
+	return nil
 }
 func DecoderConfigOptions(config *mapstructure.DecoderConfig) {
 	config.DecodeHook = mapstructure.ComposeDecodeHookFunc(
@@ -107,7 +165,7 @@ func DecoderConfigOptions(config *mapstructure.DecoderConfig) {
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
-	fmt.Println(viper.AllSettings())
+
 	totalVulns, err := s.startAnalysis(cmd)
 	if err != nil {
 		return err

@@ -17,27 +17,32 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"os"
-	"strings"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec/cmd/app/generate"
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/cmd/app/version"
 	"github.com/ZupIT/horusec/config"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"os"
+	"strings"
 )
-//The config file path
+
+//cfgFilePath The config file path flag value
 var cfgFilePath string
-//The dry-run flag
+
+//dryRun The dry-run flag flag value
 var dryRun bool
 
-var appName = "horusec"
+//logLevel The verbosity of log flag value
+var logLevel string
 
-var 	rootCmd = &cobra.Command{
+//logFilePath The path to log file flag value
+var logFilePath string
+
+var rootCmd = &cobra.Command{
 	Use:   "horusec",
 	Short: "Horusec CLI prepares packages to be analyzed by the Horusec Analysis API",
 
@@ -45,6 +50,7 @@ var 	rootCmd = &cobra.Command{
 		if err := viper.BindPFlags(cmd.Flags()); err != nil {
 			return err
 		}
+
 		if dryRun {
 			var config start.NewConfig
 			if err := viper.Unmarshal(&config, start.DecoderConfigOptions); err != nil {
@@ -73,61 +79,26 @@ horusec start -p="/home/user/projects/my-project"
 `,
 }
 
-func init(){
+func init() {
 	cfg := config.New()
-	cfg.ConfigFilePath =""
-	//logrus.SetFormatter(&logrus.JSONFormatter{
-	//	TimestampFormat: time.RFC3339,
-	//	FieldMap: logrus.FieldMap{
-	//		logrus.FieldKeyTime:  "timestamp",
-	//		logrus.FieldKeyLevel: "level",
-	//		logrus.FieldKeyMsg:   "message",
-	//		logrus.FieldKeyFunc:  "caller",
-	//	},
-	//})
-	//
-	//logrus.SetReportCaller(true)
+	cfg.ConfigFilePath = ""
 	cobra.OnInitialize(func() {
 		engine.SetLogLevel(cfg.LogLevel)
-		if err:= initConfig() ; err != nil{
+		if err := initConfig(); err != nil {
 			logrus.Error(err.Error())
 			os.Exit(1)
 		}
 	})
-
-	rootCmd.PersistentFlags().
-		StringVar(
-			&cfg.LogLevel,
-			"log-level",
-			cfg.LogLevel,
-			"Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"",
-		)
-
-	rootCmd.PersistentFlags().
-		StringVar(
-			&cfgFilePath,
-			"config-file-path",
-			"",
-			"Path of the file horusec-config.json to setup content of horusec",
-		)
-
-	rootCmd.PersistentFlags().
-		StringVarP(
-			&cfg.LogFilePath,
-			"log-file-path", "l",
-			cfg.LogFilePath,
-			`set user defined log file path instead of default`,
-		)
-	rootCmd.PersistentFlags().BoolVar(&dryRun, "dry-run", false, "Print the configuration")
-	startCmd := start.NewStartCommand(cfg)
+	rootFlags(rootCmd.Flags())
+	startCmd := start.NewStartCommand(nil)
 	generateCmd := generate.NewGenerateCommand(cfg)
-
 
 	rootCmd.AddCommand(version.CreateCobraCmd())
 	rootCmd.AddCommand(startCmd.CreateStartCommand())
 	rootCmd.AddCommand(generateCmd.CreateCobraCmd())
 
 }
+
 // nolint:funlen,lll
 func main() {
 	if err := rootCmd.Execute(); err != nil {
@@ -136,7 +107,7 @@ func main() {
 }
 
 // initConfig reads in config file and ENV variables if set.
-func initConfig() error{
+func initConfig() error {
 	if cfgFilePath != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFilePath)
@@ -160,7 +131,7 @@ func initConfig() error{
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		logrus.Infof("Using config file: %s", viper.ConfigFileUsed())
-	}else {
+	} else {
 		logrus.Warning(err)
 	}
 	return nil
