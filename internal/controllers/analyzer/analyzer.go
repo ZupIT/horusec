@@ -28,6 +28,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -443,11 +444,14 @@ func (a *Analyzer) logProjectSubPath(language languages.Language, subPath string
 	}
 }
 
+// nolint:gocyclo
 func (a *Analyzer) checkIfNoExistHashAndLog(list []string) {
 	for _, hash := range list {
 		existing := false
-		for keyAv := range a.analysis.AnalysisVulnerabilities {
-			if hash == a.analysis.AnalysisVulnerabilities[keyAv].Vulnerability.VulnHash {
+		for idx := range a.analysis.AnalysisVulnerabilities {
+			vulnHash := a.analysis.AnalysisVulnerabilities[idx].Vulnerability.VulnHash
+			vulnHashInvalid := a.analysis.AnalysisVulnerabilities[idx].Vulnerability.VulnHashInvalid
+			if hash == vulnHash || hash == vulnHashInvalid {
 				existing = true
 				break
 			}
@@ -484,21 +488,30 @@ func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
 	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }
 
-func (a *Analyzer) SetFalsePositivesAndRiskAcceptInVulnerabilities(
-	listFalsePositive, listRiskAccept []string) *analysis.Analysis {
-	for key := range a.analysis.AnalysisVulnerabilities {
-		a.setVulnerabilityType(key, listFalsePositive, enumsVulnerability.FalsePositive)
-		a.setVulnerabilityType(key, listRiskAccept, enumsVulnerability.RiskAccepted)
+// SetFalsePositivesAndRiskAcceptInVulnerabilities set analysis vulnerabiltieis to false
+// positive or risk accept if the hash exists on falsePositive and riskAccept params.
+//
+// nolint:lll
+func (a *Analyzer) SetFalsePositivesAndRiskAcceptInVulnerabilities(falsePositive, riskAccept []string) *analysis.Analysis {
+	for idx := range a.analysis.AnalysisVulnerabilities {
+		a.setVulnerabilityType(
+			&a.analysis.AnalysisVulnerabilities[idx].Vulnerability, falsePositive, enumsVulnerability.FalsePositive,
+		)
+		a.setVulnerabilityType(
+			&a.analysis.AnalysisVulnerabilities[idx].Vulnerability, riskAccept, enumsVulnerability.RiskAccepted,
+		)
 	}
 	return a.analysis
 }
 
-func (a *Analyzer) setVulnerabilityType(keyAnalysisVulnerabilities int,
-	listToCheck []string, vulnerabilityType enumsVulnerability.Type) {
-	currentHash := a.analysis.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.VulnHash
-	for _, flagVulnerabilityHash := range listToCheck {
-		if flagVulnerabilityHash != "" && strings.TrimSpace(currentHash) == strings.TrimSpace(flagVulnerabilityHash) {
-			a.analysis.AnalysisVulnerabilities[keyAnalysisVulnerabilities].Vulnerability.Type = vulnerabilityType
+func (a *Analyzer) setVulnerabilityType(
+	vuln *vulnerability.Vulnerability, hashes []string, vulnType enumsVulnerability.Type,
+) {
+	for _, hash := range hashes {
+		hash = strings.TrimSpace(hash)
+		// See vulnerability.Vulnerability.VulnHashInvalid docs for more info.
+		if hash != "" && (strings.TrimSpace(vuln.VulnHash) == hash || strings.TrimSpace(vuln.VulnHashInvalid) == hash) {
+			vuln.Type = vulnType
 		}
 	}
 }
