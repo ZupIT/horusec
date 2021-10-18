@@ -443,6 +443,22 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+
+		// Java
+		{
+			name: "Java-HS-JAVA-134",
+			rule: java.NewSQLInjection(),
+			src:  SampleVulnerableJavaSQLInjection,
+			findings: []engine.Finding{
+				{
+					CodeSample: "var pstmt = con.prepareStatement(\"select * from mytable where field01 = '\" + field01 + \"'\");",
+					SourceLocation: engine.Location{
+						Line:   14,
+						Column: 50,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcases {
@@ -604,6 +620,13 @@ func TestRulesSafeCode(t *testing.T) {
 			name: "Leaks-HS-LEAKS-28",
 			rule: leaks.NewWPConfig(),
 			src:  SampleSafeLeaksRegularWPConfig,
+		},
+
+		// Java
+		{
+			name: "Java-HS-JAVA-134",
+			rule: java.NewSQLInjection(),
+			src:  SampleSafeJavaSQLInjection,
 		},
 	}
 
