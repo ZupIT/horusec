@@ -388,7 +388,7 @@ func (c *Config) LoadFromEnvironmentVariables() *Config {
 // After each read values step we normalize the paths from relative to absolute and
 // finally configure and create the log file.
 func (c *Config) PersistentPreRun(cmd *cobra.Command, _ []string) error {
-	return c.
+	err := c.
 		LoadGlobalFlags(cmd).
 		Normalize().
 		LoadFromConfigFile().
@@ -398,6 +398,11 @@ func (c *Config) PersistentPreRun(cmd *cobra.Command, _ []string) error {
 		LoadStartFlags(cmd).
 		Normalize().
 		ConfigureLogger()
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorSettingLogFile, err)
+	}
+
+	return nil
 }
 
 // ConfigureLogger create the log file and configure the log output.
