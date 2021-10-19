@@ -59,7 +59,7 @@ horusecIdentifyOSWithVersion () {
     elif [ "$(uname)" = "Darwin" ]; then
         if [ "$(uname -m)" = "x86_64" ]; then
             echo "Installing Horusec for Mac x64"
-            URL_DOWNLOAD="https://github.com/ZupIT/horusec/releases/download/${VERSION_DOWNLOAD}/horusec_linux_x64"
+            URL_DOWNLOAD="https://github.com/ZupIT/horusec/releases/download/${VERSION_DOWNLOAD}/horusec_mac_x64"
         else
             echo "Not enable Horusec to Mac x86"
             exit 1
@@ -79,9 +79,9 @@ horusecDownloadAndInstall () {
 
     rm -r $INSTALL_PATH/horusec >/dev/null 2>&1
 
-	  echo "Downloading horusec..."
+    echo "Downloading horusec..."
+    echo $URL_DOWNLOAD
 
-	  echo $URL_DOWNLOAD
     curl -fsSL "$URL_DOWNLOAD" -o ./horusec
 
     chmod +x ./horusec
