@@ -44,8 +44,9 @@ type testcase struct {
 
 func TestRulesVulnerableCode(t *testing.T) {
 	testcases := []testcase{
+		// Leaks tests
 		{
-			name: "Leaks-HS-LEAKS-1",
+			name: "HS-LEAKS-1",
 			rule: leaks.NewAWSManagerID(),
 			src:  SampleVulnerableLeaksRegularAWSManagerID,
 			findings: []engine.Finding{
@@ -59,7 +60,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-2",
+			name: "HS-LEAKS-2",
 			rule: leaks.NewAWSSecretKey(),
 			src:  SampleVulnerableLeaksRegularAWSSecretKey,
 			findings: []engine.Finding{
@@ -73,7 +74,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-3",
+			name: "HS-LEAKS-3",
 			rule: leaks.NewAWSMWSKey(),
 			src:  SampleVulnerableLeaksRegularAWSMWSKey,
 			findings: []engine.Finding{
@@ -87,7 +88,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-4",
+			name: "HS-LEAKS-4",
 			rule: leaks.NewFacebookSecretKey(),
 			src:  SampleVulnerableLeaksRegularFacebookSecretKey,
 			findings: []engine.Finding{
@@ -101,7 +102,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-5",
+			name: "HS-LEAKS-5",
 			rule: leaks.NewFacebookClientID(),
 			src:  SampleVulnerableLeaksRegularFacebookClientID,
 			findings: []engine.Finding{
@@ -115,7 +116,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-7",
+			name: "HS-LEAKS-7",
 			rule: leaks.NewTwitterClientID(),
 			src:  SampleVulnerableLeaksRegularTwitterClientID,
 			findings: []engine.Finding{
@@ -143,7 +144,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-8",
+			name: "HS-LEAKS-8",
 			rule: leaks.NewGithub(),
 			src:  SampleVulnerableLeaksRegularGithub,
 			findings: []engine.Finding{
@@ -157,7 +158,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-9",
+			name: "HS-LEAKS-9",
 			rule: leaks.NewLinkedInClientID(),
 			src:  SampleVulnerableLeaksRegularLinkedInClientID,
 			findings: []engine.Finding{
@@ -199,7 +200,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-12",
+			name: "HS-LEAKS-12",
 			rule: leaks.NewAsymmetricPrivateKey(),
 			src:  SampleVulnerableLeaksRegularAsymmetricPrivateKey,
 			findings: []engine.Finding{
@@ -213,7 +214,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-13",
+			name: "HS-LEAKS-13",
 			rule: leaks.NewGoogleAPIKey(),
 			src:  SampleVulnerableLeaksRegularGoogleAPIKey,
 			findings: []engine.Finding{
@@ -227,7 +228,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-14",
+			name: "HS-LEAKS-14",
 			rule: leaks.NewGoogleGCPServiceAccount(),
 			src:  SampleVulnerableLeaksRegularGoogleGCPServiceAccount,
 			findings: []engine.Finding{
@@ -241,7 +242,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-15",
+			name: "HS-LEAKS-15",
 			rule: leaks.NewHerokuAPIKey(),
 			src:  SampleVulnerableLeaksRegularHerokuAPIKey,
 			findings: []engine.Finding{
@@ -255,7 +256,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-16",
+			name: "HS-LEAKS-16",
 			rule: leaks.NewMailChimpAPIKey(),
 			src:  SampleVulnerableLeaksRegularMailChimpAPIKey,
 			findings: []engine.Finding{
@@ -269,7 +270,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-17",
+			name: "HS-LEAKS-17",
 			rule: leaks.NewMailgunAPIKey(),
 			src:  SampleVulnerableLeaksRegularMailgunAPIKey,
 			findings: []engine.Finding{
@@ -283,7 +284,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-18",
+			name: "HS-LEAKS-18",
 			rule: leaks.NewPayPalBraintreeAccessToken(),
 			src:  SampleVulnerableLeaksRegularPayPalBraintreeAccessToken,
 			findings: []engine.Finding{
@@ -297,7 +298,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-19",
+			name: "HS-LEAKS-19",
 			rule: leaks.NewPicaticAPIKey(),
 			src:  SampleVulnerableLeaksRegularPicaticAPIKey,
 			findings: []engine.Finding{
@@ -311,7 +312,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-20",
+			name: "HS-LEAKS-20",
 			rule: leaks.NewSendGridAPIKey(),
 			src:  SampleVulnerableLeaksRegularSendGridAPIKey,
 			findings: []engine.Finding{
@@ -325,7 +326,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-21",
+			name: "HS-LEAKS-21",
 			rule: leaks.NewStripeAPIKey(),
 			src:  SampleVulnerableLeaksRegularStripeAPIKey,
 			findings: []engine.Finding{
@@ -339,7 +340,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-22",
+			name: "HS-LEAKS-22",
 			rule: leaks.NewSquareAccessToken(),
 			src:  SampleVulnerableLeaksRegularSquareAccessToken,
 			findings: []engine.Finding{
@@ -353,7 +354,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-23",
+			name: "HS-LEAKS-23",
 			rule: leaks.NewSquareOAuthSecret(),
 			src:  SampleVulnerableLeaksRegularSquareOAuthSecret,
 			findings: []engine.Finding{
@@ -367,7 +368,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-24",
+			name: "HS-LEAKS-24",
 			rule: leaks.NewTwilioAPIKey(),
 			src:  SampleVulnerableLeaksRegularTwilioAPIKey,
 			findings: []engine.Finding{
@@ -381,7 +382,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-25",
+			name: "HS-LEAKS-25",
 			rule: leaks.NewHardCodedCredentialGeneric(),
 			src:  SampleVulnerableLeaksRegularHardCodedCredentialGeneric,
 			findings: []engine.Finding{
@@ -395,7 +396,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-26",
+			name: "HS-LEAKS-26",
 			rule: leaks.NewHardCodedPassword(),
 			src:  SampleVulnerableLeaksRegularHardCodedPassword,
 			findings: []engine.Finding{
@@ -409,7 +410,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-27",
+			name: "HS-LEAKS-27",
 			rule: leaks.NewPasswordExposedInHardcodedURL(),
 			src:  SampleVulnerableLeaksRegularPasswordExposedInHardcodedURL,
 			findings: []engine.Finding{
@@ -423,7 +424,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
-			name: "Leaks-HS-LEAKS-28",
+			name: "HS-LEAKS-28",
 			rule: leaks.NewWPConfig(),
 			src:  SampleVulnerableLeaksRegularWPConfig,
 			findings: []engine.Finding{
@@ -444,7 +445,21 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 
-		// Java
+		// Java tests
+		{
+			name: "HS-JAVA-1",
+			rule: java.NewXMLParsingVulnerableToXXE(),
+			src:  SampleVulnerableJavaXMLParsingVulnerableToXXE,
+			findings: []engine.Finding{
+				{
+					CodeSample: `XMLReader reader = XMLReaderFactory.createXMLReader();`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 21,
+					},
+				},
+			},
+		},
 		{
 			name: "HS-JAVA-134",
 			rule: java.NewSQLInjection(),
@@ -459,12 +474,63 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+
+		// Javascript tests
+		{
+			name: "HS-JAVASCRIPT-1",
+			rule: nodejs.NewNoLogSensitiveInformationInConsole(),
+			src:  SampleVulnerableJavaScriptLogSensitiveInformation,
+			findings: []engine.Finding{
+				{
+					CodeSample: `console.log("user email: ", email)`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 0,
+					},
+				},
+				{
+					CodeSample: `console.debug("user password: ", pwd)`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 0,
+					},
+				},
+			},
+		},
+		{
+			name: "HS-JAVASCRIPT-2",
+			rule: nodejs.NewNoUseEval(),
+			src:  SampleVulnerableJavaScriptUseEval,
+			findings: []engine.Finding{
+				{
+					CodeSample: `eval("bash -c" + req.body);`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 1,
+					},
+				},
+			},
+		},
+		{
+			name: "HS-JAVASCRIPT-3",
+			rule: nodejs.NewNoDisableTlsRejectUnauthorized(),
+			src:  SampleVulnerableJavaScriptDisableTlsRejectUnauthorized,
+			findings: []engine.Finding{
+				{
+					CodeSample: `process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 12,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcases {
 		t.Run(tt.name, func(t *testing.T) {
 			findings := executeRule(t, tt)
-			assert.Len(t, findings, len(tt.findings), "Expected equal issues on vulnerable code")
+			require.Len(t, findings, len(tt.findings), "Expected equal issues on vulnerable code")
 			for idx, finding := range findings {
 				expected := tt.findings[idx]
 				assert.Equal(t, expected.CodeSample, finding.CodeSample)
@@ -481,33 +547,34 @@ func TestRulesVulnerableCode(t *testing.T) {
 
 func TestRulesSafeCode(t *testing.T) {
 	testcases := []testcase{
+		// Leaks tests
 		{
-			name: "Leaks-HS-LEAKS-1",
+			name: "HS-LEAKS-1",
 			rule: leaks.NewAWSManagerID(),
 			src:  SampleSafeLeaksRegularAWSManagerID,
 		},
 		{
-			name: "Leaks-HS-LEAKS-2",
+			name: "HS-LEAKS-2",
 			rule: leaks.NewAWSSecretKey(),
 			src:  SampleSafeLeaksRegularAWSSecretKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-3",
+			name: "HS-LEAKS-3",
 			rule: leaks.NewAWSMWSKey(),
 			src:  SampleSafeLeaksRegularAWSMWSKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-4",
+			name: "HS-LEAKS-4",
 			rule: leaks.NewFacebookSecretKey(),
 			src:  SampleSafeLeaksRegularFacebookSecretKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-5",
+			name: "HS-LEAKS-5",
 			rule: leaks.NewFacebookClientID(),
 			src:  SampleSafeLeaksRegularFacebookClientID,
 		},
 		{
-			name: "Leaks-HS-LEAKS-7",
+			name: "HS-LEAKS-7",
 			rule: leaks.NewTwitterClientID(),
 			src:  SampleSafeLeaksRegularTwitterClientID,
 		},
@@ -517,12 +584,12 @@ func TestRulesSafeCode(t *testing.T) {
 			src:  SampleSafeLeaksRegularTwitterSecretKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-8",
+			name: "HS-LEAKS-8",
 			rule: leaks.NewGithub(),
 			src:  SampleSafeLeaksRegularGithub,
 		},
 		{
-			name: "Leaks-HS-LEAKS-9",
+			name: "HS-LEAKS-9",
 			rule: leaks.NewLinkedInClientID(),
 			src:  SampleSafeLeaksRegularLinkedInClientID,
 		},
@@ -537,96 +604,102 @@ func TestRulesSafeCode(t *testing.T) {
 			src:  SampleSafeLeaksRegularSlack,
 		},
 		{
-			name: "Leaks-HS-LEAKS-12",
+			name: "HS-LEAKS-12",
 			rule: leaks.NewAsymmetricPrivateKey(),
 			src:  SampleSafeLeaksRegularAsymmetricPrivateKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-13",
+			name: "HS-LEAKS-13",
 			rule: leaks.NewGoogleAPIKey(),
 			src:  SampleSafeLeaksRegularGoogleAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-14",
+			name: "HS-LEAKS-14",
 			rule: leaks.NewGoogleGCPServiceAccount(),
 			src:  SampleSafeLeaksRegularGoogleGCPServiceAccount,
 		},
 		{
-			name: "Leaks-HS-LEAKS-15",
+			name: "HS-LEAKS-15",
 			rule: leaks.NewHerokuAPIKey(),
 			src:  SampleSafeLeaksRegularHerokuAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-16",
+			name: "HS-LEAKS-16",
 			rule: leaks.NewMailChimpAPIKey(),
 			src:  SampleSafeLeaksRegularMailChimpAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-17",
+			name: "HS-LEAKS-17",
 			rule: leaks.NewMailgunAPIKey(),
 			src:  SampleSafeLeaksRegularMailgunAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-18",
+			name: "HS-LEAKS-18",
 			rule: leaks.NewPayPalBraintreeAccessToken(),
 			src:  SampleSafeLeaksRegularPayPalBraintreeAccessToken,
 		},
 		{
-			name: "Leaks-HS-LEAKS-19",
+			name: "HS-LEAKS-19",
 			rule: leaks.NewPicaticAPIKey(),
 			src:  SampleSafeLeaksRegularPicaticAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-20",
+			name: "HS-LEAKS-20",
 			rule: leaks.NewSendGridAPIKey(),
 			src:  SampleSafeLeaksRegularSendGridAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-21",
+			name: "HS-LEAKS-21",
 			rule: leaks.NewStripeAPIKey(),
 			src:  SampleSafeLeaksRegularStripeAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-22",
+			name: "HS-LEAKS-22",
 			rule: leaks.NewSquareAccessToken(),
 			src:  SampleSafeLeaksRegularSquareAccessToken,
 		},
 		{
-			name: "Leaks-HS-LEAKS-23",
+			name: "HS-LEAKS-23",
 			rule: leaks.NewSquareOAuthSecret(),
 			src:  SampleSafeLeaksRegularSquareOAuthSecret,
 		},
 		{
-			name: "Leaks-HS-LEAKS-24",
+			name: "HS-LEAKS-24",
 			rule: leaks.NewTwilioAPIKey(),
 			src:  SampleSafeLeaksRegularTwilioAPIKey,
 		},
 		{
-			name: "Leaks-HS-LEAKS-25",
+			name: "HS-LEAKS-25",
 			rule: leaks.NewHardCodedCredentialGeneric(),
 			src:  SampleSafeLeaksRegularHardCodedCredentialGeneric,
 		},
 		{
-			name: "Leaks-HS-LEAKS-26",
+			name: "HS-LEAKS-26",
 			rule: leaks.NewHardCodedPassword(),
 			src:  SampleSafeLeaksRegularHardCodedPassword,
 		},
 		{
-			name: "Leaks-HS-LEAKS-27",
+			name: "HS-LEAKS-27",
 			rule: leaks.NewPasswordExposedInHardcodedURL(),
 			src:  SampleSafeLeaksRegularPasswordExposedInHardcodedURL,
 		},
 		{
-			name: "Leaks-HS-LEAKS-28",
+			name: "HS-LEAKS-28",
 			rule: leaks.NewWPConfig(),
 			src:  SampleSafeLeaksRegularWPConfig,
 		},
 
-		// Java
 		{
 			name: "HS-JAVA-134",
 			rule: java.NewSQLInjection(),
 			src:  SampleSafeJavaSQLInjection,
+		},
+
+		// Javascript tests
+		{
+			name: "HS-JAVASCRIPT-2",
+			rule: nodejs.NewNoUseEval(),
+			src:  SampleSafeJavaScriptUseEval,
 		},
 	}
 
