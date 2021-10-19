@@ -446,7 +446,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 
 		// Java
 		{
-			name: "Java-HS-JAVA-134",
+			name: "HS-JAVA-134",
 			rule: java.NewSQLInjection(),
 			src:  SampleVulnerableJavaSQLInjection,
 			findings: []engine.Finding{
@@ -624,7 +624,7 @@ func TestRulesSafeCode(t *testing.T) {
 
 		// Java
 		{
-			name: "Java-HS-JAVA-134",
+			name: "HS-JAVA-134",
 			rule: java.NewSQLInjection(),
 			src:  SampleSafeJavaSQLInjection,
 		},
