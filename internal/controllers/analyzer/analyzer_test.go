@@ -16,12 +16,18 @@ package analyzer
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"testing"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -51,8 +57,6 @@ import (
 
 func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	b.ReportAllocs()
-	wd, err := os.Getwd()
-	require.Nil(b, err)
 
 	logger.LogSetOutput(io.Discard)
 	// Hack to not print analysis result and make benchmark clean
@@ -60,7 +64,7 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	os.Stdout = w
 
 	cfg := config.New()
-	cfg.ProjectPath = filepath.Join(wd, "..", "..", "..", "examples", "go")
+	cfg.ProjectPath = testutil.GoExample
 	analyzer := NewAnalyzer(cfg)
 
 	for i := 0; i < b.N; i++ {
@@ -151,6 +155,45 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 func TestNewAnalyzer(t *testing.T) {
 	t.Run("Should return type os struct correctly", func(t *testing.T) {
 		assert.IsType(t, &Analyzer{}, NewAnalyzer(&config.Config{}))
+	})
+}
+
+func TestAnalyzerWithoutMock(t *testing.T) {
+	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
+		cfg := config.New()
+
+		cfg.ProjectPath = testutil.GoExample
+		controller := NewAnalyzer(cfg)
+		_, err := controller.Analyze()
+		assert.NoError(t, err)
+	})
+	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
+		cfg := config.New()
+
+		cfg.ProjectPath = testutil.GoExample
+		cfg.RepositoryAuthorization = "1234"
+
+		handlerFunc := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			structToValidate := &cli.AnalysisData{}
+			cliVersion := r.Header.Get("X-Horusec-CLI-Version")
+			authorization := r.Header.Get("X-Horusec-Authorization")
+			byteArray, err := io.ReadAll(r.Body)
+			assert.Nil(t, err)
+			err = json.Unmarshal(byteArray, &structToValidate)
+			assert.Nil(t, err)
+			assert.Equal(t, cfg.RepositoryAuthorization, authorization)
+			assert.Equal(t, cfg.Version, cliVersion)
+		})
+
+		router := http.NewServeMux()
+		router.HandleFunc("/api/analysis", handlerFunc)
+		svr := httptest.NewServer(router)
+		cfg.HorusecAPIUri = svr.URL
+		defer svr.Close()
+
+		controller := NewAnalyzer(cfg)
+		_, err := controller.Analyze()
+		assert.NoError(t, err)
 	})
 }
 

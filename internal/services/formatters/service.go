@@ -228,6 +228,8 @@ func (s *Service) ParseFindingsToVulnerabilities(findings []engine.Finding, tool
 }
 
 func (s *Service) AddNewVulnerabilityIntoAnalysis(vuln *vulnerability.Vulnerability) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 	s.analysis.AnalysisVulnerabilities = append(s.analysis.AnalysisVulnerabilities,
 		analysis.AnalysisVulnerabilities{
 			Vulnerability: *vuln,

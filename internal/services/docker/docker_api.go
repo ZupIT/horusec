@@ -23,6 +23,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"sync"
 
 	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
 
@@ -75,6 +76,7 @@ type Client interface {
 }
 
 type API struct {
+	mutex                  *sync.RWMutex
 	ctx                    context.Context
 	dockerClient           Client
 	config                 *config.Config
@@ -84,6 +86,7 @@ type API struct {
 
 func New(client Client, cfg *config.Config, analysisID uuid.UUID) *API {
 	return &API{
+		mutex:                  new(sync.RWMutex),
 		ctx:                    context.Background(),
 		dockerClient:           client,
 		config:                 cfg,
@@ -155,6 +158,8 @@ func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadClose
 }
 
 func (d *API) checkImageNotExists(imageWithTagAndRegistry string) (bool, error) {
+	d.mutex.Lock()
+	defer d.mutex.Unlock()
 	args := dockerTypesFilters.NewArgs()
 	args.Add("reference", d.removeRegistry(imageWithTagAndRegistry))
 	options := types.ImageListOptions{Filters: args}
