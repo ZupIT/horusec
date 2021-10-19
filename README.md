@@ -64,7 +64,7 @@ Check out our [**Documentation**](https://horusec.io/docs/overview/), you will s
 
 ## **Requirements**
 
-- Docker
+- **Docker**
 
 To run Horusec with all the tools we use, you need Docker installed in your machine. 
 If you don't have Docker, we have a [**flag**](https://horusec.io/docs/cli/resources/#3-flags) `-D true` that will disable the dependency, but it also loses much of the analysis power. 
@@ -100,7 +100,7 @@ horusec version
 
 ## **Usage**
 ### **CLI Usage**
-To use horusec-cli and check the application's vulnerabilities, use the following command:
+To use Horusec-CLI and check the application's vulnerabilities, use the following command:
 ```bash
 horusec start -p .
 ```
@@ -130,12 +130,12 @@ Horusec's v1 is still available.
 
 **WARNING:** The endpoint with v1 will be deprecated, please upgrade your CLI to v2. Check out more details in the [**documentation**](https://horusec.io/docs/migrate-v1-to-v2/). 
 
-### Mac or Linux
+### **Mac or Linux**
 ``` sh
 curl -fsSL https://horusec.io/bin/install.sh | bash -s latest
 ```
 
-### Windows
+### **Windows**
 ```sh
 curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
 ```

@@ -3,10 +3,9 @@
 This is Horusec contributing guide. Please read the following sections to learn how to ask questions and how to work on something.
 
 ## **Table of contents**
-1. [**Getting Started**](#Getting-started)
-   1. [**Before you contribute**](#Before-you-contribute)
-   2. [**Code of Conduct**](#Code-of-Conduct)
-   3. [**Legal**](#Legal)
+1. [**Before you contribute**](#Before-you-contribute)
+   1. [**Code of Conduct**](#Code-of-Conduct)
+   2. [**Legal**](#Legal)
 2. [**Prerequisites**](#Prerequisites)
    1. [**Developer Certificate of Origin**](#Developer-Certificate-of-Origin)
    2. [**Code Review**](#Code-Review)
@@ -19,9 +18,8 @@ This is Horusec contributing guide. Please read the following sections to learn 
       6. [**After your pull request's approval**](#After-your-pull-request's-approval)
 4. [**Community**](#Community)
 
-## **Getting started**
 
-### **Before you contribute**
+## **Before you contribute**
 
 ### **Code of Conduct**
 Please follow the [**Code of Conduct**](https://github.com/ZupIT/horusec/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
@@ -66,9 +64,12 @@ Note: For this option, your e-mail must be the same in registered in GitHub.
 - All your submissions needs a review.
 
 ### **Pull Requests**
-When opening a PR: 
+When you open a PR, make sure you follow these requisites:
 - You need to add a title describing the issue. 
-- Fill in the template, describe why you are opening the PR.
+- Answer the questions about what you did, how to verify it and a description for the changelog, see an example below:
+
+<p align="center" margin="20 0"><img src="assets/PR-model.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
+
 
 ## **How to contribute?** 
 See the guidelines to submit your changes: 
@@ -106,7 +107,7 @@ If you want to add an improvement, a new feature or bugfix, follow the steps to 
 
 **Step 4:** Make sure to write a title describing what you have done;
 
-**Step 5:** Fill in the template in the PR, here you need to write what you did and how the team can verify it; 
+**Step 5:** Fill in the template in the PR, just answer the questions you will see there, see more in the [**Pull Requests section**](#Pull-Requests); 
 
 **Step 6:** You must commit to comply with the DCO rules. It will need to be [**signed-off**](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s) and [**verified**](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification). Example: ` git commit -s --amend`.
 
@@ -117,12 +118,12 @@ Your pull request is approved when:
 - Pass all GitHub actions checking process (lint, test, coverage, license, build, e2e, security, dco).
 
 ### **After your pull request's approval**
-- If it is a bugfix, the team will perform the changes and there will be a new release.
+- If it is a bug fix, the team will perform the changes and there will be a new release.
 - If it is a feature, it will be in the next release. 
 
 ## **Community**
 
-- Do you have any question about Horusec in our [**mailing list**](horusec@zup.com.br) 
+- Do you have any question about Horusec [**e-mail us**](horusec@zup.com.br) 
 - Let's chat in our [**forum**](https://forum.zup.com.br/c/en/horusec/14).
 
 Thank you for your contribution, you rock! 🚀
