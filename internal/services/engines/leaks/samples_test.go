@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package engines_test
+package leaks
 
 const (
 	SampleVulnerableLeaksRegularAWSManagerID = `
@@ -586,55 +586,6 @@ func main() {
 define('AUTH_KEY', getenv("AUTH_KEY"));
 	`
 
-	SampleVulnerableJavaSQLInjection = `
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import javax.sql.DataSource;
 
-public class VulnerableCodeSQLInjection134 {
-
-    public void printResults(DataSource ds, String field01) throws SQLException {
-        try (
-                var con = ds.getConnection();
-                var pstmt = con.prepareStatement("select * from mytable where field01 = '" + field01 + "'");
-                var rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                System.out.println(rs.getString(1));
-            }
-        }
-    }
-}
-`
-
-	SampleSafeJavaSQLInjection = `
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-public class VulnerableCodeSQLInjection134 {
-
-    public void printResults(DataSource ds, String field01) throws SQLException {
-        try {
-            var con = ds.getConnection();
-            var pstmt = con.prepareStatement("select * from mytable where field01 = ? ");
-            pstmt.setString(1,field01);
-            var rs = pstmt.executeQuery();
-            while (rs.next()) {
-                System.out.println(rs.getString(1));
-            }
-        }
-    }
-}
-`
-	SampleSafeJavaScriptUseEval = `
-function f() {
-	eval("echo foo");
-}
-	`
 )
