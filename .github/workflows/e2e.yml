@@ -35,4 +35,8 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: test-e2e
+<<<<<<< HEAD
         run: go test -v ./e2e/...
+=======
+        run: go test -v ./e2e/..
+>>>>>>> 58161af6fb604772472dc28ab87ecd1a24994323
