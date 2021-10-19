@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: e2e
-on: [ "pull_request", "push" ]
+on: [ "pull_request" ]
 permissions: read-all
 jobs:
   test:
@@ -24,7 +24,7 @@ jobs:
           - 1.17
         os:
           - ubuntu-latest
-          - windows-latest
+#          - windows-latest
 #          - macOS-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
