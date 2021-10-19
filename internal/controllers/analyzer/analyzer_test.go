@@ -16,16 +16,27 @@ package analyzer
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/utils/testutil"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
 	"github.com/ZupIT/horusec/internal/utils/mock"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 
@@ -46,8 +57,6 @@ import (
 
 func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	b.ReportAllocs()
-	wd, err := os.Getwd()
-	require.Nil(b, err)
 
 	logger.LogSetOutput(io.Discard)
 	// Hack to not print analysis result and make benchmark clean
@@ -55,7 +64,7 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	os.Stdout = w
 
 	cfg := config.New()
-	cfg.ProjectPath = filepath.Join(wd, "..", "..", "..", "examples", "go")
+	cfg.ProjectPath = testutil.GoExample
 	analyzer := NewAnalyzer(cfg)
 
 	for i := 0; i < b.N; i++ {
@@ -65,9 +74,126 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 	}
 }
 
+func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
+	vuln := vulnerability.Vulnerability{
+		RuleID:  "HS-TEST-1",
+		Line:    "10",
+		Column:  "20",
+		File:    "testing",
+		Code:    "testing",
+		Details: fmt.Sprintf("Test\nDescription testing"),
+	}
+	vulnhash.Bind(&vuln)
+
+	testcases := []struct {
+		name          string
+		vulnerability vulnerability.Vulnerability
+		hashes        []string
+		expectedType  vulnerabilityenum.Type
+	}{
+		{
+			name:          "ChangeCorrectHashToFalsePositive",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHash},
+			expectedType:  vulnerabilityenum.FalsePositive,
+		},
+		{
+			name:          "ChangeBreakingHashToFalsePositive",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHashInvalid},
+			expectedType:  vulnerabilityenum.FalsePositive,
+		},
+		{
+			name:          "ChangeCorrectHashToRiskAccept",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHash},
+			expectedType:  vulnerabilityenum.RiskAccepted,
+		},
+		{
+			name:          "ChangeBreakingHashToRiskAccept",
+			vulnerability: vuln,
+			hashes:        []string{vuln.VulnHashInvalid},
+			expectedType:  vulnerabilityenum.RiskAccepted,
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.name, func(t *testing.T) {
+			analyzer := NewAnalyzer(config.New())
+
+			analyzer.analysis.AnalysisVulnerabilities = append(
+				analyzer.analysis.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
+					AnalysisID:    uuid.New(),
+					Vulnerability: tt.vulnerability,
+				},
+			)
+			var (
+				falsePositiveHashes []string
+				riskAcceptHashes    []string
+			)
+
+			switch tt.expectedType {
+			case vulnerabilityenum.FalsePositive:
+				falsePositiveHashes = tt.hashes
+			case vulnerabilityenum.RiskAccepted:
+				riskAcceptHashes = tt.hashes
+			default:
+				t.Fatalf("invalid type %s", tt.expectedType)
+			}
+
+			analyzer.SetFalsePositivesAndRiskAcceptInVulnerabilities(falsePositiveHashes, riskAcceptHashes)
+
+			require.Len(t, analyzer.analysis.AnalysisVulnerabilities, len(tt.hashes))
+			for _, vuln := range analyzer.analysis.AnalysisVulnerabilities {
+				assert.Equal(t, tt.expectedType, vuln.Vulnerability.Type)
+			}
+
+		})
+	}
+}
+
 func TestNewAnalyzer(t *testing.T) {
 	t.Run("Should return type os struct correctly", func(t *testing.T) {
 		assert.IsType(t, &Analyzer{}, NewAnalyzer(&config.Config{}))
+	})
+}
+
+func TestAnalyzerWithoutMock(t *testing.T) {
+	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
+		cfg := config.New()
+
+		cfg.ProjectPath = testutil.GoExample
+		controller := NewAnalyzer(cfg)
+		_, err := controller.Analyze()
+		assert.NoError(t, err)
+	})
+	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
+		cfg := config.New()
+
+		cfg.ProjectPath = testutil.GoExample
+		cfg.RepositoryAuthorization = "1234"
+
+		handlerFunc := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			structToValidate := &cli.AnalysisData{}
+			cliVersion := r.Header.Get("X-Horusec-CLI-Version")
+			authorization := r.Header.Get("X-Horusec-Authorization")
+			byteArray, err := io.ReadAll(r.Body)
+			assert.Nil(t, err)
+			err = json.Unmarshal(byteArray, &structToValidate)
+			assert.Nil(t, err)
+			assert.Equal(t, cfg.RepositoryAuthorization, authorization)
+			assert.Equal(t, cfg.Version, cliVersion)
+		})
+
+		router := http.NewServeMux()
+		router.HandleFunc("/api/analysis", handlerFunc)
+		svr := httptest.NewServer(router)
+		cfg.HorusecAPIUri = svr.URL
+		defer svr.Close()
+
+		controller := NewAnalyzer(cfg)
+		_, err := controller.Analyze()
+		assert.NoError(t, err)
 	})
 }
 

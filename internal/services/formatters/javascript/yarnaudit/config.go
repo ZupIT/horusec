@@ -18,13 +18,13 @@ package yarnaudit
 const CMD = `
 		{{WORK_DIR}}
         if [ -f yarn.lock ]; then
-            yarn audit --groups dependencies --json > /tmp/results-ANALYSISID.json 2> /tmp/errorYarnAudit-ANALYSISID
-            if [ ! -s /tmp/errorYarnAudit-ANALYSISID ]; then
+            yarn audit --groups dependencies --json > /tmp/results-ANALYSISID.json 2> /tmp/verboseYarnAudit-ANALYSISID
+            if [ -s /tmp/verboseYarnAudit-ANALYSISID ] && grep -q '"type":"error"' /tmp/verboseYarnAudit-ANALYSISID; then
+				echo -n 'ERROR_RUNNING_YARN_AUDIT'
+                cat /tmp/verboseYarnAudit-ANALYSISID
+            else
                 jq -c -M -j --slurp '{advisories: (. | map(select(.type == "auditAdvisory") | .data.advisory)), metadata: (. | map(select(.type == "auditSummary") | .data) | add)}' /tmp/results-ANALYSISID.json > /tmp/output-ANALYSISID.json
                 cat /tmp/output-ANALYSISID.json
-            else
-                echo -n 'ERROR_RUNNING_YARN_AUDIT'
-                cat /tmp/errorYarnAudit-ANALYSISID
             fi
         else
             if [ ! -f package-lock.json ]; then

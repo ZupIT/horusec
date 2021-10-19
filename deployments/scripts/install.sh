@@ -91,9 +91,9 @@ horusecDownloadAndInstall () {
 
     rm -r $INSTALL_PATH/horusec >/dev/null 2>&1
 
-	  echo "Downloading horusec..."
+    echo "Downloading horusec..."
+    echo $URL_DOWNLOAD
 
-	  echo $URL_DOWNLOAD
     curl -fsSL "$URL_DOWNLOAD" -o ./horusec
 
     chmod +x ./horusec
