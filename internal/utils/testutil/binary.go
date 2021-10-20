@@ -36,7 +36,7 @@ func GomegaBuildHorusecBinary(customArgs ...string) string {
 	err := cmd.Run()
 
 	if err != nil {
-		ginkgo.Fail("Error on build Horusec binary for e2e test")
+		ginkgo.Fail(fmt.Sprintf("Error on build Horusec binary for e2e test %v", err))
 	}
 	return binary
 }

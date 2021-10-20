@@ -145,20 +145,20 @@ var _ = Describe("Scan vulnerabilities example folder", func() {
 			err := cmd.Run()
 
 			if err != nil {
-				Fail("Error on run CLI to scan tests")
+				Fail(fmt.Sprintf("Error on run CLI to scan tests %v", err))
 			}
 
 			fileContent, err := os.ReadFile(output)
 
 			if err != nil {
-				Fail("Error on read file for scan on e2e test")
+				Fail(fmt.Sprintf("Error on read file for scan on e2e test %v", err))
 			}
 
 			var horusecAnalysis analysis.Analysis
 			err = json.Unmarshal(fileContent, &horusecAnalysis)
 
 			if err != nil {
-				Fail("Error on read json result for horusec scan example folder")
+				Fail(fmt.Sprintf("Error on read json result for horusec scan example folder %v", err))
 			}
 
 			Expect(tt.vulnerabilities).Should(Equal(len(horusecAnalysis.AnalysisVulnerabilities)))
