@@ -27,6 +27,7 @@ builds:
       - darwin
     goarch:
       - amd64
+      - arm64
       - 386
 changelog:
   skip: true
@@ -39,6 +40,7 @@ archives:
     replacements:
       amd64: x64
       386: x86
+      aarch64: arm64
       darwin: mac
       windows: win
 checksum:
@@ -51,12 +53,18 @@ release:
     - glob: ./tmp/horusec_linux_x86_stand_alone.sig
     - glob: ./tmp/horusec_linux_x64_stand_alone
     - glob: ./tmp/horusec_linux_x64_stand_alone.sig
+    - glob: ./tmp/horusec_linux_arm64_stand_alone
+    - glob: ./tmp/horusec_linux_arm64_stand_alone.sig
     - glob: ./tmp/horusec_windows_x86_stand_alone.exe
     - glob: ./tmp/horusec_windows_x86_stand_alone.exe.sig
     - glob: ./tmp/horusec_windows_x64_stand_alone.exe
     - glob: ./tmp/horusec_windows_x64_stand_alone.exe.sig
+    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe
+    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe.sig
     - glob: ./tmp/horusec_mac_x64_stand_alone
     - glob: ./tmp/horusec_mac_x64_stand_alone.sig
+    - glob: ./tmp/horusec_mac_arm64_stand_alone
+    - glob: ./tmp/horusec_mac_arm64_stand_alone.sig
 nfpms:
   - id: horusec
     package_name: horusec
@@ -64,6 +72,7 @@ nfpms:
     replacements:
       amd64: 64-bit
       386: 32-bit
+      arm64: arm64
       darwin: mac
       windows: win
     homepage: https://horusec.io/
@@ -91,7 +100,9 @@ docker_signs:
 dockers:
   - id: horusec
     goos: linux
-    goarch: amd64
+    goarch: 
+      - amd64
+      - arm64
     ids:
       - horusec
     image_templates:
