@@ -42,6 +42,9 @@ import (
 	"github.com/ZupIT/horusec/internal/services/git"
 )
 
+// MaxCharacters is the maximum length of code that a vulnerability can have.
+const MaxCharacters = 100
+
 // CustomRules is the interface that load custom rules to a given language
 type CustomRules interface {
 	Load(languages.Language) []engine.Rule
@@ -152,13 +155,12 @@ func (s *Service) RemoveSrcFolderFromPath(filepath string) string {
 }
 
 func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
-	const MaxCharacters = 100
 	if column < 0 {
 		column = 0
 	}
 
 	if len(code) > MaxCharacters {
-		return s.getAHundredCharacters(code, column)
+		return s.truncatedCode(code, column)
 	}
 
 	return code
@@ -171,8 +173,7 @@ func (s *Service) ToolIsToIgnore(tool tools.Tool) bool {
 	return false
 }
 
-func (s *Service) getAHundredCharacters(code string, column int) string {
-	const MaxCharacters = 100
+func (s *Service) truncatedCode(code string, column int) string {
 	if len(code) < column {
 		return code[:MaxCharacters]
 	}
