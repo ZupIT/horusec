@@ -15,8 +15,9 @@
 package java
 
 import (
-	engine "github.com/ZupIT/horusec-engine"
 	"testing"
+
+	engine "github.com/ZupIT/horusec-engine"
 
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )

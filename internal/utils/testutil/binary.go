@@ -16,32 +16,34 @@ package testutil
 
 import (
 	"fmt"
-	"github.com/onsi/ginkgo"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	"github.com/onsi/ginkgo"
 )
 
 func GomegaBuildHorusecBinary(customArgs ...string) string {
-	binaryName := "horusec"
-	if runtime.GOOS == "windows" {
-		binaryName = fmt.Sprintf("%s.exe", binaryName)
-	}
-	binary := filepath.Join(os.TempDir(), binaryName)
-
+	binary := filepath.Join(os.TempDir(), getBinaryNameBySystem())
 	args := []string{
 		"build",
 		`-ldflags=-X 'github.com/ZupIT/horusec/cmd/app/version.Version=vTest'`,
 		fmt.Sprintf("-o=%s", binary), filepath.Join(RootPath, "cmd", "app"),
 	}
 	args = append(args, customArgs...)
-
 	cmd := exec.Command("go", args...)
 	err := cmd.Run()
-
 	if err != nil {
 		ginkgo.Fail(fmt.Sprintf("Error on build Horusec binary for e2e test %v", err))
 	}
 	return binary
+}
+
+func getBinaryNameBySystem() string {
+	binaryName := "horusec-e2e"
+	if runtime.GOOS == "windows" {
+		binaryName = fmt.Sprintf("%s.exe", binaryName)
+	}
+	return binaryName
 }
