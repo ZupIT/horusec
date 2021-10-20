@@ -143,13 +143,14 @@ var _ = Describe("Scan vulnerabilities example folder", func() {
 			}
 
 			cmd := exec.Command(bin, cmdArguments...)
-			err := cmd.Run()
 
 			stdout := bytes.NewBufferString("")
 			stderr := bytes.NewBufferString("")
 
 			cmd.Stdout = stdout
 			cmd.Stderr = stderr
+
+			err := cmd.Run()
 
 			if err != nil {
 				Fail(fmt.Sprintf("Error on run CLI to scan tests %v\nstderr: %s\n\nstdout: %s\n", err,
