@@ -66,9 +66,12 @@ Note: For this option, your e-mail must be the same in registered in GitHub.
 - All your submissions needs a review.
 
 ### **Pull Requests**
-When opening a PR: 
+When you open a PR, follow the requisites below:
 - You need to add a title describing the issue. 
-- Fill in the template, describe why you are opening the PR.
+- Answer the questions about what you did, how to verify it and a description for the changelog, see an example:
+
+<p align="center" margin="20 0"><img src="assets/horusec-pr.PNG" alt="architecture" width="100%" style="max-width:100%;"/></p>
+
 
 ## **How to contribute?** 
 See the guidelines to submit your changes: 
@@ -80,7 +83,7 @@ To start contributing with Horusec you first need to install [Go](https://golang
 After installing Go you can build using `make build-dev`.
 
 
-#### Testing
+#### **Testing**
 Horusec has a suite of unit and end-to-end tests you can run them using the following commands. 
 
 ```
@@ -91,7 +94,7 @@ make test-e2e
 
 Make sure all the tests pass before you commit and push :)
 
-#### Coverage
+#### **Coverage**
 You can get the test coverage using the following command.
 
 ```bash
@@ -100,8 +103,7 @@ make coverage
 go tool cover -html=coverage.out # Open coverage status in your browser
 ``` 
 
----
-
+#### **Repositories**
 Horusec has other repositories and you can check the README for each one of them: 
 
 - [**Admin**](https://github.com/ZupIT/horusec-admin)
