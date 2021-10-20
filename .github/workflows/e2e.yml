@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: e2e
-on: [ "pull_request" ]
+on: [ "pull_request", "push" ]
 permissions: read-all
 jobs:
   test:
@@ -25,14 +25,24 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-#          - macOS-latest
+          - macOS-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
           submodules: true
-      - uses: actions/setup-go@v2
+
+      - name: Setup Golang
+        uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      - name: test-e2e
+
+      - name: Setup docker for MacOS
+        if: ${{ matrix.os == 'macos-latest' }}
+        uses: docker-practice/actions-setup-docker@master
+        with:
+          docker_buildx: false
+
+      - name: Run e2e test for ${{ matrix.os }}
         run: go test -v ./e2e/...
