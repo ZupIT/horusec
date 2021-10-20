@@ -91,7 +91,6 @@ func NewXMLParsingVulnerableToXXEWithSAXParserFactory() text.TextRule {
 			regexp.MustCompile(`SAXParserFactory\.newInstance\(`),
 			regexp.MustCompile(`\.parse\(`),
 			regexp.MustCompile(`(SAXParserFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(\.parse\(.*\))`),
-
 		},
 	}
 }

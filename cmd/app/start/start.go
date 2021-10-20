@@ -361,7 +361,7 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 Please use the command below informing the directory you want to run the analysis: 
 horusec start -p ./
 `, err.Error())
-			return nil
+			return err
 		}
 		return s.validateReplyOfAsk(response)
 	}

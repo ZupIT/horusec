@@ -19,13 +19,18 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/spf13/pflag"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec/internal/controllers/requirements"
 
-	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/controllers/analyzer"
@@ -33,12 +38,69 @@ import (
 	"github.com/ZupIT/horusec/internal/usecases/cli"
 	"github.com/ZupIT/horusec/internal/utils/copy"
 	"github.com/ZupIT/horusec/internal/utils/prompt"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func TestMain(m *testing.M) {
+const (
+	FlagAnalysisTimeout            = "--analysis-timeout"
+	FlagAuthorization              = "--authorization"
+	FlagCertificatePath            = "--certificate-path"
+	FlagContainerBindProjectPath   = "--container-bind-project-path"
+	FlagCustomRulesPath            = "--custom-rules-path"
+	FlagDisableDocker              = "--disable-docker"
+	FlagEnableCommitAuthor         = "--enable-commit-author"
+	FlagEnableGitHistory           = "--enable-git-history"
+	FlagEnableOwaspDependencyCheck = "--enable-owasp-dependency-check"
+	FlagEnableShellcheck           = "--enable-shellcheck"
+	FlagFalsePositive              = "--false-positive"
+	FlagHeaders                    = "--headers"
+	FlagHorusecUrl                 = "--horusec-url"
+	FlagIgnore                     = "--ignore"
+	FlagIgnoreSeverity             = "--ignore-severity"
+	FlagInformationSeverity        = "--information-severity"
+	FlagInsecureSkipVerify         = "--insecure-skip-verify"
+	FlagJsonOutputFile             = "--json-output-file"
+	FlagMonitorRetryCount          = "--monitor-retry-count"
+	FlagOutputFormat               = "--output-format"
+	FlagProjectPath                = "--project-path"
+	FlagRepositoryName             = "--repository-name"
+	FlagRequestTimeout             = "--request-timeout"
+	FlagReturnError                = "--return-error"
+	FlagRiskAccept                 = "--risk-accept"
+	FlagShowVulnerabilitiesTypes   = "--show-vulnerabilities-types"
+)
 
+func getFlags() []string {
+	return []string{
+		FlagAnalysisTimeout,
+		FlagAuthorization,
+		FlagCertificatePath,
+		FlagContainerBindProjectPath,
+		FlagCustomRulesPath,
+		FlagDisableDocker,
+		FlagEnableCommitAuthor,
+		FlagEnableGitHistory,
+		FlagEnableOwaspDependencyCheck,
+		FlagEnableShellcheck,
+		FlagFalsePositive,
+		FlagHeaders,
+		FlagHorusecUrl,
+		FlagIgnore,
+		FlagIgnoreSeverity,
+		FlagInformationSeverity,
+		FlagInsecureSkipVerify,
+		FlagJsonOutputFile,
+		FlagMonitorRetryCount,
+		FlagOutputFormat,
+		FlagProjectPath,
+		FlagRepositoryName,
+		FlagRequestTimeout,
+		FlagReturnError,
+		FlagRiskAccept,
+		FlagShowVulnerabilitiesTypes,
+	}
+}
+
+func TestMain(m *testing.M) {
 	_ = os.RemoveAll("./examples")
 	_ = os.RemoveAll("./tmp")
 	_ = os.MkdirAll("./tmp", 0750)
@@ -53,289 +115,525 @@ func TestNewStartCommand(t *testing.T) {
 	t.Run("Should run NewStartCommand and return type correctly", func(t *testing.T) {
 		assert.IsType(t, NewStartCommand(config.New()), &Start{})
 	})
+	t.Run("Should run NewStartCommand and return have expected flags", func(t *testing.T) {
+		promptMock := &prompt.Mock{}
+
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
+
+		requirementsMock := &requirements.Mock{}
+
+		analyzerMock := &analyzer.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
+		analyzerMock.On("Analyze").Return(0, nil)
+		requirementsMock.On("ValidateDocker")
+		start := &Start{
+			useCases:     cli.NewCLIUseCases(),
+			configs:      cfg,
+			prompt:       promptMock,
+			analyzer:     analyzerMock,
+			requirements: requirementsMock,
+		}
+		cmd := start.CreateStartCommand()
+		flagSet := cmd.Flags()
+
+		assert.NoError(t, cmd.Execute())
+		flags := make([]string, 0)
+		flagSet.VisitAll(func(flag *pflag.Flag) {
+			if flag.Name == "help" {
+				return
+			}
+			flags = append(flags, "--"+flag.Name)
+		})
+		expectedFlags := getFlags()
+		assert.Equal(t, len(expectedFlags), len(flags))
+		for _, flag := range flags {
+			assert.Contains(t, expectedFlags, flag)
+		}
+	})
 }
 
-func TestStartCommand_Execute(t *testing.T) {
+func TestStartCommand_ExecuteUnitTests(t *testing.T) {
+	type onFn func(*prompt.Mock, *requirements.Mock, *analyzer.Mock)
+	type assertFn func(*testing.T, *prompt.Mock, *requirements.Mock, *analyzer.Mock, *config.Config)
+
+	testcases := []struct {
+		name     string
+		args     []string
+		err      bool
+		onFn     onFn
+		assertFn assertFn
+	}{
+		{
+			name: "Should execute command exec without error and ask to user if is to run in current directory",
+			args: []string{},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not ask if is to run in current directory",
+			args: []string{FlagProjectPath, testutil.RootPath},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+
+		{
+			name: "Should execute command exec and return error because found vulnerabilities (-p,-e)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagReturnError},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(10, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec and return error because found error when ask but run in current folder",
+			args: []string{FlagReturnError},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("", errors.New("some error"))
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and validate if git is installed(--enable-git-history)",
+			args: []string{FlagEnableGitHistory, FlagReturnError},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker")
+				requirements.On("ValidateGit")
+
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+				assert.True(t, cfg.EnableGitHistoryAnalysis)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+				requirements.AssertCalled(t, "ValidateGit")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not ask because is different project path(-p, -e)",
+			args: []string{FlagReturnError, FlagProjectPath, os.TempDir()},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec and return error because found not accept proceed",
+			args: []string{FlagReturnError},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("N", nil)
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec and return error because found invalid RepositoryAuthorization field",
+			args: []string{FlagProjectPath, os.TempDir(), FlagAuthorization, "NOT_VALID_AUTHORIZATION", FlagReturnError},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(10, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+				assert.Equal(t, "NOT_VALID_AUTHORIZATION", cfg.RepositoryAuthorization)
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec and return success because found valid RepositoryAuthorization field(-a)",
+			args: []string{FlagProjectPath, os.TempDir(), FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", FlagReturnError},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+				assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error using json output(-o json, -O)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), FlagOutputFormat, "json", FlagReturnError},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+				analyzer.On("Analyze").Return(0, nil)
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), cfg.JSONOutputFilePath)
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "json", cfg.PrintOutputType)
+
+				prompt.AssertNotCalled(t, "Ask")
+				requirements.AssertCalled(t, "ValidateDocker")
+				analyzer.AssertCalled(t, "Analyze")
+			},
+		},
+		{
+			name: "Should execute command exec with error using unknown type output(-o unknown, -O)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), FlagOutputFormat, "unknownTypeOutput", FlagReturnError},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "unknownTypeOutput", cfg.PrintOutputType)
+				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), cfg.JSONOutputFilePath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error using sonarqube output (-o sonarqube, -O)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), FlagOutputFormat, "sonarqube", FlagReturnError},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "sonarqube", cfg.PrintOutputType)
+				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), cfg.JSONOutputFilePath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error showing info vulnerabilities (--information-severity)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagInformationSeverity},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+				analyzer.On("Analyze").Return(0, nil)
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.True(t, cfg.EnableInformationSeverity)
+
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+				prompt.AssertNotCalled(t, "Ask")
+			},
+		},
+		{
+			name: "Should execute command exec without error sending to web application (-u,-a)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagHorusecUrl, "https://google.com", FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				t.Run("Should execute command exec without error sending to web application (-u,-a)", func(t *testing.T) {
+					assert.Equal(t, "https://google.com", cfg.HorusecAPIUri)
+					assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
+
+					prompt.AssertNotCalled(t, "Ask")
+					analyzer.AssertCalled(t, "Analyze")
+					requirements.AssertCalled(t, "ValidateDocker")
+				})
+			},
+		},
+		{
+			name: "Should execute command exec with error sending to a invalid url web application (-u,-a)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagHorusecUrl, "*vsaf&&", FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, "*vsaf&&", cfg.HorusecAPIUri)
+				assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and return vulnerabilities but ignore vulnerabilities of type HIGH (-s)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagIgnoreSeverity, "CRITICAL, LOW"},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, []string{"CRITICAL", "LOW"}, cfg.SeveritiesToIgnore)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec with error and not return vulnerabilities when set to ignore unknown type of vulnerability (-s)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagIgnoreSeverity, "potato, shoes"},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, []string{"potato", " shoes"}, cfg.SeveritiesToIgnore)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not return vulnerabilities when set valid certificate path (-C --certificate-path)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagCertificatePath, filepath.Join(testutil.RootPath, "..")},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, filepath.Join(testutil.RootPath, ".."), cfg.CertPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec with error and not return vulnerabilities when set invalid certificate path (-C --certificate-path)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagCertificatePath, "invalidPath"},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, "invalidPath", cfg.CertPath)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not return vulnerabilities when set valid analysis timeout (-t --analysis-timeout)\"",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagAnalysisTimeout, "123"},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
+				assert.Equal(t, int64(123), cfg.TimeoutInSecondsAnalysis)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec with error and not return vulnerabilities when set invalid analysis timeout (-t --analysis-timeout)",
+			args: []string{FlagProjectPath, testutil.RootPath, FlagAnalysisTimeout, "potato"},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsAnalysis)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not return vulnerabilities when set disable docker (-D --disable-docker)",
+			args: []string{FlagDisableDocker},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.True(t, cfg.DisableDocker)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec without error and not return vulnerabilities when set valid request timeout (-r --request-timeout)",
+			args: []string{FlagRequestTimeout, "123"},
+			err:  false,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.Equal(t, int64(123), cfg.TimeoutInSecondsRequest)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+			},
+		},
+		{
+			name: "Should execute command exec with error and not return vulnerabilities when set invalid request timeout (-r --request-timeout)",
+			args: []string{FlagRequestTimeout, "potato"},
+			err:  true,
+			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+				analyzer.On("Analyze").Return(0, nil)
+				prompt.On("Ask").Return("Y", nil)
+				requirements.On("ValidateDocker")
+			},
+			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsRequest)
+
+				prompt.AssertNotCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.name, func(t *testing.T) {
+			promptMock, cfg, requirementsMock, analyzerMock, start := getMocksAndStartStruct()
+			tt.onFn(promptMock, requirementsMock, analyzerMock)
+
+			cmd := start.CreateStartCommand()
+
+			cmd.SetArgs(tt.args)
+			if tt.err {
+				assert.Error(t, cmd.Execute())
+			} else {
+				assert.NoError(t, cmd.Execute())
+			}
+
+			tt.assertFn(t, promptMock, requirementsMock, analyzerMock, cfg)
+		})
+	}
+}
+func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-
-	t.Run("Should execute command exec without error and ask to user if is to run in current directory", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-
-		assert.NoError(t, cobraCmd.Execute())
-
-		promptMock.AssertCalled(t, "Ask")
-	})
-	t.Run("Should execute command exec without error and not ask if is to run in current directory", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", "./"})
-
-		assert.NoError(t, cobraCmd.Execute())
-
-		promptMock.AssertNotCalled(t, "Ask")
-	})
-	t.Run("Should execute command exec and return error because found vulnerabilities", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", "./", "-e", "true"})
-
-		assert.Error(t, cobraCmd.Execute())
-
-		promptMock.AssertNotCalled(t, "Ask")
-	})
-	t.Run("Should execute command exec and return error because found error when ask but run in current folder", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("", errors.New("some error"))
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-e", "true"})
-
-		assert.NoError(t, cobraCmd.Execute())
-
-		promptMock.AssertCalled(t, "Ask")
-	})
-	t.Run("Should execute command exec and return error because found not accept proceed", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("N", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-e", "true"})
-
-		assert.Error(t, cobraCmd.Execute())
-
-		promptMock.AssertCalled(t, "Ask")
-	})
-	t.Run("Should execute command exec without error and not ask because is different project path", func(t *testing.T) {
-		_ = os.Setenv(config.EnvProjectPath, "/tmp")
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New().LoadFromEnvironmentVariables()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-e", "true"})
-
-		assert.NoError(t, cobraCmd.Execute())
-
-		promptMock.AssertNotCalled(t, "Ask")
-		_ = os.Setenv(config.EnvProjectPath, "")
-	})
-	t.Run("Should execute command exec without error and validate if git is installed", func(t *testing.T) {
-		_ = os.Setenv(config.EnvEnableGitHistoryAnalysis, "true")
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(0, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-		requirementsMock.On("ValidateGit")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-e", "true"})
-
-		assert.NoError(t, cobraCmd.Execute())
-
-		promptMock.AssertCalled(t, "Ask")
-		_ = os.Setenv(config.EnvEnableGitHistoryAnalysis, "")
-	})
-	t.Run("Should execute command exec and return error because found error in configs", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
-
-		stdoutMock := bytes.NewBufferString("")
-		logrus.SetOutput(stdoutMock)
-
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
-
-		analyzerControllerMock := &analyzer.Mock{}
-		analyzerControllerMock.On("AnalysisDirectory").Return(10, nil)
-
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
-
-		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
-			analyzer:     analyzerControllerMock,
-			requirements: requirementsMock,
-		}
-
-		cobraCmd := cmd.CreateStartCommand()
-		cobraCmd.SetOut(stdoutMock)
-		cobraCmd.SetArgs([]string{"-p", "./", "-a", "NOT_VALID_AUTHORIZATION", "-e", "true"})
-
-		assert.Error(t, cobraCmd.Execute())
-
-		promptMock.AssertNotCalled(t, "Ask")
-	})
 	t.Run("Should execute command exec without error using json output", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 
 		oldStdout := os.Stdout
@@ -372,25 +670,25 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"analysisVulnerabilities\": null")
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll("./tmp-json.json"))
 	})
 	t.Run("Should execute command exec without error showing info vulnerabilities", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 		oldStdout := os.Stdout
 
@@ -420,24 +718,24 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		assert.NotContains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error sending to web application", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 		oldStdout := os.Stdout
 
@@ -466,24 +764,24 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NotContains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error using sonarqube output", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 
 		oldStdout := os.Stdout
@@ -520,7 +818,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"issues\": []")
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll("./tmp-sonarqube.json"))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
@@ -529,22 +827,22 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.ConfigFilePath = "./not-exists.json"
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.ConfigFilePath = "./not-exists.json"
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 
 		oldStdout := os.Stdout
@@ -576,7 +874,7 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "[HORUSEC] 16 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
@@ -585,21 +883,21 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		promptMock := &prompt.Mock{}
-		promptMock.On("Ask").Return("Y", nil)
+		prompt := &prompt.Mock{}
+		prompt.On("Ask").Return("Y", nil)
 
-		configs := config.New()
-		configs.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
-		requirementsMock.On("ValidateDocker")
+		requirements := &requirements.Mock{}
+		requirements.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
-			configs:      configs,
-			prompt:       promptMock,
+			configs:      cfg,
+			prompt:       prompt,
 			analyzer:     nil,
-			requirements: requirementsMock,
+			requirements: requirements,
 		}
 		oldStdout := os.Stdout
 
@@ -629,7 +927,26 @@ func TestStartCommand_Execute(t *testing.T) {
 		assert.Contains(t, output, "[HORUSEC] 25 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 		assert.Contains(t, output, "")
-		promptMock.AssertNotCalled(t, "Ask")
+		prompt.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
+}
+func getMocksAndStartStruct() (*prompt.Mock, *config.Config, *requirements.Mock, *analyzer.Mock, *Start) {
+	promptMock := &prompt.Mock{}
+
+	cfg := config.New()
+	cfg.WorkDir = &workdir.WorkDir{}
+
+	requirementsMock := &requirements.Mock{}
+
+	analyzerMock := &analyzer.Mock{}
+
+	start := &Start{
+		useCases:     cli.NewCLIUseCases(),
+		configs:      cfg,
+		prompt:       promptMock,
+		analyzer:     analyzerMock,
+		requirements: requirementsMock,
+	}
+	return promptMock, cfg, requirementsMock, analyzerMock, start
 }
