@@ -431,7 +431,7 @@ func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 	return true
 }
 
-func (c *Config) ToBytes(_ bool) []byte {
+func (c *Config) Bytes() []byte {
 	bytes, _ := json.MarshalIndent(c, "", "  ")
 	return bytes
 }
