@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	cmd := exec.Command("go", "build", fmt.Sprintf("-o=%s", bin), path.Join(wd, "..", "..", "cmd", "app"))
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "GOOS=linux")
-	cmd.Env = append(cmd.Env, "GOARCH=amd64")
+	// cmd.Env = append(cmd.Env, "GOARCH=amd64")
 
 	defer func() {
 		if err := os.Remove(bin); err != nil {
