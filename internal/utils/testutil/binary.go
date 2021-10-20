@@ -16,15 +16,20 @@ package testutil
 
 import (
 	"fmt"
+	"github.com/onsi/ginkgo"
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"github.com/onsi/ginkgo"
+	"runtime"
 )
 
 func GomegaBuildHorusecBinary(customArgs ...string) string {
-	binary := filepath.Join(os.TempDir(), "horusec-e2e")
+	binaryName := "horusec"
+	if runtime.GOOS == "windows" {
+		binaryName = fmt.Sprintf("%s.exe", binaryName)
+	}
+	binary := filepath.Join(os.TempDir(), binaryName)
+
 	args := []string{
 		"build",
 		`-ldflags=-X 'github.com/ZupIT/horusec/cmd/app/version.Version=vTest'`,
