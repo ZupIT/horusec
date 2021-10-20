@@ -585,7 +585,4 @@ func main() {
 <?php
 define('AUTH_KEY', getenv("AUTH_KEY"));
 	`
-
-
-
 )

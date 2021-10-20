@@ -317,7 +317,7 @@ func (s *Start) configsValidations(cmd *cobra.Command) error {
 
 	s.validateRequirements()
 
-	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.ToBytes(true)))
+	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.Bytes()))
 	return nil
 }
 

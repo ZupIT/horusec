@@ -29,7 +29,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/config"
@@ -81,53 +80,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, false, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, false, configs.EnableShellCheck)
 	})
-	t.Run("Should change horusec config and return your new values", func(t *testing.T) {
-		currentPath, _ := os.Getwd()
-		configs := config.New()
-		configs.ConfigFilePath = path.Join(currentPath + "other-horusec-config.json")
-		configs.RepositoryAuthorization = uuid.New().String()
-		configs.PrintOutputType = "json"
-		configs.JSONOutputFilePath = "./other-file-path.json"
-		configs.SeveritiesToIgnore = []string{"info"}
-		configs.ProjectPath = "./some-other-file-path"
-		configs.WorkDir = workdir.NewWorkDir().ParseInterfaceToStruct(map[string]interface{}{"csharp": []string{"test"}})
-		configs.EnableGitHistoryAnalysis = (true)
-		configs.CertInsecureSkipVerify = true
-		configs.CertPath = "./certs"
-		configs.EnableCommitAuthor = (true)
-		configs.RiskAcceptHashes = ([]string{"123456789"})
-		configs.FalsePositiveHashes = []string{"987654321"}
-		configs.Headers = map[string]string{"x-header": "value"}
-		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.MapToolConfig{tools.Sobelow: {IsToIgnore: true}},
-		)
-		configs.CustomRulesPath = "test"
-		configs.EnableOwaspDependencyCheck = true
-		configs.EnableShellCheck = true
-
-		assert.NotEqual(t, uuid.Nil.String(), configs.RepositoryAuthorization)
-		assert.NotEqual(t, "text", configs.PrintOutputType)
-		assert.NotEqual(t, "", configs.JSONOutputFilePath)
-		assert.NotEqual(t, 0, len(configs.SeveritiesToIgnore))
-		assert.NotEqual(t, 0, len(configs.FilesOrPathsToIgnore))
-		assert.NotEqual(t, currentPath, configs.ProjectPath)
-		assert.NotEqual(t, workdir.NewWorkDir().CSharp, configs.WorkDir.CSharp)
-		assert.NotEqual(t, false, configs.EnableGitHistoryAnalysis)
-		assert.NotEqual(t, false, configs.CertInsecureSkipVerify)
-		assert.NotEqual(t, "", configs.CertPath)
-		assert.NotEqual(t, false, configs.EnableCommitAuthor)
-		assert.NotEqual(t, "", configs.RepositoryName)
-		assert.NotEqual(t, 0, len(configs.RiskAcceptHashes))
-		assert.NotEqual(t, 0, len(configs.FalsePositiveHashes))
-		assert.NotEqual(t, 0, len(configs.Headers))
-		assert.NotEqual(t, false, configs.ToolsConfig[tools.Sobelow])
-		assert.Equal(t, "test", configs.CustomRulesPath)
-		assert.Equal(t, []string{vulnerability.Vulnerability.ToString()}, configs.ShowVulnerabilitiesTypes)
-		assert.NotEqual(t, map[languages.Language]string{}, configs.CustomImages)
-		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
-		assert.Equal(t, true, configs.EnableShellCheck)
-	})
-	t.Run("Should return horusec config using new viper file", func(t *testing.T) {
+	t.Run("Should return horusec config using new config file", func(t *testing.T) {
 		viper.Reset()
 		currentPath, err := os.Getwd()
 		configFilePath := path.Join(currentPath, ".example-horusec-cli.json")
@@ -168,7 +121,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
 	})
-	t.Run("Should return horusec config using viper file and override by environment", func(t *testing.T) {
+	t.Run("Should return horusec config using config file and override by environment", func(t *testing.T) {
 		viper.Reset()
 		authorization := uuid.New().String()
 		currentPath, err := os.Getwd()
@@ -269,7 +222,7 @@ func TestNewHorusecConfig(t *testing.T) {
 			configs.ShowVulnerabilitiesTypes,
 		)
 	})
-	t.Run("Should return horusec config using viper file and override by environment and override by flags", func(t *testing.T) {
+	t.Run("Should return horusec config using config file and override by environment and override by flags", func(t *testing.T) {
 		viper.Reset()
 		authorization := uuid.New().String()
 		currentPath, err := os.Getwd()
@@ -369,14 +322,35 @@ func TestNewHorusecConfig(t *testing.T) {
 
 		target, err := os.MkdirTemp(os.TempDir(), "testing-target")
 		assert.NoError(t, err)
-
+		repositoryAuthorization := uuid.New().String()
+		wd, err := os.Getwd()
+		assert.Nil(t, err)
 		args := []string{
 			"-p", target,
 			"-F", "SOMEHASHALEATORY1,SOMEHASHALEATORY2",
 			"-R", "SOMEHASHALEATORY3,SOMEHASHALEATORY4",
-			"-t", "1000",
+			"-t", "123",
 			"I", "true",
-			"--show-vulnerabilities-types", "Vulnerability",
+			"--show-vulnerabilities-types", "False Positive,Corrected",
+			"--authorization", repositoryAuthorization,
+			"--certificate-path", target,
+			"--container-bind-project-path", "container-bind-project-path-test",
+			"--custom-rules-path", "custom-rules-path-test",
+			"--disable-docker", "true",
+			"--enable-commit-author", "true",
+			"--enable-git-history", "true",
+			"--enable-owasp-dependency-check", "true",
+			"--enable-shellcheck", "true",
+			"--headers", "X-Auth-Service=my-value",
+			"--horusec-url", "horusec-url-test",
+			"--ignore", "ignore-test-1,ignore-test-2",
+			"--insecure-skip-verify", "true",
+			"--json-output-file", "./tmp/json-output-file-test.json",
+			"--monitor-retry-count", "123",
+			"--output-format", "json",
+			"--repository-name", "repository-name-test",
+			"--request-timeout", "123",
+			"--return-error", "true",
 		}
 		assert.NoError(t, cobraCmd.PersistentFlags().Parse(args))
 		assert.NoError(t, cobraCmd.Execute())
@@ -384,47 +358,296 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, target, configs.ProjectPath)
 		assert.Equal(t, []string{"SOMEHASHALEATORY1", "SOMEHASHALEATORY2"}, configs.FalsePositiveHashes)
 		assert.Equal(t, []string{"SOMEHASHALEATORY3", "SOMEHASHALEATORY4"}, configs.RiskAcceptHashes)
-		assert.Equal(t, []string{vulnerability.Vulnerability.ToString()}, configs.ShowVulnerabilitiesTypes)
-		assert.Equal(t, int64(1000), configs.TimeoutInSecondsAnalysis)
+		assert.Equal(t, []string{vulnerability.FalsePositive.ToString(), vulnerability.Corrected.ToString()}, configs.ShowVulnerabilitiesTypes)
+		assert.Equal(t, int64(123), configs.TimeoutInSecondsAnalysis)
 		assert.Equal(t, true, configs.EnableInformationSeverity)
+		assert.Equal(t, repositoryAuthorization, configs.RepositoryAuthorization)
+		assert.Equal(t, target, configs.CertPath)
+		assert.Equal(t, "container-bind-project-path-test", configs.ContainerBindProjectPath)
+		assert.Equal(t, "custom-rules-path-test", configs.CustomRulesPath)
+		assert.Equal(t, true, configs.DisableDocker)
+		assert.Equal(t, true, configs.EnableCommitAuthor)
+		assert.Equal(t, true, configs.EnableGitHistoryAnalysis)
+		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
+		assert.Equal(t, true, configs.EnableShellCheck)
+		assert.Equal(t, map[string]string{"X-Auth-Service": "my-value"}, configs.Headers)
+		assert.Equal(t, "horusec-url-test", configs.HorusecAPIUri)
+		assert.Equal(t, []string{"ignore-test-1", "ignore-test-2"}, configs.FilesOrPathsToIgnore)
+		assert.Equal(t, true, configs.CertInsecureSkipVerify)
+		assert.Equal(t, filepath.Join(wd, "tmp", "json-output-file-test.json"), configs.JSONOutputFilePath)
+		assert.Equal(t, int64(123), configs.MonitorRetryInSeconds)
+		assert.Equal(t, "json", configs.PrintOutputType)
+		assert.Equal(t, "repository-name-test", configs.RepositoryName)
+		assert.Equal(t, int64(123), configs.TimeoutInSecondsRequest)
+		assert.Equal(t, true, configs.ReturnErrorIfFoundVulnerability)
+
 	})
 }
 
 func TestNormalizeConfigs(t *testing.T) {
 	t.Run("Should success normalize config", func(t *testing.T) {
-		config := config.New()
-		config.JSONOutputFilePath = "./cli"
-		config.ProjectPath = "./cli"
-
-		assert.NotEmpty(t, config.Normalize())
+		cfg := config.New()
+		cfg.JSONOutputFilePath = "cli"
+		cfg.ProjectPath = "cli"
+		cfg.ConfigFilePath = "cli"
+		cfg.LogFilePath = "cli"
+		wd, err := os.Getwd()
+		assert.Nil(t, err)
+		expectedJSONOutputFilePath := filepath.Join(wd, cfg.JSONOutputFilePath)
+		expectedProjectPath := filepath.Join(wd, cfg.ProjectPath)
+		expectedConfigFilePath := filepath.Join(wd, cfg.ConfigFilePath)
+		expectedLogFilePath := filepath.Join(wd, cfg.LogFilePath)
+		cfg = cfg.Normalize()
+		assert.NotEmpty(t, cfg)
+		assert.Equal(t, expectedJSONOutputFilePath, cfg.JSONOutputFilePath)
+		assert.Equal(t, expectedProjectPath, cfg.ProjectPath)
+		assert.Equal(t, expectedConfigFilePath, cfg.ConfigFilePath)
+		assert.Equal(t, expectedLogFilePath, cfg.LogFilePath)
 	})
 }
 
-func TestConfig_ToBytes(t *testing.T) {
-	t.Run("Should success when parse config to json bytes without indent", func(t *testing.T) {
-		config := config.New().LoadFromEnvironmentVariables()
-		assert.NotEmpty(t, config.ToBytes(false))
+func TestConfig_Bytes(t *testing.T) {
+	t.Run("Should success when parse config to json bytes", func(t *testing.T) {
+		viper.Reset()
+		repositoryAuthorization := uuid.New().String()
+		wd, err := os.Getwd()
+		assert.Nil(t, err)
+		assert.NoError(t, os.Setenv(config.EnvHorusecAPIUri, "api-uri"))
+		assert.NoError(t, os.Setenv(config.EnvCertPath, "cert-path"))
+		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsRequest, "99"))
+		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsAnalysis, "999"))
+		assert.NoError(t, os.Setenv(config.EnvMonitorRetryInSeconds, "20"))
+		assert.NoError(t, os.Setenv(config.EnvRepositoryAuthorization, repositoryAuthorization))
+		assert.NoError(t, os.Setenv(config.EnvPrintOutputType, "sonarqube"))
+		assert.NoError(t, os.Setenv(config.EnvJSONOutputFilePath, filepath.Join(os.TempDir(), "output-sonarqube.json")))
+		assert.NoError(t, os.Setenv(config.EnvSeveritiesToIgnore, "INFO"))
+		assert.NoError(t, os.Setenv(config.EnvFilesOrPathsToIgnore, "**/*_test.go, **/*_mock.go"))
+		assert.NoError(t, os.Setenv(config.EnvReturnErrorIfFoundVulnerability, "false"))
+		assert.NoError(t, os.Setenv(config.EnvProjectPath, "./horusec-manager"))
+		assert.NoError(t, os.Setenv(config.EnvEnableGitHistoryAnalysis, "false"))
+		assert.NoError(t, os.Setenv(config.EnvCertInsecureSkipVerify, "false"))
+		assert.NoError(t, os.Setenv(config.EnvEnableCommitAuthor, "false"))
+		assert.NoError(t, os.Setenv(config.EnvRepositoryName, "my-project"))
+		assert.NoError(t, os.Setenv(config.EnvFalsePositiveHashes, "hash9, hash8"))
+		assert.NoError(t, os.Setenv(config.EnvRiskAcceptHashes, "hash7, hash6"))
+		assert.NoError(t, os.Setenv(config.EnvHeaders, "{\"x-auth\": \"987654321\"}"))
+		assert.NoError(t, os.Setenv(config.EnvContainerBindProjectPath, "./my-path"))
+		assert.NoError(t, os.Setenv(config.EnvDisableDocker, "true"))
+		assert.NoError(t, os.Setenv(config.EnvCustomRulesPath, "test"))
+		assert.NoError(t, os.Setenv(config.EnvEnableInformationSeverity, "true"))
+		assert.NoError(t, os.Setenv(config.EnvEnableOwaspDependencyCheck, "true"))
+		assert.NoError(t, os.Setenv(config.EnvEnableShellCheck, "true"))
+		assert.NoError(t, os.Setenv(config.EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
+		assert.NoError(t, os.Setenv(config.EnvLogFilePath, "batata"))
+		cfg := config.New().LoadFromEnvironmentVariables()
+
+		expectedOutput := `{
+  "is_timeout": false,
+  "log_level": "info",
+  "config_file_path": "` + filepath.Join(wd, "horusec-config.json") + `",
+  "log_file_path": "batata",
+  "horusec_api_uri": "api-uri",
+  "repository_authorization": "` + repositoryAuthorization + `",
+  "cert_path": "cert-path",
+  "repository_name": "my-project",
+  "print_output_type": "sonarqube",
+  "json_output_file_path": "/tmp/output-sonarqube.json",
+  "project_path": "./horusec-manager",
+  "custom_rules_path": "test",
+  "container_bind_project_path": "./my-path",
+  "timeout_in_seconds_request": 99,
+  "timeout_in_seconds_analysis": 999,
+  "monitor_retry_in_seconds": 20,
+  "return_error_if_found_vulnerability": false,
+  "enable_git_history_analysis": false,
+  "cert_insecure_skip_verify": false,
+  "enable_commit_author": false,
+  "disable_docker": true,
+  "enable_information_severity": true,
+  "enable_owasp_dependency_check": true,
+  "enable_shell_check": true,
+  "severities_to_ignore": [
+    "INFO"
+  ],
+  "files_or_paths_to_ignore": [
+    "**/*_test.go",
+    "**/*_mock.go"
+  ],
+  "false_positive_hashes": [
+    "hash9",
+    "hash8"
+  ],
+  "risk_accept_hashes": [
+    "hash7",
+    "hash6"
+  ],
+  "show_vulnerabilities_types": [
+    "Vulnerability",
+    "Risk Accepted"
+  ],
+  "tools_config": {
+    "Bandit": {
+      "istoignore": false
+    },
+    "Brakeman": {
+      "istoignore": false
+    },
+    "BundlerAudit": {
+      "istoignore": false
+    },
+    "Checkov": {
+      "istoignore": false
+    },
+    "DotnetCli": {
+      "istoignore": false
+    },
+    "Flawfinder": {
+      "istoignore": false
+    },
+    "GitLeaks": {
+      "istoignore": false
+    },
+    "GoSec": {
+      "istoignore": false
+    },
+    "HorusecEngine": {
+      "istoignore": false
+    },
+    "MixAudit": {
+      "istoignore": false
+    },
+    "Nancy": {
+      "istoignore": false
+    },
+    "NpmAudit": {
+      "istoignore": false
+    },
+    "OwaspDependencyCheck": {
+      "istoignore": false
+    },
+    "PhpCS": {
+      "istoignore": false
+    },
+    "Safety": {
+      "istoignore": false
+    },
+    "SecurityCodeScan": {
+      "istoignore": false
+    },
+    "Semgrep": {
+      "istoignore": false
+    },
+    "ShellCheck": {
+      "istoignore": false
+    },
+    "Sobelow": {
+      "istoignore": false
+    },
+    "TfSec": {
+      "istoignore": false
+    },
+    "Trivy": {
+      "istoignore": false
+    },
+    "YarnAudit": {
+      "istoignore": false
+    }
+  },
+  "headers": {
+    "x-auth": "987654321"
+  },
+  "work_dir": {
+    "go": [],
+    "csharp": [],
+    "ruby": [],
+    "python": [],
+    "java": [],
+    "kotlin": [],
+    "javaScript": [],
+    "leaks": [],
+    "hcl": [],
+    "php": [],
+    "c": [],
+    "yaml": [],
+    "generic": [],
+    "elixir": [],
+    "shell": [],
+    "dart": [],
+    "nginx": []
+  },
+  "custom_images": {
+    "c": "",
+    "csharp": "",
+    "elixir": "",
+    "generic": "",
+    "go": "",
+    "hcl": "",
+    "javascript": "",
+    "leaks": "",
+    "php": "",
+    "python": "",
+    "ruby": "",
+    "shell": ""
+  },
+  "version": "{{VERSION_NOT_FOUND}}"
+}`
+		assert.Equal(t, expectedOutput, string(cfg.Bytes()))
 	})
-	t.Run("Should success when parse config to json bytes with indent", func(t *testing.T) {
-		config := config.New().LoadFromEnvironmentVariables()
-		assert.NotEmpty(t, config.ToBytes(true))
+	t.Run("Should have the predefined schema", func(t *testing.T) {
+		expectedConfig := []byte(`{
+  "is_timeout": false,
+  "log_level": "",
+  "config_file_path": "",
+  "log_file_path": "",
+  "horusec_api_uri": "",
+  "repository_authorization": "",
+  "cert_path": "",
+  "repository_name": "",
+  "print_output_type": "",
+  "json_output_file_path": "",
+  "project_path": "",
+  "custom_rules_path": "",
+  "container_bind_project_path": "",
+  "timeout_in_seconds_request": 0,
+  "timeout_in_seconds_analysis": 0,
+  "monitor_retry_in_seconds": 0,
+  "return_error_if_found_vulnerability": false,
+  "enable_git_history_analysis": false,
+  "cert_insecure_skip_verify": false,
+  "enable_commit_author": false,
+  "disable_docker": false,
+  "enable_information_severity": false,
+  "enable_owasp_dependency_check": false,
+  "enable_shell_check": false,
+  "severities_to_ignore": null,
+  "files_or_paths_to_ignore": null,
+  "false_positive_hashes": null,
+  "risk_accept_hashes": null,
+  "show_vulnerabilities_types": null,
+  "tools_config": null,
+  "headers": null,
+  "work_dir": null,
+  "custom_images": null,
+  "version": ""
+}`)
+		cfg := config.Config{}
+		assert.Equal(t, expectedConfig, cfg.Bytes())
 	})
 }
 
 func TestSetLogOutput(t *testing.T) {
 	t.Run("Should success when log path is empty", func(t *testing.T) {
-		config := config.New()
-		err := config.ConfigureLogger()
+		cfg := config.New()
+		err := cfg.ConfigureLogger()
 		assert.NoError(t, err)
 	})
 	t.Run("Should success when log path is valid", func(t *testing.T) {
 		file, err := os.CreateTemp(os.TempDir(), "log-test")
 		assert.NoError(t, err)
 
-		config := config.New()
-		config.LogFilePath = file.Name()
-		err = config.ConfigureLogger()
+		cfg := config.New()
+		cfg.LogFilePath = file.Name()
+		err = cfg.ConfigureLogger()
 		assert.NoError(t, err)
 	})
-
 }
