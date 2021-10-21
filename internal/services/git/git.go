@@ -162,3 +162,15 @@ func (g *Git) existsGitFolderInPath() bool {
 
 	return true
 }
+
+// RepositoryIsShallow check if the ProjectPath is a shallow repository.
+// A shallow repository is when a repository was cloned using the --depth=N
+// where N is the number of commits that should be cloned.
+//
+// This git functionality is commonly used by CIs to clone the repository.
+//
+// For more read https://www.git-scm.com/docs/shallow
+func RepositoryIsShallow(cfg *config.Config) bool {
+	_, err := os.Stat(filepath.Join(cfg.ProjectPath, ".git", "shallow"))
+	return !os.IsNotExist(err)
+}

@@ -15,7 +15,10 @@
 package git
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -105,4 +108,55 @@ func TestGetCommitAuthor(t *testing.T) {
 	t.Run("Should return a new service", func(t *testing.T) {
 		assert.NotEmpty(t, New(&config.Config{}))
 	})
+}
+
+func TestRepositoryIsShallow(t *testing.T) {
+	shallowRepository := filepath.Join(os.TempDir(), "horusec-shallow")
+	_, err := exec.Command(
+		"git",
+		"clone",
+		"--depth=1",
+		fmt.Sprintf("file://%s", testutil.RootPath),
+		shallowRepository,
+	).Output()
+	require.Nil(t, err, "Expected nil error to shallow clone repository: %v", err)
+
+	t.Cleanup(func() {
+		assert.NoError(
+			t,
+			os.RemoveAll(shallowRepository),
+			"Expected nil error to remove shallow repository",
+		)
+	})
+
+	testcases := []struct {
+		name     string
+		cfg      *config.Config
+		expected bool
+	}{
+		{
+			name: "NotShallow",
+			cfg: &config.Config{
+				StartOptions: config.StartOptions{
+					ProjectPath: testutil.RootPath,
+				},
+			},
+			expected: false,
+		},
+		{
+			name: "IsShallow",
+			cfg: &config.Config{
+				StartOptions: config.StartOptions{
+					ProjectPath: shallowRepository,
+				},
+			},
+			expected: true,
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, RepositoryIsShallow(tt.cfg))
+		})
+	}
 }
