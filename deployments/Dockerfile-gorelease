@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker:20.10.8
-
-RUN apk add git
+FROM docker:20.10-git
 
 COPY /horusec /usr/local/bin/horusec
-RUN chmod +x /usr/local/bin/horusec
 
 CMD [ "sh" ]
