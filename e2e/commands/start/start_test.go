@@ -20,15 +20,15 @@ import (
 
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"path/filepath"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 )
 
 var _ = Describe("running binary Horusec with start parameter", func() {
