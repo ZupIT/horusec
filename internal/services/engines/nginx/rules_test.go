@@ -24,9 +24,51 @@ import (
 func TestRulesVulnerableCode(t *testing.T) {
 	testcases := []*testutil.RuleTestCase{
 		{
+			Name: "HS-NGINX-1",
+			Rule: NewIncludeXFrameOptionsHeader(),
+			Src:  SampleVulnerableIncludeXFrameOptionsHeader,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "",
+					SourceLocation: engine.Location{
+						Line:   0,
+						Column: 0,
+					},
+				},
+			},
+		},
+		{
 			Name: "HS-NGINX-2",
 			Rule: NewIncludeXContentTypeOptionsHeader(),
 			Src:  SampleVulnerableIncludeXContentTypeOptionsHeader,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "",
+					SourceLocation: engine.Location{
+						Line:   0,
+						Column: 0,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-NGINX-3",
+			Rule: NewIncludeContentSecurityPolicyHeader(),
+			Src:  SampleVulnerableIncludeContentSecurityPolicyHeader,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "",
+					SourceLocation: engine.Location{
+						Line:   0,
+						Column: 0,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-NGINX-4",
+			Rule: NewIncludeServerTokensOff(),
+			Src:  SampleVulnerableIncludeServerTokensOff,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
@@ -45,9 +87,24 @@ func TestRulesVulnerableCode(t *testing.T) {
 func TestRulesSafeCode(t *testing.T) {
 	testcases := []*testutil.RuleTestCase{
 		{
+			Name: "HS-NGINX-1",
+			Rule: NewIncludeXFrameOptionsHeader(),
+			Src:  SampleSafeIncludeXFrameOptionsHeader,
+		},
+		{
 			Name: "HS-NGINX-2",
 			Rule: NewIncludeXContentTypeOptionsHeader(),
 			Src:  SampleSafeIncludeXContentTypeOptionsHeader,
+		},
+		{
+			Name: "HS-NGINX-3",
+			Rule: NewIncludeContentSecurityPolicyHeader(),
+			Src:  SampleSafeIncludeContentSecurityPolicyHeader,
+		},
+		{
+			Name: "HS-NGINX-4",
+			Rule: NewIncludeServerTokensOff(),
+			Src:  SampleSafeIncludeServerTokensOff,
 		},
 	}
 
