@@ -32,4 +32,48 @@ add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'se
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
+	SampleVulnerableIncludeXFrameOptionsHeader = `
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
+	SampleSafeIncludeXFrameOptionsHeader = `
+add_header X-Frame-Options "SAMEORIGIN";
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
+	SampleVulnerableIncludeContentSecurityPolicyHeader = `
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
+	SampleSafeIncludeContentSecurityPolicyHeader = `
+add_header X-Frame-Options "SAMEORIGIN";
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
+	SampleVulnerableIncludeServerTokensOff = `
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
+	SampleSafeIncludeServerTokensOff = `
+server_tokens off;
+add_header X-Frame-Options "SAMEORIGIN";
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+upstream plone52 {
+    server 127.0.0.1:8080;
+}`
 )
