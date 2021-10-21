@@ -35,7 +35,7 @@ test:
 
 test-e2e:
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/scan_languages/scan_languages_test.go -timeout=10m -parallel=1 -failfast
+	$(GO) test -v ./e2e/... -timeout=10m -parallel=1 -failfast
 
 fix-imports:
     ifeq (, $(shell which $(GO_IMPORTS)))

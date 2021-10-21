@@ -50,6 +50,10 @@ var (
 	GoExample1 = filepath.Join(GoExample, "example1")
 	GoExample2 = filepath.Join(GoExample, "example2")
 
+	// HclExample represents the entire HCL examples directory.
+	HclExample = filepath.Join(ExamplesPath, "hcl")
+	Hclxample1 = filepath.Join(HclExample, "example1")
+
 	// JavaExample represents the entire Java examples directory.
 	JavaExample  = filepath.Join(ExamplesPath, "java")
 	JavaExample1 = filepath.Join(JavaExample, "example1")
