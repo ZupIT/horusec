@@ -19,6 +19,12 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
+)
+
+// Average timeout for analysis in the example directory
+const (
+	AverageTimeoutAnalyzeForExamplesFolder = time.Minute * 5
 )
 
 var (
