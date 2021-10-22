@@ -39,6 +39,34 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
+			Name: "HS-JAVA-3",
+			Rule: NewXMLParsingVulnerableToXXEWithDocumentBuilder(),
+			Src:  SampleVulnerableXMLParsingVulnerableToXXEWithDocumentBuilder,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 23,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-4",
+			Rule: NewXMLParsingVulnerableToXXEWithSAXParserFactory(),
+			Src:  SampleVulnerableXMLParsingVulnerableToXXEWithSAXParserFactory,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `SAXParser parser = SAXParserFactory.newInstance().newSAXParser();`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 21,
+					},
+				},
+			},
+		},
+		{
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),
 			Src:  SampleVulnerableJavaSQLInjection,
@@ -59,6 +87,21 @@ func TestRulesVulnerableCode(t *testing.T) {
 
 func TestRulesSafeCode(t *testing.T) {
 	testcases := []*testutil.RuleTestCase{
+		{
+			Name: "HS-JAVA-1",
+			Rule: NewXMLParsingVulnerableToXXE(),
+			Src:  SampleSafeJavaXMLParsingVulnerableToXXE,
+		},
+		{
+			Name: "HS-JAVA-3",
+			Rule: NewXMLParsingVulnerableToXXEWithDocumentBuilder(),
+			Src:  SampleSafeXMLParsingVulnerableToXXEWithDocumentBuilder,
+		},
+		{
+			Name: "HS-JAVA-4",
+			Rule: NewXMLParsingVulnerableToXXEWithSAXParserFactory(),
+			Src:  SampleSafeXMLParsingVulnerableToXXEWithSAXParserFactory,
+		},
 		{
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),

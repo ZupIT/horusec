@@ -61,11 +61,70 @@ public class VulnerableCodeSQLInjection134 {
     }
 }
 `
+
 	SampleVulnerableJavaXMLParsingVulnerableToXXE = `
 class Foo {
 	void fn(String input) {
 		XMLReader reader = XMLReaderFactory.createXMLReader();
 		reader.parse(input)
+	}
+}
+	`
+
+	SampleSafeJavaXMLParsingVulnerableToXXE = `
+class Foo {
+	void bar() {
+		XMLReader reader = XMLReaderFactory.createXMLReader();
+		reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		reader.setContentHandler(customHandler);
+		
+		reader.parse(new InputSource(inputStream));
+	}
+}
+	`
+
+	SampleVulnerableXMLParsingVulnerableToXXEWithDocumentBuilder = `
+class Foo {
+	void bar() {
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		
+		Document doc = db.parse(input);
+	}
+}
+	`
+
+	SampleSafeXMLParsingVulnerableToXXEWithDocumentBuilder = `
+class Foo {
+	void bar() {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		
+		Document doc = db.parse(input);
+	}
+}
+	`
+
+	SampleVulnerableXMLParsingVulnerableToXXEWithSAXParserFactory = `
+class Foo {
+	void bar() {
+		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+		
+		parser.parse(inputStream, customHandler);
+	}
+}
+	`
+
+	SampleSafeXMLParsingVulnerableToXXEWithSAXParserFactory = `
+class Foo {
+	void bar() {
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+
+		spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+		SAXParser parser = spf.newSAXParser();
+	
+		parser.parse(inputStream, customHandler);
 	}
 }
 	`
