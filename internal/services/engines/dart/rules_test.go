@@ -24,6 +24,76 @@ import (
 func TestRulesVulnerableCode(t *testing.T) {
 	testcases := []*testutil.RuleTestCase{
 		{
+			Name: "HS-DART-1",
+			Rule: NewUsageLocalDataWithoutCryptography(),
+			Src:  SampleVulnerableUsageLocalDataWithoutCryptography,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "SharedPreferences prefs = await SharedPreferences.getInstance();",
+					SourceLocation: engine.Location{
+						Line:   8,
+						Column: 34,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-2",
+			Rule: NewNoSendSensitiveInformation(),
+			Src:  SampleVulnerableNoSendSensitiveInformation,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "_firebaseMessaging.configure(",
+					SourceLocation: engine.Location{
+						Line:   9,
+						Column: 5,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-3",
+			Rule: NewNoUseBiometricsTypeIOS(),
+			Src:  SampleVulnerableNoUseBiometricsTypeIOS,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "await auth.getAvailableBiometrics();",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 15,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-4",
+			Rule: NewXmlReaderExternalEntityExpansion(),
+			Src:  SampleVulnerableXmlReaderExternalEntityExpansion,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "final file = new File(FileFromUserInput);",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 13,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-5",
+			Rule: NewNoUseConnectionWithoutSSL(),
+			Src:  SampleVulnerableNoUseConnectionWithoutSSL,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "return _HttpServer.bindSecure('http://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);",
+					SourceLocation: engine.Location{
+						Line:   12,
+						Column: 22,
+					},
+				},
+			},
+		},
+		{
 			Name: "HS-DART-6",
 			Rule: NewSendSMS(),
 			Src:  SampleVulnerableDartSendSMS,
@@ -43,7 +113,38 @@ func TestRulesVulnerableCode(t *testing.T) {
 }
 
 func TestRulesSafeCode(t *testing.T) {
-	testcases := []*testutil.RuleTestCase{}
+	testcases := []*testutil.RuleTestCase{
+		{
+			Name: "HS-DART-1",
+			Rule: NewUsageLocalDataWithoutCryptography(),
+			Src:  SampleSafeUsageLocalDataWithoutCryptography,
+		},
+		{
+			Name: "HS-DART-2",
+			Rule: NewNoSendSensitiveInformation(),
+			Src:  SampleSafeNoSendSensitiveInformation,
+		},
+		{
+			Name: "HS-DART-3",
+			Rule: NewNoUseBiometricsTypeIOS(),
+			Src:  "",
+		},
+		{
+			Name: "HS-DART-4",
+			Rule: NewXmlReaderExternalEntityExpansion(),
+			Src:  SampleSafeXmlReaderExternalEntityExpansion,
+		},
+		{
+			Name: "HS-DART-5",
+			Rule: NewNoUseConnectionWithoutSSL(),
+			Src:  SampleSafeNoUseConnectionWithoutSSL,
+		},
+		{
+			Name: "HS-DART-6",
+			Rule: NewSendSMS(),
+			Src:  "",
+		},
+	}
 
 	testutil.TestSafeCode(t, testcases)
 }
