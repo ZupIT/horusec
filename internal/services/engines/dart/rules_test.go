@@ -107,6 +107,167 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-DART-7",
+			Rule: NewXSSAttack(),
+			Src:  SampleVulnerableXSSAttack,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "var element = new Element.html(sprintf(\"<div class=\"foo\">%s</div>\", [content]));",
+					SourceLocation: engine.Location{
+						Line:   8,
+						Column: 19,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-8",
+			Rule: NewNoLogSensitive(),
+			Src:  SampleVulnerableNoLogSensitive,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "print(sprintf(\"User identity is: %s\", [identity]));",
+					SourceLocation: engine.Location{
+						Line:   9,
+						Column: 1,
+					},
+				},
+				{
+					CodeSample: "_logger.info(sprintf(\"User identity is: %s\", [identity]));",
+					SourceLocation: engine.Location{
+						Line:   11,
+						Column: 2,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-9",
+			Rule: NewWeakHashingFunctionMd5OrSha1(),
+			Src:  SampleVulnerableWeakHashingFunctionMd5OrSha1,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "var digest = md5.convert(content);",
+					SourceLocation: engine.Location{
+						Line:   11,
+						Column: 15,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-10",
+			Rule: NewNoUseSelfSignedCertificate(),
+			Src:  SampleVulnerableNoUseSelfSignedCertificate,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "context.setTrustedCertificates(\"client.cer\");",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 8,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-11",
+			Rule: NewNoUseBiometricsTypeAndroid(),
+			Src:  SampleVulnerableNoUseBiometricsTypeAndroid,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "authenticated = await auth.authenticateWithBiometrics(",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 29,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-12",
+			Rule: NewNoListClipboardChanges(),
+			Src:  SampleVulnerableNoListClipboardChanges,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "Map<String, dynamic> result = await SystemChannels.platform.invokeMethod('Clipboard.getData');",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 75,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-13",
+			Rule: NewSQLInjection(),
+			Src:  SampleVulnerableSQLInjection,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "List<Map> list = await database.rawQuery(\"SELECT * FROM Users WHERE username = '\" + username + \"';\");",
+					SourceLocation: engine.Location{
+						Line:   10,
+						Column: 34,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-14",
+			Rule: NewNoUseNSTemporaryDirectory(),
+			Src:  SampleVulnerableNoUseNSTemporaryDirectory,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 49,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-15",
+			Rule: NewNoUseCipherMode(),
+			Src:  SampleVulnerableNoUseCipherMode,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "final encrypter = Encrypter(AES(key, mode: AESMode.cts));",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 43,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-16",
+			Rule: NewCorsAllowOriginWildCard(),
+			Src:  SampleVulnerableCorsAllowOriginWildCard,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `request.response.headers.add("Access-Control-Allow-Origin", "*");`,
+					SourceLocation: engine.Location{
+						Line:   9,
+						Column: 32,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-DART-17",
+			Rule: NewUsingShellInterpreterWhenExecutingOSCommand(),
+			Src:  SampleVulnerableUsingShellInterpreterWhenExecutingOSCommand,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `var result = await Process.run("netcfg", [UserParams]);`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 20,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -143,6 +304,61 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-DART-6",
 			Rule: NewSendSMS(),
 			Src:  "",
+		},
+		{
+			Name: "HS-DART-7",
+			Rule: NewXSSAttack(),
+			Src:  SampleSafeXSSAttack,
+		},
+		{
+			Name: "HS-DART-8",
+			Rule: NewNoLogSensitive(),
+			Src:  SampleSafeNoLogSensitive,
+		},
+		{
+			Name: "HS-DART-9",
+			Rule: NewWeakHashingFunctionMd5OrSha1(),
+			Src:  SampleSafeWeakHashingFunctionMd5OrSha1,
+		},
+		{
+			Name: "HS-DART-10",
+			Rule: NewNoUseSelfSignedCertificate(),
+			Src:  SampleSafeNoUseSelfSignedCertificate,
+		},
+		{
+			Name: "HS-DART-11",
+			Rule: NewNoUseBiometricsTypeAndroid(),
+			Src:  SampleSafeNoUseBiometricsTypeAndroid,
+		},
+		{
+			Name: "HS-DART-12",
+			Rule: NewNoListClipboardChanges(),
+			Src:  SampleSafeNoListClipboardChanges,
+		},
+		{
+			Name: "HS-DART-13",
+			Rule: NewSQLInjection(),
+			Src:  SampleSafeSQLInjection,
+		},
+		{
+			Name: "HS-DART-14",
+			Rule: NewNoUseNSTemporaryDirectory(),
+			Src:  SampleSafeNoUseNSTemporaryDirectory,
+		},
+		{
+			Name: "HS-DART-15",
+			Rule: NewNoUseCipherMode(),
+			Src:  SampleSafeNoUseCipherMode,
+		},
+		{
+			Name: "HS-DART-16",
+			Rule: NewCorsAllowOriginWildCard(),
+			Src:  SampleSafeCorsAllowOriginWildCard,
+		},
+		{
+			Name: "HS-DART-17",
+			Rule: NewUsingShellInterpreterWhenExecutingOSCommand(),
+			Src:  SampleSafeUsingShellInterpreterWhenExecutingOSCommand,
 		},
 	}
 
