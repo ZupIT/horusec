@@ -15,15 +15,16 @@
 package git
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 
-	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	"github.com/ZupIT/horusec/internal/utils/file"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
@@ -40,37 +41,30 @@ func New(cfg *config.Config) *Git {
 	}
 }
 
-func (g *Git) CommitAuthor(line, filePath string) commitAuthor.CommitAuthor {
-	if !g.existsGitFolderInPath() {
-		return g.getCommitAuthorNotFound()
+func (g *Git) CommitAuthor(line, filePath string) commitauthor.CommitAuthor {
+	if !g.existsGitFolderInPath() || !g.config.EnableCommitAuthor {
+		return g.newCommitAuthorNotFound()
 	}
-	if g.config.EnableCommitAuthor {
-		return g.executeGitBlame(line, filePath)
-	}
-
-	return g.getCommitAuthorNotFound()
+	return g.executeGitBlame(line, filePath)
 }
 
-func (g *Git) executeGitBlame(line, filePath string) commitAuthor.CommitAuthor {
-	if line == "" || filePath == "" {
-		return g.getCommitAuthorNotFound()
-	}
+func (g *Git) executeGitBlame(line, filePath string) commitauthor.CommitAuthor {
 	if g.lineOrPathNotFound(line, filePath) {
-		return g.getCommitAuthorNotFound()
+		return g.newCommitAuthorNotFound()
 	}
 	output, err := g.executeCMD(line, filePath)
 	if err != nil {
-		return g.getCommitAuthorNotFound()
+		return g.newCommitAuthorNotFound()
 	}
-	return g.parseOutputToStruct(output)
+	return g.parseOutput(output)
 }
 
 func (g *Git) lineOrPathNotFound(line, path string) bool {
 	return line == "-" || path == "-" || line == "" || path == ""
 }
 
-func (g *Git) getCommitAuthorNotFound() commitAuthor.CommitAuthor {
-	return commitAuthor.CommitAuthor{
+func (g *Git) newCommitAuthorNotFound() commitauthor.CommitAuthor {
+	return commitauthor.CommitAuthor{
 		Author:     "-",
 		Email:      "-",
 		CommitHash: "-",
@@ -79,34 +73,54 @@ func (g *Git) getCommitAuthorNotFound() commitAuthor.CommitAuthor {
 	}
 }
 
+//nolint:funlen
 func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
-	lineAndPath := g.setLineAndFilePath(g.getLine(line), filePath)
-	cmd := exec.Command("git", "log", "-1", "--format=\"{ %n  ^^^^^author^^^^^: ^^^^^%an^^^^^,%n"+
-		"  ^^^^^email^^^^^:^^^^^%ae^^^^^,%n  ^^^^^message^^^^^: ^^^^^%s^^^^^,%n "+
-		" ^^^^^date^^^^^: ^^^^^%ci^^^^^,%n  ^^^^^commitHash^^^^^:"+
-		" ^^^^^%H^^^^^%n }\"", lineAndPath)
+	lineAndPath := g.formatLineAndFilePath(g.getLine(line), filePath)
 
+	stderr := bytes.NewBufferString("")
+
+	// NOTE: Here we use ^ as json double quotes  to work properly on all platforms.
+	cmd := exec.Command(
+		"git",
+		"log",
+		"-1",
+		`--format={
+			^^^^^author^^^^^: ^^^^^%an^^^^^,
+			^^^^^email^^^^^:^^^^^%ae^^^^^,
+			^^^^^message^^^^^: ^^^^^%s^^^^^,
+			^^^^^date^^^^^: ^^^^^%ci^^^^^,
+			^^^^^commitHash^^^^^: ^^^^^%H^^^^^
+		}`,
+		lineAndPath,
+	)
 	cmd.Dir = g.config.ProjectPath
+	cmd.Stderr = stderr
+
 	response, err := cmd.Output()
 	if err != nil {
 		logger.LogErrorWithLevel(
 			messages.MsgErrorGitCommitAuthorsExecute, err,
-			map[string]interface{}{"line_and_path": lineAndPath})
+			map[string]interface{}{
+				"line_and_path": lineAndPath,
+				"stderr":        stderr.String(),
+			})
 	}
+
 	return response, err
 }
 
-func (g *Git) parseOutputToStruct(output []byte) (author commitAuthor.CommitAuthor) {
-	outputFormatted := g.getCleanOutput(output)
-	if err := json.Unmarshal([]byte(outputFormatted), &author); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGitCommitAuthorsParseOutput+outputFormatted,
-			err)
-		return g.getCommitAuthorNotFound()
+func (g *Git) parseOutput(output []byte) (author commitauthor.CommitAuthor) {
+	output = g.getCleanOutput(output)
+	if err := json.Unmarshal(output, &author); err != nil {
+		logger.LogErrorWithLevel(
+			messages.MsgErrorGitCommitAuthorsParseOutput+string(output), err,
+		)
+		return g.newCommitAuthorNotFound()
 	}
 	return author
 }
 
-func (g *Git) setLineAndFilePath(line, filePath string) string {
+func (g *Git) formatLineAndFilePath(line, filePath string) string {
 	return fmt.Sprintf("-L %s,%s:%s", line, line, filePath)
 }
 
@@ -130,18 +144,19 @@ func (g *Git) parseLineStringToNumber(line string) string {
 	return strconv.Itoa(num)
 }
 
-func (g *Git) getCleanOutput(output []byte) string {
-	outputToFormat := string(output)
-	index := strings.Index(outputToFormat, "}")
-	outputToFormat = outputToFormat[0 : index+1]
-	outputToFormat = strings.ReplaceAll(outputToFormat, `"`, "")
-	outputToFormat = strings.ReplaceAll(outputToFormat, "^^^^^", `"`)
-	return outputToFormat
+func (g *Git) getCleanOutput(output []byte) []byte {
+	// Output from git log contains the diff changes
+	// so we need to extract only the json output data.
+	if idx := bytes.LastIndex(output, []byte("}")); idx >= 0 {
+		return bytes.ReplaceAll(output[:idx+1], []byte("^^^^^"), []byte(`"`))
+	}
+	logger.LogWarn(fmt.Sprintf("Could not to clean git blame output: %s", output))
+	return []byte("")
 }
 
 func (g *Git) existsGitFolderInPath() bool {
-	path := fmt.Sprintf("%s/.git", g.config.ProjectPath)
-	if _, err := os.Stat(file.ReplacePathSeparator(path)); os.IsNotExist(err) {
+	path := filepath.Join(g.config.ProjectPath, ".git")
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false
 	}
 
