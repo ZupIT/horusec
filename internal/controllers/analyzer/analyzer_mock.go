@@ -25,6 +25,6 @@ type Mock struct {
 }
 
 func (m *Mock) Analyze() (int, error) {
-	args := m.MethodCalled("AnalysisDirectory")
+	args := m.MethodCalled("Analyze")
 	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 0)
 }
