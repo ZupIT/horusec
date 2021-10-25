@@ -38,9 +38,9 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format: binary
     replacements:
-      amd64: x64
+      amd64: amd64
       386: x86
-      aarch64: arm64
+      arm64: arm64
       darwin: mac
       windows: win
 checksum:
@@ -51,18 +51,18 @@ release:
     - glob: deployments/cosign.pub
     - glob: ./tmp/horusec_linux_x86_stand_alone
     - glob: ./tmp/horusec_linux_x86_stand_alone.sig
-    - glob: ./tmp/horusec_linux_x64_stand_alone
-    - glob: ./tmp/horusec_linux_x64_stand_alone.sig
+    - glob: ./tmp/horusec_linux_amd64_stand_alone
+    - glob: ./tmp/horusec_linux_amd64_stand_alone.sig
     - glob: ./tmp/horusec_linux_arm64_stand_alone
     - glob: ./tmp/horusec_linux_arm64_stand_alone.sig
-    - glob: ./tmp/horusec_windows_x86_stand_alone.exe
-    - glob: ./tmp/horusec_windows_x86_stand_alone.exe.sig
-    - glob: ./tmp/horusec_windows_x64_stand_alone.exe
-    - glob: ./tmp/horusec_windows_x64_stand_alone.exe.sig
-    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe
-    - glob: ./tmp/horusec_windows_arm64_stand_alone.exe.sig
-    - glob: ./tmp/horusec_mac_x64_stand_alone
-    - glob: ./tmp/horusec_mac_x64_stand_alone.sig
+    - glob: ./tmp/horusec_win_x86_stand_alone.exe
+    - glob: ./tmp/horusec_win_x86_stand_alone.exe.sig
+    - glob: ./tmp/horusec_win_amd64_stand_alone.exe
+    - glob: ./tmp/horusec_win_amd64_stand_alone.exe.sig
+    - glob: ./tmp/horusec_win_arm64_stand_alone.exe
+    - glob: ./tmp/horusec_win_arm64_stand_alone.exe.sig
+    - glob: ./tmp/horusec_mac_amd64_stand_alone
+    - glob: ./tmp/horusec_mac_amd64_stand_alone.sig
     - glob: ./tmp/horusec_mac_arm64_stand_alone
     - glob: ./tmp/horusec_mac_arm64_stand_alone.sig
 nfpms:
@@ -70,8 +70,8 @@ nfpms:
     package_name: horusec
     file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     replacements:
-      amd64: 64-bit
-      386: 32-bit
+      amd64: amd64
+      386: x86
       arm64: arm64
       darwin: mac
       windows: win
@@ -90,26 +90,19 @@ nfpms:
 signs:
   - cmd: cosign
     stdin: '{{ .Env.COSIGN_PWD }}'
-    args: ["sign-blob", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "-output=${signature}", "${artifact}"]
+    args: [ "sign-blob", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "-output=${signature}", "${artifact}" ]
     artifacts: all
 docker_signs:
   - cmd: cosign
-    args: ["sign", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "${artifact}"]
+    args: [ "sign", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "${artifact}" ]
     artifacts: all
     stdin: '{{ .Env.COSIGN_PWD }}'
 dockers:
-  - id: horusec
-    goos: linux
-    goarch: 
-      - amd64
-      - arm64
-    ids:
-      - horusec
-    image_templates:
-      - "horuszup/horusec-cli:latest"
-      - "horuszup/horusec-cli:{{ .Tag }}"
-      - "horuszup/horusec-cli:v{{ .Major }}"
+  - image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
     skip_push: false
+    goos: linux
+    goarch: amd64
     dockerfile: ./deployments/Dockerfile-gorelease
     use: docker
     build_flag_templates:
@@ -118,5 +111,35 @@ dockers:
       - "--label=org.opencontainers.image.title={{.ProjectName}}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/amd64"
     push_flags:
       - --tls-verify=false
+  - image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+    skip_push: false
+    goos: linux
+    goarch: arm64
+    dockerfile: ./deployments/Dockerfile-gorelease
+    use: docker
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/arm64"
+    push_flags:
+      - --tls-verify=false
+docker_manifests:
+  - name_template: 'horuszup/horusec-cli:{{ .Tag }}'
+    image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
+      - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+  - name_template: 'horuszup/horusec-cli:latest'
+    image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
+      - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+  - name_template: 'horuszup/horusec-cli:v{{ .Major }}'
+    image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
+      - 'horuszup/horusec-cli:{{ .Tag }}-arm64'

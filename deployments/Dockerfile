@@ -21,11 +21,9 @@ WORKDIR /horusec
 
 RUN go get -t -v -d ./...
 
-RUN env GOOS=linux GOARCH=amd64 go build -o /bin/horusec ./cmd/app/main.go
+RUN env GOOS=linux go build -o /bin/horusec ./cmd/app/main.go
 
-FROM docker:20.10.9
-
-RUN apk add git
+FROM docker:20.10-git
 
 COPY --from=builder /bin/horusec /usr/local/bin
 RUN chmod +x /usr/local/bin/horusec
