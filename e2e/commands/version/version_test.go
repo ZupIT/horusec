@@ -15,8 +15,6 @@
 package version_test
 
 import (
-	"os/exec"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
@@ -33,9 +31,9 @@ var _ = Describe("Run horusec CLI with version argument", func() {
 	)
 
 	BeforeEach(func() {
-		binaryPath := testutil.GomegaBuildHorusecBinary()
+		cmd := testutil.GinkgoGetHorusecCmd(testutil.VersionCmd)
 		outBuffer = gbytes.NewBuffer()
-		session, err = gexec.Start(exec.Command(binaryPath, "version"), outBuffer, outBuffer)
+		session, err = gexec.Start(cmd, outBuffer, outBuffer)
 	})
 
 	It("execute command without error", func() {

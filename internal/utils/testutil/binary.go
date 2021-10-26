@@ -24,7 +24,34 @@ import (
 	"github.com/onsi/ginkgo"
 )
 
-func GomegaBuildHorusecBinary(customArgs ...string) string {
+type HorusecCmd string
+
+func (h HorusecCmd) String() string {
+	return string(h)
+}
+
+const (
+	VersionCmd HorusecCmd = "version"
+	StartCmd HorusecCmd = "start"
+	GenerateCmd HorusecCmd = "generate"
+)
+
+func GinkgoGetHorusecCmd(horusecCmd HorusecCmd) *exec.Cmd {
+	bin := ginkgoBuildHorusecBinary()
+	args := setLogLevelArgsToHorusecCmd(horusecCmd.String())
+	return exec.Command(bin, args...)
+}
+
+func GinkgoGetHorusecCmdWithFlags(cmdArg HorusecCmd, flags map[string]string) *exec.Cmd {
+	bin := ginkgoBuildHorusecBinary()
+	args := setLogLevelArgsToHorusecCmd(cmdArg.String())
+	for flag, value := range flags {
+		args = append(args, fmt.Sprintf("%s=%s", flag, value))
+	}
+	return exec.Command(bin, args...)
+}
+
+func ginkgoBuildHorusecBinary(customArgs ...string) string {
 	binary := filepath.Join(os.TempDir(), getBinaryNameBySystem())
 	args := []string{
 		"build",
@@ -38,6 +65,10 @@ func GomegaBuildHorusecBinary(customArgs ...string) string {
 		ginkgo.Fail(fmt.Sprintf("Error on build Horusec binary for e2e test %v", err))
 	}
 	return binary
+}
+
+func setLogLevelArgsToHorusecCmd(horusecCmd ...string) []string {
+	return append(horusecCmd, fmt.Sprintf("%s=%s", "--log-level", "debug"))
 }
 
 func getBinaryNameBySystem() string {
