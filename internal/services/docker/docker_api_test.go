@@ -24,8 +24,11 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/errdefs"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	errorsenum "github.com/ZupIT/horusec/internal/enums/errors"
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
@@ -61,7 +64,7 @@ const (
 )
 
 func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
-	t.Run("Should return return error when ImagePath is empty", func(t *testing.T) {
+	t.Run("Should return error when DefaultImage is empty", func(t *testing.T) {
 		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "",
@@ -69,9 +72,10 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
+		assert.ErrorIs(t, err, errorsenum.ErrImageTagCmdRequired)
 	})
 
-	t.Run("Should return return error when cmd is empty", func(t *testing.T) {
+	t.Run("Should return error when cmd is empty", func(t *testing.T) {
 		api := New(client.NewDockerClient(), &cliConfig.Config{}, uuid.New())
 		_, err := api.CreateLanguageAnalysisContainer(&dockerEntities.AnalysisData{
 			DefaultImage: "image",
@@ -79,6 +83,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
+		assert.ErrorIs(t, err, errorsenum.ErrImageTagCmdRequired)
 	})
 
 	t.Run("Should return error when pull image aleatory", func(t *testing.T) {
@@ -88,6 +93,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 			CMD:          "command",
 		})
 
+		assert.True(t, errdefs.IsInvalidParameter(err), "Expected error ErrInvalidParameter")
 		assert.Error(t, err)
 	})
 
@@ -99,7 +105,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "Error response from daemon: invalid mount config for type \"bind\": bind source path does not exist:")
+		assert.True(t, errdefs.IsInvalidParameter(err), "Expected error ErrInvalidParameter")
 	})
 
 	t.Run("Should return error when list image to check if exist", func(t *testing.T) {

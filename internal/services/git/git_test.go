@@ -93,7 +93,9 @@ func TestGetCommitAuthor(t *testing.T) {
 		require.Nil(t, err, "Expected nil error to create temp file: %v", err)
 
 		t.Cleanup(func() {
-			require.Nil(t, os.Remove(tmp.Name()), "Expected nil error to delete temp file: %v", err)
+			assert.NoError(t, tmp.Close(), "Expected nil error to close temp file")
+			err := os.Remove(tmp.Name())
+			require.Nil(t, err, "Expected nil error to delete temp file: %v", err)
 		})
 
 		author := service.CommitAuthor("1-2", tmp.Name())
