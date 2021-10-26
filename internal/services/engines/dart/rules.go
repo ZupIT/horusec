@@ -62,11 +62,15 @@ func NewNoSendSensitiveInformation() text.TextRule {
 func NewNoUseBiometricsTypeIOS() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          "HS-DART-3",
-			Name:        "No use biometrics types face or fingerprint for login in account",
-			Description: "If the mobile app uses a feature like TouchID, it suffers from insecure authentication. For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-mobile-top-10/2016-risks/m4-insecure-authentication) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:   "HS-DART-3",
+			Name: "No use biometrics types face or fingerprint for login in account",
+			Description: `If the mobile app uses a feature like TouchID, it suffers from insecure authentication.
+Depending on the implementation in the operating system the bioID is just a lock for the traditional 4-digit password.
+Basically on Android, you can ask to use the 4-digit password because of "faulty hardware" and this functionality depends on how the application uses this.
+There are applications that ask for 6 digit passwords and then ask for the bioID just to "automatically type" the 6 digit password which can cause an easy identification and access to your application is broken.
+For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-mobile-top-10/2016-risks/m4-insecure-authentication) advisory and see this example how implement good authentication (in "C" Language): https://developer.apple.com/library/archive/samplecode/KeychainTouchID/Introduction/Intro.html.`,
+			Severity:   severities.Info.ToString(),
+			Confidence: confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -87,7 +91,7 @@ func NewXmlReaderExternalEntityExpansion() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`new File\(`),
+			regexp.MustCompile(`new File\(\w+`),
 			regexp.MustCompile(`XmlDocument\.parse\(`),
 			regexp.MustCompile(`readAsStringSync\(`),
 		},

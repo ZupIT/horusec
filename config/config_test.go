@@ -342,7 +342,7 @@ func TestNewHorusecConfig(t *testing.T) {
 			"--enable-owasp-dependency-check", "true",
 			"--enable-shellcheck", "true",
 			"--headers", "X-Auth-Service=my-value",
-			"--horusec-url", "horusec-url-test",
+			"--horusec-url", "http://horusec-url-test.com",
 			"--ignore", "ignore-test-1,ignore-test-2",
 			"--insecure-skip-verify", "true",
 			"--json-output-file", "./tmp/json-output-file-test.json",
@@ -371,7 +371,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
 		assert.Equal(t, map[string]string{"X-Auth-Service": "my-value"}, configs.Headers)
-		assert.Equal(t, "horusec-url-test", configs.HorusecAPIUri)
+		assert.Equal(t, "http://horusec-url-test.com", configs.HorusecAPIUri)
 		assert.Equal(t, []string{"ignore-test-1", "ignore-test-2"}, configs.FilesOrPathsToIgnore)
 		assert.Equal(t, true, configs.CertInsecureSkipVerify)
 		assert.Equal(t, filepath.Join(wd, "tmp", "json-output-file-test.json"), configs.JSONOutputFilePath)

@@ -20,7 +20,7 @@ jobs:
   dco-gpg-validator:
     runs-on: ubuntu-latest
     steps:
-      - uses: ZupIT/zup-dco-validator@v1.0
+      - uses: ZupIT/zup-dco-validator@v1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_GPG: false

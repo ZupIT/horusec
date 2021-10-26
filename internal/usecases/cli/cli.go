@@ -17,6 +17,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -43,7 +44,7 @@ func NewCLIUseCases() *UseCases {
 //nolint
 func (au *UseCases) ValidateConfig(cfg *config.Config) error {
 	return validation.ValidateStruct(cfg,
-		validation.Field(&cfg.HorusecAPIUri, validation.Required),
+		validation.Field(&cfg.HorusecAPIUri, validation.Required, validation.By(au.checkIfIsURL(cfg.HorusecAPIUri))),
 		validation.Field(&cfg.TimeoutInSecondsRequest, validation.Required, validation.Min(10)),
 		validation.Field(&cfg.TimeoutInSecondsAnalysis, validation.Required, validation.Min(10)),
 		validation.Field(&cfg.MonitorRetryInSeconds, validation.Required, validation.Min(10)),
@@ -130,10 +131,11 @@ func (au *UseCases) validationOutputTypes() validation.InRule {
 
 func (au *UseCases) validationSeverities(cfg *config.Config) func(value interface{}) error {
 	return func(value interface{}) error {
-		for _, item := range cfg.SeveritiesToIgnore {
-			if !au.checkIfExistItemInSliceOfSeverity(strings.TrimSpace(item)) {
+		for idx := range cfg.SeveritiesToIgnore {
+			cfg.SeveritiesToIgnore[idx] = strings.TrimSpace(cfg.SeveritiesToIgnore[idx])
+			if !au.checkIfExistItemInSliceOfSeverity(cfg.SeveritiesToIgnore[idx]) {
 				return fmt.Errorf("%s %s. See severities enable: %v",
-					messages.MsgErrorSeverityNotValid, item, au.sliceSeverityEnable())
+					messages.MsgErrorSeverityNotValid, cfg.SeveritiesToIgnore[idx], au.sliceSeverityEnable())
 			}
 		}
 		return nil
@@ -226,4 +228,13 @@ func (au *UseCases) isVulnerabilityValid(vulnType string) bool {
 		}
 	}
 	return false
+}
+func (au *UseCases) checkIfIsURL(rawURL string) validation.RuleFunc {
+	return func(value interface{}) error {
+		_, err := url.ParseRequestURI(rawURL)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 }

@@ -38,6 +38,7 @@ func NewXMLParsingVulnerableToXXE() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`XMLReaderFactory\.createXMLReader\(`),
 			regexp.MustCompile(`\.parse\(`),
+			regexp.MustCompile(`(XMLReaderFactory\.createXMLReader\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(\.parse\(.*\))`),
 		},
 	}
 }
@@ -71,6 +72,7 @@ func NewXMLParsingVulnerableToXXEWithDocumentBuilder() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`DocumentBuilderFactory\.newInstance\(`),
 			regexp.MustCompile(`\.parse\(`),
+			regexp.MustCompile(`(DocumentBuilderFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(\.parse\(.*\))`),
 		},
 	}
 }
@@ -88,6 +90,7 @@ func NewXMLParsingVulnerableToXXEWithSAXParserFactory() text.TextRule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`SAXParserFactory\.newInstance\(`),
 			regexp.MustCompile(`\.parse\(`),
+			regexp.MustCompile(`(SAXParserFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(\.parse\(.*\))`),
 		},
 	}
 }
