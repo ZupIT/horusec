@@ -27,7 +27,7 @@ func TestGetDefaultFoldersToIgnore(t *testing.T) {
 }
 
 func TestGetDefaultExtensionsToIgnore(t *testing.T) {
-	t.Run("should success get 35 extensions to ignore", func(t *testing.T) {
-		assert.Len(t, GetDefaultExtensionsToIgnore(), 35)
+	t.Run("should success get 38 extensions to ignore", func(t *testing.T) {
+		assert.Len(t, GetDefaultExtensionsToIgnore(), 38)
 	})
 }
