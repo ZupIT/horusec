@@ -21,8 +21,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ZupIT/horusec/internal/utils/file"
-
 	doubleStar "github.com/bmatcuk/doublestar/v4"
 	"github.com/go-enry/go-enry/v2"
 	"github.com/google/uuid"
@@ -90,7 +88,7 @@ func (ld *LanguageDetect) execWalkToGetLanguagesAndReturnIfSkip(
 	path string, info os.FileInfo) (languagesFound []string, skip bool) {
 	skip = ld.filesAndFoldersToIgnore(path)
 	if skip {
-		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, path)
+		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, filepath.Clean(path))
 	}
 	if !info.IsDir() && !skip {
 		newLanguages := enry.GetLanguages(path, nil)
@@ -135,12 +133,12 @@ func (ld *LanguageDetect) filesAndFoldersToIgnore(path string) bool {
 
 func (ld *LanguageDetect) checkDefaultPathsToIgnore(path string) bool {
 	for _, value := range toignore.GetDefaultFoldersToIgnore() {
-		if strings.Contains(path, file.ReplacePathSeparator(value)) {
+		if strings.Contains(path, value) {
 			return true
 		}
 	}
 	if !ld.configs.EnableGitHistoryAnalysis {
-		return strings.Contains(path, file.ReplacePathSeparator("/.git/"))
+		return strings.Contains(path, ".git")
 	}
 	return false
 }
