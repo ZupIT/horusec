@@ -31,8 +31,8 @@ func (h HorusecCmd) String() string {
 }
 
 const (
-	VersionCmd HorusecCmd = "version"
-	StartCmd HorusecCmd = "start"
+	VersionCmd  HorusecCmd = "version"
+	StartCmd    HorusecCmd = "start"
 	GenerateCmd HorusecCmd = "generate"
 )
 

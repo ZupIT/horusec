@@ -15,13 +15,14 @@
 package generate_test
 
 import (
-	"os"
-	"path/filepath"
-
+	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -39,6 +40,8 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 	BeforeSuite(func() {
 		configFileName := "horusec-config-generate-test.json"
 		configFilePath = filepath.Join(os.TempDir(), configFileName)
+		// Add scape slashes when running on Windows.
+		configFilePath = strings.ReplaceAll(configFilePath, `\`, `\\`)
 	})
 
 	BeforeEach(func() {
@@ -54,7 +57,7 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 		_ = errBuffer.Clear()
 	})
 
-	When("the horusec-config.json don't already exists", func() {
+	When("the horusec-config.json still doesn't exists", func() {
 		BeforeEach(func() {
 			_ = os.Remove(configFilePath)
 		})
@@ -66,7 +69,7 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 
 		It("show success message and correct path of config file", func() {
 			Eventually(outBuffer).Should(gbytes.Say(`Horusec created file of configuration with success on path:`))
-			Eventually(outBuffer).Should(gbytes.Say(configFilePath))
+			Eventually(outBuffer).Should(gbytes.Say(fmt.Sprintf("[%s]", configFilePath)))
 		})
 	})
 
@@ -78,7 +81,7 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 
 		It("show message already exists", func() {
 			Eventually(outBuffer).Should(gbytes.Say(`Horusec configuration already exists on path:`))
-			Eventually(outBuffer).Should(gbytes.Say(configFilePath))
+			Eventually(outBuffer).Should(gbytes.Say(fmt.Sprintf("[%s]", configFilePath)))
 		})
 	})
 })
