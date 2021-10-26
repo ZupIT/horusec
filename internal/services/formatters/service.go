@@ -188,7 +188,7 @@ func (s *Service) truncatedCode(code string, column int) string {
 
 func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) string {
 	basePath := file.ReplacePathSeparator(path.Join(s.GetConfigProjectPath(), projectSubPath))
-	filepath := file.GetPathIntoFilename(filename, basePath)
+	filepath := file.GetPathFromFilename(filename, basePath)
 	if filepath != "" {
 		return path.Join(projectSubPath, filepath[1:])
 	}
