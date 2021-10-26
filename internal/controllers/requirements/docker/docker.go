@@ -40,37 +40,31 @@ func NewRequirementDocker() *RequirementDocker {
 }
 
 func (r *RequirementDocker) ValidateDocker() error {
-	if err := r.validateIfDockerIsInstalled(); err != nil {
-		return err
-	}
-	return r.validateIfDockerIsSupported()
-}
-
-func (r *RequirementDocker) validateIfDockerIsInstalled() error {
-	response, err := r.execDockerVersion()
+	response, err := r.validateIfDockerIsInstalled()
 	if err != nil {
 		return err
+	}
+	return r.validateIfDockerIsSupported(response)
+}
+
+func (r *RequirementDocker) validateIfDockerIsInstalled() (string, error) {
+	response, err := r.execDockerVersion()
+	if err != nil {
+		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
+		return "", err
 	}
 	if !r.checkIfContainsDockerVersion(response) {
-		return errorsEnums.ErrDockerNotInstalled
+		return "", errorsEnums.ErrDockerNotInstalled
 	}
-	return r.checkIfDockerIsRunning()
+	return response, r.checkIfDockerIsRunning()
 }
 
-func (r *RequirementDocker) validateIfDockerIsSupported() error {
-	response, err := r.execDockerVersion()
+func (r *RequirementDocker) validateIfDockerIsSupported(version string) error {
+	err := r.validateIfDockerIsRunningInMinVersion(version)
 	if err != nil {
-		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
 		return err
 	}
-	if r.checkIfContainsDockerVersion(response) {
-		err := r.validateIfDockerIsRunningInMinVersion(response)
-		if err == nil {
-			return nil
-		}
-		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
-	}
-	return errorsEnums.ErrDockerNotInstalled
+	return nil
 }
 
 func (r *RequirementDocker) execDockerVersion() (string, error) {
@@ -99,9 +93,9 @@ func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response strin
 		return err
 	}
 
-	if version < MinVersionDockerAccept || version == MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
+	if version <= MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
 		fmt.Print("\n")
-		logger.LogInfo(messages.MsgDockerLowerVersion)
+		logger.LogWarn(messages.MsgDockerLowerVersion)
 		fmt.Print("\n")
 	}
 

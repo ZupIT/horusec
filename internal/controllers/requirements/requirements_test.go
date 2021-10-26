@@ -23,7 +23,6 @@ import (
 func TestValidateRequirements(t *testing.T) {
 	t.Run("should return no error when everything it is ok", func(t *testing.T) {
 		controller := NewRequirements()
-
 		assert.NotPanics(t, func() {
 			controller.ValidateDocker()
 		})

@@ -39,36 +39,31 @@ func NewRequirementGit() *RequirementGit {
 }
 
 func (r *RequirementGit) ValidateGit() error {
-	if err := r.validateIfGitIsInstalled(); err != nil {
-		return err
-	}
-	return r.validateIfGitIsSupported()
-}
-
-func (r *RequirementGit) validateIfGitIsInstalled() error {
-	response, err := r.execGitVersion()
+	response, err := r.validateIfGitIsInstalled()
 	if err != nil {
 		return err
+	}
+	return r.validateIfGitIsSupported(response)
+}
+
+func (r *RequirementGit) validateIfGitIsInstalled() (string, error) {
+	response, err := r.execGitVersion()
+	if err != nil {
+		return "", err
 	}
 	if !r.checkIfContainsGitVersion(response) {
-		return errorsEnums.ErrGitNotInstalled
+		return "", errorsEnums.ErrGitNotInstalled
 	}
-	return nil
+	return response, nil
 }
 
-func (r *RequirementGit) validateIfGitIsSupported() error {
-	response, err := r.execGitVersion()
+func (r *RequirementGit) validateIfGitIsSupported(version string) error {
+	err := r.validateIfGitIsRunningInMinVersion(version)
 	if err != nil {
+		logger.LogInfo(messages.MsgInfoHowToInstallGit)
 		return err
 	}
-	if r.checkIfContainsGitVersion(response) {
-		err := r.validateIfGitIsRunningInMinVersion(response)
-		if err == nil {
-			return nil
-		}
-		logger.LogInfo(messages.MsgInfoHowToInstallGit)
-	}
-	return errorsEnums.ErrGitNotInstalled
+	return nil
 }
 
 func (r *RequirementGit) execGitVersion() (string, error) {
