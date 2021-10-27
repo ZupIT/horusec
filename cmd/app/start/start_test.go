@@ -40,66 +40,6 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 
-const (
-	FlagAnalysisTimeout            = "--analysis-timeout"
-	FlagAuthorization              = "--authorization"
-	FlagCertificatePath            = "--certificate-path"
-	FlagContainerBindProjectPath   = "--container-bind-project-path"
-	FlagCustomRulesPath            = "--custom-rules-path"
-	FlagDisableDocker              = "--disable-docker"
-	FlagEnableCommitAuthor         = "--enable-commit-author"
-	FlagEnableGitHistory           = "--enable-git-history"
-	FlagEnableOwaspDependencyCheck = "--enable-owasp-dependency-check"
-	FlagEnableShellcheck           = "--enable-shellcheck"
-	FlagFalsePositive              = "--false-positive"
-	FlagHeaders                    = "--headers"
-	FlagHorusecUrl                 = "--horusec-url"
-	FlagIgnore                     = "--ignore"
-	FlagIgnoreSeverity             = "--ignore-severity"
-	FlagInformationSeverity        = "--information-severity"
-	FlagInsecureSkipVerify         = "--insecure-skip-verify"
-	FlagJsonOutputFile             = "--json-output-file"
-	FlagMonitorRetryCount          = "--monitor-retry-count"
-	FlagOutputFormat               = "--output-format"
-	FlagProjectPath                = "--project-path"
-	FlagRepositoryName             = "--repository-name"
-	FlagRequestTimeout             = "--request-timeout"
-	FlagReturnError                = "--return-error"
-	FlagRiskAccept                 = "--risk-accept"
-	FlagShowVulnerabilitiesTypes   = "--show-vulnerabilities-types"
-)
-
-func getFlags() []string {
-	return []string{
-		FlagAnalysisTimeout,
-		FlagAuthorization,
-		FlagCertificatePath,
-		FlagContainerBindProjectPath,
-		FlagCustomRulesPath,
-		FlagDisableDocker,
-		FlagEnableCommitAuthor,
-		FlagEnableGitHistory,
-		FlagEnableOwaspDependencyCheck,
-		FlagEnableShellcheck,
-		FlagFalsePositive,
-		FlagHeaders,
-		FlagHorusecUrl,
-		FlagIgnore,
-		FlagIgnoreSeverity,
-		FlagInformationSeverity,
-		FlagInsecureSkipVerify,
-		FlagJsonOutputFile,
-		FlagMonitorRetryCount,
-		FlagOutputFormat,
-		FlagProjectPath,
-		FlagRepositoryName,
-		FlagRequestTimeout,
-		FlagReturnError,
-		FlagRiskAccept,
-		FlagShowVulnerabilitiesTypes,
-	}
-}
-
 func TestMain(m *testing.M) {
 	_ = os.RemoveAll("./examples")
 	_ = os.RemoveAll("./tmp")
@@ -145,7 +85,7 @@ func TestNewStartCommand(t *testing.T) {
 			}
 			flags = append(flags, "--"+flag.Name)
 		})
-		expectedFlags := getFlags()
+		expectedFlags := testutil.GetAllStartFlags()
 		assert.Equal(t, len(expectedFlags), len(flags))
 		for _, flag := range flags {
 			assert.Contains(t, expectedFlags, flag)
@@ -181,7 +121,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not ask if is to run in current directory",
-			args: []string{FlagProjectPath, testutil.RootPath},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -199,7 +139,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 
 		{
 			name: "Should execute command exec and return error because found vulnerabilities (-p,-e)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(10, nil)
@@ -216,7 +156,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec and return error because found error when ask but run in current folder",
-			args: []string{FlagReturnError},
+			args: []string{testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -232,7 +172,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and validate if git is installed(--enable-git-history)",
-			args: []string{FlagEnableGitHistory, FlagReturnError},
+			args: []string{testutil.StartFlagEnableGitHistory, testutil.StartFlagReturnError},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -253,7 +193,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not ask because is different project path(-p, -e)",
-			args: []string{FlagReturnError, FlagProjectPath, os.TempDir()},
+			args: []string{testutil.StartFlagReturnError, testutil.StartFlagProjectPath, os.TempDir()},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -271,7 +211,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec and return error because found not accept proceed",
-			args: []string{FlagReturnError},
+			args: []string{testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -287,7 +227,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec and return error because found invalid RepositoryAuthorization field",
-			args: []string{FlagProjectPath, os.TempDir(), FlagAuthorization, "NOT_VALID_AUTHORIZATION", FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, os.TempDir(), testutil.StartFlagAuthorization, "NOT_VALID_AUTHORIZATION", testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -306,7 +246,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec and return success because found valid RepositoryAuthorization field(-a)",
-			args: []string{FlagProjectPath, os.TempDir(), FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, os.TempDir(), testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", testutil.StartFlagReturnError},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -325,7 +265,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error using json output(-o json, -O)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), FlagOutputFormat, "json", FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), testutil.StartFlagOutputFormat, "json", testutil.StartFlagReturnError},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -344,7 +284,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error using unknown type output(-o unknown, -O)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), FlagOutputFormat, "unknownTypeOutput", FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), testutil.StartFlagOutputFormat, "unknownTypeOutput", testutil.StartFlagReturnError},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -363,7 +303,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error using sonarqube output (-o sonarqube, -O)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagJsonOutputFile, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), FlagOutputFormat, "sonarqube", FlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), testutil.StartFlagOutputFormat, "sonarqube", testutil.StartFlagReturnError},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -382,7 +322,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error showing info vulnerabilities (--information-severity)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagInformationSeverity},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagInformationSeverity},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				prompt.On("Ask").Return("Y", nil)
@@ -400,7 +340,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error sending to web application (-u,-a)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagHorusecUrl, "https://google.com", FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagHorusecURL, "https://google.com", testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -420,7 +360,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error sending to a invalid url web application (-u,-a)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagHorusecUrl, "*vsaf&&", FlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagHorusecURL, "*vsaf&&", testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -438,7 +378,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and return vulnerabilities but ignore vulnerabilities of type HIGH (-s)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagIgnoreSeverity, "CRITICAL, LOW"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagIgnoreSeverity, "CRITICAL, LOW"},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 
@@ -457,7 +397,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error and not return vulnerabilities when set to ignore unknown type of vulnerability (-s)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagIgnoreSeverity, "potato, shoes"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagIgnoreSeverity, "potato, shoes"},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -475,7 +415,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not return vulnerabilities when set valid certificate path (-C --certificate-path)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagCertificatePath, filepath.Join(testutil.RootPath, "..")},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagCertificatePath, filepath.Join(testutil.RootPath, "..")},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -493,7 +433,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid certificate path (-C --certificate-path)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagCertificatePath, "invalidPath"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagCertificatePath, "invalidPath"},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -511,7 +451,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not return vulnerabilities when set valid analysis timeout (-t --analysis-timeout)\"",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagAnalysisTimeout, "123"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagAnalysisTimeout, "123"},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -529,7 +469,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid analysis timeout (-t --analysis-timeout)",
-			args: []string{FlagProjectPath, testutil.RootPath, FlagAnalysisTimeout, "potato"},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagAnalysisTimeout, "potato"},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -546,7 +486,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not return vulnerabilities when set disable docker (-D --disable-docker)",
-			args: []string{FlagDisableDocker},
+			args: []string{testutil.StartFlagDisableDocker},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -563,7 +503,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error and not return vulnerabilities when set valid request timeout (-r --request-timeout)",
-			args: []string{FlagRequestTimeout, "123"},
+			args: []string{testutil.StartFlagRequestTimeout, "123"},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -580,7 +520,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid request timeout (-r --request-timeout)",
-			args: []string{FlagRequestTimeout, "potato"},
+			args: []string{testutil.StartFlagRequestTimeout, "potato"},
 			err:  true,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)

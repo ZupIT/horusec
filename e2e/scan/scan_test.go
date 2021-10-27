@@ -21,6 +21,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
+
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -127,12 +129,12 @@ var _ = Describe("Scan vulnerabilities example folder", func() {
 			output := path.Join(os.TempDir(), fmt.Sprintf("horusec-analysis-%s.json", uuid.New().String()))
 
 			flags := map[string]string{
-				"-p": tt.target,
-				"-o": "json",
-				"-O": output,
+				testutil.StartFlagProjectPath:        tt.target,
+				testutil.StartFlagOutputFormat:       outputtype.JSON,
+				testutil.StartFlagJSONOutputFilePath: output,
 			}
 
-			cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.StartCmd, flags)
+			cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.CmdStart, flags)
 
 			stdout := bytes.NewBufferString("")
 			stderr := bytes.NewBufferString("")

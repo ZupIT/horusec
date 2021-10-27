@@ -31,7 +31,7 @@ var _ = Describe("Run horusec CLI with version argument", func() {
 	)
 
 	BeforeEach(func() {
-		cmd := testutil.GinkgoGetHorusecCmd(testutil.VersionCmd)
+		cmd := testutil.GinkgoGetHorusecCmd(testutil.CmdVersion)
 		outBuffer = gbytes.NewBuffer()
 		session, err = gexec.Start(cmd, outBuffer, outBuffer)
 	})
