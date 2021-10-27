@@ -33,4 +33,25 @@ function f(req) {
 console.log("user email: ", email) 
 console.debug("user password: ", pwd) 
 	`
+	SampleVulnerableJavaScriptNoUseMD5Hashing = `
+const hash = crypto.createHash('md5')
+	`
+	SampleVulnerableJavaScriptNoUseSHA1Hashing = `
+const hash = crypto.createHash('sha1')
+	`
+	SampleVulnerableJavaScriptNoUseWeakRandom = `
+function f() {
+	return Math.random();
+}
+	`
+	SampleVulnerableJavaScriptNoReadFileUsingDataFromRequest = `
+function f(req) {
+	return fs.readFileSync(req.body, 'utf8')
+}
+	`
+	SampleVulnerableJavaScriptNoCreateReadStreamUsingDataFromRequest = `
+function f(req) {
+	return fs.createReadStream(req.body)
+}
+	`
 )
