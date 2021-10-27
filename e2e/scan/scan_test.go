@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 
 	"github.com/google/uuid"
@@ -125,7 +124,6 @@ var _ = Describe("Scan vulnerabilities example folder", func() {
 
 	for _, tt := range testcases {
 		It(tt.name, func() {
-			bin := testutil.GomegaBuildHorusecBinary()
 			output := path.Join(os.TempDir(), fmt.Sprintf("horusec-analysis-%s.json", uuid.New().String()))
 
 			flags := map[string]string{
@@ -134,15 +132,7 @@ var _ = Describe("Scan vulnerabilities example folder", func() {
 				"-O": output,
 			}
 
-			cmdArguments := []string{
-				"start",
-			}
-
-			for flag, value := range flags {
-				cmdArguments = append(cmdArguments, fmt.Sprintf("%s=%s", flag, value))
-			}
-
-			cmd := exec.Command(bin, cmdArguments...)
+			cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.StartCmd, flags)
 
 			stdout := bytes.NewBufferString("")
 			stderr := bytes.NewBufferString("")
