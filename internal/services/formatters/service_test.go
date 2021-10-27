@@ -15,11 +15,18 @@
 package formatters
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/internal/entities/workdir"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -39,7 +46,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/config"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
 )
@@ -64,8 +70,7 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 			},
 		},
 	}
-	err := svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Java)
-	require.Nil(t, err, "Expected nil error to parse finding to vulnerabilities")
+	svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, languages.Java)
 
 	expectedVulnerabilities := []vulnerability.Vulnerability{
 		{
@@ -128,7 +133,7 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 }
 
 func TestExecuteContainer(t *testing.T) {
-	t.Run("should return no error when success set is finished", func(t *testing.T) {
+	t.Run("should return no error when execute container", func(t *testing.T) {
 		analysis := &analysis.Analysis{}
 
 		dockerAPIControllerMock := &docker.Mock{}
@@ -140,6 +145,20 @@ func TestExecuteContainer(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, "test", result)
+	})
+	t.Run("should return error when execute container if CreateLanguageAnalysisContainer return error", func(t *testing.T) {
+		analysis := &analysis.Analysis{}
+
+		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("test", errors.New("some error"))
+
+		monitorController := NewFormatterService(analysis, dockerAPIControllerMock, &config.Config{})
+		result, err := monitorController.ExecuteContainer(&dockerentities.AnalysisData{})
+
+		assert.Error(t, err)
+		assert.Equal(t, "test", result)
+		assert.Equal(t, err.Error(), "some error")
 	})
 }
 
@@ -156,13 +175,38 @@ func TestGetAnalysisIDErrorMessage(t *testing.T) {
 }
 
 func TestGetCommitAuthor(t *testing.T) {
-	t.Run("should get commit author", func(t *testing.T) {
+	t.Run("should get commit author default values when .git folder is not found", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		result := monitorController.GetCommitAuthor("", "")
-
+		assert.Equal(t, "-", result.Author)
+		assert.Equal(t, "-", result.CommitHash)
+		assert.Equal(t, "-", result.Date)
+		assert.Equal(t, "-", result.Email)
+		assert.Equal(t, "-", result.Message)
 		assert.NotEmpty(t, result)
 	})
+	t.Run("should get commit author values when .git folder is found", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath:        testutil.ExamplesPath,
+				EnableCommitAuthor: true,
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+
+		result := monitorController.GetCommitAuthor("15", filepath.Join(testutil.GoExample1, "api", "server.go"))
+		notExpected := commitauthor.CommitAuthor{
+			Author:     "-",
+			Email:      "-",
+			CommitHash: "-",
+			Message:    "-",
+			Date:       "-",
+		}
+		assert.NotEmpty(t, result)
+		assert.NotEqual(t, notExpected, result)
+	})
+
 }
 
 func TestGetConfigProjectPath(t *testing.T) {
@@ -184,39 +228,37 @@ func TestGetConfigProjectPath(t *testing.T) {
 
 func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
-		cliConfig := &config.Config{}
-		cliConfig.WorkDir = &workdir.WorkDir{
-			CSharp: []string{"test"},
-		}
+		workDirString := "{{WORK_DIR}}"
+		cmd := "testcmd"
+		cmdWithWorkDir := workDirString + cmd
+		projectSubPath := filepath.Join("random", "file", "path")
+		expectedString := "cd " + projectSubPath + cmd
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
+		result := monitorController.AddWorkDirInCmd(cmdWithWorkDir, projectSubPath, tools.SecurityCodeScan)
 
-		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
-
-		assert.NotEmpty(t, result)
+		assert.Equal(t, expectedString, result)
 	})
 
 	t.Run("should return cmd with no workdir", func(t *testing.T) {
-		cliConfig := &config.Config{}
-		cliConfig.WorkDir = &workdir.WorkDir{
-			CSharp: []string{"test"},
-		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		cmd := "testcmd"
+		result := monitorController.AddWorkDirInCmd(cmd, "", tools.SecurityCodeScan)
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
-
-		result := monitorController.AddWorkDirInCmd("test", "C#", tools.SecurityCodeScan)
-
-		assert.NotEmpty(t, result)
+		assert.Equal(t, cmd, result)
 	})
 }
 
 func TestLogDebugWithReplace(t *testing.T) {
 	t.Run("should log debug and not panics", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
-
+		stdOutMock := bytes.NewBufferString("")
+		logger.LogSetOutput(stdOutMock)
+		logger.SetLogLevel("debug")
 		assert.NotPanics(t, func() {
-			monitorController.LogDebugWithReplace("test", tools.NpmAudit, languages.Javascript)
+			monitorController.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.NpmAudit, languages.Javascript)
 		})
+		assert.Contains(t, stdOutMock.String(), `level=debug msg="{HORUSEC_CLI} Running NpmAudit - JavaScript in analysisID: [00000000-0000-0000-0000-000000000000]`)
 	})
 }
 
@@ -231,17 +273,25 @@ func TestGetAnalysisID(t *testing.T) {
 func TestLogAnalysisError(t *testing.T) {
 	t.Run("should not panic when logging error", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
-
+		stdOutMock := bytes.NewBufferString("")
+		logger.LogSetOutput(stdOutMock)
+		logger.SetLogLevel("debug")
 		assert.NotPanics(t, func() {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "")
+			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "")
 		})
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> `)
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
-
+		stdOutMock := bytes.NewBufferString("")
+		logger.LogSetOutput(stdOutMock)
+		logger.SetLogLevel("debug")
 		assert.NotPanics(t, func() {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "/tmp")
+			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "/tmp")
 		})
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output ->  | ProjectSubPath -> /tmp - test"`)
 	})
 }
 
@@ -286,6 +336,11 @@ func TestToolIsToIgnore(t *testing.T) {
 		)
 
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
+
+		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
+	})
+	t.Run("should return false when language not exists", func(t *testing.T) {
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
 
 		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -362,5 +417,143 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		column := 999
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Len(t, newCode, 100)
+	})
+}
+
+func TestRemoveSrcFolderFromPath(t *testing.T) {
+	t.Run("should return path without src prefix", func(t *testing.T) {
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("src", "something"))
+		assert.Equal(t, filepath.Base("something"), result)
+	})
+	t.Run("should return path without diff when src is after 4 index position", func(t *testing.T) {
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("something", "src"))
+		assert.Equal(t, filepath.Join("something", "src"), result)
+	})
+	t.Run("should return path without diff when src is before 4 index position", func(t *testing.T) {
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		result := monitorController.RemoveSrcFolderFromPath(filepath.Base("src"))
+		assert.Equal(t, filepath.Base("src"), result)
+	})
+}
+
+func TestGetFilepathFromFilename(t *testing.T) {
+	t.Run("should successfully return path from filename", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: testutil.GoExample1,
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		dirName := filepath.Join(cfg.ProjectPath, ".horusec", monitorController.GetAnalysisID())
+		relativeFilePath := filepath.Join("examples", "go", "example1")
+		filename := "server.go"
+
+		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0700)
+		assert.NoError(t, err)
+
+		file, err := os.Create(filepath.Join(dirName, relativeFilePath, filename))
+		assert.NotNil(t, file)
+		assert.NoError(t, err)
+
+		result := monitorController.GetFilepathFromFilename(filename, "")
+
+		assert.Equal(t, filepath.Join(relativeFilePath, filename), result)
+		t.Cleanup(func() {
+			_ = file.Close()
+			_ = os.RemoveAll(dirName)
+		})
+
+	})
+	t.Run("should return empty when path from filename is not found", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: testutil.GoExample1,
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		filename := "server.go"
+
+		result := monitorController.GetFilepathFromFilename(filename, "")
+
+		assert.Equal(t, "", result)
+	})
+}
+
+func TestGetConfigCMDByFileExtension(t *testing.T) {
+	t.Run("should return path when valid parameters", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: testutil.GoExample1,
+				WorkDir:     &workdir.WorkDir{Go: []string{"a", "b"}},
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		dirName := filepath.Join(cfg.ProjectPath, ".horusec", monitorController.GetAnalysisID())
+		relativeFilePath := filepath.Join("examples", "go", "example1", "/")
+		filename := "package-lock.json"
+
+		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0700)
+		assert.NoError(t, err)
+		file, err := os.Create(filepath.Join(dirName, relativeFilePath, filename))
+		assert.NotNil(t, file)
+		assert.NoError(t, err)
+
+		cmdWithWorkdir := `
+ 	  {{WORK_DIR}}
+      if [ -f package-lock.json ]; then
+        npm audit --only=prod --json > /tmp/results-ANALYSISID.json 2> /tmp/errorNpmaudit-ANALYSISID
+        jq -j -M -c . /tmp/results-ANALYSISID.json
+      else
+        if [ ! -f yarn.lock ]; then
+          echo 'ERROR_PACKAGE_LOCK_NOT_FOUND'
+        fi
+      fi
+  `
+		expectedCmd := `
+ 	  cd ` + relativeFilePath + string(os.PathSeparator) + `
+      if [ -f package-lock.json ]; then
+        npm audit --only=prod --json > /tmp/results-ANALYSISID.json 2> /tmp/errorNpmaudit-ANALYSISID
+        jq -j -M -c . /tmp/results-ANALYSISID.json
+      else
+        if [ ! -f yarn.lock ]; then
+          echo 'ERROR_PACKAGE_LOCK_NOT_FOUND'
+        fi
+      fi
+  `
+		result := monitorController.GetConfigCMDByFileExtension(relativeFilePath, cmdWithWorkdir, "package-lock.json", tools.NpmAudit)
+
+		assert.Equal(t, expectedCmd, result)
+		t.Cleanup(func() {
+			_ = file.Close()
+			_ = os.RemoveAll(dirName)
+		})
+
+	})
+	t.Run("should return cmd when cmd has no workdir", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: testutil.GoExample1,
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		expectedCmd := "expectedCmd"
+		result := monitorController.GetConfigCMDByFileExtension("relativeFilePath", expectedCmd, "package-lock.json", tools.NpmAudit)
+		assert.Equal(t, expectedCmd, result)
+	})
+	t.Run("should return cmd with altered workdir when cmd has workdir", func(t *testing.T) {
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: testutil.GoExample1,
+			},
+		}
+		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		workdirString := "{{WORK_DIR}}"
+		cmd := "expectedCmd"
+		relativeFilePath := "relativeFilePath"
+		expectedResult := "cd " + relativeFilePath + cmd
+		result := monitorController.GetConfigCMDByFileExtension(relativeFilePath, workdirString+cmd, "package-lock.json", tools.NpmAudit)
+		assert.Equal(t, expectedResult, result)
 	})
 }
