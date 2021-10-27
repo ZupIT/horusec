@@ -34,4 +34,7 @@ const (
 	MsgWarnInfoVulnerabilitiesDisabled = "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis, " +
 		"to see info vulnerabilities add option \"--information-severity=true\". " +
 		"For more details use (horusec start --help) command."
+	MsgWarnGitRepositoryIsNotFullCloned = "{HORUSEC_CLI} Repository is not fully cloned." +
+		"Commit author can result wrong authors. Check the documentation for more info." +
+		"https://horusec.io/docs/cli/installation/#2-installation-via-pipeline"
 )

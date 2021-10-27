@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -33,6 +34,7 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/services/git"
 )
 
 type UseCases struct{}
@@ -61,10 +63,20 @@ func (au *UseCases) ValidateConfig(cfg *config.Config) error {
 		validation.Field(&cfg.FalsePositiveHashes, validation.By(au.checkIfExistsDuplicatedFalsePositiveHashes(cfg))),
 		validation.Field(&cfg.RiskAcceptHashes, validation.By(au.checkIfExistsDuplicatedRiskAcceptHashes(cfg))),
 		validation.Field(&cfg.ShowVulnerabilitiesTypes, validation.By(au.checkIfIsValidVulnerabilitiesTypes(cfg))),
+		validation.Field(&cfg.EnableCommitAuthor, validation.By(au.checkGitDepthClone(cfg))),
 	)
 }
 
-func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(cfg *config.Config) func(value interface{}) error {
+func (au *UseCases) checkGitDepthClone(cfg *config.Config) validation.RuleFunc {
+	return func(_ interface{}) error {
+		if (cfg.EnableCommitAuthor || cfg.EnableGitHistoryAnalysis) && git.RepositoryIsShallow(cfg) {
+			logger.LogWarn(messages.MsgWarnGitRepositoryIsNotFullCloned)
+		}
+		return nil
+	}
+}
+
+func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(cfg *config.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		for _, falsePositive := range cfg.FalsePositiveHashes {
 			for _, riskAccept := range cfg.RiskAcceptHashes {
@@ -78,7 +90,7 @@ func (au *UseCases) checkIfExistsDuplicatedFalsePositiveHashes(cfg *config.Confi
 	}
 }
 
-func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(cfg *config.Config) func(value interface{}) error {
+func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(cfg *config.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		for _, riskAccept := range cfg.RiskAcceptHashes {
 			for _, falsePositive := range cfg.FalsePositiveHashes {
@@ -92,7 +104,7 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(cfg *config.Config) 
 	}
 }
 
-func (au *UseCases) checkAndValidateJSONOutputFilePath(cfg *config.Config) func(value interface{}) error {
+func (au *UseCases) checkAndValidateJSONOutputFilePath(cfg *config.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		switch cfg.PrintOutputType {
 		case outputtype.JSON, outputtype.SonarQube:
@@ -129,7 +141,7 @@ func (au *UseCases) validationOutputTypes() validation.InRule {
 	)
 }
 
-func (au *UseCases) validationSeverities(cfg *config.Config) func(value interface{}) error {
+func (au *UseCases) validationSeverities(cfg *config.Config) validation.RuleFunc {
 	return func(value interface{}) error {
 		for idx := range cfg.SeveritiesToIgnore {
 			cfg.SeveritiesToIgnore[idx] = strings.TrimSpace(cfg.SeveritiesToIgnore[idx])
@@ -162,7 +174,7 @@ func (au *UseCases) sliceSeverityEnable() []severities.Severity {
 	}
 }
 
-func (au *UseCases) validateIfIsValidPath(dir string) func(value interface{}) error {
+func (au *UseCases) validateIfIsValidPath(dir string) validation.RuleFunc {
 	return func(value interface{}) error {
 		if _, errStat := os.Stat(dir); errStat != nil || dir == "" {
 			return fmt.Errorf(messages.MsgErrorPathNotValid)
@@ -171,7 +183,7 @@ func (au *UseCases) validateIfIsValidPath(dir string) func(value interface{}) er
 	}
 }
 
-func (au *UseCases) validateCertPath(dir string) func(value interface{}) error {
+func (au *UseCases) validateCertPath(dir string) validation.RuleFunc {
 	if dir == "" {
 		return func(value interface{}) error {
 			return nil
@@ -181,7 +193,7 @@ func (au *UseCases) validateCertPath(dir string) func(value interface{}) error {
 	return au.validateIfIsValidPath(dir)
 }
 
-func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string) func(value interface{}) error {
+func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string) validation.RuleFunc {
 	return func(value interface{}) error {
 		if workDir == nil {
 			return errors.New(messages.MsgErrorParseStringToWorkDir)
