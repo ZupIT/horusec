@@ -72,6 +72,76 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-JAVASCRIPT-4",
+			Rule: NewNoUseMD5Hashing(),
+			Src:  SampleVulnerableJavaScriptNoUseMD5Hashing,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `const hash = crypto.createHash('md5')`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 20,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-5",
+			Rule: NewNoUseSHA1Hashing(),
+			Src:  SampleVulnerableJavaScriptNoUseSHA1Hashing,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `const hash = crypto.createHash('sha1')`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 20,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-6",
+			Rule: NewNoUseWeakRandom(),
+			Src:  SampleVulnerableJavaScriptNoUseWeakRandom,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `return Math.random();`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 8,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-7",
+			Rule: NewNoReadFileUsingDataFromRequest(),
+			Src:  SampleVulnerableJavaScriptNoReadFileUsingDataFromRequest,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `return fs.readFileSync(req.body, 'utf8')`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 10,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-8",
+			Rule: NewNoCreateReadStreamUsingDataFromRequest(),
+			Src:  SampleVulnerableJavaScriptNoCreateReadStreamUsingDataFromRequest,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `return fs.createReadStream(req.body)`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 10,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
