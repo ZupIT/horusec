@@ -15,6 +15,7 @@
 package customrules
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -34,7 +35,7 @@ func TestNewCustomRulesService(t *testing.T) {
 func TestGetCustomRulesByTool(t *testing.T) {
 	t.Run("should success get rules by tool", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.CustomRulesPath = "./custom_rules_example.json"
+		config.CustomRulesPath = filepath.Join(".", "custom_rules_example.json")
 
 		service := NewCustomRulesService(config)
 
@@ -49,7 +50,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 	t.Run("should return error when opening json file", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.CustomRulesPath = "./test.json"
+		config.CustomRulesPath = filepath.Join(".", "test.json")
 
 		service := NewCustomRulesService(config)
 
@@ -60,7 +61,7 @@ func TestGetCustomRulesByTool(t *testing.T) {
 
 	t.Run("should success return invalid custom rule", func(t *testing.T) {
 		config := &cliConfig.Config{}
-		config.CustomRulesPath = "./custom_rules_example_invalid.json"
+		config.CustomRulesPath = filepath.Join(".", "custom_rules_example_invalid.json")
 
 		service := NewCustomRulesService(config)
 
