@@ -25,14 +25,23 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
+          - macOS-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
           fetch-depth: 0
+
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
+
+      - name: Setup docker for MacOS
+        if: ${{ matrix.os == 'macos-latest' }} 
+        uses: docker-practice/actions-setup-docker@master
+        with:
+          docker_buildx: false
+
       - name: test
         run: make test
