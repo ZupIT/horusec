@@ -160,9 +160,9 @@ func NewNoLogSensitive() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`print\(.*\$`),
-			regexp.MustCompile(`window\.console.*\(`),
-			regexp.MustCompile(`log.*\.(finest|finer|fine|config|info|warning|severe|shout|erro).*\(`),
+			regexp.MustCompile(`print\(.*(\$|%|('|")\s*\+)`),
+			regexp.MustCompile(`window\.console.*\(.*(\$|%|('|")\s*\+)`),
+			regexp.MustCompile(`log.*\.(finest|finer|fine|config|info|warning|severe|shout|erro).*\(.*(\$|%|('|")\s*\+)`),
 		},
 	}
 }
@@ -278,10 +278,10 @@ func NewNoUseCipherMode() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)AesMode\.ECB`),
-			regexp.MustCompile(`(?i)AesMode\.OFB`),
-			regexp.MustCompile(`(?i)AesMode\.CTS`),
-			regexp.MustCompile(`(?i)AesMode\.CFB`),
+			regexp.MustCompile(`(?i)(AesMode\.ECB)`),
+			regexp.MustCompile(`(?i)(AesMode\.OFB)`),
+			regexp.MustCompile(`(?i)(AesMode\.CTS)`),
+			regexp.MustCompile(`(?i)(AesMode\.CFB)`),
 		},
 	}
 }

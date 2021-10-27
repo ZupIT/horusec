@@ -92,6 +92,135 @@ static Future<HttpServer> SentToApi(
     return _HttpServer.bindSecure('http://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
 }
 `
+	SampleVulnerableXSSAttack = `
+import 'package:sprintf/sprintf.dart';
+import 'dart:html';
+...
+
+void RenderHTML(String content) {
+	// Possible vulnerable code: In your html you can receive variable and sent to html render in this case occurs XSS attack 
+	var element = new Element.html(sprintf("<div class="foo">%s</div>", [content]));
+	document.body.append(element);
+}
+`
+	SampleVulnerableNoLogSensitive = `
+import 'package:sprintf/sprintf.dart';
+import 'package:logging/logging.dart';
+...
+final _logger = Logger('YourClassName');
+
+void ShowUserSensitiveInformation(String identity) {
+	// Possible vulnerable code: Logging Sensitive information is not good implementation 
+	print(sprintf("User identity is: %s", [identity]));
+	// or Possible vulnerable code: Logging Sensitive information is not good implementation 
+	_logger.info(sprintf("User identity is: %s", [identity]));
+	sentToAPIUserIdentity(identity);
+}
+`
+	SampleVulnerableWeakHashingFunctionMd5OrSha1 = `
+import 'dart:convert';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+///Generate MD5 hash
+generateMd5(String data) {
+  var content = new Utf8Encoder().convert(data);
+  var md5 = crypto.md5;
+  // Possible vulnerable code: This code is bad because this type cryptography is easy of to be broken.
+  var digest = md5.convert(content);
+  return hex.encode(digest.bytes);
+}
+`
+	SampleVulnerableNoUseSelfSignedCertificate = `
+final SecurityContext context = SecurityContext(withTrustedRoots: false);
+// Possible vulnerable code: This code is bad because if you can exposed for MITM attacks
+context.setTrustedCertificates("client.cer");
+Socket socket = await Socket.connect(serverIp, port);
+socket = await SecureSocket.secure(socket, host: "server"
+  , context: context, onBadCertificate: (cert) => true);
+`
+	SampleVulnerableNoUseBiometricsTypeAndroid = `
+try {
+// Possible vulnerable code: This code is bad because your authentication can be passed easy form when exists only 1 method to authenticate
+  authenticated = await auth.authenticateWithBiometrics(
+	  localizedReason: 'Touch your finger on the sensor to login',
+	  useErrorDialogs: true,
+	  stickyAuth: false
+  );
+} catch (e) {
+  print("error using biometric auth: $e");
+}
+`
+	SampleVulnerableNoListClipboardChanges = `
+_getFromClipboard() async {
+	// Possible vulnerable code: Is not good idea read content from clipboard.
+	Map<String, dynamic> result = await SystemChannels.platform.invokeMethod('Clipboard.getData');
+	if (result != null) {
+	  return result['text'].toString();
+	}
+	return '';
+}
+
+void sendToAPIToKeepChangesInDatabase() {
+	try {
+		String changesFromClipboard = await _getFromClipboard()
+		if (changesFromClipboard != "" {
+            // Here occurs SQL Injection, XSS attack, and others many forms to users attack your base of data when you safe content without treatment.
+			SaveChangesFromClipboardOnDatabasePost(changesFromClipboard)
+		}
+	} on HttpException {
+		...
+	}
+}
+`
+	SampleVulnerableSQLInjection = `
+Database database = await openDatabase(path, version: 1,
+    onCreate: (Database db, int version) async {
+  await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
+});
+
+getCheckIfUserExists(String username) {
+	try {
+		// Possible vulnerable code: User can be pass malicious code and delete all data from your database by example.
+		List<Map> list = await database.rawQuery("SELECT * FROM Users WHERE username = '" + username + "';");
+		...
+	} on Exception {
+    	...
+	}
+}
+`
+	SampleVulnerableNoUseNSTemporaryDirectory = `
+// Possible vulnerable code: If You get NSTemporaryDirectory you can get anywhere content from this directory
+let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);
+`
+	SampleVulnerableNoUseCipherMode = `
+// Possible vulnerable code: This code is bad because this type cryptography is easy of to be broken.
+final encrypter = Encrypter(AES(key, mode: AESMode.cts));
+`
+	SampleVulnerableCorsAllowOriginWildCard = `
+HttpServer.bind('127.0.0.1', 8080).then((server){
+	server.listen((HttpRequest request){     
+		request.uri.queryParameters.forEach((param,val){
+			print(param + '-' + val);
+		});
+		
+		// Possible vulnerable code: When you allow any origin you can exposed to multiple attacks in your application
+		request.response.headers.add("Access-Control-Allow-Origin", "*");
+		request.response.headers.add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
+		
+		request.response.statusCode = HttpStatus.OK;
+		request.response.write("Success!");
+		request.response.close();
+    });
+});
+`
+	SampleVulnerableUsingShellInterpreterWhenExecutingOSCommand = `
+getIPFromLoggedUser (List<String> UserParams) async {
+	// Possible vulnerable code: User can be inject malicious code and run others commands after this command 
+	var result = await Process.run("netcfg", [UserParams]);
+	return result.stdout
+}
+`
 )
 
 const (
@@ -142,5 +271,121 @@ static Future<HttpServer> SentToApi(
 	bool requestClientCertificate = false,
 	bool shared = false}
 ) => _HttpServer.bindSecure('https://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
+`
+	SampleSafeXSSAttack = `
+import 'package:sprintf/sprintf.dart';
+import 'dart:html';
+...
+
+void RenderHTML(String content) {
+	var element = new DivElement()
+		..textContent = content;
+	document.body.append(element);
+}
+`
+	SampleSafeNoLogSensitive = `
+import 'package:logging/logging.dart';
+...
+final _logger = Logger('YourClassName');
+
+void ShowUserSensitiveInformation(String identity) {
+	print("send identity of the user to api");
+	_logger.info("send identity of the user to api");
+	sentToAPIUserIdentity(identity);
+}
+...
+`
+	SampleSafeWeakHashingFunctionMd5OrSha1 = `
+import 'dart:convert';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+///Generate sha256 hash
+generateSha256(String data) {
+  var content = new Utf8Encoder().convert(data);
+  var sha256 = crypto.sha256;
+  var digest = sha256.convert(content);
+  return hex.encode(digest.bytes);
+}
+`
+	SampleSafeNoUseSelfSignedCertificate = `
+final SecurityContext context = SecurityContext(withTrustedRoots: false);
+Socket socket = await Socket.connect(serverIp, port);
+socket = await SecureSocket.secure(socket, host: "server"
+  , context: context, onBadCertificate: (cert) => true);
+`
+	SampleSafeNoUseBiometricsTypeAndroid = `
+try {
+  authenticated = await auth.CheckTwoFactorAuthenticationAndAuthenticateWithBiometrics(
+	  localizedReason: 'Touch your finger on the sensor to login',
+	  useErrorDialogs: true,
+	  stickyAuth: false
+  );
+} catch (e) {
+  print("error using biometric auth: $e");
+}
+`
+	SampleSafeNoListClipboardChanges = `
+_getFromClipboard() async {
+	var cp = Clipboard
+	Map<String, dynamic> result = await cp.getData;
+	if (result != null) {
+	  return "New content has been updated on Clipboard";
+	}
+	return "Not exists content from Clipboard";
+}
+
+void sendToAPIToKeepChangesInDatabase() {
+	try {
+		String changesFromClipboard = await _getFromClipboard()
+		if (changesFromClipboard != "" {
+            // Note this code is safe because only data on sent to API is constants, there not exists vulnerabilities
+			SaveChangesFromClipboardOnDatabasePost(changesFromClipboard)
+		}
+	} on HttpException {
+		...
+	}
+}
+`
+	SampleSafeSQLInjection = `
+Database database = await openDatabase(path, version: 1,
+    onCreate: (Database db, int version) async {
+  await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
+});
+
+getCheckIfUserExists(String username) {
+	try {
+		List<Map> list = await database.rawQuery("SELECT * FROM Users WHERE username = ?;", [username]);
+		...
+	} on Exception {
+    	...
+	}
+}
+`
+	SampleSafeNoUseNSTemporaryDirectory = `
+let temporaryDirectoryURL = URL(fileURLWithPath: "Some/Other/Path", isDirectory: true)
+`
+	SampleSafeNoUseCipherMode = `
+final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
+`
+	SampleSafeCorsAllowOriginWildCard = `
+HttpServer.bind('127.0.0.1', 8080).then((server){
+	server.listen((HttpRequest request){     
+		request.uri.queryParameters.forEach((param,val){
+			print(param + '-' + val);
+		});
+		
+		request.response.headers.add("Access-Control-Allow-Origin", "only-my-website.com.br");
+		request.response.headers.add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
+		
+		request.response.statusCode = HttpStatus.OK;
+		request.response.write("Success!");
+		request.response.close();
+    });
+});
+`
+	SampleSafeUsingShellInterpreterWhenExecutingOSCommand = `
+// You can get IP using library or interact with your backend application
+var getIPFromLoggedUser => await MyIpPost()
 `
 )
