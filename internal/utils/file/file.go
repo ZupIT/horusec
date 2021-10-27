@@ -16,135 +16,172 @@ package file
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"io"
+	"io/fs"
 	"os"
-	"os/exec"
-	filepathLib "path/filepath"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 )
 
-func GetAbsFilePathIntoBasePath(filePath, basePath string) string {
-	bytes, err := exec.Command("find", basePath, "-type", "f").Output()
-	if err != nil {
-		return filePath
-	}
-	for _, path := range strings.Split(string(bytes), "\n") {
-		if strings.Contains(path, filePath) {
-			absPath, _ := filepathLib.Abs(path)
-			return absPath
+// GetPathFromFilename return the relative file path inside basePath
+// that match the filename. Return empty if not found or some error
+// occurred.
+//
+// nolint:funlen,gocyclo
+func GetPathFromFilename(filename, basePath string) string {
+	var filePath string
+
+	err := filepath.Walk(basePath, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
+		if strings.Contains(path, filename) && isSameExtensions(filename, path) {
+			p, err := filepath.Rel(basePath, path)
+			if err != nil {
+				return err
+			}
+			filePath = p
+			return io.EOF
+		}
+		return nil
+	})
+	if err != nil && !errors.Is(err, io.EOF) {
+		logger.LogError("Error to find filepath", err, map[string]interface{}{
+			"filename": filename,
+			"basePath": basePath,
+		})
+		return ""
 	}
+
 	return filePath
 }
 
-func GetPathIntoFilename(filename, basePath string) string {
-	bytes, err := exec.Command("find", basePath, "-type", "f").Output()
-	if err != nil {
-		return ""
-	}
-	for _, path := range strings.Split(string(bytes), "\n") {
-		if strings.Contains(path, filename) {
-			if isSameExtensions(filename, path) {
-				return strings.ReplaceAll(path, basePath, "")
-			}
-		}
-	}
-	return ""
-}
-
 func isSameExtensions(filename, path string) bool {
-	filenameExt := filepathLib.Ext(filename)
-	basePathExt := filepathLib.Ext(path)
+	filenameExt := filepath.Ext(filename)
+	basePathExt := filepath.Ext(path)
 	return filenameExt == basePathExt
 }
 
+// ReplacePathSeparator replace slashes from path to OS specific.
+//
+// We usually use this function to replace paths that was returned by
+// a tool running on Docker when running on Windows.
 func ReplacePathSeparator(path string) string {
 	return strings.ReplaceAll(path, "/", string(os.PathSeparator))
 }
 
+// GetSubPathByExtension returns the path inside projectPath + subPath that contains
+// the files with a given ext inside projectPath.
+//
+// nolint: funlen
 func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) {
-	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
-	_ = filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	err := filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if result := verifyMathAndFormat(projectPath, walkPath, ext); result != "" {
+		if result := verifyMatchAndFormat(projectPath, walkPath, ext); result != "" {
 			finalPath = result
 			return io.EOF
 		}
 		return nil
 	})
+	if err != nil && !errors.Is(err, io.EOF) {
+		logger.LogError("Error to walk on path", err, map[string]interface{}{
+			"path":        pathToWalk,
+			"projectPath": projectPath,
+			"subPath":     subPath,
+			"ext":         ext,
+		})
+		return ""
+	}
 
 	return finalPath
 }
 
-func setExtension(ext string) string {
+func buildPattern(ext string) string {
 	return "*" + ext
 }
 
-func verifyMathAndFormat(projectPath, walkPath, ext string) string {
-	matched, err := filepathLib.Match(setExtension(ext), filepathLib.Base(walkPath))
-	if err != nil {
+func verifyMatchAndFormat(projectPath, walkPath, ext string) string {
+	matched, err := filepath.Match(buildPattern(ext), filepath.Base(walkPath))
+	if err != nil || !matched {
 		return ""
 	}
-
-	if matched {
-		return formatExtPath(projectPath, walkPath)
-	}
-
-	return ""
+	return formatExtPath(projectPath, walkPath)
 }
 
-func setProjectPathWithSubPath(projectPath, projectSubPath string) string {
+func projectPathWithSubPath(projectPath, projectSubPath string) string {
 	if projectSubPath != "" {
-		projectPath += "/"
-		projectPath += projectSubPath
+		projectPath = filepath.Join(projectPath, projectSubPath)
 	}
 
 	return projectPath
 }
 
 func formatExtPath(projectPath, walkPath string) string {
+	// TODO(matheus): This code seems confusing. We should use a better approach here.
 	basePathRemoved := strings.ReplaceAll(walkPath, projectPath, "")
-	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepathLib.Base(walkPath), "")
+	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepath.Base(walkPath), "")
 
-	if extensionFileRemoved != "" && extensionFileRemoved[0:1] == "/" {
+	if extensionFileRemoved != "" && extensionFileRemoved[0:1] == string(os.PathSeparator) {
 		extensionFileRemoved = extensionFileRemoved[1:]
 	}
 
 	return extensionFileRemoved
 }
 
+// GetFilenameByExt return the first filename that match extension ext
+// on projectPath. subPath is used with projectPath if not empty.
+//
+// nolint: funlen
 func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
-	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
-	_ = filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	err := filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if filepathLib.Ext(walkPath) == ext {
-			filename = filepathLib.Base(walkPath)
+		if filepath.Ext(walkPath) == ext {
+			filename = filepath.Base(walkPath)
 			return io.EOF
 		}
 
 		return nil
 	})
+	if err != nil && !errors.Is(err, io.EOF) {
+		logger.LogError("Error to walk on path", err, map[string]interface{}{
+			"path":        pathToWalk,
+			"projectPath": projectPath,
+			"subPath":     subPath,
+			"ext":         ext,
+		})
+		return ""
+	}
 
 	return filename
 }
 
-func GetCode(projectPath, filepath, desiredLine string) string {
-	path := fmt.Sprintf("%s%s%s", projectPath, string(os.PathSeparator), filepath)
+// GetCode return code to a given line of filename inside projectPath.
+func GetCode(projectPath, filename, line string) string {
+	path := filepath.Join(projectPath, filename)
 
 	file, err := os.Open(path)
 	if err != nil {
+		logger.LogError("Error to open file to get code sample", err, map[string]interface{}{
+			"projectPath": projectPath,
+			"filename":    filename,
+			"line":        line,
+		})
 		return ""
 	}
 
-	return strings.TrimSpace(getCodeFromDesiredLine(file, getLine(desiredLine)))
+	return strings.TrimSpace(getCodeFromDesiredLine(file, getLine(line)))
 }
 
 func getLine(desiredLine string) int {
@@ -183,13 +220,13 @@ func GetDependencyCodeFilepathAndLine(projectPath, subPath, ext, dependency stri
 func getPathsByExtension(projectPath, subPath, ext string) ([]string, error) {
 	var paths []string
 
-	pathToWalk := setProjectPathWithSubPath(projectPath, subPath)
-	return paths, filepathLib.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	return paths, filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if filepathLib.Ext(walkPath) == ext {
+		if filepath.Ext(walkPath) == ext {
 			paths = append(paths, walkPath)
 		}
 
@@ -198,7 +235,7 @@ func getPathsByExtension(projectPath, subPath, ext string) ([]string, error) {
 }
 
 //nolint:funlen // improve in the future
-func getDependencyInfo(paths []string, dependency string) (code, filepath, _ string) {
+func getDependencyInfo(paths []string, dependency string) (string, string, string) {
 	var line int
 
 	for _, path := range paths {
@@ -220,8 +257,8 @@ func getDependencyInfo(paths []string, dependency string) (code, filepath, _ str
 	return "", "", ""
 }
 
-func CreateAndWriteFile(output, filepath string) error {
-	path, err := filepathLib.Abs(filepath)
+func CreateAndWriteFile(output, filename string) error {
+	path, err := filepath.Abs(filename)
 	if err != nil {
 		return err
 	}

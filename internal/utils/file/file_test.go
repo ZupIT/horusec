@@ -18,55 +18,28 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetPath(t *testing.T) {
-	t.Run("Should return path correctly", func(t *testing.T) {
-		filePath := "file/file_test.go"
-		volume := "../../../.."
-		response := GetAbsFilePathIntoBasePath(filePath, volume)
-		assert.NotEqual(t, response, filePath)
-		assert.Contains(t, response, "/utils/file/file_test.go")
-	})
-	t.Run("Should return filePath because not found", func(t *testing.T) {
-		filePath := "some_other_not_existing_file.go"
-		volume := "../../../.."
-		response := GetAbsFilePathIntoBasePath(filePath, volume)
-		assert.Equal(t, response, filePath)
-	})
-	t.Run("Should return filePath because base path is wrong", func(t *testing.T) {
-		filePath := "some_other_not_existing_file.go"
-		volume := "S0M3 N0T E3X1$t"
-		response := GetAbsFilePathIntoBasePath(filePath, volume)
-		assert.Equal(t, response, filePath)
-	})
-	t.Run("Should return filePath because base path is not exists", func(t *testing.T) {
-		filePath := "some_other_not_existing_file.go"
-		volume := "./not_existing_path"
-		response := GetAbsFilePathIntoBasePath(filePath, volume)
-		assert.Equal(t, response, filePath)
-	})
-}
-
 func TestGetFilePathIntoBasePath(t *testing.T) {
 	t.Run("Should return path correctly", func(t *testing.T) {
-		filePath := "file/file_test.go"
-		volume := "../../../.."
-		response := GetPathIntoFilename(filePath, volume)
+		filePath := filepath.Join("file", "file_test.go")
+		volume := testutil.RootPath
+		response := GetPathFromFilename(filePath, volume)
 		assert.NotEqual(t, response, filePath)
-		assert.Contains(t, response, "/utils/file/file_test.go")
+		assert.Equal(t, filepath.Join("internal", "utils", "file", "file_test.go"), response)
 	})
 	t.Run("Should return filePath because not found", func(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
-		volume := "../../../.."
-		response := GetPathIntoFilename(filePath, volume)
+		volume := testutil.RootPath
+		response := GetPathFromFilename(filePath, volume)
 		assert.Equal(t, "", response)
 	})
 	t.Run("Should return filePath because base path is wrong", func(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
 		volume := "S0M3 N0T E3X1$t"
-		response := GetPathIntoFilename(filePath, volume)
+		response := GetPathFromFilename(filePath, volume)
 		assert.Equal(t, "", response)
 	})
 }

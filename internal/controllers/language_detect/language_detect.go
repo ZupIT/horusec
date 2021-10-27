@@ -166,7 +166,7 @@ func (ld *LanguageDetect) checkFileExtensionInvalid(path string) bool {
 }
 
 func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
-	folderDstName := file.ReplacePathSeparator(fmt.Sprintf("%s/.horusec/%s", directory, ld.analysisID.String()))
+	folderDstName := filepath.Join(directory, ".horusec", ld.analysisID.String())
 	err := copy.Copy(directory, folderDstName, ld.filesAndFoldersToIgnore)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)

@@ -16,6 +16,7 @@ package analyzer
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"log"
 	"os"
@@ -75,7 +76,6 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
-	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
 const LoadingDelay = 200 * time.Millisecond
@@ -157,7 +157,7 @@ func (a *Analyzer) removeTrashByInterruptProcess() {
 }
 
 func (a *Analyzer) removeHorusecFolder() {
-	err := os.RemoveAll(a.config.ProjectPath + file.ReplacePathSeparator("/.horusec"))
+	err := os.RemoveAll(filepath.Join(a.config.ProjectPath, ".horusec"))
 	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err)
 	if !a.config.DisableDocker {
 		a.docker.DeleteContainersFromAPI()
