@@ -3,31 +3,28 @@
 This is Horusec contributing guide. Please read the following sections to learn how to ask questions and how to work on something.
 
 ## **Table of contents**
-1. [**Getting Started**](#Getting-started)
-   1. [**Before you contribute**](#Before-you-contribute)
-   2. [**Code of Conduct**](#Code-of-Conduct)
-   3. [**Legal**](#Legal)
-2. [**Prerequisites**](#Prerequisites)
-   1. [**Developer Certificate of Origin**](#Developer-Certificate-of-Origin)
-   2. [**Code Review**](#Code-Review)
-   3. [**Pull Requests**](#Pull-Requests)    
-3. [**How to contribute?**](#How-to-contribute?)
-      1. [**Prepare your development environment**](#Prepare-your-development-environment)
-      2. [**First contribution**](#First-contribution)
-      4. [**Add new feature, bugfixing or improvement**](#Add-new-feature-bugfixing-or-improvement)
-      5. [**Pull Request's approval**](#Pull-Request's-approval)
-      6. [**After your pull request's approval**](#After-your-pull-request's-approval)
-4. [**Community**](#Community)
+### 1. [**Before you contribute**](#Before-you-contribute)
+> #### i.  [**Code of Conduct**](#Code-of-Conduct)
+> #### ii. [**Legal**](#Legal)
+### 2. [**Prerequisites**](#Prerequisites)
+> #### i.   [**Developer Certificate of Origin**](#Developer-Certificate-of-Origin)
+> #### ii.  [**Code Review**](#Code-Review)
+> #### iii. [**Pull Requests**](#Pull-Requests)    
+### 3. [**How to contribute?**](#How-to-contribute?)
+ > #### i. [**Prepare your development environment**](#Prepare-your-development-environment)
+> #### ii.  [**First contribution**](#First-contribution)
+> #### iii. [**Add new feature, bugfixing or improvement**](#Add-new-feature-bugfixing-or-improvement)
+> #### iv.  [**Pull Request's approval**](#Pull-Request's-approval)
+> #### v.   [**After your pull request's approval**](#After-your-pull-request's-approval)
+### 4. [**Community**](#Community)
 
-## **Getting started**
-
-### **Before you contribute**
+## **Before you contribute**
 
 ### **Code of Conduct**
 Please follow the [**Code of Conduct**](https://github.com/ZupIT/horusec/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
 
 ### **Legal**
-- Horusec is licensed over [**ASL - Apache License**](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header. For more information, please check out [**Apache license**](https://www.apache.org/licenses/LICENSE-2.0).
+- Horusec is licensed over [**ASF - Apache License**](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header. For more information, please check out [**Apache license**](https://www.apache.org/licenses/LICENSE-2.0).
 
 - All contributions are subject to the [**Developer Certificate of Origin (DCO)**](https://developercertificate.org). 
 When you commit, use the ```**-s** ``` option to include the Signed-off-by line at the end of the commit log message.
@@ -39,28 +36,32 @@ Check out the requisites before contributing to Horusec:
 
  This is a security layer for the project and for the developers. It is mandatory.
  
- There are two ways to use DCO, see them below: 
+ Follow one of these two methods to add DCO to your commits:
  
 **1. Command line**
  Follow the steps: 
- **Step 1:** Check out your local git:
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
 
  ```
 git config --global user.name “Name”
 git config --global user.email “email@domain.com.br”
 ```
-**Step 2:** When you commit, add the sigoff via `-s` flag:
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
 
 ```
 $ git commit -s -m "This is my commit message"
 ```
 **2. GitHub website**
 
-**Step 1:** When the commit changes box opens, add 
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
 ```
-$ git commit -m “My signed commit” Signed-off-by: username <email address>
+Signed-off-by: Name < e-mail address >
 ```
-Note: For this option, your e-mail must be the same in registered in GitHub. 
+
+For this method, your name and e-mail must be the same registered to your GitHub account.
 
 ### **Code Review**
 - All your submissions needs a review.

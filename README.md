@@ -26,21 +26,22 @@
 </p>
 
 ## **Table of contents**
-1. [**What is Horusec?**](#What-is-Horusec?)
-2. [**Getting started**](#Getting-started)
-    1. [**Requirements**](#Requirements)
-    2. [**Installing Horusec**](#Installing-Horusec)
-    3. [**Usage**](#Usage)
-        1. [**CLI Usage**](#CLI-Usage)
-        2. [**Using Docker**](#Using-Docker)
-        3. [**Older versions**](#Older-versions)
-        4. [**Using Horusec-Web application**](#Using-Horusec-Web-application)
-        5. [**Using Visual Studio Code**](#Using-Visual-Studio-Code)
-        6. [**Using the Pipeline**](#Using-the-Pipeline)
-4. [**Contributing**](#Contributing)
-5. [**Roadmap**](#Community)
-6. [**License**](#License)
-7. [**Community**](#Community)
+### 1. [**About**](#About)
+### 2. [**Getting started**](#Getting-started)
+>#### i.   [**Requirements**](#Requirements)
+>#### ii.  [**Installation**](#Installation)
+>#### iii. [**Usage**](#Usage)
+        >##### [**CLI Usage**](#CLI-Usage)
+        >##### [**Using Docker**](#Using-Docker)
+        >##### [**Older versions**](#Older-versions)
+        >##### [**Using Horusec-Web application**](#Using-Horusec-Web-application)
+        >##### [**Using Visual Studio Code**](#Using-Visual-Studio-Code)
+        >##### [**Using the Pipeline**](#Using-the-Pipeline)
+### 3. [**Documentation**](#Documentation)       
+### 4. [**Roadmap**](#Roadmap)
+### 5. [**Contributing**](#Contributing)
+### 6. [**License**](#License)
+### 7. [**Community**](#Community)
 
 
 
@@ -48,7 +49,7 @@
 <br>
 <br>
 
-# **What is Horusec?**
+# **About**
 Horusec is an open source tool that performs a static code analysis to identify security flaws during the development process. Currently, the languages for analysis are C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. 
 The tool has options to search for key leaks and security flaws in all your project's files, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. 
 
@@ -168,39 +169,8 @@ See below:
 - Search for their historical git by secrets and other contents exposed;
 - Your analysis can be fully configurable, [**see all CLI available resources**](https://horusec.io/docs/cli/resources/#3-flags).
 
-
-## **Contributing**
-
-Feel free to use, recommend improvements, or contribute to new implementations.
-
-Check out our [**contributing guide**](CONTRIBUTING.md) to learn about our development process, how to suggest bugfixes and improvements. 
-
-### **Developer Certificate of Origin - DCO**
-
- This is a security layer for the project and for the developers. It is mandatory.
- 
- There are two ways to use DCO, see them below: 
- 
-**1. Command line**
- Follow the steps: 
- **Step 1:** Check out your local git:
-
- ```
-git config --global user.name “Name”
-git config --global user.email “email@domain.com.br”
-```
-**Step 2:** When you commit, add the sigoff via `-s` flag:
-
-```
-$ git commit -s -m "This is my commit message"
-```
-**2. GitHub website**
-
-**Step 1:** When the commit changes box opens, add 
-```
-$ git commit -m “My signed commit” Signed-off-by: username <email address>
-```
-Note: For this option, your e-mail must be the same in registered in GitHub. 
+## **Documentation**
+You can find Horusec's documentation on our [**website**](https://horusec.io/docs/).
 
 ## **Roadmap**
 We have a project [**roadmap**](ROADMAP.md), you can come contribute with us!
@@ -213,6 +183,42 @@ Horusec also have other repositories, check out some of our other projects:
 - [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
 - [**Horusec Admin**](https://github.com/ZupIT/horusec-admin)
 - [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
+
+## **Contributing**
+
+Feel free to use, recommend improvements, or contribute to new implementations.
+
+Check out our [**contributing guide**](CONTRIBUTING.md) to learn about our development process, how to suggest bugfixes and improvements. 
+
+### **Developer Certificate of Origin - DCO**
+
+ This is a security layer for the project and for the developers. It is mandatory.
+ 
+Follow one of these two methods to add DCO to your commits:
+ 
+**1. Command line**
+ Follow the steps: 
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
+
+ ```
+git config --global user.name “Name”
+git config --global user.email “email@domain.com.br”
+```
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
+```
+$ git commit -s -m "This is my commit message"
+```
+**2. GitHub website**
+
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
+```
+Signed-off-by: Name < e-mail address >
+```
+
+For this method, your name and e-mail must be the same registered to your GitHub account.
 
 ## **License**
  [**Apache License 2.0**](LICENSE).
