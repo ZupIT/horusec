@@ -15,9 +15,12 @@
 package cli
 
 import (
+	"errors"
+	"os"
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 
 	"github.com/stretchr/testify/assert"
 
@@ -129,23 +132,32 @@ func TestValidateConfigs(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error because not exists path in workdir", func(t *testing.T) {
-		cfg := &config.Config{}
-		cfg.WorkDir = &workdir.WorkDir{
-			Go:         []string{"NOT EXISTS PATH"},
-			CSharp:     []string{},
-			Ruby:       []string{},
-			Python:     []string{},
-			Java:       []string{},
-			Kotlin:     []string{},
-			JavaScript: []string{},
-			Leaks:      []string{},
-			HCL:        []string{},
+		cfg := &config.Config{
+			StartOptions: config.StartOptions{
+				WorkDir: &workdir.WorkDir{
+					Go:         []string{"NOT EXISTS PATH"},
+					CSharp:     []string{},
+					Ruby:       []string{},
+					Python:     []string{},
+					Java:       []string{},
+					Kotlin:     []string{},
+					JavaScript: []string{},
+					Leaks:      []string{},
+					HCL:        []string{},
+				},
+			},
 		}
 
 		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "work_dir: stat ")
-		assert.Contains(t, err.Error(), "internal/usecases/cli/NOT EXISTS PATH: no such file or directory.")
+
+		var vErrors validation.Errors
+		assert.True(t, errors.As(err, &vErrors), "Expected that error should be validiation.Errors")
+
+		workDirErr, exists := vErrors["work_dir"]
+		assert.True(t, exists, "Expected error from work dir config")
+
+		assert.ErrorIs(t, workDirErr, os.ErrNotExist)
 	})
 	t.Run("Should return error because cert path is not valid", func(t *testing.T) {
 		cfg := config.New()

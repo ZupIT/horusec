@@ -17,9 +17,11 @@ package scs
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
@@ -31,26 +33,26 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
 )
 
-func createSlnFile() error {
-	path, _ := os.Getwd()
+func createSlnFile(t *testing.T) {
+	wd, _ := os.Getwd()
 
-	if err := os.MkdirAll(path+"/.horusec/00000000-0000-0000-0000-000000000000", 0755); err != nil {
-		return err
-	}
+	dir := filepath.Join(wd, ".horusec", "00000000-0000-0000-0000-000000000000")
+	err := os.MkdirAll(dir, 0755)
+	require.Nil(t, err, "Expected nil error to create sln directory: %v", err)
 
-	_, err := os.Create(path + "/.horusec/00000000-0000-0000-0000-000000000000/test.sln")
-	return err
-}
+	f, err := os.Create(filepath.Join(dir, "test.sln"))
+	require.Nil(t, err, "Expected nil error to create sln file: %v", err)
 
-func removeSlnFile() error {
-	path, _ := os.Getwd()
+	t.Cleanup(func() {
+		assert.NoError(t, f.Close(), "Expected nil error to close sln file")
+		assert.NoError(t, os.RemoveAll(dir), "Expected nil error to remove sln directory")
+	})
 
-	return os.RemoveAll(path + "/.horusec")
 }
 
 func TestParseOutput(t *testing.T) {
 	t.Run("should return 4 vulnerabilities with no errors", func(t *testing.T) {
-		assert.NoError(t, createSlnFile())
+		createSlnFile(t)
 
 		dockerAPIControllerMock := &docker.Mock{}
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -104,11 +106,10 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
 
-		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should return error when unmarshalling output", func(t *testing.T) {
-		assert.NoError(t, createSlnFile())
+		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
@@ -126,11 +127,10 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
 
-		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should return build error", func(t *testing.T) {
-		assert.NoError(t, createSlnFile())
+		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
@@ -148,7 +148,6 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
 
-		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should return error not found solution file", func(t *testing.T) {
@@ -168,7 +167,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should return error executing container", func(t *testing.T) {
-		assert.NoError(t, createSlnFile())
+		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
@@ -184,8 +183,6 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
-
-		assert.NoError(t, removeSlnFile())
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {

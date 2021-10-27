@@ -20,6 +20,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
@@ -451,7 +452,7 @@ func TestConfig_Bytes(t *testing.T) {
   "cert_path": "cert-path",
   "repository_name": "my-project",
   "print_output_type": "sonarqube",
-  "json_output_file_path": "/tmp/output-sonarqube.json",
+  "json_output_file_path": "` + filepath.Join(os.TempDir(), "output-sonarqube.json") + `",
   "project_path": "./horusec-manager",
   "custom_rules_path": "test",
   "container_bind_project_path": "./my-path",
@@ -591,6 +592,8 @@ func TestConfig_Bytes(t *testing.T) {
   },
   "version": "{{VERSION_NOT_FOUND}}"
 }`
+		// Add scape slashes when running on Windows.
+		expectedOutput = strings.ReplaceAll(expectedOutput, `\`, `\\`)
 		assert.Equal(t, expectedOutput, string(cfg.Bytes()))
 	})
 	t.Run("Should have the predefined schema", func(t *testing.T) {

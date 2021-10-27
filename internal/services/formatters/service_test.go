@@ -17,6 +17,7 @@ package formatters
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -166,15 +167,18 @@ func TestGetCommitAuthor(t *testing.T) {
 
 func TestGetConfigProjectPath(t *testing.T) {
 	t.Run("should success get project path", func(t *testing.T) {
-		cliConfig := &config.Config{}
-		cliConfig.ProjectPath = "test"
+		cliConfig := &config.Config{
+			StartOptions: config.StartOptions{
+				ProjectPath: "test",
+			},
+		}
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
+		svc := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
 
-		result := monitorController.GetConfigProjectPath()
+		result := svc.GetConfigProjectPath()
 
 		assert.NotEmpty(t, result)
-		assert.Equal(t, "test/.horusec/00000000-0000-0000-0000-000000000000", result)
+		assert.Equal(t, filepath.Join("test", ".horusec", "00000000-0000-0000-0000-000000000000"), result)
 	})
 }
 
