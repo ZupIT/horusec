@@ -69,7 +69,7 @@ func (r *RequirementGit) validateIfGitIsSupported(version string) error {
 func (r *RequirementGit) execGitVersion() (string, error) {
 	responseBytes, err := exec.Command("git", "--version").CombinedOutput()
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirements, err)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirementsGit, err)
 		return "", err
 	}
 	return strings.ToLower(string(responseBytes)), nil

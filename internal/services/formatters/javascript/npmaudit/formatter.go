@@ -173,5 +173,5 @@ func (f *Formatter) getLine(version, module string, scanner *bufio.Scanner) stri
 }
 
 func (f *Formatter) isModuleInScannerText(module, scannerText string) bool {
-	return strings.Contains(strings.ToLower(scannerText), strings.ToLower(fmt.Sprintf(`%q: {`, module)))
+	return strings.Contains(strings.ToLower(scannerText), strings.ToLower(fmt.Sprintf("%q: {", module)))
 }

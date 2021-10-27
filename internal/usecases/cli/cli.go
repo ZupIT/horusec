@@ -96,7 +96,7 @@ func (au *UseCases) checkIfExistsDuplicatedRiskAcceptHashes(cfg *config.Config) 
 			for _, falsePositive := range cfg.FalsePositiveHashes {
 				falsePositive = strings.TrimSpace(falsePositive)
 				if riskAccept == falsePositive {
-					return errors.New(messages.MsgErrorRiskAcceptNotValid + riskAccept)
+					return fmt.Errorf("%s %s", messages.MsgErrorRiskAcceptNotValid, riskAccept)
 				}
 			}
 		}
@@ -125,10 +125,14 @@ func (au *UseCases) validateTextOutputFilePath(cfg *config.Config) error {
 
 func (au *UseCases) validateFilePathAndExtension(cfg *config.Config, extension string) error {
 	if filepath.Ext(cfg.JSONOutputFilePath) != extension {
-		return fmt.Errorf("%snot valid file of type %s", messages.MsgErrorJSONOutputFilePathNotValid, extension)
+		return fmt.Errorf("%s %s", messages.MsgErrorJSONOutputFilePathNotValidExtension, extension)
 	}
-	if output, err := filepath.Abs(cfg.JSONOutputFilePath); err != nil || output == "" {
-		return errors.New(messages.MsgErrorJSONOutputFilePathNotValid + err.Error())
+	output, err := filepath.Abs(cfg.JSONOutputFilePath)
+	if err != nil {
+		return fmt.Errorf("%s %s", messages.MsgErrorJSONOutputFilePathNotValidUnknown, err.Error())
+	}
+	if output == "" {
+		return fmt.Errorf("%s file is empty", messages.MsgErrorJSONOutputFilePathNotValidUnknown)
 	}
 	return nil
 }
@@ -146,8 +150,8 @@ func (au *UseCases) validationSeverities(cfg *config.Config) validation.RuleFunc
 		for idx := range cfg.SeveritiesToIgnore {
 			cfg.SeveritiesToIgnore[idx] = strings.TrimSpace(cfg.SeveritiesToIgnore[idx])
 			if !au.checkIfExistItemInSliceOfSeverity(cfg.SeveritiesToIgnore[idx]) {
-				return fmt.Errorf("%s %s. See severities enable: %v",
-					messages.MsgErrorSeverityNotValid, cfg.SeveritiesToIgnore[idx], au.sliceSeverityEnable())
+				return fmt.Errorf("%s %s %v",
+					cfg.SeveritiesToIgnore[idx], messages.MsgErrorSeverityNotValid, au.sliceSeverityEnable())
 			}
 		}
 		return nil
@@ -196,7 +200,7 @@ func (au *UseCases) validateCertPath(dir string) validation.RuleFunc {
 func (au *UseCases) validateWorkDir(workDir *workdir.WorkDir, projectPath string) validation.RuleFunc {
 	return func(value interface{}) error {
 		if workDir == nil {
-			return errors.New(messages.MsgErrorParseStringToWorkDir)
+			return errors.New(messages.MsgErrorInvalidWorkDir)
 		}
 		for _, pathsByLanguage := range workDir.LanguagePaths() {
 			for _, projectSubPath := range pathsByLanguage {

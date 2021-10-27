@@ -158,4 +158,19 @@ func TestParseOutputNpm(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, 0, len(analysis.AnalysisVulnerabilities))
 	})
+	t.Run("Check if get version contains double quote using %q", func(t *testing.T) {
+		analysis := &entitiesAnalysis.Analysis{}
+		dockerAPIControllerMock := &docker.Mock{}
+		config := &cliConfig.Config{}
+		config.WorkDir = &workdir.WorkDir{}
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+
+		formatter := Formatter{
+			service,
+		}
+
+		extractedVersion := formatter.getVersionText("v1.0.0")
+
+		assert.Equal(t, `"version": "v1.0.0"`, extractedVersion)
+	})
 }
