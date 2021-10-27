@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-1",
 			Rule: NewNoLogSensitiveInformationInConsole(),
-			Src:  SampleVulnerableJavaScriptLogSensitiveInformation,
+			Src:  SampleVulnerableHSJAVASCRIPT1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `console.log("user email: ", email)`,
@@ -47,7 +47,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-2",
 			Rule: NewNoUseEval(),
-			Src:  SampleVulnerableJavaScriptUseEval,
+			Src:  SampleVulnerableHSJAVASCRIPT2,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `eval("bash -c" + req.body);`,
@@ -61,7 +61,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-3",
 			Rule: NewNoDisableTlsRejectUnauthorized(),
-			Src:  SampleVulnerableJavaScriptDisableTlsRejectUnauthorized,
+			Src:  SampleVulnerableHSJAVASCRIPT3,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";`,
@@ -75,7 +75,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-4",
 			Rule: NewNoUseMD5Hashing(),
-			Src:  SampleVulnerableJavaScriptNoUseMD5Hashing,
+			Src:  SampleVulnerableHSJAVASCRIPT4,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `const hash = crypto.createHash('md5')`,
@@ -89,7 +89,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-5",
 			Rule: NewNoUseSHA1Hashing(),
-			Src:  SampleVulnerableJavaScriptNoUseSHA1Hashing,
+			Src:  SampleVulnerableHSJAVASCRIPT5,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `const hash = crypto.createHash('sha1')`,
@@ -103,7 +103,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-6",
 			Rule: NewNoUseWeakRandom(),
-			Src:  SampleVulnerableJavaScriptNoUseWeakRandom,
+			Src:  SampleVulnerableHSJAVASCRIPT6,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `return Math.random();`,
@@ -117,7 +117,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-7",
 			Rule: NewNoReadFileUsingDataFromRequest(),
-			Src:  SampleVulnerableJavaScriptNoReadFileUsingDataFromRequest,
+			Src:  SampleVulnerableHSJAVASCRIPT7,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `return fs.readFileSync(req.body, 'utf8')`,
@@ -131,7 +131,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-8",
 			Rule: NewNoCreateReadStreamUsingDataFromRequest(),
-			Src:  SampleVulnerableJavaScriptNoCreateReadStreamUsingDataFromRequest,
+			Src:  SampleVulnerableHSJAVASCRIPT8,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `return fs.createReadStream(req.body)`,
@@ -152,7 +152,7 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-JAVASCRIPT-2",
 			Rule: NewNoUseEval(),
-			Src:  SampleSafeJavaScriptUseEval,
+			Src:  SampleSafeHSJAVASCRIPT2,
 		},
 	}
 

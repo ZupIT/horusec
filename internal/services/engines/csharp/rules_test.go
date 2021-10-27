@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-CSHARP-1",
 			Rule: NewCommandInjection(),
-			Src:  SampleVulnerableCsharpNewCommandInjection,
+			Src:  SampleVulnerableHSCSHARP1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var p = new Process();",

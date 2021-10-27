@@ -30,6 +30,7 @@ func TestVulnerableCode(t *testing.T, testcases []*RuleTestCase) {
 		t.Run(tt.Name, func(t *testing.T) {
 			findings := executeRule(t, tt)
 			assert.Len(t, findings, len(tt.Findings), "Expected equal issues on vulnerable code")
+			assert.Equal(t, tt.Name, tt.Rule.ID, "Test case rule name is not match with rule id")
 			assertExpectedFindingAndRuleCase(t, findings, tt)
 		})
 	}
@@ -53,6 +54,7 @@ func TestSafeCode(t *testing.T, testcases []*RuleTestCase) {
 		t.Run(tt.Name, func(t *testing.T) {
 			Findings := executeRule(t, tt)
 			assert.Empty(t, Findings, "Expected not issues on safe code to Rule %s", tt.Name)
+			assert.Equal(t, tt.Name, tt.Rule.ID)
 		})
 	}
 }

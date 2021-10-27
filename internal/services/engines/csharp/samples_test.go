@@ -15,7 +15,7 @@
 package csharp
 
 const (
-	SampleVulnerableCsharpNewCommandInjection = `var p = new Process();
+	SampleVulnerableHSCSHARP1 = `var p = new Process();
 p.StartInfo.FileName = "exportLegacy.exe";
 p.StartInfo.Arguments = " -user " + input + " -role user";
 p.Start();`

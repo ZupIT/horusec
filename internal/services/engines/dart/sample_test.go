@@ -15,9 +15,9 @@
 package dart
 
 const (
-	SampleVulnerableDartSendSMS = `import 'package:flutter_sms/flutter_sms.dart';
+	SampleVulnerableHSDART6 = `import 'package:flutter_sms/flutter_sms.dart';
 `
-	SampleVulnerableUsageLocalDataWithoutCryptography = `
+	SampleVulnerableHSDART1 = `
 ...
 final CpfExposedFromUserInput = "";
 ...
@@ -35,7 +35,7 @@ void onButtonClick() async {
 }
 ...
 `
-	SampleVulnerableNoSendSensitiveInformation = `
+	SampleVulnerableHSDART2 = `
 ...
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   
@@ -61,7 +61,7 @@ void onButtonClick() async {
   }
 ...
 `
-	SampleVulnerableNoUseBiometricsTypeIOS = `
+	SampleVulnerableHSDART3 = `
 List<BiometricType> availableBiometrics;
     await auth.getAvailableBiometrics();
 
@@ -73,12 +73,12 @@ if (Platform.isIOS) {
     }
 }
 `
-	SampleVulnerableXmlReaderExternalEntityExpansion = `
+	SampleVulnerableHSDART4 = `
 // Possible vulnerable code: user can pass other path in your input and causes attacks in the application.
 final file = new File(FileFromUserInput);
 final document = XmlDocument.parse(file.readAsStringSync());
 `
-	SampleVulnerableNoUseConnectionWithoutSSL = `
+	SampleVulnerableHSDART5 = `
 ...
 static Future<HttpServer> SentToApi(
 	int port,
@@ -92,7 +92,7 @@ static Future<HttpServer> SentToApi(
     return _HttpServer.bindSecure('http://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
 }
 `
-	SampleVulnerableXSSAttack = `
+	SampleVulnerableHSDART7 = `
 import 'package:sprintf/sprintf.dart';
 import 'dart:html';
 ...
@@ -103,7 +103,7 @@ void RenderHTML(String content) {
 	document.body.append(element);
 }
 `
-	SampleVulnerableNoLogSensitive = `
+	SampleVulnerableHSDART8 = `
 import 'package:sprintf/sprintf.dart';
 import 'package:logging/logging.dart';
 ...
@@ -117,7 +117,7 @@ void ShowUserSensitiveInformation(String identity) {
 	sentToAPIUserIdentity(identity);
 }
 `
-	SampleVulnerableWeakHashingFunctionMd5OrSha1 = `
+	SampleVulnerableHSDART9 = `
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' as crypto;
@@ -131,7 +131,7 @@ generateMd5(String data) {
   return hex.encode(digest.bytes);
 }
 `
-	SampleVulnerableNoUseSelfSignedCertificate = `
+	SampleVulnerableHSDART10 = `
 final SecurityContext context = SecurityContext(withTrustedRoots: false);
 // Possible vulnerable code: This code is bad because if you can exposed for MITM attacks
 context.setTrustedCertificates("client.cer");
@@ -139,7 +139,7 @@ Socket socket = await Socket.connect(serverIp, port);
 socket = await SecureSocket.secure(socket, host: "server"
   , context: context, onBadCertificate: (cert) => true);
 `
-	SampleVulnerableNoUseBiometricsTypeAndroid = `
+	SampleVulnerableHSDART11 = `
 try {
 // Possible vulnerable code: This code is bad because your authentication can be passed easy form when exists only 1 method to authenticate
   authenticated = await auth.authenticateWithBiometrics(
@@ -151,7 +151,7 @@ try {
   print("error using biometric auth: $e");
 }
 `
-	SampleVulnerableNoListClipboardChanges = `
+	SampleVulnerableHSDART12 = `
 _getFromClipboard() async {
 	// Possible vulnerable code: Is not good idea read content from clipboard.
 	Map<String, dynamic> result = await SystemChannels.platform.invokeMethod('Clipboard.getData');
@@ -173,7 +173,7 @@ void sendToAPIToKeepChangesInDatabase() {
 	}
 }
 `
-	SampleVulnerableSQLInjection = `
+	SampleVulnerableHSDART13 = `
 Database database = await openDatabase(path, version: 1,
     onCreate: (Database db, int version) async {
   await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
@@ -189,15 +189,15 @@ getCheckIfUserExists(String username) {
 	}
 }
 `
-	SampleVulnerableNoUseNSTemporaryDirectory = `
+	SampleVulnerableHSDART14 = `
 // Possible vulnerable code: If You get NSTemporaryDirectory you can get anywhere content from this directory
 let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);
 `
-	SampleVulnerableNoUseCipherMode = `
+	SampleVulnerableHSDART15 = `
 // Possible vulnerable code: This code is bad because this type cryptography is easy of to be broken.
 final encrypter = Encrypter(AES(key, mode: AESMode.cts));
 `
-	SampleVulnerableCorsAllowOriginWildCard = `
+	SampleVulnerableHSDART16 = `
 HttpServer.bind('127.0.0.1', 8080).then((server){
 	server.listen((HttpRequest request){     
 		request.uri.queryParameters.forEach((param,val){
@@ -214,7 +214,7 @@ HttpServer.bind('127.0.0.1', 8080).then((server){
     });
 });
 `
-	SampleVulnerableUsingShellInterpreterWhenExecutingOSCommand = `
+	SampleVulnerableHSDART17 = `
 getIPFromLoggedUser (List<String> UserParams) async {
 	// Possible vulnerable code: User can be inject malicious code and run others commands after this command 
 	var result = await Process.run("netcfg", [UserParams]);
@@ -224,7 +224,7 @@ getIPFromLoggedUser (List<String> UserParams) async {
 )
 
 const (
-	SampleSafeUsageLocalDataWithoutCryptography = `
+	SampleSafeHSDART1 = `
 ...
 final CpfExposedFromUserInput = "";
 ...
@@ -239,7 +239,7 @@ void onButtonClick() async {
 }
 ...
 `
-	SampleSafeNoSendSensitiveInformation = `
+	SampleSafeHSDART2 = `
 ...
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   
@@ -257,12 +257,12 @@ void onButtonClick() async {
   }
 ...
 `
-	SampleSafeXmlReaderExternalEntityExpansion = `
+	SampleSafeHSDART4 = `
 final file = new File('static-file.xml');
 final document = XmlDocument.parse(file.readAsStringSync());
 `
 
-	SampleSafeNoUseConnectionWithoutSSL = `
+	SampleSafeHSDART5 = `
 static Future<HttpServer> SentToApi(
 	int port,
 	SecurityContext context,
@@ -272,7 +272,7 @@ static Future<HttpServer> SentToApi(
 	bool shared = false}
 ) => _HttpServer.bindSecure('https://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
 `
-	SampleSafeXSSAttack = `
+	SampleSafeHSDART7 = `
 import 'package:sprintf/sprintf.dart';
 import 'dart:html';
 ...
@@ -283,7 +283,7 @@ void RenderHTML(String content) {
 	document.body.append(element);
 }
 `
-	SampleSafeNoLogSensitive = `
+	SampleSafeHSDART8 = `
 import 'package:logging/logging.dart';
 ...
 final _logger = Logger('YourClassName');
@@ -295,7 +295,7 @@ void ShowUserSensitiveInformation(String identity) {
 }
 ...
 `
-	SampleSafeWeakHashingFunctionMd5OrSha1 = `
+	SampleSafeHSDART9 = `
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' as crypto;
@@ -308,13 +308,13 @@ generateSha256(String data) {
   return hex.encode(digest.bytes);
 }
 `
-	SampleSafeNoUseSelfSignedCertificate = `
+	SampleSafeHSDART10 = `
 final SecurityContext context = SecurityContext(withTrustedRoots: false);
 Socket socket = await Socket.connect(serverIp, port);
 socket = await SecureSocket.secure(socket, host: "server"
   , context: context, onBadCertificate: (cert) => true);
 `
-	SampleSafeNoUseBiometricsTypeAndroid = `
+	SampleSafeHSDART11 = `
 try {
   authenticated = await auth.CheckTwoFactorAuthenticationAndAuthenticateWithBiometrics(
 	  localizedReason: 'Touch your finger on the sensor to login',
@@ -325,7 +325,7 @@ try {
   print("error using biometric auth: $e");
 }
 `
-	SampleSafeNoListClipboardChanges = `
+	SampleSafeHSDART12 = `
 _getFromClipboard() async {
 	var cp = Clipboard
 	Map<String, dynamic> result = await cp.getData;
@@ -347,7 +347,7 @@ void sendToAPIToKeepChangesInDatabase() {
 	}
 }
 `
-	SampleSafeSQLInjection = `
+	SampleSafeHSDART13 = `
 Database database = await openDatabase(path, version: 1,
     onCreate: (Database db, int version) async {
   await db.execute('CREATE TABLE Users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);');
@@ -362,13 +362,13 @@ getCheckIfUserExists(String username) {
 	}
 }
 `
-	SampleSafeNoUseNSTemporaryDirectory = `
+	SampleSafeHSDART14 = `
 let temporaryDirectoryURL = URL(fileURLWithPath: "Some/Other/Path", isDirectory: true)
 `
-	SampleSafeNoUseCipherMode = `
+	SampleSafeHSDART15 = `
 final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
 `
-	SampleSafeCorsAllowOriginWildCard = `
+	SampleSafeHSDART16 = `
 HttpServer.bind('127.0.0.1', 8080).then((server){
 	server.listen((HttpRequest request){     
 		request.uri.queryParameters.forEach((param,val){
@@ -384,7 +384,7 @@ HttpServer.bind('127.0.0.1', 8080).then((server){
     });
 });
 `
-	SampleSafeUsingShellInterpreterWhenExecutingOSCommand = `
+	SampleSafeHSDART17 = `
 // You can get IP using library or interact with your backend application
 var getIPFromLoggedUser => await MyIpPost()
 `

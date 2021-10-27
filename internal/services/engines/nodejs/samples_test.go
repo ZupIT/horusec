@@ -15,43 +15,53 @@
 package nodejs
 
 const (
-	SampleSafeJavaScriptUseEval = `
-function f() {
-	eval("echo foo");
-}
-	`
+	SampleVulnerableHSJAVASCRIPT1 = `
+console.log("user email: ", email)
+console.debug("user password: ", pwd)
+`
 
-	SampleVulnerableJavaScriptDisableTlsRejectUnauthorized = `
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-	`
-	SampleVulnerableJavaScriptUseEval = `
+	SampleVulnerableHSJAVASCRIPT2 = `
 function f(req) {
 	eval("bash -c" + req.body);
 }
-	`
-	SampleVulnerableJavaScriptLogSensitiveInformation = `
-console.log("user email: ", email) 
-console.debug("user password: ", pwd) 
-	`
-	SampleVulnerableJavaScriptNoUseMD5Hashing = `
+`
+
+	SampleVulnerableHSJAVASCRIPT3 = `
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+`
+
+	SampleVulnerableHSJAVASCRIPT4 = `
 const hash = crypto.createHash('md5')
-	`
-	SampleVulnerableJavaScriptNoUseSHA1Hashing = `
+`
+
+	SampleVulnerableHSJAVASCRIPT5 = `
 const hash = crypto.createHash('sha1')
-	`
-	SampleVulnerableJavaScriptNoUseWeakRandom = `
+`
+
+	SampleVulnerableHSJAVASCRIPT6 = `
 function f() {
 	return Math.random();
 }
-	`
-	SampleVulnerableJavaScriptNoReadFileUsingDataFromRequest = `
+`
+
+	SampleVulnerableHSJAVASCRIPT7 = `
 function f(req) {
 	return fs.readFileSync(req.body, 'utf8')
 }
-	`
-	SampleVulnerableJavaScriptNoCreateReadStreamUsingDataFromRequest = `
+`
+
+	SampleVulnerableHSJAVASCRIPT8 = `
 function f(req) {
 	return fs.createReadStream(req.body)
 }
-	`
+`
+
+)
+
+const (
+	SampleSafeHSJAVASCRIPT2 = `
+function f() {
+	eval("echo foo");
+}
+`
 )

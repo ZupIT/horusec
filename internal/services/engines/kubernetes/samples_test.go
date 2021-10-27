@@ -15,7 +15,7 @@
 package kubernetes
 
 const (
-	SampleVulnerableAllowPrivilegeEscalation = `apiVersion: v1
+	SampleVulnerableHSKUBERNETES1 = `apiVersion: v1
 kind: Pod
 metadata:
   name: security-context-demo
@@ -35,7 +35,8 @@ spec:
     volumeMounts:
     - name: sec-ctx-vol
       mountPath: /data/demo`
-	SampleSafeAllowPrivilegeEscalation = `apiVersion: v1
+
+	SampleSafeHSKUBERNETES1 = `apiVersion: v1
 kind: Pod
 metadata:
   name: security-context-demo
