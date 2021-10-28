@@ -101,7 +101,7 @@ func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability
 	data.Line = result.GetLine()
 	data.Column = result.GetColumn()
 	data.File = result.GetFile()
-	data.Code = fileUtils.GetCode(f.GetConfigProjectPath(), result.GetFile(), result.GetLine())
+	data.Code, _ = fileUtils.GetCode(f.GetConfigProjectPath(), result.GetFile(), result.GetLine())
 	data = vulnHash.Bind(data)
 	return f.SetCommitAuthor(data)
 }
@@ -119,8 +119,11 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 			f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt), tools.SecurityCodeScan),
 		Language: languages.CSharp,
 	}
-
-	analysisData.SetSlnName(fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt))
+	filename, err := fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt)
+	if err != nil {
+		logger.LogError(messages.MsgErrorGetFilenameByExt, err)
+	}
+	analysisData.SetSlnName(filename)
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 

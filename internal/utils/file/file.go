@@ -140,8 +140,9 @@ func formatExtPath(projectPath, walkPath string) string {
 // on projectPath. subPath is used with projectPath if not empty.
 //
 // nolint: funlen
-func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
+func GetFilenameByExt(projectPath, subPath, ext string) (string, error) {
 	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	filename := ""
 	err := filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -161,27 +162,29 @@ func GetFilenameByExt(projectPath, subPath, ext string) (filename string) {
 			"subPath":     subPath,
 			"ext":         ext,
 		})
-		return ""
+		return "", err
 	}
 
-	return filename
+	return filename, nil
 }
 
 // GetCode return code to a given line of filename inside projectPath.
-func GetCode(projectPath, filename, line string) string {
+func GetCode(projectPath, filename, line string) (string, error) {
 	path := filepath.Join(projectPath, filename)
 
-	file, err := os.Open(path)
+	file, err := os.Open(filepath.Clean(path))
 	if err != nil {
 		logger.LogError("Error to open file to get code sample", err, map[string]interface{}{
 			"projectPath": projectPath,
 			"filename":    filename,
 			"line":        line,
 		})
-		return ""
+		return "", err
 	}
-
-	return strings.TrimSpace(getCodeFromDesiredLine(file, getLine(line)))
+	defer func() {
+		_ = file.Close()
+	}()
+	return strings.TrimSpace(getCodeFromDesiredLine(file, getLine(line))), nil
 }
 
 func getLine(desiredLine string) int {
@@ -239,7 +242,7 @@ func getDependencyInfo(paths []string, dependency string) (string, string, strin
 	var line int
 
 	for _, path := range paths {
-		file, err := os.Open(path)
+		file, err := os.Open(filepath.Clean(path))
 		if err != nil {
 			return "", "", ""
 		}
@@ -257,17 +260,18 @@ func getDependencyInfo(paths []string, dependency string) (string, string, strin
 	return "", "", ""
 }
 
-func CreateAndWriteFile(output, filename string) error {
+func CreateAndWriteFile(input, filename string) error {
 	path, err := filepath.Abs(filename)
 	if err != nil {
 		return err
 	}
-
 	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
-
-	_, err = file.WriteString(output)
+	defer func() {
+		_ = file.Close()
+	}()
+	_, err = file.WriteString(input)
 	return err
 }

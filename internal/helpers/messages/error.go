@@ -38,6 +38,7 @@ const (
 	MsgErrorYarnProcess     = "{HORUSEC_CLI} Error Yarn returned an error: "
 	MsgErrorGemLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
+	MsgErrorGetFilenameByExt = "Could not get filename by extension: "
 )
 
 // Block of messages usage into log of the level error

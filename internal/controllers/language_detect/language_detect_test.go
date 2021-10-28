@@ -17,13 +17,14 @@ package languagedetect
 import (
 	"bytes"
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/enums/toignore"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/internal/enums/toignore"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 
 	"github.com/google/uuid"
 
@@ -47,6 +48,14 @@ func TestMain(m *testing.M) {
 }
 
 func TestNewLanguageDetect(t *testing.T) {
+	t.Cleanup(func() {
+		err := os.RemoveAll(filepath.Join(testutil.ExamplesPath, ".horusec"))
+		assert.NoError(t, err)
+		for _, path := range testutil.GetAllExamples1Dir() {
+			err = os.RemoveAll(filepath.Join(path, ".horusec"))
+			assert.NoError(t, err)
+		}
+	})
 	t.Run("Should return error when the folder not exists", func(t *testing.T) {
 		controller := NewLanguageDetect(&config.Config{}, uuid.New())
 
