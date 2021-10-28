@@ -13,7 +13,13 @@
 # limitations under the License.
 
 name: Coverage
-on: [ "pull_request" ]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 permissions: read-all
 jobs:
   coverage:
