@@ -16,13 +16,14 @@ package generate_test
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -46,9 +47,9 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 
 	BeforeEach(func() {
 		flags = map[string]string{
-			"--config-file-path": configFilePath,
+			testutil.GlobalFlagConfigFilePath: configFilePath,
 		}
-		cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.GenerateCmd, flags)
+		cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.CmdGenerate, flags)
 		session, err = gexec.Start(cmd, outBuffer, errBuffer)
 	})
 

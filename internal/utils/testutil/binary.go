@@ -24,27 +24,15 @@ import (
 	"github.com/onsi/ginkgo"
 )
 
-type HorusecCmd string
-
-func (h HorusecCmd) String() string {
-	return string(h)
-}
-
-const (
-	VersionCmd  HorusecCmd = "version"
-	StartCmd    HorusecCmd = "start"
-	GenerateCmd HorusecCmd = "generate"
-)
-
-func GinkgoGetHorusecCmd(horusecCmd HorusecCmd) *exec.Cmd {
+func GinkgoGetHorusecCmd(horusecCmd string) *exec.Cmd {
 	bin := ginkgoBuildHorusecBinary()
-	args := setLogLevelArgsToHorusecCmd(horusecCmd.String())
+	args := setLogLevelArgsToHorusecCmd(horusecCmd)
 	return exec.Command(bin, args...)
 }
 
-func GinkgoGetHorusecCmdWithFlags(cmdArg HorusecCmd, flags map[string]string) *exec.Cmd {
+func GinkgoGetHorusecCmdWithFlags(cmdArg string, flags map[string]string) *exec.Cmd {
 	bin := ginkgoBuildHorusecBinary()
-	args := setLogLevelArgsToHorusecCmd(cmdArg.String())
+	args := setLogLevelArgsToHorusecCmd(cmdArg)
 	for flag, value := range flags {
 		args = append(args, fmt.Sprintf("%s=%s", flag, value))
 	}

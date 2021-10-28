@@ -18,8 +18,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestGetFilePathIntoBasePath(t *testing.T) {
