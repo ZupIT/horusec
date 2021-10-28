@@ -187,7 +187,9 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(config.EnvEnableShellCheck, "true"))
 		assert.NoError(t, os.Setenv(config.EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(config.EnvEnableInformationSeverity, "true"))
-		assert.NoError(t, os.Setenv(config.EnvLogFilePath, "test"))
+		assert.NoError(t, os.Setenv(
+			config.EnvLogFilePath, filepath.Join(os.TempDir(), "test.log")),
+		)
 		configs.LoadFromEnvironmentVariables()
 
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
