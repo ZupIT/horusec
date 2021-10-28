@@ -34,7 +34,7 @@ func Rules() []engine.Rule {
 		NewNoUseEval(),
 		NewNoDisableTlsRejectUnauthorized(),
 		NewNoUseMD5Hashing(),
-		NewNoUseSAH1Hashing(),
+		NewNoUseSHA1Hashing(),
 		NewNoReadFileUsingDataFromRequest(),
 		NewNoCreateReadStreamUsingDataFromRequest(),
 		NewSQLInjectionUsingParams(),

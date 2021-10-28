@@ -87,7 +87,7 @@ func NewNoUseMD5Hashing() text.TextRule {
 	}
 }
 
-func NewNoUseSAH1Hashing() text.TextRule {
+func NewNoUseSHA1Hashing() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-5",
