@@ -67,7 +67,7 @@ func TestGetRules(t *testing.T) {
 		{
 			engine:             "Java",
 			manager:            java.NewRules(),
-			expectedTotalRules: 183,
+			expectedTotalRules: 180,
 		},
 		{
 			engine:             "Dart",

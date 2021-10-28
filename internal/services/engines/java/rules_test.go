@@ -207,6 +207,118 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
+			Name: "HS-JAVA-18",
+			Rule: NewWebViewLoadFilesFromExternalStorage(),
+			Src:  SampleVulnerableHSJAVA18,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "WebView.loadUrl(\"file://\"+Environment.getExternalStorageDirectory().getAbsolutePath()+\"dangerZone.html\");",
+					SourceLocation: engine.Location{
+						Line:   6,
+						Column: 9,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-19",
+			Rule: NewInsecureWebViewImplementation(),
+			Src:  SampleVulnerableHSJAVA19,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "webSettings.setJavaScriptEnabled(true);",
+					SourceLocation: engine.Location{
+						Line:   16,
+						Column: 14,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-22",
+			Rule: NewNoUseWebviewDebuggingEnable(),
+			Src:  SampleVulnerableHSJAVA22,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "this.setWebContentsDebuggingEnabled(true);",
+					SourceLocation: engine.Location{
+						Line:   7,
+						Column: 7,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-23",
+			Rule: NewNoListenToClipboard(),
+			Src:  SampleVulnerableHSJAVA23,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "private ClipboardManager.OnPrimaryClipChangedListener listener = new ClipboardManager.OnPrimaryClipChangedListener() {",
+					SourceLocation: engine.Location{
+						Line:   18,
+						Column: 29,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-24",
+			Rule: NewNoCopyContentToClipboard(),
+			Src:  SampleVulnerableHSJAVA24,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "clipboardManager.setPrimaryClip(clip);",
+					SourceLocation: engine.Location{
+						Line:   12,
+						Column: 29,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-25",
+			Rule: NewNoUseWebviewIgnoringSSL(),
+			Src:  SampleVulnerableHSJAVA25,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 15,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-26",
+			Rule: NewSQLInjectionWithSqlUtil(),
+			Src:  SampleVulnerableHSJAVA26,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "SqlUtil.execQuery(\"select * from UserEntity where id = \" + parameterInput);",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 4,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-28",
+			Rule: NewNoUseSSLPinningLib(),
+			Src:  SampleVulnerableHSJAVA28,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "package org.thoughtcrime.ssl.pinning;",
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 8,
+					},
+				},
+			},
+		},
+		{
 			Name: "HS-JAVA-111",
 			Rule: NewWeakHash(),
 			Src:  SampleVulnerableHSJAVA111,
@@ -272,6 +384,90 @@ func TestRulesVulnerableCode(t *testing.T) {
 					SourceLocation: engine.Location{
 						Line:   14,
 						Column: 50,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-144",
+			Rule: NewNullCipherInsecure(),
+			Src:  SampleVulnerableHSJAVA144,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "Cipher doNothingCihper = new NullCipher();",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 31,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-145",
+			Rule: NewUnsafeHashEquals(),
+			Src:  SampleVulnerableHSJAVA145,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "if(userInput.equals(actualHash)) {",
+					SourceLocation: engine.Location{
+						Line:   6,
+						Column: 14,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-146",
+			Rule: NewUnvalidatedRedirect(),
+			Src:  SampleVulnerableHSJAVA146,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "resp.sendRedirect(req.getParameter(\"url\"));",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 7,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-147",
+			Rule: NewRequestMappingMethodsNotPublic(),
+			Src:  SampleVulnerableHSJAVA147,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "@RequestMapping(\"/test\")",
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 5,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-148",
+			Rule: NewLDAPDeserializationNotDisabled(),
+			Src:  SampleVulnerableHSJAVA148,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "ctx.search(query, filter,new SearchControls(scope, countLimit, timeLimit, attributes,true, deref));",
+					SourceLocation: engine.Location{
+						Line:   6,
+						Column: 31,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-149",
+			Rule: NewDatabasesPasswordNotProtected(),
+			Src:  SampleVulnerableHSJAVA149,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "Connection conn = DriverManager.getConnection(\"jdbc:derby:memory:myDB;create=true\", \"login\", \"\");",
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 33,
 					},
 				},
 			},
@@ -374,6 +570,46 @@ func TestRulesSafeCode(t *testing.T) {
 			Src:  SampleSafeHSJAVA14,
 		},
 		{
+			Name: "HS-JAVA-18",
+			Rule: NewWebViewLoadFilesFromExternalStorage(),
+			Src:  SampleSafeHSJAVA18,
+		},
+		{
+			Name: "HS-JAVA-19",
+			Rule: NewInsecureWebViewImplementation(),
+			Src:  SampleSafeHSJAVA19,
+		},
+		{
+			Name: "HS-JAVA-22",
+			Rule: NewNoUseWebviewDebuggingEnable(),
+			Src:  SampleSafeHSJAVA22,
+		},
+		{
+			Name: "HS-JAVA-23",
+			Rule: NewNoListenToClipboard(),
+			Src:  SampleSafeHSJAVA23,
+		},
+		{
+			Name: "HS-JAVA-24",
+			Rule: NewNoCopyContentToClipboard(),
+			Src:  SampleSafeHSJAVA24,
+		},
+		{
+			Name: "HS-JAVA-25",
+			Rule: NewNoUseWebviewIgnoringSSL(),
+			Src:  SampleSafeHSJAVA25,
+		},
+		{
+			Name: "HS-JAVA-26",
+			Rule: NewSQLInjectionWithSqlUtil(),
+			Src:  SampleSafeHSJAVA26,
+		},
+		{
+			Name: "HS-JAVA-28",
+			Rule: NewNoUseSSLPinningLib(),
+			Src:  SampleSafeHSJAVA28,
+		},
+		{
 			Name: "HS-JAVA-111",
 			Rule: NewWeakHash(),
 			Src:  SampleSafeHSJAVA111,
@@ -397,6 +633,31 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),
 			Src:  SampleSafeHSJAVA134,
+		},
+		{
+			Name: "HS-JAVA-145",
+			Rule: NewUnsafeHashEquals(),
+			Src:  SampleSafeHSJAVA145,
+		},
+		{
+			Name: "HS-JAVA-146",
+			Rule: NewUnvalidatedRedirect(),
+			Src:  SampleSafeHSJAVA146,
+		},
+		{
+			Name: "HS-JAVA-147",
+			Rule: NewRequestMappingMethodsNotPublic(),
+			Src:  SampleSafeHSJAVA147,
+		},
+		{
+			Name: "HS-JAVA-148",
+			Rule: NewLDAPDeserializationNotDisabled(),
+			Src:  SampleSafeHSJAVA148,
+		},
+		{
+			Name: "HS-JAVA-149",
+			Rule: NewDatabasesPasswordNotProtected(),
+			Src:  SampleSafeHSJAVA149,
 		},
 	}
 	testutil.TestSafeCode(t, testcases)
