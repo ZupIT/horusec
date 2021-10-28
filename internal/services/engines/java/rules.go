@@ -54,7 +54,8 @@ func NewXMLParsingVulnerableToXXEWithXMLInputFactory() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`XMLInputFactory\.newInstance\(`),
+			regexp.MustCompile(`XMLInputFactory\.newFactory\(`),
+			regexp.MustCompile(`(XMLInputFactory\.newFactory\(\))(([^s]|s[^e]|se[^t]|set[^P]|setP[^r]|setPr[^o]|setPro[^p]|setProp[^e]|setPrope[^r]|setProper[^t]|setPropert[^y])*)(\.createXMLStreamReader\(.*\))`),
 		},
 	}
 }
@@ -106,26 +107,30 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`javax\.xml\.transform\.TransformerFactory\.newInstance\(`),
+			regexp.MustCompile(`(TransformerFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^O]|setO[^u]|setOu[^t]|setOut[^p]|setOutp[^u]|setOutpu[^t]|setOutput[^P]|setOutputP[^r]|setOutputPr[^o]|setOutputPro[^p]|setOutputProp[^e]|setOutputPrope[^r]|setOutputProper[^t]|setPropertyPropert[^y])*)(\.transform\(.*\))`),
+			regexp.MustCompile(`(TransformerFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(\.transform\(.*\))`),
+			regexp.MustCompile(`(TransformerFactory\.newInstance\(\))(([^s]|s[^e]|se[^t]|set[^A]|setA[^t]|setAt[^t]|setAtt[^r]setAttr[^i]setAttri[^b]setAttrib[^u]|setAttribu[^^t]setAttribut[^e])*)(\.transform\(.*\))`),
 		},
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithSchemaFactory() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-6",
-			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
-			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`SchemaFactory\.newInstance\(`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-5
+//
+//func NewXMLParsingVulnerableToXXEWithSchemaFactory() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-6",
+//			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
+//			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+//			Severity:    severities.Medium.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`SchemaFactory\.newInstance\(`),
+//		},
+//	}
+//}
 
 func NewXMLParsingVulnerableToXXEWithDom4j() text.TextRule {
 	return text.TextRule{
@@ -139,6 +144,7 @@ func NewXMLParsingVulnerableToXXEWithDom4j() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new\sSAXReader\(\)`),
+			regexp.MustCompile(`(new\sSAXReader\(\))(([^s]|s[^e]|se[^t]|set[^F]|setF[^e]|setFe[^a]|setFea[^t]|setFeat[^u]|setFeatu[^r]|setFeatur[^e])*)(read\(.*\))`),
 		},
 	}
 }
@@ -155,6 +161,7 @@ func NewXMLParsingVulnerableToXXEWithJdom2() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new\sSAXBuilder\(\)`),
+			regexp.MustCompile(`(new\sSAXBuilder\(\))(([^s]|s[^e]|se[^t]|set[^P]|setP[^r]|setPr[^o]|setPro[^p]|setProp[^e]|setPrope[^r]|setProper[^t]|setPropert[^y])*)(\.build\(.*\))`),
 		},
 	}
 }
@@ -170,8 +177,8 @@ func NewInsecureImplementationOfSSL() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`javax\.net\.ssl`),
 			regexp.MustCompile(`TrustAllSSLSocket-Factory|AllTrustSSLSocketFactory|NonValidatingSSLSocketFactory|net\.SSLCertificateSocketFactory|ALLOW_ALL_HOSTNAME_VERIFIER|\.setDefaultHostnameVerifier\(|NullHostnameVerifier\(`),
+			regexp.MustCompile(`javax\.net\.ssl`),
 		},
 	}
 }
@@ -223,10 +230,9 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`SSLContext\.getInstance\(.*TLS.*\)((.*|\n)*)(\@Override.*\n.*verify\()(.*\n.*return\strue)`),
-			regexp.MustCompile(`checkClientTrusted\(`),
-			regexp.MustCompile(`checkServerTrusted\(`),
-			regexp.MustCompile(`getAcceptedIssuers\(`),
+			regexp.MustCompile(`(verify\(String.*, SSLSession.*\).*\n.*return\strue)`),
+			regexp.MustCompile(`(\@Override.*\n.*verify\(String.*, SSLSession .*\).*\n.*return\strue)`),
+			regexp.MustCompile(`setHostnameVerifier\(new HostnameVerifier\(\)`),
 		},
 	}
 }
@@ -259,64 +265,71 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjavax\.mail\.Authenticator\()`),
+			regexp.MustCompile(`put\("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"\);`),
+			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\s(javax|jakarta)\.mail\.Authenticator\()`),
 			regexp.MustCompile(`put\(.*mail.smtp`),
 		},
 	}
 }
 
-func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-15",
-			Name:        "Server hostnames should be verified during SSL/TLS connections With Mail's",
-			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjakarta\.mail\.Authenticator\()`),
-			regexp.MustCompile(`put\(.*mail.smtp`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-14
+//
+//func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-15",
+//			Name:        "Server hostnames should be verified during SSL/TLS connections With Mail's",
+//			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+//			Severity:    severities.High.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`(new Properties\()(([^c]|c[^h]|ch[^e]|che[^c]|chec[^k]|check[^s]|checks[^e]|checkse[^r]|checkser[^v]|checkserv[^e]|checkserve[^r]|checkserver[^i]|checkserveri[^d]|checkserverid[^e]|checkserveride[^n]|checkserveriden[^t]|checkserverident[^i]|checkserveridenti[^t]|checkserveridentit[^y])*?)(new\sjakarta\.mail\.Authenticator\()`),
+//			regexp.MustCompile(`put\(.*mail.smtp`),
+//		},
+//	}
+//}
 
-func NewTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-16",
-			Name:        "TrustManager that accept any certificates Server",
-			Description: "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`implements\sX509TrustManager`),
-			regexp.MustCompile(`@Override`),
-			regexp.MustCompile(`public\svoid\scheckServerTrusted`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-11
+//
+//func NewTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-16",
+//			Name:        "TrustManager that accept any certificates Server",
+//			Description: "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+//			Severity:    severities.Critical.ToString(),
+//			Confidence:  confidence.High.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`implements\sX509TrustManager`),
+//			regexp.MustCompile(`@Override`),
+//			regexp.MustCompile(`public\svoid\scheckServerTrusted`),
+//		},
+//	}
+//}
 
-func NewTrustManagerThatAcceptAnyCertificatesIssuers() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-17",
-			Name:        "TrustManager that accept any certificates Issuers",
-			Description: "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`implements\sX509TrustManager`),
-			regexp.MustCompile(`@Override`),
-			regexp.MustCompile(`public\sX509Certificate\[\]\sgetAcceptedIssuers`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-11
+//
+//func NewTrustManagerThatAcceptAnyCertificatesIssuers() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-17",
+//			Name:        "TrustManager that accept any certificates Issuers",
+//			Description: "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+//			Severity:    severities.Critical.ToString(),
+//			Confidence:  confidence.High.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`implements\sX509TrustManager`),
+//			regexp.MustCompile(`@Override`),
+//			regexp.MustCompile(`public\sX509Certificate\[\]\sgetAcceptedIssuers`),
+//		},
+//	}
+//}
 
 func NewWebViewLoadFilesFromExternalStorage() text.TextRule {
 	return text.TextRule{
@@ -1487,23 +1500,25 @@ func NewClassesShouldNotBeLoadedDynamically() text.TextRule {
 	}
 }
 
-func NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-86",
-			Name:        "HostnameVerifier.verify should not always return true",
-			Description: "To prevent URL spoofing, HostnameVerifier.verify() methods should do more than simply return true. Doing so may get you quickly past an exception, but that comes at the cost of opening a security hole in your application. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`@Override`),
-			regexp.MustCompile(`public boolean verify\(String requestedHost, SSLSession remoteServerSession\)`),
-			regexp.MustCompile(`return true`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-12
+//
+//func NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-86",
+//			Name:        "HostnameVerifier.verify should not always return true",
+//			Description: "To prevent URL spoofing, HostnameVerifier.verify() methods should do more than simply return true. Doing so may get you quickly past an exception, but that comes at the cost of opening a security hole in your application. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory",
+//			Severity:    severities.High.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`@Override`),
+//			regexp.MustCompile(`public boolean verify\(String requestedHost, SSLSession remoteServerSession\)`),
+//			regexp.MustCompile(`return true`),
+//		},
+//	}
+//}
 
 func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() text.TextRule {
 	return text.TextRule{
@@ -1842,25 +1857,25 @@ func NewSetOrReadClipboardData() text.TextRule {
 	}
 }
 
-func NewMessageDigest() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:   "HS-JAVA-106",
-			Name: "Message Digest",
-			Description: `The MD5 algorithm and its successor, SHA-1, are no longer considered secure, because it is too easy to create hash collisions with them. That is, it takes too little computational effort to come up with a different input that produces the same MD5 or SHA-1 hash, and using the new, same-hash value gives an attacker the same access as if he had the originally-hashed value. This applies as well to the other Message-Digest algorithms: MD2, MD4, MD6, HAVAL-128, HMAC-MD5, DSA (which uses SHA-1), RIPEMD, RIPEMD-128, RIPEMD-160, HMACRIPEMD160.
-
-`,
-			Severity:   severities.Medium.ToString(),
-			Confidence: confidence.Low.ToString(),
-		},
-		Type: text.OrMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`java.security.MessageDigest`),
-			regexp.MustCompile(`MessageDigestSpi`),
-			regexp.MustCompile(`MessageDigest`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-111
+//
+//func NewMessageDigest() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:   "HS-JAVA-106",
+//			Name: "Message Digest",
+//			Description: `The MD5 algorithm and its successor, SHA-1, are no longer considered secure, because it is too easy to create hash collisions with them. That is, it takes too little computational effort to come up with a different input that produces the same MD5 or SHA-1 hash, and using the new, same-hash value gives an attacker the same access as if he had the originally-hashed value. This applies as well to the other Message-Digest algorithms: MD2, MD4, MD6, HAVAL-128, HMAC-MD5, DSA (which uses SHA-1), RIPEMD, RIPEMD-128, RIPEMD-160, HMACRIPEMD160.`,
+//			Severity:   severities.Medium.ToString(),
+//			Confidence: confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`java.security.MessageDigest`),
+//			regexp.MustCompile(`MessageDigestSpi`),
+//			regexp.MustCompile(`MessageDigest`),
+//		},
+//	}
+//}
 
 func NewOverlyPermissiveFilePermission() text.TextRule {
 	return text.TextRule{
@@ -1950,7 +1965,7 @@ func NewWeakHash() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`getInstance("md4")|getInstance("rc2")|getInstance("rc4")|getInstance("RC4")|getInstance("RC2")|getInstance("MD4")`),
-			regexp.MustCompile(`MessageDigest\.getInstance\(["|']*MD5["|']*\)|MessageDigest\.getInstance\(["|']*md5["|']*\)|DigestUtils\.md5\(`),
+			regexp.MustCompile(`MessageDigest\.getInstance\(["|']*MD5["|']*\)|MessageDigest\.getInstance\(["|']*md5["|']*\)|DigestUtils\.md5\(|DigestUtils\.getMd5Digest\(`),
 			regexp.MustCompile(`MessageDigest\.getInstance\(["|']*SHA-?1["|']*\)|MessageDigest\.getInstance\(["|']*sha-?1["|']*\)|DigestUtils\.sha\(|DigestUtils\.getSha1Digest\(`),
 			regexp.MustCompile(`getInstance\(["|']rc4["|']\)|getInstance\(["|']RC4["|']\)|getInstance\(["|']RC2["|']\)|getInstance\(["|']rc2["|']\)`),
 			regexp.MustCompile(`getInstance\(["|']md4["|']\)|getInstance\(["|']MD4["|']\)|getInstance\(["|']md2["|']\)|getInstance\(["|']MD2["|']\)`),
