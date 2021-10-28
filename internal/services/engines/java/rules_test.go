@@ -27,7 +27,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVA-1",
 			Rule: NewXMLParsingVulnerableToXXE(),
-			Src:  SampleVulnerableJavaXMLParsingVulnerableToXXE,
+			Src:  SampleVulnerableHSJAVA1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `XMLReader reader = XMLReaderFactory.createXMLReader();`,
@@ -41,7 +41,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVA-3",
 			Rule: NewXMLParsingVulnerableToXXEWithDocumentBuilder(),
-			Src:  SampleVulnerableXMLParsingVulnerableToXXEWithDocumentBuilder,
+			Src:  SampleVulnerableHSJAVA3,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();`,
@@ -55,7 +55,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVA-4",
 			Rule: NewXMLParsingVulnerableToXXEWithSAXParserFactory(),
-			Src:  SampleVulnerableXMLParsingVulnerableToXXEWithSAXParserFactory,
+			Src:  SampleVulnerableHSJAVA4,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `SAXParser parser = SAXParserFactory.newInstance().newSAXParser();`,
@@ -69,7 +69,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),
-			Src:  SampleVulnerableJavaSQLInjection,
+			Src:  SampleVulnerableHSJAVA134,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var pstmt = con.prepareStatement(\"select * from mytable where field01 = '\" + field01 + \"'\");",
@@ -90,22 +90,22 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-JAVA-1",
 			Rule: NewXMLParsingVulnerableToXXE(),
-			Src:  SampleSafeJavaXMLParsingVulnerableToXXE,
+			Src:  SampleSafeHSJAVA1,
 		},
 		{
 			Name: "HS-JAVA-3",
 			Rule: NewXMLParsingVulnerableToXXEWithDocumentBuilder(),
-			Src:  SampleSafeXMLParsingVulnerableToXXEWithDocumentBuilder,
+			Src:  SampleSafeHSJAVA3,
 		},
 		{
 			Name: "HS-JAVA-4",
 			Rule: NewXMLParsingVulnerableToXXEWithSAXParserFactory(),
-			Src:  SampleSafeXMLParsingVulnerableToXXEWithSAXParserFactory,
+			Src:  SampleSafeHSJAVA4,
 		},
 		{
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),
-			Src:  SampleSafeJavaSQLInjection,
+			Src:  SampleSafeHSJAVA134,
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

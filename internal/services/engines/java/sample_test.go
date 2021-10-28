@@ -15,7 +15,7 @@
 package java
 
 const (
-	SampleVulnerableJavaSQLInjection = `
+	SampleVulnerableHSJAVA134 = `
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,7 +38,7 @@ public class VulnerableCodeSQLInjection134 {
 }
 `
 
-	SampleSafeJavaSQLInjection = `
+	SampleSafeHSJAVA134 = `
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,7 +62,7 @@ public class VulnerableCodeSQLInjection134 {
 }
 `
 
-	SampleVulnerableJavaXMLParsingVulnerableToXXE = `
+	SampleVulnerableHSJAVA1 = `
 class Foo {
 	void fn(String input) {
 		XMLReader reader = XMLReaderFactory.createXMLReader();
@@ -71,7 +71,7 @@ class Foo {
 }
 	`
 
-	SampleSafeJavaXMLParsingVulnerableToXXE = `
+	SampleSafeHSJAVA1 = `
 class Foo {
 	void bar() {
 		XMLReader reader = XMLReaderFactory.createXMLReader();
@@ -83,7 +83,7 @@ class Foo {
 }
 	`
 
-	SampleVulnerableXMLParsingVulnerableToXXEWithDocumentBuilder = `
+	SampleVulnerableHSJAVA3 = `
 class Foo {
 	void bar() {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -93,7 +93,7 @@ class Foo {
 }
 	`
 
-	SampleSafeXMLParsingVulnerableToXXEWithDocumentBuilder = `
+	SampleSafeHSJAVA3 = `
 class Foo {
 	void bar() {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -105,7 +105,7 @@ class Foo {
 }
 	`
 
-	SampleVulnerableXMLParsingVulnerableToXXEWithSAXParserFactory = `
+	SampleVulnerableHSJAVA4 = `
 class Foo {
 	void bar() {
 		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -115,7 +115,7 @@ class Foo {
 }
 	`
 
-	SampleSafeXMLParsingVulnerableToXXEWithSAXParserFactory = `
+	SampleSafeHSJAVA4 = `
 class Foo {
 	void bar() {
 		SAXParserFactory spf = SAXParserFactory.newInstance();

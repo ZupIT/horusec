@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-SWIFT-6",
 			Rule: NewWeakMD5CryptoCipher(),
-			Src:  SampleVulnerableWeakMD5CryptoCipher,
+			Src:  SampleVulnerableHSSWIFT6,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `import CryptoSwift`,
@@ -47,7 +47,7 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-SWIFT-6",
 			Rule: NewWeakMD5CryptoCipher(),
-			Src:  SampleSafeWeakMD5CryptoCipher,
+			Src:  SampleSafeHSSWIFT6,
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

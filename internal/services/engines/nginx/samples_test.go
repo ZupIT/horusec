@@ -15,7 +15,7 @@
 package nginx
 
 const (
-	SampleVulnerableIncludeXContentTypeOptionsHeader = `
+	SampleVulnerableHSNGINX2 = `
 add_header X-Frame-Options "SAMEORIGIN";
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
@@ -23,7 +23,7 @@ add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'se
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleSafeIncludeXContentTypeOptionsHeader = `
+	SampleSafeHSNGINX2 = `
 add_header X-Frame-Options "SAMEORIGIN";
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
@@ -32,14 +32,14 @@ add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'se
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleVulnerableIncludeXFrameOptionsHeader = `
+	SampleVulnerableHSNGINX1 = `
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
 add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleSafeIncludeXFrameOptionsHeader = `
+	SampleSafeHSNGINX1 = `
 add_header X-Frame-Options "SAMEORIGIN";
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
@@ -47,13 +47,13 @@ add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'se
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleVulnerableIncludeContentSecurityPolicyHeader = `
+	SampleVulnerableHSNGINX3 = `
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleSafeIncludeContentSecurityPolicyHeader = `
+	SampleSafeHSNGINX3 = `
 add_header X-Frame-Options "SAMEORIGIN";
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
@@ -61,13 +61,13 @@ add_header Content-Security-Policy "default-src 'self'; img-src *; style-src 'se
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleVulnerableIncludeServerTokensOff = `
+	SampleVulnerableHSNGINX4 = `
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";
 add_header X-XSS-Protection "1; mode=block";
 upstream plone52 {
     server 127.0.0.1:8080;
 }`
-	SampleSafeIncludeServerTokensOff = `
+	SampleSafeHSNGINX4 = `
 server_tokens off;
 add_header X-Frame-Options "SAMEORIGIN";
 add_header Strict-Transport-Security "max-age=15768000; includeSubDomains";

@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-NGINX-1",
 			Rule: NewIncludeXFrameOptionsHeader(),
-			Src:  SampleVulnerableIncludeXFrameOptionsHeader,
+			Src:  SampleVulnerableHSNGINX1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
@@ -40,7 +40,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-NGINX-2",
 			Rule: NewIncludeXContentTypeOptionsHeader(),
-			Src:  SampleVulnerableIncludeXContentTypeOptionsHeader,
+			Src:  SampleVulnerableHSNGINX2,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
@@ -54,7 +54,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-NGINX-3",
 			Rule: NewIncludeContentSecurityPolicyHeader(),
-			Src:  SampleVulnerableIncludeContentSecurityPolicyHeader,
+			Src:  SampleVulnerableHSNGINX3,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
@@ -68,7 +68,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-NGINX-4",
 			Rule: NewIncludeServerTokensOff(),
-			Src:  SampleVulnerableIncludeServerTokensOff,
+			Src:  SampleVulnerableHSNGINX4,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
@@ -89,22 +89,22 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-NGINX-1",
 			Rule: NewIncludeXFrameOptionsHeader(),
-			Src:  SampleSafeIncludeXFrameOptionsHeader,
+			Src:  SampleSafeHSNGINX1,
 		},
 		{
 			Name: "HS-NGINX-2",
 			Rule: NewIncludeXContentTypeOptionsHeader(),
-			Src:  SampleSafeIncludeXContentTypeOptionsHeader,
+			Src:  SampleSafeHSNGINX2,
 		},
 		{
 			Name: "HS-NGINX-3",
 			Rule: NewIncludeContentSecurityPolicyHeader(),
-			Src:  SampleSafeIncludeContentSecurityPolicyHeader,
+			Src:  SampleSafeHSNGINX3,
 		},
 		{
 			Name: "HS-NGINX-4",
 			Rule: NewIncludeServerTokensOff(),
-			Src:  SampleSafeIncludeServerTokensOff,
+			Src:  SampleSafeHSNGINX4,
 		},
 	}
 

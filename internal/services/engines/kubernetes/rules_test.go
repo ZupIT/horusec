@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-KUBERNETES-1",
 			Rule: NewAllowPrivilegeEscalation(),
-			Src:  SampleVulnerableAllowPrivilegeEscalation,
+			Src:  SampleVulnerableHSKUBERNETES1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "allowPrivilegeEscalation: true",
@@ -47,7 +47,7 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-KUBERNETES-1",
 			Rule: NewAllowPrivilegeEscalation(),
-			Src:  SampleSafeAllowPrivilegeEscalation,
+			Src:  SampleSafeHSKUBERNETES1,
 		},
 	}
 

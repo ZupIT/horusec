@@ -15,10 +15,11 @@
 package swift
 
 const (
-	SampleVulnerableWeakMD5CryptoCipher = `import CryptoSwift
+	SampleVulnerableHSSWIFT6 = `import CryptoSwift
 
 		"SwiftSummit".md5()`
-	SampleSafeWeakMD5CryptoCipher = `import Foundation
+
+	SampleSafeHSSWIFT6 = `import Foundation
 import var CommonCrypto.CC_MD5_DIGEST_LENGTH
 import func CommonCrypto.CC_MD5
 import typealias CommonCrypto.CC_LONG

@@ -26,7 +26,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-1",
 			Rule: NewUsageLocalDataWithoutCryptography(),
-			Src:  SampleVulnerableUsageLocalDataWithoutCryptography,
+			Src:  SampleVulnerableHSDART1,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "SharedPreferences prefs = await SharedPreferences.getInstance();",
@@ -40,7 +40,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-2",
 			Rule: NewNoSendSensitiveInformation(),
-			Src:  SampleVulnerableNoSendSensitiveInformation,
+			Src:  SampleVulnerableHSDART2,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "_firebaseMessaging.configure(",
@@ -54,7 +54,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-3",
 			Rule: NewNoUseBiometricsTypeIOS(),
-			Src:  SampleVulnerableNoUseBiometricsTypeIOS,
+			Src:  SampleVulnerableHSDART3,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "await auth.getAvailableBiometrics();",
@@ -68,7 +68,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-4",
 			Rule: NewXmlReaderExternalEntityExpansion(),
-			Src:  SampleVulnerableXmlReaderExternalEntityExpansion,
+			Src:  SampleVulnerableHSDART4,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "final file = new File(FileFromUserInput);",
@@ -82,7 +82,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-5",
 			Rule: NewNoUseConnectionWithoutSSL(),
-			Src:  SampleVulnerableNoUseConnectionWithoutSSL,
+			Src:  SampleVulnerableHSDART5,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "return _HttpServer.bindSecure('http://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);",
@@ -96,7 +96,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-6",
 			Rule: NewSendSMS(),
-			Src:  SampleVulnerableDartSendSMS,
+			Src:  SampleVulnerableHSDART6,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "import 'package:flutter_sms/flutter_sms.dart';",
@@ -110,7 +110,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-7",
 			Rule: NewXSSAttack(),
-			Src:  SampleVulnerableXSSAttack,
+			Src:  SampleVulnerableHSDART7,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var element = new Element.html(sprintf(\"<div class=\"foo\">%s</div>\", [content]));",
@@ -124,7 +124,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-8",
 			Rule: NewNoLogSensitive(),
-			Src:  SampleVulnerableNoLogSensitive,
+			Src:  SampleVulnerableHSDART8,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "print(sprintf(\"User identity is: %s\", [identity]));",
@@ -145,7 +145,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-9",
 			Rule: NewWeakHashingFunctionMd5OrSha1(),
-			Src:  SampleVulnerableWeakHashingFunctionMd5OrSha1,
+			Src:  SampleVulnerableHSDART9,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var digest = md5.convert(content);",
@@ -159,7 +159,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-10",
 			Rule: NewNoUseSelfSignedCertificate(),
-			Src:  SampleVulnerableNoUseSelfSignedCertificate,
+			Src:  SampleVulnerableHSDART10,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "context.setTrustedCertificates(\"client.cer\");",
@@ -173,7 +173,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-11",
 			Rule: NewNoUseBiometricsTypeAndroid(),
-			Src:  SampleVulnerableNoUseBiometricsTypeAndroid,
+			Src:  SampleVulnerableHSDART11,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "authenticated = await auth.authenticateWithBiometrics(",
@@ -187,7 +187,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-12",
 			Rule: NewNoListClipboardChanges(),
-			Src:  SampleVulnerableNoListClipboardChanges,
+			Src:  SampleVulnerableHSDART12,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "Map<String, dynamic> result = await SystemChannels.platform.invokeMethod('Clipboard.getData');",
@@ -201,7 +201,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-13",
 			Rule: NewSQLInjection(),
-			Src:  SampleVulnerableSQLInjection,
+			Src:  SampleVulnerableHSDART13,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "List<Map> list = await database.rawQuery(\"SELECT * FROM Users WHERE username = '\" + username + \"';\");",
@@ -215,7 +215,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-14",
 			Rule: NewNoUseNSTemporaryDirectory(),
-			Src:  SampleVulnerableNoUseNSTemporaryDirectory,
+			Src:  SampleVulnerableHSDART14,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true);",
@@ -229,7 +229,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-15",
 			Rule: NewNoUseCipherMode(),
-			Src:  SampleVulnerableNoUseCipherMode,
+			Src:  SampleVulnerableHSDART15,
 			Findings: []engine.Finding{
 				{
 					CodeSample: "final encrypter = Encrypter(AES(key, mode: AESMode.cts));",
@@ -243,7 +243,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-16",
 			Rule: NewCorsAllowOriginWildCard(),
-			Src:  SampleVulnerableCorsAllowOriginWildCard,
+			Src:  SampleVulnerableHSDART16,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `request.response.headers.add("Access-Control-Allow-Origin", "*");`,
@@ -257,7 +257,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 		{
 			Name: "HS-DART-17",
 			Rule: NewUsingShellInterpreterWhenExecutingOSCommand(),
-			Src:  SampleVulnerableUsingShellInterpreterWhenExecutingOSCommand,
+			Src:  SampleVulnerableHSDART17,
 			Findings: []engine.Finding{
 				{
 					CodeSample: `var result = await Process.run("netcfg", [UserParams]);`,
@@ -278,12 +278,12 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-DART-1",
 			Rule: NewUsageLocalDataWithoutCryptography(),
-			Src:  SampleSafeUsageLocalDataWithoutCryptography,
+			Src:  SampleSafeHSDART1,
 		},
 		{
 			Name: "HS-DART-2",
 			Rule: NewNoSendSensitiveInformation(),
-			Src:  SampleSafeNoSendSensitiveInformation,
+			Src:  SampleSafeHSDART2,
 		},
 		{
 			Name: "HS-DART-3",
@@ -293,12 +293,12 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-DART-4",
 			Rule: NewXmlReaderExternalEntityExpansion(),
-			Src:  SampleSafeXmlReaderExternalEntityExpansion,
+			Src:  SampleSafeHSDART4,
 		},
 		{
 			Name: "HS-DART-5",
 			Rule: NewNoUseConnectionWithoutSSL(),
-			Src:  SampleSafeNoUseConnectionWithoutSSL,
+			Src:  SampleSafeHSDART5,
 		},
 		{
 			Name: "HS-DART-6",
@@ -308,57 +308,57 @@ func TestRulesSafeCode(t *testing.T) {
 		{
 			Name: "HS-DART-7",
 			Rule: NewXSSAttack(),
-			Src:  SampleSafeXSSAttack,
+			Src:  SampleSafeHSDART7,
 		},
 		{
 			Name: "HS-DART-8",
 			Rule: NewNoLogSensitive(),
-			Src:  SampleSafeNoLogSensitive,
+			Src:  SampleSafeHSDART8,
 		},
 		{
 			Name: "HS-DART-9",
 			Rule: NewWeakHashingFunctionMd5OrSha1(),
-			Src:  SampleSafeWeakHashingFunctionMd5OrSha1,
+			Src:  SampleSafeHSDART9,
 		},
 		{
 			Name: "HS-DART-10",
 			Rule: NewNoUseSelfSignedCertificate(),
-			Src:  SampleSafeNoUseSelfSignedCertificate,
+			Src:  SampleSafeHSDART10,
 		},
 		{
 			Name: "HS-DART-11",
 			Rule: NewNoUseBiometricsTypeAndroid(),
-			Src:  SampleSafeNoUseBiometricsTypeAndroid,
+			Src:  SampleSafeHSDART11,
 		},
 		{
 			Name: "HS-DART-12",
 			Rule: NewNoListClipboardChanges(),
-			Src:  SampleSafeNoListClipboardChanges,
+			Src:  SampleSafeHSDART12,
 		},
 		{
 			Name: "HS-DART-13",
 			Rule: NewSQLInjection(),
-			Src:  SampleSafeSQLInjection,
+			Src:  SampleSafeHSDART13,
 		},
 		{
 			Name: "HS-DART-14",
 			Rule: NewNoUseNSTemporaryDirectory(),
-			Src:  SampleSafeNoUseNSTemporaryDirectory,
+			Src:  SampleSafeHSDART14,
 		},
 		{
 			Name: "HS-DART-15",
 			Rule: NewNoUseCipherMode(),
-			Src:  SampleSafeNoUseCipherMode,
+			Src:  SampleSafeHSDART15,
 		},
 		{
 			Name: "HS-DART-16",
 			Rule: NewCorsAllowOriginWildCard(),
-			Src:  SampleSafeCorsAllowOriginWildCard,
+			Src:  SampleSafeHSDART16,
 		},
 		{
 			Name: "HS-DART-17",
 			Rule: NewUsingShellInterpreterWhenExecutingOSCommand(),
-			Src:  SampleSafeUsingShellInterpreterWhenExecutingOSCommand,
+			Src:  SampleSafeHSDART17,
 		},
 	}
 
