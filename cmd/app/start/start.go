@@ -36,7 +36,7 @@ import (
 
 // Analyzer is the interface that execute the analysis on some directory.
 //
-// Analyze returns the total of vulnerabilies founded on directory
+// Analyze returns the total of vulnerabilities founded on directory
 type Analyzer interface {
 	Analyze() (int, error)
 }
