@@ -15,8 +15,28 @@
 package csharp
 
 const (
-	SampleVulnerableHSCSHARP1 = `var p = new Process();
-p.StartInfo.FileName = "exportLegacy.exe";
-p.StartInfo.Arguments = " -user " + input + " -role user";
-p.Start();`
+	SampleVulnerableHSCSHARP1 = `
+		var p = new Process();
+		p.StartInfo.FileName = "exportLegacy.exe";
+		p.StartInfo.Arguments = " -user " + input + " -role user";
+		p.Start();
+	`
+
+	SampleVulnerableHSCSHARP2 = `
+		var doc = new XmlDocument {XmlResolver = null};
+		doc.Load("/config.xml");
+		var results = doc.SelectNodes("/Config/Devices/Device[id='" + input + "']");
+	`
+
+	SampleSafeHSCSHARP1 = `
+		var p = new Process();
+		p.StartInfo.FileName = "exportLegacy.exe";
+		p.Start();
+	`
+
+	SampleSafeHSCSHARP2 = `
+		XmlDocument doc = new XmlDocument { XmlResolver = null };
+		doc.Load("/config.xml");
+		var results = doc.SelectSingleNode("/Config/Devices/Device");
+	`
 )

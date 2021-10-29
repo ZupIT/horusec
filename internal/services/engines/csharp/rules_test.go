@@ -31,8 +31,22 @@ func TestRulesVulnerableCode(t *testing.T) {
 				{
 					CodeSample: "var p = new Process();",
 					SourceLocation: engine.Location{
-						Line:   1,
-						Column: 8,
+						Line:   2,
+						Column: 10,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-CSHARP-2",
+			Rule: NewXPathInjection(),
+			Src:  SampleVulnerableHSCSHARP2,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "var doc = new XmlDocument {XmlResolver = null};",
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 12,
 					},
 				},
 			},
@@ -42,7 +56,18 @@ func TestRulesVulnerableCode(t *testing.T) {
 }
 
 func TestRulesSafeCode(t *testing.T) {
-	testcases := []*testutil.RuleTestCase{}
+	testcases := []*testutil.RuleTestCase{
+		{
+			Name: "HS-CSHARP-1",
+			Rule: NewCommandInjection(),
+			Src:  SampleSafeHSCSHARP1,
+		},
+		{
+			Name: "HS-CSHARP-2",
+			Rule: NewXPathInjection(),
+			Src:  SampleSafeHSCSHARP2,
+		},
+	}
 
 	testutil.TestSafeCode(t, testcases)
 }
