@@ -40,8 +40,9 @@
 ### 3. [**Documentation**](#Documentation)       
 ### 4. [**Roadmap**](#Roadmap)
 ### 5. [**Contributing**](#Contributing)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 6. [**Code of Conduct**](#Code-of-Conduct)
+### 7. [**License**](#License)
+### 8. [**Community**](#Community)
 
 
 
@@ -219,6 +220,9 @@ Signed-off-by: Name < e-mail address >
 ```
 
 For this method, your name and e-mail must be the same registered to your GitHub account.
+
+## **Code of Conduct**
+Please follow the [**Code of Conduct**](https://github.com/ZupIT/horusec/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
 
 ## **License**
  [**Apache License 2.0**](LICENSE).
