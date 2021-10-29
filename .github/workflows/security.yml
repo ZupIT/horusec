@@ -13,7 +13,13 @@
 # limitations under the License.
 
 name: Security
-on: [ "pull_request" ]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 permissions: read-all
 jobs:
   security:
