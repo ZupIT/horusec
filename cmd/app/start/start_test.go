@@ -202,7 +202,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			},
 			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
-				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 
 				prompt.AssertNotCalled(t, "Ask")
 				analyzer.AssertCalled(t, "Analyze")
@@ -235,7 +235,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 				requirements.On("ValidateDocker")
 			},
 			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
-				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 				assert.Equal(t, "NOT_VALID_AUTHORIZATION", cfg.RepositoryAuthorization)
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 
@@ -254,7 +254,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 				requirements.On("ValidateDocker")
 			},
 			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
-				assert.Equal(t, os.TempDir(), cfg.ProjectPath)
+				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 				assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 
