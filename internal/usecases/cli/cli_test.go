@@ -152,7 +152,7 @@ func TestValidateConfigs(t *testing.T) {
 		assert.Error(t, err)
 
 		var vErrors validation.Errors
-		assert.True(t, errors.As(err, &vErrors), "Expected that error should be validiation.Errors")
+		assert.True(t, errors.As(err, &vErrors), "Expected that error should be validation.Errors")
 
 		workDirErr, exists := vErrors["work_dir"]
 		assert.True(t, exists, "Expected error from work dir config")

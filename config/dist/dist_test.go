@@ -21,7 +21,7 @@ import (
 )
 
 func TestIsStandAlone(t *testing.T) {
-	t.Run("should return false when the distribuition is not a stand alone distribution", func(t *testing.T) {
+	t.Run("should return false when the distribution is not a stand alone distribution", func(t *testing.T) {
 		s := IsStandAlone()
 		assert.False(t, s)
 	})

@@ -488,7 +488,7 @@ func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
 	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
 }
 
-// SetFalsePositivesAndRiskAcceptInVulnerabilities set analysis vulnerabiltieis to false
+// SetFalsePositivesAndRiskAcceptInVulnerabilities set analysis vulnerabilities to false
 // positive or risk accept if the hash exists on falsePositive and riskAccept params.
 //
 // nolint:lll
