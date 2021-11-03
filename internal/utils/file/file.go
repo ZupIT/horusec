@@ -268,6 +268,6 @@ func CreateAndWriteFile(output, filename string) error {
 		return err
 	}
 
-	_, err = file.Write([]byte(output))
+	_, err = file.WriteString(output)
 	return err
 }

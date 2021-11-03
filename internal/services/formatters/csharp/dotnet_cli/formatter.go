@@ -80,7 +80,7 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 	if f.isInvalidOutput(output) {
 		return
 	}
-
+	//nolint
 	for _, value := range strings.Split(output[strings.Index(output, enums.Separator):], enums.Separator) {
 		dependency := f.parseDependencyValue(value)
 		if dependency != nil && *dependency != (entities.Dependency{}) {

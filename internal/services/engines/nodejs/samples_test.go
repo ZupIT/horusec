@@ -55,7 +55,6 @@ function f(req) {
 	return fs.createReadStream(req.body)
 }
 `
-
 )
 
 const (
