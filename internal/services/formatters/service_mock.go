@@ -98,9 +98,8 @@ func (m *Mock) SetCommitAuthor(_ *vulnerability.Vulnerability) *vulnerability.Vu
 	return args.Get(0).(*vulnerability.Vulnerability)
 }
 
-func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, _ languages.Language) error {
-	args := m.MethodCalled("ParseFindingsToVulnerabilities")
-	return utilsMock.ReturnNilOrError(args, 0)
+func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, _ languages.Language) {
+	_ = m.MethodCalled("ParseFindingsToVulnerabilities")
 }
 
 func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *vulnerability.Vulnerability) {

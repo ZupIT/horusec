@@ -82,7 +82,7 @@ type IService interface {
 
 	// ParseFindingsToVulnerabilities convert findings to vulnerabilities and add these
 	// vulnerabilities on current analysis.
-	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language) error
+	ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool, language languages.Language)
 
 	// AddNewVulnerabilityIntoAnalysis add vulnerability on current analysis.
 	AddNewVulnerabilityIntoAnalysis(vulnerability *vulnerability.Vulnerability)

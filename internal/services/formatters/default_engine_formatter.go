@@ -59,8 +59,8 @@ func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
 	if err != nil {
 		return err
 	}
-
-	return f.svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, f.language)
+	f.svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, f.language)
+	return nil
 }
 
 func (f *DefaultFormatter) execEngineAnalysis(src string) ([]engine.Finding, error) {
