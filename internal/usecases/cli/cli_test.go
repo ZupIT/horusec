@@ -17,7 +17,10 @@ package cli
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/google/uuid"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
@@ -46,7 +49,7 @@ func TestValidateConfigs(t *testing.T) {
 
 		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "project_path: invalid path: .", err.Error())
+		assert.Equal(t, "project_path: invalid path: ./not-exist-path.", err.Error())
 	})
 	t.Run("Should return no errors when valid config with ignore", func(t *testing.T) {
 		cfg := config.New()
@@ -100,13 +103,17 @@ func TestValidateConfigs(t *testing.T) {
 		assert.EqualError(t, err, "json_output_file_path: Output File path not valid file of type: .txt.")
 	})
 	t.Run("Should not return error when the text output file is valid", func(t *testing.T) {
+		tmpPath, err := filepath.Abs("tmp")
+		assert.NoError(t, err)
+
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 		cfg.LoadFromEnvironmentVariables()
+		pathValid := filepath.Join(tmpPath, uuid.NewString()+"-test.txt")
 		cfg.PrintOutputType = (outputtype.Text)
-		cfg.JSONOutputFilePath = "test.txt"
+		cfg.JSONOutputFilePath = pathValid
 
-		err := useCases.ValidateConfig(cfg)
+		err = useCases.ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
@@ -166,7 +173,7 @@ func TestValidateConfigs(t *testing.T) {
 
 		err := useCases.ValidateConfig(cfg)
 		assert.Error(t, err)
-		assert.Equal(t, "cert_path: invalid path: .", err.Error())
+		assert.Equal(t, "cert_path: invalid path: INVALID PATH.", err.Error())
 	})
 	t.Run("Should return error when is duplicated false positive and risk accepted", func(t *testing.T) {
 		hash := "1e836029-4e90-4151-bb4a-d86ef47f96b6"

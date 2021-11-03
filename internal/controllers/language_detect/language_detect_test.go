@@ -17,13 +17,14 @@ package languagedetect
 import (
 	"bytes"
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/enums/toignore"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/internal/enums/toignore"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 
 	"github.com/google/uuid"
 
@@ -37,12 +38,14 @@ import (
 	"github.com/ZupIT/horusec/config"
 )
 
+var tmpPath, _ = filepath.Abs("tmp")
+
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("./examples")
+	_ = os.RemoveAll(tmpPath)
 
 	code := m.Run()
 
-	_ = os.RemoveAll("./examples")
+	_ = os.RemoveAll(tmpPath)
 	os.Exit(code)
 }
 
@@ -57,7 +60,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should ignore files of the type images", func(t *testing.T) {
-		dstPath := filepath.Join(".", "tmp-examples", uuid.New().String())
+		dstPath := filepath.Join(tmpPath, uuid.New().String())
 		srcPath := filepath.Join(testutil.RootPath, "assets")
 		err := copy.Copy(srcPath, dstPath, func(src string) bool { return false })
 		assert.NoError(t, err)

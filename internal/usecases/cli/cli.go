@@ -127,13 +127,6 @@ func (au *UseCases) validateFilePathAndExtension(cfg *config.Config, extension s
 	if filepath.Ext(cfg.JSONOutputFilePath) != extension {
 		return fmt.Errorf("%s %s", messages.MsgErrorJSONOutputFilePathNotValidExtension, extension)
 	}
-	output, err := filepath.Abs(cfg.JSONOutputFilePath)
-	if err != nil {
-		return fmt.Errorf("%s %s", messages.MsgErrorJSONOutputFilePathNotValidUnknown, err.Error())
-	}
-	if output == "" {
-		return fmt.Errorf("%s file is empty", messages.MsgErrorJSONOutputFilePathNotValidUnknown)
-	}
 	return nil
 }
 
@@ -181,7 +174,7 @@ func (au *UseCases) sliceSeverityEnable() []severities.Severity {
 func (au *UseCases) validateIfIsValidPath(dir string) validation.RuleFunc {
 	return func(value interface{}) error {
 		if _, errStat := os.Stat(dir); errStat != nil || dir == "" {
-			return fmt.Errorf(messages.MsgErrorPathNotValid)
+			return fmt.Errorf("%s %s", messages.MsgErrorPathNotValid, dir)
 		}
 		return nil
 	}
