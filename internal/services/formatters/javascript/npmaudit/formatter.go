@@ -138,7 +138,7 @@ func (f *Formatter) getDefaultVulnerabilitySeverity(projectSubPath string) *vuln
 }
 
 func (f *Formatter) getVersionText(version string) string {
-	return fmt.Sprintf(`"version": "%s"`, version)
+	return fmt.Sprintf(`"version": %q`, version)
 }
 
 func (f *Formatter) getVulnerabilityLineByName(version, module, file string) string {
@@ -173,5 +173,5 @@ func (f *Formatter) getLine(version, module string, scanner *bufio.Scanner) stri
 }
 
 func (f *Formatter) isModuleInScannerText(module, scannerText string) bool {
-	return strings.Contains(strings.ToLower(scannerText), strings.ToLower(fmt.Sprintf(`"%s": {`, module)))
+	return strings.Contains(strings.ToLower(scannerText), strings.ToLower(fmt.Sprintf(`%q: {`, module)))
 }
