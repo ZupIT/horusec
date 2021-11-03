@@ -17,13 +17,14 @@ package languagedetect
 import (
 	"bytes"
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/enums/toignore"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/internal/enums/toignore"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 
 	"github.com/google/uuid"
 
