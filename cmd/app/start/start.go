@@ -299,7 +299,6 @@ func (s *Start) runE(cmd *cobra.Command, _ []string) error {
 
 func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorWhenAskDirToRun, err)
 		return 0, err
 	}
 	if err := s.configsValidations(cmd); err != nil {
@@ -357,10 +356,7 @@ func (s *Start) askIfRunInDirectorySelected(shouldAsk bool) error {
 			fmt.Sprintf("The folder selected is: [%s]. Proceed? [Y/n]", s.configs.ProjectPath),
 			"Y")
 		if err != nil {
-			logger.LogWarnWithLevel(messages.MsgErrorWhenAskDirToRun+`
-Please use the command below informing the directory you want to run the analysis: 
-horusec start -p ./
-`, err.Error())
+			logger.LogWarnWithLevel(messages.MsgWarnWhenAskDirToRun, err.Error())
 			return err
 		}
 		return s.validateReplyOfAsk(response)
@@ -374,7 +370,7 @@ func (s *Start) validateReplyOfAsk(response string) error {
 		return s.askIfRunInDirectorySelected(true)
 	}
 	if strings.EqualFold(response, "n") {
-		return errors.New("{HORUSEC_CLI} Operation was canceled by user")
+		return errors.New(messages.MsgErrorAskForUserCancelled)
 	}
 	return nil
 }

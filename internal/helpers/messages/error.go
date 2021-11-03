@@ -14,68 +14,19 @@
 
 package messages
 
+// Block of messages usage into error response
 const (
-	// Fired when occurs timeout on wait analysis Finish
-	MsgErrorTimeoutOccurs = "{HORUSEC_CLI} Some analysis was not completed due to the timeout, " +
-		"increase the time with -t flag and try again."
-	// USED IN USE CASES: Fired when the project path is invalid
-	MsgErrorPathNotValid = "invalid path: "
-	// USED IN USE CASES: Fired when an path of json is not valid in configs
-	MsgErrorJSONOutputFilePathNotValid = "Output File path is required or is invalid: "
-	// USED IN USE CASES: Fired when an severity is not allowed in configs
-	MsgErrorSeverityNotValid = "Type of severity not valid: "
-	// USED IN USE CASES: Fired when an false positive is not allowed in configs
-	MsgErrorFalsePositiveNotValid = "False positive is not valid because is duplicated in risk accept: "
-	// USED IN USE CASES: Fired when an risk accept is not allowed in configs
-	MsgErrorRiskAcceptNotValid = "Risk Accept is not valid because is duplicated in false positive: "
-	// Fired when an unexpected error occurs when check if the requirements it's ok
-	MsgErrorWhenCheckRequirements = "{HORUSEC_CLI} Error when check if requirements it's ok!"
-	// Fired when an unexpected error occurs when check if the docker is running
-	MsgErrorWhenCheckDockerRunnnig = "{HORUSEC_CLI} Error when check if docker is running in requirements, "
-	// Fired when docker is running in lower version
-	MsgErrorWhenDockerIsLowerVersion = "{HORUSEC_CLI} Your docker version is below of: "
-	// Fired when git is running in lower version
-	MsgErrorWhenGitIsLowerVersion = "{HORUSEC_CLI} Your git version is below of: "
-	// Fired when an unexpected error occurs when asking if the project directory is correct
-	MsgErrorWhenAskDirToRun = "{HORUSEC_CLI} Error when ask if can run prompt question."
-	// Fired when user-provided settings are invalid
-	MsgErrorInvalidConfigs = "{HORUSEC_CLI} Errors on validate configuration: "
-	// Fired when an unexpected error occurs when try remove analysis folder
-	MsgErrorRemoveAnalysisFolder = "{HORUSEC_CLI} Error when remove analysis project inside .horusec"
-	// Fired when an unexpected error occurs when try detect languages of the project
-	MsgErrorDetectLanguage = "{HORUSEC_CLI} Error when detect language"
-	// Fired when an unexpected error occurs when try copy project analysis to .horusec folder
-	MsgErrorCopyProjectToHorusecAnalysis = "{HORUSEC_CLI} Error when copy project to .horusec folder"
-	// Fired when an unexpected error occurs when try generate files json
-	MsgErrorGenerateJSONFile = "{HORUSEC_CLI} Error when try parse horusec analysis to output"
-	// Fired when an unexpected error occurs when try pull image in the docker
-	MsgErrorDockerPullImage = "{HORUSEC_CLI} Error when pull new image: "
-	// Fired when an unexpected error occurs when try pull list images in the docker
-	MsgErrorDockerListImages = "{HORUSEC_CLI} Error when list all images enable: "
-	// Fired when an unexpected error occurs when try create container of analysis in the docker
-	MsgErrorDockerCreateContainer = "{HORUSEC_CLI} Error when create container of analysis: "
-	// Fired when an unexpected error occurs when try start container of analysis in the docker
-	MsgErrorDockerStartContainer = "{HORUSEC_CLI} Error when start container of analysis: "
-	// Fired when an unexpected error occurs when try list all containers of analysis in the docker
-	MsgErrorDockerListAllContainers = "{HORUSEC_CLI} Error when list all containers of analysis: "
-	// Fired when an unexpected error occurs when try remove container of analysis in the docker
-	MsgErrorDockerRemoveContainer = "{HORUSEC_CLI} Error when remove container of analysis: "
-	// Fired when an unexpected error occurs when try execute command to extract commit authors of an vulnerability
-	MsgErrorGitCommitAuthorsExecute = "{HORUSEC_CLI} Error when execute commit author command: "
-	// Fired when an unexpected error occurs when try parse output commit authors to struct CommitAuthors
-	MsgErrorGitCommitAuthorsParseOutput = "{HORUSEC_CLI} Error when to parse output to commit author struct: "
-	// Fired when validate vulnerability types to show
-	MsgVulnerabilityTypeToShowInvalid = "{HORUSEC_CLI} Error on validate vulnerability type to show, wrong type: "
-	// Fired when an unexpected error occurs when run tool in docker
-	MsgErrorRunToolInDocker = "{HORUSEC_CLI} Something error went wrong in {{0}} tool " +
+	MsgErrorPathNotValid                        = "invalid path: "
+	MsgErrorJSONOutputFilePathNotValidExtension = "Output File path not valid file of type:"
+	MsgErrorJSONOutputFilePathNotValidUnknown   = "Output File path is required or is invalid:"
+	MsgErrorSeverityNotValid                    = "Type of severity not valid. See severities enable:"
+	MsgErrorAskForUserCancelled                 = "{HORUSEC_CLI} Operation was canceled by user"
+	MsgVulnerabilityTypeToShowInvalid           = "{HORUSEC_CLI} Error on validate vulnerability type is wrong type: "
+	MsgErrorRunToolInDocker                     = "{HORUSEC_CLI} Something error went wrong in {{0}} tool " +
 		"| analysisID -> {{1}} | output -> {{2}}"
-	// Fired when to be parse string of the WorkDir Entity and return error
-	MsgErrorParseStringToWorkDir = "{HORUSEC_CLI} Error when try parse workdir string to entity. Returning default values"
-	// Fired when to be parse string of the WorkDir Entity and return error
-	MsgErrorParseStringToToolsConfig = "{HORUSEC_CLI} Error when try parse tools config string to entity." +
-		" Returning default values"
-	// Fired when finish analysis and send to print results and exists errors in analysis
-	MsgErrorFoundErrorsInAnalysis   = "{HORUSEC_CLI} During execution we found some problems:"
+	MsgErrorInvalidWorkDir           = "{HORUSEC_CLI} Workdir is nil! Check the configuration and try again"
+	MsgErrorParseStringToToolsConfig = "{HORUSEC_CLI} Error when try parse tools config string to entity. " +
+		"Returning default values"
 	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt not found in python project to " +
 		"start analysis. It would be a good idea to commit it so horusec can check for vulnerabilities"
 	MsgErrorPacketJSONNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a package-lock.json " +
@@ -84,16 +35,41 @@ const (
 	MsgErrorYarnLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a yarn.lock file. " +
 		"If you use Yarn to handle your dependencies, it would be a good idea to commit it so horusec " +
 		"can check for vulnerabilities"
-	MsgErrorYarnProcess             = "{HORUSEC_CLI} Error Yarn returned an error: "
-	MsgErrorDeferFileClose          = "{HORUSEC_CLI} Error defer file close: "
-	MsgErrorGetCurrentPath          = "{HORUSEC-CLI} Error on get current path"
-	MsgErrorSetHeadersOnConfig      = "{HORUSEC-CLI} Error on set headers on configurations"
-	MsgErrorReplayWrong             = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
-	MsgErrorErrorOnCreateConfigFile = "{HORUSEC-CLI} Error on create config file: "
-	MsgErrorErrorOnReadConfigFile   = "{HORUSEC-CLI} Error on read config file on path: "
-	MsgErrorGemLockNotFound         = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
+	MsgErrorYarnProcess     = "{HORUSEC_CLI} Error Yarn returned an error: "
+	MsgErrorGemLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
+)
+
+// Block of messages usage into log of the level error
+const (
+	MsgErrorFalsePositiveNotValid        = "False positive is not valid because is duplicated in risk accept:"
+	MsgErrorRiskAcceptNotValid           = "Risk Accept is not valid because is duplicated in false positive:"
+	MsgErrorWhenCheckRequirementsGit     = "{HORUSEC_CLI} Error when check if git requirement it's ok!"
+	MsgErrorWhenCheckRequirementsDocker  = "{HORUSEC_CLI} Error when check if docker requirement it's ok!"
+	MsgErrorWhenCheckDockerRunning       = "{HORUSEC_CLI} Error when check if docker is running."
+	MsgErrorWhenDockerIsLowerVersion     = "{HORUSEC_CLI} Your docker version is below of: "
+	MsgErrorWhenGitIsLowerVersion        = "{HORUSEC_CLI} Your git version is below of: "
+	MsgErrorInvalidConfigs               = "{HORUSEC_CLI} Errors on validate configuration: "
+	MsgErrorRemoveAnalysisFolder         = "{HORUSEC_CLI} Error when remove analysis project inside .horusec"
+	MsgErrorDetectLanguage               = "{HORUSEC_CLI} Error when detect language"
+	MsgErrorCopyProjectToHorusecAnalysis = "{HORUSEC_CLI} Error when copy project to .horusec folder"
+	MsgErrorGenerateJSONFile             = "{HORUSEC_CLI} Error when try parse horusec analysis to output"
+	MsgErrorDockerPullImage              = "{HORUSEC_CLI} Error when pull new image: "
+	MsgErrorDockerListImages             = "{HORUSEC_CLI} Error when list all images enable: "
+	MsgErrorDockerCreateContainer        = "{HORUSEC_CLI} Error when create container of analysis: "
+	MsgErrorDockerStartContainer         = "{HORUSEC_CLI} Error when start container of analysis: "
+	MsgErrorDockerListAllContainers      = "{HORUSEC_CLI} Error when list all containers of analysis: "
+	MsgErrorDockerRemoveContainer        = "{HORUSEC_CLI} Error when remove container of analysis: "
+	MsgErrorGitCommitAuthorsExecute      = "{HORUSEC_CLI} Error when execute commit author command: "
+	MsgErrorGitCommitAuthorsParseOutput  = "{HORUSEC_CLI} Error when to parse output to commit author struct: "
+	MsgErrorParseStringToWorkDir         = "{HORUSEC_CLI} Error when try parse workdir string to entity." +
+		"Returning default values"
+	MsgErrorDeferFileClose           = "{HORUSEC_CLI} Error defer file close: "
+	MsgErrorSetHeadersOnConfig       = "{HORUSEC-CLI} Error on set headers on configurations"
+	MsgErrorReplayWrong              = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
+	MsgErrorErrorOnCreateConfigFile  = "{HORUSEC-CLI} Error on create config file: "
+	MsgErrorErrorOnReadConfigFile    = "{HORUSEC-CLI} Error on read config file on path: "
 	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
 	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config."
-	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file."
+	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file"
 )

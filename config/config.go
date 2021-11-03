@@ -423,7 +423,7 @@ func (c *Config) IsEmptyRepositoryAuthorization() bool {
 func (c *Config) setViperConfigsAndReturnIfExistFile() bool {
 	logger.LogDebugWithLevel(messages.MsgDebugConfigFileRunningOnPath + c.ConfigFilePath)
 	if _, err := os.Stat(c.ConfigFilePath); os.IsNotExist(err) {
-		logger.LogWarn(messages.MsgDebugConfigFileNotFoundOnPath)
+		logger.LogWarn(messages.MsgWarnConfigFileNotFoundOnPath)
 		return false
 	}
 	viper.SetConfigFile(c.ConfigFilePath)

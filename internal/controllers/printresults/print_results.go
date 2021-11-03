@@ -79,7 +79,7 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
 	if pr.configs.IsTimeout {
-		logger.LogWarnWithLevel(messages.MsgErrorTimeoutOccurs)
+		logger.LogWarnWithLevel(messages.MsgWarnTimeoutOccurs)
 	}
 
 	return pr.totalVulns, nil
@@ -317,7 +317,7 @@ func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 	}
 	if pr.analysis.HasErrors() {
 		pr.logSeparator(true)
-		logger.LogWarnWithLevel(messages.MsgErrorFoundErrorsInAnalysis)
+		logger.LogWarnWithLevel(messages.MsgWarnFoundErrorsInAnalysis)
 		fmt.Print("\n")
 
 		for _, errorMessage := range strings.SplitAfter(pr.analysis.Errors, ";") {
@@ -342,12 +342,12 @@ func (pr *PrintResults) printErrors(errorMessage string) {
 
 func (pr *PrintResults) printResponseAnalysis() {
 	if pr.totalVulns > 0 {
-		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgAnalysisFoundVulns, pr.totalVulns))
+		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgWarnAnalysisFoundVulns, pr.totalVulns))
 		fmt.Print("\n")
 		return
 	}
 
-	logger.LogWarnWithLevel(messages.MsgAnalysisFinishedWithoutVulns)
+	logger.LogWarnWithLevel(messages.MsgWarnAnalysisFinishedWithoutVulns)
 	fmt.Print("\n")
 }
 

@@ -14,34 +14,22 @@
 
 package messages
 
+// Block of messages usage into log of the level debug
 const (
-	// Fired when start pull new image in docker
-	MsgDebugDockerAPIPullNewImage = "{HORUSEC_CLI} Docker pull new image: "
-	// Fired when image was finish download with success
+	MsgDebugDockerAPIPullNewImage        = "{HORUSEC_CLI} Docker pull new image: "
 	MsgDebugDockerAPIDownloadWithSuccess = "{HORUSEC_CLI} Docker download new image with success: "
-	// Fired when container will be created
-	MsgDebugDockerAPIContainerCreated = "{HORUSEC_CLI} Docker create new container: "
-	// Fired when wait container start analysis of the project
-	MsgDebugDockerAPIContainerWait = "{HORUSEC_CLI} Docker wait container up..."
-	// Fired when read container output of the analysis
-	MsgDebugDockerAPIContainerRead = "{HORUSEC_CLI} Docker read container output: "
-	// Fired when analysis is finished and return success
-	MsgDebugDockerAPIFinishedSuccess = "{HORUSEC_CLI} Docker Finished analysis with SUCCESS: "
-	// Fired when analysis is finished and return error
-	MsgDebugDockerAPIFinishedError = "{HORUSEC_CLI} Docker Finished analysis with ERROR: "
-	// Fired when tool start an analysis
-	MsgDebugToolStartAnalysis = "{HORUSEC_CLI} Running {{0}} - {{1}} in analysisID: "
-	// Fired when tool finish an analysis
-	MsgDebugToolFinishAnalysis = "{HORUSEC_CLI} {{0}} - {{1}} is finished in analysisID: "
-	// Fired when output of the analysis was run in docker is empty
-	MsgDebugOutputEmpty              = "{HORUSEC_CLI} When format Output it's Empty!"
-	MsgDebugConfigFileRunningOnPath  = "{HORUSEC_CLI} Config file running on path: "
-	MsgDebugConfigFileNotFoundOnPath = "{HORUSEC_CLI} Config file not found"
-	// Fired when occurs of ignore folder or file to send horusec analysis
-	MsgDebugFolderOrFileIgnored = "{HORUSEC_CLI} The file or folder was ignored to send analysis:"
-	// Fired when configs already validate and before start analysis
-	MsgDebugShowConfigs   = "{HORUSEC_CLI} The current configuration for this analysis are:"
-	MsgDebugShowWorkdir   = "{HORUSEC_CLI} The workdir setup for run in path:"
-	MsgDebugToolIgnored   = "{HORUSEC_CLI} The tool was ignored for run in this analysis: "
-	MsgDebugVulnHashToFix = "{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "
+	MsgDebugDockerAPIContainerCreated    = "{HORUSEC_CLI} Docker create new container: "
+	MsgDebugDockerAPIContainerWait       = "{HORUSEC_CLI} Docker wait container up..."
+	MsgDebugDockerAPIContainerRead       = "{HORUSEC_CLI} Docker read container output: "
+	MsgDebugDockerAPIFinishedSuccess     = "{HORUSEC_CLI} Docker Finished analysis with SUCCESS: "
+	MsgDebugDockerAPIFinishedError       = "{HORUSEC_CLI} Docker Finished analysis with ERROR: "
+	MsgDebugToolStartAnalysis            = "{HORUSEC_CLI} Running {{0}} - {{1}} in analysisID: "
+	MsgDebugToolFinishAnalysis           = "{HORUSEC_CLI} {{0}} - {{1}} is finished in analysisID: "
+	MsgDebugOutputEmpty                  = "{HORUSEC_CLI} When format Output it's Empty!"
+	MsgDebugConfigFileRunningOnPath      = "{HORUSEC_CLI} Config file running on path: "
+	MsgDebugFolderOrFileIgnored          = "{HORUSEC_CLI} The file or folder was ignored to send analysis:"
+	MsgDebugShowConfigs                  = "{HORUSEC_CLI} The current configuration for this analysis are:"
+	MsgDebugShowWorkdir                  = "{HORUSEC_CLI} The workdir setup for run in path:"
+	MsgDebugToolIgnored                  = "{HORUSEC_CLI} The tool was ignored for run in this analysis: "
+	MsgDebugVulnHashToFix                = "{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "
 )

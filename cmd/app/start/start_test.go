@@ -559,21 +559,21 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should execute command exec without error using json output", func(t *testing.T) {
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -583,7 +583,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -610,25 +610,25 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"analysisVulnerabilities\": null")
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll("./tmp-json.json"))
 	})
 	t.Run("Should execute command exec without error showing info vulnerabilities", func(t *testing.T) {
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementsMock,
 		}
 		oldStdout := os.Stdout
 
@@ -637,7 +637,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -658,24 +658,24 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		assert.NotContains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error sending to web application", func(t *testing.T) {
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementsMock,
 		}
 		oldStdout := os.Stdout
 
@@ -684,7 +684,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -704,24 +704,24 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NotContains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error using sonarqube output", func(t *testing.T) {
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -731,7 +731,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -758,7 +758,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"issues\": []")
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll("./tmp-sonarqube.json"))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
@@ -767,22 +767,22 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.ConfigFilePath = "./not-exists.json"
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementsMock := &requirements.Mock{}
+		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementsMock,
 		}
 
 		oldStdout := os.Stdout
@@ -792,7 +792,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -812,9 +812,9 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.Contains(t, output, "Total of Vulnerability MEDIUM is: 5")
 		assert.Contains(t, output, "Total of Vulnerability HIGH is: 11")
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
-		assert.Contains(t, output, "[HORUSEC] 16 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
+		assert.Contains(t, output, "{HORUSEC_CLI} 16 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
@@ -823,21 +823,21 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		prompt := &prompt.Mock{}
-		prompt.On("Ask").Return("Y", nil)
+		promptMock := &prompt.Mock{}
+		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirements := &requirements.Mock{}
-		requirements.On("ValidateDocker")
+		requirementMock := &requirements.Mock{}
+		requirementMock.On("ValidateDocker")
 
 		cmd := &Start{
 			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
-			prompt:       prompt,
+			prompt:       promptMock,
 			analyzer:     nil,
-			requirements: requirements,
+			requirements: requirementMock,
 		}
 		oldStdout := os.Stdout
 
@@ -846,7 +846,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		outC := make(chan string)
 		go func() {
 			var buf bytes.Buffer
-			io.Copy(&buf, r)
+			_, _ = io.Copy(&buf, r)
 			outC <- buf.String()
 		}()
 		cobraCmd := cmd.CreateStartCommand()
@@ -864,10 +864,10 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.Contains(t, output, "FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: ")
 		assert.Contains(t, output, "Horusec will return a timeout after 600 seconds. This time can be customized in the cli settings.")
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
-		assert.Contains(t, output, "[HORUSEC] 25 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
+		assert.Contains(t, output, "{HORUSEC_CLI} 25 VULNERABILITIES WERE FOUND IN YOUR CODE SENT TO HORUSEC, TO SEE MORE DETAILS USE THE LOG LEVEL AS DEBUG AND TRY AGAIN")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 		assert.Contains(t, output, "")
-		prompt.AssertNotCalled(t, "Ask")
+		promptMock.AssertNotCalled(t, "Ask")
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 }

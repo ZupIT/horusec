@@ -76,12 +76,17 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
+// nolint:gocyclo // function simple is not necessarily broken any validation
 func (f *Formatter) parseOutput(output, projectSubPath string) {
 	if f.isInvalidOutput(output) {
 		return
 	}
-	//nolint
-	for _, value := range strings.Split(output[strings.Index(output, enums.Separator):], enums.Separator) {
+
+	startedIndex := strings.Index(output, enums.Separator)
+	if startedIndex < 0 {
+		startedIndex = 0
+	}
+	for _, value := range strings.Split(output[startedIndex:], enums.Separator) {
 		dependency := f.parseDependencyValue(value)
 		if dependency != nil && *dependency != (entities.Dependency{}) {
 			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(dependency, projectSubPath))
