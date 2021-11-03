@@ -162,7 +162,7 @@ func NewSQLInjectionUsingParams() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.(find|drop|create|explain|delete|count|bulk|copy).*\n*{.*\n*\$where(?:'|\"|):.*(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`\.(find|drop|create|explain|delete|count|bulk|copy).*\n*{.*\n*(\$|)where(?:'|\"|):.*(?:req\.|req\.query|req\.body|req\.param)`),
 		},
 	}
 }
@@ -279,7 +279,7 @@ func NewAlertStatementsShouldNotBeUsed() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?m)(?i)(^| |;)(alert|confirm|prompt)\(.*`),
+			regexp.MustCompile(`(?m)(?i)(^||;)(alert|confirm|prompt)\(.*`),
 		},
 	}
 }

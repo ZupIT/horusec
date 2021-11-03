@@ -55,6 +55,92 @@ function f(req) {
 	return fs.createReadStream(req.body)
 }
 `
+	SampleVulnerableHSJAVASCRIPT9 = `
+function f(req) {
+	Model.find({ where: { foo: req.body}});
+}
+	`
+
+	SampleVulnerableHSJAVASCRIPT10 = `
+var libxml = require("libxmljs2");
+
+var xmlDoc = libxml.parseXmlString(xml, {});
+	`
+
+	SampleVulnerableHSJAVASCRIPT11 = `
+function f() {
+	var popup = window.open();
+	popup.postMessage("message", "https://foo.bar", "*");
+}
+
+function f2() {
+	window.addEventListener("message", (event) => {});
+}
+	`
+
+	SampleVulnerableHSJAVASCRIPT12 = `
+function f() {
+	const options = {
+		secureProtocol: 'TLSv1_method'
+	}
+}
+
+function f2() {
+	const options = {
+		secureProtocol: 'TLSv1.1'
+	}
+}
+	`
+
+	SampleVulnerableHSJAVASCRIPT13 = `
+const db = window.openDatabase();
+	`
+
+	SampleVulnerableHSJAVASCRIPT14 = `
+function f() {
+	localStorage.setItem("foo", "bar");
+}
+
+function f2() {
+	sessionStorage.setItem("foo", "bar");
+}
+	`
+
+	SampleVulnerableHSJAVASCRIPT15 = `
+	debugger;
+	`
+
+	SampleVulnerableHSJAVASCRIPT16 = `
+function f() {
+	alert("testing");
+}
+
+function f2() {
+	confirm("testing");
+}
+
+function f3() {
+	prompt("testing");
+}
+	`
+
+	SampleVulnerableHSJAVASCRIPT17 = `
+app.use('/', express.static('public', {
+  dotfiles : 'allow'
+}));
+	`
+
+	SampleVulnerableHSJAVASCRIPT18 = `
+function success(pos) {
+	console.log(pos)
+}
+
+function error(err) {
+  console.warn(err);
+}
+
+navigator.geolocation.getCurrentPosition(success, error, {});
+	`
 )
 
 const (
@@ -63,4 +149,45 @@ function f() {
 	eval("echo foo");
 }
 `
+
+	SampleSafeHSJAVASCRIPT9 = `
+function f(foo) {
+	Model.find({ where: { foo: foo}});
+}
+`
+
+	SampleSafeHSJAVASCRIPT10 = `
+var libxml = require("libxmljs2");
+
+var xmlDoc = libxml.parseXmlString(xml);
+	`
+
+	SampleSafeHSJAVASCRIPT11 = `
+function f() {
+	var popup = window.open();
+	popup.postMessage("message", "https://foo.bar");
+}
+
+function f2() {
+	window.addEventListener("message", (event) => {
+		if (event.origin !== "http://example.org:8080") {
+			return;
+		}
+	});
+}
+	`
+
+	SampleSafeHSJAVASCRIPT12 = `
+
+function f() {
+	const options = {
+		secureProtocol: 'SSLv23_method'
+	}
+}
+	`
+
+	SampleSafeHSJAVASCRIPT17 = `
+app.use('/', express.static('public', { }));
+
+	`
 )
