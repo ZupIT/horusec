@@ -40,14 +40,15 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 
+var tmpPath, _ = filepath.Abs("tmp")
+
 func TestMain(m *testing.M) {
-	_ = os.RemoveAll("./examples")
-	_ = os.RemoveAll("./tmp")
-	_ = os.MkdirAll("./tmp", 0750)
+	_ = os.RemoveAll(tmpPath)
+	_ = os.MkdirAll(tmpPath, os.ModePerm)
+
 	code := m.Run()
 
-	_ = os.RemoveAll("./examples")
-	_ = os.RemoveAll("./tmp")
+	_ = os.RemoveAll(tmpPath)
 	os.Exit(code)
 }
 
@@ -303,7 +304,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		},
 		{
 			name: "Should execute command exec without error using sonarqube output (-o sonarqube, -O)",
-			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), testutil.StartFlagOutputFormat, "sonarqube", testutil.StartFlagReturnError},
+			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(tmpPath, "tmp-sonarqube.json"), testutil.StartFlagOutputFormat, "sonarqube", testutil.StartFlagReturnError},
 			err:  false,
 			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
 				analyzer.On("Analyze").Return(0, nil)
@@ -313,7 +314,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, "sonarqube", cfg.PrintOutputType)
-				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-sonarqube.json"), cfg.JSONOutputFilePath)
+				assert.Equal(t, filepath.Join(tmpPath, "tmp-sonarqube.json"), cfg.JSONOutputFilePath)
 
 				prompt.AssertNotCalled(t, "Ask")
 				analyzer.AssertCalled(t, "Analyze")
@@ -588,7 +589,11 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		}()
 		cobraCmd := cmd.CreateStartCommand()
 		cobraCmd.SetOut(w)
-		cobraCmd.SetArgs([]string{"-p", "./", "-o", "json", "-O", "./tmp-json.json"})
+		outputPathJSON := filepath.Join(tmpPath, "tmp-json.json")
+		cobraCmd.SetArgs([]string{
+			testutil.StartFlagProjectPath, ".",
+			testutil.StartFlagOutputFormat, "json",
+			testutil.StartFlagJSONOutputFilePath, outputPathJSON})
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
@@ -601,17 +606,17 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.Contains(t, output, "FOLDER BEFORE THE ANALYSIS FINISH! Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: ")
 		assert.Contains(t, output, "Horusec will return a timeout after 600 seconds. This time can be customized in the cli settings.")
 		assert.Contains(t, output, "{HORUSEC_CLI} Writing output JSON to file in the path:")
-		assert.Contains(t, output, "cmd/app/start/tmp-json.json")
+		assert.Contains(t, output, outputPathJSON)
 		assert.Contains(t, output, "{HORUSEC_CLI} No authorization token was found, your code it is not going to be sent to horusec. Please enter a token with the -a flag to configure and save your analysis")
 		assert.Contains(t, output, "YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!")
 		assert.Contains(t, output, "{HORUSEC_CLI} Horusec not show info vulnerabilities in this analysis")
 
-		bytesFile, err := os.ReadFile("./tmp-json.json")
+		bytesFile, err := os.ReadFile(outputPathJSON)
 		assert.NoError(t, err)
 		bytesFileString := string(bytesFile)
 		assert.Contains(t, bytesFileString, "\"analysisVulnerabilities\": null")
 		promptMock.AssertNotCalled(t, "Ask")
-		assert.NoError(t, os.RemoveAll("./tmp-json.json"))
+		assert.NoError(t, os.RemoveAll(outputPathJSON))
 	})
 	t.Run("Should execute command exec without error showing info vulnerabilities", func(t *testing.T) {
 		promptMock := &prompt.Mock{}
@@ -762,8 +767,8 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, os.RemoveAll("./tmp-sonarqube.json"))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks but ignore vulnerabilities of the HIGH", func(t *testing.T) {
-		srcProject := "../../../examples/leaks/example1"
-		dstProject := "./examples/" + uuid.New().String()
+		srcProject := testutil.LeaksExample1
+		dstProject := filepath.Join(tmpPath, uuid.NewString())
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
@@ -818,8 +823,8 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 	t.Run("Should execute command exec without error and return vulnerabilities of gitleaks and return error", func(t *testing.T) {
-		srcProject := "../../../examples/leaks/example1"
-		dstProject := "./examples/" + uuid.New().String()
+		srcProject := testutil.LeaksExample1
+		dstProject := filepath.Join(tmpPath, uuid.NewString())
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))

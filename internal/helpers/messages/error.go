@@ -16,7 +16,7 @@ package messages
 
 // Block of messages usage into error response
 const (
-	MsgErrorPathNotValid                        = "invalid path: "
+	MsgErrorPathNotValid                        = "invalid path:"
 	MsgErrorJSONOutputFilePathNotValidExtension = "Output File path not valid file of type:"
 	MsgErrorJSONOutputFilePathNotValidUnknown   = "Output File path is required or is invalid:"
 	MsgErrorSeverityNotValid                    = "Type of severity not valid. See severities enable:"
