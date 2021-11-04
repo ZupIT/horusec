@@ -142,6 +142,181 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-JAVASCRIPT-9",
+			Rule: NewSQLInjectionUsingParams(),
+			Src:  SampleVulnerableHSJAVASCRIPT9,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `Model.find({ where: { foo: req.body}});`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 6,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-10",
+			Rule: NewXMLParsersShouldNotBeVulnerableToXXEAttacks(),
+			Src:  SampleVulnerableHSJAVASCRIPT10,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `var xmlDoc = libxml.parseXmlString(xml, {});`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 19,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-11",
+			Rule: NewOriginsNotVerified(),
+			Src:  SampleVulnerableHSJAVASCRIPT11,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `popup.postMessage("message", "https://foo.bar", "*");`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 6,
+					},
+				},
+				{
+					CodeSample: `window.addEventListener("message", (event) => {});`,
+					SourceLocation: engine.Location{
+						Line:   8,
+						Column: 7,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-12",
+			Rule: NewWeakSSLTLSProtocolsShouldNotBeUsed(),
+			Src:  SampleVulnerableHSJAVASCRIPT12,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `secureProtocol: 'TLSv1_method'`,
+					SourceLocation: engine.Location{
+						Line:   4,
+						Column: 19,
+					},
+				},
+				{
+					CodeSample: `secureProtocol: 'TLSv1.1'`,
+					SourceLocation: engine.Location{
+						Line:   10,
+						Column: 19,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-13",
+			Rule: NewWebSQLDatabasesShouldNotBeUsed(),
+			Src:  SampleVulnerableHSJAVASCRIPT13,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `const db = window.openDatabase();`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 11,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-14",
+			Rule: NewLocalStorageShouldNotBeUsed(),
+			Src:  SampleVulnerableHSJAVASCRIPT14,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `localStorage.setItem("foo", "bar");`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 1,
+					},
+				},
+				{
+					CodeSample: `sessionStorage.setItem("foo", "bar");`,
+					SourceLocation: engine.Location{
+						Line:   7,
+						Column: 1,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-15",
+			Rule: NewDebuggerStatementsShouldNotBeUsed(),
+			Src:  SampleVulnerableHSJAVASCRIPT15,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `debugger;`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 1,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-16",
+			Rule: NewAlertStatementsShouldNotBeUsed(),
+			Src:  SampleVulnerableHSJAVASCRIPT16,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `alert("testing");`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 1,
+					},
+				},
+				{
+					CodeSample: `confirm("testing");`,
+					SourceLocation: engine.Location{
+						Line:   7,
+						Column: 1,
+					},
+				},
+				{
+					CodeSample: `prompt("testing");`,
+					SourceLocation: engine.Location{
+						Line:   11,
+						Column: 1,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-17",
+			Rule: NewStaticallyServingHiddenFilesIsSecuritySensitive(),
+			Src:  SampleVulnerableHSJAVASCRIPT17,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `dotfiles : 'allow'`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 2,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVASCRIPT-18",
+			Rule: NewUsingIntrusivePermissionsWithGeolocation(),
+			Src:  SampleVulnerableHSJAVASCRIPT18,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `navigator.geolocation.getCurrentPosition(success, error, {});`,
+					SourceLocation: engine.Location{
+						Line:   10,
+						Column: 10,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -153,6 +328,31 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-JAVASCRIPT-2",
 			Rule: NewNoUseEval(),
 			Src:  SampleSafeHSJAVASCRIPT2,
+		},
+		{
+			Name: "HS-JAVASCRIPT-9",
+			Rule: NewSQLInjectionUsingParams(),
+			Src:  SampleSafeHSJAVASCRIPT9,
+		},
+		{
+			Name: "HS-JAVASCRIPT-10",
+			Rule: NewXMLParsersShouldNotBeVulnerableToXXEAttacks(),
+			Src:  SampleSafeHSJAVASCRIPT10,
+		},
+		{
+			Name: "HS-JAVASCRIPT-11",
+			Rule: NewOriginsNotVerified(),
+			Src:  SampleSafeHSJAVASCRIPT11,
+		},
+		{
+			Name: "HS-JAVASCRIPT-12",
+			Rule: NewWeakSSLTLSProtocolsShouldNotBeUsed(),
+			Src:  SampleSafeHSJAVASCRIPT12,
+		},
+		{
+			Name: "HS-JAVASCRIPT-17",
+			Rule: NewStaticallyServingHiddenFilesIsSecuritySensitive(),
+			Src:  SampleSafeHSJAVASCRIPT17,
 		},
 	}
 
