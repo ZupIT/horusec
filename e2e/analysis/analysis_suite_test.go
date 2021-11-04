@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package scan_test
+package analysis_test
 
 import (
 	"testing"
@@ -21,7 +21,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestScan(t *testing.T) {
+func TestAnalysis(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Scan Suite")
+	defer GinkgoRecover()
+	RunSpecs(t, "Analysis Suite")
 }
