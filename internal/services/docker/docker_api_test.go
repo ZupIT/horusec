@@ -249,6 +249,40 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 
 		assert.NoError(t, err)
 	})
+
+	t.Run("Should pull image from registry when not exists on cache", func(t *testing.T) {
+		dockerAPIClient := new(client.Mock)
+		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, nil)
+		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
+		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
+		dockerAPIClient.On("ContainerStart").Return(nil)
+		dockerAPIClient.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
+		dockerAPIClient.On("ContainerLogs").Return(io.NopCloser(bytes.NewReader([]byte("{}"))), nil)
+		dockerAPIClient.On("ContainerRemove").Return(nil)
+
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+
+		err := api.PullImage("random/image")
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("Should not pull image from registry when exists on cache", func(t *testing.T) {
+		dockerAPIClient := new(client.Mock)
+		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
+		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
+		dockerAPIClient.On("ContainerStart").Return(nil)
+		dockerAPIClient.On("ContainerWait").Return(container.ContainerWaitOKBody{}, nil)
+		dockerAPIClient.On("ContainerLogs").Return(io.NopCloser(bytes.NewReader([]byte("{}"))), nil)
+		dockerAPIClient.On("ContainerRemove").Return(nil)
+
+		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
+
+		err := api.PullImage("random/image")
+
+		assert.NoError(t, err)
+		dockerAPIClient.AssertNotCalled(t, "ImagePull")
+	})
 }
 
 func TestDeleteContainersFromAPI(t *testing.T) {

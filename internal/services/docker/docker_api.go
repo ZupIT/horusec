@@ -103,20 +103,27 @@ func (d *API) CreateLanguageAnalysisContainer(data *docker.AnalysisData) (contai
 	return d.logStatusAndExecuteCRDContainer(data.GetCustomOrDefaultImage(), d.replaceCMDAnalysisID(data.CMD))
 }
 
+// PullImage check if an image already exists on cache, if its not, pull from registry.
+//
+// nolint:funlen
 func (d *API) PullImage(imageWithTagAndRegistry string) error {
 	if d.config.DisableDocker {
 		return nil
 	}
 
-	if imageNotExist, err := d.checkImageNotExists(imageWithTagAndRegistry); err != nil || !imageNotExist {
+	imageNotExist, err := d.checkIfImageNotExists(imageWithTagAndRegistry)
+	if err != nil {
 		logger.LogError(fmt.Sprintf("%s -> %s",
 			messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
 		return err
+	} else if imageNotExist {
+		logger.LogDebugWithLevel(fmt.Sprintf(messages.MsgDebugDockerImageDoesNotExists, imageWithTagAndRegistry))
+		err = d.downloadImage(imageWithTagAndRegistry)
+		logger.LogError(fmt.Sprintf("%s -> %s", messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
+		return err
 	}
 
-	err := d.downloadImage(imageWithTagAndRegistry)
-	logger.LogError(fmt.Sprintf("%s -> %s", messages.MsgErrorFailedToPullImage, imageWithTagAndRegistry), err)
-	return err
+	return nil
 }
 
 func (d *API) downloadImage(imageWithTagAndRegistry string) error {
@@ -157,7 +164,8 @@ func (d *API) readPullReader(imageWithTagAndRegistry string, reader io.ReadClose
 	return nil
 }
 
-func (d *API) checkImageNotExists(imageWithTagAndRegistry string) (bool, error) {
+// checkIfImageNotExists return true if image does not exists on cache, otherwise false.
+func (d *API) checkIfImageNotExists(imageWithTagAndRegistry string) (bool, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	args := dockerTypesFilters.NewArgs()
