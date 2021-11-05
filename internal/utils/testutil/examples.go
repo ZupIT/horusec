@@ -134,3 +134,26 @@ func init() {
 		))
 	}
 }
+
+//nolint:funlen
+func GetAllExamples1Dir() []string {
+	return append([]string{},
+		CsharpExample1,
+		DartExample1,
+		ElfExample1,
+		ElixirExample1,
+		GoExample1,
+		Hclxample1,
+		JavaExample1,
+		JavaScriptExample1,
+		KotlinExample1,
+		LeaksExample1,
+		NginxExample1,
+		PeExample1,
+		PerfExample1,
+		PHPExample1,
+		PythonExample1,
+		RubyExample1,
+		SwiftExample1,
+		YamlExample1)
+}

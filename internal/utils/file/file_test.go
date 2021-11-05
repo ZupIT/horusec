@@ -15,8 +15,12 @@
 package file
 
 import (
+	"errors"
+	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
 
 	"github.com/stretchr/testify/assert"
 
@@ -56,5 +60,139 @@ func TestGetSubPathByExtension(t *testing.T) {
 		path, _ := filepath.Abs(".")
 		response := GetSubPathByExtension(path, "test", "*.test")
 		assert.Equal(t, "", response)
+	})
+}
+func TestCreateAndWriteFile(t *testing.T) {
+	wd := t.TempDir()
+	t.Run("Should create a file with input and return no error", func(t *testing.T) {
+		expectedInput := "some input"
+		filename := filepath.Join(wd, "someFile")
+		err := CreateAndWriteFile(expectedInput, filename)
+		assert.NoError(t, err)
+
+		_, err = os.Stat(filename)
+		exists := !errors.Is(err, os.ErrNotExist)
+		assert.True(t, exists)
+		if exists {
+			input, err := os.ReadFile(filename)
+			assert.NoError(t, err)
+			assert.Equal(t, expectedInput, string(input))
+		}
+	})
+	t.Run("Should create a file in current directory "+
+		"with absolute filepath with input and return no error when invalid filepath", func(t *testing.T) {
+		filename := "invalidPathForFile"
+		expectedInput := "some input"
+
+		err := CreateAndWriteFile(expectedInput, filename)
+		assert.NoError(t, err)
+
+		_, err = os.Stat(filename)
+		assert.NoError(t, err)
+
+		exists := !errors.Is(err, os.ErrNotExist)
+		assert.True(t, exists)
+
+		if exists {
+			path, err := filepath.Abs(filename)
+			assert.NoError(t, err)
+			input, err := os.ReadFile(path)
+			assert.NoError(t, err)
+			assert.Equal(t, expectedInput, string(input))
+			t.Cleanup(func() {
+				_ = os.Remove(path)
+			})
+		}
+	})
+}
+
+func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
+	t.Run("Should run with success", func(t *testing.T) {
+		code, file, line := GetDependencyCodeFilepathAndLine(testutil.CsharpExample1, "", enums.CsProjExt, "Microsoft.AspNetCore.Http")
+		expectedCode := "<PackageReference Include=\"Microsoft.AspNetCore.Http\" Version=\"2.2.2\"/>"
+		expectedFile := filepath.Join(testutil.CsharpExample1, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj")
+		expectedLine := "7"
+		assert.Equal(t, expectedLine, line)
+		assert.Equal(t, expectedFile, file)
+		assert.Equal(t, expectedCode, code)
+	})
+	t.Run("Should return empty when path is invalid", func(t *testing.T) {
+		code, file, line := GetDependencyCodeFilepathAndLine("invalidPath", "", enums.CsProjExt, "Microsoft.AspNetCore.Http")
+		assert.Zero(t, code)
+		assert.Zero(t, file)
+		assert.Zero(t, line)
+	})
+	t.Run("Should return empty when path is valid but has no files", func(t *testing.T) {
+		code, file, line := GetDependencyCodeFilepathAndLine(t.TempDir(), "", enums.CsProjExt, "Microsoft.AspNetCore.Http")
+		assert.Zero(t, code)
+		assert.Zero(t, file)
+		assert.Zero(t, line)
+	})
+
+}
+
+func TestGetCode(t *testing.T) {
+	dir := t.TempDir()
+	expectedInput := "some input"
+	filename := "someFile"
+	path := filepath.Join(dir, filename)
+	err := CreateAndWriteFile(expectedInput, path)
+	assert.NoError(t, err)
+	t.Run("Should get a code from a file with input and return no error", func(t *testing.T) {
+		result, err := GetCode(dir, filename, "1")
+		assert.NoError(t, err)
+		assert.Equal(t, expectedInput, result)
+	})
+	t.Run("Should not get a code from a file with input and return error", func(t *testing.T) {
+		err = CreateAndWriteFile("notExpectedInput", path)
+		assert.NoError(t, err)
+
+		result, err := GetCode(dir, filename, "1")
+		assert.NoError(t, err)
+		assert.NotEqual(t, expectedInput, result)
+	})
+	t.Run("Should not get a code from a file with input and return empty when line is empty", func(t *testing.T) {
+		result, err := GetCode(dir, filename, "3")
+		assert.NoError(t, err)
+		assert.Equal(t, "", result)
+	})
+	t.Run("Should not get a code from a file with input and return empty when line is invalid", func(t *testing.T) {
+		result, err := GetCode(dir, filename, "-3")
+		assert.NoError(t, err)
+		assert.Equal(t, "", result)
+	})
+	t.Run("Should not get a code from a file with input and return error when dir path is invalid", func(t *testing.T) {
+		result, err := GetCode("invalidDirPath", filename, "3")
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+	t.Run("Should not get a code from a file with input and return error when filename is invalid", func(t *testing.T) {
+		result, err := GetCode(dir, "invalidFilename", "3")
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+}
+
+func TestGetFilenameByExt(t *testing.T) {
+	dir := t.TempDir()
+	expectedInput := "some input"
+	filename := "someFile.go"
+	path := filepath.Join(dir, filename)
+	err := CreateAndWriteFile(expectedInput, path)
+	assert.NoError(t, err)
+	t.Run("Should get a filename by extension with no error", func(t *testing.T) {
+		resultFilename, err := GetFilenameByExt(dir, "", ".go")
+		assert.NoError(t, err)
+		assert.Equal(t, filename, resultFilename)
+	})
+	t.Run("Should get a empty filename by extension when ext is not found", func(t *testing.T) {
+		resultFilename, err := GetFilenameByExt(dir, "", ".potato")
+		assert.NoError(t, err)
+		assert.Equal(t, "", resultFilename)
+	})
+	t.Run("Should get a empty filename by extension and error when path is valid", func(t *testing.T) {
+		resultFilename, err := GetFilenameByExt("invalidPath", "", ".go")
+		assert.Error(t, err)
+		assert.Equal(t, "", resultFilename)
 	})
 }
