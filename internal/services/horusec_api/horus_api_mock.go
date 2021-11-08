@@ -18,6 +18,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 
+	utilsmock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 )
 
@@ -25,11 +27,12 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) SendAnalysis(_ *analysis.Analysis) {
+func (m *Mock) SendAnalysis(_ *analysis.Analysis) error {
 	m.MethodCalled("SendAnalysis")
+	return nil
 }
 
-func (m *Mock) GetAnalysis(_ uuid.UUID) *analysis.Analysis {
+func (m *Mock) GetAnalysis(_ uuid.UUID) (*analysis.Analysis, error) {
 	args := m.MethodCalled("GetAnalysis")
-	return args.Get(0).(*analysis.Analysis)
+	return args.Get(0).(*analysis.Analysis), utilsmock.ReturnNilOrError(args, 1)
 }

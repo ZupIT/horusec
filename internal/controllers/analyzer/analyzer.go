@@ -105,8 +105,8 @@ type PrintResults interface {
 
 // HorusecService is the interface that interacts with Horusec API
 type HorusecService interface {
-	SendAnalysis(*analysis.Analysis)
-	GetAnalysis(uuid.UUID) *analysis.Analysis
+	SendAnalysis(*analysis.Analysis) error
+	GetAnalysis(uuid.UUID) (*analysis.Analysis, error)
 }
 
 type Analyzer struct {
@@ -172,20 +172,31 @@ func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 		return 0, err
 	}
 	a.startDetectVulnerabilities(langs)
-	return a.sendAnalysisAndStartPrintResults()
-}
-
-func (a *Analyzer) sendAnalysisAndStartPrintResults() (int, error) {
-	a.formatAnalysisToSendToAPI()
-	a.horusec.SendAnalysis(a.analysis)
-	analysisSaved := a.horusec.GetAnalysis(a.analysis.ID)
-	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
-		a.analysis = analysisSaved
+	if err = a.sendAnalysis(); err != nil {
+		logger.LogStringAsError(fmt.Sprintf("[HORUSEC] %s", err.Error()))
 	}
 
+	return a.startPrintResults()
+}
+func (a *Analyzer) startPrintResults() (int, error) {
 	a.formatAnalysisToPrint()
 	a.printController.SetAnalysis(a.analysis)
 	return a.printController.Print()
+}
+
+func (a *Analyzer) sendAnalysis() error {
+	a.formatAnalysisToSendToAPI()
+	if err := a.horusec.SendAnalysis(a.analysis); err != nil {
+		return err
+	}
+	analysisSaved, err := a.horusec.GetAnalysis(a.analysis.ID)
+	if err != nil {
+		return err
+	}
+	if analysisSaved != nil && analysisSaved.ID != uuid.Nil {
+		a.analysis = analysisSaved
+	}
+	return err
 }
 
 func (a *Analyzer) formatAnalysisToPrint() {
