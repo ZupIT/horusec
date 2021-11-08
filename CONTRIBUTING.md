@@ -3,20 +3,20 @@
 This is Horusec contributing guide. Please read the following sections to learn how to ask questions and how to work on something.
 
 ## **Table of contents**
-### 1. [**Before you contribute**](#Before-you-contribute)
-> #### i.  [**Code of Conduct**](#Code-of-Conduct)
-> #### ii. [**Legal**](#Legal)
-### 2. [**Prerequisites**](#Prerequisites)
-> #### i.   [**Developer Certificate of Origin**](#Developer-Certificate-of-Origin)
-> #### ii.  [**Code Review**](#Code-Review)
-> #### iii. [**Pull Requests**](#Pull-Requests)    
-### 3. [**How to contribute?**](#How-to-contribute?)
- > #### i. [**Prepare your development environment**](#Prepare-your-development-environment)
-> #### ii.  [**First contribution**](#First-contribution)
-> #### iii. [**Add new feature, bugfixing or improvement**](#Add-new-feature-bugfixing-or-improvement)
-> #### iv.  [**Pull Request's approval**](#Pull-Request's-approval)
-> #### v.   [**After your pull request's approval**](#After-your-pull-request's-approval)
-### 4. [**Community**](#Community)
+### 1. [**Before you contribute**](#before-you-contribute)
+> #### i.  [**Code of Conduct**](#code-of-conduct)
+> #### ii. [**Legal**](#legal)
+### 2. [**Prerequisites**](#prerequisites)
+> #### i.   [**Developer Certificate of Origin**](#developer-certificate-of-origin)
+> #### ii.  [**Code Review**](#code-review)
+> #### iii. [**Pull Requests**](#pull-requests)    
+### 3. [**How to contribute?**](#how-to-contribute?)
+ > #### i. [**Prepare your development environment**](#prepare-your-development-environment)
+> #### ii.  [**First contribution**](#first-contribution)
+> #### iii. [**Add new feature, bugfixing or improvement**](#add-new-feature-bugfixing-or-improvement)
+> #### iv.  [**Pull Request's approval**](#pull-request-approval)
+> #### v.   [**After your pull request's approval**](#after-your-pull-request-approval)
+### 4. [**Community**](#community)
 
 ## **Before you contribute**
 
@@ -107,7 +107,6 @@ go tool cover -html=coverage.out # Open coverage status in your browser
 #### **Repositories**
 Horusec has other repositories and you can check the README for each one of them: 
 
-- [**Admin**](https://github.com/ZupIT/horusec-admin)
 - [**Charts**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher)
 - [**Devkit**](https://github.com/ZupIT/horusec-devkit)
 - [**Engine**](https://github.com/ZupIT/horusec-engine)

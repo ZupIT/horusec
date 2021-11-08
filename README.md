@@ -26,23 +26,23 @@
 </p>
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Getting started**](#Getting-started)
->#### i.   [**Requirements**](#Requirements)
->#### ii.  [**Installation**](#Installation)
->#### iii. [**Usage**](#Usage)
->##### [**CLI Usage**](#CLI-Usage)
->##### [**Using Docker**](#Using-Docker)
->##### [**Older versions**](#Older-versions)
->##### [**Using Horusec-Web application**](#Using-Horusec-Web-application)
->##### [**Using Visual Studio Code**](#Using-Visual-Studio-Code)
->##### [**Using the Pipeline**](#Using-the-Pipeline)
-### 3. [**Documentation**](#Documentation)       
-### 4. [**Roadmap**](#Roadmap)
-### 5. [**Contributing**](#Contributing)
-### 6. [**Code of Conduct**](#Code-of-Conduct)
-### 7. [**License**](#License)
-### 8. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Getting started**](#getting-started)
+>#### i.   [**Requirements**](#requirements)
+>#### ii.  [**Installation**](#installing-horusec)
+>#### iii. [**Usage**](#usage)
+>##### i. [**CLI Usage**](#cli-usage-1)
+>##### ii. [**Using Docker**](#using-docker-1)
+>##### iii. [**Older versions**](#older-versions-1)
+>##### iv. [**Using Horusec-Web application**](#using-horusec-web-application-1)
+>##### v.  [**Using Visual Studio Code**](#using-visual-studio-code-1)
+>##### vi. [**Using the Pipeline**](#Using-the-Pipeline)
+### 3. [**Documentation**](#documentation)       
+### 4. [**Roadmap**](#roadmap)
+### 5. [**Contributing**](#contributing)
+### 6. [**Code of Conduct**](#code-of-conduct)
+### 7. [**License**](#license)
+### 8. [**Community**](#community)
 
 
 
@@ -182,7 +182,6 @@ Horusec also have other repositories, check out some of our other projects:
 - [**Horusec DevKit**](https://github.com/ZupIT/horusec-devkit)
 - [**Horusec Engine**](https://github.com/ZupIT/horusec-engine)
 - [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
-- [**Horusec Admin**](https://github.com/ZupIT/horusec-admin)
 - [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
 
 ## **Contributing**
