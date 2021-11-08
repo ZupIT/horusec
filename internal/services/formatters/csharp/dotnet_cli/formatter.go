@@ -50,20 +50,21 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startDotnetCli(projectSubPath), tools.DotnetCli, projectSubPath)
+	output, err := f.startDotnetCli(projectSubPath)
+	f.SetAnalysisError(err, tools.DotnetCli, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.DotnetCli, languages.CSharp)
 }
 
-func (f *Formatter) startDotnetCli(projectSubPath string) error {
+func (f *Formatter) startDotnetCli(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.DotnetCli, languages.CSharp)
 
 	output, err := f.checkOutputErrors(f.ExecuteContainer(f.getConfigData(projectSubPath)))
 	if err != nil {
-		return err
+		return output, err
 	}
 
 	f.parseOutput(output, projectSubPath)
-	return nil
+	return output, nil
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

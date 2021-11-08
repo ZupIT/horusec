@@ -45,19 +45,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startFlawfinder(projectSubPath), tools.Flawfinder, projectSubPath)
+	output, err := f.startFlawfinder(projectSubPath)
+	f.SetAnalysisError(err, tools.Flawfinder, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Flawfinder, languages.C)
 }
 
-func (f *Formatter) startFlawfinder(projectSubPath string) error {
+func (f *Formatter) startFlawfinder(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Flawfinder, languages.C)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

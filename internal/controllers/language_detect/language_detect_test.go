@@ -286,4 +286,16 @@ func TestNewLanguageDetect(t *testing.T) {
 			}
 		})
 	})
+	t.Run("Should read git submodule path and copy to .horusec folder git submodule correctly", func(t *testing.T) {
+		analysisID := uuid.New()
+		configs := config.New()
+		configs.EnableGitHistoryAnalysis = true
+		controller := NewLanguageDetect(configs, analysisID)
+		_, err := controller.Detect(testutil.ExamplesPath)
+		assert.NoError(t, err)
+		projectClonedPath := filepath.Join(testutil.ExamplesPath, ".horusec", analysisID.String())
+		fileInfo, err := os.Stat(filepath.Join(projectClonedPath, ".git"))
+		assert.NoError(t, err)
+		assert.True(t, fileInfo.IsDir())
+	})
 }

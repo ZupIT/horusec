@@ -15,123 +15,132 @@
 package analysis_test
 
 import (
+	"encoding/json"
 	"fmt"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gexec"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+
+	"github.com/google/uuid"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/e2e/analysis"
+	customimages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
-type AnalysisTestCase struct {
-	Language       languages.Language
-	AnalysisFolder string
-	ExpectedTools  []tools.Tool
-}
+const isWindows = runtime.GOOS == "windows"
+const isDarwin = runtime.GOOS == "darwin"
+const horusecConfigName = "horusec-config.json"
 
-func (A AnalysisTestCase) RunAnalysisTestCase() (*gexec.Session, error) {
-	flags := map[string]string{
-		testutil.StartFlagProjectPath: A.AnalysisFolder,
-	}
-	cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.CmdStart, flags)
-	return gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
-}
+var _ = Describe("Run a complete horusec analysis when build tools locally", func() {
+	tmpDir := CreateHorusecConfigAndReturnTMPDirectory()
 
-var testcases = []AnalysisTestCase{
-	{
-		Language:       languages.Python,
-		AnalysisFolder: testutil.PythonExample1,
-		ExpectedTools:  []tools.Tool{tools.Bandit, tools.BundlerAudit, tools.Trivy},
-	},
-	{
-		Language:       languages.Ruby,
-		AnalysisFolder: testutil.RubyExample1,
-		ExpectedTools:  []tools.Tool{tools.Brakeman, tools.BundlerAudit, tools.Trivy},
-	},
-	{
-		Language:       languages.Javascript,
-		AnalysisFolder: testutil.JavaScriptExample1,
-		ExpectedTools:  []tools.Tool{tools.NpmAudit, tools.YarnAudit, tools.HorusecEngine, tools.Semgrep, tools.Trivy},
-	},
-	{
-		Language:       languages.Go,
-		AnalysisFolder: testutil.GoExample1,
-		ExpectedTools:  []tools.Tool{tools.GoSec, tools.Semgrep, tools.Nancy, tools.Trivy},
-	},
-	{
-		Language:       languages.CSharp,
-		AnalysisFolder: testutil.CsharpExample1,
-		ExpectedTools:  []tools.Tool{tools.SecurityCodeScan, tools.HorusecEngine, tools.DotnetCli, tools.Trivy},
-	},
-	{
-		Language:       languages.Java,
-		AnalysisFolder: testutil.JavaExample1,
-		ExpectedTools:  []tools.Tool{tools.HorusecEngine, tools.Semgrep, tools.Trivy},
-	},
-	{
-		Language:       languages.Kotlin,
-		AnalysisFolder: testutil.KotlinExample1,
-		ExpectedTools:  []tools.Tool{tools.HorusecEngine},
-	},
-	{
-		Language:       languages.Leaks,
-		AnalysisFolder: testutil.LeaksExample1,
-		ExpectedTools:  []tools.Tool{tools.GitLeaks, tools.HorusecEngine},
-	},
-	{
-		Language:       languages.PHP,
-		AnalysisFolder: testutil.PHPExample1,
-		ExpectedTools:  []tools.Tool{tools.Semgrep, tools.PhpCS, tools.Trivy},
-	},
-	{
-		Language:       languages.Dart,
-		AnalysisFolder: testutil.DartExample1,
-		ExpectedTools:  []tools.Tool{tools.HorusecEngine},
-	},
-	{
-		Language:       languages.Elixir,
-		AnalysisFolder: testutil.ElixirExample1,
-		ExpectedTools:  []tools.Tool{tools.MixAudit, tools.Sobelow},
-	},
-	{
-		Language:       languages.Nginx,
-		AnalysisFolder: testutil.NginxExample1,
-		ExpectedTools:  []tools.Tool{tools.HorusecEngine},
-	},
-	{
-		Language:       languages.Swift,
-		AnalysisFolder: testutil.SwiftExample1,
-		ExpectedTools:  []tools.Tool{tools.HorusecEngine},
-	},
-}
+	Describe("Running e2e tests when build tools locally", func() {
+		allTestsCases := analysis.NewTestCase()
 
-var _ = Describe("Run a complete horusec analysis", func() {
-	var (
-		session *gexec.Session
-	)
+		for idx, testCase := range allTestsCases {
+			if !isDarwin {
+				horusecConfigFilePathBuildLocally := filepath.Join(tmpDir, horusecConfigName)
+				RunTestCase(testCase, horusecConfigFilePathBuildLocally, "(build locally)", idx, len(allTestsCases))
 
-	for _, tt := range testcases {
-		Describe(fmt.Sprintf("Running on %s codebase.", tt.Language.ToString()), func() {
-			session, _ = tt.RunAnalysisTestCase()
-			session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder)
+				time.Sleep(2 * time.Second)
+			}
 
-			It("execute command without error", func() {
-				Expect(session.ExitCode()).To(Equal(0))
-			})
+			horusecConfigFilePathDownloadFromDockerHub := filepath.Join(allTestsCases[idx].Command.Flags[testutil.StartFlagProjectPath], horusecConfigName)
+			RunTestCase(testCase, horusecConfigFilePathDownloadFromDockerHub, "(download from dockerhub)", idx, len(allTestsCases))
 
-			It("vulnerabilities were found", func() {
-				Expect(session.Out.Contents()).To(ContainSubstring("{HORUSEC_CLI} Vulnerability Hash expected to be FIXED"))
-				Expect(session.Out.Contents()).To(ContainSubstring("VULNERABILITIES WERE FOUND IN YOUR CODE"))
-			})
+			time.Sleep(2 * time.Second)
+		}
+	})
 
-			It("running all expected tools", func() {
-				for _, tool := range tt.ExpectedTools {
-					Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("{HORUSEC_CLI} Running %s", tool.ToString())))
-				}
-			})
-		})
-	}
+	AfterEach(func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			Fail(fmt.Sprintf("Error on remove tmp folder: %v", err))
+		}
+	})
 })
+
+func RunTestCase(testCase *analysis.TestCase, horusecConfigFilePath, runType string, idx, lenTestCase int) {
+	testCase.Command.Flags[testutil.GlobalFlagConfigFilePath] = horusecConfigFilePath
+	if isWindows && testCase.RequiredDocker {
+		logger.LogInfo("Tool ignored because is required docker: ", runType, testCase.Tool, fmt.Sprintf("[%v/%v]", idx+1, lenTestCase))
+		return
+	}
+	logger.LogInfo("Preparing test for run e2e: ", runType, testCase.Tool, fmt.Sprintf("[%v/%v]", idx+1, lenTestCase))
+	session, err := testCase.RunAnalysisTestCase()
+	if err != nil {
+		Fail(fmt.Sprintf("Error on run analysis Test Case %s: %v", runType, err))
+	}
+	session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder)
+	testCase.Command.Output = string(session.Out.Contents())
+	testCase.Command.ExitCode = session.ExitCode()
+
+	It(fmt.Sprintf("Execute command without error for %s: %s", runType, testCase.Tool), func() {
+		Expect(testCase.Command.ExitCode).Should(Equal(0))
+	})
+
+	It(fmt.Sprintf("Validate is outputs expected exists on tool %s: %s", runType, testCase.Tool), func() {
+		for _, outputExpected := range testCase.Expected.OutputsContains {
+			Expect(testCase.Command.Output).Should(
+				ContainSubstring(outputExpected),
+				fmt.Sprintf("The output [%s] not exist in output", outputExpected),
+				testCase.Command.Output,
+			)
+		}
+	})
+
+	It(fmt.Sprintf("Validate is outputs not expected exists on tool %s: %s", runType, testCase.Tool), func() {
+		for _, outputNotExpected := range testCase.Expected.OutputsNotContains {
+			Expect(testCase.Command.Output).ShouldNot(
+				ContainSubstring(outputNotExpected),
+				fmt.Sprintf("The output [%s] exist in output", outputNotExpected),
+				testCase.Command.Output,
+			)
+		}
+	})
+}
+
+func CreateHorusecConfigAndReturnTMPDirectory() string {
+	tmpDir := filepath.Join(os.TempDir(), "horusec-analysis-e2e-"+uuid.NewString())
+	horusecConfigPath := filepath.Join(tmpDir, horusecConfigName)
+
+	if err := os.MkdirAll(tmpDir, os.ModePerm); err != nil {
+		Fail(fmt.Sprintf("Error on create tmp folder: %v", err))
+	}
+
+	horusecConfigFile, err := os.Create(horusecConfigPath)
+	if err != nil {
+		Fail(fmt.Sprintf("Error on create config file for scan on e2e test %v", err))
+	}
+
+	horusecConfig := config.New()
+
+	newCustomImages := customimages.Default()
+	for k := range newCustomImages {
+		if k == languages.CSharp {
+			newCustomImages[k] = strings.ToLower("local-csharp:local")
+		} else {
+			newCustomImages[k] = strings.ToLower(fmt.Sprintf("local-%s:local", k))
+		}
+	}
+
+	horusecConfig.CustomImages = newCustomImages
+	horusecConfigBytes, err := json.MarshalIndent(horusecConfig.ToMapLowerCase(), "", "  ")
+	if err != nil {
+		Fail(fmt.Sprintf("Error on marshall horusec-config.json %v", err))
+	}
+
+	_, err = horusecConfigFile.Write(horusecConfigBytes)
+	if err != nil {
+		Fail(fmt.Sprintf("Error on write config file for scan on e2e test %v", err))
+	}
+	return tmpDir
+}

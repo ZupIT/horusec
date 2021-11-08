@@ -17,4 +17,5 @@ FROM zricethezav/gitleaks:v7.6.1
 COPY ./internal/services/formatters/leaks/deployments/rules.toml /rules/rules.toml
 
 ENTRYPOINT []
+
 CMD ["/bin/sh"]

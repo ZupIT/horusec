@@ -48,19 +48,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startMixAudit(projectSubPath), tools.MixAudit, projectSubPath)
+	output, err := f.startMixAudit(projectSubPath)
+	f.SetAnalysisError(err, tools.MixAudit, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.MixAudit, languages.Elixir)
 }
 
-func (f *Formatter) startMixAudit(projectSubPath string) error {
+func (f *Formatter) startMixAudit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.MixAudit, languages.Elixir)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

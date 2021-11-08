@@ -12,16 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trivy
+package messages
 
-const CmdFs = `
-		{{WORK_DIR}}
-		TRIVY_NEW_JSON_SCHEMA=true trivy fs  -f json -o resultFs.json ./ &> /dev/null
-		cat resultFs.json
-  `
-
-const CmdConfig = `
-		{{WORK_DIR}}
-		TRIVY_NEW_JSON_SCHEMA=true trivy config -f json -o resultConfig.json ./ &> /dev/null 
-		cat resultConfig.json
-  `
+const (
+	MsgPrintFinishAnalysisWithStatus = `HORUSEC ENDED THE ANALYSIS WITH STATUS OF %q AND WITH THE FOLLOWING RESULTS:`
+)

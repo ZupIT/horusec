@@ -108,7 +108,7 @@ func (pr *PrintResults) printResultsText() error {
 	fmt.Fprint(pr.writer, "\n")
 	pr.logSeparator(true)
 
-	pr.printlnf(`HORUSEC ENDED THE ANALYSIS WITH STATUS OF %q AND WITH THE FOLLOWING RESULTS:`, pr.analysis.Status)
+	pr.printlnf(messages.MsgPrintFinishAnalysisWithStatus, pr.analysis.Status)
 
 	pr.logSeparator(true)
 
