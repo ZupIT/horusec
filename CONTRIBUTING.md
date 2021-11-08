@@ -78,8 +78,8 @@ When you open a PR, follow the requisites below:
 See the guidelines to submit your changes: 
 
 ### **Prepare your development environment**
-To start contributing with Horusec you first need to install [Go](https://golang.org/dl/). The minimal version required to build is 1.17.
-[GNU Make](https://www.gnu.org/software/make/) is also required to development.
+To start contributing with Horusec you first need to install [**Go**](https://golang.org/dl/). The minimal version required to build is 1.17.
+[**GNU Make**](https://www.gnu.org/software/make/) is also required to development.
 
 After installing Go you can build using `make build-dev`.
 
@@ -122,7 +122,7 @@ Contributing to a new feature is only allowed in the [**main repository**](https
 
 Before contributing to this repository, please discuss the changes you wish to make via e-mail or [**forum**](https://forum.zup.com.br/c/en/horusec/14). 
 
-### **Add new feature, bugfixing or improvement**
+### **Add new feature, bug fixing or improvement**
 If you want to add an improvement, a new feature or bugfix, follow the steps to contribute: 
 
 **Step 1:** Make sure your branch is based on main;
