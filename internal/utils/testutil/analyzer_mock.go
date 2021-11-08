@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horusecapi
+package testutil
 
 import (
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 
-	utilsmock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 )
 
-type Mock struct {
+type AnalyzerMock struct {
 	mock.Mock
 }
 
-func (m *Mock) SendAnalysis(_ *analysis.Analysis) error {
-	m.MethodCalled("SendAnalysis")
-	return nil
+func NewAnalyzerMock() *AnalyzerMock {
+	return new(AnalyzerMock)
 }
 
-func (m *Mock) GetAnalysis(_ uuid.UUID) (*analysis.Analysis, error) {
-	args := m.MethodCalled("GetAnalysis")
-	return args.Get(0).(*analysis.Analysis), utilsmock.ReturnNilOrError(args, 1)
+func (m *AnalyzerMock) Analyze() (int, error) {
+	args := m.MethodCalled("Analyze")
+	return args.Get(0).(int), mockutils.ReturnNilOrError(args, 0)
 }

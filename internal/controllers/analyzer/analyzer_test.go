@@ -34,8 +34,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
-	"github.com/ZupIT/horusec/internal/utils/mock"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
 	"github.com/ZupIT/horusec/internal/entities/workdir"
@@ -48,10 +46,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/config"
-	languageDetect "github.com/ZupIT/horusec/internal/controllers/language_detect"
-	"github.com/ZupIT/horusec/internal/controllers/printresults"
 	"github.com/ZupIT/horusec/internal/services/docker"
-	dockerClient "github.com/ZupIT/horusec/internal/services/docker/client"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
@@ -205,7 +200,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		configs.EnableGitHistoryAnalysis = true
 		configs.FalsePositiveHashes = []string{"test"}
 
-		languageDetectMock := &languageDetect.Mock{}
+		languageDetectMock := testutil.NewLanguageDetectMock()
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
 			languages.CSharp,
@@ -222,15 +217,15 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 			languages.Yaml,
 		}, nil)
 
-		printResultMock := &printresults.Mock{}
+		printResultMock := testutil.NewPrintResultsMock()
 		printResultMock.On("StartPrintResults").Return(0, nil)
 		printResultMock.On("SetAnalysis")
 
-		horusecAPIMock := &horusecAPI.Mock{}
+		horusecAPIMock := testutil.NewHorusecAPIMock()
 		horusecAPIMock.On("SendAnalysis").Return(nil)
 		horusecAPIMock.On("GetAnalysis").Return(&entitiesAnalysis.Analysis{}, nil)
 
-		dockerMocker := &dockerClient.Mock{}
+		dockerMocker := testutil.NewDockerClientMock()
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
 		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
@@ -263,7 +258,7 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		configs.WorkDir = &workdir.WorkDir{Go: []string{"test"}}
 		configs.FalsePositiveHashes = []string{"test"}
 
-		languageDetectMock := &languageDetect.Mock{}
+		languageDetectMock := testutil.NewLanguageDetectMock()
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{
 			languages.Go,
 			languages.CSharp,
@@ -280,15 +275,15 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 			languages.Yaml,
 		}, nil)
 
-		printResultMock := &printresults.Mock{}
+		printResultMock := testutil.NewPrintResultsMock()
 		printResultMock.On("StartPrintResults").Return(0, nil)
 		printResultMock.On("SetAnalysis")
 
-		horusecAPIMock := &horusecAPI.Mock{}
+		horusecAPIMock := testutil.NewHorusecAPIMock()
 		horusecAPIMock.On("SendAnalysis").Return(nil)
-		horusecAPIMock.On("GetAnalysis").Return(mock.CreateAnalysisMock(), nil)
+		horusecAPIMock.On("GetAnalysis").Return(testutil.CreateAnalysisMock(), nil)
 
-		dockerMocker := &dockerClient.Mock{}
+		dockerMocker := testutil.NewDockerClientMock()
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
 		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)
@@ -320,18 +315,18 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		configs := config.New()
 		configs.WorkDir = &workdir.WorkDir{}
 
-		languageDetectMock := &languageDetect.Mock{}
+		languageDetectMock := testutil.NewLanguageDetectMock()
 		languageDetectMock.On("LanguageDetect").Return([]languages.Language{}, errors.New("test"))
 
-		printResultMock := &printresults.Mock{}
+		printResultMock := testutil.NewPrintResultsMock()
 		printResultMock.On("StartPrintResults").Return(0, nil)
 		printResultMock.On("SetAnalysis")
 
-		horusecAPIMock := &horusecAPI.Mock{}
+		horusecAPIMock := testutil.NewHorusecAPIMock()
 		horusecAPIMock.On("SendAnalysis").Return(nil)
 		horusecAPIMock.On("GetAnalysis").Return(&entitiesAnalysis.Analysis{}, nil)
 
-		dockerMocker := &dockerClient.Mock{}
+		dockerMocker := testutil.NewDockerClientMock()
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
 		dockerMocker.On("ImageList").Return([]types.ImageSummary{{}}, nil)
 		dockerMocker.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte(""))), nil)

@@ -26,13 +26,13 @@ import (
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseOutput(t *testing.T) {
 	t.Run("should return 3 vulnerability with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
@@ -62,7 +62,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should return no vulnerability with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := &cliConfig.Config{}
@@ -79,7 +79,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("should return error executing container", func(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -96,7 +96,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("should return error when solution was not found", func(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -113,7 +113,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{

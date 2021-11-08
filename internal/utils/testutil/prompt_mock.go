@@ -12,23 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package prompt
+package testutil
 
 import (
 	"github.com/stretchr/testify/mock"
 
-	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 )
 
-type Mock struct {
+type PromptMock struct {
 	mock.Mock
 }
 
-func (m *Mock) Ask(label, defaultValue string) (string, error) {
-	args := m.MethodCalled("Ask")
-	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
+func NewPromptMock() *PromptMock {
+	return new(PromptMock)
 }
-func (m *Mock) Select(label string, items []string) (string, error) {
+
+func (m *PromptMock) Ask(label, defaultValue string) (string, error) {
+	args := m.MethodCalled("Ask")
+	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)
+}
+func (m *PromptMock) Select(label string, items []string) (string, error) {
 	args := m.MethodCalled("Select")
-	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)
 }

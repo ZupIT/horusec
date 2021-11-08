@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -30,7 +31,6 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
@@ -62,7 +62,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("Error"))
 
@@ -82,7 +82,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
@@ -102,7 +102,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"code": "6 \n7 exec(command)\n8 \n","filename": "./main.py","line_number": 7,"issue_severity": "MEDIUM","issue_text": "Use of exec detected."}]}`
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
@@ -122,7 +122,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config.WorkDir = &workdir.WorkDir{}
 
 		output := `{"results": [{"issue_text": "Use of assert detected. The enclosed code will be removed when compiling to optimized byte code."}]}`
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
@@ -141,7 +141,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("some aleatory text", nil)
 
@@ -155,7 +155,7 @@ func TestFormatter_StartSafety(t *testing.T) {
 	})
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.Bandit: toolsconfig.Config{

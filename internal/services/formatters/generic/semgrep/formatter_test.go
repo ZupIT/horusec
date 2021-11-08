@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
@@ -27,13 +28,12 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
 func TestParseOutput(t *testing.T) {
 	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
@@ -56,7 +56,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
@@ -79,7 +79,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("Should return 1 vulnerabilities with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
@@ -102,7 +102,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("Should return error when invalid output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
@@ -120,7 +120,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("Should return error when executing container", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
@@ -137,7 +137,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{

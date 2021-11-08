@@ -29,9 +29,9 @@ import (
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func createSlnFile(t *testing.T) {
@@ -55,7 +55,7 @@ func TestParseOutput(t *testing.T) {
 	t.Run("should return 4 vulnerabilities with no errors", func(t *testing.T) {
 		createSlnFile(t)
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &analysisEntities.Analysis{}
 		config := cliConfig.New()
@@ -113,7 +113,7 @@ func TestParseOutput(t *testing.T) {
 		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -134,7 +134,7 @@ func TestParseOutput(t *testing.T) {
 		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -153,7 +153,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("should return error not found solution file", func(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -171,7 +171,7 @@ func TestParseOutput(t *testing.T) {
 		createSlnFile(t)
 
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -188,7 +188,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &analysisEntities.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{

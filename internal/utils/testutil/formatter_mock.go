@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package formatters
+package testutil
 
 import (
 	"github.com/stretchr/testify/mock"
@@ -20,118 +20,122 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 	engine "github.com/ZupIT/horusec-engine"
-	commitAuthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
+	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 )
 
-type Mock struct {
+type FormatterMock struct {
 	mock.Mock
 }
 
-func (m *Mock) LogDebugWithReplace(_ string, _ tools.Tool, _ languages.Language) {
+func NewFormatterMock() *FormatterMock {
+	return new(FormatterMock)
+}
+
+func (m *FormatterMock) LogDebugWithReplace(_ string, _ tools.Tool, _ languages.Language) {
 	_ = m.MethodCalled("LogDebugWithReplace")
 }
 
-func (m *Mock) GetAnalysisID() string {
+func (m *FormatterMock) GetAnalysisID() string {
 	args := m.MethodCalled("GetAnalysisID")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) ExecuteContainer(_ *dockerEntities.AnalysisData) (output string, err error) {
+func (m *FormatterMock) ExecuteContainer(_ *dockerentities.AnalysisData) (output string, err error) {
 	args := m.MethodCalled("ExecuteContainer")
-	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetAnalysisIDErrorMessage(_ tools.Tool, _ string) string {
+func (m *FormatterMock) GetAnalysisIDErrorMessage(_ tools.Tool, _ string) string {
 	args := m.MethodCalled("GetAnalysisIDErrorMessage")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetCommitAuthor(_, _ string) (author commitAuthor.CommitAuthor) {
+func (m *FormatterMock) GetCommitAuthor(_, _ string) (author commitauthor.CommitAuthor) {
 	args := m.MethodCalled("GetCommitAuthor")
-	return args.Get(0).(commitAuthor.CommitAuthor)
+	return args.Get(0).(commitauthor.CommitAuthor)
 }
 
-func (m *Mock) AddWorkDirInCmd(_ string, _ string, _ tools.Tool) string {
+func (m *FormatterMock) AddWorkDirInCmd(_, _ string, _ tools.Tool) string {
 	args := m.MethodCalled("AddWorkDirInCmd")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetConfigProjectPath() string {
+func (m *FormatterMock) GetConfigProjectPath() string {
 	args := m.MethodCalled("GetConfigProjectPath")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
+func (m *FormatterMock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
 	_ = m.MethodCalled("SetAnalysisError")
 }
 
-func (m *Mock) RemoveSrcFolderFromPath(_ string) string {
+func (m *FormatterMock) RemoveSrcFolderFromPath(_ string) string {
 	args := m.MethodCalled("RemoveSrcFolderFromPath")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetCodeWithMaxCharacters(_ string, _ int) string {
+func (m *FormatterMock) GetCodeWithMaxCharacters(_ string, _ int) string {
 	args := m.MethodCalled("GetCodeWithMaxCharacters")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) ToolIsToIgnore(_ tools.Tool) bool {
+func (m *FormatterMock) ToolIsToIgnore(_ tools.Tool) bool {
 	args := m.MethodCalled("ToolIsToIgnore")
 	return args.Get(0).(bool)
 }
 
-func (m *Mock) GetFilepathFromFilename(_, _ string) string {
+func (m *FormatterMock) GetFilepathFromFilename(_, _ string) string {
 	args := m.MethodCalled("GetFilepathFromFilename")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetProjectPathWithWorkdir(_ string) string {
+func (m *FormatterMock) GetProjectPathWithWorkdir(_ string) string {
 	args := m.MethodCalled("GetProjectPathWithWorkdir")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) SetCommitAuthor(_ *vulnerability.Vulnerability) *vulnerability.Vulnerability {
+func (m *FormatterMock) SetCommitAuthor(_ *vulnerability.Vulnerability) *vulnerability.Vulnerability {
 	args := m.MethodCalled("SetCommitAuthor")
 	return args.Get(0).(*vulnerability.Vulnerability)
 }
 
-func (m *Mock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, _ languages.Language) {
+func (m *FormatterMock) ParseFindingsToVulnerabilities(_ []engine.Finding, _ tools.Tool, _ languages.Language) {
 	_ = m.MethodCalled("ParseFindingsToVulnerabilities")
 }
 
-func (m *Mock) AddNewVulnerabilityIntoAnalysis(_ *vulnerability.Vulnerability) {
+func (m *FormatterMock) AddNewVulnerabilityIntoAnalysis(_ *vulnerability.Vulnerability) {
 	_ = m.MethodCalled("AddNewVulnerabilityIntoAnalysis")
 }
 
-func (m *Mock) IsDockerDisabled() bool {
+func (m *FormatterMock) IsDockerDisabled() bool {
 	args := m.MethodCalled("IsDockerDisabled")
 	return args.Get(0).(bool)
 }
 
-func (m *Mock) GetCustomRulesByLanguage(_ languages.Language) []engine.Rule {
+func (m *FormatterMock) GetCustomRulesByLanguage(_ languages.Language) []engine.Rule {
 	args := m.MethodCalled("GetCustomRulesByLanguage")
 	return args.Get(0).([]engine.Rule)
 }
 
-func (m *Mock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string {
+func (m *FormatterMock) GetConfigCMDByFileExtension(_, _, _ string, _ tools.Tool) string {
 	args := m.MethodCalled("GetConfigCMDByFileExtension")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) GetCustomImageByLanguage(_ languages.Language) string {
+func (m *FormatterMock) GetCustomImageByLanguage(_ languages.Language) string {
 	args := m.MethodCalled("GetCustomImageByLanguage")
 	return args.Get(0).(string)
 }
 
-func (m *Mock) IsOwaspDependencyCheckDisable() bool {
+func (m *FormatterMock) IsOwaspDependencyCheckDisable() bool {
 	args := m.MethodCalled("IsOwaspDependencyCheckDisable")
 	return args.Get(0).(bool)
 }
 
-func (m *Mock) IsShellcheckDisable() bool {
+func (m *FormatterMock) IsShellcheckDisable() bool {
 	args := m.MethodCalled("IsShellcheckDisable")
 	return args.Get(0).(bool)
 }

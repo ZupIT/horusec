@@ -28,15 +28,11 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/ZupIT/horusec/internal/controllers/requirements"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/controllers/analyzer"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/utils/copy"
-	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 
 var tmpPath, _ = filepath.Abs("tmp")
@@ -56,14 +52,14 @@ func TestNewStartCommand(t *testing.T) {
 		assert.IsType(t, NewStartCommand(config.New()), &Start{})
 	})
 	t.Run("Should run NewStartCommand and return have expected flags", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 
-		analyzerMock := &analyzer.Mock{}
+		analyzerMock := testutil.NewAnalyzerMock()
 		promptMock.On("Ask").Return("Y", nil)
 		analyzerMock.On("Analyze").Return(0, nil)
 		requirementsMock.On("ValidateDocker")
@@ -93,8 +89,8 @@ func TestNewStartCommand(t *testing.T) {
 }
 
 func TestStartCommand_ExecuteUnitTests(t *testing.T) {
-	type onFn func(*prompt.Mock, *requirements.Mock, *analyzer.Mock)
-	type assertFn func(*testing.T, *prompt.Mock, *requirements.Mock, *analyzer.Mock, *config.Config)
+	type onFn func(*testutil.PromptMock, *testutil.RequirementsMock, *testutil.AnalyzerMock)
+	type assertFn func(*testing.T, *testutil.PromptMock, *testutil.RequirementsMock, *testutil.AnalyzerMock, *config.Config)
 
 	testcases := []struct {
 		name     string
@@ -107,12 +103,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and ask to user if is to run in current directory",
 			args: []string{},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				prompt.AssertCalled(t, "Ask")
 				analyzer.AssertCalled(t, "Analyze")
 				requirements.AssertCalled(t, "ValidateDocker")
@@ -122,12 +118,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not ask if is to run in current directory",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 
 				prompt.AssertNotCalled(t, "Ask")
@@ -140,11 +136,11 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec and return error because found vulnerabilities (-p,-e)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagReturnError},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(10, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 
@@ -157,11 +153,11 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec and return error because found error when ask but run in current folder",
 			args: []string{testutil.StartFlagReturnError},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("", errors.New("some error"))
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 
 				prompt.AssertCalled(t, "Ask")
@@ -173,14 +169,14 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and validate if git is installed(--enable-git-history)",
 			args: []string{testutil.StartFlagEnableGitHistory, testutil.StartFlagReturnError},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 				requirements.On("ValidateGit")
 
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 				assert.True(t, cfg.EnableGitHistoryAnalysis)
 
@@ -194,12 +190,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not ask because is different project path(-p, -e)",
 			args: []string{testutil.StartFlagReturnError, testutil.StartFlagProjectPath, os.TempDir()},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 
@@ -212,11 +208,11 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec and return error because found not accept proceed",
 			args: []string{testutil.StartFlagReturnError},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("N", nil)
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
 
 				prompt.AssertCalled(t, "Ask")
@@ -228,12 +224,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec and return error because found invalid RepositoryAuthorization field",
 			args: []string{testutil.StartFlagProjectPath, os.TempDir(), testutil.StartFlagAuthorization, "NOT_VALID_AUTHORIZATION", testutil.StartFlagReturnError},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(10, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 				assert.Equal(t, "NOT_VALID_AUTHORIZATION", cfg.RepositoryAuthorization)
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
@@ -247,12 +243,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec and return success because found valid RepositoryAuthorization field(-a)",
 			args: []string{testutil.StartFlagProjectPath, os.TempDir(), testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", testutil.StartFlagReturnError},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
 				assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
@@ -266,12 +262,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error using json output(-o json, -O)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), testutil.StartFlagOutputFormat, "json", testutil.StartFlagReturnError},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 				analyzer.On("Analyze").Return(0, nil)
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-json.json"), cfg.JSONOutputFilePath)
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, "json", cfg.PrintOutputType)
@@ -285,12 +281,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error using unknown type output(-o unknown, -O)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), testutil.StartFlagOutputFormat, "unknownTypeOutput", testutil.StartFlagReturnError},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, "unknownTypeOutput", cfg.PrintOutputType)
 				assert.Equal(t, filepath.Join(testutil.RootPath, "cmd", "app", "start", "tmp-unknownType.json"), cfg.JSONOutputFilePath)
@@ -304,12 +300,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error using sonarqube output (-o sonarqube, -O)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagJSONOutputFilePath, filepath.Join(tmpPath, "tmp-sonarqube.json"), testutil.StartFlagOutputFormat, "sonarqube", testutil.StartFlagReturnError},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, "sonarqube", cfg.PrintOutputType)
 				assert.Equal(t, filepath.Join(tmpPath, "tmp-sonarqube.json"), cfg.JSONOutputFilePath)
@@ -323,12 +319,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error showing info vulnerabilities (--information-severity)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagInformationSeverity},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 				analyzer.On("Analyze").Return(0, nil)
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.True(t, cfg.EnableInformationSeverity)
 
@@ -341,12 +337,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error sending to web application (-u,-a)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagHorusecURL, "https://google.com", testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				t.Run("Should execute command exec without error sending to web application (-u,-a)", func(t *testing.T) {
 					assert.Equal(t, "https://google.com", cfg.HorusecAPIUri)
 					assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
@@ -361,12 +357,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error sending to a invalid url web application (-u,-a)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagHorusecURL, "*vsaf&&", testutil.StartFlagAuthorization, "76034e43-bdb8-48d9-a0ad-fc674f0354bb"},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, "*vsaf&&", cfg.HorusecAPIUri)
 				assert.Equal(t, "76034e43-bdb8-48d9-a0ad-fc674f0354bb", cfg.RepositoryAuthorization)
 
@@ -379,13 +375,13 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and return vulnerabilities but ignore vulnerabilities of type HIGH (-s)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagIgnoreSeverity, "CRITICAL, LOW"},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, []string{"CRITICAL", "LOW"}, cfg.SeveritiesToIgnore)
 
@@ -398,12 +394,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error and not return vulnerabilities when set to ignore unknown type of vulnerability (-s)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagIgnoreSeverity, "potato, shoes"},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, []string{"potato", " shoes"}, cfg.SeveritiesToIgnore)
 
@@ -416,12 +412,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not return vulnerabilities when set valid certificate path (-C --certificate-path)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagCertificatePath, filepath.Join(testutil.RootPath, "..")},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, filepath.Join(testutil.RootPath, ".."), cfg.CertPath)
 
@@ -434,12 +430,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid certificate path (-C --certificate-path)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagCertificatePath, "invalidPath"},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, "invalidPath", cfg.CertPath)
 
@@ -452,12 +448,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not return vulnerabilities when set valid analysis timeout (-t --analysis-timeout)\"",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagAnalysisTimeout, "123"},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
 				assert.Equal(t, int64(123), cfg.TimeoutInSecondsAnalysis)
 
@@ -470,12 +466,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid analysis timeout (-t --analysis-timeout)",
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagAnalysisTimeout, "potato"},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsAnalysis)
 
 				prompt.AssertNotCalled(t, "Ask")
@@ -487,12 +483,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not return vulnerabilities when set disable docker (-D --disable-docker)",
 			args: []string{testutil.StartFlagDisableDocker},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.DisableDocker)
 
 				prompt.AssertCalled(t, "Ask")
@@ -504,12 +500,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec without error and not return vulnerabilities when set valid request timeout (-r --request-timeout)",
 			args: []string{testutil.StartFlagRequestTimeout, "123"},
 			err:  false,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, int64(123), cfg.TimeoutInSecondsRequest)
 
 				prompt.AssertCalled(t, "Ask")
@@ -521,12 +517,12 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			name: "Should execute command exec with error and not return vulnerabilities when set invalid request timeout (-r --request-timeout)",
 			args: []string{testutil.StartFlagRequestTimeout, "potato"},
 			err:  true,
-			onFn: func(prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock) {
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
 			},
-			assertFn: func(t *testing.T, prompt *prompt.Mock, requirements *requirements.Mock, analyzer *analyzer.Mock, cfg *config.Config) {
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsRequest)
 
 				prompt.AssertNotCalled(t, "Ask")
@@ -558,13 +554,13 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 	t.Run("Should execute command exec without error using json output", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -616,13 +612,13 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, os.RemoveAll(outputPathJSON))
 	})
 	t.Run("Should execute command exec without error showing info vulnerabilities", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -662,13 +658,13 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		promptMock.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error sending to web application", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -707,13 +703,13 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		promptMock.AssertNotCalled(t, "Ask")
 	})
 	t.Run("Should execute command exec without error using sonarqube output", func(t *testing.T) {
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -766,14 +762,14 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.ConfigFilePath = "./not-exists.json"
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementsMock := &requirements.Mock{}
+		requirementsMock := testutil.NewRequirementsMock()
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -821,13 +817,13 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, copy.Copy(srcProject, dstProject, func(src string) bool {
 			return false
 		}))
-		promptMock := &prompt.Mock{}
+		promptMock := testutil.NewPromptMock()
 		promptMock.On("Ask").Return("Y", nil)
 
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		requirementMock := &requirements.Mock{}
+		requirementMock := testutil.NewRequirementsMock()
 		requirementMock.On("ValidateDocker")
 
 		cmd := &Start{
@@ -868,15 +864,15 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 }
-func getMocksAndStartStruct() (*prompt.Mock, *config.Config, *requirements.Mock, *analyzer.Mock, *Start) {
-	promptMock := &prompt.Mock{}
+func getMocksAndStartStruct() (*testutil.PromptMock, *config.Config, *testutil.RequirementsMock, *testutil.AnalyzerMock, *Start) {
+	promptMock := testutil.NewPromptMock()
 
 	cfg := config.New()
 	cfg.WorkDir = &workdir.WorkDir{}
 
-	requirementsMock := &requirements.Mock{}
+	requirementsMock := testutil.NewRequirementsMock()
 
-	analyzerMock := &analyzer.Mock{}
+	analyzerMock := testutil.NewAnalyzerMock()
 
 	start := &Start{
 		configs:      cfg,

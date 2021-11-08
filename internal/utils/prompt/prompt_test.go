@@ -17,6 +17,7 @@ package prompt
 import (
 	"testing"
 
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,14 +30,14 @@ func TestPrompt_Ask(t *testing.T) {
 }
 
 func TestMock_Ask(t *testing.T) {
-	mock := &Mock{}
+	mock := testutil.NewPromptMock()
 	mock.On("Ask").Return("", nil)
 	_, err := mock.Ask("", "")
 	assert.NoError(t, err)
 }
 
 func TestMock_Select(t *testing.T) {
-	mock := &Mock{}
+	mock := testutil.NewPromptMock()
 	mock.On("Select").Return("", nil)
 	_, err := mock.Select("", []string{})
 	assert.NoError(t, err)

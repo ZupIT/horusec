@@ -26,13 +26,13 @@ import (
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestStartHCLCheckov(t *testing.T) {
 	t.Run("should successfully execute container and process output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -51,7 +51,7 @@ func TestStartHCLCheckov(t *testing.T) {
 	})
 
 	t.Run("should return error when invalid output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -69,7 +69,7 @@ func TestStartHCLCheckov(t *testing.T) {
 	})
 
 	t.Run("should return error when executing container", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -85,7 +85,7 @@ func TestStartHCLCheckov(t *testing.T) {
 	})
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}

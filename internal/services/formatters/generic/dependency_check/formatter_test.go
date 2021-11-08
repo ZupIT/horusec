@@ -26,8 +26,8 @@ import (
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 const output = "{ \"dependencies\":[ { \"isVirtual\":false, \"fileName\":\"app.js\", \"filePath\":\"\\/src\\/app.js" +
@@ -64,7 +64,7 @@ const output = "{ \"dependencies\":[ { \"isVirtual\":false, \"fileName\":\"app.j
 
 func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 	t.Run("should success execute container and process output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -82,7 +82,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 	})
 
 	t.Run("should return error when invalid output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -98,7 +98,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 	})
 
 	t.Run("should return error when executing container", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -114,7 +114,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 	})
 
 	t.Run("should return nil when empty output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -131,7 +131,7 @@ func TestStartGenericOwaspDependencyCheck(t *testing.T) {
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{

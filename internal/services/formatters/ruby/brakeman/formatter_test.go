@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
@@ -27,7 +28,6 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
@@ -38,7 +38,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		output := "{\"warnings\":[{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Low\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Medium\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"High\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Test\"}]}"
@@ -62,7 +62,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		output := ""
@@ -86,7 +86,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		output := "Please supply the path to a Rails application"
@@ -110,7 +110,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
 
@@ -123,7 +123,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should return error when something went wrong in container", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -139,7 +139,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.Brakeman: toolsconfig.Config{

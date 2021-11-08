@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
@@ -27,7 +28,6 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
@@ -38,7 +38,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		output := "\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8164\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/f6ioe4sdpbY\n\u001B[31mTitle: \u001B[0mPossible Strong Parameters Bypass in ActionPack\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n\n\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8166\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/NOjKiGeXUgw\n\u001B[31mTitle: \u001B[0mAbility to forge per-form CSRF tokens given a global CSRF token\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n"
@@ -62,7 +62,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
 
@@ -79,7 +79,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
 			Return("No such file or directory Errno::ENOENT", nil)
@@ -97,7 +97,7 @@ func TestParseOutput(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
 			Return("No vulnerabilities found", nil)
@@ -111,7 +111,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should return error when something went wrong in container", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
@@ -127,7 +127,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.BundlerAudit: toolsconfig.Config{

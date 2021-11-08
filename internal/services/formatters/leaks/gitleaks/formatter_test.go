@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -30,7 +31,6 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
@@ -46,7 +46,7 @@ func AnalysisMock() *entitiesAnalysis.Analysis {
 func TestLeaks_StartAnalysis(t *testing.T) {
 	t.Run("Should run analysis without panics and save on cache with success", func(t *testing.T) {
 		analysis := AnalysisMock()
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
@@ -83,7 +83,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
@@ -101,7 +101,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("some error"))
 
@@ -119,7 +119,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		outputAnalysis := "is some a text aleatory"
@@ -136,7 +136,7 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 	})
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.GitLeaks: toolsconfig.Config{
