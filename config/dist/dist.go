@@ -14,18 +14,32 @@
 
 package dist
 
-const False = "false"
+const falseString = "false"
 
-var standAlone string = False
+var (
+	// standAlone is a build flag used to check if build is stand alone.
+	//
+	// The value passed is a raw string contaning true or false.
+	standAlone string = falseString
+)
 
+const (
+	// StandAlone represents the build mode without Docker support.
+	StandAlone = "stand-alone"
+
+	// Normal represents the build mode with Docker support.
+	Normal = "normal"
+)
+
+// IsStandAlone check if current build is in StandAlone mode.
 func IsStandAlone() bool {
-	return standAlone != False
+	return standAlone != falseString
 }
 
-func GetVersion() string {
+// Mode return the build mode.
+func Mode() string {
 	if IsStandAlone() {
-		return "stand-alone"
+		return StandAlone
 	}
-
-	return "normal"
+	return Normal
 }

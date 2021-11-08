@@ -43,5 +43,5 @@ func printVersionInfo() {
 	logger.LogPrint("Version:          " + Version)
 	logger.LogPrint("Git commit:       " + Commit)
 	logger.LogPrint("Built:            " + Date)
-	logger.LogPrint("Distribution:     " + dist.GetVersion())
+	logger.LogPrint("Distribution:     " + dist.Mode())
 }
