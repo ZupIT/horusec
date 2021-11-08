@@ -16,6 +16,7 @@ package analyzer
 
 import (
 	"fmt"
+	"io"
 	"path/filepath"
 
 	"log"
@@ -27,6 +28,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -134,7 +136,7 @@ func NewAnalyzer(cfg *config.Config) *Analyzer {
 		printController: printresults.NewPrintResults(entity, cfg),
 		horusec:         horusecAPI.NewHorusecAPIService(cfg),
 		formatter:       formatters.NewFormatterService(entity, dockerAPI, cfg),
-		loading:         newScanLoading(),
+		loading:         newScanLoading(cfg),
 	}
 }
 
@@ -661,9 +663,13 @@ func spawn(wg *sync.WaitGroup, f formatters.IFormatter, src string) {
 	}()
 }
 
-func newScanLoading() *spinner.Spinner {
+func newScanLoading(cfg *config.Config) *spinner.Spinner {
 	loading := spinner.New(spinner.CharSets[11], LoadingDelay)
 	loading.Suffix = messages.MsgInfoAnalysisLoading
+
+	if cfg.LogLevel == logrus.DebugLevel.String() || cfg.LogLevel == logrus.TraceLevel.String() {
+		loading.Writer = io.Discard
+	}
 
 	return loading
 }
