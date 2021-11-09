@@ -171,6 +171,12 @@ func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 	if err != nil {
 		return 0, err
 	}
+
+	if a.config.EnableGitHistoryAnalysis {
+		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
+		fmt.Println()
+	}
+
 	a.startDetectVulnerabilities(langs)
 	return a.sendAnalysisAndStartPrintResults()
 }
@@ -312,13 +318,12 @@ func (a *Analyzer) detectVulnerabilityLeaks(wg *sync.WaitGroup, projectSubPath s
 	spawn(wg, horusecleaks.NewFormatter(a.formatter), projectSubPath)
 
 	if a.config.EnableGitHistoryAnalysis {
-		logger.LogWarnWithLevel(messages.MsgWarnGitHistoryEnable)
-
 		if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Leaks)); err != nil {
 			return err
 		}
 		gitleaks.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
 	}
+
 	return nil
 }
 

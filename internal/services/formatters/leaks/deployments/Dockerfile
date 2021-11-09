@@ -16,7 +16,5 @@ FROM zricethezav/gitleaks:v7.6.1
 
 COPY ./internal/services/formatters/leaks/deployments/rules.toml /rules/rules.toml
 
-RUN apk --no-cache add ca-certificates openssh-client jq
-
 ENTRYPOINT []
 CMD ["/bin/sh"]
