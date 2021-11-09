@@ -21,6 +21,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
+
 	"github.com/onsi/ginkgo"
 )
 
@@ -56,7 +58,7 @@ func ginkgoBuildHorusecBinary(customArgs ...string) string {
 }
 
 func setLogLevelArgsToHorusecCmd(horusecCmd ...string) []string {
-	return append(horusecCmd, fmt.Sprintf("%s=%s", "--log-level", "debug"))
+	return append(horusecCmd, fmt.Sprintf("%s=%s", GlobalFlagLogLevel, enums.DebugLevel.String()))
 }
 
 func getBinaryNameBySystem() string {

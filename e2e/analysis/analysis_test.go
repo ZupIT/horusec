@@ -16,7 +16,6 @@ package analysis_test
 
 import (
 	"fmt"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -117,7 +116,7 @@ var _ = Describe("Run a complete horusec analysis", func() {
 	for _, tt := range testcases {
 		Describe(fmt.Sprintf("Running on %s codebase.", tt.Language.ToString()), func() {
 			session, _ = tt.RunAnalysisTestCase()
-			session.Wait(2 * time.Minute)
+			session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder)
 
 			It("execute command without error", func() {
 				Expect(session.ExitCode()).To(Equal(0))

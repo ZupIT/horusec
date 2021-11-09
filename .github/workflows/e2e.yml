@@ -52,4 +52,4 @@ jobs:
           docker_buildx: false
 
       - name: Run e2e test for ${{ matrix.os }}
-        run: go test -v ./e2e/... -failfast -race
+        run: go test -v ./e2e/... -timeout 60m -failfast -race
