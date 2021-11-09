@@ -15,13 +15,17 @@
 package start_test
 
 import (
-	"strings"
+	"fmt"
+	"os"
 
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
+
+	"path/filepath"
 
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -43,7 +47,50 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		By("runs the command without errors", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(session).Should(gexec.Exit(0))
+		})
+	})
 
+	When("global flag --log-level is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath: configFilePath,
+				testutil.GlobalFlagLogLevel:   enums.TraceLevel.String(),
+			}
+		})
+
+		It("Checks if the log level was set as trace", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"log_level\": \"trace\"`))
+		})
+	})
+
+	When("global flag --config-file-path is passed", func() {
+		var configFilePathToTest = filepath.Join(configFilePath, "horusec-config.json")
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:     configFilePath,
+				testutil.GlobalFlagConfigFilePath: configFilePathToTest,
+				testutil.GlobalFlagLogLevel:       enums.TraceLevel.String(),
+			}
+		})
+
+		It("Checks if the config file path was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"config_file_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(configFilePathToTest))))
+		})
+	})
+
+	When("global flag --log-file-path is passed", func() {
+		var logFilePathToTest = filepath.Join(os.TempDir(), fmt.Sprintf("%s-test.txt", uuid.New()))
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:  configFilePath,
+				testutil.GlobalFlagLogFilePath: logFilePathToTest,
+			}
+		})
+
+		It("Checks if the log file path was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`Set log file to %s`, testutil.NormalizePathToAssert(logFilePathToTest))))
 		})
 	})
 
@@ -55,7 +102,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 
 		It("Checks if the project path was set", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring(strings.ReplaceAll(testutil.GoExample1, `\`, `\\`)))
+			Expect(session.Out.Contents()).To(ContainSubstring(testutil.NormalizePathToAssert(testutil.GoExample1)))
 		})
 	})
 
@@ -82,8 +129,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 
 		It("Checks if the repository authorization property was set", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring("repository_authorization"))
-			Expect(session).Should(gbytes.Say(repoAuthorization))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"repository_authorization\": \"%s\"`, testutil.NormalizePathToAssertInJSON(repoAuthorization))))
 		})
 	})
 })

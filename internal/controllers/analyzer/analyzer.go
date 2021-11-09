@@ -181,7 +181,6 @@ func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 	if err = a.sendAnalysis(); err != nil {
 		logger.LogStringAsError(fmt.Sprintf("[HORUSEC] %s", err.Error()))
 	}
-
 	return a.startPrintResults()
 }
 func (a *Analyzer) startPrintResults() (int, error) {
