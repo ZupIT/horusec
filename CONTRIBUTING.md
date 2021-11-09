@@ -126,7 +126,7 @@ Before contributing to this repository, please discuss the changes you wish to m
 If you want to add an improvement, a new feature or bugfix, follow the steps to contribute: 
 
 **Step 1:** Make sure your branch is based on main;
-**Step 2:** When opening an issue, choose a template to answer the questions regarding the what you want to contribute: 
+**Step 2:** When opening an issue, choose a template to answer the questions regarding what you want to contribute: 
 - [**Bug Report**](https://github.com/ZupIT/horusec/blob/main/.github/ISSUE_TEMPLATE/bug_report.md)
 - [**Feature request**](https://github.com/ZupIT/horusec/blob/main/.github/ISSUE_TEMPLATE/feature_request.md)
 - [**Improvement**](https://github.com/ZupIT/horusec/blob/main/.github/ISSUE_TEMPLATE/improvement.md)

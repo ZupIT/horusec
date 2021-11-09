@@ -80,7 +80,7 @@ type GlobalOptions struct {
 	// TODO: Remove this field.
 	// IsTimeout is not a configuration value.
 	// IsTimeout just exists to communicate that analysis
-	// execed the timeout configuration.
+	// exceed the timeout configuration.
 	// We should find a better way to handle this.
 	IsTimeout      bool   `json:"is_timeout"`
 	LogLevel       string `json:"log_level"`
@@ -330,7 +330,7 @@ func (c *Config) LoadFromConfigFile() *Config {
 }
 
 // LoadFromEnvironmentVariables load config values from environment variables into
-// current config instance. Note the values loaded from environemtn variables will
+// current config instance. Note the values loaded from environment variables will
 // override current config instance.
 //
 //nolint:lll,funlen
