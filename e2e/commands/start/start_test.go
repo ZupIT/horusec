@@ -17,12 +17,13 @@ package start_test
 import (
 	"strings"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 var _ = Describe("running binary Horusec with start parameter", func() {
