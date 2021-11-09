@@ -17,12 +17,6 @@ package gitleaks
 
 const CMD = `
 		{{WORK_DIR}}
-		touch /tmp/results-ANALYSISID.json /tmp/error-ANALYSISID.txt
-		gitleaks --config-path="/rules/rules.toml" --path="./" --leaks-exit-code="0" --verbose --report="/tmp/results-ANALYSISID.json" &> /tmp/error-ANALYSISID.txt
-		if [ $? -eq 0 ];
-		then
-            jq -j -M -c . /tmp/results-ANALYSISID.json
-        else
-            cat /tmp/error-ANALYSISID.txt
-        fi
+		gitleaks --config-path /rules/rules.toml --path . --leaks-exit-code 0 --format json --report /tmp/leaks-result.json &> /tmp/leaks-runner-output.txt
+		cat /tmp/leaks-result.json
   `
