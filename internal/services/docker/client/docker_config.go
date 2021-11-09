@@ -22,7 +22,7 @@ import (
 )
 
 func NewDockerClient() *docker.Client {
-	dockerClient, err := docker.NewClientWithOpts(docker.WithAPIVersionNegotiation())
+	dockerClient, err := docker.NewClientWithOpts(docker.FromEnv, docker.WithAPIVersionNegotiation())
 	if err != nil {
 		logger.LogPanicWithLevel(messages.MsgPanicNotConnectDocker, err)
 	}

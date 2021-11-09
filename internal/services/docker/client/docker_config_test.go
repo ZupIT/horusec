@@ -16,6 +16,7 @@ package client
 
 import (
 	"io"
+	"os"
 	"strings"
 	"testing"
 
@@ -29,6 +30,15 @@ func TestNewDockerAPI(t *testing.T) {
 		assert.NotPanics(t, func() {
 			NewDockerClient()
 		})
+	})
+
+	t.Run("Should use docker host from environment variable", func(t *testing.T) {
+		dockerHost := "http://localhost:1234"
+		os.Setenv("DOCKER_HOST", dockerHost)
+
+		c := NewDockerClient()
+
+		assert.Equal(t, dockerHost, c.DaemonHost())
 	})
 }
 
