@@ -17,6 +17,7 @@ package start_test
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 
@@ -26,17 +27,24 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
-	"path/filepath"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 )
 
 var _ = Describe("running binary Horusec with start parameter", func() {
 	var (
-		session        *gexec.Session
-		flags          map[string]string
-		configFilePath = testutil.GoExample1
+		session                 *gexec.Session
+		flags                   map[string]string
+		projectPath             = testutil.GoExample1
+		certificateFileWithPath string
 	)
+
+	BeforeSuite(func() {
+		file, err := os.CreateTemp(os.TempDir(), "*.crt")
+		if err != nil {
+			Fail(fmt.Sprintf("error: %v", err))
+		}
+		certificateFileWithPath = file.Name()
+	})
 
 	JustBeforeEach(func() {
 		var err error
@@ -50,7 +58,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	When("global flag --log-level is passed", func() {
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath: configFilePath,
+				testutil.StartFlagProjectPath: projectPath,
 				testutil.GlobalFlagLogLevel:   enums.TraceLevel.String(),
 			}
 		})
@@ -61,11 +69,11 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	})
 
 	When("global flag --config-file-path is passed", func() {
-		var configFilePathToTest = filepath.Join(configFilePath, "horusec-config.json")
+		configFilePathToTest := filepath.Join(projectPath, "horusec-config.json")
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:     configFilePath,
+				testutil.StartFlagProjectPath:     projectPath,
 				testutil.GlobalFlagConfigFilePath: configFilePathToTest,
 				testutil.GlobalFlagLogLevel:       enums.TraceLevel.String(),
 			}
@@ -81,7 +89,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:  configFilePath,
+				testutil.StartFlagProjectPath:  projectPath,
 				testutil.GlobalFlagLogFilePath: logFilePathToTest,
 			}
 		})
@@ -95,7 +103,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	When("--project-path is passed", func() {
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath: configFilePath,
+				testutil.StartFlagProjectPath: projectPath,
 			}
 		})
 
@@ -109,7 +117,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:     configFilePath,
+				testutil.StartFlagProjectPath:     projectPath,
 				testutil.StartFlagAnalysisTimeout: analysisTimeout,
 			}
 		})
@@ -125,7 +133,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:   configFilePath,
+				testutil.StartFlagProjectPath:   projectPath,
 				testutil.StartFlagAuthorization: repoAuthorization,
 			}
 		})
@@ -135,12 +143,26 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 	})
 
+	When("--certificate-path is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:     projectPath,
+				testutil.StartFlagCertificatePath: certificateFileWithPath,
+			}
+		})
+
+		It("Checks if the cert path property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"cert_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(certificateFileWithPath))))
+
+		})
+	})
+
 	When("--output-format and --json-output-file is passed as JSON", func() {
 		jsonOutputPath := filepath.Join(os.TempDir(), fmt.Sprintf("%s-e2e-output.json", uuid.New()))
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagProjectPath:        projectPath,
 				testutil.StartFlagOutputFormat:       outputtype.JSON,
 				testutil.StartFlagJSONOutputFilePath: jsonOutputPath,
 			}
@@ -158,7 +180,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagProjectPath:        projectPath,
 				testutil.StartFlagOutputFormat:       outputtype.Text,
 				testutil.StartFlagJSONOutputFilePath: textOutputPath,
 			}
@@ -176,7 +198,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagProjectPath:        projectPath,
 				testutil.StartFlagOutputFormat:       outputtype.SonarQube,
 				testutil.StartFlagJSONOutputFilePath: sonarqubeOutputPath,
 			}
@@ -194,7 +216,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:    configFilePath,
+				testutil.StartFlagProjectPath:    projectPath,
 				testutil.StartFlagRequestTimeout: requestTimeout,
 			}
 		})
