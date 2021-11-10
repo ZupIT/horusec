@@ -298,9 +298,11 @@ func TestLogAnalysisError(t *testing.T) {
 func TestToolIsToIgnore(t *testing.T) {
 	t.Run("should return true when language is match", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		configs.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.GoSec: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -308,9 +310,11 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return true when language is match uppercase", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		configs.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.GoSec: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -318,12 +322,10 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return true when language is match lowercase and multi tools", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{
-				GoSec:            toolsconfig.ToolConfig{IsToIgnore: true},
-				SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true},
-			},
-		)
+		configs.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.GoSec:            toolsconfig.Config{IsToIgnore: true},
+			tools.SecurityCodeScan: toolsconfig.Config{IsToIgnore: true},
+		}
 
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 
@@ -331,9 +333,11 @@ func TestToolIsToIgnore(t *testing.T) {
 	})
 	t.Run("should return false when language is not match", func(t *testing.T) {
 		configs := &config.Config{}
-		configs.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		configs.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.SecurityCodeScan: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
 

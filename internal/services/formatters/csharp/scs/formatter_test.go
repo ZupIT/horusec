@@ -24,6 +24,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
@@ -190,9 +191,11 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{SecurityCodeScan: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.SecurityCodeScan: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

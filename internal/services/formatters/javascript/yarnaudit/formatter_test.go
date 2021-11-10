@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 
 	"github.com/stretchr/testify/assert"
 
@@ -132,9 +133,11 @@ func TestParseOutputYarn(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 
 		config := &cliConfig.Config{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{YarnAudit: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.YarnAudit: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 

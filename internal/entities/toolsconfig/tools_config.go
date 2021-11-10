@@ -22,40 +22,45 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-type MapToolConfig map[tools.Tool]ToolConfig
+// ToolsConfig is a map of a tool to config for easily index access.
+type ToolsConfig map[tools.Tool]Config
 
-type ToolConfig struct {
+// Config represents the configuration options for all tools.
+type Config struct {
 	IsToIgnore bool `json:"istoignore"`
 }
 
-type ToolsConfigsStruct struct {
-	Bandit               ToolConfig `json:"bandit"`
-	BundlerAudit         ToolConfig `json:"bundleraudit"`
-	Brakeman             ToolConfig `json:"brakeman"`
-	Checkov              ToolConfig `json:"checkov"`
-	Flawfinder           ToolConfig `json:"flawfinder"`
-	GitLeaks             ToolConfig `json:"gitleaks"`
-	GoSec                ToolConfig `json:"gosec"`
-	HorusecEngine        ToolConfig `json:"horusecengine"`
-	MixAudit             ToolConfig `json:"mixaudit"`
-	NpmAudit             ToolConfig `json:"npmaudit"`
-	PhpCS                ToolConfig `json:"phpcs"`
-	Safety               ToolConfig `json:"safety"`
-	SecurityCodeScan     ToolConfig `json:"securitycodescan"`
-	Semgrep              ToolConfig `json:"semgrep"`
-	ShellCheck           ToolConfig `json:"shellcheck"`
-	Sobelow              ToolConfig `json:"sobelow"`
-	TfSec                ToolConfig `json:"tfsec"`
-	YarnAudit            ToolConfig `json:"yarnaudit"`
-	OwaspDependencyCheck ToolConfig `json:"owaspDependencyCheck"`
-	DotnetCli            ToolConfig `json:"dotnetCli"`
-	Nancy                ToolConfig `json:"nancy"`
-	Trivy                ToolConfig `json:"trivy"`
+// toolsConfig represents the schema of configuration tools.
+type toolsConfig struct {
+	Bandit               Config `json:"bandit"`
+	BundlerAudit         Config `json:"bundleraudit"`
+	Brakeman             Config `json:"brakeman"`
+	Checkov              Config `json:"checkov"`
+	Flawfinder           Config `json:"flawfinder"`
+	GitLeaks             Config `json:"gitleaks"`
+	GoSec                Config `json:"gosec"`
+	HorusecEngine        Config `json:"horusecengine"`
+	MixAudit             Config `json:"mixaudit"`
+	NpmAudit             Config `json:"npmaudit"`
+	PhpCS                Config `json:"phpcs"`
+	Safety               Config `json:"safety"`
+	SecurityCodeScan     Config `json:"securitycodescan"`
+	Semgrep              Config `json:"semgrep"`
+	ShellCheck           Config `json:"shellcheck"`
+	Sobelow              Config `json:"sobelow"`
+	TfSec                Config `json:"tfsec"`
+	YarnAudit            Config `json:"yarnaudit"`
+	OwaspDependencyCheck Config `json:"owaspDependencyCheck"`
+	DotnetCli            Config `json:"dotnetCli"`
+	Nancy                Config `json:"nancy"`
+	Trivy                Config `json:"trivy"`
 }
 
-// nolint:funlen // toMap is necessary more 15 lines
-func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
-	return MapToolConfig{
+// toMap return the tools configuration as ToolsConfig for easily access.
+//
+// nolint:funlen
+func (t *toolsConfig) toMap() ToolsConfig {
+	return ToolsConfig{
 		tools.Bandit:               t.Bandit,
 		tools.BundlerAudit:         t.BundlerAudit,
 		tools.Brakeman:             t.Brakeman,
@@ -81,17 +86,38 @@ func (t *ToolsConfigsStruct) ToMap() MapToolConfig {
 	}
 }
 
-func ParseInterfaceToMapToolsConfig(input interface{}) (output MapToolConfig) {
-	outputStruct := ToolsConfigsStruct{}
+// Default return the default configuration of tools.
+//
+// The default configuration is enabled for all tools.
+func Default() ToolsConfig {
+	return (&toolsConfig{}).toMap()
+}
+
+// MustParseToolsConfig parse a input to ToolsConfig.
+//
+// If some error occur the default values will be returned and the error
+// will be logged.
+func MustParseToolsConfig(input map[string]interface{}) ToolsConfig {
+	cfg, err := parseToolsConfig(input)
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
+		return Default()
+	}
+	return cfg
+}
+
+// parseToolsConfig parse input to ToolsConfig.
+func parseToolsConfig(input map[string]interface{}) (ToolsConfig, error) {
+	var config toolsConfig
+
 	bytes, err := json.Marshal(input)
 	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
-		return outputStruct.ToMap()
+		return nil, err
 	}
-	err = json.Unmarshal(bytes, &outputStruct)
-	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToToolsConfig, err)
-		return outputStruct.ToMap()
+
+	if err := json.Unmarshal(bytes, &config); err != nil {
+		return nil, err
 	}
-	return outputStruct.ToMap()
+
+	return config.toMap(), nil
 }

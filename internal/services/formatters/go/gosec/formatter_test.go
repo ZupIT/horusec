@@ -23,6 +23,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
@@ -120,9 +121,11 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{GoSec: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.GoSec: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

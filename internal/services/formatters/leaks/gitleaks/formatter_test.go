@@ -23,6 +23,7 @@ import (
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -137,9 +138,11 @@ func TestLeaks_StartAnalysis(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{GitLeaks: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.GitLeaks: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

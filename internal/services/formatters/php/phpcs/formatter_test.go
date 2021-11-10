@@ -23,6 +23,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
@@ -86,9 +87,11 @@ func TestStartCFlawfinder(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{PhpCS: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.PhpCS: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

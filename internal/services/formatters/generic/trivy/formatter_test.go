@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
@@ -69,9 +70,11 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		c := &config.Config{}
 		c.WorkDir = &workdir.WorkDir{}
-		c.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{Trivy: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		c.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.Trivy: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, c)
 		formatter := NewFormatter(service)
