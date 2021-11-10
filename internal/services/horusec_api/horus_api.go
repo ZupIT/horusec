@@ -28,7 +28,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/request"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/request/entities"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
 )
 
@@ -44,35 +43,46 @@ func NewHorusecAPIService(cfg *config.Config) *Service {
 	}
 }
 
-func (s *Service) SendAnalysis(entity *analysis.Analysis) {
+func (s *Service) SendAnalysis(entity *analysis.Analysis) error {
 	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
-		return
+		return nil
 	}
-
-	res, err := s.sendCreateAnalysisRequest(entity)
-	if err != nil {
-		s.loggerSendError(err)
-		return
+	if err := s.sendAndVerifyCreateAnalysisRequest(entity); err != nil {
+		return err
 	}
-	defer res.CloseBody()
-
-	s.loggerSendError(s.verifyResponseCreateAnalysis(res))
+	return nil
 }
 
-func (s *Service) GetAnalysis(analysisID uuid.UUID) *analysis.Analysis {
-	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
-		return nil
+func (s *Service) sendAndVerifyCreateAnalysisRequest(entity *analysis.Analysis) error {
+	res, err := s.sendCreateAnalysisRequest(entity)
+	if err != nil {
+		return err
 	}
+	defer res.CloseBody()
+	if err := s.verifyResponseCreateAnalysis(res); err != nil {
+		return err
+	}
+	return nil
+}
 
+func (s *Service) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error) {
+	if s.config.IsEmptyRepositoryAuthorization() || s.config.IsTimeout {
+		return nil, nil
+	}
+	return s.sendAndVerifyFindAnalysisRequest(analysisID)
+}
+
+func (s *Service) sendAndVerifyFindAnalysisRequest(analysisID uuid.UUID) (*analysis.Analysis, error) {
 	res, err := s.sendFindAnalysisRequest(analysisID)
 	if err != nil {
-		s.loggerSendError(err)
-		return nil
+		return nil, err
 	}
 	defer res.CloseBody()
 	body, err := s.verifyResponseFindAnalysis(res)
-	s.loggerSendError(err)
-	return body
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
 
 func (s *Service) sendFindAnalysisRequest(analysisID uuid.UUID) (*entities.HTTPResponse, error) {
@@ -146,6 +156,9 @@ func (s *Service) parseResponseBytesToAnalysis(body []byte) (entity *analysis.An
 	if err != nil {
 		return nil, err
 	}
+	if string(body) == "null" {
+		return nil, fmt.Errorf("couldn't find field %q in response body: %v", "content", res)
+	}
 	return entity, json.Unmarshal(body, &entity)
 }
 
@@ -153,28 +166,31 @@ func (s *Service) getHorusecAPIURL() string {
 	return fmt.Sprintf("%s/api/analysis", s.config.HorusecAPIUri)
 }
 
-func (s *Service) loggerSendError(err error) {
-	if err != nil {
-		print("\n")
-		logger.LogStringAsError(fmt.Sprintf("[HORUSEC] %s", err.Error()))
-	}
-}
-
 func (s *Service) setTLSConfig() (*tls.Config, error) {
+	//nolint:gosec // skip dynamic
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify: s.config.CertInsecureSkipVerify, // nolint:gosec // skip dynamic
+		InsecureSkipVerify: s.config.CertInsecureSkipVerify,
 	}
 	if s.config.CertPath != "" {
-		caCert, err := os.ReadFile(s.config.CertPath)
+		t, err := s.readTLSConfigFile(tlsConfig)
 		if err != nil {
-			return tlsConfig, err
+			return t, err
 		}
-
-		certPool := x509.NewCertPool()
-		_ = certPool.AppendCertsFromPEM(caCert)
-		tlsConfig.RootCAs = certPool
 	}
+	return tlsConfig, nil
+}
 
+func (s *Service) readTLSConfigFile(tlsConfig *tls.Config) (*tls.Config, error) {
+	caCert, err := os.ReadFile(s.config.CertPath)
+	if err != nil {
+		return tlsConfig, err
+	}
+	certPool := x509.NewCertPool()
+	ok := certPool.AppendCertsFromPEM(caCert)
+	if !ok {
+		return tlsConfig, fmt.Errorf("could not set certificate: \n %s", string(caCert))
+	}
+	tlsConfig.RootCAs = certPool
 	return tlsConfig, nil
 }
 
