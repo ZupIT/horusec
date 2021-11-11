@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,7 +26,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/config"
@@ -49,19 +50,26 @@ type analysisOutputJSON struct {
 	analysis.Analysis
 }
 
+// PrintResults is reponsable to print results of an analysis
+// to a given io.Writer.
 type PrintResults struct {
 	analysis         *analysis.Analysis
-	configs          *config.Config
+	config           *config.Config
 	totalVulns       int
 	sonarqubeService SonarQubeConverter
 	textOutput       string
+	writer           io.Writer
 }
 
-func NewPrintResults(entity *analysis.Analysis, configs *config.Config) *PrintResults {
+// NewPrintResults create a new PrintResults using os.Stdout as writer.
+func NewPrintResults(entity *analysis.Analysis, cfg *config.Config) *PrintResults {
 	return &PrintResults{
 		analysis:         entity,
-		configs:          configs,
+		config:           cfg,
 		sonarqubeService: sonarqube.NewSonarQube(entity),
+		writer:           os.Stdout,
+		totalVulns:       0,
+		textOutput:       "",
 	}
 }
 
@@ -70,7 +78,7 @@ func (pr *PrintResults) SetAnalysis(entity *analysis.Analysis) {
 }
 
 func (pr *PrintResults) Print() (totalVulns int, err error) {
-	if err := pr.factoryPrintByType(); err != nil {
+	if err := pr.printByOutputType(); err != nil {
 		return 0, err
 	}
 
@@ -78,34 +86,34 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
-	if pr.configs.IsTimeout {
+	if pr.config.IsTimeout {
 		logger.LogWarnWithLevel(messages.MsgWarnTimeoutOccurs)
 	}
 
 	return pr.totalVulns, nil
 }
 
-func (pr *PrintResults) factoryPrintByType() error {
+func (pr *PrintResults) printByOutputType() error {
 	switch {
-	case pr.configs.PrintOutputType == outputtype.JSON:
-		return pr.runPrintResultsJSON()
-	case pr.configs.PrintOutputType == outputtype.SonarQube:
-		return pr.runPrintResultsSonarQube()
+	case pr.config.PrintOutputType == outputtype.JSON:
+		return pr.printResultsJSON()
+	case pr.config.PrintOutputType == outputtype.SonarQube:
+		return pr.printResultsSonarQube()
 	default:
-		return pr.runPrintResultsText()
+		return pr.printResultsText()
 	}
 }
 
-func (pr *PrintResults) runPrintResultsText() error {
-	fmt.Print("\n")
+func (pr *PrintResults) printResultsText() error {
+	fmt.Fprint(pr.writer, "\n")
 	pr.logSeparator(true)
 
-	pr.printLNF("HORUSEC ENDED THE ANALYSIS WITH STATUS OF \"%s\" AND WITH THE FOLLOWING RESULTS:", pr.analysis.Status)
+	pr.printlnf(`HORUSEC ENDED THE ANALYSIS WITH STATUS OF %q AND WITH THE FOLLOWING RESULTS:`, pr.analysis.Status)
 
 	pr.logSeparator(true)
 
-	pr.printLNF("Analysis StartedAt: %s", pr.analysis.CreatedAt.Format("2006-01-02 15:04:05"))
-	pr.printLNF("Analysis FinishedAt: %s", pr.analysis.FinishedAt.Format("2006-01-02 15:04:05"))
+	pr.printlnf("Analysis StartedAt: %s", pr.analysis.CreatedAt.Format("2006-01-02 15:04:05"))
+	pr.printlnf("Analysis FinishedAt: %s", pr.analysis.FinishedAt.Format("2006-01-02 15:04:05"))
 
 	pr.logSeparator(true)
 
@@ -114,22 +122,33 @@ func (pr *PrintResults) runPrintResultsText() error {
 	return pr.createTxtOutputFile()
 }
 
-func (pr *PrintResults) runPrintResultsJSON() error {
+func (pr *PrintResults) printResultsJSON() error {
 	a := analysisOutputJSON{
 		Analysis: *pr.analysis,
-		Version:  pr.configs.Version,
+		Version:  pr.config.Version,
 	}
 
-	bytesToWrite, err := json.MarshalIndent(a, "", "  ")
+	b, err := json.MarshalIndent(a, "", "  ")
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 		return err
 	}
-	return pr.parseFilePathToAbsAndCreateOutputJSON(bytesToWrite)
+
+	return pr.createOutputJSON(b)
 }
 
-func (pr *PrintResults) runPrintResultsSonarQube() error {
-	return pr.saveSonarQubeFormatResults()
+func (pr *PrintResults) printResultsSonarQube() error {
+	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSonarQubeFile)
+
+	report := pr.sonarqubeService.ConvertVulnerabilityToSonarQube()
+
+	b, err := json.MarshalIndent(report, "", "  ")
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
+		return err
+	}
+
+	return pr.createOutputJSON(b)
 }
 
 func (pr *PrintResults) checkIfExistVulnerabilityOrNoSec() {
@@ -150,34 +169,20 @@ func (pr *PrintResults) validateVulnerabilityToCheckTotalErrors(vuln *vulnerabil
 }
 
 func (pr *PrintResults) isTypeVulnToSkip(vuln *vulnerability.Vulnerability) bool {
-	return vuln.Type == enumsVulnerability.FalsePositive ||
-		vuln.Type == enumsVulnerability.RiskAccepted ||
-		vuln.Type == enumsVulnerability.Corrected
+	return vuln.Type == vulnerabilityenum.FalsePositive ||
+		vuln.Type == vulnerabilityenum.RiskAccepted ||
+		vuln.Type == vulnerabilityenum.Corrected
 }
 
-func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) (ignore bool) {
-	ignore = false
-
-	for _, typeToIgnore := range pr.configs.SeveritiesToIgnore {
+func (pr *PrintResults) isIgnoredVulnerability(vulnerabilityType string) bool {
+	for _, typeToIgnore := range pr.config.SeveritiesToIgnore {
 		if strings.EqualFold(vulnerabilityType, strings.TrimSpace(typeToIgnore)) ||
 			vulnerabilityType == string(severities.Info) {
-			ignore = true
-			return ignore
+			return true
 		}
 	}
 
-	return ignore
-}
-
-func (pr *PrintResults) saveSonarQubeFormatResults() error {
-	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSonarQubeFile)
-	report := pr.sonarqubeService.ConvertVulnerabilityToSonarQube()
-	bytesToWrite, err := json.MarshalIndent(report, "", "  ")
-	if err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
-		return err
-	}
-	return pr.parseFilePathToAbsAndCreateOutputJSON(bytesToWrite)
+	return false
 }
 
 func (pr *PrintResults) returnDefaultErrOutputJSON(err error) error {
@@ -185,32 +190,38 @@ func (pr *PrintResults) returnDefaultErrOutputJSON(err error) error {
 	return ErrOutputJSON
 }
 
-func (pr *PrintResults) parseFilePathToAbsAndCreateOutputJSON(bytesToWrite []byte) error {
-	completePath, err := filepath.Abs(pr.configs.JSONOutputFilePath)
+//nolint:funlen
+func (pr *PrintResults) createOutputJSON(content []byte) error {
+	path, err := filepath.Abs(pr.config.JSONOutputFilePath)
 	if err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
-	if _, err := os.Create(completePath); err != nil {
+
+	f, err := os.Create(path)
+	if err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
-	logger.LogInfoWithLevel(messages.MsgInfoStartWriteFile + completePath)
-	return pr.openJSONFileAndWriteBytes(bytesToWrite, completePath)
+
+	logger.LogInfoWithLevel(messages.MsgInfoStartWriteFile + path)
+
+	if err := pr.truncateAndWriteFile(content, f); err != nil {
+		return err
+	}
+
+	return f.Close()
 }
 
-//nolint:gomnd // magic number
-func (pr *PrintResults) openJSONFileAndWriteBytes(bytesToWrite []byte, completePath string) error {
-	outputFile, err := os.OpenFile(completePath, os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
+func (pr *PrintResults) truncateAndWriteFile(content []byte, f *os.File) error {
+	if err := f.Truncate(0); err != nil {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
-	if err = outputFile.Truncate(0); err != nil {
+
+	bytesWritten, err := f.Write(content)
+	if err != nil || bytesWritten != len(content) {
 		return pr.returnDefaultErrOutputJSON(err)
 	}
-	bytesWritten, err := outputFile.Write(bytesToWrite)
-	if err != nil || bytesWritten != len(bytesToWrite) {
-		return pr.returnDefaultErrOutputJSON(err)
-	}
-	return outputFile.Close()
+
+	return nil
 }
 
 func (pr *PrintResults) printTextOutputVulnerability() {
@@ -222,37 +233,44 @@ func (pr *PrintResults) printTextOutputVulnerability() {
 	pr.printTotalVulnerabilities()
 }
 
+//nolint:funlen
 func (pr *PrintResults) printTotalVulnerabilities() {
 	totalVulnerabilities := pr.analysis.GetTotalVulnerabilities()
 	if totalVulnerabilities > 0 {
-		pr.printLNF("In this analysis, a total of %v possible vulnerabilities "+
-			"were found and we classified them into:", totalVulnerabilities)
+		pr.printlnf(
+			"In this analysis, a total of %v possible vulnerabilities were found and we classified them into:",
+			totalVulnerabilities,
+		)
 	}
-	totalVulnerabilitiesBySeverity := pr.GetTotalVulnsBySeverity()
+
+	totalVulnerabilitiesBySeverity := pr.getTotalVulnsBySeverity()
 	for vulnType, countBySeverity := range totalVulnerabilitiesBySeverity {
 		for severityName, count := range countBySeverity {
 			if count > 0 {
-				pr.printLNF("Total of %s %s is: %v", vulnType.ToString(), severityName.ToString(), count)
+				pr.printlnf("Total of %s %s is: %v", vulnType.ToString(), severityName.ToString(), count)
 			}
 		}
 	}
 }
 
-func (pr *PrintResults) GetTotalVulnsBySeverity() (total map[enumsVulnerability.Type]map[severities.Severity]int) {
-	total = pr.getDefaultTotalVulnBySeverity()
+func (pr *PrintResults) getTotalVulnsBySeverity() map[vulnerabilityenum.Type]map[severities.Severity]int {
+	total := pr.getDefaultTotalVulnBySeverity()
+
 	for index := range pr.analysis.AnalysisVulnerabilities {
 		vuln := pr.analysis.AnalysisVulnerabilities[index].Vulnerability
 		total[vuln.Type][vuln.Severity]++
 	}
+
 	return total
 }
 
-func (pr *PrintResults) getDefaultTotalVulnBySeverity() map[enumsVulnerability.Type]map[severities.Severity]int {
-	return map[enumsVulnerability.Type]map[severities.Severity]int{
-		enumsVulnerability.Vulnerability: pr.getDefaultCountBySeverity(),
-		enumsVulnerability.RiskAccepted:  pr.getDefaultCountBySeverity(),
-		enumsVulnerability.FalsePositive: pr.getDefaultCountBySeverity(),
-		enumsVulnerability.Corrected:     pr.getDefaultCountBySeverity(),
+func (pr *PrintResults) getDefaultTotalVulnBySeverity() map[vulnerabilityenum.Type]map[severities.Severity]int {
+	count := pr.getDefaultCountBySeverity()
+	return map[vulnerabilityenum.Type]map[severities.Severity]int{
+		vulnerabilityenum.Vulnerability: count,
+		vulnerabilityenum.RiskAccepted:  count,
+		vulnerabilityenum.FalsePositive: count,
+		vulnerabilityenum.Corrected:     count,
 	}
 }
 
@@ -269,62 +287,62 @@ func (pr *PrintResults) getDefaultCountBySeverity() map[severities.Severity]int 
 
 // nolint
 func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerability.Vulnerability) {
-	pr.printLNF("Language: %s", vulnerability.Language)
-	pr.printLNF("Severity: %s", vulnerability.Severity)
-	pr.printLNF("Line: %s", vulnerability.Line)
-	pr.printLNF("Column: %s", vulnerability.Column)
-	pr.printLNF("SecurityTool: %s", vulnerability.SecurityTool)
-	pr.printLNF("Confidence: %s", vulnerability.Confidence)
-	pr.printLNF("File: %s", pr.getProjectPath(vulnerability.File))
-	pr.printLNF("Code: %s", vulnerability.Code)
+	pr.printlnf("Language: %s", vulnerability.Language)
+	pr.printlnf("Severity: %s", vulnerability.Severity)
+	pr.printlnf("Line: %s", vulnerability.Line)
+	pr.printlnf("Column: %s", vulnerability.Column)
+	pr.printlnf("SecurityTool: %s", vulnerability.SecurityTool)
+	pr.printlnf("Confidence: %s", vulnerability.Confidence)
+	pr.printlnf("File: %s", pr.getProjectPath(vulnerability.File))
+	pr.printlnf("Code: %s", vulnerability.Code)
 	if vulnerability.RuleID != "" {
-		pr.printLNF("RuleID: %s", vulnerability.RuleID)
+		pr.printlnf("RuleID: %s", vulnerability.RuleID)
 	}
-	pr.printLNF("Details: %s", vulnerability.Details)
-	pr.printLNF("Type: %s", vulnerability.Type)
+	pr.printlnf("Details: %s", vulnerability.Details)
+	pr.printlnf("Type: %s", vulnerability.Type)
 
 	pr.printCommitAuthor(vulnerability)
 
-	pr.printLNF("ReferenceHash: %s", vulnerability.VulnHash)
+	pr.printlnf("ReferenceHash: %s", vulnerability.VulnHash)
 
 	pr.logSeparator(true)
 }
 
 // nolint
 func (pr *PrintResults) printCommitAuthor(vulnerability *vulnerability.Vulnerability) {
-	if !pr.configs.EnableCommitAuthor {
+	if !pr.config.EnableCommitAuthor {
 		return
 	}
-	pr.printLNF("Commit Author: %s", vulnerability.CommitAuthor)
-	pr.printLNF("Commit Date: %s", vulnerability.CommitDate)
-	pr.printLNF("Commit Email: %s", vulnerability.CommitEmail)
-	pr.printLNF("Commit CommitHash: %s", vulnerability.CommitHash)
-	pr.printLNF("Commit Message: %s", vulnerability.CommitMessage)
+	pr.printlnf("Commit Author: %s", vulnerability.CommitAuthor)
+	pr.printlnf("Commit Date: %s", vulnerability.CommitDate)
+	pr.printlnf("Commit Email: %s", vulnerability.CommitEmail)
+	pr.printlnf("Commit CommitHash: %s", vulnerability.CommitHash)
+	pr.printlnf("Commit Message: %s", vulnerability.CommitMessage)
 
 }
 
 func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
-	if pr.configs.IsEmptyRepositoryAuthorization() {
-		fmt.Print("\n")
+	if pr.config.IsEmptyRepositoryAuthorization() {
+		fmt.Fprint(pr.writer, "\n")
 		logger.LogWarnWithLevel(messages.MsgWarnAuthorizationNotFound)
-		fmt.Print("\n")
+		fmt.Fprint(pr.writer, "\n")
 	}
 }
 
 func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
-	if !pr.configs.EnableInformationSeverity {
+	if !pr.config.EnableInformationSeverity {
 		logger.LogWarnWithLevel(messages.MsgWarnInfoVulnerabilitiesDisabled)
 	}
 	if pr.analysis.HasErrors() {
 		pr.logSeparator(true)
 		logger.LogWarnWithLevel(messages.MsgWarnFoundErrorsInAnalysis)
-		fmt.Print("\n")
+		fmt.Fprint(pr.writer, "\n")
 
 		for _, errorMessage := range strings.SplitAfter(pr.analysis.Errors, ";") {
 			pr.printErrors(errorMessage)
 		}
 
-		fmt.Print("\n")
+		fmt.Fprint(pr.writer, "\n")
 	}
 }
 
@@ -343,44 +361,46 @@ func (pr *PrintResults) printErrors(errorMessage string) {
 func (pr *PrintResults) printResponseAnalysis() {
 	if pr.totalVulns > 0 {
 		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgWarnAnalysisFoundVulns, pr.totalVulns))
-		fmt.Print("\n")
+		fmt.Fprint(pr.writer, "\n")
 		return
 	}
 
 	logger.LogWarnWithLevel(messages.MsgWarnAnalysisFinishedWithoutVulns)
-	fmt.Print("\n")
+	fmt.Fprint(pr.writer, "\n")
 }
 
 func (pr *PrintResults) logSeparator(isToShow bool) {
 	if isToShow {
-		pr.printLNF("\n==================================================================================\n")
+		pr.printlnf("\n==================================================================================\n")
 	}
 }
 
 func (pr *PrintResults) getProjectPath(path string) string {
-	if strings.Contains(path, pr.configs.ProjectPath) {
+	if strings.Contains(path, pr.config.ProjectPath) {
 		return path
 	}
 
-	if pr.configs.ContainerBindProjectPath != "" {
-		return fmt.Sprintf("%s/%s", pr.configs.ContainerBindProjectPath, path)
+	if pr.config.ContainerBindProjectPath != "" {
+		return fmt.Sprintf("%s/%s", pr.config.ContainerBindProjectPath, path)
 	}
 
-	return fmt.Sprintf("%s/%s", pr.configs.ProjectPath, path)
+	return fmt.Sprintf("%s/%s", pr.config.ProjectPath, path)
 }
 
-func (pr *PrintResults) printLNF(text string, args ...interface{}) {
-	if pr.configs.PrintOutputType == outputtype.Text {
-		pr.textOutput += fmt.Sprintln(fmt.Sprintf(text, args...))
+func (pr *PrintResults) printlnf(text string, args ...interface{}) {
+	msg := fmt.Sprintf(text, args...)
+
+	if pr.config.PrintOutputType == outputtype.Text {
+		pr.textOutput += fmt.Sprintln(msg)
 	}
 
-	fmt.Println(fmt.Sprintf(text, args...))
+	fmt.Fprintln(pr.writer, msg)
 }
 
 func (pr *PrintResults) createTxtOutputFile() error {
-	if pr.configs.PrintOutputType != outputtype.Text || pr.configs.JSONOutputFilePath == "" {
+	if pr.config.PrintOutputType != outputtype.Text || pr.config.JSONOutputFilePath == "" {
 		return nil
 	}
 
-	return file.CreateAndWriteFile(pr.textOutput, pr.configs.JSONOutputFilePath)
+	return file.CreateAndWriteFile(pr.textOutput, pr.config.JSONOutputFilePath)
 }
