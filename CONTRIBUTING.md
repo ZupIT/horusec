@@ -4,18 +4,18 @@ This is Horusec contributing guide. Please read the following sections to learn 
 
 ## **Table of contents**
 ### 1. [**Before you contribute**](#before-you-contribute)
-> #### i.  [**Code of Conduct**](#code-of-conduct)
-> #### ii. [**Legal**](#legal)
+> #### 1.1.  [**Code of Conduct**](#code-of-conduct)
+> #### 1.2. [**Legal**](#legal)
 ### 2. [**Prerequisites**](#prerequisites)
-> #### i.   [**Developer Certificate of Origin**](#developer-certificate-of-origin)
-> #### ii.  [**Code Review**](#code-review)
-> #### iii. [**Pull Requests**](#pull-requests)    
+> #### 1.1.   [**Developer Certificate of Origin**](#developer-certificate-of-origin)
+> #### 1.2.  [**Code Review**](#code-review)
+> #### 1.3. [**Pull Requests**](#pull-requests)    
 ### 3. [**How to contribute?**](#how-to-contribute?)
- > #### i. [**Prepare your development environment**](#prepare-your-development-environment)
-> #### ii.  [**First contribution**](#first-contribution)
-> #### iii. [**Add new feature, bugfixing or improvement**](#add-new-feature-bugfixing-or-improvement)
-> #### iv.  [**Pull Request's approval**](#pull-request-approval)
-> #### v.   [**After your pull request's approval**](#after-your-pull-request-approval)
+ > #### 1.1. [**Prepare your development environment**](#prepare-your-development-environment)
+> #### 1.2.  [**First contribution**](#first-contribution)
+> #### 1.3. [**Add new feature, bug fixing or improvement**](#add-new-feature-bugfixing-or-improvement)
+> #### 1.4.  [**Pull Request's approval**](#pull-request-approval)
+> #### 1.5.   [**After your pull request's approval**](#after-your-pull-request-approval)
 ### 4. [**Community**](#community)
 
 ## **Before you contribute**
@@ -67,9 +67,24 @@ For this method, your name and e-mail must be the same registered to your GitHub
 - All your submissions needs a review.
 
 ### **Pull Requests**
-When you open a PR, follow the requisites below:
-- You need to add a title describing the issue. 
-- Answer the questions about what you did, how to verify it and a description for the changelog, see an example:
+When you open a Pull Request, follow the requirements below:
+
+1. Add a title with the following pattern: 
+
+#### **[PKG][TYPE]: Description**
+
+#### **PKG:** Name of the package or main service you want to change.
+
+#### **TYPE**: Add what you Pull Request (PR) refers to:
+- **FEATURE:** PR refers to a new activity.
+- **BUGFIX:** PR refers to corrections for the next release.
+- **HOTFIX:** PR refers to corrections where you will need a cherry-pick and the update of the minor version. 
+- **CHORE:** PR refers to changes for the next release, but it was only maintenance without an activity impact.  
+
+**Example:** **[start][bugfix]: Fix bug when Horusec haven't read the new flag of authorization**
+
+ 
+2. Answer the questions about what you did, how to verify it and a short description for the changelog, see an example below:
 
 <p align="center" margin="20 0"><img src="assets/horusec-pr.PNG" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
