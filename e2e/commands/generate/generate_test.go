@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -40,9 +39,7 @@ var _ = Describe("Run horusec CLI with generate argument", func() {
 
 	BeforeSuite(func() {
 		configFileName := "horusec-config-generate-test.json"
-		configFilePath = filepath.Join(os.TempDir(), configFileName)
-		// Add scape slashes when running on Windows.
-		configFilePath = strings.ReplaceAll(configFilePath, `\`, `\\`)
+		configFilePath = testutil.NormalizePathToAssert(filepath.Join(os.TempDir(), configFileName))
 	})
 
 	BeforeEach(func() {
