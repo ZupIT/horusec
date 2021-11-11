@@ -359,45 +359,53 @@ func NewInsecureWebViewImplementation() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`setScriptEnabled\(true\)`),
-			regexp.MustCompile(`.addscriptInterface\(`),
+			regexp.MustCompile(`setJavaScriptEnabled\(true\)`),
+			regexp.MustCompile(`.addJavascriptInterface\(`),
 		},
 	}
 }
 
-func NewNoUseSQLCipherAndMatch() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-20",
-			Name:        "No Use SQL Cipher",
-			Description: "This App uses SQL Cipher. SQLCipher provides 256-bit AES encryption to sqlite database files",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`SQLiteDatabase.loadLibs\(`),
-			regexp.MustCompile(`net.sqlcipher`),
-		},
-	}
-}
+// DEPRECATED Simply using SQL Cipher does not appear to be a vulnerability, to this becomes a vulnerability will
+// depend on what is stored, how it was stored and the sql cipher version, removed to avoid false positives.
+// reference: https://www.zetetic.net/blog/2019/08/14/defcon-sqlite-attacks/
+//
+//func NewNoUseSQLCipherAndMatch() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-20",
+//			Name:        "No Use SQL Cipher",
+//			Description: "This App uses SQL Cipher. SQLCipher provides 256-bit AES encryption to sqlite database files",
+//			Severity:    severities.Medium.ToString(),
+//			Confidence:  confidence.High.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`SQLiteDatabase.loadLibs\(`),
+//			regexp.MustCompile(`net.sqlcipher`),
+//		},
+//	}
+//}
 
-func NewNoUseRealmDatabaseWithEncryptionKey() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-21",
-			Name:        "No Use Realm Database With Encryption Key",
-			Description: "This App use Realm Database with encryption",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`io.realm.Realm`),
-			regexp.MustCompile(`.encryptionKey\(`),
-		},
-	}
-}
+// DEPRECATED This vulnerability should search for a hardcoded secret, the actual implemented way
+// will only lead to false positives, leaks engine already does a search for hardcoded credentials.
+// reference: https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-6301?search=realm
+//
+//func NewNoUseRealmDatabaseWithEncryptionKey() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-21",
+//			Name:        "No Use Realm Database With Encryption Key",
+//			Description: "This App use Realm Database with encryption",
+//			Severity:    severities.Medium.ToString(),
+//			Confidence:  confidence.Medium.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`io.realm.Realm`),
+//			regexp.MustCompile(`.encryptionKey\(`),
+//		},
+//	}
+//}
 
 func NewNoUseWebviewDebuggingEnable() text.TextRule {
 	return text.TextRule{
@@ -421,14 +429,14 @@ func NewNoListenToClipboard() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-23",
 			Name:        "No Listen To Clipboard",
-			Description: "This app listens to Clipboard changes. Some malwares also listen to Clipboard changes.",
+			Description: "ClipboardManager is a system service that allows you to register a listener for when the clipboard changes and some malwares also listen to Clipboard changes.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`content.ClipboardManager`),
 			regexp.MustCompile(`OnPrimaryClipChangedListener`),
+			regexp.MustCompile(`content.ClipboardManager`),
 		},
 	}
 }
@@ -444,8 +452,8 @@ func NewNoCopyContentToClipboard() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`content.ClipboardManager`),
 			regexp.MustCompile(`setPrimaryClip\(`),
+			regexp.MustCompile(`content.ClipboardManager`),
 		},
 	}
 }
@@ -462,6 +470,7 @@ func NewNoUseWebviewIgnoringSSL() text.TextRule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`onReceivedSslError\(WebView`),
+			regexp.MustCompile(`@Override\n.*onReceivedSslError\(WebView`),
 			regexp.MustCompile(`.proceed\(\);`),
 		},
 	}
@@ -478,11 +487,12 @@ func NewSQLInjectionWithSqlUtil() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`SqlUtil\.execQuery\(`),
+			regexp.MustCompile(`SqlUtil\.execQuery\(.*\+`),
 		},
 	}
 }
 
+// NewNoUseFridaServer Frida seems to be a pentest tool. I couldn't find an example similar to what our rule is looking for, so it's remains without tests.
 func NewNoUseFridaServer() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -500,6 +510,7 @@ func NewNoUseFridaServer() text.TextRule {
 	}
 }
 
+// NewNoUseSSLPinningLib not really sure about this vulnerability, needs to be revised in the future.
 func NewNoUseSSLPinningLib() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -522,14 +533,14 @@ func NewNoUseDexGuardAppDebuggable() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-29",
 			Name:        "DexGuard Debug Detection",
-			Description: "DexGuard Debug Detection code to detect wheather an App is debuggable or not is identified.",
+			Description: "DexGuard Debug Detection code to detect whatever an App is debuggable or not is identified.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`import dexguard.util`),
 			regexp.MustCompile(`DebugDetector.isDebuggable`),
+			regexp.MustCompile(`dexguard.util`),
 		},
 	}
 }
@@ -1776,7 +1787,7 @@ func NewNoWriteExternalContent() text.TextRule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`.getExternalStorage`),
+			regexp.MustCompile(`.getExternalStorage\(`),
 			regexp.MustCompile(`.getExternalFilesDir\(`),
 		},
 	}
@@ -1839,23 +1850,25 @@ func NewJARURLConnection() text.TextRule {
 	}
 }
 
-func NewSetOrReadClipboardData() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-105",
-			Name:        "Set or Read Clipboard data",
-			Description: "Set or Read Clipboard data",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.OrMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`content.ClipboardManager`),
-			regexp.MustCompile(`CLIPBOARD_SERVICE`),
-			regexp.MustCompile(`ClipboardManager`),
-		},
-	}
-}
+// DEPRECATED Repeated vulnerability, same as HS-JAVA-23
+//
+//func NewSetOrReadClipboardData() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-105",
+//			Name:        "Set or Read Clipboard data",
+//			Description: "Set or Read Clipboard data",
+//			Severity:    severities.Low.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.OrMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`content.ClipboardManager`),
+//			regexp.MustCompile(`CLIPBOARD_SERVICE`),
+//			regexp.MustCompile(`ClipboardManager`),
+//		},
+//	}
+//}
 
 // DEPRECATED Repeated vulnerability, same as HS-JAVA-111
 //
@@ -2529,7 +2542,7 @@ func NewUnvalidatedRedirect() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`sendRedirect\(.*.getParameter\(.*\)\)`),
+			regexp.MustCompile(`\.sendRedirect\(.*\.getParameter\(.*\)\)`),
 		},
 	}
 }
@@ -2577,7 +2590,7 @@ func NewDatabasesPasswordNotProtected() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.getConnection\(['|"]jdbc`),
+			regexp.MustCompile(`\.getConnection\("jdbc:derby:memory:.*;create=true".*, ""\);`),
 		},
 	}
 }

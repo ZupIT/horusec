@@ -413,6 +413,249 @@ public class Foo {
 }
 	`
 
+	SampleVulnerableHSJAVA18 = `
+import android.webkit.WebView;
+
+public class Foo {
+	public void Bar() {
+		WebView.loadUrl("file://"+Environment.getExternalStorageDirectory().getAbsolutePath()+"dangerZone.html");
+	}
+}
+	`
+
+	SampleSafeHSJAVA18 = `
+import android.webkit.WebView;
+
+public class Foo {
+	public void Bar() {
+			myWebView.loadUrl("https://www.example.com");
+		});
+	}
+}
+	`
+
+	SampleVulnerableHSJAVA19 = `
+package com.example.root.vulnerableapp;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundler;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+
+public class MainActivity extends AppCompatActivity {
+	@Override
+	protected void onCreate(Bundler savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		set.ContentView(R.layout.activity_main);
+		
+		WebView myWEbView = (WebView) findViewById(R.id.webview);
+		WebSettings webSettings = myWebView.getSettings();
+		webSettings.setJavaScriptEnabled(true);
+
+		myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
+		myWebView.loadUrl("http://10.0.0.2");
+	}
+}
+	`
+
+	SampleSafeHSJAVA19 = `
+package com.example.root.vulnerableapp;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundler;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+
+public class MainActivity extends AppCompatActivity {
+	@Override
+	protected void onCreate(Bundler savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		set.ContentView(R.layout.activity_main);
+		
+		WebView myWEbView = (WebView) findViewById(R.id.webview);
+		WebSettings webSettings = myWebView.getSettings();
+
+		myWebView.loadUrl("http://10.0.0.2");
+	}
+}
+	`
+
+	SampleVulnerableHSJAVA22 = `
+public class Foo {
+	Java.perform(function() {
+	   var Webview = Java.use("android.webkit.WebView")
+	   Webview.onTouchEvent.overload("android.view.MotionEvent").implementation = 
+	   function(touchEvent) {
+		 this.setWebContentsDebuggingEnabled(true);
+		 this.onTouchEvent.overload("android.view.MotionEvent").call(this, touchEvent);
+	   }
+	});
+}
+	`
+
+	SampleSafeHSJAVA22 = `
+public class Foo {
+	Java.perform(function() {
+	   var Webview = Java.use("android.webkit.WebView")
+	   Webview.onTouchEvent.overload("android.view.MotionEvent").implementation = 
+	   function(touchEvent) {
+		 this.setWebContentsDebuggingEnabled(false);
+		 this.onTouchEvent.overload("android.view.MotionEvent").call(this, touchEvent);
+	   }
+	});
+}
+	`
+
+	SampleVulnerableHSJAVA23 = `
+import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.IBinder;
+
+import java.util.List;
+
+public class ClipboardWatcherService extends Service {
+
+    public static final StringBuilder log = new StringBuilder("--- STUFF THAT I SENT TO MY SERVER ---\n\n");
+    public static boolean serviceIsRunning = false;
+
+    private ClipboardManager.OnPrimaryClipChangedListener listener = new ClipboardManager.OnPrimaryClipChangedListener() {
+        public void onPrimaryClipChanged() {
+            performClipboardCheck();
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).addPrimaryClipChangedListener(listener);
+        checkForPasswordManager();
+        serviceIsRunning = true;
+    }
+}
+	`
+
+	SampleSafeHSJAVA23 = `
+public class Foo {
+	@Test
+	public void shouldHavePrimaryClipIfText() {
+	 clipboardManager.setText("BLARG?");
+	 assertThat(clipboardManager.hasPrimaryClip()).isTrue();
+	}
+}
+	`
+
+	SampleVulnerableHSJAVA24 = `
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.Build;
+
+public class Foo {
+    public static void setText(Context context, CharSequence text) {
+        if (isNew()) {
+            instance(context);
+            ClipData clip = ClipData.newPlainText("simple text", text);
+            clipboardManager.setPrimaryClip(clip);
+        } else {
+            instance(context);
+            clipboardManager.setText(text);
+        }
+    }
+}
+`
+
+	SampleSafeHSJAVA24 = `
+public class Foo {
+	@Test
+	public void shouldHavePrimaryClipIfText() {
+	 clipboardManager.setText("BLARG?");
+	 assertThat(clipboardManager.hasPrimaryClip()).isTrue();
+	}
+}
+`
+
+	SampleVulnerableHSJAVA25 = `
+public class Foo {
+	  @Override
+	  public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+		handler.proceed();
+	  }
+}
+`
+
+	SampleSafeHSJAVA25 = `
+public class Foo {
+	  @Override
+	  public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+		System.out.println(error);
+	  }
+}
+`
+
+	SampleVulnerableHSJAVA26 = `
+public void findUser(String parameterInput) {
+    SqlUtil.execQuery("select * from UserEntity where id = " + parameterInput);
+}
+`
+
+	SampleSafeHSJAVA26 = `
+public void findUser() {
+    SqlUtil.execQuery("select * from UserEntity where id = 1");
+}
+`
+
+	SampleVulnerableHSJAVA28 = `
+package org.thoughtcrime.ssl.pinning;
+
+	public static HttpClient getPinnedHttpClient(Context context, String[] pins) {
+		try {
+			SchemeRegistry schemeRegistry = new SchemeRegistry();
+			schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+			schemeRegistry.register(new Scheme("https", new PinningSSLSocketFactory(context, pins, 0), 443));
+			 
+			HttpParams httpParams                     = new BasicHttpParams();
+			ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(httpParams, schemeRegistry);
+			return new DefaultHttpClient(connectionManager, httpParams);
+		} catch (UnrecoverableKeyException e) {
+		throw new AssertionError(e);
+		} catch (KeyManagementException e) {
+		throw new AssertionError(e);
+		} catch (NoSuchAlgorithmException e) {
+		throw new AssertionError(e);
+		} catch (KeyStoreException e) {
+		throw new AssertionError(e);
+		}
+	}
+`
+
+	SampleSafeHSJAVA28 = `
+  public static HttpsURLConnection getPinnedHttpsURLConnection(Context context, String[] pins, URL url)
+      throws IOException
+  {
+    try {
+      if (!url.getProtocol().equals("https")) {
+        throw new IllegalArgumentException("Attempt to construct pinned non-https connection!");
+      }
+      TrustManager[] trustManagers = new TrustManager[1];
+      trustManagers[0]             = new PinningTrustManager(SystemKeyStore.getInstance(context), pins, 0);
+
+      SSLContext sslContext = SSLContext.getInstance("TLS");
+      sslContext.init(null, trustManagers, null);
+
+      HttpsURLConnection urlConnection = (HttpsURLConnection)url.openConnection();
+      urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+
+      return urlConnection;
+    } catch (NoSuchAlgorithmException nsae) {
+      throw new AssertionError(nsae);
+    } catch (KeyManagementException e) {
+      throw new AssertionError(e);
+    }
+  }
+`
+
 	SampleVulnerableHSJAVA111 = `
 public class Foo {
 	public void Bar() {
@@ -533,6 +776,120 @@ public class VulnerableCodeSQLInjection134 {
             }
         }
     }
+}
+`
+
+	SampleVulnerableHSJAVA144 = `
+public class Foo {
+	public void Bar() {
+		Cipher doNothingCihper = new NullCipher();
+
+		byte[] cipherText = c.doFinal(plainText);
+	}
+}
+`
+
+	SampleVulnerableHSJAVA145 = `
+public class Foo {
+	public void Bar() {
+		String actualHash = 12345
+
+		if(userInput.equals(actualHash)) {
+
+		}
+	}
+}
+`
+
+	SampleSafeHSJAVA145 = `
+public class Foo {
+	public void Bar() {
+		String actualHash = 12345
+
+		if(MessageDigest.isEqual(userInput.getBytes(),actualHash.getBytes())) {
+
+		}
+	}
+}
+`
+
+	SampleVulnerableHSJAVA146 = `
+public class Foo {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	  resp.sendRedirect(req.getParameter("url"));
+	}
+}
+
+`
+
+	SampleSafeHSJAVA146 = `
+public class Foo {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	  String location = req.getParameter("url");
+	
+	  List<String> allowedHosts = new ArrayList<String>();
+	  allowedUrls.add("https://www.domain1.com/");
+	  allowedUrls.add("https://www.domain2.com/");
+	
+	  if (allowedUrls.contains(location))
+		resp.sendRedirect(location);
+	}
+}
+`
+
+	SampleVulnerableHSJAVA147 = `
+public class Foo {
+    @RequestMapping("/test")
+    private void test() {
+    }
+}
+
+`
+
+	SampleSafeHSJAVA147 = `
+public class Foo {
+    @RequestMapping("/test")
+    public void test() {
+    }
+}
+`
+
+	SampleVulnerableHSJAVA148 = `
+public class Foo {
+	public void Bar() {
+		DirContext ctx = new InitialDirContext();
+		
+		ctx.search(query, filter,new SearchControls(scope, countLimit, timeLimit, attributes,true, deref));
+	}
+}
+
+`
+
+	SampleSafeHSJAVA148 = `
+public class Foo {
+	public void Bar() {
+		DirContext ctx = new InitialDirContext();
+		
+		ctx.search(query, filter, new SearchControls(scope, countLimit, timeLimit, attributes, false, deref));
+	}
+}
+`
+
+	SampleVulnerableHSJAVA149 = `
+public class Foo {
+	public void Bar() {
+		Connection conn = DriverManager.getConnection("jdbc:derby:memory:myDB;create=true", "login", "");
+	}
+}
+
+`
+
+	SampleSafeHSJAVA149 = `
+public class Foo {
+	public void Bar() {
+		String password = System.getProperty("database.password");
+		Connection conn = DriverManager.getConnection("jdbc:derby:memory:myDB;create=true", "login", password);
+	}
 }
 `
 )
