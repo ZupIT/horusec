@@ -16,14 +16,15 @@ package start_test
 
 import (
 	"fmt"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"os"
+
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
 
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 
 	"path/filepath"
 
@@ -32,22 +33,18 @@ import (
 
 var _ = Describe("running binary Horusec with start parameter", func() {
 	var (
-		session           *gexec.Session
-		err               error
-		flags             map[string]string
-		repoAuthorization string
-		configFilePath    = testutil.GoExample1
+		session        *gexec.Session
+		flags          map[string]string
+		configFilePath = testutil.GoExample1
 	)
 
 	JustBeforeEach(func() {
+		var err error
 		cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.CmdStart, flags)
 		session, err = gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
 		session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder)
-
-		By("runs the command without errors", func() {
-			Expect(err).NotTo(HaveOccurred())
-			Expect(session).Should(gexec.Exit(0))
-		})
+		Expect(session).Should(gexec.Exit(0))
 	})
 
 	When("global flag --log-level is passed", func() {
@@ -120,8 +117,9 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	})
 
 	When("--authorization is passed", func() {
+		repoAuthorization := uuid.New().String()
+
 		BeforeEach(func() {
-			repoAuthorization = uuid.New().String()
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:   configFilePath,
 				testutil.StartFlagAuthorization: repoAuthorization,
@@ -130,6 +128,60 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		It("Checks if the repository authorization property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"repository_authorization\": \"%s\"`, testutil.NormalizePathToAssertInJSON(repoAuthorization))))
+		})
+	})
+
+	When("--output-format and --json-output-file is passed as JSON", func() {
+		jsonOutputPath := filepath.Join(os.TempDir(), fmt.Sprintf("%s-e2e-output.json", uuid.New()))
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagOutputFormat:       outputtype.JSON,
+				testutil.StartFlagJSONOutputFilePath: jsonOutputPath,
+			}
+		})
+
+		It("Checks if format was set as JSON and the file is created", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"print_output_type\": \"%s\"`, outputtype.JSON)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"json_output_file_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(jsonOutputPath))))
+			Expect(jsonOutputPath).Should(BeAnExistingFile())
+		})
+	})
+
+	When("--output-format and --json-output-file is passed as Text", func() {
+		textOutputPath := filepath.Join(os.TempDir(), fmt.Sprintf("%s-e2e-output.txt", uuid.New()))
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagOutputFormat:       outputtype.Text,
+				testutil.StartFlagJSONOutputFilePath: textOutputPath,
+			}
+		})
+
+		It("Checks if format was set as text and the file is created", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"print_output_type\": \"%s\"`, outputtype.Text)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"json_output_file_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(textOutputPath))))
+			Expect(textOutputPath).Should(BeAnExistingFile())
+		})
+	})
+
+	When("--output-format is passed as sonarqube with --json-output-file as JSON", func() {
+		sonarqubeOutputPath := filepath.Join(os.TempDir(), fmt.Sprintf("%s-e2e-output-sonarqube.json", uuid.New()))
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:        configFilePath,
+				testutil.StartFlagOutputFormat:       outputtype.SonarQube,
+				testutil.StartFlagJSONOutputFilePath: sonarqubeOutputPath,
+			}
+		})
+
+		It("Checks if format was set as sonarqube and the JSON file is created", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"print_output_type\": \"%s\"`, outputtype.SonarQube)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"json_output_file_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(sonarqubeOutputPath))))
+			Expect(sonarqubeOutputPath).Should(BeAnExistingFile())
 		})
 	})
 })
