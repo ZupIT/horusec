@@ -117,7 +117,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
 		assert.Equal(t, []string{vulnerability.Vulnerability.ToString(), vulnerability.FalsePositive.ToString()}, configs.ShowVulnerabilitiesTypes)
-		assert.Equal(t, toolsconfig.ToolConfig{
+		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
@@ -157,7 +157,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableInformationSeverity)
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
-		assert.Equal(t, toolsconfig.ToolConfig{
+		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
@@ -260,7 +260,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableInformationSeverity)
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
-		assert.Equal(t, toolsconfig.ToolConfig{
+		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])

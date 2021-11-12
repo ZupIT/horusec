@@ -20,6 +20,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -114,11 +115,11 @@ func TestStartCFlawfinder(t *testing.T) {
 		dockerAPIControllerMock := &docker.Mock{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolsConfigsStruct{
-			Flawfinder: toolsconfig.ToolConfig{
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.Flawfinder: toolsconfig.Config{
 				IsToIgnore: true,
 			},
-		})
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)

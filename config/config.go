@@ -114,7 +114,7 @@ type StartOptions struct {
 	FalsePositiveHashes             []string                  `json:"false_positive_hashes"`
 	RiskAcceptHashes                []string                  `json:"risk_accept_hashes"`
 	ShowVulnerabilitiesTypes        []string                  `json:"show_vulnerabilities_types"`
-	ToolsConfig                     toolsconfig.MapToolConfig `json:"tools_config"`
+	ToolsConfig                     toolsconfig.ToolsConfig   `json:"tools_config"`
 	Headers                         map[string]string         `json:"headers"`
 	WorkDir                         *workdir.WorkDir          `json:"work_dir"`
 	CustomImages                    customimages.CustomImages `json:"custom_images"`
@@ -167,7 +167,7 @@ func New() *Config {
 			FalsePositiveHashes:             make([]string, 0),
 			Headers:                         make(map[string]string),
 			ContainerBindProjectPath:        "",
-			ToolsConfig:                     toolsconfig.ParseInterfaceToMapToolsConfig(toolsconfig.ToolConfig{}),
+			ToolsConfig:                     toolsconfig.Default(),
 			ShowVulnerabilitiesTypes:        []string{vulnerability.Vulnerability.ToString()},
 			CustomImages:                    customimages.NewCustomImages(),
 			DisableDocker:                   dist.IsStandAlone(),
@@ -296,8 +296,8 @@ func (c *Config) LoadFromConfigFile() *Config {
 		viper.GetString(c.toLowerCamel(EnvContainerBindProjectPath)), c.ContainerBindProjectPath,
 	)
 
-	if cfg := viper.Get(c.toLowerCamel(EnvToolsConfig)); cfg != nil {
-		c.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(cfg)
+	if cfg := viper.GetStringMap(c.toLowerCamel(EnvToolsConfig)); cfg != nil {
+		c.ToolsConfig = toolsconfig.MustParseToolsConfig(cfg)
 	}
 
 	c.DisableDocker = viper.GetBool(c.toLowerCamel(EnvDisableDocker))

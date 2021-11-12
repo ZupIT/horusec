@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 
 	"github.com/stretchr/testify/assert"
 
@@ -88,9 +89,11 @@ func TestStartHCLCheckov(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
-		config.ToolsConfig = toolsconfig.ParseInterfaceToMapToolsConfig(
-			toolsconfig.ToolsConfigsStruct{Checkov: toolsconfig.ToolConfig{IsToIgnore: true}},
-		)
+		config.ToolsConfig = toolsconfig.ToolsConfig{
+			tools.Checkov: toolsconfig.Config{
+				IsToIgnore: true,
+			},
+		}
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
