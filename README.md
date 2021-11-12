@@ -174,9 +174,9 @@ See below:
 You can find Horusec's documentation on our [**website**](https://horusec.io/docs/).
 
 ## **Roadmap**
-We have a project [**roadmap**](ROADMAP.md), you can come contribute with us!
+We have a project [**roadmap**](ROADMAP.md), you can contribute with us!
 
-Horusec also have other repositories, check out some of our other projects:
+Horusec has other repositories, check them out:
 
 - [**Horusec Platform**](https://github.com/ZupIT/horusec-platform)
 - [**Horusec DevKit**](https://github.com/ZupIT/horusec-devkit)
@@ -205,6 +205,7 @@ git config --global user.name “Name”
 git config --global user.email “email@domain.com.br”
 ```
 **Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
+
 ```
 $ git commit -s -m "This is my commit message"
 ```
@@ -218,7 +219,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 Signed-off-by: Name < e-mail address >
 ```
 
-For this method, your name and e-mail must be the same registered to your GitHub account.
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
 ## **Code of Conduct**
 Please follow the [**Code of Conduct**](https://github.com/ZupIT/horusec/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.

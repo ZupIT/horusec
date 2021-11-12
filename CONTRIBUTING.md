@@ -61,7 +61,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 Signed-off-by: Name < e-mail address >
 ```
 
-For this method, your name and e-mail must be the same registered to your GitHub account.
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
 ### **Code Review**
 - All your submissions needs a review.
@@ -75,7 +75,7 @@ When you open a Pull Request, follow the requirements below:
 
 #### **PKG:** Name of the package or main service you want to change.
 
-#### **TYPE**: Add what you Pull Request (PR) refers to:
+#### **TYPE**: Add what your Pull Request (PR) refers to:
 - **FEATURE:** PR refers to a new activity.
 - **BUGFIX:** PR refers to corrections for the next release.
 - **HOTFIX:** PR refers to corrections where you will need a cherry-pick and the update of the minor version. 
@@ -93,7 +93,7 @@ When you open a Pull Request, follow the requirements below:
 See the guidelines to submit your changes: 
 
 ### **Prepare your development environment**
-To start contributing with Horusec you first need to install [**Go**](https://golang.org/dl/). The minimal version required to build is 1.17.
+To start contributing with Horusec, you need to install [**Go**](https://golang.org/dl/). The minimal version required to build is 1.17.
 [**GNU Make**](https://www.gnu.org/software/make/) is also required to development.
 
 After installing Go you can build using `make build-dev`.
