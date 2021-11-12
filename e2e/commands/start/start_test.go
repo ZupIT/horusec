@@ -16,7 +16,6 @@ package start_test
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"os"
 
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
@@ -26,6 +25,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"path/filepath"
 
 	"github.com/ZupIT/horusec/internal/utils/testutil"
@@ -86,8 +86,9 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			}
 		})
 
-		It("Checks if the log file path was set", func() {
+		It("Checks if the log file path was set and file is created", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`Set log file to %s`, testutil.NormalizePathToAssert(logFilePathToTest))))
+			Expect(logFilePathToTest).Should(BeAnExistingFile())
 		})
 	})
 
@@ -104,15 +105,18 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	})
 
 	When("--analysis-timeout is passed", func() {
+		analysisTimeout := "500"
+
 		BeforeEach(func() {
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:     configFilePath,
-				testutil.StartFlagAnalysisTimeout: "500",
+				testutil.StartFlagAnalysisTimeout: analysisTimeout,
 			}
 		})
 
 		It("Checks if the timeout property was set", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring("Horusec will return a timeout after 500 seconds."))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("Horusec will return a timeout after %s seconds.", analysisTimeout)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"timeout_in_seconds_analysis\": %s`, analysisTimeout)))
 		})
 	})
 
@@ -182,6 +186,21 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"print_output_type\": \"%s\"`, outputtype.SonarQube)))
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"json_output_file_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(sonarqubeOutputPath))))
 			Expect(sonarqubeOutputPath).Should(BeAnExistingFile())
+		})
+	})
+
+	When("--request-timeout is passed", func() {
+		requestTimeout := "500"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:    configFilePath,
+				testutil.StartFlagRequestTimeout: requestTimeout,
+			}
+		})
+
+		It("Checks if the request timeout property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"timeout_in_seconds_request\": %s`, requestTimeout)))
 		})
 	})
 })
