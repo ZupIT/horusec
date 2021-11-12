@@ -28,8 +28,8 @@
 ## **Table of contents**
 ### 1. [**About**](#about)
 ### 2. [**Getting started**](#getting-started)
->#### 1.1.   [**Requirements**](#requirements)
->#### 1.2.  [**Installation**](#installing-horusec)
+>#### 2.1.   [**Requirements**](#requirements)
+>#### 2.2.  [**Installation**](#installing-horusec)
 ### 3. [**Usage**](#usage)
 >#### 3.1. [**CLI Usage**](#cli-usage)
 >#### 3.2. [**Using Docker**](#using-docker)
