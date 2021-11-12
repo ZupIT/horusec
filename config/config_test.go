@@ -23,6 +23,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
@@ -120,7 +121,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
-		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
+		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages[languages.Go])
 	})
 	t.Run("Should return horusec config using config file and override by environment", func(t *testing.T) {
 		viper.Reset()
@@ -160,7 +161,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
-		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
+		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages[languages.Go])
 
 		assert.NoError(t, os.Setenv(config.EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsRequest, "99"))
@@ -263,7 +264,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
-		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages["go"])
+		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages[languages.Go])
 
 		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsRequest, "99"))
 		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsAnalysis, "999"))
@@ -636,7 +637,7 @@ func TestConfig_Bytes(t *testing.T) {
   "version": ""
 }`)
 		cfg := config.Config{}
-		assert.Equal(t, expectedConfig, cfg.Bytes())
+		assert.Equal(t, string(expectedConfig), string(cfg.Bytes()))
 	})
 }
 

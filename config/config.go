@@ -169,7 +169,7 @@ func New() *Config {
 			ContainerBindProjectPath:        "",
 			ToolsConfig:                     toolsconfig.Default(),
 			ShowVulnerabilitiesTypes:        []string{vulnerability.Vulnerability.ToString()},
-			CustomImages:                    customimages.NewCustomImages(),
+			CustomImages:                    customimages.Default(),
 			DisableDocker:                   dist.IsStandAlone(),
 			CustomRulesPath:                 "",
 			EnableInformationSeverity:       false,
@@ -230,7 +230,7 @@ func (c *Config) LoadStartFlags(cmd *cobra.Command) *Config {
 // config instance. Note the values loaded from config file will override
 // current config instance.
 //
-//nolint:funlen,gocyclo
+//nolint:funlen
 func (c *Config) LoadFromConfigFile() *Config {
 	if !c.setViperConfigsAndReturnIfExistFile() {
 		return c
@@ -306,16 +306,8 @@ func (c *Config) LoadFromConfigFile() *Config {
 	)
 	c.EnableInformationSeverity = viper.GetBool(c.toLowerCamel(EnvEnableInformationSeverity))
 
-	if images := viper.Get(c.toLowerCamel(EnvCustomImages)); images != nil {
-		customImg := customimages.CustomImages{}
-		bytes, err := json.Marshal(images)
-		if err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
-		}
-		if err := json.Unmarshal(bytes, &customImg); err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorWhileParsingCustomImages, err)
-		}
-		c.CustomImages = customImg
+	if images := viper.GetStringMap(c.toLowerCamel(EnvCustomImages)); images != nil {
+		c.CustomImages = customimages.MustParseCustomImages(images)
 	}
 
 	c.ShowVulnerabilitiesTypes = valueordefault.GetSliceStringValueOrDefault(

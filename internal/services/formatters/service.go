@@ -265,7 +265,7 @@ func (s *Service) GetCustomRulesByLanguage(lang languages.Language) []engine.Rul
 }
 
 func (s *Service) GetCustomImageByLanguage(language languages.Language) string {
-	return s.config.CustomImages[language.GetCustomImagesKeyByLanguage()]
+	return s.config.CustomImages[language]
 }
 
 func (s *Service) IsOwaspDependencyCheckDisable() bool {
