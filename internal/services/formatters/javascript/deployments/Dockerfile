@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:17.0.1-alpine
+FROM node:17.1.0-alpine
 
 RUN npm install -g npm@6.14.7 #update
 
