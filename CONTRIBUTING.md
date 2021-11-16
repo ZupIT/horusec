@@ -86,7 +86,7 @@ When you open a Pull Request, follow the requirements below:
  
 2. Answer the questions about what you did, how to verify it and a short description for the changelog, see an example below:
 
-<p align="center" margin="20 0"><img src="assets/horusec-pr.PNG" alt="architecture" width="100%" style="max-width:100%;"/></p>
+<p align="center" margin="20 0"><img src="assets/pr-template.PNG" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
 
 ## **How to contribute?** 
