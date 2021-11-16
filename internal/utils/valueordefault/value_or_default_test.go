@@ -46,18 +46,6 @@ func TestGetInt64ValueOrDefault(t *testing.T) {
 	})
 }
 
-func TestGetPathOrCurrentPath(t *testing.T) {
-	t.Run("should return path string value", func(t *testing.T) {
-		result := GetPathOrCurrentPath("./")
-		assert.NotEmpty(t, result)
-		assert.Equal(t, "./", result)
-	})
-
-	t.Run("should return path default value", func(t *testing.T) {
-		result := GetPathOrCurrentPath("")
-		assert.NotEmpty(t, result)
-	})
-}
 func TestGetSliceStringValueOrDefault(t *testing.T) {
 	t.Run("should return slice string value", func(t *testing.T) {
 		result := GetSliceStringValueOrDefault([]string{"./"}, []string{"123"})
@@ -69,31 +57,5 @@ func TestGetSliceStringValueOrDefault(t *testing.T) {
 		result := GetSliceStringValueOrDefault([]string{}, []string{"123"})
 		assert.NotEmpty(t, result)
 		assert.Equal(t, []string{"123"}, result)
-	})
-}
-func TestGetMapStringStringValueOrDefault(t *testing.T) {
-	t.Run("should return map string value", func(t *testing.T) {
-		result := GetMapStringStringValueOrDefault(map[string]string{"123": "987"}, map[string]string{"321": "321"})
-		assert.NotEmpty(t, result)
-		assert.Equal(t, map[string]string{"123": "987"}, result)
-	})
-
-	t.Run("should return map default value", func(t *testing.T) {
-		result := GetMapStringStringValueOrDefault(map[string]string{}, map[string]string{"321": "321"})
-		assert.NotEmpty(t, result)
-		assert.Equal(t, map[string]string{"321": "321"}, result)
-	})
-}
-func TestGetInterfaceValueOrDefault(t *testing.T) {
-	t.Run("should return map string value", func(t *testing.T) {
-		result := GetInterfaceValueOrDefault(map[string]interface{}{"test": 666}, "test")
-		assert.NotEmpty(t, result)
-		assert.Equal(t, map[string]interface{}{"test": 666}, result)
-	})
-
-	t.Run("should return map default value", func(t *testing.T) {
-		result := GetInterfaceValueOrDefault(nil, "test")
-		assert.NotEmpty(t, result)
-		assert.Equal(t, "test", result)
 	})
 }
