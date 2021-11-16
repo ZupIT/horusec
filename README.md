@@ -26,21 +26,23 @@
 </p>
 
 ## **Table of contents**
-1. [**What is Horusec?**](#What-is-Horusec?)
-2. [**Getting started**](#Getting-started)
-    1. [**Requirements**](#Requirements)
-    2. [**Installing Horusec**](#Installing-Horusec)
-    3. [**Usage**](#Usage)
-        1. [**CLI Usage**](#CLI-Usage)
-        2. [**Using Docker**](#Using-Docker)
-        3. [**Older versions**](#Older-versions)
-        4. [**Using Horusec-Web application**](#Using-Horusec-Web-application)
-        5. [**Using Visual Studio Code**](#Using-Visual-Studio-Code)
-        6. [**Using the Pipeline**](#Using-the-Pipeline)
-4. [**Contributing**](#Contributing)
-5. [**Roadmap**](#Community)
-6. [**License**](#License)
-7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Getting started**](#getting-started)
+>#### 2.1.   [**Requirements**](#requirements)
+>#### 2.2.  [**Installation**](#installing-horusec)
+### 3. [**Usage**](#usage)
+>#### 3.1. [**CLI Usage**](#cli-usage)
+>#### 3.2. [**Using Docker**](#using-docker)
+>#### 3.3. [**Older versions**](#older-versions)
+>#### 3.4. [**Using Horusec-Web application**](#using-horusec-web-application)
+>#### 3.5.  [**Using Visual Studio Code**](#using-visual-studio-code)
+>#### 3.6. [**Using the Pipeline**](#using-the-pipeline)
+### 4. [**Documentation**](#documentation)       
+### 5. [**Roadmap**](#roadmap)
+### 6. [**Contributing**](#contributing)
+### 7. [**Code of Conduct**](#code-of-conduct)
+### 8. [**License**](#license)
+### 9. [**Community**](#community)
 
 
 
@@ -48,7 +50,7 @@
 <br>
 <br>
 
-# **What is Horusec?**
+# **About**
 Horusec is an open source tool that performs a static code analysis to identify security flaws during the development process. Currently, the languages for analysis are C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. 
 The tool has options to search for key leaks and security flaws in all your project's files, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. 
 
@@ -168,6 +170,19 @@ See below:
 - Search for their historical git by secrets and other contents exposed;
 - Your analysis can be fully configurable, [**see all CLI available resources**](https://horusec.io/docs/cli/resources/#3-flags).
 
+## **Documentation**
+You can find Horusec's documentation on our [**website**](https://horusec.io/docs/).
+
+## **Roadmap**
+We have a project [**roadmap**](ROADMAP.md), you can contribute with us!
+
+Horusec has other repositories, check them out:
+
+- [**Horusec Platform**](https://github.com/ZupIT/horusec-platform)
+- [**Horusec DevKit**](https://github.com/ZupIT/horusec-devkit)
+- [**Horusec Engine**](https://github.com/ZupIT/horusec-engine)
+- [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
+- [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
 
 ## **Contributing**
 
@@ -179,40 +194,35 @@ Check out our [**contributing guide**](CONTRIBUTING.md) to learn about our devel
 
  This is a security layer for the project and for the developers. It is mandatory.
  
- There are two ways to use DCO, see them below: 
+Follow one of these two methods to add DCO to your commits:
  
 **1. Command line**
  Follow the steps: 
- **Step 1:** Check out your local git:
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
 
  ```
 git config --global user.name “Name”
 git config --global user.email “email@domain.com.br”
 ```
-**Step 2:** When you commit, add the sigoff via `-s` flag:
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
 
 ```
 $ git commit -s -m "This is my commit message"
 ```
 **2. GitHub website**
 
-**Step 1:** When the commit changes box opens, add 
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
 ```
-$ git commit -m “My signed commit” Signed-off-by: username <email address>
+Signed-off-by: Name < e-mail address >
 ```
-Note: For this option, your e-mail must be the same in registered in GitHub. 
 
-## **Roadmap**
-We have a project [**roadmap**](ROADMAP.md), you can come contribute with us!
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
-Horusec also have other repositories, check out some of our other projects:
-
-- [**Horusec Platform**](https://github.com/ZupIT/horusec-platform)
-- [**Horusec DevKit**](https://github.com/ZupIT/horusec-devkit)
-- [**Horusec Engine**](https://github.com/ZupIT/horusec-engine)
-- [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
-- [**Horusec Admin**](https://github.com/ZupIT/horusec-admin)
-- [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
+## **Code of Conduct**
+Please follow the [**Code of Conduct**](https://github.com/ZupIT/horusec/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
 
 ## **License**
  [**Apache License 2.0**](LICENSE).
