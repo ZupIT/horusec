@@ -31,9 +31,9 @@ import (
 
 var _ = Describe("running binary Horusec with start parameter", func() {
 	var (
-		session                 *gexec.Session
-		flags                   map[string]string
-		projectPath             = testutil.GoExample2
+		session     *gexec.Session
+		flags       map[string]string
+		projectPath = testutil.GoExample2
 	)
 
 	JustBeforeEach(func() {
@@ -240,6 +240,40 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if the return error property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(`"return_error_if_found_vulnerability\": true`))
 			Expect(session.ExitCode()).Should(Equal(1))
+		})
+	})
+
+	When("--risk-accepted is passed", func() {
+		riskAcceptedHash := "8d75739ff88edd7acd60321ae6c7ea9f211048f6fdedb426eb58556ad4d87ea4"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:   testutil.JavaScriptExample4,
+				testutil.StartFlagRiskAccept:    riskAcceptedHash,
+				testutil.StartFlagDisableDocker: "true",
+			}
+		})
+
+		It("Checks if the risk accepted property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"risk_accept_hashes\": [\n    \"%s\"\n  ]`, riskAcceptedHash)))
+			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
+		})
+	})
+
+	When("--false-positive is passed", func() {
+		falsePositiveHash := "8d75739ff88edd7acd60321ae6c7ea9f211048f6fdedb426eb58556ad4d87ea4"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:   testutil.JavaScriptExample4,
+				testutil.StartFlagFalsePositive: falsePositiveHash,
+				testutil.StartFlagDisableDocker: "true",
+			}
+		})
+
+		It("Checks if the risk accepted property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"false_positive_hashes\": [\n    \"%s\"\n  ]`, falsePositiveHash)))
+			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
 		})
 	})
 })
