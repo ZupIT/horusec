@@ -20,30 +20,21 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 )
 
 func TestBind(t *testing.T) {
-	t.Run("should bind the vuln hash in VulnHash field", func(t *testing.T) {
-		vuln := &vulnerability.Vulnerability{
-			Code: "test",
-			File: "test.go",
-		}
+	vuln := vulnerability.Vulnerability{
+		Code:        `fmt.Println("testing")`,
+		Line:        "10",
+		Details:     "testing",
+		File:        "main.go",
+		CommitEmail: "foo@bar",
+	}
 
-		vuln = Bind(vuln)
-		assert.NotEmpty(t, vuln.VulnHash)
-	})
+	Bind(&vuln)
 
-	t.Run("should generate the hash from Code and File attrs", func(t *testing.T) {
-		expected := crypto.GenerateSHA256("test", "test.go")
-		vuln := &vulnerability.Vulnerability{
-			Code: "test",
-			File: "test.go",
-		}
-
-		vuln = Bind(vuln)
-		assert.Equal(t, expected, vuln.VulnHash)
-	})
+	assert.Equal(t, "278facfff87828631a37b27d76d1a926bed37466b05cab7d365d7f5c7345ac6d", vuln.VulnHash)
+	assert.Equal(t, "751cf1c4e4f0fbf59777eea1d14c062b913a57fd3c0e457400ec134577c89686", vuln.VulnHashInvalid)
 }
 
 func TestToOneLine(t *testing.T) {
