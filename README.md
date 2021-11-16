@@ -86,7 +86,7 @@ curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/sc
 
 ### **Windows**
 ```sh
-curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" && ./horusec.exe version
+curl "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" -L && ./horusec.exe version
 ```
 
 - You can find all binaries with versions in our [**releases page**](https://github.com/ZupIT/horusec/releases).
