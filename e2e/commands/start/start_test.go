@@ -16,14 +16,16 @@ package start_test
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
-	"github.com/ZupIT/horusec/internal/enums/outputtype"
+	"os"
+	"path/filepath"
+
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-	"os"
-	"path/filepath"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
@@ -238,8 +240,8 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	When("--return-error is passed", func() {
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:   projectPath,
-				testutil.StartFlagReturnError:   "true",
+				testutil.StartFlagProjectPath: projectPath,
+				testutil.StartFlagReturnError: "true",
 			}
 		})
 
@@ -309,6 +311,22 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if the ignore severity property was set and ignore all vulnerabilities.", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"severities_to_ignore\": [\n    \"%s\"\n  ]`, severities.Critical.ToString())))
 			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
+		})
+	})
+
+	When("--monitor-retry-count is passed", func() {
+		monitorRetryCount := "50"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:       projectPath,
+				testutil.StartFlagMonitorRetryCount: monitorRetryCount,
+			}
+		})
+
+		It("Checks if the monitor retry count property was set.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"monitor_retry_in_seconds\": %s`, monitorRetryCount)))
+
 		})
 	})
 })
