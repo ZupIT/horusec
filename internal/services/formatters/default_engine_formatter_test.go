@@ -22,7 +22,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/horuseccsharp"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
+	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecjavascript"
 	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
 	"github.com/ZupIT/horusec/internal/services/formatters/leaks/horusecleaks"
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
@@ -52,8 +52,8 @@ func TestStartAnalysis(t *testing.T) {
 			formatter: horusecjava.NewFormatter,
 		},
 		{
-			engine:    "Nodejs",
-			formatter: horusecnodejs.NewFormatter,
+			engine:    "Javascript",
+			formatter: horusecjavascript.NewFormatter,
 		},
 		{
 			engine:    "Kotlin",

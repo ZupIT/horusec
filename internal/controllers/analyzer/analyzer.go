@@ -62,7 +62,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl/checkov"
 	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecnodejs"
+	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecjavascript"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/npmaudit"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/yarnaudit"
 	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
@@ -363,7 +363,7 @@ func (a *Analyzer) detectVulnerabilityNginx(_ *sync.WaitGroup, projectSubPath st
 }
 
 func (a *Analyzer) detectVulnerabilityJavascript(wg *sync.WaitGroup, projectSubPath string) error {
-	spawn(wg, horusecnodejs.NewFormatter(a.formatter), projectSubPath)
+	spawn(wg, horusecjavascript.NewFormatter(a.formatter), projectSubPath)
 
 	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Javascript)); err != nil {
 		return err

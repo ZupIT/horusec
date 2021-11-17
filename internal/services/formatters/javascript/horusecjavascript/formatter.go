@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package horusecnodejs
+package horusecjavascript
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
+	"github.com/ZupIT/horusec/internal/services/engines/javascript"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
 func NewFormatter(service formatters.IService) formatters.IFormatter {
-	return formatters.NewDefaultFormatter(service, nodejs.NewRules(), languages.Javascript)
+	return formatters.NewDefaultFormatter(service, javascript.NewRules(), languages.Javascript)
 }
