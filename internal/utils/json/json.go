@@ -18,31 +18,6 @@ import (
 	"encoding/json"
 )
 
-func ConvertInterfaceToOutput(input, output interface{}) error {
-	bytes, err := json.Marshal(input)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(bytes, &output)
-}
-
-func ConvertStringToOutput(input string, output interface{}) error {
-	return json.Unmarshal([]byte(input), &output)
-}
-
-func ConvertInterfaceToString(input interface{}) (string, error) {
-	if input != nil && input != "" {
-		inputString, ok := input.(string)
-		if ok {
-			return inputString, nil
-		}
-		bytes, err := json.Marshal(input)
-		return string(bytes), err
-	}
-	return "", nil
-}
-
 func ConvertInterfaceToMapString(input interface{}) (output map[string]string, err error) {
 	if input != nil {
 		if _, ok := input.(map[string]string); ok {
