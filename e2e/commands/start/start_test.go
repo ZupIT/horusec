@@ -19,32 +19,22 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ZupIT/horusec/internal/enums/outputtype"
-
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 var _ = Describe("running binary Horusec with start parameter", func() {
 	var (
 		session                 *gexec.Session
 		flags                   map[string]string
-		projectPath             = testutil.GoExample1
-		certificateFileWithPath string
+		projectPath             = testutil.GoExample2
 	)
-
-	BeforeSuite(func() {
-		file, err := os.CreateTemp(os.TempDir(), "*.crt")
-		if err != nil {
-			Fail(fmt.Sprintf("error: %v", err))
-		}
-		certificateFileWithPath = file.Name()
-	})
 
 	JustBeforeEach(func() {
 		var err error
@@ -52,7 +42,12 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		session, err = gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
 		session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder)
-		Expect(session).Should(gexec.Exit(0))
+
+		if _, hasReturnErrorFlag := flags[testutil.StartFlagReturnError]; hasReturnErrorFlag {
+			Expect(session).Should(gexec.Exit(1))
+		} else {
+			Expect(session).Should(gexec.Exit(0))
+		}
 	})
 
 	When("global flag --log-level is passed", func() {
@@ -108,7 +103,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 
 		It("Checks if the project path was set", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring(testutil.NormalizePathToAssert(testutil.GoExample1)))
+			Expect(session.Out.Contents()).To(ContainSubstring(testutil.NormalizePathToAssert(testutil.GoExample2)))
 		})
 	})
 
@@ -144,7 +139,15 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	})
 
 	When("--certificate-path is passed", func() {
+		var certificateFileWithPath string
+
 		BeforeEach(func() {
+			file, err := os.CreateTemp(os.TempDir(), "*.crt")
+			if err != nil {
+				Fail(fmt.Sprintf("error: %v", err))
+			}
+			certificateFileWithPath = file.Name()
+
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:     projectPath,
 				testutil.StartFlagCertificatePath: certificateFileWithPath,
@@ -153,7 +156,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		It("Checks if the cert path property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"cert_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(certificateFileWithPath))))
-
 		})
 	})
 
@@ -223,6 +225,21 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		It("Checks if the request timeout property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"timeout_in_seconds_request\": %s`, requestTimeout)))
+		})
+	})
+
+	When("--return-error is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:   projectPath,
+				testutil.StartFlagReturnError:   "true",
+				testutil.StartFlagDisableDocker: "true",
+			}
+		})
+
+		It("Checks if the return error property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`"return_error_if_found_vulnerability\": true`))
+			Expect(session.ExitCode()).Should(Equal(1))
 		})
 	})
 })
