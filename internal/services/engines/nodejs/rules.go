@@ -82,7 +82,7 @@ func NewNoUseMD5Hashing() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`createHash\((?:'|\")md5(?:'|\")`),
+			regexp.MustCompile(`(createHash\((?:'|\")md5(?:'|\")|(?i)md5\()`),
 		},
 	}
 }
@@ -98,7 +98,7 @@ func NewNoUseSHA1Hashing() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`createHash\((?:'|\")sha1(?:'|\")`),
+			regexp.MustCompile(`(createHash\((?:'|\")sha1(?:'|\")|(?i)sha1\()`),
 		},
 	}
 }
