@@ -498,8 +498,11 @@ func (a *Analyzer) setAnalysisError(err error) {
 		a.analysis.Errors += toAppend + err.Error()
 	}
 }
+
 func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
-	if customImage := a.config.CustomImages[language.GetCustomImagesKeyByLanguage()]; customImage != "" {
+	// Images can be set to empty on config file, so we need to use only if its not empty.
+	// If its empty we return the default value.
+	if customImage := a.config.CustomImages[language]; customImage != "" {
 		return customImage
 	}
 	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])

@@ -71,6 +71,6 @@ const (
 	MsgErrorErrorOnCreateConfigFile  = "{HORUSEC-CLI} Error on create config file: "
 	MsgErrorErrorOnReadConfigFile    = "{HORUSEC-CLI} Error on read config file on path: "
 	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
-	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config."
+	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config. Using default values"
 	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file"
 )
