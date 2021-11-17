@@ -51,8 +51,11 @@ import (
 )
 
 func TestParseFindingsToVulnerabilities(t *testing.T) {
-	analysis := new(analysis.Analysis)
-	svc := NewFormatterService(analysis, &docker.Mock{}, config.New())
+	analysis := &analysis.Analysis{
+		ID: uuid.New(),
+	}
+	cfg := config.New()
+	svc := NewFormatterService(analysis, &docker.Mock{}, cfg)
 
 	rule := java.NewAWSQueryInjection()
 	findings := []engine.Finding{
@@ -64,7 +67,7 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 			Confidence:  rule.Confidence,
 			Description: rule.Description,
 			SourceLocation: engine.Location{
-				Filename: "Test.java",
+				Filename: filepath.Join(cfg.ProjectPath, ".horusec", analysis.ID.String(), "Test.java"),
 				Line:     10,
 				Column:   20,
 			},

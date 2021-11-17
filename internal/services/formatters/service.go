@@ -236,8 +236,17 @@ func (s *Service) newVulnerabilityFromFinding(finding *engine.Finding, tool tool
 }
 
 func (s *Service) removeHorusecFolder(path string) string {
-	toRemove := fmt.Sprintf("%s/", s.GetConfigProjectPath())
-	return strings.ReplaceAll(path, toRemove, "")
+	rel, err := filepath.Rel(s.GetConfigProjectPath(), path)
+	if err != nil {
+		logger.LogError(messages.MsgErrorGetRelativePathFromFile, err, map[string]interface{}{
+			"basepath": s.GetConfigProjectPath(),
+			"path":     path,
+		})
+		// Since all files will be analyzed from GetConfigProjectPath path
+		// this error should never happen.
+		return path
+	}
+	return rel
 }
 
 func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext string, tool tools.Tool) string {

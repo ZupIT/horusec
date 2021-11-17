@@ -73,4 +73,5 @@ const (
 	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
 	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config. Using default values"
 	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file"
+	MsgErrorGetRelativePathFromFile  = "{HORUSEC_CLI} Error when get relative path of file"
 )
