@@ -50,7 +50,7 @@ func NewNoUseEval() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(eval\(.+)(?:req\.|req\.query|req\.body|req\.param)`),
+			regexp.MustCompile(`eval\(((.*[\+,$].*\))|([a-zA-Z]*\)))`),
 		},
 	}
 }

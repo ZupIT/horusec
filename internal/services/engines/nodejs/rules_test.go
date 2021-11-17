@@ -50,7 +50,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 			Src:  SampleVulnerableHSJAVASCRIPT2,
 			Findings: []engine.Finding{
 				{
-					CodeSample: `eval("bash -c" + req.body);`,
+					CodeSample: `eval(foo);`,
 					SourceLocation: engine.Location{
 						Line:   3,
 						Column: 1,

@@ -22,7 +22,7 @@ console.debug("user password: ", pwd)
 
 	SampleVulnerableHSJAVASCRIPT2 = `
 function f(req) {
-	eval("bash -c" + req.body);
+	eval(foo);
 }
 `
 
@@ -146,10 +146,9 @@ navigator.geolocation.getCurrentPosition(success, error, {});
 const (
 	SampleSafeHSJAVASCRIPT2 = `
 function f() {
-	eval("echo foo");
+	window.eval("any string")
 }
 `
-
 	SampleSafeHSJAVASCRIPT9 = `
 function f(foo) {
 	Model.find({ where: { foo: foo}});

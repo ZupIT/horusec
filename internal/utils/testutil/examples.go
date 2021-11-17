@@ -24,7 +24,7 @@ import (
 
 const (
 	// AverageTimeoutAnalyzeForExamplesFolder Average timeout for analysis in the example directory
-	AverageTimeoutAnalyzeForExamplesFolder = time.Minute * 5
+	AverageTimeoutAnalyzeForExamplesFolder = time.Minute * 15
 )
 
 var (
