@@ -29,7 +29,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec-engine/text"
-	customRulesEnums "github.com/ZupIT/horusec/internal/enums/custom_rules"
+	customrules "github.com/ZupIT/horusec/internal/enums/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
@@ -41,14 +41,14 @@ import (
 )
 
 type CustomRule struct {
-	ID          string                     `json:"id"`
-	Name        string                     `json:"name"`
-	Description string                     `json:"description"`
-	Language    languages.Language         `json:"language"`
-	Severity    severities.Severity        `json:"severity"`
-	Confidence  confidence.Confidence      `json:"confidence"`
-	Type        customRulesEnums.MatchType `json:"type"`
-	Expressions []string                   `json:"expressions"`
+	ID          string                `json:"id"`
+	Name        string                `json:"name"`
+	Description string                `json:"description"`
+	Language    languages.Language    `json:"language"`
+	Severity    severities.Severity   `json:"severity"`
+	Confidence  confidence.Confidence `json:"confidence"`
+	Type        customrules.MatchType `json:"type"`
+	Expressions []string              `json:"expressions"`
 }
 
 func (c *CustomRule) Validate() error {
@@ -62,20 +62,20 @@ func (c *CustomRule) Validate() error {
 			severities.Low, severities.Medium, severities.High, severities.Critical)),
 		validation.Field(&c.Confidence, validation.Required, validation.In(confidence.Low,
 			confidence.Medium, confidence.High)),
-		validation.Field(&c.Type, validation.Required, validation.In(customRulesEnums.Regular,
-			customRulesEnums.OrMatch, customRulesEnums.AndMatch, customRulesEnums.NotMatch)),
+		validation.Field(&c.Type, validation.Required, validation.In(customrules.Regular,
+			customrules.OrMatch, customrules.AndMatch, customrules.NotMatch)),
 	)
 }
 
 func (c *CustomRule) GetRuleType() text.MatchType {
 	switch c.Type {
-	case customRulesEnums.Regular:
+	case customrules.Regular:
 		return text.Regular
-	case customRulesEnums.OrMatch:
+	case customrules.OrMatch:
 		return text.OrMatch
-	case customRulesEnums.AndMatch:
+	case customrules.AndMatch:
 		return text.AndMatch
-	case customRulesEnums.NotMatch:
+	case customrules.NotMatch:
 		return text.NotMatch
 	}
 

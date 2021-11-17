@@ -24,7 +24,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-engine/text"
-	customRulesEnums "github.com/ZupIT/horusec/internal/enums/custom_rules"
+	customrulesenum "github.com/ZupIT/horusec/internal/enums/custom_rules"
 )
 
 func TestValidate(t *testing.T) {
@@ -35,7 +35,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customRulesEnums.OrMatch,
+			Type:        customrulesenum.OrMatch,
 			Expressions: []string{""},
 			Language:    languages.Leaks,
 		}
@@ -43,7 +43,7 @@ func TestValidate(t *testing.T) {
 		assert.NoError(t, customRule.Validate())
 	})
 
-	t.Run("should return error when invalid custom", func(t *testing.T) {
+	t.Run("should return error when empty custom rule", func(t *testing.T) {
 		customRule := CustomRule{}
 		assert.Error(t, customRule.Validate())
 	})
@@ -55,7 +55,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customRulesEnums.Regular,
+			Type:        customrulesenum.Regular,
 			Expressions: []string{""},
 			Language:    languages.Java,
 		}
@@ -68,9 +68,9 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customRulesEnums.Regular,
+			Type:        customrulesenum.Regular,
 			Expressions: []string{""},
-			Language:    languages.Java,
+			Language:    languages.Leaks,
 		}
 		assert.Error(t, customRule.Validate())
 	})
@@ -81,7 +81,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customRulesEnums.Regular,
+			Type:        customrulesenum.Regular,
 			Expressions: []string{""},
 			Language:    languages.Python,
 		}
@@ -89,10 +89,76 @@ func TestValidate(t *testing.T) {
 	})
 }
 
+func TestValidateAllLanguages(t *testing.T) {
+	rules := []CustomRule{
+		{
+			ID:         "HS-CSHARP-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.CSharp,
+		},
+		{
+			ID:         "HS-DART-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Dart,
+		},
+		{
+			ID:         "HS-JAVA-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Java,
+		},
+		{
+			ID:         "HS-KOTLIN-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Kotlin,
+		},
+		{
+			ID:         "HS-YAML-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Yaml,
+		},
+		{
+			ID:         "HS-LEAKS-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Leaks,
+		},
+		{
+			ID:         "HS-JAVASCRIPT-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Javascript,
+		},
+		{
+			ID:         "HS-NGINX-10000",
+			Severity:   severities.Low,
+			Confidence: confidence.Low,
+			Type:       customrulesenum.Regular,
+			Language:   languages.Nginx,
+		},
+	}
+
+	for _, rule := range rules {
+		err := rule.Validate()
+		assert.NoError(t, err, "Expected no error for custom rule of language %s: %v", rule.Language, err)
+	}
+}
+
 func TestGetRuleType(t *testing.T) {
 	t.Run("should return regular type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customRulesEnums.Regular,
+			Type: customrulesenum.Regular,
 		}
 
 		assert.Equal(t, text.Regular, customRule.GetRuleType())
@@ -106,7 +172,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return or type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customRulesEnums.OrMatch,
+			Type: customrulesenum.OrMatch,
 		}
 
 		assert.Equal(t, text.OrMatch, customRule.GetRuleType())
@@ -114,7 +180,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return and type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customRulesEnums.AndMatch,
+			Type: customrulesenum.AndMatch,
 		}
 
 		assert.Equal(t, text.AndMatch, customRule.GetRuleType())
@@ -122,7 +188,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return not type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customRulesEnums.NotMatch,
+			Type: customrulesenum.NotMatch,
 		}
 
 		assert.Equal(t, text.NotMatch, customRule.GetRuleType())
