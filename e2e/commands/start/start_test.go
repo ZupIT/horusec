@@ -393,4 +393,18 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(`\"enable_shell_check\": true`))
 		})
 	})
+
+	When("--information-severity is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:         testutil.JavaScriptExample1,
+				testutil.StartFlagInformationSeverity: "true",
+			}
+		})
+
+		It("Checks if the information severity property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"enable_information_severity\": true`))
+			Expect(session.Out.Contents()).NotTo(ContainSubstring("Horusec not show info vulnerabilities in this analysis"))
+		})
+	})
 })
