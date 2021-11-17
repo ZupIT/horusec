@@ -16,16 +16,15 @@ package start_test
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
+	"os"
+	"path/filepath"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
-	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
@@ -38,6 +37,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 	JustBeforeEach(func() {
 		var err error
+		flags[testutil.StartFlagDisableDocker] = "true"
 		cmd := testutil.GinkgoGetHorusecCmdWithFlags(testutil.CmdStart, flags)
 		session, err = gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
@@ -92,6 +92,12 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if the log file path was set and file is created", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`Set log file to %s`, testutil.NormalizePathToAssert(logFilePathToTest))))
 			Expect(logFilePathToTest).Should(BeAnExistingFile())
+		})
+	})
+
+	When("--disable-docker is passed", func() {
+		It("Checks if the disable docker was set as true", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"disable_docker\": true`))
 		})
 	})
 
@@ -233,7 +239,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:   projectPath,
 				testutil.StartFlagReturnError:   "true",
-				testutil.StartFlagDisableDocker: "true",
 			}
 		})
 
@@ -274,6 +279,21 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if the risk accepted property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"false_positive_hashes\": [\n    \"%s\"\n  ]`, falsePositiveHash)))
 			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
+		})
+	})
+
+	When("--repository-name is passed", func() {
+		repositoryName := "horusec-e2e-test"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:   projectPath,
+				testutil.StartFlagRepositoryName: repositoryName,
+			}
+		})
+
+		It("Checks if the repository name property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"repository_name\": \"%s\"`, repositoryName)))
 		})
 	})
 })
