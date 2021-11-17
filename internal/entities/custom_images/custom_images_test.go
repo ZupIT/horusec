@@ -18,10 +18,11 @@ import (
 	"io"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	customimages "github.com/ZupIT/horusec/internal/entities/custom_images"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewCustomImages(t *testing.T) {
