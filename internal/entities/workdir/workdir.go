@@ -22,6 +22,10 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
+// WorkDir represents the working directory for each language.
+//
+// Work directory here means a directory that contains files
+// for a specific language.
 type WorkDir struct {
 	Go         []string `json:"go"`
 	CSharp     []string `json:"csharp"`
@@ -42,27 +46,9 @@ type WorkDir struct {
 	Nginx      []string `json:"nginx"`
 }
 
-//nolint // parse struct is necessary > 15 lines
-func NewWorkDir() *WorkDir {
-	return &WorkDir{
-		Go:         []string{},
-		CSharp:     []string{},
-		Ruby:       []string{},
-		Python:     []string{},
-		Java:       []string{},
-		Kotlin:     []string{},
-		JavaScript: []string{},
-		Leaks:      []string{},
-		HCL:        []string{},
-		PHP:        []string{},
-		C:          []string{},
-		Yaml:       []string{},
-		Generic:    []string{},
-		Elixir:     []string{},
-		Shell:      []string{},
-		Dart:       []string{},
-		Nginx:      []string{},
-	}
+// Default create a new empty work dir.
+func Default() *WorkDir {
+	return (new(WorkDir).initNilValues())
 }
 
 func (w *WorkDir) String() string {
@@ -70,28 +56,30 @@ func (w *WorkDir) String() string {
 	return string(bytes)
 }
 
-func (w *WorkDir) ParseInterfaceToStruct(toParse interface{}) *WorkDir {
-	if _, ok := toParse.(*WorkDir); ok {
-		return toParse.(*WorkDir)
-	}
-	bytes, err := json.Marshal(toParse)
+// MustParseWorkDir parse a input to WorkDir.
+//
+// If some error occur an empty work dir will be returned
+// and the error will be logged.
+func MustParseWorkDir(input map[string]interface{}) *WorkDir {
+	wd := new(WorkDir)
+
+	bytes, err := json.Marshal(input)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err)
-		return w
+		return Default()
 	}
-	if err = json.Unmarshal(bytes, &w); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err)
-	}
-	return w.setEmptyOrSliceEmptyInNilContent()
-}
 
-func (w *WorkDir) Type() string {
-	return ""
+	if err := json.Unmarshal(bytes, wd); err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorParseStringToWorkDir, err)
+		return Default()
+	}
+
+	return wd.initNilValues()
 }
 
 // LanguagePaths returns a map of language and paths that should be analysed.
 //
-//nolint
+// nolint
 func (w *WorkDir) LanguagePaths() map[languages.Language][]string {
 	return map[languages.Language][]string{
 		languages.Go:         w.Go,
@@ -127,58 +115,60 @@ func (w *WorkDir) PathsOfLanguage(language languages.Language) []string {
 	return []string{""}
 }
 
-//nolint // validation is necessary > 5 conditions
-func (w *WorkDir) setEmptyOrSliceEmptyInNilContent() *WorkDir {
+// initNilValues initialize an empty slice for nil values on work dir.
+//
+// nolint
+func (w *WorkDir) initNilValues() *WorkDir {
 	if w.Go == nil {
-		w.Go = []string{}
+		w.Go = make([]string, 0)
 	}
 	if w.CSharp == nil {
-		w.CSharp = []string{}
+		w.CSharp = make([]string, 0)
 	}
 	if w.Ruby == nil {
-		w.Ruby = []string{}
+		w.Ruby = make([]string, 0)
 	}
 	if w.Python == nil {
-		w.Python = []string{}
+		w.Python = make([]string, 0)
 	}
 	if w.Java == nil {
-		w.Java = []string{}
+		w.Java = make([]string, 0)
 	}
 	if w.Kotlin == nil {
-		w.Kotlin = []string{}
+		w.Kotlin = make([]string, 0)
 	}
 	if w.JavaScript == nil {
-		w.JavaScript = []string{}
+		w.JavaScript = make([]string, 0)
 	}
 	if w.Leaks == nil {
-		w.Leaks = []string{}
+		w.Leaks = make([]string, 0)
 	}
 	if w.HCL == nil {
-		w.HCL = []string{}
+		w.HCL = make([]string, 0)
 	}
 	if w.PHP == nil {
-		w.PHP = []string{}
+		w.PHP = make([]string, 0)
 	}
 	if w.C == nil {
-		w.C = []string{}
+		w.C = make([]string, 0)
 	}
 	if w.Yaml == nil {
-		w.Yaml = []string{}
+		w.Yaml = make([]string, 0)
 	}
 	if w.Generic == nil {
-		w.Generic = []string{}
+		w.Generic = make([]string, 0)
 	}
 	if w.Elixir == nil {
-		w.Elixir = []string{}
+		w.Elixir = make([]string, 0)
 	}
 	if w.Shell == nil {
-		w.Shell = []string{}
+		w.Shell = make([]string, 0)
 	}
 	if w.Dart == nil {
-		w.Dart = []string{}
+		w.Dart = make([]string, 0)
 	}
 	if w.Nginx == nil {
-		w.Nginx = []string{}
+		w.Nginx = make([]string, 0)
 	}
 	return w
 }

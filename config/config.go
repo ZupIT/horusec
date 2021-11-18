@@ -157,7 +157,7 @@ func New() *Config {
 			FilesOrPathsToIgnore:            []string{"*tmp*", "**/.vscode/**"},
 			ReturnErrorIfFoundVulnerability: false,
 			ProjectPath:                     wd,
-			WorkDir:                         workdir.NewWorkDir(),
+			WorkDir:                         workdir.Default(),
 			EnableGitHistoryAnalysis:        false,
 			CertInsecureSkipVerify:          false,
 			CertPath:                        "",
@@ -267,8 +267,8 @@ func (c *Config) LoadFromConfigFile() *Config {
 		viper.GetString(c.toLowerCamel(EnvProjectPath)), c.ProjectPath,
 	)
 
-	if wd := viper.Get(c.toLowerCamel(EnvWorkDir)); wd != nil {
-		c.WorkDir = c.WorkDir.ParseInterfaceToStruct(wd)
+	if wd := viper.GetStringMap(c.toLowerCamel(EnvWorkDir)); wd != nil {
+		c.WorkDir = workdir.MustParseWorkDir(wd)
 	}
 
 	c.EnableGitHistoryAnalysis = viper.GetBool(c.toLowerCamel(EnvEnableGitHistoryAnalysis))
