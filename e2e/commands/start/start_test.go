@@ -298,6 +298,38 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if the repository name property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"repository_name\": \"%s\"`, repositoryName)))
 		})
+
+		When("--enable-commit-author is passed", func() {
+			BeforeEach(func() {
+				flags = map[string]string{
+					testutil.StartFlagProjectPath:        projectPath,
+					testutil.StartFlagEnableCommitAuthor: "true",
+				}
+			})
+
+			It("Checks if the enable commit author property was set", func() {
+				Expect(session.Out.Contents()).To(ContainSubstring(`\"enable_commit_author\": true`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Commit Author:`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Commit Date:`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Commit Email:`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Commit CommitHash:`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Commit Message:`))
+			})
+		})
+
+		When("--enable-git-history is passed", func() {
+			BeforeEach(func() {
+				flags = map[string]string{
+					testutil.StartFlagProjectPath:      projectPath,
+					testutil.StartFlagEnableGitHistory: "true",
+				}
+			})
+
+			It("Checks if the enable git history property was set", func() {
+				Expect(session.Out.Contents()).To(ContainSubstring(`\"enable_git_history_analysis\": true`))
+				Expect(session.Out.Contents()).To(ContainSubstring(`Starting the analysis with git history enabled`))
+			})
+		})
 	})
 
 	When("--ignore-severity is passed", func() {
