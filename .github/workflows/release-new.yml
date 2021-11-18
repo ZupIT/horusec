@@ -1,0 +1,104 @@
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+name: release-new
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Release type: Major; Minor; Patch'
+        required: true
+permissions: read-all
+jobs:
+  NewRelease:
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    env:
+      COSIGN_KEY_LOCATION: /tmp/cosign.key
+      COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Docker Login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Cosign Installer
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.2.0'
+
+      - name: Install Mage
+        run: go install github.com/magefile/mage@v1.11
+
+      - name: Get current date
+        id: date
+        run: mage -v getCurrentDate
+
+      - name: Git config
+        run: mage -v defaultGitConfig
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Install cosign private key
+        run: mage -v writeCosignKeyToFile
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+
+      - name: Version increment
+        id: updated-version
+        run: |
+          mage -v upVersions ${{ github.event.inputs.releaseType }}
+        env:
+          HORUSEC_REPOSITORY_ORG: ${{ github.repository_owner }}
+          HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
+
+      - name: Checkout release candidate branch
+        run: mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
+
+      - name: Create local tag
+        run: mage -v createLocalTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+          GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+          CLI_VERSION: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+
+      - name: Push updates
+        run: mage -v gitPushAll

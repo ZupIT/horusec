@@ -13,6 +13,7 @@
 # limitations under the License.
 
 project_name: horusec
+
 builds:
   - id: horusec
     env: [ CGO_ENABLED=0 ]
@@ -21,6 +22,24 @@ builds:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
+  - id: horusec-standalone
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
     goos:
       - linux
       - windows
@@ -31,11 +50,24 @@ builds:
       - 386
 changelog:
   skip: true
+snapshot:
+  name_template: '{{ incpatch .Tag }}'
 archives:
   - id: horusec
     builds:
       - horusec
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format: binary
+    replacements:
+      amd64: amd64
+      386: x86
+      arm64: arm64
+      darwin: mac
+      windows: win
+  - id: horusec-standalone
+    builds:
+      - horusec-standalone
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}_stand_alone"
     format: binary
     replacements:
       amd64: amd64
@@ -49,26 +81,12 @@ release:
   draft: true
   extra_files:
     - glob: deployments/cosign.pub
-    - glob: ./tmp/horusec_linux_x86_stand_alone
-    - glob: ./tmp/horusec_linux_x86_stand_alone.sig
-    - glob: ./tmp/horusec_linux_amd64_stand_alone
-    - glob: ./tmp/horusec_linux_amd64_stand_alone.sig
-    - glob: ./tmp/horusec_linux_arm64_stand_alone
-    - glob: ./tmp/horusec_linux_arm64_stand_alone.sig
-    - glob: ./tmp/horusec_win_x86_stand_alone.exe
-    - glob: ./tmp/horusec_win_x86_stand_alone.exe.sig
-    - glob: ./tmp/horusec_win_amd64_stand_alone.exe
-    - glob: ./tmp/horusec_win_amd64_stand_alone.exe.sig
-    - glob: ./tmp/horusec_win_arm64_stand_alone.exe
-    - glob: ./tmp/horusec_win_arm64_stand_alone.exe.sig
-    - glob: ./tmp/horusec_mac_amd64_stand_alone
-    - glob: ./tmp/horusec_mac_amd64_stand_alone.sig
-    - glob: ./tmp/horusec_mac_arm64_stand_alone
-    - glob: ./tmp/horusec_mac_arm64_stand_alone.sig
 nfpms:
   - id: horusec
     package_name: horusec
     file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - horusec
     replacements:
       amd64: amd64
       386: x86
@@ -131,6 +149,7 @@ dockers:
     push_flags:
       - --tls-verify=false
 docker_manifests:
+
   - name_template: 'horuszup/horusec-cli:{{ .Tag }}'
     image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
@@ -139,7 +158,14 @@ docker_manifests:
     image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
       - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+    skip_push: auto
   - name_template: 'horuszup/horusec-cli:v{{ .Major }}'
     image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
       - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+    skip_push: auto
+  - name_template: 'horuszup/horusec-cli:v{{ .Major }}{{ .Minor }}'
+    image_templates:
+      - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
+      - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
+    skip_push: auto
