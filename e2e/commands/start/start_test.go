@@ -24,6 +24,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 
@@ -98,21 +99,16 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 	})
 
-	When("--disable-docker is passed", func() {
-		It("Checks if the disable docker was set as true", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring(`\"disable_docker\": true`))
+	When("--project-path is passed", func() {
+		It("Checks if the project path property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"project_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(projectPath))))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`Project sent to folder in location: [%s`, testutil.NormalizePathToAssert(projectPath))))
 		})
 	})
 
-	When("--project-path is passed", func() {
-		BeforeEach(func() {
-			flags = map[string]string{
-				testutil.StartFlagProjectPath: projectPath,
-			}
-		})
-
-		It("Checks if the project path was set", func() {
-			Expect(session.Out.Contents()).To(ContainSubstring(testutil.NormalizePathToAssert(testutil.GoExample2)))
+	When("--disable-docker is passed", func() {
+		It("Checks if the disable docker was set as true", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"disable_docker\": true`))
 		})
 	})
 
@@ -453,6 +449,20 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		It("Checks if container bind project path property was set.", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("File: %s", filePathAnalyzed)))
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"container_bind_project_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(os.TempDir()))))
+		})
+	})
+
+	When("--show-vulnerabilities-types is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:              projectPath,
+				testutil.StartFlagShowVulnerabilitiesTypes: vulnerability.RiskAccepted.ToString(),
+			}
+		})
+
+		It("Checks if show vulnerabilities types property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"show_vulnerabilities_types\": [\n    \"%s\"\n  ]`, vulnerability.RiskAccepted.ToString())))
+			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
 		})
 	})
 })
