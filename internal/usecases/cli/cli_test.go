@@ -33,13 +33,11 @@ import (
 )
 
 func TestValidateConfigs(t *testing.T) {
-	useCases := NewCLIUseCases()
-
 	t.Run("Should return no errors when valid", func(t *testing.T) {
 		cfg := config.New()
 		cfg.WorkDir = &workdir.WorkDir{}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return no errors when is not valid path", func(t *testing.T) {
@@ -47,7 +45,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 		cfg.ProjectPath = "./not-exist-path"
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		assert.Equal(t, "project_path: invalid path: ./not-exist-path.", err.Error())
 	})
@@ -56,7 +54,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 		cfg.SeveritiesToIgnore = []string{"LOW"}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid ignore value", func(t *testing.T) {
@@ -64,7 +62,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 		cfg.SeveritiesToIgnore = []string{"test"}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		expected := "severities_to_ignore: test Type of severity not valid. See severities enable: [CRITICAL HIGH MEDIUM LOW UNKNOWN INFO]."
 		assert.Equal(t, expected, err.Error())
@@ -75,7 +73,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.PrintOutputType = outputtype.JSON
 		cfg.JSONOutputFilePath = ""
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		assert.Equal(t, "json_output_file_path: Output File path not valid file of type: .json.",
 			err.Error())
@@ -86,7 +84,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.PrintOutputType = outputtype.JSON
 		cfg.JSONOutputFilePath = "test.test"
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		assert.Equal(t, "json_output_file_path: Output File path not valid file of type: .json.",
 			err.Error())
@@ -98,7 +96,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.PrintOutputType = outputtype.Text
 		cfg.JSONOutputFilePath = "test.test"
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		assert.EqualError(t, err, "json_output_file_path: Output File path not valid file of type: .txt.")
 	})
@@ -113,13 +111,13 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.PrintOutputType = (outputtype.Text)
 		cfg.JSONOutputFilePath = pathValid
 
-		err = useCases.ValidateConfig(cfg)
+		err = ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error when invalid workdir", func(t *testing.T) {
 		cfg := &config.Config{}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 	})
 	t.Run("Should return success because exists path in workdir", func(t *testing.T) {
@@ -136,7 +134,7 @@ func TestValidateConfigs(t *testing.T) {
 			HCL:        []string{},
 		}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 	t.Run("Should return error because not exists path in workdir", func(t *testing.T) {
@@ -156,7 +154,7 @@ func TestValidateConfigs(t *testing.T) {
 			},
 		}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 
 		var vErrors validation.Errors
@@ -171,7 +169,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg := config.New()
 		cfg.CertPath = "INVALID PATH"
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.Error(t, err)
 		assert.Equal(t, "cert_path: invalid path: INVALID PATH.", err.Error())
 	})
@@ -181,7 +179,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.FalsePositiveHashes = []string{hash}
 		cfg.RiskAcceptHashes = []string{hash}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		expected := "false_positive_hashes: False positive is not valid because is duplicated in risk accept:1e836029-4e90-4151-bb4a-d86ef47f96b6; risk_accept_hashes: Risk Accept is not valid because is duplicated in false positive: 1e836029-4e90-4151-bb4a-d86ef47f96b6."
 		assert.Equal(t, expected, err.Error())
 	})
@@ -190,7 +188,7 @@ func TestValidateConfigs(t *testing.T) {
 		cfg.FalsePositiveHashes = []string{"1e836029-4e90-4151-bb4a-d86ef47f96b6"}
 		cfg.RiskAcceptHashes = []string{"c0d0c85c-8597-49c4-b4fa-b92ecad2a991"}
 
-		err := useCases.ValidateConfig(cfg)
+		err := ValidateConfig(cfg)
 		assert.NoError(t, err)
 	})
 }
