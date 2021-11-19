@@ -25,11 +25,11 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
+	"github.com/ZupIT/horusec/internal/services/engines/javascript"
 	"github.com/ZupIT/horusec/internal/services/engines/kotlin"
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes"
 	"github.com/ZupIT/horusec/internal/services/engines/leaks"
 	"github.com/ZupIT/horusec/internal/services/engines/nginx"
-	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
 	"github.com/ZupIT/horusec/internal/services/engines/swift"
 )
 
@@ -40,8 +40,8 @@ func TestGetRules(t *testing.T) {
 		expectedTotalRules int
 	}{
 		{
-			engine:             "Nodejs",
-			manager:            nodejs.NewRules(),
+			engine:             "Javascript",
+			manager:            javascript.NewRules(),
 			expectedTotalRules: 53,
 		},
 		{

@@ -33,11 +33,11 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
+	"github.com/ZupIT/horusec/internal/services/engines/javascript"
 	"github.com/ZupIT/horusec/internal/services/engines/kotlin"
 	"github.com/ZupIT/horusec/internal/services/engines/kubernetes"
 	"github.com/ZupIT/horusec/internal/services/engines/leaks"
 	"github.com/ZupIT/horusec/internal/services/engines/nginx"
-	"github.com/ZupIT/horusec/internal/services/engines/nodejs"
 )
 
 type CustomRule struct {
@@ -141,7 +141,7 @@ func (r ruleIDValidator) Validate(value interface{}) error {
 	case languages.Leaks:
 		rules = leaks.Rules()
 	case languages.Javascript:
-		rules = nodejs.Rules()
+		rules = javascript.Rules()
 	case languages.Nginx:
 		rules = nginx.Rules()
 	default:
