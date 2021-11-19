@@ -25,111 +25,183 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	cliConfig "github.com/ZupIT/horusec/config"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
-func TestGoLang_StartAnalysis(t *testing.T) {
-	t.Run("Should run analysis and return error because output is empty", func(t *testing.T) {
+func TestGosecStartAnalysis(t *testing.T) {
+	t.Run("Should run analysis successfully when output is empty", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
 
-		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
+		entity := new(analysis.Analysis)
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, cfg)
 
-		golangAnalyzer := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			golangAnalyzer.StartAnalysis("")
-		})
+		NewFormatter(service).StartAnalysis("")
+		assert.False(t, entity.HasErrors(), "Expected no error for analysis")
 	})
 
-	t.Run("Should run analysis without panics and save on cache with success", func(t *testing.T) {
+	t.Run("Should run analysis successfully and add vulnerability on Analysis", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		outputAnalysis := `{
-		"Golang errors":{
-			"/go/src/code/api/server.go":[{"line":20,"column":42,"error":"Healthcheck not declared by package routes"}]
-		},
-		"Issues":[
-			{"severity":"MEDIUM","confidence":"HIGH","cwe":{"ID":"327","URL":"https://cwe.mitre.org/data/definitions/327.html"},"rule_id":"G501","details":"Blacklisted import crypto/md5: weak cryptographic primitive","file":"/go/src/code/api/util/util.go","code":"\"crypto/md5\"","line":"4","column":"2"},
-			{"severity":"MEDIUM","confidence":"HIGH","cwe":{"ID":"326","URL":"https://cwe.mitre.org/data/definitions/326.html"},"rule_id":"G401","details":"Use of weak cryptographic primitive","file":"/go/src/code/api/util/util.go","code":"md5.New()","line":"23","column":"7"},
-			{"severity":"LOW","confidence":"HIGH","cwe":{"ID":"703","URL":"https://cwe.mitre.org/data/definitions/703.html"},"rule_id":"G104","details":"Errors unhandled.","file":"/go/src/code/api/util/util.go","code":"io.WriteString(h, s)","line":"24","column":"2"},
-			{"severity":"HIGH","confidence":"HIGH","cwe":{"ID":"746","URL":"https://cwe.mitre.org/data/definitions/746.html"},"rule_id":"G746","details":"Password hard codede","file":"/go/src/code/api/server.go","code":"password","line":"2","column":"6"},
-			{"severity":"LOW","confidence":"HIGH","cwe":{"ID":"001","URL":"https://cwe.mitre.org/data/definitions/001.html"},"rule_id":"G001","details":"Rename Import","file":"/go/src/code/api/server.go","code":"cache := cache.NewCache() //nohorus","line":"15","column":"2"}
-		],
-		"Stats":{"files":4,"lines":70,"found":4}
-		}`
+		cfg := config.New()
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)
 
-		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
+		entity := new(analysis.Analysis)
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, cfg)
 
-		golangAnalyzer := NewFormatter(service)
+		gosec := NewFormatter(service)
 
-		assert.NotPanics(t, func() {
-			golangAnalyzer.StartAnalysis("")
-		})
+		gosec.StartAnalysis("")
+
+		assert.False(t, entity.HasErrors(), "Expected no errors for analysis")
+		assert.Len(t, entity.AnalysisVulnerabilities, 5)
 	})
 
-	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
+	t.Run("Should run analysis and add error from Docker on Analysis", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("some error"))
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
 
-		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
+		entity := new(analysis.Analysis)
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, cfg)
 
-		golangAnalyzer := NewFormatter(service)
+		gosec := NewFormatter(service)
 
-		assert.NotPanics(t, func() {
-			golangAnalyzer.StartAnalysis("")
-		})
+		gosec.StartAnalysis("")
+		assert.True(t, entity.HasErrors(), "Expected errors for analysis")
+		assert.Equal(t, "some error", entity.Errors)
 	})
 
-	t.Run("Should run analysis and return error because output is wrong", func(t *testing.T) {
+	t.Run("Should run analysis and return error for an invalid output", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
+
 		outputAnalysis := "is some a text aleatory"
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputAnalysis, nil)
 
-		service := formatters.NewFormatterService(&analysis.Analysis{}, dockerAPIControllerMock, config)
+		entity := new(analysis.Analysis)
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, cfg)
 
-		golangAnalyzer := NewFormatter(service)
+		gosec := NewFormatter(service)
+		gosec.StartAnalysis("")
 
-		assert.NotPanics(t, func() {
-			golangAnalyzer.StartAnalysis("")
-		})
+		assert.True(t, entity.HasErrors(), "Expected errors for analysis")
 	})
 
-	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		entity := &analysis.Analysis{}
+	t.Run("Should not execute gosec because it's ignored", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-		config.ToolsConfig = toolsconfig.ToolsConfig{
+
+		cfg := config.New()
+		cfg.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.GoSec: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
-		formatter := NewFormatter(service)
-
-		formatter.StartAnalysis("")
+		service := formatters.NewFormatterService(new(analysis.Analysis), dockerAPIControllerMock, cfg)
+		gosec := NewFormatter(service)
+		gosec.StartAnalysis("")
 	})
 }
+
+const outputAnalysis = `
+{
+  "Golang errors": {
+    "/go/src/code/api/server.go": [
+      {
+        "line": 20,
+        "column": 42,
+        "error": "Healthcheck not declared by package routes"
+      }
+    ]
+  },
+  "Issues": [
+    {
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "cwe": {
+        "ID": "327",
+        "URL": "https://cwe.mitre.org/data/definitions/327.html"
+      },
+      "rule_id": "G501",
+      "details": "Blacklisted import crypto/md5: weak cryptographic primitive",
+      "file": "/go/src/code/api/util/util.go",
+      "code": "\"crypto/md5\"",
+      "line": "4",
+      "column": "2"
+    },
+    {
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "cwe": {
+        "ID": "326",
+        "URL": "https://cwe.mitre.org/data/definitions/326.html"
+      },
+      "rule_id": "G401",
+      "details": "Use of weak cryptographic primitive",
+      "file": "/go/src/code/api/util/util.go",
+      "code": "md5.New()",
+      "line": "23",
+      "column": "7"
+    },
+    {
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "cwe": {
+        "ID": "703",
+        "URL": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "rule_id": "G104",
+      "details": "Errors unhandled.",
+      "file": "/go/src/code/api/util/util.go",
+      "code": "io.WriteString(h, s)",
+      "line": "24",
+      "column": "2"
+    },
+    {
+      "severity": "HIGH",
+      "confidence": "HIGH",
+      "cwe": {
+        "ID": "746",
+        "URL": "https://cwe.mitre.org/data/definitions/746.html"
+      },
+      "rule_id": "G746",
+      "details": "Password hard codede",
+      "file": "/go/src/code/api/server.go",
+      "code": "password",
+      "line": "2",
+      "column": "6"
+    },
+    {
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "cwe": {
+        "ID": "001",
+        "URL": "https://cwe.mitre.org/data/definitions/001.html"
+      },
+      "rule_id": "G001",
+      "details": "Rename Import",
+      "file": "/go/src/code/api/server.go",
+      "code": "cache := cache.NewCache() //nohorus",
+      "line": "15",
+      "column": "2"
+    }
+  ],
+  "Stats": {
+    "files": 4,
+    "lines": 70,
+    "found": 4
+  }
+}
+		`
