@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
@@ -287,13 +288,27 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		BeforeEach(func() {
 			flags = map[string]string{
-				testutil.StartFlagProjectPath:   projectPath,
+				testutil.StartFlagProjectPath:    projectPath,
 				testutil.StartFlagRepositoryName: repositoryName,
 			}
 		})
 
 		It("Checks if the repository name property was set", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"repository_name\": \"%s\"`, repositoryName)))
+		})
+	})
+
+	When("--ignore-severity is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:    projectPath,
+				testutil.StartFlagIgnoreSeverity: severities.Critical.ToString(),
+			}
+		})
+
+		It("Checks if the ignore severity property was set and ignore all vulnerabilities.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"severities_to_ignore\": [\n    \"%s\"\n  ]`, severities.Critical.ToString())))
+			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
 		})
 	})
 })
