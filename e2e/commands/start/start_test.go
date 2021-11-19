@@ -361,4 +361,23 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"headers\": {\n    \"%s\": \"%s\"\n  }`, horusecApiHeaderKey, horusecApiHeaderValue)))
 		})
 	})
+
+	When("--ignore is passed", func() {
+		patternToIgnore := "**/*.js"
+		fileIgnored := filepath.Join(testutil.JavaScriptExample4, "test.js")
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagIgnore:      patternToIgnore,
+				testutil.StartFlagProjectPath: testutil.JavaScriptExample4,
+			}
+		})
+
+		It("Checks if the ignore property was set and ignore all files.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"files_or_paths_to_ignore\": [\n    \"%s\"\n  ]`, patternToIgnore)))
+			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
+			Expect(session.Out.Contents()).To(ContainSubstring("When starting the analysis WE SKIP A TOTAL OF 1 FILES that are not considered to be analyzed."))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("The file or folder was ignored to send analysis:[%s]", testutil.NormalizePathToAssert(fileIgnored))))
+		})
+	})
 })
