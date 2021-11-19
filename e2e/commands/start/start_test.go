@@ -342,4 +342,23 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(`\"cert_insecure_skip_verify\": true`))
 		})
 	})
+
+	When("--horusec-api and --headers is passed", func() {
+		horusecApiUrl := "http://localhost:8005"
+		horusecApiHeaderKey := "Authorization"
+		horusecApiHeaderValue := "MySuperSecretToken"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath: projectPath,
+				testutil.StartFlagHorusecURL:  horusecApiUrl,
+				testutil.StartFlagHeaders:     fmt.Sprintf("%s=%s", horusecApiHeaderKey, horusecApiHeaderValue),
+			}
+		})
+
+		It("Checks if the horusec api and headers properties was set.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"horusec_api_uri\": \"%s\"`, horusecApiUrl)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"headers\": {\n    \"%s\": \"%s\"\n  }`, horusecApiHeaderKey, horusecApiHeaderValue)))
+		})
+	})
 })

@@ -19,10 +19,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/utils/copy"
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/ZupIT/horusec/internal/utils/copy"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestCopy(t *testing.T) {
