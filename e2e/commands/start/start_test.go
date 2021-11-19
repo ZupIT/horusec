@@ -329,4 +329,17 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		})
 	})
+
+	When("--insecure-skip-verify is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:        projectPath,
+				testutil.StartFlagInsecureSkipVerify: "true",
+			}
+		})
+
+		It("Checks if the insecure skip verify property was set.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"cert_insecure_skip_verify\": true`))
+		})
+	})
 })
