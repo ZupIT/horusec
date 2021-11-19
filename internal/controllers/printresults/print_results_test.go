@@ -16,6 +16,7 @@ package printresults
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -35,6 +36,7 @@ import (
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/utils/mock"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -207,6 +209,20 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 				for _, line := range strings.Split(expectedTextResult, "\n") {
 					assert.Contains(t, output, line)
 				}
+			},
+		},
+		{
+			name: "Should print correct path when using ContainerBindProjectPath",
+			cfg: config.Config{
+				StartOptions: config.StartOptions{
+					ContainerBindProjectPath: os.TempDir(),
+					ProjectPath:              testutil.JavaScriptExample1,
+				},
+			},
+			analysis:        *mock.CreateAnalysisMock(),
+			vulnerabilities: 11,
+			outputs: []string{
+				fmt.Sprintf("File: %s", filepath.Join(os.TempDir(), "cert.pem")),
 			},
 		},
 	}
