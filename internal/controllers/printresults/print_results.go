@@ -293,7 +293,7 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerab
 	pr.printlnf("Column: %s", vulnerability.Column)
 	pr.printlnf("SecurityTool: %s", vulnerability.SecurityTool)
 	pr.printlnf("Confidence: %s", vulnerability.Confidence)
-	pr.printlnf("File: %s", pr.getProjectPath(vulnerability.File))
+	pr.printlnf("File: %s", pr.getFilePath(vulnerability.File))
 	pr.printlnf("Code: %s", vulnerability.Code)
 	if vulnerability.RuleID != "" {
 		pr.printlnf("RuleID: %s", vulnerability.RuleID)
@@ -375,16 +375,16 @@ func (pr *PrintResults) logSeparator(isToShow bool) {
 	}
 }
 
-func (pr *PrintResults) getProjectPath(path string) string {
+func (pr *PrintResults) getFilePath(path string) string {
 	if strings.Contains(path, pr.config.ProjectPath) {
 		return path
 	}
 
 	if pr.config.ContainerBindProjectPath != "" {
-		return fmt.Sprintf("%s/%s", pr.config.ContainerBindProjectPath, path)
+		return filepath.Join(pr.config.ContainerBindProjectPath, path)
 	}
 
-	return fmt.Sprintf("%s/%s", pr.config.ProjectPath, path)
+	return filepath.Join(pr.config.ProjectPath, path)
 }
 
 func (pr *PrintResults) printlnf(text string, args ...interface{}) {
