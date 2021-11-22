@@ -21,11 +21,11 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec/internal/controllers/requirements"
+	usecases "github.com/ZupIT/horusec/internal/usecases/cli"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/config/dist"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-	"github.com/ZupIT/horusec/internal/usecases/cli"
 
 	"github.com/spf13/cobra"
 
@@ -48,11 +48,6 @@ type Prompt interface {
 	Ask(label, defaultValue string) (string, error)
 }
 
-// UseCase is the interface that validate the configurations
-type UseCase interface {
-	ValidateConfig(config *config.Config) error
-}
-
 // Requirements is the interface that validate Horusec dynamic
 // requirements to execute analysis
 type Requirements interface {
@@ -61,7 +56,6 @@ type Requirements interface {
 }
 
 type Start struct {
-	useCases     UseCase
 	configs      *config.Config
 	analyzer     Analyzer
 	prompt       Prompt
@@ -71,7 +65,6 @@ type Start struct {
 func NewStartCommand(configs *config.Config) *Start {
 	return &Start{
 		configs:      configs,
-		useCases:     cli.NewCLIUseCases(),
 		prompt:       prompt.NewPrompt(),
 		requirements: requirements.NewRequirements(),
 	}
@@ -308,7 +301,7 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 }
 
 func (s *Start) configsValidations(cmd *cobra.Command) error {
-	if err := s.useCases.ValidateConfig(s.configs); err != nil {
+	if err := usecases.ValidateConfig(s.configs); err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
 		_ = cmd.Help()
 		return err

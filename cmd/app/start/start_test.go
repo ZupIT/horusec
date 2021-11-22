@@ -35,7 +35,6 @@ import (
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/controllers/analyzer"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/usecases/cli"
 	"github.com/ZupIT/horusec/internal/utils/copy"
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
@@ -69,7 +68,6 @@ func TestNewStartCommand(t *testing.T) {
 		analyzerMock.On("Analyze").Return(0, nil)
 		requirementsMock.On("ValidateDocker")
 		start := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     analyzerMock,
@@ -570,7 +568,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -629,7 +626,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -676,7 +672,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -722,7 +717,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -783,7 +777,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementsMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -838,7 +831,6 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		requirementMock.On("ValidateDocker")
 
 		cmd := &Start{
-			useCases:     cli.NewCLIUseCases(),
 			configs:      cfg,
 			prompt:       promptMock,
 			analyzer:     nil,
@@ -887,7 +879,6 @@ func getMocksAndStartStruct() (*prompt.Mock, *config.Config, *requirements.Mock,
 	analyzerMock := &analyzer.Mock{}
 
 	start := &Start{
-		useCases:     cli.NewCLIUseCases(),
 		configs:      cfg,
 		prompt:       promptMock,
 		analyzer:     analyzerMock,
