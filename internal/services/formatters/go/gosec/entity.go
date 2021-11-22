@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package gosec
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Issue struct {
+// issue represents the Issues schema from gosec output
+type issue struct {
 	Severity   severities.Severity   `json:"severity"`
 	Confidence confidence.Confidence `json:"confidence"`
 	Details    string                `json:"details"`
@@ -27,4 +28,9 @@ type Issue struct {
 	Code       string                `json:"code"`
 	Line       string                `json:"line"`
 	Column     string                `json:"column"`
+}
+
+// output represents the output schema from gosec.
+type output struct {
+	Issues []issue `json:"Issues"`
 }
