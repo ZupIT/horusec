@@ -24,13 +24,13 @@ import (
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseOutput(t *testing.T) {
 	t.Run("Should return 2 vulnerabilities with no errors", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		c := &config.Config{}
@@ -48,7 +48,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("Should return error when invalid output", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		analysis := &entitiesAnalysis.Analysis{}
 		c := &config.Config{}
@@ -67,7 +67,7 @@ func TestParseOutput(t *testing.T) {
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		analysis := &entitiesAnalysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		c := &config.Config{}
 		c.WorkDir = &workdir.WorkDir{}
 		c.ToolsConfig = toolsconfig.ToolsConfig{

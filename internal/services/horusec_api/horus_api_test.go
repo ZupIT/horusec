@@ -29,9 +29,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	cliConfig "github.com/ZupIT/horusec/config"
 )
 

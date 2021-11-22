@@ -12,29 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package docker
+package testutil
 
 import (
 	"github.com/stretchr/testify/mock"
 
-	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 )
 
-type Mock struct {
+type LanguageDetectMock struct {
 	mock.Mock
 }
 
-func (m *Mock) CreateLanguageAnalysisContainer(_ *dockerEntities.AnalysisData) (containerOutPut string, err error) {
-	args := m.MethodCalled("CreateLanguageAnalysisContainer")
-	return args.Get(0).(string), utilsMock.ReturnNilOrError(args, 1)
+func NewLanguageDetectMock() *LanguageDetectMock {
+	return new(LanguageDetectMock)
 }
 
-func (m *Mock) DeleteContainersFromAPI() {
-	m.MethodCalled("DeleteContainerFromAPI")
-}
-
-func (m *Mock) PullImage(_ string) error {
-	args := m.MethodCalled("PullImage")
-	return utilsMock.ReturnNilOrError(args, 0)
+func (m *LanguageDetectMock) Detect(_ string) ([]languages.Language, error) {
+	args := m.MethodCalled("LanguageDetect")
+	return args.Get(0).([]languages.Language), mockutils.ReturnNilOrError(args, 1)
 }

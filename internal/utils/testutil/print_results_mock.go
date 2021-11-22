@@ -12,20 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package languagedetect
+package testutil
 
 import (
 	"github.com/stretchr/testify/mock"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	mock2 "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 )
 
-type Mock struct {
+type PrintResultsMock struct {
 	mock.Mock
 }
 
-func (m *Mock) Detect(_ string) ([]languages.Language, error) {
-	args := m.MethodCalled("LanguageDetect")
-	return args.Get(0).([]languages.Language), mock2.ReturnNilOrError(args, 1)
+func NewPrintResultsMock() *PrintResultsMock {
+	return new(PrintResultsMock)
+}
+
+func (m *PrintResultsMock) Print() (totalVulns int, err error) {
+	args := m.MethodCalled("StartPrintResults")
+	return args.Get(0).(int), mockutils.ReturnNilOrError(args, 0)
+}
+
+func (m *PrintResultsMock) SetAnalysis(analysis *entitiesAnalysis.Analysis) {
+	_ = m.MethodCalled("SetAnalysis")
 }

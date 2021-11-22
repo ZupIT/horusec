@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package requirements
+package testutil
 
 import (
 	"github.com/stretchr/testify/mock"
 )
 
-type Mock struct {
+type RequirementsMock struct {
 	mock.Mock
 }
 
-func (m *Mock) ValidateDocker() {
+func NewRequirementsMock() *RequirementsMock {
+	return new(RequirementsMock)
+}
+
+func (m *RequirementsMock) ValidateDocker() {
 	_ = m.MethodCalled("ValidateDocker")
 }
 
-func (m *Mock) ValidateGit() {
+func (m *RequirementsMock) ValidateGit() {
 	_ = m.MethodCalled("ValidateGit")
 }

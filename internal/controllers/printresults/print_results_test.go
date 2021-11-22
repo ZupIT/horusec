@@ -35,7 +35,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-	"github.com/ZupIT/horusec/internal/utils/mock"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/stretchr/testify/assert"
@@ -58,7 +57,7 @@ type testcase struct {
 
 func TestStartPrintResultsMock(t *testing.T) {
 	t.Run("Should return correctly mock", func(t *testing.T) {
-		m := &Mock{}
+		m := testutil.NewPrintResultsMock()
 		m.On("StartPrintResults").Return(0, nil)
 
 		totalVulns, err := m.Print()
@@ -122,7 +121,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					JSONOutputFilePath: filepath.Join(t.TempDir(), "sonar-output.json"),
 				},
 			},
-			analysis: *mock.CreateAnalysisMock(),
+			analysis: *testutil.CreateAnalysisMock(),
 			outputs:  []string{messages.MsgInfoStartGenerateSonarQubeFile},
 			validateFn: func(t *testing.T, tt testcase) {
 				assert.FileExists(t, tt.cfg.JSONOutputFilePath)
@@ -147,7 +146,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					PrintOutputType: outputtype.JSON,
 				},
 			},
-			analysis: *mock.CreateAnalysisMock(),
+			analysis: *testutil.CreateAnalysisMock(),
 			err:      true,
 			outputs:  []string{messages.MsgErrorGenerateJSONFile},
 		},
@@ -158,14 +157,14 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					IsTimeout: true,
 				},
 			},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 11,
 			outputs:         []string{messages.MsgWarnTimeoutOccurs},
 		},
 		{
 			name:            "Should print 11 vulnerabilities",
 			cfg:             config.Config{},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 11,
 		},
 		{
@@ -175,7 +174,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					EnableCommitAuthor: true,
 				},
 			},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 11,
 			outputs: []string{
 				"Commit Author", "Commit Date", "Commit Email", "Commit CommitHash", "Commit Message",
@@ -188,7 +187,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					SeveritiesToIgnore: []string{"MEDIUM", "LOW"},
 				},
 			},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 3,
 		},
 		{
@@ -199,7 +198,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					JSONOutputFilePath: filepath.Join(t.TempDir(), "output"),
 				},
 			},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 11,
 			validateFn: func(t *testing.T, tt testcase) {
 				assert.FileExists(t, tt.cfg.JSONOutputFilePath, "output")
@@ -219,7 +218,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 					ProjectPath:              testutil.JavaScriptExample1,
 				},
 			},
-			analysis:        *mock.CreateAnalysisMock(),
+			analysis:        *testutil.CreateAnalysisMock(),
 			vulnerabilities: 11,
 			outputs: []string{
 				fmt.Sprintf("File: %s", filepath.Join(os.TempDir(), "cert.pem")),

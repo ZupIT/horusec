@@ -29,6 +29,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	errorsenum "github.com/ZupIT/horusec/internal/enums/errors"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
@@ -109,7 +110,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should return error when list image to check if exist", func(t *testing.T) {
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, ErrGeneric)
 
 		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
@@ -120,7 +121,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should return error when pull new image", func(t *testing.T) {
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), ErrGeneric)
 
@@ -136,7 +137,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_ = os.Setenv("HORUSEC_DOCKER_API_IMAGE_CHECK", "false")
 		_ = os.Setenv("HORUSEC_DOCKER_API_RETRY_TIME_SLEEP_SECONDS", "1")
 
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, ErrGeneric)
@@ -156,7 +157,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_ = os.Setenv("HORUSEC_DOCKER_API_IMAGE_CHECK", "false")
 		_ = os.Setenv("HORUSEC_DOCKER_API_RETRY_TIME_SLEEP_SECONDS", "1")
 
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
@@ -177,7 +178,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_ = os.Setenv("HORUSEC_DOCKER_API_IMAGE_CHECK", "false")
 		_ = os.Setenv("HORUSEC_DOCKER_API_RETRY_TIME_SLEEP_SECONDS", "1")
 
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
@@ -205,7 +206,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_ = os.Setenv("HORUSEC_DOCKER_API_IMAGE_CHECK", "false")
 		_ = os.Setenv("HORUSEC_DOCKER_API_RETRY_TIME_SLEEP_SECONDS", "1")
 
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
@@ -230,7 +231,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		_ = os.Setenv("HORUSEC_DOCKER_API_IMAGE_CHECK", "false")
 		_ = os.Setenv("HORUSEC_DOCKER_API_RETRY_TIME_SLEEP_SECONDS", "1")
 
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
@@ -251,7 +252,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should pull image from registry when not exists on cache", func(t *testing.T) {
-		dockerAPIClient := new(client.Mock)
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{}, nil)
 		dockerAPIClient.On("ImagePull").Return(io.NopCloser(bytes.NewReader([]byte("Some data"))), nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
@@ -268,7 +269,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 	})
 
 	t.Run("Should not pull image from registry when exists on cache", func(t *testing.T) {
-		dockerAPIClient := new(client.Mock)
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ImageList").Return([]types.ImageSummary{{ID: uuid.New().String()}}, nil)
 		dockerAPIClient.On("ContainerCreate").Return(container.ContainerCreateCreatedBody{ID: uuid.New().String()}, nil)
 		dockerAPIClient.On("ContainerStart").Return(nil)
@@ -287,7 +288,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 
 func TestDeleteContainersFromAPI(t *testing.T) {
 	t.Run("should not panics", func(t *testing.T) {
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 		dockerAPIClient.On("ContainerRemove").Return(nil)
 
@@ -299,7 +300,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 	})
 
 	t.Run("should not panics but return error when container list", func(t *testing.T) {
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ContainerList").Return([]types.Container{}, errors.New("test"))
 
 		api := New(dockerAPIClient, &cliConfig.Config{}, uuid.New())
@@ -310,7 +311,7 @@ func TestDeleteContainersFromAPI(t *testing.T) {
 	})
 
 	t.Run("Test Replace docker bind folder to windows o.s", func(t *testing.T) {
-		dockerAPIClient := &client.Mock{}
+		dockerAPIClient := testutil.NewDockerClientMock()
 		dockerAPIClient.On("ContainerList").Return([]types.Container{}, errors.New("test"))
 		config := &cliConfig.Config{}
 		config.ProjectPath = "C:/Users/usr/Documents/Horusec/project"

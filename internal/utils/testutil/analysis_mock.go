@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mock
+package testutil
 
 import (
 	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	enumsAnalysis "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
+	analysisenum "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 
 	"github.com/google/uuid"
@@ -32,12 +32,14 @@ import (
 )
 
 // CreateAnalysisMock creates a mocked plain entity to use in test suites.
+//
+// nolint: funlen
 func CreateAnalysisMock() *analysis.Analysis {
 	mock := &analysis.Analysis{
 		ID:                      uuid.New(),
 		RepositoryID:            uuid.New(),
 		WorkspaceID:             uuid.New(),
-		Status:                  enumsAnalysis.Success,
+		Status:                  analysisenum.Success,
 		Errors:                  "",
 		CreatedAt:               time.Now(),
 		FinishedAt:              time.Now(),
@@ -57,6 +59,8 @@ func CreateAnalysisMock() *analysis.Analysis {
 // ReturnEachTypeOfVulnerability generates a generic []Vulnerability
 // with 1 vulnerability of each tool/language.
 // The Severity and CommitAuthor are empty on purpose
+//
+// nolint: funlen
 func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 	return []vulnerability.Vulnerability{
 		*vulnhash.Bind(&vulnerability.Vulnerability{
@@ -70,7 +74,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			SecurityTool:    tools.GoSec,
 			Language:        languages.Go,
 			Severity:        severities.Low,
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 		}),
 		*vulnhash.Bind(&vulnerability.Vulnerability{
 			VulnerabilityID: uuid.New(),
@@ -84,7 +88,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.CSharp,
 			Severity:        severities.Medium,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 		}),
 		*vulnhash.Bind(&vulnerability.Vulnerability{
 			VulnerabilityID: uuid.New(),
@@ -98,7 +102,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Ruby,
 			Severity:        severities.High,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -117,7 +121,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Javascript,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -136,7 +140,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Javascript,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -155,7 +159,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Python,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -174,7 +178,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Python,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -193,7 +197,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Leaks,
 			Severity:        severities.High,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -212,7 +216,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Leaks,
 			Severity:        severities.High,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -231,7 +235,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Java,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",
@@ -250,7 +254,7 @@ func ReturnEachTypeOfVulnerability() []vulnerability.Vulnerability {
 			Language:        languages.Kotlin,
 			Severity:        severities.Low,
 			VulnHash:        uuid.New().String(),
-			Type:            enumsVulnerability.Vulnerability,
+			Type:            vulnerabilityenum.Vulnerability,
 			CommitAuthor:    "",
 			CommitEmail:     "",
 			CommitHash:      "",

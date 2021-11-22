@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package printresults
+package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/request"
 )
 
-type Mock struct {
-	mock.Mock
-}
+type RequestMock request.Mock
 
-func (m *Mock) Print() (totalVulns int, err error) {
-	args := m.MethodCalled("StartPrintResults")
-	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 0)
-}
-
-func (m *Mock) SetAnalysis(analysis *entitiesAnalysis.Analysis) {
-	_ = m.MethodCalled("SetAnalysis")
+func NewRequestMock() *RequestMock {
+	return new(RequestMock)
 }

@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/stretchr/testify/assert"
 
@@ -26,13 +27,12 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
 func TestGoLang_StartAnalysis(t *testing.T) {
 	t.Run("Should run analysis and return error because output is empty", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
@@ -49,7 +49,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 	})
 
 	t.Run("Should run analysis without panics and save on cache with success", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 
 		config := &cliConfig.Config{}
@@ -81,7 +81,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 	})
 
 	t.Run("Should run analysis and return error and up docker_api and save on cache with error", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("some error"))
 
@@ -98,7 +98,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 	})
 
 	t.Run("Should run analysis and return error because output is wrong", func(t *testing.T) {
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		outputAnalysis := "is some a text aleatory"
 
@@ -118,7 +118,7 @@ func TestGoLang_StartAnalysis(t *testing.T) {
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
 		entity := &analysis.Analysis{}
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		config := &cliConfig.Config{}
 		config.WorkDir = &workdir.WorkDir{}
 		config.ToolsConfig = toolsconfig.ToolsConfig{

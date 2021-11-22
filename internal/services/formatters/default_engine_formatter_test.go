@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
 	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 
 	"github.com/stretchr/testify/assert"
 
@@ -82,7 +83,7 @@ func TestStartAnalysis(t *testing.T) {
 
 			t.Run("should success execute analysis without errors", func(t *testing.T) {
 				analysis := &analysis.Analysis{}
-				service := &formatters.Mock{}
+				service := testutil.NewFormatterMock()
 
 				service.On("LogDebugWithReplace")
 				service.On("SetToolFinishedAnalysis")
@@ -100,7 +101,7 @@ func TestStartAnalysis(t *testing.T) {
 			})
 
 			t.Run("should return error when getting text unit", func(t *testing.T) {
-				service := &formatters.Mock{}
+				service := testutil.NewFormatterMock()
 
 				service.On("LogDebugWithReplace")
 				service.On("SetToolFinishedAnalysis")
@@ -116,7 +117,7 @@ func TestStartAnalysis(t *testing.T) {
 			})
 
 			t.Run("should ignore this tool", func(t *testing.T) {
-				service := &formatters.Mock{}
+				service := testutil.NewFormatterMock()
 
 				service.On("ToolIsToIgnore").Return(true)
 

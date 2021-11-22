@@ -28,7 +28,7 @@
     "**/examples/**",
     "**/*.toml",
     "**/*_test.go",
-    "**/*_mock.go",
+    "**/testutil/**",
     "**/*README.md",
     "**/cmd/app/start/analysis/**",
     "**/tmp/**",

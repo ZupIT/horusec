@@ -46,7 +46,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/config"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
-	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
 )
 
@@ -55,7 +54,7 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 		ID: uuid.New(),
 	}
 	cfg := config.New()
-	svc := NewFormatterService(analysis, &docker.Mock{}, cfg)
+	svc := NewFormatterService(analysis, testutil.NewDockerMock(), cfg)
 
 	rule := java.NewAWSQueryInjection()
 	findings := []engine.Finding{
@@ -106,7 +105,7 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 }
 
 func TestMock_AddWorkDirInCmd(t *testing.T) {
-	mock := &Mock{}
+	mock := testutil.NewFormatterMock()
 	t.Run("Should mock with success", func(t *testing.T) {
 		mock.On("LogDebugWithReplace")
 		mock.On("GetAnalysisID").Return("")
@@ -139,7 +138,7 @@ func TestExecuteContainer(t *testing.T) {
 	t.Run("should return no error when execute container", func(t *testing.T) {
 		analysis := &analysis.Analysis{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("test", nil)
 
@@ -152,7 +151,7 @@ func TestExecuteContainer(t *testing.T) {
 	t.Run("should return error when execute container if CreateLanguageAnalysisContainer return error", func(t *testing.T) {
 		analysis := &analysis.Analysis{}
 
-		dockerAPIControllerMock := &docker.Mock{}
+		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("test", errors.New("some error"))
 
@@ -167,7 +166,7 @@ func TestExecuteContainer(t *testing.T) {
 
 func TestGetAnalysisIDErrorMessage(t *testing.T) {
 	t.Run("should success get error message with replaces", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 
 		result := monitorController.GetAnalysisIDErrorMessage(tools.Bandit, "test")
 
@@ -179,7 +178,7 @@ func TestGetAnalysisIDErrorMessage(t *testing.T) {
 
 func TestGetCommitAuthor(t *testing.T) {
 	t.Run("should get commit author default values when .git folder is not found", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 
 		result := monitorController.GetCommitAuthor("", "")
 		assert.Equal(t, "-", result.Author)
@@ -196,7 +195,7 @@ func TestGetCommitAuthor(t *testing.T) {
 				EnableCommitAuthor: true,
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 
 		result := monitorController.GetCommitAuthor("15", filepath.Join(testutil.GoExample1, "api", "server.go"))
 		notExpected := commitauthor.CommitAuthor{
@@ -220,7 +219,7 @@ func TestGetConfigProjectPath(t *testing.T) {
 			},
 		}
 
-		svc := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cliConfig)
+		svc := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cliConfig)
 
 		result := svc.GetConfigProjectPath()
 
@@ -236,7 +235,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 		cmdWithWorkDir := workDirString + cmd
 		projectSubPath := filepath.Join("random", "file", "path")
 		expectedString := "cd " + projectSubPath + cmd
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 
 		result := monitorController.AddWorkDirInCmd(cmdWithWorkDir, projectSubPath, tools.SecurityCodeScan)
 
@@ -244,7 +243,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 	})
 
 	t.Run("should return cmd with no workdir", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		cmd := "testcmd"
 		result := monitorController.AddWorkDirInCmd(cmd, "", tools.SecurityCodeScan)
 
@@ -254,7 +253,7 @@ func TestAddWorkDirInCmd(t *testing.T) {
 
 func TestLogDebugWithReplace(t *testing.T) {
 	t.Run("should log debug and not panics", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		stdOutMock := bytes.NewBufferString("")
 		logger.LogSetOutput(stdOutMock)
 		logger.SetLogLevel("debug")
@@ -268,14 +267,14 @@ func TestLogDebugWithReplace(t *testing.T) {
 func TestGetAnalysisID(t *testing.T) {
 	t.Run("should success get analysis id", func(t *testing.T) {
 		id := uuid.New()
-		monitorController := NewFormatterService(&analysis.Analysis{ID: id}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{ID: id}, testutil.NewDockerMock(), &config.Config{})
 		assert.Equal(t, id.String(), monitorController.GetAnalysisID())
 	})
 }
 
 func TestLogAnalysisError(t *testing.T) {
 	t.Run("should not panic when logging error", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		stdOutMock := bytes.NewBufferString("")
 		logger.LogSetOutput(stdOutMock)
 		logger.SetLogLevel("debug")
@@ -286,7 +285,7 @@ func TestLogAnalysisError(t *testing.T) {
 		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> `)
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		stdOutMock := bytes.NewBufferString("")
 		logger.LogSetOutput(stdOutMock)
 		logger.SetLogLevel("debug")
@@ -307,7 +306,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			},
 		}
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -319,7 +318,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			},
 		}
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -330,7 +329,7 @@ func TestToolIsToIgnore(t *testing.T) {
 			tools.SecurityCodeScan: toolsconfig.Config{IsToIgnore: true},
 		}
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), configs)
 
 		assert.Equal(t, true, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -342,12 +341,12 @@ func TestToolIsToIgnore(t *testing.T) {
 			},
 		}
 
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, configs)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), configs)
 
 		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
 	t.Run("should return false when language not exists", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 
 		assert.Equal(t, false, monitorController.ToolIsToIgnore(tools.GoSec))
 	})
@@ -355,21 +354,21 @@ func TestToolIsToIgnore(t *testing.T) {
 
 func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 	t.Run("should return default code", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		column := 0
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Equal(t, "text", newCode)
 	})
 	t.Run("should return default code if column is negative", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		column := -1
 		newCode := monitorController.GetCodeWithMaxCharacters(code, column)
 		assert.Equal(t, "text", newCode)
 	})
 	t.Run("should return 4:105 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		for i := 0; i < 10; i++ {
 			for i := 0; i <= 9; i++ {
@@ -381,7 +380,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789", newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		for i := 0; i < 10; i++ {
 			for i := 0; i <= 9; i++ {
@@ -393,7 +392,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "text012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345", newCode)
 	})
 	t.Run("should return first 100 characters when text contains breaking lines", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := `22: func GetMD5(s string) string {
 23:     h := md5.New()
 24:     io.WriteString(h, s) // #nohorus
@@ -406,7 +405,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 	`, newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		for i := 0; i <= 200; i++ {
 			code += strconv.Itoa(i)
@@ -416,7 +415,7 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 		assert.Equal(t, "4041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889", newCode)
 	})
 	t.Run("should return first 100 characters when text is so bigger", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		code := "text"
 		for i := 0; i <= 200; i++ {
 			code += strconv.Itoa(i)
@@ -429,17 +428,17 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 
 func TestRemoveSrcFolderFromPath(t *testing.T) {
 	t.Run("should return path without src prefix", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("src", "something"))
 		assert.Equal(t, filepath.Base("something"), result)
 	})
 	t.Run("should return path without diff when src is after 4 index position", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("something", "src"))
 		assert.Equal(t, filepath.Join("something", "src"), result)
 	})
 	t.Run("should return path without diff when src is before 4 index position", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, &config.Config{})
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 		result := monitorController.RemoveSrcFolderFromPath(filepath.Base("src"))
 		assert.Equal(t, filepath.Base("src"), result)
 	})
@@ -452,7 +451,7 @@ func TestGetFilepathFromFilename(t *testing.T) {
 				ProjectPath: testutil.GoExample1,
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		dirName := filepath.Join(cfg.ProjectPath, ".horusec", monitorController.GetAnalysisID())
 		relativeFilePath := filepath.Join("examples", "go", "example1")
 		filename := "server.go"
@@ -479,7 +478,7 @@ func TestGetFilepathFromFilename(t *testing.T) {
 				ProjectPath: testutil.GoExample1,
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		filename := "server.go"
 
 		result := monitorController.GetFilepathFromFilename(filename, "")
@@ -496,7 +495,7 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 				WorkDir:     &workdir.WorkDir{Go: []string{"a", "b"}},
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		dirName := filepath.Join(cfg.ProjectPath, ".horusec", monitorController.GetAnalysisID())
 		relativeFilePath := filepath.Join("examples", "go", "example1", "/")
 		filename := "package-lock.json"
@@ -544,7 +543,7 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 				ProjectPath: testutil.GoExample1,
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		expectedCmd := "expectedCmd"
 		result := monitorController.GetConfigCMDByFileExtension("relativeFilePath", expectedCmd, "package-lock.json", tools.NpmAudit)
 		assert.Equal(t, expectedCmd, result)
@@ -555,7 +554,7 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 				ProjectPath: testutil.GoExample1,
 			},
 		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, &docker.Mock{}, cfg)
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		workdirString := "{{WORK_DIR}}"
 		cmd := "expectedCmd"
 		relativeFilePath := "relativeFilePath"
