@@ -24,14 +24,13 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
@@ -40,7 +39,7 @@ import (
 
 func TestMain(m *testing.M) {
 	_ = os.RemoveAll("./tmp")
-	_ = os.MkdirAll("./tmp", 0750)
+	_ = os.MkdirAll("./tmp", 0o750)
 	code := m.Run()
 	_ = os.RemoveAll("./tmp")
 	os.Exit(code)
@@ -384,7 +383,6 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "repository-name-test", configs.RepositoryName)
 		assert.Equal(t, int64(123), configs.TimeoutInSecondsRequest)
 		assert.Equal(t, true, configs.ReturnErrorIfFoundVulnerability)
-
 	})
 }
 

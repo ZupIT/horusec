@@ -20,16 +20,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-
-	"github.com/ZupIT/horusec/internal/enums/outputtype"
-
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
 )
 
 func TestValidateConfigs(t *testing.T) {

@@ -22,20 +22,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/enums/toignore"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-
 	"github.com/google/uuid"
-
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
-	"github.com/ZupIT/horusec/internal/utils/copy"
-
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/enums/toignore"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/utils/copy"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 var tmpPath, _ = filepath.Abs("tmp")
@@ -253,7 +249,7 @@ func TestNewLanguageDetect(t *testing.T) {
 			}
 			assert.Contains(t, langs, lang)
 		}
-		//TODO: We don't have examples of TypeScript language and Unknown language on examples folder, this will fail when we add them
+		// TODO: We don't have examples of TypeScript language and Unknown language on examples folder, this will fail when we add them
 		assert.Len(t, langs, len(languages.Values())-2)
 	})
 	t.Run("Should ignore folders present in toignore.GetDefaultFoldersToIgnore()", func(t *testing.T) {
@@ -264,7 +260,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		stdOutMock := bytes.NewBufferString("")
 		logger.LogSetOutput(stdOutMock)
 		for _, folderName := range toignore.GetDefaultFoldersToIgnore() {
-			err = os.MkdirAll(filepath.Join(wd, folderName), 0700)
+			err = os.MkdirAll(filepath.Join(wd, folderName), 0o700)
 			assert.NoError(t, err)
 		}
 		langs, err := controller.Detect(wd)

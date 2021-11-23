@@ -21,10 +21,10 @@ import (
 	"os"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
+
 	"github.com/ZupIT/horusec/config"
 	customRulesEntities "github.com/ZupIT/horusec/internal/entities/custom_rules"
 )

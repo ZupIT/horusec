@@ -24,5 +24,4 @@ import (
 func TestGenerate(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Command generate suite")
-
 }

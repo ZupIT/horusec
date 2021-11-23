@@ -15,10 +15,9 @@
 package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
 )
 
 type PrintResultsMock struct {

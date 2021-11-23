@@ -16,6 +16,7 @@ package nginx
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
+
 	"github.com/ZupIT/horusec/internal/services/engines"
 )
 

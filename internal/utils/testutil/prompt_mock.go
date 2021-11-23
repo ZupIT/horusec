@@ -15,9 +15,8 @@
 package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
 )
 
 type PromptMock struct {
@@ -32,6 +31,7 @@ func (m *PromptMock) Ask(label, defaultValue string) (string, error) {
 	args := m.MethodCalled("Ask")
 	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)
 }
+
 func (m *PromptMock) Select(label string, items []string) (string, error) {
 	args := m.MethodCalled("Select")
 	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)

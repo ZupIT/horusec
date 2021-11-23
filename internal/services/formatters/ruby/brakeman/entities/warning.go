@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 

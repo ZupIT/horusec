@@ -15,9 +15,8 @@
 package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
 )
 
 type AnalyzerMock struct {

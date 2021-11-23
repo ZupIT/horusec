@@ -15,10 +15,9 @@
 package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
 )
 
 type LanguageDetectMock struct {

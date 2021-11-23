@@ -17,9 +17,8 @@ package entities
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetDetails(t *testing.T) {
@@ -35,7 +34,6 @@ func TestGetDetails(t *testing.T) {
 		assert.NotEmpty(t, details)
 		assert.Equal(t, "test test test", details)
 	})
-
 }
 
 func TestGetSeverity(t *testing.T) {
@@ -84,5 +82,4 @@ func TestGetFilename(t *testing.T) {
 		assert.NotContains(t, filename, "./")
 		assert.Equal(t, "test.c", filename)
 	})
-
 }

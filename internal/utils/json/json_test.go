@@ -17,9 +17,8 @@ package json
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	horusecEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConvertInterfaceToMapString(t *testing.T) {

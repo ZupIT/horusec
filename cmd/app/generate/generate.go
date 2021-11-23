@@ -18,9 +18,9 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/spf13/cobra"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
@@ -75,7 +75,7 @@ func (g *Generate) createAndOpenFile() (outputFile *os.File, err error) {
 	if _, err = os.Create(g.configs.ConfigFilePath); err != nil {
 		return nil, err
 	}
-	outputFile, err = os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	outputFile, err = os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (g *Generate) writeConfigOnFile(outputFile *os.File) error {
 
 //nolint:gomnd // magic number
 func (g *Generate) readFileAndCreateNewKeys() error {
-	configFile, err := os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	configFile, err := os.OpenFile(g.configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		logger.LogError(messages.MsgErrorErrorOnReadConfigFile+g.configs.ConfigFilePath, err)
 		return err

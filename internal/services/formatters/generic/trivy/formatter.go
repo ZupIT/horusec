@@ -20,8 +20,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/google/uuid"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -29,6 +27,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/google/uuid"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"

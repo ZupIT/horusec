@@ -16,6 +16,7 @@ package horusecjavascript
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec/internal/services/engines/javascript"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )

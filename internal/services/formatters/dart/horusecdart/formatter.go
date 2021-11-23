@@ -16,6 +16,7 @@ package horusecdart
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )

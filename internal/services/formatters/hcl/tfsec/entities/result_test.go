@@ -32,7 +32,6 @@ func resultMock() *Result {
 		Description: "test",
 		Severity:    "test",
 	}
-
 }
 
 func TestGetDetails(t *testing.T) {

@@ -19,9 +19,9 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler/entities/enums"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+
+	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler/entities/enums"
 )
 
 type Output struct {

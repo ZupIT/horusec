@@ -19,6 +19,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 

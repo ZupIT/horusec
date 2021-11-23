@@ -19,7 +19,6 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-
 	"github.com/stretchr/testify/assert"
 
 	cliConfig "github.com/ZupIT/horusec/config"

@@ -20,15 +20,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	engine "github.com/ZupIT/horusec-engine"
-
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+
 	customrules "github.com/ZupIT/horusec/internal/enums/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"

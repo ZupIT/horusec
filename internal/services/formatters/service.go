@@ -25,21 +25,21 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	"github.com/ZupIT/horusec/internal/utils/file"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
+
 	"github.com/ZupIT/horusec/config"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	custonrules "github.com/ZupIT/horusec/internal/services/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/git"
+	"github.com/ZupIT/horusec/internal/utils/file"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 // MaxCharacters is the maximum length of code that a vulnerability can have.
@@ -265,6 +265,7 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 func (s *Service) GetProjectPathWithWorkdir(projectSubPath string) string {
 	return filepath.Join(s.GetConfigProjectPath(), projectSubPath)
 }
+
 func (s *Service) IsDockerDisabled() bool {
 	return s.config.DisableDocker
 }

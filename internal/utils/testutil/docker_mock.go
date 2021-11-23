@@ -15,20 +15,17 @@
 package testutil
 
 import (
+	"context"
 	"io"
 
-	"github.com/docker/docker/api/types/network"
-
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-
-	"context"
-
-	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/mock"
+
+	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 )
 
 type DockerClientMock struct {

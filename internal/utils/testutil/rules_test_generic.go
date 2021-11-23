@@ -17,11 +17,11 @@ package testutil
 import (
 	"testing"
 
+	engine "github.com/ZupIT/horusec-engine"
+	"github.com/ZupIT/horusec-engine/text"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	engine "github.com/ZupIT/horusec-engine"
-	"github.com/ZupIT/horusec-engine/text"
 	enginesenum "github.com/ZupIT/horusec/internal/enums/engines"
 )
 
@@ -49,6 +49,7 @@ func assertExpectedFindingAndRuleCase(t *testing.T, findings []engine.Finding, t
 		assert.Equal(t, tt.Rule.Description, finding.Description)
 	}
 }
+
 func TestSafeCode(t *testing.T, testcases []*RuleTestCase) {
 	for _, tt := range testcases {
 		t.Run(tt.Name, func(t *testing.T) {

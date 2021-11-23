@@ -23,30 +23,26 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
-
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec/config"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/entities/workdir"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseFindingsToVulnerabilities(t *testing.T) {
@@ -100,7 +96,6 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 	require.Len(t, analysis.AnalysisVulnerabilities, len(expectedVulnerabilities))
 	for idx := range expectedVulnerabilities {
 		assert.Equal(t, expectedVulnerabilities[idx], analysis.AnalysisVulnerabilities[idx].Vulnerability)
-
 	}
 }
 
@@ -208,7 +203,6 @@ func TestGetCommitAuthor(t *testing.T) {
 		assert.NotEmpty(t, result)
 		assert.NotEqual(t, notExpected, result)
 	})
-
 }
 
 func TestGetConfigProjectPath(t *testing.T) {
@@ -456,7 +450,7 @@ func TestGetFilepathFromFilename(t *testing.T) {
 		relativeFilePath := filepath.Join("examples", "go", "example1")
 		filename := "server.go"
 
-		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0700)
+		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0o700)
 		assert.NoError(t, err)
 
 		file, err := os.Create(filepath.Join(dirName, relativeFilePath, filename))
@@ -470,7 +464,6 @@ func TestGetFilepathFromFilename(t *testing.T) {
 			_ = file.Close()
 			_ = os.RemoveAll(dirName)
 		})
-
 	})
 	t.Run("should return empty when path from filename is not found", func(t *testing.T) {
 		cfg := &config.Config{
@@ -500,7 +493,7 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 		relativeFilePath := filepath.Join("examples", "go", "example1", "/")
 		filename := "package-lock.json"
 
-		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0700)
+		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0o700)
 		assert.NoError(t, err)
 		file, err := os.Create(filepath.Join(dirName, relativeFilePath, filename))
 		assert.NotNil(t, file)
@@ -535,7 +528,6 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 			_ = file.Close()
 			_ = os.RemoveAll(dirName)
 		})
-
 	})
 	t.Run("should return cmd when cmd has no workdir", func(t *testing.T) {
 		cfg := &config.Config{

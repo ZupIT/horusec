@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
+
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
@@ -381,7 +382,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 				{
 					CodeSample: `DB_PASSWORD="gorm"`,
 					SourceLocation: engine.Location{
-						Line:   12,
+						Line:   13,
 						Column: 4,
 					},
 				},
@@ -426,6 +427,7 @@ func TestRulesVulnerableCode(t *testing.T) {
 
 	testutil.TestVulnerableCode(t, testcases)
 }
+
 func TestRulesSafeCode(t *testing.T) {
 	testcases := []*testutil.RuleTestCase{
 		{

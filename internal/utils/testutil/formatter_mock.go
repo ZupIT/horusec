@@ -15,13 +15,13 @@
 package testutil
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/stretchr/testify/mock"
+
 	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 )

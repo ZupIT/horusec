@@ -16,9 +16,7 @@ package dist
 
 const False = "false"
 
-var (
-	standAlone string = False
-)
+var standAlone string = False
 
 func IsStandAlone() bool {
 	return standAlone != False

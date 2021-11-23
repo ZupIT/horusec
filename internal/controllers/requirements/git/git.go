@@ -21,16 +21,17 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-const MinVersionGitAccept = 2
-const MinSubVersionGitAccept = 01
-
-var (
-	ErrMinVersion = fmt.Errorf("%v.%v", MinVersionGitAccept, MinSubVersionGitAccept)
+const (
+	MinVersionGitAccept    = 2
+	MinSubVersionGitAccept = 0o1
 )
+
+var ErrMinVersion = fmt.Errorf("%v.%v", MinVersionGitAccept, MinSubVersionGitAccept)
 
 type RequirementGit struct{}
 

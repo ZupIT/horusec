@@ -24,21 +24,22 @@ import (
 	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/e2e/analysis"
 	customimages "github.com/ZupIT/horusec/internal/entities/custom_images"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
-const isWindows = runtime.GOOS == "windows"
-const isDarwin = runtime.GOOS == "darwin"
-const horusecConfigName = "horusec-config.json"
+const (
+	isWindows         = runtime.GOOS == "windows"
+	isDarwin          = runtime.GOOS == "darwin"
+	horusecConfigName = "horusec-config.json"
+)
 
 var _ = Describe("Run a complete horusec analysis when build tools locally", func() {
 	tmpDir := CreateHorusecConfigAndReturnTMPDirectory()

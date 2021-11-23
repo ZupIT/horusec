@@ -17,9 +17,8 @@ package vulnhash
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBind(t *testing.T) {

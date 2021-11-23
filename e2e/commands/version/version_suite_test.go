@@ -24,5 +24,4 @@ import (
 func TestVersion(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Command version suite")
-
 }

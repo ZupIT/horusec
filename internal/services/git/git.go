@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"strings"
 
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/config"
+	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 

@@ -16,6 +16,7 @@ package horuseccsharp
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )

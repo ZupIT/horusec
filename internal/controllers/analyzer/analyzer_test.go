@@ -25,29 +25,24 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
-	"github.com/ZupIT/horusec/internal/entities/workdir"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 func BenchmarkAnalyzerAnalyze(b *testing.B) {
@@ -117,7 +112,7 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 			analyzer := NewAnalyzer(config.New())
 
 			analyzer.analysis.AnalysisVulnerabilities = append(
-				analyzer.analysis.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
+				analyzer.analysis.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{
 					AnalysisID:    uuid.New(),
 					Vulnerability: tt.vulnerability,
 				},
@@ -142,7 +137,6 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 			for _, vuln := range analyzer.analysis.AnalysisVulnerabilities {
 				assert.Equal(t, tt.expectedType, vuln.Vulnerability.Type)
 			}
-
 		})
 	}
 }
