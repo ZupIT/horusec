@@ -1,10 +1,12 @@
 GO ?= go
 GOFMT ?= gofmt
-GO_FILES ?= $$(find . -name '*.go' | grep -v vendor)
+GO_FILES ?= $$(find . -name '*.go' | grep -v vendor | grep -v /examples/)
 GO_LIST_TO_TEST ?= $$(go list ./... | grep -v /examples/ | grep -v /e2e/)
-GOLANG_CI_LINT ?= ./bin/golangci-lint
+GOLANG_CI_LINT ?= golangci-lint
 GO_IMPORTS ?= goimports
-GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec
+GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec/
+GO_FUMPT ?= gofumpt
+GO_GCI ?= gci
 ADDLICENSE ?= addlicense
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
@@ -13,16 +15,9 @@ ARCH_ARM64 ?= arm64
 ARCH_AMD64 ?= amd64
 MAIN = ./cmd/app
 
-fmt:
-	$(GOFMT) -w $(GO_FILES)
-
 lint:
-    ifeq ($(wildcard $(GOLANG_CI_LINT)), $(GOLANG_CI_LINT))
-		$(GOLANG_CI_LINT) run -v --timeout=5m -c .golangci.yml ./...
-    else
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
-		$(GOLANG_CI_LINT) run -v --timeout=5m -c .golangci.yml ./...
-    endif
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	$(GOLANG_CI_LINT) run -v --timeout=5m -c .golangci.yml ./...
 
 coverage:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/coverage.sh | bash -s 91 ./cmd
@@ -40,20 +35,23 @@ test-e2e:
 	$(GO) clean -testcache
 	$(GO) test -v ./e2e/commands/... -timeout=30m -parallel=1 -failfast
 
-fix-imports:
-    ifeq (, $(shell which $(GO_IMPORTS)))
-		$(GO) install golang.org/x/tools/cmd/goimports
-		$(GO_IMPORTS) -local $(GO_IMPORTS_LOCAL) -w $(GO_FILES)
-    else
-		$(GO_IMPORTS) -local $(GO_IMPORTS_LOCAL) -w $(GO_FILES)
-    endif
+format: install-format-dependencies
+	$(GOFMT) -s -l -w $(GO_FILES)
+	$(GO_IMPORTS) -w -local $(GO_IMPORTS_LOCAL) $(GO_FILES)
+	$(GO_FUMPT) -l -w $(GO_FILES)
+	$(GO_GCI) -w -local $(GO_IMPORTS_LOCAL) $(GO_FILES)
+
+install-format-dependencies:
+	$(GO) install golang.org/x/tools/cmd/goimports@latest
+	$(GO) install mvdan.cc/gofumpt@latest
+	$(GO) install github.com/daixiang0/gci@latest
 
 license:
-	$(GO) install github.com/google/addlicense
+	$(GO) install github.com/google/addlicense@latest
 	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
-	$(GO) install github.com/google/addlicense
+	$(GO) install github.com/google/addlicense@latest
 	@$(ADDLICENSE) -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 security:
