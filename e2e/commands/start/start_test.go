@@ -439,4 +439,20 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).NotTo(ContainSubstring("Horusec not show info vulnerabilities in this analysis"))
 		})
 	})
+
+	When("--container-bind-project-path is passed", func() {
+		filePathAnalyzed := filepath.Join(os.TempDir(), "test.js")
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:              testutil.JavaScriptExample4,
+				testutil.StartFlagContainerBindProjectPath: os.TempDir(),
+			}
+		})
+
+		It("Checks if container bind project path property was set.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("File: %s", filePathAnalyzed)))
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"container_bind_project_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(os.TempDir()))))
+		})
+	})
 })
