@@ -16,7 +16,7 @@ package nancy
 
 import (
 	"encoding/json"
-	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -25,15 +25,15 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy/entities"
-	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy/enums"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
+
+const goModulesExt = ".mod"
 
 type Formatter struct {
 	formatters.IService
@@ -71,7 +71,7 @@ func (f *Formatter) startNancy(projectSubPath string) error {
 }
 
 func (f *Formatter) processOutput(output, projectSubPath string) error {
-	analysis := &entities.Analysis{}
+	var analysis *nancyAnalysis
 
 	if err := json.Unmarshal([]byte(f.getOutputText(output)), &analysis); err != nil {
 		return err
@@ -79,14 +79,15 @@ func (f *Formatter) processOutput(output, projectSubPath string) error {
 
 	for _, vulnerable := range analysis.Vulnerable {
 		f.AddNewVulnerabilityIntoAnalysis(
-			f.setVulnerabilityData(vulnerable.GetVulnerability(), vulnerable, projectSubPath))
+			f.newVulnerability(vulnerable.getVulnerability(), vulnerable, projectSubPath),
+		)
 	}
 
 	return nil
 }
 
 func (f *Formatter) getOutputText(output string) string {
-	index := strings.Index(output, enums.JSONIndex)
+	index := strings.Index(output, "{")
 	if index < 0 {
 		return output
 	}
@@ -94,38 +95,42 @@ func (f *Formatter) getOutputText(output string) string {
 	return output[index:]
 }
 
-func (f *Formatter) setVulnerabilityData(vulnData *entities.Vulnerability,
-	vulnerable *entities.Vulnerable, projectSubPath string) *vulnerability.Vulnerability {
-	code, filepath, line := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, enums.GoModulesExt, vulnerable.GetDependency())
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Severity = vulnData.GetSeverity()
-	vuln.Details = vulnData.GetDescription()
-	vuln.Confidence = confidence.High
-	vuln.Code = code
-	vuln.Line = line
-	vuln.File = f.removeHorusecFolder(filepath)
-	vuln = vulnHash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
+// nolint:funlen
+func (f *Formatter) newVulnerability(
+	vulnData *nancyVulnerability,
+	vulnerable *nancyVulnerable,
+	projectSubPath string,
+) *vulnerability.Vulnerability {
+	code, filePath, line := file.GetDependencyCodeFilepathAndLine(
+		f.GetConfigProjectPath(), projectSubPath, goModulesExt, vulnerable.getDependency(),
+	)
+
+	vuln := &vulnerability.Vulnerability{
+		Language:     languages.Go,
+		SecurityTool: tools.Nancy,
+		Severity:     vulnData.getSeverity(),
+		Details:      vulnData.getDescription(),
+		Confidence:   confidence.High,
+		Code:         code,
+		Line:         line,
+		File:         f.removeHorusecFolder(filePath),
+	}
+	return f.SetCommitAuthor(vulnHash.Bind(vuln))
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.Language = languages.Go
-	vulnerabilitySeverity.SecurityTool = tools.Nancy
-	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, enums.GoModulesExt), tools.Nancy),
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
+		CMD: f.AddWorkDirInCmd(
+			CMD,
+			file.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, goModulesExt),
+			tools.Nancy,
+		),
 		Language: languages.Go,
 	}
 
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Go), images.Go)
 }
 
-func (f *Formatter) removeHorusecFolder(filepath string) string {
-	return strings.ReplaceAll(filepath, fmt.Sprintf(enums.HorusecFolder, f.GetAnalysisID()), "")
+func (f *Formatter) removeHorusecFolder(path string) string {
+	return filepath.Clean(strings.ReplaceAll(path, filepath.Join(".horusec", f.GetAnalysisID()), ""))
 }

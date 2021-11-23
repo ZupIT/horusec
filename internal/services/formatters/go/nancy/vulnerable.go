@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package nancy
 
 import (
 	"strings"
-
-	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy/enums"
 )
 
-type Vulnerable struct {
-	Vulnerabilities []*Vulnerability `json:"Vulnerabilities"`
-	Coordinates     string           `json:"Coordinates"`
+const indexDependencyVersion = "@"
+
+type nancyAnalysis struct {
+	Vulnerable []*nancyVulnerable `json:"vulnerable"`
 }
 
-func (v *Vulnerable) GetVulnerability() *Vulnerability {
+type nancyVulnerable struct {
+	Vulnerabilities []*nancyVulnerability `json:"Vulnerabilities"`
+	Coordinates     string                `json:"Coordinates"`
+}
+
+func (v *nancyVulnerable) getVulnerability() *nancyVulnerability {
 	if len(v.Vulnerabilities) > 0 {
 		return v.Vulnerabilities[0]
 	}
@@ -33,10 +37,10 @@ func (v *Vulnerable) GetVulnerability() *Vulnerability {
 	return nil
 }
 
-func (v *Vulnerable) GetDependency() string {
-	dependency := strings.ReplaceAll(v.Coordinates, enums.ReplaceDependencyText, "")
+func (v *nancyVulnerable) getDependency() string {
+	dependency := strings.ReplaceAll(v.Coordinates, replaceDependencyText, "")
 
-	index := strings.Index(dependency, enums.IndexDependencyVersion)
+	index := strings.Index(dependency, indexDependencyVersion)
 	if index < 0 {
 		return dependency
 	}

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package nancy
 
 import (
 	"testing"
@@ -22,34 +22,34 @@ import (
 
 func TestGetVulnerability(t *testing.T) {
 	t.Run("should return first vulnerability in the array", func(t *testing.T) {
-		vulnerable := Vulnerable{
-			Vulnerabilities: []*Vulnerability{{}},
+		vulnerable := nancyVulnerable{
+			Vulnerabilities: []*nancyVulnerability{{}},
 		}
 
-		assert.NotNil(t, vulnerable.GetVulnerability())
+		assert.NotNil(t, vulnerable.getVulnerability())
 	})
 
 	t.Run("should return nil when no vulnerabilities were found", func(t *testing.T) {
-		vulnerable := Vulnerable{}
+		vulnerable := nancyVulnerable{}
 
-		assert.Nil(t, vulnerable.GetVulnerability())
+		assert.Nil(t, vulnerable.getVulnerability())
 	})
 }
 
 func TestGetDependency(t *testing.T) {
 	t.Run("should success get dependency path", func(t *testing.T) {
-		vulnerable := Vulnerable{
+		vulnerable := nancyVulnerable{
 			Coordinates: "pkg:golang/test@123",
 		}
 
-		assert.Equal(t, "test", vulnerable.GetDependency())
+		assert.Equal(t, "test", vulnerable.getDependency())
 	})
 
 	t.Run("should return dependency when no version was found", func(t *testing.T) {
-		vulnerable := Vulnerable{
+		vulnerable := nancyVulnerable{
 			Coordinates: "pkg:golang/test",
 		}
 
-		assert.Equal(t, "test", vulnerable.GetDependency())
+		assert.Equal(t, "test", vulnerable.getDependency())
 	})
 }
