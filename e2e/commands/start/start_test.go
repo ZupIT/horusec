@@ -380,4 +380,17 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf("The file or folder was ignored to send analysis:[%s]", testutil.NormalizePathToAssert(fileIgnored))))
 		})
 	})
+
+	When("--enable-shellcheck is passed", func() {
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:      projectPath,
+				testutil.StartFlagEnableShellcheck: "true",
+			}
+		})
+
+		It("Checks if the enable shellcheck property was set.", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"enable_shell_check\": true`))
+		})
+	})
 })
