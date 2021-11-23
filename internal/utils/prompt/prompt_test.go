@@ -17,8 +17,9 @@ package prompt
 import (
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestPrompt_Ask(t *testing.T) {

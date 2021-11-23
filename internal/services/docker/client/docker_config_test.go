@@ -20,10 +20,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/utils/testutil"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestNewDockerAPI(t *testing.T) {
