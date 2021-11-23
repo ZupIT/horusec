@@ -53,23 +53,25 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startSobelow(projectSubPath), tools.Sobelow, projectSubPath)
+	output, err := f.startSobelow(projectSubPath)
+	f.SetAnalysisError(err, tools.Sobelow, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Sobelow, languages.Elixir)
 }
 
-func (f *Formatter) startSobelow(projectSubPath string) error {
+func (f *Formatter) startSobelow(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Sobelow, languages.Elixir)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
 	if strings.Contains(output, NotAPhoenixApplication) {
-		return ErrorNotAPhoenixApplication
+		return output, ErrorNotAPhoenixApplication
 	}
 
-	return f.parseOutput(output, projectSubPath)
+	f.parseOutput(output, projectSubPath)
+	return output, nil
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
@@ -81,7 +83,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
-func (f *Formatter) parseOutput(output, projectSubPath string) error {
+func (f *Formatter) parseOutput(output, projectSubPath string) {
 	const replaceDefaultMessage = "Checking Sobelow version..."
 	output = strings.ReplaceAll(strings.ReplaceAll(output, replaceDefaultMessage, ""), "\r", "")
 
@@ -94,8 +96,6 @@ func (f *Formatter) parseOutput(output, projectSubPath string) error {
 			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(data, projectSubPath))
 		}
 	}
-
-	return nil
 }
 
 func (f *Formatter) setOutputData(output string) *entities.Output {

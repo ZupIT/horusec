@@ -47,19 +47,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startDependencyCheck(projectSubPath), tools.OwaspDependencyCheck, projectSubPath)
+	output, err := f.startDependencyCheck(projectSubPath)
+	f.SetAnalysisError(err, tools.OwaspDependencyCheck, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.OwaspDependencyCheck, languages.Generic)
 }
 
-func (f *Formatter) startDependencyCheck(projectSubPath string) error {
+func (f *Formatter) startDependencyCheck(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.OwaspDependencyCheck, languages.Generic)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {

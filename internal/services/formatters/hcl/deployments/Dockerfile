@@ -12,9 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10.0-alpine
+FROM python:3.10.0-alpine3.14
 
 RUN apk add --quiet --no-cache wget
 
 RUN wget -O /usr/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v0.55.1/tfsec-linux-amd64 && chmod +x /usr/bin/tfsec
-RUN pip3 install --upgrade pip==21.2.4 && pip3 install --upgrade setuptools==57.4.0 && pip3 install checkov==2.0.474
+
+# This installation is necessary if we can usage checkov tool
+# See more details in: https://github.com/bridgecrewio/checkov/issues/1947
+RUN pip install --upgrade pip==21.3.1 && pip install --upgrade setuptools==59.1.1
+RUN apk add --no-cache --virtual .build_deps build-base libffi-dev \
+ && pip install --no-cache-dir -U checkov \
+ && apk del .build_deps
+
+

@@ -113,12 +113,12 @@ func (s *Service) GetAnalysisID() string {
 	return s.analysis.GetIDString()
 }
 
-func (s *Service) SetAnalysisError(err error, tool tools.Tool, projectSubPath string) {
+func (s *Service) SetAnalysisError(err error, tool tools.Tool, output, projectSubPath string) {
 	if err != nil {
 		s.mutex.Lock()
 		defer s.mutex.Unlock()
 		s.addAnalysisError(err)
-		msg := s.GetAnalysisIDErrorMessage(tool, "")
+		msg := s.GetAnalysisIDErrorMessage(tool, output)
 		if projectSubPath != "" {
 			msg += " | ProjectSubPath -> " + projectSubPath
 		}

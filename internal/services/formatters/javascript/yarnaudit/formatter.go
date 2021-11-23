@@ -54,19 +54,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startYarnAudit(projectSubPath), tools.YarnAudit, projectSubPath)
+	output, err := f.startYarnAudit(projectSubPath)
+	f.SetAnalysisError(err, tools.YarnAudit, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.YarnAudit, languages.Javascript)
 }
 
-func (f *Formatter) startYarnAudit(projectSubPath string) error {
+func (f *Formatter) startYarnAudit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.YarnAudit, languages.Javascript)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output, projectSubPath)
+	return output, f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -119,11 +120,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 		return &entities.Output{}, nil
 	}
 
-	if err = json.Unmarshal([]byte(containerOutput), &output); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.YarnAudit, containerOutput), err)
-	}
-
-	return output, err
+	return output, json.Unmarshal([]byte(containerOutput), &output)
 }
 
 func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {

@@ -68,7 +68,7 @@ func (m *FormatterMock) GetConfigProjectPath() string {
 	return args.Get(0).(string)
 }
 
-func (m *FormatterMock) SetAnalysisError(_ error, _ tools.Tool, _ string) {
+func (m *FormatterMock) SetAnalysisError(_ error, _ tools.Tool, _, _ string) {
 	_ = m.MethodCalled("SetAnalysisError")
 }
 

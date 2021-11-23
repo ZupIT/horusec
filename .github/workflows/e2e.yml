@@ -24,6 +24,9 @@ on:
 permissions: read-all
 jobs:
   test:
+    permissions:
+      contents: write
+      packages: write
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -38,6 +41,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: true
 
       - name: Setup Golang
@@ -50,6 +54,14 @@ jobs:
         uses: docker-practice/actions-setup-docker@master
         with:
           docker_buildx: false
-
-      - name: Run e2e test for ${{ matrix.os }}
-        run: go test -v ./e2e/... -timeout 60m -failfast -race
+      - name: Build local images
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: sh ./deployments/scripts/build-all-tools.sh
+      - name: Run e2e analysis test for ${{ matrix.os }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: go test -v ./e2e/analysis/... -timeout 60m -failfast -race
+      - name: Run e2e commands test for ${{ matrix.os }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: go test -v ./e2e/commands/... -timeout 60m -failfast -race

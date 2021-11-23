@@ -15,6 +15,7 @@
 package languagedetect
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -32,6 +33,8 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/utils/copy"
 )
+
+const prefixGitSubModule = "gitdir: "
 
 type LanguageDetect struct {
 	configs    *config.Config
@@ -163,19 +166,20 @@ func (ld *LanguageDetect) checkFileExtensionInvalid(path string) bool {
 	return false
 }
 
+// nolint:funlen // method is not necessary broken
 func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 	folderDstName := filepath.Join(directory, ".horusec", ld.analysisID.String())
 	err := copy.Copy(directory, folderDstName, ld.filesAndFoldersToIgnore)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
-	} else {
-		fmt.Print("\n")
-		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgWarnMonitorTimeoutIn, ld.configs.TimeoutInSecondsAnalysis))
-		fmt.Print("\n")
-		logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, folderDstName)
-		fmt.Print("\n")
+		return err
 	}
-	return err
+	fmt.Print("\n")
+	logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgWarnMonitorTimeoutIn, ld.configs.TimeoutInSecondsAnalysis))
+	fmt.Print("\n")
+	logger.LogWarnWithLevel(messages.MsgWarnDontRemoveHorusecFolder, folderDstName)
+	fmt.Print("\n")
+	return ld.copyGitFolderWhenIsSubmodule(directory, folderDstName)
 }
 
 func (ld *LanguageDetect) filterSupportedLanguages(langs []string) (onlySupportedLangs []languages.Language) {
@@ -234,4 +238,74 @@ func (ld *LanguageDetect) isCPlusPLusOrCLang(lang string) bool {
 func (ld *LanguageDetect) isBatFileOrShellFile(lang string) bool {
 	return strings.EqualFold(lang, "Batchfile") ||
 		strings.EqualFold(lang, "Shell")
+}
+
+// copyGitFolderWhenIsSubmodule check if the analysis is running with GitHistory enabled,
+// If so, we also check whether the .git is a submodule or not,
+// so we can find where the original git folder is
+// and replace it inside .horusec to run the gitleaks tool without any problems.
+//nolint:funlen
+func (ld *LanguageDetect) copyGitFolderWhenIsSubmodule(directory, folderDstName string) error {
+	if ld.configs.EnableGitHistoryAnalysis {
+		isGitSubmodule, originalFolderPath := ld.returnGitFolderOriginalIfIsSubmodule(filepath.Join(directory, ".git"))
+		if isGitSubmodule {
+			logger.LogErrorWithLevel(
+				messages.MsgErrorCopyProjectToHorusecAnalysis,
+				os.RemoveAll(filepath.Join(folderDstName, ".git")),
+			)
+
+			err := copy.Copy(
+				filepath.Join(directory, originalFolderPath),
+				filepath.Join(folderDstName, ".git"),
+				func(src string) bool { return false },
+			)
+			if err != nil {
+				logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+//nolint:funlen // lines is not necessary broken
+func (ld *LanguageDetect) returnGitFolderOriginalIfIsSubmodule(directory string) (bool, string) {
+	fileInfo, err := os.Stat(directory)
+	if err != nil {
+		logger.LogError(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
+		return false, ""
+	}
+	if fileInfo.IsDir() {
+		return false, ""
+	}
+	fileContentBytes, err := os.ReadFile(directory)
+	if err != nil {
+		logger.LogError(messages.MsgErrorCopyProjectToHorusecAnalysis, err)
+		return false, ""
+	}
+	return ld.validateSubModuleContent(fileContentBytes)
+}
+
+func (ld *LanguageDetect) validateSubModuleContent(fileContentBytes []byte) (bool, string) {
+	var fileContent string
+	if fileContentBytes != nil {
+		fileContent = string(fileContentBytes)
+	}
+	if !strings.HasPrefix(fileContent, prefixGitSubModule) {
+		logger.LogErrorWithLevel(messages.MsgErrorCopyProjectToHorusecAnalysis,
+			errors.New("file content wrong: "+fileContent))
+		return false, ""
+	}
+
+	return true, ld.extractGitSubmoduleCorrectlyPath(fileContent)
+}
+
+// extractGitSubmoduleCorrectlyPath contains the logic for get correctly path
+// from content of the symbolic link in git submodules.
+// Its value is expected to be something like this "gitdir: ../.git/modules/examples".
+// Then is prefix is removed and path returned for join with project path
+func (ld *LanguageDetect) extractGitSubmoduleCorrectlyPath(fileContent string) string {
+	prefix := len(prefixGitSubModule)
+	suffix := len(fileContent) - 1
+	return fileContent[prefix:suffix]
 }

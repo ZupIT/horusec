@@ -52,19 +52,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startNpmAudit(projectSubPath), tools.NpmAudit, projectSubPath)
+	output, err := f.startNpmAudit(projectSubPath)
+	f.SetAnalysisError(err, tools.NpmAudit, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.NpmAudit, languages.Javascript)
 }
 
-func (f *Formatter) startNpmAudit(projectSubPath string) error {
+func (f *Formatter) startNpmAudit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.NpmAudit, languages.Javascript)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output, projectSubPath)
+	return output, f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -104,11 +105,7 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 		return &entities.Output{}, nil
 	}
 
-	if err = json.Unmarshal([]byte(containerOutput), &output); err != nil {
-		logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.NpmAudit, containerOutput), err)
-	}
-
-	return output, err
+	return output, json.Unmarshal([]byte(containerOutput), &output)
 }
 
 func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {

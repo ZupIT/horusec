@@ -54,24 +54,24 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startBundlerAudit(projectSubPath), tools.BundlerAudit, projectSubPath)
+	output, err := f.startBundlerAudit(projectSubPath)
+	f.SetAnalysisError(err, tools.BundlerAudit, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.BundlerAudit, languages.Ruby)
 }
 
-func (f *Formatter) startBundlerAudit(projectSubPath string) error {
+func (f *Formatter) startBundlerAudit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.BundlerAudit, languages.Ruby)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
 	if errGemLock := f.verifyGemLockError(output); errGemLock != nil {
-		return errGemLock
+		return output, errGemLock
 	}
-
 	f.parseOutput(f.removeOutputEsc(output), projectSubPath)
-	return nil
+	return "", nil
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {

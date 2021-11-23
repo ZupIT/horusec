@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -277,6 +278,7 @@ func (d *API) getContainerConfig(imageNameWithTag, cmd string) *container.Config
 		Image: imageNameWithTag,
 		Tty:   true,
 		Cmd:   []string{"/bin/sh", "-c", fmt.Sprintf(`cd %s && %s`, d.pathDestinyInContainer, cmd)},
+		Env:   []string{fmt.Sprintf("GITHUB_TOKEN=%s", os.Getenv("GITHUB_TOKEN"))},
 	}
 }
 

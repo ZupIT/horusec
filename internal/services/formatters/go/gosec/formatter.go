@@ -50,19 +50,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startGoSec(projectSubPath), tools.GoSec, projectSubPath)
+	output, err := f.startGoSec(projectSubPath)
+	f.SetAnalysisError(err, tools.GoSec, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GoSec, languages.Go)
 }
 
-func (f *Formatter) startGoSec(projectSubPath string) error {
+func (f *Formatter) startGoSec(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GoSec, languages.Go)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.processOutput(output)
+	return "", f.processOutput(output)
 }
 
 // nolint: funlen

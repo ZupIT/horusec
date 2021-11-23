@@ -49,19 +49,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startPhpCs(projectSubPath), tools.PhpCS, projectSubPath)
+	output, err := f.startPhpCs(projectSubPath)
+	f.SetAnalysisError(err, tools.PhpCS, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.PhpCS, languages.PHP)
 }
 
-func (f *Formatter) startPhpCs(projectSubPath string) error {
+func (f *Formatter) startPhpCs(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.PhpCS, languages.PHP)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {

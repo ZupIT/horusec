@@ -61,16 +61,17 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startTrivy(projectSubPath), tools.Trivy, projectSubPath)
-	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Trivy, images.Generic)
+	output, err := f.startTrivy(projectSubPath)
+	f.SetAnalysisError(err, tools.Trivy, output, projectSubPath)
+	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Trivy, languages.Generic)
 }
 
-func (f *Formatter) startTrivy(projectSubPath string) error {
-	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Trivy, images.Generic)
+func (f *Formatter) startTrivy(projectSubPath string) (string, error) {
+	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Trivy, languages.Generic)
 
 	configOutput, fileSystemOutput, err := f.executeContainers(projectSubPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	return f.parse(projectSubPath, configOutput, fileSystemOutput)
@@ -116,24 +117,24 @@ func (f *Formatter) executeContainers(projectSubPath string) (string, string, er
 	return result.config, result.fs, result.err
 }
 
-func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string) error {
+func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string) (string, error) {
 	if err := f.parseOutput(configOutput, CmdConfig, projectSubPath); err != nil {
-		return err
+		return configOutput, err
 	}
 
-	return f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
+	return fileSystemOutput, f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
 
-func (f *Formatter) getDockerConfig(cmd Cmd, projectSubPath string) *dockerEntities.AnalysisData {
+func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(cmd.ToString(), projectSubPath, tools.Trivy),
+		CMD:      f.AddWorkDirInCmd(cmd, projectSubPath, tools.Trivy),
 		Language: languages.Generic,
 	}
 
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
-func (f *Formatter) parseOutput(output string, cmd Cmd, projectSubPath string) error {
+func (f *Formatter) parseOutput(output, cmd, projectSubPath string) error {
 	report := &entities.Output{}
 
 	if output == "" {
@@ -151,7 +152,7 @@ func (f *Formatter) parseOutput(output string, cmd Cmd, projectSubPath string) e
 	return nil
 }
 
-func (f *Formatter) setVulnerabilities(cmd Cmd, result *entities.Result, path string) {
+func (f *Formatter) setVulnerabilities(cmd string, result *entities.Result, path string) {
 	switch cmd {
 	case CmdFs:
 		f.setVulnerabilitiesOutput(result.Vulnerabilities, path)

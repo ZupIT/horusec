@@ -54,24 +54,30 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startSecurityCodeScan(projectSubPath), tools.SecurityCodeScan, projectSubPath)
+	output, err := f.startSecurityCodeScan(projectSubPath)
+	f.SetAnalysisError(err, tools.SecurityCodeScan, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan, languages.CSharp)
 }
 
-func (f *Formatter) startSecurityCodeScan(projectSubPath string) error {
+//nolint:funlen
+func (f *Formatter) startSecurityCodeScan(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan, languages.CSharp)
 
 	analysisData := f.getDockerConfig(projectSubPath)
 	if err := f.verifyIsSolutionError(analysisData.CMD); err != nil {
-		return err
+		return analysisData.CMD, err
 	}
 
-	output, err := f.CheckOutputErrors(f.ExecuteContainer(analysisData))
+	outputContainer, err := f.ExecuteContainer(analysisData)
 	if err != nil {
-		return err
+		return "", err
+	}
+	output, err := f.CheckOutputErrors(outputContainer, err)
+	if err != nil {
+		return outputContainer, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) parseOutput(output string) error {

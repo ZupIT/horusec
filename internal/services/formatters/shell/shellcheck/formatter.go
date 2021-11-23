@@ -51,19 +51,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startShellCheck(projectSubPath), tools.ShellCheck, projectSubPath)
+	output, err := f.startShellCheck(projectSubPath)
+	f.SetAnalysisError(err, tools.ShellCheck, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.ShellCheck, languages.Shell)
 }
 
-func (f *Formatter) startShellCheck(projectSubPath string) error {
+func (f *Formatter) startShellCheck(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.ShellCheck, languages.Shell)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) parseOutput(containerOutput string) error {
@@ -90,7 +91,6 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	containerOutput = strings.ReplaceAll(containerOutput, NotFoundFiles, "")
 
 	err = json.Unmarshal([]byte(containerOutput), &output)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.ShellCheck, containerOutput), err)
 	return output, err
 }
 

@@ -50,19 +50,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startCheckov(projectSubPath), tools.Checkov, projectSubPath)
+	output, err := f.startCheckov(projectSubPath)
+	f.SetAnalysisError(err, tools.Checkov, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Checkov, languages.HCL)
 }
 
-func (f *Formatter) startCheckov(projectSubPath string) error {
+func (f *Formatter) startCheckov(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Checkov, languages.HCL)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {

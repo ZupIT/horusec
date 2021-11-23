@@ -59,7 +59,7 @@ type IService interface {
 	GetConfigProjectPath() string
 
 	// SetAnalysisError add an error from a tool to current analysis.
-	SetAnalysisError(err error, tool tools.Tool, projectSubPath string)
+	SetAnalysisError(err error, tool tools.Tool, output, projectSubPath string)
 
 	// RemoveSrcFolderFromPath remove src prefix from filepath.
 	RemoveSrcFolderFromPath(filepath string) string

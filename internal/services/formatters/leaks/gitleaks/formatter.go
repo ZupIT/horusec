@@ -51,19 +51,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startGitLeaks(projectSubPath), tools.GitLeaks, projectSubPath)
+	output, err := f.startGitLeaks(projectSubPath)
+	f.SetAnalysisError(err, tools.GitLeaks, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.GitLeaks, languages.Leaks)
 }
 
-func (f *Formatter) startGitLeaks(projectSubPath string) error {
+func (f *Formatter) startGitLeaks(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.GitLeaks, languages.Leaks)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.formatOutputGitLeaks(output)
+	return output, f.formatOutputGitLeaks(output)
 }
 
 func (f *Formatter) formatOutputGitLeaks(output string) error {
@@ -89,7 +90,6 @@ func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error)
 	if err != nil && strings.Contains(err.Error(), "invalid character") {
 		err = errors.New(output)
 	}
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.GitLeaks, output), err)
 	return issues, err
 }
 

@@ -56,20 +56,18 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startSafety(projectSubPath), tools.Safety, projectSubPath)
+	output, err := f.startSafety(projectSubPath)
+	f.SetAnalysisError(err, tools.Safety, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Safety, languages.Python)
 }
 
-func (f *Formatter) startSafety(projectSubPath string) error {
+func (f *Formatter) startSafety(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Safety, languages.Python)
-
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
-
-	f.parseOutput(output, projectSubPath)
-	return nil
+	return "", f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -82,26 +80,25 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
-func (f *Formatter) parseOutput(output, projectSubPath string) {
+func (f *Formatter) parseOutput(output, projectSubPath string) error {
 	if output == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.Safety.ToString()})
-		return
+		return nil
 	}
 	if len(output) >= 19 && strings.EqualFold(output[:19], "ERROR_REQ_NOT_FOUND") {
-		f.SetAnalysisError(errors.New(messages.MsgErrorNotFoundRequirementsTxt), tools.Safety, projectSubPath)
-		return
+		return errors.New(messages.MsgErrorNotFoundRequirementsTxt)
 	}
 	safetyOutput, err := f.parseOutputToSafetyOutput(output)
 	if err != nil {
-		return
+		return err
 	}
 	f.setSafetyOutPutInHorusecAnalysis(safetyOutput.Issues, projectSubPath)
+	return nil
 }
 
 func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entities.SafetyOutput, err error) {
 	err = json.Unmarshal([]byte(output), &safetyOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Safety, output), err)
 	return safetyOutput, err
 }
 

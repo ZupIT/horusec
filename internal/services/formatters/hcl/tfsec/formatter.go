@@ -49,19 +49,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startTfSec(projectSubPath), tools.TfSec, projectSubPath)
+	output, err := f.startTfSec(projectSubPath)
+	f.SetAnalysisError(err, tools.TfSec, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.TfSec, languages.HCL)
 }
 
-func (f *Formatter) startTfSec(projectSubPath string) error {
+func (f *Formatter) startTfSec(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.TfSec, languages.HCL)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {

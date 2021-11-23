@@ -49,20 +49,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startBandit(projectSubPath), tools.Bandit, projectSubPath)
+	output, err := f.startBandit(projectSubPath)
+	f.SetAnalysisError(err, tools.Bandit, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Bandit, languages.Python)
 }
 
-func (f *Formatter) startBandit(projectSubPath string) error {
+func (f *Formatter) startBandit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Bandit, languages.Python)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	f.parseOutput(output)
-	return nil
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -74,24 +74,24 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Python), images.Python)
 }
 
-func (f *Formatter) parseOutput(output string) {
+func (f *Formatter) parseOutput(output string) error {
 	if output == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
 			map[string]interface{}{"tool": tools.Bandit.ToString()})
-		return
+		return nil
 	}
 
 	banditOutput, err := f.parseOutputToBanditOutput(output)
 	if err != nil {
-		return
+		return err
 	}
 
 	f.setBanditOutPutInHorusecAnalysis(banditOutput.Results)
+	return nil
 }
 
 func (f *Formatter) parseOutputToBanditOutput(output string) (banditOutput entities.BanditOutput, err error) {
 	err = json.Unmarshal([]byte(output), &banditOutput)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Bandit, output), err)
 	return banditOutput, err
 }
 

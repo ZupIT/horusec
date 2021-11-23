@@ -128,7 +128,7 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		_ = mock.GetCommitAuthor("", "")
 		_ = mock.AddWorkDirInCmd("", "", "")
 		_ = mock.GetConfigProjectPath()
-		mock.SetAnalysisError(errors.New(""), "", "")
+		mock.SetAnalysisError(errors.New(""), "", "", "")
 		_ = mock.RemoveSrcFolderFromPath("")
 		_ = mock.GetCodeWithMaxCharacters("", 0)
 	})
@@ -279,10 +279,10 @@ func TestLogAnalysisError(t *testing.T) {
 		logger.LogSetOutput(stdOutMock)
 		logger.SetLogLevel("debug")
 		assert.NotPanics(t, func() {
-			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "")
-			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "")
+			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "container err", "")
+			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "container err", "")
 		})
-		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> `)
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err`)
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
@@ -290,10 +290,10 @@ func TestLogAnalysisError(t *testing.T) {
 		logger.LogSetOutput(stdOutMock)
 		logger.SetLogLevel("debug")
 		assert.NotPanics(t, func() {
-			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "/tmp")
-			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "/tmp")
+			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "container err", "/tmp")
+			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "container err", "/tmp")
 		})
-		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output ->  | ProjectSubPath -> /tmp - test"`)
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err | ProjectSubPath -> /tmp - test"`)
 	})
 }
 

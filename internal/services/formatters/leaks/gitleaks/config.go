@@ -17,6 +17,9 @@ package gitleaks
 
 const CMD = `
 		{{WORK_DIR}}
-		gitleaks --config-path /rules/rules.toml --path . --leaks-exit-code 0 --format json --report /tmp/leaks-result.json &> /tmp/leaks-runner-output.txt
-		cat /tmp/leaks-result.json
+		if ! gitleaks --config-path /rules/rules.toml --path . --leaks-exit-code 0 --format json --report /tmp/leaks-result.json &> /tmp/leaks-runner-output.txt; then
+			echo /tmp/leaks-runner-output.txt
+		else
+			cat /tmp/leaks-result.json
+		fi
   `

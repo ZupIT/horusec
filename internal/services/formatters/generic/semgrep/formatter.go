@@ -50,19 +50,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startSemgrep(projectSubPath), tools.SecurityCodeScan, projectSubPath)
+	output, err := f.startSemgrep(projectSubPath)
+	f.SetAnalysisError(err, tools.SecurityCodeScan, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep, languages.Generic)
 }
 
-func (f *Formatter) startSemgrep(projectSubPath string) error {
+func (f *Formatter) startSemgrep(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Semgrep, languages.Generic)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output)
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {

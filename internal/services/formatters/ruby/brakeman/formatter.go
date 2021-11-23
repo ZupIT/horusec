@@ -49,19 +49,20 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startBrakeman(projectSubPath), tools.Brakeman, projectSubPath)
+	output, err := f.startBrakeman(projectSubPath)
+	f.SetAnalysisError(err, tools.Brakeman, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Brakeman, languages.Ruby)
 }
 
-func (f *Formatter) startBrakeman(projectSubPath string) error {
+func (f *Formatter) startBrakeman(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman, languages.Ruby)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
-	return f.parseOutput(output, projectSubPath)
+	return output, f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
@@ -88,7 +89,6 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	}
 
 	err = json.Unmarshal([]byte(containerOutput), &output)
-	logger.LogErrorWithLevel(f.GetAnalysisIDErrorMessage(tools.Brakeman, containerOutput), err)
 	return output, err
 }
 

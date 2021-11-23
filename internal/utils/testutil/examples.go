@@ -24,7 +24,7 @@ import (
 
 const (
 	// AverageTimeoutAnalyzeForExamplesFolder Average timeout for analysis in the example directory
-	AverageTimeoutAnalyzeForExamplesFolder = time.Minute * 15
+	AverageTimeoutAnalyzeForExamplesFolder = time.Minute * 30
 )
 
 var (
@@ -33,6 +33,11 @@ var (
 
 	// ExamplesPath represents the entire examples directory.
 	ExamplesPath = filepath.Join(RootPath, "examples")
+
+	// nolint:golint
+	// C-Lang Example represents the entire c-lang examples directory.
+	CExample  = filepath.Join(ExamplesPath, "c")
+	CExample1 = filepath.Join(CExample, "example1")
 
 	// CsharpExample represents the entire C# examples directory.
 	CsharpExample  = filepath.Join(ExamplesPath, "csharp")

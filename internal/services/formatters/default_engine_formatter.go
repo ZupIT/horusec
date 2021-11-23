@@ -48,7 +48,7 @@ func (f *DefaultFormatter) StartAnalysis(src string) {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.HorusecEngine.ToString())
 		return
 	}
-	f.svc.SetAnalysisError(f.execEngineAndParseResults(src), tools.HorusecEngine, src)
+	f.svc.SetAnalysisError(f.execEngineAndParseResults(src), tools.HorusecEngine, "", src)
 	f.svc.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, f.language)
 }
 

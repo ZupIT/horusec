@@ -34,23 +34,26 @@ test:
 	$(GO) test -v $(GO_LIST_TO_TEST) -race -timeout=5m -parallel=1 -failfast -short
 
 test-e2e:
+	sh ./deployments/scripts/build-all-tools.sh
 	$(GO) clean -testcache
-	$(GO) test -v ./e2e/... -timeout=10m -parallel=1 -failfast
+	$(GO) test -v ./e2e/analysis/... -timeout=30m -parallel=1 -failfast
+	$(GO) clean -testcache
+	$(GO) test -v ./e2e/commands/... -timeout=30m -parallel=1 -failfast
 
 fix-imports:
     ifeq (, $(shell which $(GO_IMPORTS)))
-		$(GO) get -u golang.org/x/tools/cmd/goimports
+		$(GO) install golang.org/x/tools/cmd/goimports
 		$(GO_IMPORTS) -local $(GO_IMPORTS_LOCAL) -w $(GO_FILES)
     else
 		$(GO_IMPORTS) -local $(GO_IMPORTS_LOCAL) -w $(GO_FILES)
     endif
 
 license:
-	$(GO) get -u github.com/google/addlicense
+	$(GO) install github.com/google/addlicense
 	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
-	$(GO) get -u github.com/google/addlicense
+	$(GO) install github.com/google/addlicense
 	@$(ADDLICENSE) -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 security:

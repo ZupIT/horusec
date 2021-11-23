@@ -51,23 +51,24 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	f.SetAnalysisError(f.startNancy(projectSubPath), tools.Nancy, projectSubPath)
+	output, err := f.startNancy(projectSubPath)
+	f.SetAnalysisError(err, tools.Nancy, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Nancy, languages.Go)
 }
 
-func (f *Formatter) startNancy(projectSubPath string) error {
+func (f *Formatter) startNancy(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Nancy, languages.Go)
 
 	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
 	if err != nil {
-		return err
+		return output, err
 	}
 
 	if output == "" {
-		return nil
+		return output, nil
 	}
 
-	return f.processOutput(output, projectSubPath)
+	return output, f.processOutput(output, projectSubPath)
 }
 
 func (f *Formatter) processOutput(output, projectSubPath string) error {
