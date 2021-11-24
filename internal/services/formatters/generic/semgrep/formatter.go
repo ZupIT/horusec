@@ -28,10 +28,9 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep/entities"
 )
 
 type Formatter struct {
@@ -66,8 +65,8 @@ func (f *Formatter) startSemgrep(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Semgrep),
 		Language: languages.Generic,
 	}
@@ -76,7 +75,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var analysis *entities.Analysis
+	var analysis *sgAnalysis
 
 	if err := json.Unmarshal([]byte(output), &analysis); err != nil {
 		return err
@@ -84,36 +83,30 @@ func (f *Formatter) parseOutput(output string) error {
 
 	for _, result := range analysis.Results {
 		item := result
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(&item))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerabilityFromResult(&item))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability.Vulnerability {
-	data := f.getDefaultVulnerabilityData()
-	data.Details = result.Extra.Message
-	data.Severity = f.getSeverity(result.Extra.Severity)
-	data.Line = strconv.Itoa(result.Start.Line)
-	data.Column = strconv.Itoa(result.Start.Col)
-	data.File = result.Path
-	data.Code = f.GetCodeWithMaxCharacters(result.Extra.Code, 0)
-	data.Language = f.getLanguageByFile(result.Path)
-	data = vulnhash.Bind(data)
-	return f.SetCommitAuthor(data)
-}
-
-func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.Semgrep
-	return vulnerabilitySeverity
+func (f *Formatter) newVulnerabilityFromResult(result *sgResult) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.Semgrep,
+		Details:      result.Extra.Message,
+		Severity:     f.getSeverity(result.Extra.Severity),
+		Line:         strconv.Itoa(result.Start.Line),
+		Column:       strconv.Itoa(result.Start.Col),
+		File:         result.Path,
+		Code:         f.GetCodeWithMaxCharacters(result.Extra.Code, 0),
+		Language:     f.getLanguageByFile(result.Path),
+	}
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
 
 func (f *Formatter) getLanguageByFile(file string) languages.Language {
 	if language, ok := f.getLanguagesMap()[filepath.Ext(file)]; ok {
 		return language
 	}
-
 	return languages.Unknown
 }
 
@@ -139,6 +132,5 @@ func (f *Formatter) getSeverity(resultSeverity string) severities.Severity {
 	case "WARNING":
 		return severities.Medium
 	}
-
 	return severities.Low
 }

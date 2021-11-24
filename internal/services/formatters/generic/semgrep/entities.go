@@ -12,8 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package semgrep
 
-type Analysis struct {
-	Results []Result `json:"results"`
+type sgAnalysis struct {
+	Results []sgResult `json:"results"`
+}
+
+type sgPosition struct {
+	Line int `json:"line"`
+	Col  int `json:"col"`
+}
+
+type sgResult struct {
+	CheckID string     `json:"check_id"`
+	Path    string     `json:"path"`
+	Start   sgPosition `json:"start"`
+	End     sgPosition `json:"end"`
+	Extra   sgExtra    `json:"extra"`
+}
+
+type sgExtra struct {
+	Message  string `json:"message"`
+	Severity string `json:"severity"`
+	Code     string `json:"lines"`
 }
