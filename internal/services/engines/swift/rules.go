@@ -23,22 +23,25 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewSQLiteDatabase() text.TextRule {
-	return text.TextRule{
-		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-1",
-			Name:        "SQLite Database",
-			Description: "App uses SQLite Database. Sensitive Information should be encrypted.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
-		},
-		Type: text.AndMatch,
-		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`sqlite3_exec`),
-			regexp.MustCompile(`sqlite3_finalize`),
-		},
-	}
-}
+// Deprecated: This rule is not usage really in any swift project,
+// because when use sqlite3_exec internally it's running the commands sqlite3_prepare_v2, sqlite3_step, sqlite3_finalize
+// then is not necessary use sqlite3_finalize and this rule not will get anywhere vulnerability
+//func NewSQLiteDatabase() text.TextRule {
+//	return text.TextRule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-SWIFT-1",
+//			Name:        "SQLite Database",
+//			Description: "App uses SQLite Database. Sensitive Information should be encrypted.",
+//			Severity:    severities.Medium.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`sqlite3_exec`),
+//			regexp.MustCompile(`sqlite3_finalize`),
+//		},
+//	}
+//}
 
 func NewCoreDataDatabase() text.TextRule {
 	return text.TextRule{
@@ -449,6 +452,22 @@ func NewMD2Collision() text.TextRule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CC_MD2\(`),
+		},
+	}
+}
+
+func NewSQLInjection() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "HS-SWIFT-24",
+			Name:        "SQL Injection",
+			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.Regular,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)((sqlite3_exec|executeChange|raw)\(.?((.*|\n)*)?)?(select|update|insert|delete)((.*|\n)*)?.*((["|']*)(\s?)(\+))`),
 		},
 	}
 }

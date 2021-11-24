@@ -114,7 +114,7 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
 	}
 }
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-5
+// Deprecated: Repeated vulnerability, same as HS-JAVA-5
 //
 //func NewXMLParsingVulnerableToXXEWithSchemaFactory() text.TextRule {
 //	return text.TextRule{
@@ -272,7 +272,7 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 	}
 }
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-14
+// Deprecated: Repeated vulnerability, same as HS-JAVA-14
 //
 //func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
 //	return text.TextRule{
@@ -291,7 +291,7 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 //	}
 //}
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-11
+// Deprecated: Repeated vulnerability, same as HS-JAVA-11
 //
 //func NewTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
 //	return text.TextRule{
@@ -311,7 +311,7 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 //	}
 //}
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-11
+// Deprecated: Repeated vulnerability, same as HS-JAVA-11
 //
 //func NewTrustManagerThatAcceptAnyCertificatesIssuers() text.TextRule {
 //	return text.TextRule{
@@ -365,7 +365,7 @@ func NewInsecureWebViewImplementation() text.TextRule {
 	}
 }
 
-// DEPRECATED Simply using SQL Cipher does not appear to be a vulnerability, to this becomes a vulnerability will
+// Deprecated: Simply using SQL Cipher does not appear to be a vulnerability, to this becomes a vulnerability will
 // depend on what is stored, how it was stored and the sql cipher version, removed to avoid false positives.
 // reference: https://www.zetetic.net/blog/2019/08/14/defcon-sqlite-attacks/
 //
@@ -386,7 +386,7 @@ func NewInsecureWebViewImplementation() text.TextRule {
 //	}
 //}
 
-// DEPRECATED This vulnerability should search for a hardcoded secret, the actual implemented way
+// Deprecated: This vulnerability should search for a hardcoded secret, the actual implemented way
 // will only lead to false positives, leaks engine already does a search for hardcoded credentials.
 // reference: https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-6301?search=realm
 //
@@ -954,7 +954,7 @@ func NewQueryDatabaseOfSMSContacts() text.TextRule {
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewPotentialPathTraversal() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1511,7 +1511,7 @@ func NewClassesShouldNotBeLoadedDynamically() text.TextRule {
 	}
 }
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-12
+// Deprecated: Repeated vulnerability, same as HS-JAVA-12
 //
 //func NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue() text.TextRule {
 //	return text.TextRule{
@@ -1638,7 +1638,7 @@ func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.TextRule
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1690,7 +1690,7 @@ func NewLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1850,7 +1850,7 @@ func NewJARURLConnection() text.TextRule {
 	}
 }
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-23
+// Deprecated: Repeated vulnerability, same as HS-JAVA-23
 //
 //func NewSetOrReadClipboardData() text.TextRule {
 //	return text.TextRule{
@@ -1870,7 +1870,7 @@ func NewJARURLConnection() text.TextRule {
 //	}
 //}
 
-// DEPRECATED Repeated vulnerability, same as HS-JAVA-111
+// Deprecated: Repeated vulnerability, same as HS-JAVA-111
 //
 //func NewMessageDigest() text.TextRule {
 //	return text.TextRule{
