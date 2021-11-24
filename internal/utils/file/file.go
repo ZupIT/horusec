@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
 // GetPathFromFilename return the relative file path inside basePath
@@ -211,6 +212,10 @@ func getCodeFromDesiredLine(file *os.File, desiredLine int) string {
 	return ""
 }
 
+// GetDependencyCodeFilepathAndLine find a file inside projectPath + subPath with
+// ext that match the dependency name.
+//
+// Return the file, code sample and line that match the dependency name.
 func GetDependencyCodeFilepathAndLine(projectPath, subPath, ext, dependency string) (code, file, line string) {
 	paths, err := getPathsByExtension(projectPath, subPath, ext)
 	if err != nil {
@@ -237,7 +242,11 @@ func getPathsByExtension(projectPath, subPath, ext string) ([]string, error) {
 	})
 }
 
-//nolint:funlen // improve in the future
+// getDependencyInfo return the path inside paths that match the dependency.
+//
+// The line and the dependency trimmed is also returned.
+//
+//nolint:funlen,gocyclo
 func getDependencyInfo(paths []string, dependency string) (string, string, string) {
 	var line int
 
@@ -252,8 +261,16 @@ func getDependencyInfo(paths []string, dependency string) (string, string, strin
 			line++
 
 			if strings.Contains(scanner.Text(), dependency) {
+				if err := file.Close(); err != nil {
+					logger.LogError(messages.MsgErrorDeferFileClose, err)
+				}
 				return strings.TrimSpace(scanner.Text()), path, strconv.Itoa(line)
 			}
+		}
+
+		if err := file.Close(); err != nil {
+			logger.LogError(messages.MsgErrorDeferFileClose, err)
+			return "", "", ""
 		}
 	}
 
