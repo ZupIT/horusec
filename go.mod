@@ -8,7 +8,7 @@ require (
 	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/briandowns/spinner v1.16.0
 	github.com/docker/docker v20.10.9+incompatible
-	github.com/go-enry/go-enry/v2 v2.7.2
+	github.com/go-enry/go-enry/v2 v2.8.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
 	github.com/google/uuid v1.3.0
