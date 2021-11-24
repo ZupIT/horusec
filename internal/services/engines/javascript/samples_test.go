@@ -141,6 +141,17 @@ function error(err) {
 
 navigator.geolocation.getCurrentPosition(success, error, {});
 	`
+
+	SampleVulnerableHSJAVASCRIPT19 = `
+var corsOptions = {
+  origin: '*',
+}
+
+app.get('/products/:id', cors(), function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.json({msg: 'This is CORS-enabled for only domain.'});
+})
+	`
 )
 
 const (
@@ -188,5 +199,16 @@ function f() {
 	SampleSafeHSJAVASCRIPT17 = `
 app.use('/', express.static('public', { }));
 
+	`
+
+	SampleSafeHSJAVASCRIPT19 = `
+var corsOptions = {
+  origin: 'http://horusec.io',
+}
+
+app.get('/products/:id', cors(corsOptions), function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://horusec.io");
+  res.json({msg: 'This is CORS-enabled for only domain.'});
+})
 	`
 )
