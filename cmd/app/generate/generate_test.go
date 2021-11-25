@@ -31,7 +31,7 @@ import (
 
 func TestMain(m *testing.M) {
 	_ = os.RemoveAll("./tmp")
-	_ = os.MkdirAll("./tmp", 0750)
+	_ = os.MkdirAll("./tmp", 0o750)
 	code := m.Run()
 	_ = os.RemoveAll("./tmp")
 	os.Exit(code)
@@ -67,7 +67,7 @@ func TestGenerate_CreateCobraCmd(t *testing.T) {
 		// Create existing file and write empry object
 		_, err := os.Create(configs.ConfigFilePath)
 		assert.NoError(t, err)
-		fileExisting, err := os.OpenFile(configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+		fileExisting, err := os.OpenFile(configs.ConfigFilePath, os.O_CREATE|os.O_WRONLY, 0o600)
 		assert.NoError(t, err)
 		_, err = fileExisting.Write([]byte("{}"))
 		assert.NoError(t, err)

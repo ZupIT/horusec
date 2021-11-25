@@ -17,10 +17,10 @@ package trivy
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"

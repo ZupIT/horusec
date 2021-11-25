@@ -22,17 +22,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/spf13/pflag"
-
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
 	"github.com/google/uuid"
-
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/utils/copy"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 var tmpPath, _ = filepath.Abs("tmp")
@@ -174,7 +171,6 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 				analyzer.On("Analyze").Return(0, nil)
 				requirements.On("ValidateDocker")
 				requirements.On("ValidateGit")
-
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
@@ -376,7 +372,6 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			args: []string{testutil.StartFlagProjectPath, testutil.RootPath, testutil.StartFlagIgnoreSeverity, "CRITICAL, LOW"},
 			err:  false,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
-
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
 				requirements.On("ValidateDocker")
@@ -549,6 +544,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 		})
 	}
 }
+
 func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
@@ -586,7 +582,8 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cobraCmd.SetArgs([]string{
 			testutil.StartFlagProjectPath, ".",
 			testutil.StartFlagOutputFormat, "json",
-			testutil.StartFlagJSONOutputFilePath, outputPathJSON})
+			testutil.StartFlagJSONOutputFilePath, outputPathJSON,
+		})
 
 		assert.NoError(t, cobraCmd.Execute())
 		err := w.Close()
@@ -864,6 +861,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		assert.NoError(t, os.RemoveAll(dstProject))
 	})
 }
+
 func getMocksAndStartStruct() (*testutil.PromptMock, *config.Config, *testutil.RequirementsMock, *testutil.AnalyzerMock, *Start) {
 	promptMock := testutil.NewPromptMock()
 

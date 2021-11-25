@@ -15,9 +15,8 @@
 package version
 
 import (
-	"github.com/spf13/cobra"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/spf13/cobra"
 
 	"github.com/ZupIT/horusec/config/dist"
 )

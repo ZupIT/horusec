@@ -22,16 +22,17 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-const MinVersionDockerAccept = 19
-const MinSubVersionDockerAccept = 03
-
-var (
-	ErrMinVersion = fmt.Errorf("%v.%v", MinVersionDockerAccept, MinSubVersionDockerAccept)
+const (
+	MinVersionDockerAccept    = 19
+	MinSubVersionDockerAccept = 0o3
 )
+
+var ErrMinVersion = fmt.Errorf("%v.%v", MinVersionDockerAccept, MinSubVersionDockerAccept)
 
 type RequirementDocker struct{}
 

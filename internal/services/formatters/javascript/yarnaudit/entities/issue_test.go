@@ -17,9 +17,8 @@ package entities
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetVersion(t *testing.T) {

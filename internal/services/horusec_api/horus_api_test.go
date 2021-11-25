@@ -26,11 +26,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	enumHorusec "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
 	cliConfig "github.com/ZupIT/horusec/config"
 )
 
@@ -54,6 +54,7 @@ func createSendHandlerWithStatus(status int) http.HandlerFunc {
 		w.WriteHeader(status)
 	}
 }
+
 func createFindHandlerWithStatus(status int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type Content struct {
@@ -130,7 +131,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 
@@ -159,7 +159,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 
@@ -188,7 +187,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			wantErr: true,
@@ -216,7 +214,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			wantErr: true,
@@ -244,7 +241,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			wantErr: true,
@@ -272,7 +268,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, "invalidCertificate")
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			wantErr: true,
@@ -389,7 +384,6 @@ func TestServiceGetAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, string(localhostCert))
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			want:    expectedUUID,
@@ -414,7 +408,6 @@ func TestServiceGetAnalysis(t *testing.T) {
 					_, err = io.WriteString(file, "invalidCertificate")
 					assert.NoError(t, err)
 					return svr, file
-
 				},
 			},
 			want:    expectedUUID,

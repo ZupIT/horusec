@@ -19,8 +19,11 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/csharp/horuseccsharp"
+	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
 	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecjavascript"
 	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
@@ -29,10 +32,6 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
 	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
-
-	"github.com/stretchr/testify/assert"
-
-	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
 )
 
 func TestStartAnalysis(t *testing.T) {
@@ -80,7 +79,6 @@ func TestStartAnalysis(t *testing.T) {
 
 	for _, tt := range testcases {
 		t.Run(tt.engine, func(t *testing.T) {
-
 			t.Run("should success execute analysis without errors", func(t *testing.T) {
 				analysis := &analysis.Analysis{}
 				service := testutil.NewFormatterMock()
@@ -125,7 +123,6 @@ func TestStartAnalysis(t *testing.T) {
 					tt.formatter(service).StartAnalysis("")
 				})
 			})
-
 		})
 	}
 }

@@ -243,9 +243,10 @@ services:
 package main
 
 import (
-  "fmt"
-  "gorm.io/gorm"
-  "gorm.io/driver/postgres"
+	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {

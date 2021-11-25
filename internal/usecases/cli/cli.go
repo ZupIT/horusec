@@ -23,13 +23,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
@@ -225,6 +224,7 @@ func isVulnerabilityValid(vulnType string) bool {
 	}
 	return false
 }
+
 func checkIfIsURL(rawURL string) validation.RuleFunc {
 	return func(value interface{}) error {
 		_, err := url.ParseRequestURI(rawURL)

@@ -63,5 +63,4 @@ func TestCopy(t *testing.T) {
 
 	assert.NoFileExists(t, filepath.Join(dst, "go.mod"))
 	assert.NoFileExists(t, filepath.Join(dst, "go.sum"))
-
 }

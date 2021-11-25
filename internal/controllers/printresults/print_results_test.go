@@ -22,9 +22,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/uuid"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
@@ -33,14 +30,14 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec/internal/enums/outputtype"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/internal/enums/outputtype"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 type validateFn func(t *testing.T, tt testcase)
@@ -48,7 +45,7 @@ type validateFn func(t *testing.T, tt testcase)
 type testcase struct {
 	name            string
 	cfg             config.Config
-	analysis        analysis.Analysis
+	analysis        entitiesAnalysis.Analysis
 	vulnerabilities int
 	outputs         []string
 	err             bool
@@ -89,7 +86,6 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 						VulnerabilityID: uuid.MustParse("57bf7b03-b504-42ed-a026-ea89c81b7f4a"),
 						AnalysisID:      uuid.MustParse("16c70059-aa76-4b00-87d6-ad9941f8603e"),
 						Vulnerability: vulnerability.Vulnerability{
-
 							VulnerabilityID: uuid.MustParse("54a7a2a9-d68e-4139-ba53-6bff3bc84863"),
 							Line:            "1",
 							Column:          "0",
@@ -253,7 +249,7 @@ func TestPrintResultsStartPrintResults(t *testing.T) {
 
 // newPrintResultsTest creates a new PrintResults using the bytes.Buffer
 // from return as a print results writer and logger output.
-func newPrintResultsTest(entity *analysis.Analysis, cfg *config.Config) (*PrintResults, *bytes.Buffer) {
+func newPrintResultsTest(entity *entitiesAnalysis.Analysis, cfg *config.Config) (*PrintResults, *bytes.Buffer) {
 	output := bytes.NewBufferString("")
 	pr := NewPrintResults(entity, cfg)
 	pr.writer = output

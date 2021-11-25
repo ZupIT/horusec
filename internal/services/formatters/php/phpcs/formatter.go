@@ -18,19 +18,17 @@ import (
 	"encoding/json"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
-
-	"github.com/ZupIT/horusec/internal/enums/images"
-
-	"github.com/ZupIT/horusec/internal/services/formatters/php/phpcs/entities"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	"github.com/ZupIT/horusec/internal/services/formatters/php/phpcs/entities"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 type Formatter struct {

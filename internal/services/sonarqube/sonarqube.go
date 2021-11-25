@@ -17,11 +17,11 @@ package sonarqube
 import (
 	"strconv"
 
-	"github.com/ZupIT/horusec/internal/entities/sonarqube"
-
 	horusecEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	vulnEntity "github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	horusecSeverity "github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+
+	"github.com/ZupIT/horusec/internal/entities/sonarqube"
 )
 
 type SonarQube struct {

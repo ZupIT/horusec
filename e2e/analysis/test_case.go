@@ -19,15 +19,13 @@ import (
 	"runtime"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-
-	"github.com/onsi/gomega/gexec"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
 	. "github.com/onsi/ginkgo"
+	"github.com/onsi/gomega/gexec"
+
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 // Expected struct represents the validations that will be expected when comparing the final results of the analysis
@@ -101,7 +99,7 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.NpmAudit),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.YarnAudit),
 					// TODO: This log show only if pass --enable-git-history, we can see if this tool was runned or not without this flag
-					//fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.GitLeaks),
+					// fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.GitLeaks),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.TfSec),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Checkov),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Semgrep),
@@ -110,10 +108,10 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.MixAudit),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Sobelow),
 					// TODO: This log show only if pass --enable-shellcheck, we can see if this tool was runned or not without this flag
-					//fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.ShellCheck),
+					// fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.ShellCheck),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.BundlerAudit),
 					// TODO: This log show only if pass --enable-owasp-dependency-check, we can see if this tool was runned or not without this flag
-					//fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.OwaspDependencyCheck),
+					// fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.OwaspDependencyCheck),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.DotnetCli),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Nancy),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Trivy),

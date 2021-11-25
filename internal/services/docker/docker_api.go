@@ -26,23 +26,21 @@ import (
 	"strings"
 	"sync"
 
-	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
-
-	"github.com/docker/docker/api/types"
-	dockerTypesFilters "github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/mount"
-	"github.com/google/uuid"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	dockerTypesFilters "github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/api/types/network"
+	"github.com/google/uuid"
+	specs "github.com/opencontainers/image-spec/specs-go/v1"
+
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/docker"
+	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
-	specs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 
 // Docker is the interface that abstract the Docker API.
@@ -57,22 +55,14 @@ type Client interface {
 	ContainerCreate(ctx context.Context, cfg *container.Config, hostCfg *container.HostConfig,
 		netCfg *network.NetworkingConfig, plataform *specs.Platform, name string,
 	) (container.ContainerCreateCreatedBody, error)
-
 	ContainerStart(ctx context.Context, containerID string, options types.ContainerStartOptions) error
-
 	ContainerList(ctx context.Context, options types.ContainerListOptions) ([]types.Container, error)
-
 	ContainerWait(ctx context.Context, containerID string, condition container.WaitCondition) (
 		<-chan container.ContainerWaitOKBody, <-chan error)
-
 	ContainerLogs(ctx context.Context, containerID string, options types.ContainerLogsOptions) (io.ReadCloser, error)
-
 	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
-
 	ImageList(ctx context.Context, options types.ImageListOptions) ([]types.ImageSummary, error)
-
 	ImagePull(ctx context.Context, ref string, options types.ImagePullOptions) (io.ReadCloser, error)
-
 	Ping(ctx context.Context) (types.Ping, error)
 }
 

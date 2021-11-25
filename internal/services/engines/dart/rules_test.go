@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
+
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 

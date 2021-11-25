@@ -17,10 +17,10 @@ package engines_test
 import (
 	"testing"
 
+	"github.com/ZupIT/horusec-engine/text"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"

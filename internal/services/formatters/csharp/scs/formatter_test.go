@@ -20,11 +20,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
@@ -38,7 +37,7 @@ func createSlnFile(t *testing.T) {
 	wd, _ := os.Getwd()
 
 	dir := filepath.Join(wd, ".horusec", "00000000-0000-0000-0000-000000000000")
-	err := os.MkdirAll(dir, 0755)
+	err := os.MkdirAll(dir, 0o755)
 	require.Nil(t, err, "Expected nil error to create sln directory: %v", err)
 
 	f, err := os.Create(filepath.Join(dir, "test.sln"))
@@ -48,7 +47,6 @@ func createSlnFile(t *testing.T) {
 		assert.NoError(t, f.Close(), "Expected nil error to close sln file")
 		assert.NoError(t, os.RemoveAll(dir), "Expected nil error to remove sln directory")
 	})
-
 }
 
 func TestParseOutput(t *testing.T) {
@@ -106,7 +104,6 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
-
 	})
 
 	t.Run("should return error when unmarshalling output", func(t *testing.T) {
@@ -127,7 +124,6 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
-
 	})
 
 	t.Run("should return build error", func(t *testing.T) {
@@ -148,7 +144,6 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 		assert.NotEmpty(t, analysis.Errors)
-
 	})
 
 	t.Run("should return error not found solution file", func(t *testing.T) {

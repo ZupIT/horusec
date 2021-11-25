@@ -19,16 +19,15 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
-
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
@@ -84,7 +83,7 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 	})
 
 	When("global flag --log-file-path is passed", func() {
-		var logFilePathToTest = filepath.Join(os.TempDir(), fmt.Sprintf("%s-test.txt", uuid.New()))
+		logFilePathToTest := filepath.Join(os.TempDir(), fmt.Sprintf("%s-test.txt", uuid.New()))
 
 		BeforeEach(func() {
 			flags = map[string]string{
@@ -354,7 +353,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 
 		It("Checks if the monitor retry count property was set.", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`"monitor_retry_in_seconds\": %s`, monitorRetryCount)))
-
 		})
 	})
 

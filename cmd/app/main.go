@@ -17,10 +17,10 @@ package main
 import (
 	"os"
 
-	"github.com/spf13/cobra"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
+	"github.com/spf13/cobra"
+
 	"github.com/ZupIT/horusec/cmd/app/generate"
 	"github.com/ZupIT/horusec/cmd/app/start"
 	"github.com/ZupIT/horusec/cmd/app/version"

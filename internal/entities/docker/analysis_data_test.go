@@ -46,7 +46,6 @@ func TestSetData(t *testing.T) {
 		assert.Equal(t, "other-host.io/t/test:latest", newData.CustomImage)
 		assert.Equal(t, "docker.io/test:v1.0.0", newData.DefaultImage)
 	})
-
 }
 
 func TestGetCustomOrDefaultImage(t *testing.T) {

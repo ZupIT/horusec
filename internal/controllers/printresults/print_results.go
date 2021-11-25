@@ -37,9 +37,7 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
-var (
-	ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
-)
+var ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
 
 type SonarQubeConverter interface {
 	ConvertVulnerabilityToSonarQube() sq.Report
@@ -318,7 +316,6 @@ func (pr *PrintResults) printCommitAuthor(vulnerability *vulnerability.Vulnerabi
 	pr.printlnf("Commit Email: %s", vulnerability.CommitEmail)
 	pr.printlnf("Commit CommitHash: %s", vulnerability.CommitHash)
 	pr.printlnf("Commit Message: %s", vulnerability.CommitMessage)
-
 }
 
 func (pr *PrintResults) verifyRepositoryAuthorizationToken() {

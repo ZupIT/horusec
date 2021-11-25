@@ -29,7 +29,6 @@ func checkMock() *Check {
 		FileAbsPath:   "test",
 		FileLineRange: [2]int{1, 1},
 	}
-
 }
 
 func TestGetDetails(t *testing.T) {

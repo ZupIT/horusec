@@ -16,6 +16,7 @@ package java
 
 import (
 	engine "github.com/ZupIT/horusec-engine"
+
 	"github.com/ZupIT/horusec/internal/services/engines"
 	"github.com/ZupIT/horusec/internal/services/engines/jvm"
 )
@@ -36,8 +37,8 @@ func Rules() []engine.Rule {
 		NewInsecureImplementationOfSSL(),
 		NewWebViewLoadFilesFromExternalStorage(),
 		NewInsecureWebViewImplementation(),
-		//NewNoUseSQLCipherAndMatch(),
-		//NewNoUseRealmDatabaseWithEncryptionKey(),
+		// NewNoUseSQLCipherAndMatch(),
+		// NewNoUseRealmDatabaseWithEncryptionKey(),
 		NewNoUseWebviewDebuggingEnable(),
 		NewNoListenToClipboard(),
 		NewNoCopyContentToClipboard(),
@@ -78,8 +79,8 @@ func Rules() []engine.Rule {
 		NewAnonymousLDAPBind(),
 		NewLDAPEntryPoisoning(),
 		NewTrustManagerThatAcceptAnyCertificatesClient(),
-		//NewTrustManagerThatAcceptAnyCertificatesServer(),
-		//NewTrustManagerThatAcceptAnyCertificatesIssuers(),
+		// NewTrustManagerThatAcceptAnyCertificatesServer(),
+		// NewTrustManagerThatAcceptAnyCertificatesIssuers(),
 		NewXMLParsingVulnerableToXXE(),
 		NewIgnoringXMLCommentsInSAML(),
 		NewInformationExposureThroughAnErrorMessage(),
@@ -109,17 +110,17 @@ func Rules() []engine.Rule {
 		NewXMLParsingVulnerableToXXEWithXMLInputFactory(),
 		NewXMLParsingVulnerableToXXEWithSAXParserFactory(),
 		NewXMLParsingVulnerableToXXEWithTransformerFactory(),
-		//NewXMLParsingVulnerableToXXEWithSchemaFactory(),
+		// NewXMLParsingVulnerableToXXEWithSchemaFactory(),
 		NewXMLParsingVulnerableToXXEWithDom4j(),
 		NewXMLParsingVulnerableToXXEWithJdom2(),
 		NewClassesShouldNotBeLoadedDynamically(),
-		//NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue(),
+		// NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue(),
 		NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks(),
 		NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections(),
 		NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail(),
 		NewFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks(),
 		NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail(),
-		//NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail(),
+		// NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail(),
 		NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks(),
 		NewLDAPAuthenticatedAnalyzeYourCode(),
 		NewSecureRandomSeedsShouldNotBePredictable(),
@@ -138,8 +139,8 @@ func Rules() []engine.Rule {
 		NewNoUseIVsWeak(),
 		NewRootDetectionCapabilities(),
 		NewJARURLConnection(),
-		//NewSetOrReadClipboardData(),
-		//NewMessageDigest(),
+		// NewSetOrReadClipboardData(),
+		// NewMessageDigest(),
 		NewOverlyPermissiveFilePermission(),
 		NewCipherGetInstanceInsecure(),
 

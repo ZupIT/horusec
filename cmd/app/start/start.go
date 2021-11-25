@@ -20,17 +20,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ZupIT/horusec/internal/controllers/requirements"
-	usecases "github.com/ZupIT/horusec/internal/usecases/cli"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/spf13/cobra"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/config/dist"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
-
-	"github.com/spf13/cobra"
-
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec/internal/controllers/analyzer"
+	"github.com/ZupIT/horusec/internal/controllers/requirements"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
+	usecases "github.com/ZupIT/horusec/internal/usecases/cli"
 	"github.com/ZupIT/horusec/internal/utils/prompt"
 )
 

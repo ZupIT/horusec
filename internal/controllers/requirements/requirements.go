@@ -18,6 +18,7 @@ import (
 	"errors"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+
 	"github.com/ZupIT/horusec/internal/controllers/requirements/docker"
 	"github.com/ZupIT/horusec/internal/controllers/requirements/git"
 	"github.com/ZupIT/horusec/internal/helpers/messages"

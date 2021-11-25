@@ -16,6 +16,7 @@ package horusecleaks
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec/internal/services/engines/leaks"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )

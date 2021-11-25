@@ -17,9 +17,8 @@ package analysis_test
 import (
 	"testing"
 
-	ginkgoconfig "github.com/onsi/ginkgo/config"
-
 	. "github.com/onsi/ginkgo"
+	ginkgoconfig "github.com/onsi/ginkgo/config"
 	. "github.com/onsi/gomega"
 )
 

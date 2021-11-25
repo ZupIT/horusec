@@ -954,7 +954,7 @@ func NewQueryDatabaseOfSMSContacts() text.TextRule {
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewPotentialPathTraversal() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1638,7 +1638,7 @@ func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.TextRule
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
@@ -1690,7 +1690,7 @@ func NewLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 	}
 }
 
-//Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
+// Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
 func NewWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{

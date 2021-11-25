@@ -28,12 +28,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	errorsenum "github.com/ZupIT/horusec/internal/enums/errors"
-	"github.com/ZupIT/horusec/internal/utils/testutil"
-
 	cliConfig "github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	errorsenum "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/services/docker/client"
+	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 var ErrGeneric = errors.New("some error generic")

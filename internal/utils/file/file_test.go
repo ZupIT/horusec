@@ -20,10 +20,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
-
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli/enums"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
@@ -62,6 +61,7 @@ func TestGetSubPathByExtension(t *testing.T) {
 		assert.Equal(t, "", response)
 	})
 }
+
 func TestCreateAndWriteFile(t *testing.T) {
 	wd := t.TempDir()
 	t.Run("Should create a file with input and return no error", func(t *testing.T) {
@@ -128,7 +128,6 @@ func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
 		assert.Zero(t, file)
 		assert.Zero(t, line)
 	})
-
 }
 
 func TestGetCode(t *testing.T) {

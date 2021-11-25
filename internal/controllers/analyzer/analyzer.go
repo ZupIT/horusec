@@ -17,18 +17,13 @@ package analyzer
 import (
 	"fmt"
 	"io"
-	"path/filepath"
-
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/briandowns/spinner"
-	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -38,6 +33,9 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/briandowns/spinner"
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec/config"
 	languagedetect "github.com/ZupIT/horusec/internal/controllers/language_detect"
@@ -183,6 +181,7 @@ func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 	}
 	return a.startPrintResults()
 }
+
 func (a *Analyzer) startPrintResults() (int, error) {
 	a.formatAnalysisToPrint()
 	a.printController.SetAnalysis(a.analysis)
