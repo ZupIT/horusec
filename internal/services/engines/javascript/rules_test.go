@@ -318,6 +318,34 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-JAVASCRIPT-19",
+			Rule: NewHavingAPermissiveCrossOriginResourceSharingPolicy(),
+			Src:  SampleVulnerableHSJAVASCRIPT19,
+			Findings: []engine.Finding{
+				{
+					CodeSample: `res.header("Access-Control-Allow-Origin", "*");`,
+					SourceLocation: engine.Location{
+						Line:   7,
+						Column: 14,
+					},
+				},
+				{
+					CodeSample: `app.get('/products/:id', cors(), function (req, res, next) {`,
+					SourceLocation: engine.Location{
+						Line:   6,
+						Column: 25,
+					},
+				},
+				{
+					CodeSample: `origin: '*',`,
+					SourceLocation: engine.Location{
+						Line:   3,
+						Column: 2,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -354,6 +382,11 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-JAVASCRIPT-17",
 			Rule: NewStaticallyServingHiddenFilesIsSecuritySensitive(),
 			Src:  SampleSafeHSJAVASCRIPT17,
+		},
+		{
+			Name: "HS-JAVASCRIPT-19",
+			Rule: NewHavingAPermissiveCrossOriginResourceSharingPolicy(),
+			Src:  SampleSafeHSJAVASCRIPT19,
 		},
 	}
 

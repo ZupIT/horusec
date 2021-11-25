@@ -330,7 +330,7 @@ func NewHavingAPermissiveCrossOriginResourceSharingPolicy() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`Access-Control-Allow-Origin\s*:\s*['|"]\*['|"]`),
+			regexp.MustCompile(`Access-Control-Allow-Origin["|'|:][\s|,][\s|"|']['|"|\*]['|"|\*]\D`),
 			regexp.MustCompile(`cors\(\)`),
 			regexp.MustCompile(`origin\s*:\s*['|"]\*['|"]`),
 		},
