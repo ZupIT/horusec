@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package customrules
+package customrules_test
 
 import (
 	"path/filepath"
@@ -22,22 +22,23 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
+	customrules "github.com/ZupIT/horusec/internal/services/custom_rules"
 )
 
 func TestNewCustomRulesService(t *testing.T) {
-	t.Run("should success create new custom rules service", func(t *testing.T) {
-		service := NewCustomRulesService(&cliConfig.Config{})
-		assert.NotEmpty(t, service)
-	})
+	service := customrules.NewCustomRulesService(config.New())
+
+	assert.NotEmpty(t, service)
+	assertEmptyRulesForAllLanguages(t, service)
 }
 
 func TestGetCustomRulesByTool(t *testing.T) {
-	t.Run("should success get rules by tool", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.CustomRulesPath = filepath.Join(".", "custom_rules_example.json")
+	t.Run("should success load custom rules from file", func(t *testing.T) {
+		cfg := config.New()
+		cfg.CustomRulesPath = filepath.Join(".", "custom_rules_example.json")
 
-		service := NewCustomRulesService(config)
+		service := customrules.NewCustomRulesService(cfg)
 
 		assert.Len(t, service.Load(languages.CSharp), 1)
 		assert.Len(t, service.Load(languages.Dart), 1)
@@ -48,25 +49,27 @@ func TestGetCustomRulesByTool(t *testing.T) {
 		assert.Len(t, service.Load(languages.Javascript), 1)
 	})
 
-	t.Run("should return error when opening json file", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.CustomRulesPath = filepath.Join(".", "test.json")
+	t.Run("should use empty rules for all languages when file does not exists", func(t *testing.T) {
+		cfg := config.New()
+		cfg.CustomRulesPath = filepath.Join(".", "test.json")
 
-		service := NewCustomRulesService(config)
+		service := customrules.NewCustomRulesService(cfg)
 
-		rules := service.Load(languages.Leaks)
-
-		assert.Len(t, rules, 0)
+		assertEmptyRulesForAllLanguages(t, service)
 	})
 
-	t.Run("should success return invalid custom rule", func(t *testing.T) {
-		config := &cliConfig.Config{}
-		config.CustomRulesPath = filepath.Join(".", "custom_rules_example_invalid.json")
+	t.Run("should use empty rules for all languages when file is in invalid format", func(t *testing.T) {
+		cfg := config.New()
+		cfg.CustomRulesPath = filepath.Join(".", "custom_rules_example_invalid.json")
 
-		service := NewCustomRulesService(config)
+		service := customrules.NewCustomRulesService(cfg)
 
-		rules := service.Load(languages.Leaks)
-
-		assert.Len(t, rules, 0)
+		assertEmptyRulesForAllLanguages(t, service)
 	})
+}
+
+func assertEmptyRulesForAllLanguages(t *testing.T, service *customrules.Service) {
+	for _, lang := range languages.Values() {
+		assert.Empty(t, service.Load(lang), "Expected empty default custom rules to language %s", lang)
+	}
 }

@@ -26,32 +26,43 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/ZupIT/horusec/config"
-	customRulesEntities "github.com/ZupIT/horusec/internal/entities/custom_rules"
+	customrules "github.com/ZupIT/horusec/internal/entities/custom_rules"
 )
 
+// Service represents the custom rule service responsible to
+// load custom rules from an configuration file.
 type Service struct {
-	config            *config.Config
-	customRulesByTool map[languages.Language][]engine.Rule
+	config      *config.Config
+	customRules map[languages.Language][]engine.Rule
 }
 
+// NewCustomRulesService create a new custom rule service with all rules
+// loaded from configuration file path.
 func NewCustomRulesService(cfg *config.Config) *Service {
 	service := &Service{
 		config: cfg,
+		customRules: map[languages.Language][]engine.Rule{
+			languages.CSharp:     make([]engine.Rule, 0),
+			languages.Dart:       make([]engine.Rule, 0),
+			languages.Java:       make([]engine.Rule, 0),
+			languages.Kotlin:     make([]engine.Rule, 0),
+			languages.Yaml:       make([]engine.Rule, 0),
+			languages.Leaks:      make([]engine.Rule, 0),
+			languages.Javascript: make([]engine.Rule, 0),
+			languages.Nginx:      make([]engine.Rule, 0),
+		},
 	}
-
-	service.mapCustomRulesByLanguage()
-	service.setCustomRules()
-
-	return service
+	return service.loadCustomRules()
 }
 
+// Load implements formatters.CustomRules
 func (s *Service) Load(lang languages.Language) []engine.Rule {
-	return s.customRulesByTool[lang]
+	return s.customRules[lang]
 }
 
-func (s *Service) setCustomRules() {
+func (s *Service) loadCustomRules() *Service {
 	if s.config.CustomRulesPath == "" {
-		return
+		return s
 	}
 
 	customRules, err := s.openCustomRulesJSONFile()
@@ -60,55 +71,48 @@ func (s *Service) setCustomRules() {
 	}
 
 	for index := range customRules {
-		s.validateAndParseCustomRule(index, customRules)
+		s.validateAndParseCustomRule(customRules[index])
 	}
+
+	return s
 }
 
-func (s *Service) validateAndParseCustomRule(index int, customRules []customRulesEntities.CustomRule) {
-	if err := customRules[index].Validate(); err != nil {
-		errMsg := fmt.Sprintf("{HORUSEC_CLI} invalid custom rule: %s", customRules[index].String())
+func (s *Service) validateAndParseCustomRule(rule *customrules.CustomRule) {
+	if err := rule.Validate(); err != nil {
+		errMsg := fmt.Sprintf("{HORUSEC_CLI} invalid custom rule: %s", rule.String())
 		logger.LogError(errMsg, err)
 		return
 	}
 
-	s.customRulesByTool[customRules[index].Language] = append(
-		s.customRulesByTool[customRules[index].Language], s.parseCustomRuleToTextRule(index, customRules),
+	s.customRules[rule.Language] = append(
+		s.customRules[rule.Language], s.parseCustomRuleToTextRule(rule),
 	)
 }
 
-func (s *Service) openCustomRulesJSONFile() (customRules []customRulesEntities.CustomRule, err error) {
+func (s *Service) openCustomRulesJSONFile() (customRules []*customrules.CustomRule, err error) {
 	file, err := os.Open(s.config.CustomRulesPath)
 	if err != nil {
 		return nil, err
 	}
 
-	byteValue, _ := io.ReadAll(file)
-	return customRules, json.Unmarshal(byteValue, &customRules)
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return customRules, json.Unmarshal(bytes, &customRules)
 }
 
-func (s *Service) parseCustomRuleToTextRule(index int, customRules []customRulesEntities.CustomRule) text.TextRule {
+func (s *Service) parseCustomRuleToTextRule(rule *customrules.CustomRule) text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
-			ID:          customRules[index].ID,
-			Name:        customRules[index].Name,
-			Description: customRules[index].Description,
-			Severity:    customRules[index].Severity.ToString(),
-			Confidence:  customRules[index].Confidence.ToString(),
+			ID:          rule.ID,
+			Name:        rule.Name,
+			Description: rule.Description,
+			Severity:    rule.Severity.ToString(),
+			Confidence:  rule.Confidence.ToString(),
 		},
-		Type:        customRules[index].GetRuleType(),
-		Expressions: customRules[index].GetExpressions(),
-	}
-}
-
-func (s *Service) mapCustomRulesByLanguage() {
-	s.customRulesByTool = map[languages.Language][]engine.Rule{
-		languages.CSharp:     {},
-		languages.Dart:       {},
-		languages.Java:       {},
-		languages.Kotlin:     {},
-		languages.Yaml:       {},
-		languages.Leaks:      {},
-		languages.Javascript: {},
-		languages.Nginx:      {},
+		Type:        rule.GetRuleType(),
+		Expressions: rule.GetExpressions(),
 	}
 }
