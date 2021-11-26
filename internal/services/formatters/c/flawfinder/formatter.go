@@ -21,11 +21,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/gocarina/gocsv"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	flawfinderEntities "github.com/ZupIT/horusec/internal/services/formatters/c/flawfinder/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -61,8 +60,8 @@ func (f *Formatter) startFlawfinder(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Flawfinder),
 		Language: languages.C,
 	}
@@ -71,34 +70,30 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var results []flawfinderEntities.Result
+	var results []*flawFinderResult
 
 	if err := gocsv.UnmarshalString(output, &results); err != nil {
 		return err
 	}
 
 	for index := range results {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(results, index))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(results[index]))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(results []flawfinderEntities.Result, index int) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Severity = results[index].GetSeverity()
-	vuln.Details = results[index].GetDetails()
-	vuln.Line = results[index].Line
-	vuln.Column = results[index].Column
-	vuln.Code = f.GetCodeWithMaxCharacters(results[index].Context, 0)
-	vuln.File = results[index].GetFilename()
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
-}
+func (f *Formatter) newVulnerability(result *flawFinderResult) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.Flawfinder,
+		Language:     languages.C,
+		Severity:     result.getSeverity(),
+		Details:      result.getDetails(),
+		Line:         result.Line,
+		Column:       result.Column,
+		Code:         f.GetCodeWithMaxCharacters(result.Context, 0),
+		File:         result.getFilename(),
+	}
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.Flawfinder
-	vulnerabilitySeverity.Language = languages.C
-	return vulnerabilitySeverity
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
