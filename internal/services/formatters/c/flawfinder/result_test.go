@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package flawfinder
 
 import (
 	"testing"
@@ -22,14 +22,14 @@ import (
 )
 
 func TestGetDetails(t *testing.T) {
-	result := &Result{
+	result := &flawFinderResult{
 		Warning:    "test",
 		Suggestion: "test",
 		Note:       "test",
 	}
 
 	t.Run("should success get details", func(t *testing.T) {
-		details := result.GetDetails()
+		details := result.getDetails()
 
 		assert.NotEmpty(t, details)
 		assert.Equal(t, "test test test", details)
@@ -37,46 +37,46 @@ func TestGetDetails(t *testing.T) {
 }
 
 func TestGetSeverity(t *testing.T) {
-	result := &Result{
+	result := &flawFinderResult{
 		Level: "0",
 	}
 
 	t.Run("should get severities low", func(t *testing.T) {
-		assert.Equal(t, severities.Low, result.GetSeverity())
+		assert.Equal(t, severities.Low, result.getSeverity())
 
 		result.Level = "0"
-		assert.Equal(t, severities.Low, result.GetSeverity())
+		assert.Equal(t, severities.Low, result.getSeverity())
 
 		result.Level = "1"
-		assert.Equal(t, severities.Low, result.GetSeverity())
+		assert.Equal(t, severities.Low, result.getSeverity())
 	})
 
 	t.Run("should get severities medium", func(t *testing.T) {
 		result.Level = "2"
-		assert.Equal(t, severities.Medium, result.GetSeverity())
+		assert.Equal(t, severities.Medium, result.getSeverity())
 
 		result.Level = "3"
-		assert.Equal(t, severities.Medium, result.GetSeverity())
+		assert.Equal(t, severities.Medium, result.getSeverity())
 	})
 
 	t.Run("should get severities high", func(t *testing.T) {
 		result.Level = "4"
-		assert.Equal(t, severities.High, result.GetSeverity())
+		assert.Equal(t, severities.High, result.getSeverity())
 	})
 
 	t.Run("should get severities critical", func(t *testing.T) {
 		result.Level = "5"
-		assert.Equal(t, severities.Critical, result.GetSeverity())
+		assert.Equal(t, severities.Critical, result.getSeverity())
 	})
 }
 
 func TestGetFilename(t *testing.T) {
-	result := &Result{
+	result := &flawFinderResult{
 		File: "./test.c",
 	}
 
 	t.Run("should success get filename", func(t *testing.T) {
-		filename := result.GetFilename()
+		filename := result.getFilename()
 
 		assert.NotEmpty(t, filename)
 		assert.NotContains(t, filename, "./")

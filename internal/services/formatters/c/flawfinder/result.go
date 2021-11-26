@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package flawfinder
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Result struct {
+type flawFinderResult struct {
 	File       string `json:"file"`
 	Line       string `json:"line"`
 	Column     string `json:"column"`
@@ -33,16 +33,16 @@ type Result struct {
 	Context    string `json:"context"`
 }
 
-func (r *Result) GetDetails() string {
+func (r *flawFinderResult) getDetails() string {
 	return fmt.Sprintf("%s %s %s", r.Warning, r.Suggestion, r.Note)
 }
 
-func (r *Result) GetSeverity() severities.Severity {
+func (r *flawFinderResult) getSeverity() severities.Severity {
 	level, _ := strconv.Atoi(r.Level)
 	return r.mapSeverityByLevels()[level]
 }
 
-func (r *Result) mapSeverityByLevels() map[int]severities.Severity {
+func (r *flawFinderResult) mapSeverityByLevels() map[int]severities.Severity {
 	return map[int]severities.Severity{
 		5: severities.Critical,
 		4: severities.High,
@@ -53,6 +53,6 @@ func (r *Result) mapSeverityByLevels() map[int]severities.Severity {
 	}
 }
 
-func (r *Result) GetFilename() string {
-	return strings.ReplaceAll(r.File, "./", "")
+func (r *flawFinderResult) getFilename() string {
+	return filepath.Clean(r.File)
 }
