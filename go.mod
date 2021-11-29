@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec
 go 1.17
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.19
+	github.com/ZupIT/horusec-devkit v1.0.20
 	github.com/ZupIT/horusec-engine v0.3.6
 	github.com/bmatcuk/doublestar/v4 v4.0.2
 	github.com/briandowns/spinner v1.16.0
@@ -69,7 +69,7 @@ require (
 	golang.org/x/tools v0.1.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20211013025323-ce878158c4d4 // indirect
-	google.golang.org/grpc v1.41.0 // indirect
+	google.golang.org/grpc v1.42.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
