@@ -4,18 +4,18 @@ This is Horusec contributing guide. Please read the following sections to learn 
 
 ## **Table of contents**
 ### 1. [**Before you contribute**](#before-you-contribute)
-> #### 1.1.  [**Code of Conduct**](#code-of-conduct)
+> #### 1.1. [**Code of Conduct**](#code-of-conduct)
 > #### 1.2. [**Legal**](#legal)
 ### 2. [**Prerequisites**](#prerequisites)
-> #### 2.1.   [**Developer Certificate of Origin**](#developer-certificate-of-origin)
-> #### 2.2.  [**Code Review**](#code-review)
+> #### 2.1. [**Developer Certificate of Origin**](#developer-certificate-of-origin)
+> #### 2.2. [**Code Review**](#code-review)
 > #### 2.3. [**Pull Requests**](#pull-requests)    
 ### 3. [**How to contribute?**](#how-to-contribute?)
  > #### 3.1. [**Prepare your development environment**](#prepare-your-development-environment)
-> #### 3.2.  [**First contribution**](#first-contribution)
+> #### 3.2. [**First contribution**](#first-contribution)
 > #### 3.3. [**Add new feature, bug fixing or improvement**](#add-new-feature-bugfixing-or-improvement)
-> #### 3.4.  [**Pull Request's approval**](#pull-request-approval)
-> #### 3.5.   [**After your pull request's approval**](#after-your-pull-request-approval)
+> #### 3.4. [**Pull Request's approval**](#pull-request-approval)
+> #### 3.5. [**After your pull request's approval**](#after-your-pull-request-approval)
 ### 4. [**Community**](#community)
 
 ## **Before you contribute**
@@ -120,7 +120,7 @@ go tool cover -html=coverage.out # Open coverage status in your browser
 ``` 
 
 #### **Repositories**
-Horusec has other repositories and you can check the README for each one of them: 
+Horusec has other repositories, check them below:
 
 - [**Charts**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher)
 - [**Devkit**](https://github.com/ZupIT/horusec-devkit)
@@ -138,9 +138,10 @@ Contributing to a new feature is only allowed in the [**main repository**](https
 Before contributing to this repository, please discuss the changes you wish to make via e-mail or [**forum**](https://forum.zup.com.br/c/en/horusec/14). 
 
 ### **Add new feature, bug fixing or improvement**
-If you want to add an improvement, a new feature or bugfix, follow the steps to contribute: 
+If you want to add an improvement, a new feature or bug fix, follow the steps to contribute: 
 
 **Step 1:** Make sure your branch is based on main;
+
 **Step 2:** When opening an issue, choose a template to answer the questions regarding what you want to contribute: 
 - [**Bug Report**](https://github.com/ZupIT/horusec/blob/main/.github/ISSUE_TEMPLATE/bug_report.md)
 - [**Feature request**](https://github.com/ZupIT/horusec/blob/main/.github/ISSUE_TEMPLATE/feature_request.md)
@@ -162,12 +163,12 @@ Your pull request is approved when:
 - Pass all GitHub actions checking process (lint, test, coverage, license, build, e2e, security, dco).
 
 ### **After your pull request's approval**
-- If it is a bugfix, the team will perform the changes and there will be a new release.
+- If it is a bug fix, the team will perform the changes and there will be a new release.
 - If it is a feature, it will be in the next release. 
 
 ## **Community**
 
-- Do you have any question about Horusec in our [**mailing list**](horusec@zup.com.br) 
+- Do you have any question about Horusec? Send to our [**mailing list**](horusec@zup.com.br). 
 - Let's chat in our [**forum**](https://forum.zup.com.br/c/en/horusec/14).
 
 Thank you for your contribution, you rock! 🚀
