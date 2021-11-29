@@ -16,8 +16,6 @@ package nancy
 
 import (
 	"errors"
-	"io"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -26,7 +24,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
@@ -39,7 +36,7 @@ func TestParseOutput(t *testing.T) {
 		analysis := new(analysis.Analysis)
 
 		cfg := config.New()
-		cfg.ProjectPath = createTmpProjectPath(t, analysis)
+		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.GoExample1)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -137,37 +134,6 @@ func TestParseOutput(t *testing.T) {
 
 		formatter.StartAnalysis("")
 	})
-}
-
-// createTmpProjectPath create a .horusec directory to be analysed using the
-// analysis.ID as suffix on path and copy go.mod files from Go examples 1 to
-// the created directory.
-//
-// The value returned will be a project path that contains the .horusec directory inside.
-func createTmpProjectPath(t *testing.T, analysis *analysis.Analysis) string {
-	projectPath := t.TempDir()
-
-	goModSrc, err := os.Open(filepath.Join(testutil.GoExample1, "go.mod"))
-	require.NoError(t, err, "Expected nil error to open src go mod file: %v", err)
-	defer func() {
-		assert.NoError(t, goModSrc.Close(), "Expected no error to close go mod src file")
-	}()
-
-	horusecPath := filepath.Join(projectPath, ".horusec", analysis.ID.String())
-	require.NoError(
-		t, os.MkdirAll(horusecPath, os.ModePerm), "Expected no error to create horusec directory",
-	)
-
-	goModDst, err := os.Create(filepath.Join(horusecPath, "go.mod"))
-	require.NoError(t, err, "Expected nil error to create dst go mod file: %v", err)
-	defer func() {
-		assert.NoError(t, goModDst.Close(), "Expected no error to close go mod dst file")
-	}()
-
-	_, err = io.Copy(goModDst, goModSrc)
-	require.NoError(t, err, "Expected nil error to copy go mod file: %v", err)
-
-	return projectPath
 }
 
 const output = `

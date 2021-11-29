@@ -16,114 +16,127 @@ package dotnetcli
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
-	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseOutput(t *testing.T) {
-	t.Run("should return 3 vulnerability with no errors", func(t *testing.T) {
+	t.Run("should add 3 vulnerability on analysis with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &analysisEntities.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		output := "The following sources were used:\n   https://api.nuget.org/v3/index.json\n\nProject " +
-			"`NetCoreVulnerabilities` has the following vulnerable packages\n\u001B[39;49m\u001B[34m  " +
-			" [netcoreapp3.1]: \n\u001B[39;49m   Top-level Package          \u001B[39;49m   \u001B[39;49m" +
-			"   Requested\u001B[39;49m   Resolved\u001B[39;49m   Severity\u001B[39;49m   Advisory URL     " +
-			"                                \u001B[39;49m\n\u001B[39;49m   > adplug                  " +
-			" \u001B[39;49m   \u001B[39;49m   2.3.1    \u001B[39;49m   2.3.1   \u001B[39;49m\u001B[39;49m\u001B[31m " +
-			"  Critical\u001B[39;49m   https://github.com/advisories/GHSA-874w-m2v2-mj64\u001B[39;49m\n\u001B[39;49m " +
-			"  > Gw2Sharp                 \u001B[39;49m   \u001B[39;49m   0.3.0    \u001B[39;49m   0.3.0  " +
-			" \u001B[39;49m   Low     \u001B[39;49m  " +
-			" https://github.com/advisories/GHSA-4vr3-9v7h-5f8v\u001B[39;49m\n\u001B[39;49m   > log4net " +
-			"                 \u001B[39;49m   \u001B[39;49m   2.0.9    \u001B[39;49m   2.0.9  " +
-			" \u001B[39;49m\u001B[39;49m\u001B[31m   Critical\u001B[39;49m   " +
-			"https://github.com/advisories/GHSA-2cwj-8chv-9pp9\u001B[39;49m\n"
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-		formatter := NewFormatter(service)
+		analysis := new(analysis.Analysis)
 
+		cfg := config.New()
+		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.CsharpExample1)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
+		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
+
 		assert.Len(t, analysis.AnalysisVulnerabilities, 3)
+
+		for _, v := range analysis.AnalysisVulnerabilities {
+			vuln := v.Vulnerability
+			assert.Equal(t, tools.DotnetCli, vuln.SecurityTool)
+			assert.Equal(t, languages.CSharp, vuln.Language)
+			assert.Equal(t, confidence.High, vuln.Confidence)
+			assert.NotEmpty(t, vuln.Details, "Exepcted not empty details")
+			assert.NotContains(t, vuln.Details, "()")
+			assert.NotEmpty(t, vuln.Code, "Expected not empty code")
+			assert.Equal(
+				t,
+				filepath.Join(cfg.ProjectPath, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj"),
+				vuln.File,
+				"Expected equals file name",
+			)
+			assert.NotEmpty(t, vuln.Line, "Expected not empty line")
+			assert.NotEmpty(t, vuln.Severity, "Expected not empty severity")
+		}
 	})
 
-	t.Run("should return no vulnerability with no errors", func(t *testing.T) {
+	t.Run("should add no vulnerability and no errors on analysis", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		analysis := &analysisEntities.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-		formatter := NewFormatter(service)
+		analysis := new(analysis.Analysis)
 
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
+
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
+		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
 	})
 
-	t.Run("should return error executing container", func(t *testing.T) {
-		analysis := &analysisEntities.Analysis{}
+	t.Run("should add error from executing container on analysis", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
-			"", errors.New("test"))
+		analysis := new(analysis.Analysis)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
-		assert.NotEmpty(t, analysis.Errors)
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
-	t.Run("should return error when solution was not found", func(t *testing.T) {
-		analysis := &analysisEntities.Analysis{}
+	t.Run("should add error on analysis when solution was not found", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(
-			"A project or solution file could not be found", nil)
+			"A project or solution file could not be found", nil,
+		)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		analysis := new(analysis.Analysis)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
-		assert.NotEmpty(t, analysis.Errors)
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &analysisEntities.Analysis{}
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+
+		config := config.New()
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.DotnetCli: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(new(analysis.Analysis), dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
 	})
 }
+
+var output = `
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+Project NetCoreVulnerabilities has the following vulnerable packages
+[39;49m[34m   [netcoreapp3.1]: 
+[39;49m   Top-level Package          [39;49m   [39;49m   Requested[39;49m   Resolved[39;49m   Severity[39;49m   Advisory URL                                     [39;49m
+[39;49m   > adplug                   [39;49m   [39;49m   2.3.1    [39;49m   2.3.1   [39;49m[39;49m[31m   Critical[39;49m   https://github.com/advisories/GHSA-874w-m2v2-mj64[39;49m
+[39;49m   > HtmlSanitizer            [39;49m   [39;49m   4.0.217  [39;49m   4.0.217 [39;49m   Low     [39;49m   https://github.com/advisories/GHSA-8j9v-h2vp-2hhv[39;49m
+[39;49m   > Microsoft.ChakraCore     [39;49m   [39;49m   1.11.13  [39;49m   1.11.13 [39;49m[39;49m[31m   Critical[39;49m   https://github.com/advisories/GHSA-2wwc-w2gw-4329[39;49m
+`
