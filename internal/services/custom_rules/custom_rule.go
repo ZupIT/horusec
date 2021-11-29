@@ -28,7 +28,6 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
-	customrules "github.com/ZupIT/horusec/internal/enums/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/engines/csharp"
 	"github.com/ZupIT/horusec/internal/services/engines/dart"
 	"github.com/ZupIT/horusec/internal/services/engines/java"
@@ -46,7 +45,7 @@ type CustomRule struct {
 	Language    languages.Language    `json:"language"`
 	Severity    severities.Severity   `json:"severity"`
 	Confidence  confidence.Confidence `json:"confidence"`
-	Type        customrules.MatchType `json:"type"`
+	Type        MatchType             `json:"type"`
 	Expressions []string              `json:"expressions"`
 }
 
@@ -61,20 +60,20 @@ func (c *CustomRule) Validate() error {
 			severities.Low, severities.Medium, severities.High, severities.Critical)),
 		validation.Field(&c.Confidence, validation.Required, validation.In(confidence.Low,
 			confidence.Medium, confidence.High)),
-		validation.Field(&c.Type, validation.Required, validation.In(customrules.Regular,
-			customrules.OrMatch, customrules.AndMatch, customrules.NotMatch)),
+		validation.Field(&c.Type, validation.Required, validation.In(Regular,
+			OrMatch, AndMatch, NotMatch)),
 	)
 }
 
 func (c *CustomRule) GetRuleType() text.MatchType {
 	switch c.Type {
-	case customrules.Regular:
+	case Regular:
 		return text.Regular
-	case customrules.OrMatch:
+	case OrMatch:
 		return text.OrMatch
-	case customrules.AndMatch:
+	case AndMatch:
 		return text.AndMatch
-	case customrules.NotMatch:
+	case NotMatch:
 		return text.NotMatch
 	}
 
