@@ -55,7 +55,6 @@ type Docker interface {
 // Note that these comments was copied and paste from the docker client implementation
 // from github.com/docker/docker/client.
 type Client interface {
-
 	// ContainerCreate creates a new container based in the given configuration.
 	// It can be associated with a name, but it's not mandatory.
 	ContainerCreate(

@@ -39,7 +39,7 @@ func rules() []engine.Rule {
 		NewTLS13NotUsed(),
 		NewDTLS12NotUsed(),
 		NewCoreDataDatabase(),
-		//NewSQLiteDatabase(),
+		// NewSQLiteDatabase(),
 
 		// Or rules
 		NewWeakDesCryptoCipher(),
