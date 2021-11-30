@@ -38,6 +38,20 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-SWIFT-24",
+			Src:  SampleVulnerableHSSWIFT24,
+			Rule: NewSQLInjection(),
+			Findings: []engine.Finding{
+				{
+					CodeSample: `let err = SD.executeChange("SELECT * FROM User where user="+ valuesFromInput) {`,
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 13,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -49,6 +63,11 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-SWIFT-6",
 			Rule: NewWeakMD5CryptoCipher(),
 			Src:  SampleSafeHSSWIFT6,
+		},
+		{
+			Name: "HS-SWIFT-24",
+			Rule: NewSQLInjection(),
+			Src:  SampleSafeHSSWIFT24,
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

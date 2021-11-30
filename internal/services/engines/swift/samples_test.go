@@ -17,8 +17,18 @@ package swift
 const (
 	SampleVulnerableHSSWIFT6 = `import CryptoSwift
 
-		"SwiftSummit".md5()`
+		"SwiftSummit".md5()
+`
+	SampleVulnerableHSSWIFT24 = `
+let err = SD.executeChange("SELECT * FROM User where user="+ valuesFromInput) {
+    //there was an error during the insert, handle it here
+} else {
+    //no error, the row was inserted successfully
+}
+`
+)
 
+const (
 	SampleSafeHSSWIFT6 = `import Foundation
 import var CommonCrypto.CC_MD5_DIGEST_LENGTH
 import func CommonCrypto.CC_MD5
@@ -43,4 +53,12 @@ func MD5(string: String) -> Data {
 
 //Test:
 let md5Data = MD5(string:"Hello")`
+
+	SampleSafeHSSWIFT24 = `
+if let err = SD.executeChange("SELECT * FROM User where user=?", withArgs: [name, population, isWarm, foundedIn]) {
+    //there was an error during the insert, handle it here
+} else {
+    //no error, the row was inserted successfully
+}
+`
 )
