@@ -130,12 +130,12 @@ Horusec's v1 is still available.
 
 **WARNING:** The endpoint with v1 will be deprecated, please upgrade your CLI to v2. Check out more details in the [**documentation**](https://horusec.io/docs/migrate-v1-to-v2/). 
 
-### Mac or Linux
+### **Mac or Linux**
 ``` sh
 curl -fsSL https://horusec.io/bin/install.sh | bash -s latest
 ```
 
-### Windows
+### **Windows**
 ```sh
 curl "https://horusec.io/bin/latest/win_x64/horusec.exe" -o "./horusec.exe" && ./horusec.exe version
 ```
