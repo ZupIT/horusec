@@ -7,6 +7,6 @@
     "every weekend"
   ],
   "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>",
-  "commitMessagePrefix": "deps:",
+  "commitMessagePrefix": "deps:chore -",
   "commitMessageAction": "update"
 }
