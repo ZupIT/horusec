@@ -28,11 +28,6 @@ var ErrGitLowerVersion = errors.New("{HORUSEC_CLI} Error Git version is lower of
 
 var ErrDockerNotInstalled = errors.New("{HORUSEC_CLI} Error Docker not found. Please check and try again")
 
-// Occurs when CsProj not found in dotnet project
-
-var ErrSolutionNotFound = errors.New("{HORUSEC_CLI} Security code scan failed to execute," +
-	" specify a solution file. The current working directory does not contain a solution file")
-
 // Occurs when not found rails project
 
 var ErrNotFoundRailsProject = errors.New("{HORUSEC_CLI} Error not found rails project syntax")

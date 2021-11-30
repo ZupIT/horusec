@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package severities
+package scs
 
 import (
 	"testing"
@@ -20,9 +20,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMapCriticalValues(t *testing.T) {
+	t.Run("should success return a critical severity map", func(t *testing.T) {
+		result := criticalSeverities()
+		assert.NotEmpty(t, result)
+	})
+}
+
 func TestMapHighValues(t *testing.T) {
 	t.Run("should success return a high severity map", func(t *testing.T) {
-		result := MapHighValues()
+		result := highSeverities()
+		assert.NotEmpty(t, result)
+	})
+}
+
+func TestMapLowValues(t *testing.T) {
+	t.Run("should success return a low severity map", func(t *testing.T) {
+		result := lowSevetiries()
+		assert.NotEmpty(t, result)
+	})
+}
+
+func TestMapMediumValues(t *testing.T) {
+	t.Run("should success return a medium severity map", func(t *testing.T) {
+		result := mediumSeverities()
 		assert.NotEmpty(t, result)
 	})
 }

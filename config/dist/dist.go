@@ -16,12 +16,10 @@ package dist
 
 const falseString = "false"
 
-var (
-	// standAlone is a build flag used to check if build is stand alone.
-	//
-	// The value passed is a raw string contaning true or false.
-	standAlone string = falseString
-)
+// standAlone is a build flag used to check if build is stand alone.
+//
+// The value passed is a raw string contaning true or false.
+var standAlone string = falseString
 
 const (
 	// StandAlone represents the build mode without Docker support.

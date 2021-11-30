@@ -16,6 +16,7 @@ package scs
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -24,25 +25,37 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/entities"
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/enums"
-	severitiesScs "github.com/ZupIT/horusec/internal/services/formatters/csharp/scs/severities"
-	fileUtils "github.com/ZupIT/horusec/internal/utils/file"
+	fileutils "github.com/ZupIT/horusec/internal/utils/file"
 	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
+)
+
+var (
+	// ErrSolutionNotFound occurs when a .sln file not found on dotnet project.
+	//
+	// nolint: lll
+	ErrSolutionNotFound = errors.New("security code scan failed to execute. The current working directory does not contain a solution file")
+
+	// ErrBuildProject occurs when SCS fail to build the dotnet project.
+	ErrBuildProject = errors.New("project failed to build. Fix the project issues and try again")
+)
+
+const (
+	BuildFailedOutput    = "Msbuild failed when processing the file"
+	SolutionFileNotFound = "solution file not found"
+	solutionExt          = ".sln"
 )
 
 type Formatter struct {
 	formatters.IService
 	severities          map[string]severities.Severity
-	vulnerabilitiesByID map[string]*entities.Rule
+	vulnerabilitiesByID map[string]*scsRule
 }
 
-func NewFormatter(service formatters.IService) formatters.IFormatter {
+func NewFormatter(service formatters.IService) *Formatter {
 	return &Formatter{
 		IService: service,
 	}
@@ -59,20 +72,17 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.SecurityCodeScan, languages.CSharp)
 }
 
-//nolint:funlen
 func (f *Formatter) startSecurityCodeScan(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.SecurityCodeScan, languages.CSharp)
 
 	analysisData := f.getDockerConfig(projectSubPath)
-	if err := f.verifyIsSolutionError(analysisData.CMD); err != nil {
-		return analysisData.CMD, err
-	}
 
 	outputContainer, err := f.ExecuteContainer(analysisData)
 	if err != nil {
 		return "", err
 	}
-	output, err := f.CheckOutputErrors(outputContainer, err)
+
+	output, err := f.checkOutputErrors(outputContainer)
 	if err != nil {
 		return outputContainer, err
 	}
@@ -81,67 +91,65 @@ func (f *Formatter) startSecurityCodeScan(projectSubPath string) (string, error)
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	analysis := &entities.Analysis{}
+	analysis := new(scsAnalysis)
 
 	if err := json.Unmarshal([]byte(output), &analysis); err != nil {
 		return err
 	}
 
 	f.setSeveritiesAndVulnsByID(analysis)
-	for _, result := range analysis.GetRun().Results {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(result))
+
+	for _, result := range analysis.getRun().Results {
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(result))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setSeveritiesAndVulnsByID(analysis *entities.Analysis) {
+func (f *Formatter) setSeveritiesAndVulnsByID(analysis *scsAnalysis) {
 	f.severities = f.getVulnerabilityMap()
-	f.vulnerabilitiesByID = analysis.MapVulnerabilitiesByID()
+	f.vulnerabilitiesByID = analysis.vulnerabilitiesByID()
 }
 
-func (f *Formatter) setVulnerabilityData(result *entities.Result) *vulnerability.Vulnerability {
-	data := f.getDefaultVulnerabilitySeverity()
-	data.Severity = f.GetSeverity(result.RuleID)
-	data.Details = f.GetDetails(result.RuleID, result.GetVulnName())
-	data.Line = result.GetLine()
-	data.Column = result.GetColumn()
-	data.File = result.GetFile()
-	data.Code, _ = fileUtils.GetCode(f.GetConfigProjectPath(), result.GetFile(), result.GetLine())
-	data = vulnHash.Bind(data)
-	return f.SetCommitAuthor(data)
+func (f *Formatter) newVulnerability(result *scsResult) *vulnerability.Vulnerability {
+	code, _ := fileutils.GetCode(f.GetConfigProjectPath(), result.getFile(), result.getLine())
+
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.SecurityCodeScan,
+		Language:     languages.CSharp,
+		Severity:     f.getSeverity(result.RuleID),
+		Details:      f.getDetails(result.RuleID, result.getVulnName()),
+		Line:         result.getLine(),
+		Column:       result.getColumn(),
+		File:         result.getFile(),
+		Code:         code,
+	}
+
+	return f.SetCommitAuthor(vulnHash.Bind(vuln))
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.SecurityCodeScan
-	vulnerabilitySeverity.Language = languages.CSharp
-	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(CMD, fileUtils.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt), tools.SecurityCodeScan),
+// nolint: funlen
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
+		CMD: f.AddWorkDirInCmd(
+			CMD,
+			fileutils.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, solutionExt),
+			tools.SecurityCodeScan,
+		),
 		Language: languages.CSharp,
 	}
-	filename, err := fileUtils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, enums.SolutionExt)
+
+	filename, err := fileutils.GetFilenameByExt(f.GetConfigProjectPath(), projectSubPath, solutionExt)
 	if err != nil {
 		logger.LogError(messages.MsgErrorGetFilenameByExt, err)
 	}
+
 	analysisData.SetSlnName(filename)
+
 	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-func (f *Formatter) verifyIsSolutionError(cmd string) error {
-	if strings.Contains(cmd, enums.SolutionFileNotFound) {
-		return errorsEnums.ErrSolutionNotFound
-	}
-
-	return nil
-}
-
-func (f *Formatter) GetSeverity(ruleID string) severities.Severity {
+func (f *Formatter) getSeverity(ruleID string) severities.Severity {
 	if ruleID == "" {
 		return severities.Unknown
 	}
@@ -149,39 +157,44 @@ func (f *Formatter) GetSeverity(ruleID string) severities.Severity {
 	return f.severities[ruleID]
 }
 
-func (f Formatter) GetDetails(ruleID, vulnName string) string {
+func (f Formatter) getDetails(ruleID, vulnName string) string {
 	if ruleID == "" {
 		return vulnName
 	}
 
-	return f.vulnerabilitiesByID[ruleID].GetDescription(vulnName)
+	return f.vulnerabilitiesByID[ruleID].getDescription(vulnName)
 }
 
+// nolint: funlen
 func (f *Formatter) getVulnerabilityMap() map[string]severities.Severity {
-	values := map[string]severities.Severity{}
-	for key, value := range severitiesScs.MapCriticalValues() {
+	values := make(map[string]severities.Severity)
+
+	for key, value := range criticalSeverities() {
 		values[key] = value
 	}
-	for key, value := range severitiesScs.MapHighValues() {
+
+	for key, value := range highSeverities() {
 		values[key] = value
 	}
-	for key, value := range severitiesScs.MapMediumValues() {
+
+	for key, value := range mediumSeverities() {
 		values[key] = value
 	}
-	for key, value := range severitiesScs.MapLowValues() {
+
+	for key, value := range lowSevetiries() {
 		values[key] = value
 	}
 
 	return values
 }
 
-func (f *Formatter) CheckOutputErrors(output string, err error) (string, error) {
-	if err != nil {
-		return output, err
+func (f *Formatter) checkOutputErrors(output string) (string, error) {
+	if strings.Contains(output, BuildFailedOutput) {
+		return output, ErrBuildProject
 	}
 
-	if strings.Contains(output, enums.BuildFailedOutput) {
-		return output, enums.ErrorFailedToBuildProject
+	if strings.Contains(output, SolutionFileNotFound) {
+		return output, ErrSolutionNotFound
 	}
 
 	return output, nil
