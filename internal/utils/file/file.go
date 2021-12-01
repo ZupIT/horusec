@@ -217,8 +217,10 @@ func getCodeFromDesiredLine(file *os.File, desiredLine int) string {
 // ext that match the dependency name.
 //
 // Return the file, code sample and line that match the dependency name.
-func GetDependencyCodeFilepathAndLine(projectPath, subPath, ext, dependency string) (code, file, line string) {
-	paths, err := getPathsByExtension(projectPath, subPath, ext)
+func GetDependencyCodeFilepathAndLine(
+	projectPath, subPath, dependency string, extensions ...string,
+) (code, file, line string) {
+	paths, err := getPathsByExtension(projectPath, subPath, extensions...)
 	if err != nil {
 		return "", "", ""
 	}
@@ -226,17 +228,22 @@ func GetDependencyCodeFilepathAndLine(projectPath, subPath, ext, dependency stri
 	return getDependencyInfo(paths, dependency)
 }
 
-func getPathsByExtension(projectPath, subPath, ext string) ([]string, error) {
+// nolint: funlen
+func getPathsByExtension(projectPath, subPath string, extensions ...string) ([]string, error) {
 	var paths []string
 
 	pathToWalk := projectPathWithSubPath(projectPath, subPath)
-	return paths, filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+	return paths, filepath.Walk(pathToWalk, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if filepath.Ext(walkPath) == ext {
-			paths = append(paths, walkPath)
+		fileExt := filepath.Ext(path)
+
+		for _, ext := range extensions {
+			if fileExt == ext {
+				paths = append(paths, path)
+			}
 		}
 
 		return nil
