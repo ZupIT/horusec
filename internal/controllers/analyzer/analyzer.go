@@ -20,6 +20,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -504,7 +505,7 @@ func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
 	if customImage := a.config.CustomImages[language]; customImage != "" {
 		return customImage
 	}
-	return fmt.Sprintf("%s/%s", images.DefaultRegistry, images.MapValues()[language])
+	return path.Join(images.DefaultRegistry, images.MapValues()[language])
 }
 
 // SetFalsePositivesAndRiskAcceptInVulnerabilities set analysis vulnerabilities to false

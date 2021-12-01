@@ -16,8 +16,8 @@ package bundler
 
 import (
 	"bufio"
-	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -147,7 +147,7 @@ func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerabili
 }
 
 func (f *Formatter) getVulnerabilityLineByName(module, fileName string) string {
-	fileExisting, err := os.Open(fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), fileName))
+	fileExisting, err := os.Open(filepath.Join(f.GetConfigProjectPath(), fileName))
 	if err != nil {
 		return ""
 	}

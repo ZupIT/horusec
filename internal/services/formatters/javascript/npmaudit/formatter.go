@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -139,7 +140,7 @@ func (f *Formatter) getVersionText(version string) string {
 }
 
 func (f *Formatter) getVulnerabilityLineByName(version, module, file string) string {
-	fileExisting, err := os.Open(fmt.Sprintf("%s/%s", f.GetConfigProjectPath(), file))
+	fileExisting, err := os.Open(filepath.Join(f.GetConfigProjectPath(), file))
 	if err != nil {
 		return ""
 	}
