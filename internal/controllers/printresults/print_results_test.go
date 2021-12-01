@@ -467,18 +467,9 @@ ReferenceHash: 9824269893d4df5e66a4fe7f53a715117bb722910228152b04831b6d2ad19a5b
 ==================================================================================
 
 In this analysis, a total of 11 possible vulnerabilities were found and we classified them into:
-Total of False Positive HIGH is: 3
-Total of False Positive MEDIUM is: 1
-Total of False Positive LOW is: 7
-Total of Corrected HIGH is: 3
-Total of Corrected MEDIUM is: 1
-Total of Corrected LOW is: 7
 Total of Vulnerability HIGH is: 3
 Total of Vulnerability MEDIUM is: 1
 Total of Vulnerability LOW is: 7
-Total of Risk Accepted HIGH is: 3
-Total of Risk Accepted MEDIUM is: 1
-Total of Risk Accepted LOW is: 7
 
 `
 

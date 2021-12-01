@@ -263,12 +263,13 @@ func (pr *PrintResults) getTotalVulnsBySeverity() map[vulnerabilityenum.Type]map
 }
 
 func (pr *PrintResults) getDefaultTotalVulnBySeverity() map[vulnerabilityenum.Type]map[severities.Severity]int {
-	count := pr.getDefaultCountBySeverity()
+	// NOTE: Here we call pr.getDefaultCountBySeverity for each key on map
+	// to avoid reuse the same map pointer to all keys.
 	return map[vulnerabilityenum.Type]map[severities.Severity]int{
-		vulnerabilityenum.Vulnerability: count,
-		vulnerabilityenum.RiskAccepted:  count,
-		vulnerabilityenum.FalsePositive: count,
-		vulnerabilityenum.Corrected:     count,
+		vulnerabilityenum.Vulnerability: pr.getDefaultCountBySeverity(),
+		vulnerabilityenum.RiskAccepted:  pr.getDefaultCountBySeverity(),
+		vulnerabilityenum.FalsePositive: pr.getDefaultCountBySeverity(),
+		vulnerabilityenum.Corrected:     pr.getDefaultCountBySeverity(),
 	}
 }
 
