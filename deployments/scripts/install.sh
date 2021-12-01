@@ -16,12 +16,32 @@
 
 URL_DOWNLOAD=""
 VERSION_DOWNLOAD=$1
+LATEST_RC=$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-rc.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
+LATEST_BETA=$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-beta.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
+
+regex='^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
 
 horusecSetVersion () {
     if [ -z "$VERSION_DOWNLOAD" ]; then
-        VERSION_DOWNLOAD="latest"
+        echo "invalid input, empty string"
+        exit 1
+    elif [ "$VERSION_DOWNLOAD" = "latest-rc" ] ; then
+        echo "Version set to $LATEST_RC"
+        VERSION_DOWNLOAD=$LATEST_RC
+    elif [ "$VERSION_DOWNLOAD" = "latest-beta" ] ; then
+        echo "Version set to $LATEST_BETA"
+        VERSION_DOWNLOAD=$LATEST_BETA
+    elif  [ "$VERSION_DOWNLOAD" = "latest" ] ; then
+        echo "Version set to $LATEST_BETA"
+        VERSION_DOWNLOAD='latest'
+    elif echo $VERSION_DOWNLOAD| grep -Eq  $regex; then
+        echo "Version set to $VERSION_DOWNLOAD"
+    else
+      echo "input not match required params: 'latest-rc' 'latest-beta' 'latest' or a semantic version compliant, check https://github.com/ZupIT/horusec/releases"
+      exit 1
     fi
     echo "Download version: $VERSION_DOWNLOAD"
+
 }
 
 horusecIdentifyOSLatest () {
