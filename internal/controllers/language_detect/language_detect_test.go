@@ -55,7 +55,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		}
 	})
 	t.Run("Should return error when the folder not exists", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		monitor, err := controller.Detect("./NOT-EXIST-PATH")
 
@@ -68,7 +68,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		srcPath := filepath.Join(testutil.RootPath, "assets")
 		err := copy.Copy(srcPath, dstPath, func(src string) bool { return false })
 		assert.NoError(t, err)
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(srcPath)
 
@@ -80,7 +80,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should ignore additional folder setup in configs", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.GoExample1)
 
@@ -92,7 +92,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should ignore additional specific file name setup in configs", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.GoExample1)
 
@@ -103,7 +103,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, 3)
 	})
 	t.Run("Should run language detect and return GO and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.GoExample1)
 
@@ -115,7 +115,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.LeaksExample1)
 
@@ -125,7 +125,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return JAVA and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.JavaExample1)
 
@@ -137,7 +137,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.JavaScriptExample1)
 
@@ -149,7 +149,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.JavaScriptExample2)
 
@@ -162,7 +162,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return KOTLIN and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.KotlinExample1)
 
@@ -174,7 +174,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return CSHARP and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.CsharpExample1)
 
@@ -186,7 +186,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return PYTHON and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.PythonExample1)
 
@@ -198,7 +198,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return PYTHON safety and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.PythonExample2)
 
@@ -210,7 +210,7 @@ func TestNewLanguageDetect(t *testing.T) {
 	})
 
 	t.Run("Should run language detect and return RUBY and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.RubyExample1)
 
@@ -224,7 +224,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, 6)
 	})
 	t.Run("Should run language detect on examples folder and return RUBY and GITLEAKS", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.RubyExample1)
 
@@ -238,7 +238,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, 6)
 	})
 	t.Run("Should run language detect on examples folder and return all languages", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(testutil.ExamplesPath)
 
@@ -253,7 +253,7 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, len(languages.Values())-2)
 	})
 	t.Run("Should ignore folders present in toignore.GetDefaultFoldersToIgnore()", func(t *testing.T) {
-		controller := NewLanguageDetect(&config.Config{}, uuid.New())
+		controller := NewLanguageDetect(config.New(), uuid.New())
 		wd, err := os.Getwd()
 		assert.NoError(t, err)
 		logger.SetLogLevel("debug")
