@@ -109,7 +109,10 @@ func TestCreateAndWriteFile(t *testing.T) {
 
 func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
 	t.Run("Should run with success", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine(testutil.CsharpExample1, "", dotnetcli.CsProjExt, "Microsoft.AspNetCore.Http")
+		code, file, line := file.GetDependencyCodeFilepathAndLine(
+			testutil.CsharpExample1, "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		)
+
 		expectedCode := "<PackageReference Include=\"Microsoft.AspNetCore.Http\" Version=\"2.2.2\"/>"
 		expectedFile := filepath.Join(testutil.CsharpExample1, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj")
 		expectedLine := "7"
@@ -118,13 +121,19 @@ func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
 		assert.Equal(t, expectedCode, code)
 	})
 	t.Run("Should return empty when path is invalid", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine("invalidPath", "", dotnetcli.CsProjExt, "Microsoft.AspNetCore.Http")
+		code, file, line := file.GetDependencyCodeFilepathAndLine(
+			"invalidPath", "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		)
+
 		assert.Zero(t, code)
 		assert.Zero(t, file)
 		assert.Zero(t, line)
 	})
 	t.Run("Should return empty when path is valid but has no files", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine(t.TempDir(), "", dotnetcli.CsProjExt, "Microsoft.AspNetCore.Http")
+		code, file, line := file.GetDependencyCodeFilepathAndLine(
+			t.TempDir(), "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		)
+
 		assert.Zero(t, code)
 		assert.Zero(t, file)
 		assert.Zero(t, line)

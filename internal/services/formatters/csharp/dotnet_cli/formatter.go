@@ -143,7 +143,7 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 
 func (f *Formatter) newVulnerability(dependency *dotnetDependency, projectSubPath string) *vulnerability.Vulnerability {
 	code, filePath, line := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, CsProjExt, dependency.Name,
+		f.GetConfigProjectPath(), projectSubPath, dependency.Name, CsProjExt,
 	)
 
 	vuln := &vulnerability.Vulnerability{

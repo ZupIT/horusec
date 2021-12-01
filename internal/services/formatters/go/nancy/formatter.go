@@ -33,7 +33,10 @@ import (
 	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
-const goModulesExt = ".mod"
+const (
+	goModulesExt = ".mod"
+	goSumExt     = ".sum"
+)
 
 type Formatter struct {
 	formatters.IService
@@ -103,7 +106,7 @@ func (f *Formatter) newVulnerability(
 	projectSubPath string,
 ) *vulnerability.Vulnerability {
 	code, filePath, line := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, goModulesExt, vulnerable.getDependency(),
+		f.GetConfigProjectPath(), projectSubPath, vulnerable.getDependency(), goModulesExt, goSumExt,
 	)
 
 	vuln := &vulnerability.Vulnerability{
