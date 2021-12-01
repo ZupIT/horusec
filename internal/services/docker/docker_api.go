@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -372,9 +373,9 @@ func (d *API) DeleteContainersFromAPI() {
 
 func (d *API) getSourceFolder() (path string) {
 	if d.config.ContainerBindProjectPath != "" {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.ContainerBindProjectPath, d.analysisID.String())
+		path = filepath.Join(d.config.ContainerBindProjectPath, ".horusec", d.analysisID.String())
 	} else {
-		path = fmt.Sprintf("%s/.horusec/%s", d.config.ProjectPath, d.analysisID.String())
+		path = filepath.Join(d.config.ProjectPath, ".horusec", d.analysisID.String())
 	}
 
 	separator := path[1:2]

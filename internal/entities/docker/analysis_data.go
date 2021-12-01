@@ -15,7 +15,7 @@
 package docker
 
 import (
-	"fmt"
+	"path"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -36,7 +36,7 @@ func (a *AnalysisData) IsInvalid() bool {
 
 func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
 	a.CustomImage = customImage
-	a.DefaultImage = fmt.Sprintf("%s/%s", images.DefaultRegistry, imageWithTag)
+	a.DefaultImage = path.Join(images.DefaultRegistry, imageWithTag)
 
 	return a
 }
