@@ -257,7 +257,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		BoolP(
 			"enable-shellcheck", "j",
 			s.configs.EnableShellCheck,
-			"Enable shellcheck. Example -h=\"true\". Default: false",
+			`Enable shellcheck. Example -j="true". Default: false`,
 		)
 
 	if !dist.IsStandAlone() {
