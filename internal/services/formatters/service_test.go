@@ -423,8 +423,13 @@ func TestService_GetCodeWithMaxCharacters(t *testing.T) {
 func TestRemoveSrcFolderFromPath(t *testing.T) {
 	t.Run("should return path without src prefix", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
-		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("src", "something"))
+		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("/", "src", "something"))
 		assert.Equal(t, filepath.Base("something"), result)
+	})
+	t.Run("should return path without src prefix", func(t *testing.T) {
+		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
+		result := monitorController.RemoveSrcFolderFromPath(filepath.Join("/", "src", "something", "test"))
+		assert.Equal(t, filepath.Join("something", "test"), result)
 	})
 	t.Run("should return path without diff when src is after 4 index position", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})

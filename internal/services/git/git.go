@@ -80,10 +80,12 @@ func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
 	stderr := bytes.NewBufferString("")
 
 	// NOTE: Here we use ^ as json double quotes  to work properly on all platforms.
+	// The --no-patch flag suppress diff output, avoiding parse errors.
 	cmd := exec.Command(
 		"git",
 		"log",
 		"-1",
+		"--no-patch",
 		`--format={
 			^^^^^author^^^^^: ^^^^^%an^^^^^,
 			^^^^^email^^^^^:^^^^^%ae^^^^^,
@@ -110,13 +112,15 @@ func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
 }
 
 func (g *Git) parseOutput(output []byte) (author commitauthor.CommitAuthor) {
-	output = g.getCleanOutput(output)
+	output = g.replaceCarets(output)
+
 	if err := json.Unmarshal(output, &author); err != nil {
 		logger.LogErrorWithLevel(
 			messages.MsgErrorGitCommitAuthorsParseOutput+string(output), err,
 		)
 		return g.newCommitAuthorNotFound()
 	}
+
 	return author
 }
 
@@ -144,14 +148,8 @@ func (g *Git) parseLineStringToNumber(line string) string {
 	return strconv.Itoa(num)
 }
 
-func (g *Git) getCleanOutput(output []byte) []byte {
-	// Output from git log contains the diff changes
-	// so we need to extract only the json output data.
-	if idx := bytes.LastIndex(output, []byte("}")); idx >= 0 {
-		return bytes.ReplaceAll(output[:idx+1], []byte("^^^^^"), []byte(`"`))
-	}
-	logger.LogWarn(fmt.Sprintf("Could not to clean git blame output: %s", output))
-	return []byte("")
+func (g *Git) replaceCarets(output []byte) []byte {
+	return bytes.ReplaceAll(output, []byte("^^^^^"), []byte(`"`))
 }
 
 func (g *Git) existsGitFolderInPath() bool {

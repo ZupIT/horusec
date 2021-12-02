@@ -110,6 +110,14 @@ func TestGetCommitAuthor(t *testing.T) {
 	t.Run("Should return a new service", func(t *testing.T) {
 		assert.NotEmpty(t, New(&config.Config{}))
 	})
+
+	t.Run("Should not return git diff in output", func(t *testing.T) {
+		bytes, err := service.executeCMD("1", "README.md")
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, bytes)
+		assert.NotContains(t, string(bytes), "diff --git")
+	})
 }
 
 func TestRepositoryIsShallow(t *testing.T) {
