@@ -23,7 +23,7 @@ const (
 		" Don’t worry, we’ll remove it after the analysis ends automatically! Project sent to folder in location: "
 	MsgWarnBanditFoundInformative = "{HORUSEC_CLI} CAUTION! In your project was found " +
 		"{{0}} details of type informative"
-	MsgWarnTotalFolderOrFileWasIgnored = "{HORUSEC_CLI} When starting the analysis WE SKIP A TOTAL OF {{0}} FILES " +
+	MsgWarnTotalFolderOrFileWasIgnored = "{HORUSEC_CLI} When starting the analysis WE SKIP A TOTAL OF %d FILES " +
 		"that are not considered to be analyzed. To see more details use flag --log-level=debug"
 	MsgWarnGitHistoryEnable = "{HORUSEC_CLI} Starting the analysis with git history enabled. " +
 		"ATTENTION the waiting time can be longer when this option is enabled!"
