@@ -269,7 +269,23 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 			)
 	}
 
-	return startCmd
+	return s.setDeprecatedFlags(startCmd)
+}
+
+func (s *Start) setDeprecatedFlags(cmd *cobra.Command) *cobra.Command {
+	flags := cmd.PersistentFlags()
+
+	if err := flags.MarkHidden("monitor-retry-count"); err != nil {
+		logger.LogPanic(fmt.Sprintf(messages.PanicMarkHiddenFlag, "monitor-retry-count"), err)
+	}
+
+	if err := flags.MarkDeprecated(
+		"monitor-retry-count", "monitor component no longer exists in Horusec. Use only --analysis-timeout.",
+	); err != nil {
+		logger.LogPanic(fmt.Sprintf(messages.PanicMarkDeprecatedFlag, "monitor-retry-count"), err)
+	}
+
+	return cmd
 }
 
 func (s *Start) runE(cmd *cobra.Command, _ []string) error {
