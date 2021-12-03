@@ -143,10 +143,14 @@ func (s *Service) RemoveSrcFolderFromPath(path string) string {
 	if path == "" || len(path) <= 4 || !strings.Contains(path[:4], "src") {
 		return path
 	}
+
+	path = strings.Replace(filepath.ToSlash(path), "/src/", "", 1)
+
 	if runtime.GOOS == "windows" {
-		return strings.Replace(path, `src\`, "", 1)
+		return filepath.FromSlash(path)
 	}
-	return strings.Replace(path, "src/", "", 1)
+
+	return path
 }
 
 func (s *Service) GetCodeWithMaxCharacters(code string, column int) string {
