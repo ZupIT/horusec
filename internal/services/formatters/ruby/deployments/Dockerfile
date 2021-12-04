@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ruby:2.7.5-alpine
+FROM ruby:3.0.3-alpine
 
 RUN gem install brakeman -v 5.1.1
 RUN gem install bundler-audit -v 0.9.0
