@@ -19,9 +19,9 @@ RUN apk update && apk add --no-cache git
 ADD . /horusec
 WORKDIR /horusec
 
-RUN go get -t -v -d ./...
+RUN go mod download
 
-RUN env GOOS=linux go build -o /bin/horusec ./cmd/app/main.go
+RUN env GOOS=linux go build -ldflags '-s -w' -o /bin/horusec ./cmd/app/main.go
 
 FROM docker:20.10-git
 
