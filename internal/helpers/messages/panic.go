@@ -21,4 +21,6 @@ const (
 	MsgPanicGetFlagValue                   = "{HORUSEC_CLI} Error on getting flag value, check and try again: "
 	MsgPanicNotConnectDocker               = "{HORUSEC_CLI} Error when try connect in docker."
 	MsgPanicGetConfigFilePath              = "{HORUSEC-CLI} Error on get config file path."
+	PanicMarkHiddenFlag                    = "{HORUSEC-CLI} Internal error occurred to hidden %s flag: "
+	PanicMarkDeprecatedFlag                = "{HORUSEC-CLI} Internal error occurred to mark %s flag as deprecated: "
 )

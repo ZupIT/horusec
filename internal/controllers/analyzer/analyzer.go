@@ -258,23 +258,17 @@ func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
 		wg.Wait()
 	}()
 
-	timeout := a.config.TimeoutInSecondsAnalysis
-	timer := time.After(time.Duration(timeout) * time.Second)
-	retry := a.config.MonitorRetryInSeconds
-	tick := time.NewTicker(time.Duration(retry) * time.Second)
-	defer tick.Stop()
+	timeout := time.After(time.Duration(a.config.TimeoutInSecondsAnalysis) * time.Second)
 	for {
 		select {
 		case <-done:
 			a.loading.Stop()
 			return
-		case <-timer:
+		case <-timeout:
 			a.docker.DeleteContainersFromAPI()
 			a.config.IsTimeout = true
 			a.loading.Stop()
 			return
-		case <-tick.C:
-			timeout -= retry
 		}
 	}
 }
