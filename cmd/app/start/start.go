@@ -308,16 +308,14 @@ func (s *Start) startAnalysis(cmd *cobra.Command) (totalVulns int, err error) {
 	if err := s.askIfRunInDirectorySelected(s.isRunPromptQuestion(cmd)); err != nil {
 		return 0, err
 	}
-	if err := s.configsValidations(cmd); err != nil {
+	if err := s.validateConfig(); err != nil {
 		return 0, err
 	}
 	return s.executeAnalysisDirectory()
 }
 
-func (s *Start) configsValidations(cmd *cobra.Command) error {
+func (s *Start) validateConfig() error {
 	if err := usecases.ValidateConfig(s.configs); err != nil {
-		logger.LogErrorWithLevel(messages.MsgErrorInvalidConfigs, err)
-		_ = cmd.Help()
 		return err
 	}
 
