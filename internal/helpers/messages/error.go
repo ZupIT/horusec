@@ -50,7 +50,6 @@ const (
 	MsgErrorWhenCheckDockerRunning       = "{HORUSEC_CLI} Error when check if docker is running."
 	MsgErrorWhenDockerIsLowerVersion     = "{HORUSEC_CLI} Your docker version is below of: "
 	MsgErrorWhenGitIsLowerVersion        = "{HORUSEC_CLI} Your git version is below of: "
-	MsgErrorInvalidConfigs               = "{HORUSEC_CLI} Errors on validate configuration: "
 	MsgErrorRemoveAnalysisFolder         = "{HORUSEC_CLI} Error when remove analysis project inside .horusec"
 	MsgErrorDetectLanguage               = "{HORUSEC_CLI} Error when detect language"
 	MsgErrorCopyProjectToHorusecAnalysis = "{HORUSEC_CLI} Error when copy project to .horusec folder"
