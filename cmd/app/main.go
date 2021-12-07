@@ -17,7 +17,6 @@ package main
 import (
 	"os"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/spf13/cobra"
 
@@ -32,15 +31,22 @@ func main() {
 	cfg := config.New()
 
 	rootCmd := &cobra.Command{
-		Use:   "horusec",
-		Short: "Horusec CLI prepares packages to be analyzed by the Horusec Analysis API",
+		Use: "horusec",
+		Short: `Horusec is an open source tool that orchestrates other security tools and identifies security flaws and vulnerabilities.
+See more in https://docs.horusec.io/docs/overview
+		`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger.LogPrint("Horusec Command Line is an orchestrates security," +
-				"tests and centralizes all results into a database for further analysis and metrics.")
 			return cmd.Help()
 		},
 		Example: `
+# Horusec will ask in which directory the analysis should be performed. Default is the current path.
 horusec start
+
+# Use the current directory to run the analysis.
+horusec start -p .
+
+# Use a different path than the current one.
+# Note that the configuration file will still be searched in the current path if "--config-file-path" flag is not passed.
 horusec start -p="/home/user/projects/my-project"
 `,
 	}
@@ -53,7 +59,7 @@ horusec start -p="/home/user/projects/my-project"
 			&cfg.LogLevel,
 			"log-level",
 			cfg.LogLevel,
-			"Set verbose level of the CLI. Log Level enable is: \"panic\",\"fatal\",\"error\",\"warn\",\"info\",\"debug\",\"trace\"",
+			`Set log level ("panic"|"fatal"|"error"|"warn"|"info"|"debug"|"trace")`,
 		)
 
 	rootCmd.PersistentFlags().
@@ -61,7 +67,7 @@ horusec start -p="/home/user/projects/my-project"
 			&cfg.ConfigFilePath,
 			"config-file-path",
 			cfg.ConfigFilePath,
-			"Path of the file horusec-config.json to setup content of horusec",
+			"Path of the configuration file",
 		)
 
 	rootCmd.PersistentFlags().
@@ -69,7 +75,7 @@ horusec start -p="/home/user/projects/my-project"
 			&cfg.LogFilePath,
 			"log-file-path", "l",
 			cfg.LogFilePath,
-			`set user defined log file path instead of default`,
+			"Path of log file",
 		)
 
 	rootCmd.AddCommand(version.CreateCobraCmd())

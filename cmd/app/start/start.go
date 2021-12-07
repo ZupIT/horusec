@@ -78,8 +78,8 @@ func NewStartCommand(configs *config.Config) *Start {
 func (s *Start) CreateStartCommand() *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:               "start",
-		Short:             "Start horusec-cli",
-		Long:              "Start the Horusec' analysis in the current path",
+		Short:             "Start analysis",
+		Long:              "Start the Horusec analysis in the current path",
 		Example:           "horusec start",
 		PersistentPreRunE: s.configs.PersistentPreRun,
 		RunE:              s.runE,
@@ -89,175 +89,175 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		Int64P(
 			"monitor-retry-count", "m",
 			s.configs.MonitorRetryInSeconds,
-			"The number of retries for the monitor.",
+			"The number of retries for the monitor",
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"output-format", "o",
 			s.configs.PrintOutputType,
-			"The format for the output to be shown. Options are: text (stdout), json, sonarqube",
+			`Output format of analysis ("text"|"json"|"sonarqube"). For json and sonarqube --json-output-file is required`,
 		)
 
 	startCmd.PersistentFlags().
 		StringSliceP(
 			"ignore-severity", "s",
 			s.configs.SeveritiesToIgnore,
-			"The level of vulnerabilities to ignore in the output. Example: -s=\"LOW, MEDIUM, HIGH\"",
+			`The level of vulnerabilities to ignore in the output ("LOW"|"MEDIUM"|"HIGH"). Example: -s="LOW, HIGH"`,
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"json-output-file", "O",
 			s.configs.JSONOutputFilePath,
-			"If your pass output-format you can configure the output JSON location. Example: -O=\"/tmp/output.json\"",
+			`Output file to write analysis result. This flag should be used with --output-format`,
 		)
 
 	startCmd.PersistentFlags().
 		StringSliceP(
 			"ignore", "i",
 			s.configs.FilesOrPathsToIgnore,
-			"Paths to ignore in the analysis. Example: -i=\"/home/user/project/assets, /home/user/project/deployments\"",
+			`Paths to ignore in the analysis. Example: -i="/path/to/ignore, **/*_test.go, **/assets/**"`,
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"horusec-url", "u",
 			s.configs.HorusecAPIUri,
-			"The Horusec API address to access the analysis engine",
+			"The Horusec server address to send analysis results",
 		)
 
 	startCmd.PersistentFlags().
 		Int64P(
 			"request-timeout", "r",
 			s.configs.TimeoutInSecondsRequest,
-			"The timeout threshold for the request to the Horusec API",
+			"The timeout threshold for the request to the Horusec server. The minimum time is 10",
 		)
 
 	startCmd.PersistentFlags().
 		Int64P(
 			"analysis-timeout", "t",
 			s.configs.TimeoutInSecondsAnalysis,
-			"The timeout threshold for the Horusec CLI wait for the analysis to complete.",
+			"The timeout threshold for the Horusec CLI wait for the analysis to complete. The minimum time is 10",
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"authorization", "a",
 			s.configs.RepositoryAuthorization,
-			"The authorization token for the Horusec API",
+			"Authorization token to use on Horusec server. Read more: https://docs.horusec.io/docs/tutorials/how-to-create-an-authorization-token",
 		)
 
 	startCmd.PersistentFlags().
 		StringToString(
 			"headers",
 			s.configs.Headers,
-			"The headers dynamic to send on request in Horusec API. Example --headers=\"{\"X-Auth-Service\": \"my-value\"}\"",
+			`Custom headers to send on request to Horusec API. Example --headers='{"X-Auth-Service": "value"}'`,
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"return-error", "e",
 			s.configs.ReturnErrorIfFoundVulnerability,
-			"The return-error is the option to check if you can return \"exit(1)\" if found vulnerabilities. Example -e=\"true\"",
+			`Return exit code 1 if found vulnerabilities. Default value is false (exit code 0)`,
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"project-path", "p",
 			s.configs.ProjectPath,
-			"Path to run an analysis in your project",
+			"Path to run an analysis. If this value is not passed, Horusec will ask if you want to run the analysis in the current directory",
 		)
 
 	startCmd.PersistentFlags().
 		Bool(
 			"enable-git-history",
 			s.configs.EnableGitHistoryAnalysis,
-			"When this value is \"true\" we will run tool gitleaks and search vulnerability in all git history of the project. Example --enable-git-history=\"true\"",
+			`Run Gitleaks and search for vulnerabilities in all git history of the project https://github.com/zricethezav/gitleaks`,
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"insecure-skip-verify", "S",
 			s.configs.CertInsecureSkipVerify,
-			"Insecure skip verify cert authority. PLEASE, try not to use it. Example -S=\"true\"",
+			"Disable the certification validation. PLEASE, try not to use it",
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"certificate-path", "C",
 			s.configs.CertPath,
-			"Path to certificate of authority. Example -C=\"/example/ca.crt\"",
+			`Path to certificate of authority. Example -C="example/ca.crt"`,
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"enable-commit-author", "G",
 			s.configs.EnableCommitAuthor,
-			"Used to enable or disable search with vulnerability author. Example -G=\"true\"",
+			"Enable to search commit author of vulnerabilities",
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"repository-name", "n",
 			s.configs.RepositoryName,
-			"Used to send repository name to horus server. Example -n=\"horus\"",
+			"Send repository name to Horusec server, by default sends the actual directory name",
 		)
 
 	startCmd.PersistentFlags().
 		StringSliceP(
 			"false-positive", "F",
 			s.configs.FalsePositiveHashes,
-			"Used to ignore a vulnerability by hash and setting it to be of the false positive type. Example -F=\"hash1, hash2\"",
+			`Ignore a vulnerability by hash and set it to be false positive. Example -F="hash1, hash2"`,
 		)
 
 	startCmd.PersistentFlags().
 		StringSliceP(
 			"risk-accept", "R",
 			s.configs.RiskAcceptHashes,
-			"Used to ignore a vulnerability by hash and setting it to be of the risk accept type. Example -R=\"hash3, hash4\"",
+			`Ignore a vulnerability by hash and set it to be risk accept. Example -R="hash1, hash2"`,
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"container-bind-project-path", "P",
 			s.configs.ContainerBindProjectPath,
-			"Used to pass project path in host when running horusec cli inside a container.",
+			"Project path in host to be used on Docker when running Horusec inside a container",
 		)
 
 	startCmd.PersistentFlags().
 		StringP(
 			"custom-rules-path", "c",
 			s.configs.CustomRulesPath,
-			"Used to pass the path to the horusec custom rules file. Example: -c=\"./horusec/horusec-custom-rules.json\".",
+			"Path with custom rules that should be used by Horusec engine",
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"information-severity", "I",
 			s.configs.EnableInformationSeverity,
-			"Used to enable or disable information severity vulnerabilities, information vulnerabilities can contain a lot of false positives. Example: -I=\"true\"",
+			"Enable information severity vulnerabilities. Information vulnerabilities can contain a lot of false positives",
 		)
 
 	startCmd.PersistentFlags().
 		StringSlice(
 			"show-vulnerabilities-types",
 			s.configs.ShowVulnerabilitiesTypes,
-			"Used to show in the output vulnerabilities of types: Vulnerability, Risk Accepted, False Positive, Corrected. Example --show-vulnerabilities-types=\"Vulnerability, Risk Accepted\"",
+			`Show vulnerabilities by types ("Vulnerability"|"Risk Accepted"|"False Positive"|"Corrected"). Example --show-vulnerabilities-types="Vulnerability, Risk Accepted"`,
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"enable-owasp-dependency-check", "w",
 			s.configs.EnableOwaspDependencyCheck,
-			"Enable owasp dependency check. Example -w=\"true\". Default: false",
+			"Run Owasp Dependency Check tool https://github.com/jeremylong/DependencyCheck",
 		)
 
 	startCmd.PersistentFlags().
 		BoolP(
 			"enable-shellcheck", "j",
 			s.configs.EnableShellCheck,
-			`Enable shellcheck. Example -j="true". Default: false`,
+			`Run ShellCheck tool https://github.com/koalaman/shellcheck`,
 		)
 
 	if !dist.IsStandAlone() {
@@ -265,7 +265,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 			BoolP(
 				"disable-docker", "D",
 				s.configs.DisableDocker,
-				"Used to run horusec without docker if enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-java, horusec-kubernetes, horusec-leaks, horusec-javascript, horusec-dart, horusec-nginx. Example: -D=\"true\"",
+				"Run Horusec without docker. If enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-java, horusec-kubernetes, horusec-leaks, horusec-javascript, horusec-dart, horusec-nginx",
 			)
 	}
 
