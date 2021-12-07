@@ -39,41 +39,36 @@ var (
 	ErrDockerNotInstalled = errors.New("docker not found. Please check and try again")
 )
 
-type RequirementDocker struct{}
-
-func NewRequirementDocker() *RequirementDocker {
-	return &RequirementDocker{}
-}
-
-func (r *RequirementDocker) ValidateDocker() error {
-	response, err := r.validateIfDockerIsInstalled()
+func Validate() error {
+	response, err := validateIfDockerIsInstalled()
 	if err != nil {
 		return err
 	}
-	return r.validateIfDockerIsSupported(response)
+	return validateIfDockerIsSupported(response)
 }
 
-func (r *RequirementDocker) validateIfDockerIsInstalled() (string, error) {
-	response, err := r.execDockerVersion()
+func validateIfDockerIsInstalled() (string, error) {
+	response, err := execDockerVersion()
 	if err != nil {
 		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
 		return "", err
 	}
-	if !r.checkIfContainsDockerVersion(response) {
+
+	if !checkIfContainsDockerVersion(response) {
 		return "", ErrDockerNotInstalled
 	}
-	return response, r.checkIfDockerIsRunning()
+	return response, checkIfDockerIsRunning()
 }
 
-func (r *RequirementDocker) validateIfDockerIsSupported(version string) error {
-	err := r.validateIfDockerIsRunningInMinVersion(version)
+func validateIfDockerIsSupported(version string) error {
+	err := validateIfDockerIsRunningInMinVersion(version)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *RequirementDocker) execDockerVersion() (string, error) {
+func execDockerVersion() (string, error) {
 	responseBytes, err := exec.Command("docker", "-v").CombinedOutput()
 	if err != nil {
 		logger.LogErrorWithLevel(
@@ -83,7 +78,7 @@ func (r *RequirementDocker) execDockerVersion() (string, error) {
 	return strings.ToLower(string(responseBytes)), nil
 }
 
-func (r *RequirementDocker) checkIfDockerIsRunning() error {
+func checkIfDockerIsRunning() error {
 	responseBytes, err := exec.Command("docker", "ps").CombinedOutput()
 	if err != nil {
 		logger.LogErrorWithLevel(
@@ -92,8 +87,8 @@ func (r *RequirementDocker) checkIfDockerIsRunning() error {
 	return err
 }
 
-func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response string) error {
-	version, subversion, err := r.extractDockerVersionFromString(response)
+func validateIfDockerIsRunningInMinVersion(response string) error {
+	version, subversion, err := extractDockerVersionFromString(response)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
@@ -108,19 +103,19 @@ func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response strin
 	return nil
 }
 
-func (r *RequirementDocker) extractDockerVersionFromString(response string) (int, int, error) {
+func extractDockerVersionFromString(response string) (int, int, error) {
 	responseSpited := strings.Split(strings.ToLower(response), "docker version ")
 	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 8 {
 		return 0, 0, ErrDockerNotInstalled
 	}
-	return r.getVersionAndSubVersion(responseSpited[1])
+	return getVersionAndSubVersion(responseSpited[1])
 }
 
-func (r *RequirementDocker) checkIfContainsDockerVersion(response string) bool {
+func checkIfContainsDockerVersion(response string) bool {
 	return strings.Contains(strings.ToLower(response), "docker version ")
 }
 
-func (r *RequirementDocker) getVersionAndSubVersion(fullVersion string) (int, int, error) {
+func getVersionAndSubVersion(fullVersion string) (int, int, error) {
 	version, err := strconv.Atoi(fullVersion[0:2])
 	if err != nil {
 		return 0, 0, ErrDockerNotInstalled

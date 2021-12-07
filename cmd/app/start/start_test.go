@@ -59,7 +59,7 @@ func TestNewStartCommand(t *testing.T) {
 		analyzerMock := testutil.NewAnalyzerMock()
 		promptMock.On("Ask").Return("Y", nil)
 		analyzerMock.On("Analyze").Return(0, nil)
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 		start := &Start{
 			configs:      cfg,
 			prompt:       promptMock,
@@ -103,7 +103,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				prompt.AssertCalled(t, "Ask")
@@ -118,7 +118,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -135,7 +135,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			err:  true,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(10, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -169,8 +169,8 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
-				requirements.On("ValidateDocker")
-				requirements.On("ValidateGit")
+				requirements.On("ValidateDocker").Return(nil)
+				requirements.On("ValidateGit").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
@@ -183,13 +183,52 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			},
 		},
 		{
+			name: "Should execute command exec with error when validate if git is installed(--enable-git-history)",
+			args: []string{testutil.StartFlagEnableGitHistory, testutil.StartFlagReturnError},
+			err:  true,
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateGit").Return(errors.New("some error"))
+			},
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+				assert.True(t, cfg.EnableGitHistoryAnalysis)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertNotCalled(t, "ValidateDocker")
+				requirements.AssertCalled(t, "ValidateGit")
+			},
+		},
+		{
+			name: "Should execute command exec with error when validate if docker is installed",
+			args: []string{testutil.StartFlagEnableGitHistory, testutil.StartFlagReturnError},
+			err:  true,
+			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
+				prompt.On("Ask").Return("Y", nil)
+				analyzer.On("Analyze").Return(0, nil)
+				requirements.On("ValidateDocker").Return(errors.New("some error"))
+				requirements.On("ValidateGit").Return(nil)
+			},
+			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
+				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
+				assert.True(t, cfg.EnableGitHistoryAnalysis)
+
+				prompt.AssertCalled(t, "Ask")
+				analyzer.AssertNotCalled(t, "Analyze")
+				requirements.AssertCalled(t, "ValidateDocker")
+				requirements.AssertCalled(t, "ValidateGit")
+			},
+		},
+		{
 			name: "Should execute command exec without error and not ask because is different project path(-p, -e)",
 			args: []string{testutil.StartFlagReturnError, testutil.StartFlagProjectPath, os.TempDir()},
 			err:  false,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.ReturnErrorIfFoundVulnerability)
@@ -223,7 +262,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(10, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
@@ -242,7 +281,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
 				analyzer.On("Analyze").Return(0, nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, filepath.Clean(os.TempDir()), cfg.ProjectPath)
@@ -260,7 +299,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			err:  false,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 				analyzer.On("Analyze").Return(0, nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
@@ -280,7 +319,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -299,7 +338,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -317,7 +356,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			err:  false,
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 				analyzer.On("Analyze").Return(0, nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
@@ -336,7 +375,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				t.Run("Should execute command exec without error sending to web application (-u,-a)", func(t *testing.T) {
@@ -356,7 +395,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, "*vsaf&&", cfg.HorusecAPIUri)
@@ -374,7 +413,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -392,7 +431,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -410,7 +449,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -428,7 +467,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -446,7 +485,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, testutil.RootPath, cfg.ProjectPath)
@@ -464,7 +503,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsAnalysis)
@@ -481,7 +520,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.True(t, cfg.DisableDocker)
@@ -498,7 +537,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.Equal(t, int64(123), cfg.TimeoutInSecondsRequest)
@@ -515,7 +554,7 @@ func TestStartCommand_ExecuteUnitTests(t *testing.T) {
 			onFn: func(prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock) {
 				analyzer.On("Analyze").Return(0, nil)
 				prompt.On("Ask").Return("Y", nil)
-				requirements.On("ValidateDocker")
+				requirements.On("ValidateDocker").Return(nil)
 			},
 			assertFn: func(t *testing.T, prompt *testutil.PromptMock, requirements *testutil.RequirementsMock, analyzer *testutil.AnalyzerMock, cfg *config.Config) {
 				assert.NotEqual(t, "potato", cfg.TimeoutInSecondsRequest)
@@ -557,7 +596,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := testutil.NewRequirementsMock()
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,
@@ -616,7 +655,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := testutil.NewRequirementsMock()
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,
@@ -662,7 +701,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := testutil.NewRequirementsMock()
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,
@@ -707,7 +746,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := testutil.NewRequirementsMock()
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,
@@ -767,7 +806,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementsMock := testutil.NewRequirementsMock()
-		requirementsMock.On("ValidateDocker")
+		requirementsMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,
@@ -821,7 +860,7 @@ func TestStartCommand_ExecuteIntegrationTest(t *testing.T) {
 		cfg.WorkDir = &workdir.WorkDir{}
 
 		requirementMock := testutil.NewRequirementsMock()
-		requirementMock.On("ValidateDocker")
+		requirementMock.On("ValidateDocker").Return(nil)
 
 		cmd := &Start{
 			configs:      cfg,

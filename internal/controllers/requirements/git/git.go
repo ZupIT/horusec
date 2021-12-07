@@ -42,33 +42,28 @@ var (
 	ErrGitLowerVersion = errors.New("git version is lower of 2.01. Please check and try again")
 )
 
-type RequirementGit struct{}
-
-func NewRequirementGit() *RequirementGit {
-	return &RequirementGit{}
-}
-
-func (r *RequirementGit) ValidateGit() error {
-	response, err := r.validateIfGitIsInstalled()
+func Validate() error {
+	response, err := validateIfGitIsInstalled()
 	if err != nil {
 		return err
 	}
-	return r.validateIfGitIsSupported(response)
+	return validateIfGitIsSupported(response)
 }
 
-func (r *RequirementGit) validateIfGitIsInstalled() (string, error) {
-	response, err := r.execGitVersion()
+func validateIfGitIsInstalled() (string, error) {
+	response, err := execGitVersion()
 	if err != nil {
 		return "", err
 	}
-	if !r.checkIfContainsGitVersion(response) {
+
+	if !checkIfContainsGitVersion(response) {
 		return "", ErrGitNotInstalled
 	}
 	return response, nil
 }
 
-func (r *RequirementGit) validateIfGitIsSupported(version string) error {
-	err := r.validateIfGitIsRunningInMinVersion(version)
+func validateIfGitIsSupported(version string) error {
+	err := validateIfGitIsRunningInMinVersion(version)
 	if err != nil {
 		logger.LogInfo(messages.MsgInfoHowToInstallGit)
 		return err
@@ -76,7 +71,7 @@ func (r *RequirementGit) validateIfGitIsSupported(version string) error {
 	return nil
 }
 
-func (r *RequirementGit) execGitVersion() (string, error) {
+func execGitVersion() (string, error) {
 	responseBytes, err := exec.Command("git", "--version").CombinedOutput()
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirementsGit, err)
@@ -85,8 +80,8 @@ func (r *RequirementGit) execGitVersion() (string, error) {
 	return strings.ToLower(string(responseBytes)), nil
 }
 
-func (r *RequirementGit) validateIfGitIsRunningInMinVersion(response string) error {
-	version, subversion, err := r.extractGitVersionFromString(response)
+func validateIfGitIsRunningInMinVersion(response string) error {
+	version, subversion, err := extractGitVersionFromString(response)
 	if err != nil {
 		return err
 	}
@@ -100,19 +95,19 @@ func (r *RequirementGit) validateIfGitIsRunningInMinVersion(response string) err
 	return nil
 }
 
-func (r *RequirementGit) extractGitVersionFromString(response string) (int, int, error) {
+func extractGitVersionFromString(response string) (int, int, error) {
 	responseSpited := strings.Split(strings.ToLower(response), "git version ")
 	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 3 {
 		return 0, 0, ErrGitNotInstalled
 	}
-	return r.getVersionAndSubVersion(responseSpited[1])
+	return getVersionAndSubVersion(responseSpited[1])
 }
 
-func (r *RequirementGit) checkIfContainsGitVersion(response string) bool {
+func checkIfContainsGitVersion(response string) bool {
 	return strings.Contains(strings.ToLower(response), "git version ")
 }
 
-func (r *RequirementGit) getVersionAndSubVersion(fullVersion string) (int, int, error) {
+func getVersionAndSubVersion(fullVersion string) (int, int, error) {
 	version, err := strconv.Atoi(fullVersion[0:1])
 	if err != nil {
 		return 0, 0, ErrGitNotInstalled
