@@ -20,15 +20,15 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -148,7 +148,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		var certificateFileWithPath string
 
 		BeforeEach(func() {
-
 			certificateFileWithPath = testutil.GinkgoCreateTmpFile("*.crt")
 
 			flags = map[string]string{
@@ -468,7 +467,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		writeJsonFile(customRulesJson)
 
 		BeforeEach(func() {
-
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:     testutil.JavaExample1,
 				testutil.StartFlagCustomRulesPath: customRulesJson,
@@ -484,7 +482,6 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Details: Teste QA`))
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Teste de description QA`))
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Type: Vulnerability`))
-
 		})
 	})
 })
@@ -498,7 +495,6 @@ func writeJsonFile(path string) {
 	defer file.Close()
 
 	customRules := []map[string]interface{}{
-
 		{
 			"id":          "HS-JAVA-99999999999",
 			"name":        "Teste QA",

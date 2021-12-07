@@ -30,7 +30,7 @@ var ErrDockerNotInstalled = errors.New("{HORUSEC_CLI} Error Docker not found. Pl
 
 // Occurs when not found rails project
 
-var ErrNotFoundRailsProject = errors.New("{HORUSEC_CLI} Error not found rails project syntax")
+var ErrNotFoundRailsProject = errors.New("brakeman only works on Ruby On Rails project")
 
 // Occurs when gem lock not found
 
@@ -39,5 +39,3 @@ var ErrGemLockNotFound = errors.New(
 		" it would be a good idea to commit it so horusec can check for vulnerabilities")
 
 var ErrImageTagCmdRequired = errors.New("{ERROR_DOCKER_API} required exists Image, Tag and CMD not empty")
-
-var ErrorBodyIsRequired = errors.New("{ERROR_USE_CASES} body is required")

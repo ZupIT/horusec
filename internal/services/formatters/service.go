@@ -117,7 +117,7 @@ func (s *Service) SetAnalysisError(err error, tool tools.Tool, output, projectSu
 	if err != nil {
 		s.mutex.Lock()
 		defer s.mutex.Unlock()
-		s.addAnalysisError(err)
+		s.addAnalysisError(tool, err)
 		msg := s.GetAnalysisIDErrorMessage(tool, output)
 		if projectSubPath != "" {
 			msg += " | ProjectSubPath -> " + projectSubPath
@@ -128,11 +128,11 @@ func (s *Service) SetAnalysisError(err error, tool tools.Tool, output, projectSu
 	}
 }
 
-func (s *Service) addAnalysisError(err error) {
+func (s *Service) addAnalysisError(tool tools.Tool, err error) {
 	if err != nil {
 		toAppend := ""
 		if len(s.analysis.Errors) > 0 {
-			s.analysis.Errors += "; " + err.Error()
+			s.analysis.Errors += fmt.Sprintf("; Error while running %s tool: %s", tool.ToString(), err.Error())
 			return
 		}
 		s.analysis.Errors += toAppend + err.Error()

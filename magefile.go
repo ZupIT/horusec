@@ -18,9 +18,10 @@
 package main
 
 import (
-	"github.com/magefile/mage/sh"
+
 	// mage:import
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/mageutils"
+	"github.com/magefile/mage/sh"
 )
 
 // GetCurrentDate execute "echo", `::set-output name=date::$(date "+%a %b %d %H:%M:%S %Y")`
