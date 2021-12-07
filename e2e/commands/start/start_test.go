@@ -15,18 +15,20 @@
 package start_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger/enums"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -146,11 +148,8 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		var certificateFileWithPath string
 
 		BeforeEach(func() {
-			file, err := os.CreateTemp(os.TempDir(), "*.crt")
-			if err != nil {
-				Fail(fmt.Sprintf("error: %v", err))
-			}
-			certificateFileWithPath = file.Name()
+
+			certificateFileWithPath = testutil.GinkgoCreateTmpFile("*.crt")
 
 			flags = map[string]string{
 				testutil.StartFlagProjectPath:     projectPath,
@@ -463,4 +462,61 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Expect(session.Out.Contents()).To(ContainSubstring("YOUR ANALYSIS HAD FINISHED WITHOUT ANY VULNERABILITY!"))
 		})
 	})
+
+	When("--custom-path-rules is passed", func() {
+		customRulesJson := testutil.GinkgoCreateTmpFile("*.json")
+		writeJsonFile(customRulesJson)
+
+		BeforeEach(func() {
+
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:     testutil.JavaExample1,
+				testutil.StartFlagCustomRulesPath: customRulesJson,
+			}
+		})
+
+		It("Checks if the custom rules path property was set", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(`\"custom_rules_path\": \"%s\"`, testutil.NormalizePathToAssertInJSON(customRulesJson)))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Language: Java`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Severity: LOW`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Confidence: LOW`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`RuleID: HS-JAVA-99999999999`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Details: Teste QA`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Teste de description QA`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Type: Vulnerability`))
+
+		})
+	})
 })
+
+func writeJsonFile(path string) {
+	file, err := os.OpenFile(path, os.O_RDWR, os.ModePerm)
+	if err != nil {
+		Fail(fmt.Sprintf("The following error occurred when opening the file: %v", err))
+	}
+
+	defer file.Close()
+
+	customRules := []map[string]interface{}{
+
+		{
+			"id":          "HS-JAVA-99999999999",
+			"name":        "Teste QA",
+			"description": "Teste de description QA",
+			"language":    "Java",
+			"severity":    "LOW",
+			"confidence":  "LOW",
+			"type":        "Regular",
+			"expressions": []string{".*"},
+		},
+	}
+
+	b, err := json.Marshal(customRules)
+	if err != nil {
+		Fail(fmt.Sprintf("The following error occurred to marshal json: %v", err))
+	}
+
+	if _, err := file.Write(b); err != nil {
+		Fail(fmt.Sprintf("The following error occurred when writing to the file: %v", err))
+	}
+}
