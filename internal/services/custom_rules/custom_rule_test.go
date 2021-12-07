@@ -22,8 +22,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/stretchr/testify/assert"
-
-	customrulesenum "github.com/ZupIT/horusec/internal/enums/custom_rules"
 )
 
 func TestValidate(t *testing.T) {
@@ -34,7 +32,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customrulesenum.OrMatch,
+			Type:        OrMatch,
 			Expressions: []string{""},
 			Language:    languages.Leaks,
 		}
@@ -54,7 +52,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customrulesenum.Regular,
+			Type:        Regular,
 			Expressions: []string{""},
 			Language:    languages.Java,
 		}
@@ -67,7 +65,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customrulesenum.Regular,
+			Type:        Regular,
 			Expressions: []string{""},
 			Language:    languages.Leaks,
 		}
@@ -80,7 +78,7 @@ func TestValidate(t *testing.T) {
 			Description: "test",
 			Severity:    severities.Low,
 			Confidence:  confidence.Low,
-			Type:        customrulesenum.Regular,
+			Type:        Regular,
 			Expressions: []string{""},
 			Language:    languages.Python,
 		}
@@ -94,56 +92,56 @@ func TestValidateAllLanguages(t *testing.T) {
 			ID:         "HS-CSHARP-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.CSharp,
 		},
 		{
 			ID:         "HS-DART-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Dart,
 		},
 		{
 			ID:         "HS-JAVA-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Java,
 		},
 		{
 			ID:         "HS-KOTLIN-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Kotlin,
 		},
 		{
 			ID:         "HS-YAML-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Yaml,
 		},
 		{
 			ID:         "HS-LEAKS-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Leaks,
 		},
 		{
 			ID:         "HS-JAVASCRIPT-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Javascript,
 		},
 		{
 			ID:         "HS-NGINX-10000",
 			Severity:   severities.Low,
 			Confidence: confidence.Low,
-			Type:       customrulesenum.Regular,
+			Type:       Regular,
 			Language:   languages.Nginx,
 		},
 	}
@@ -157,7 +155,7 @@ func TestValidateAllLanguages(t *testing.T) {
 func TestGetRuleType(t *testing.T) {
 	t.Run("should return regular type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customrulesenum.Regular,
+			Type: Regular,
 		}
 
 		assert.Equal(t, text.Regular, customRule.GetRuleType())
@@ -171,7 +169,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return or type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customrulesenum.OrMatch,
+			Type: OrMatch,
 		}
 
 		assert.Equal(t, text.OrMatch, customRule.GetRuleType())
@@ -179,7 +177,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return and type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customrulesenum.AndMatch,
+			Type: AndMatch,
 		}
 
 		assert.Equal(t, text.AndMatch, customRule.GetRuleType())
@@ -187,7 +185,7 @@ func TestGetRuleType(t *testing.T) {
 
 	t.Run("should return not type", func(t *testing.T) {
 		customRule := CustomRule{
-			Type: customrulesenum.NotMatch,
+			Type: NotMatch,
 		}
 
 		assert.Equal(t, text.NotMatch, customRule.GetRuleType())

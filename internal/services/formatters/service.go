@@ -35,7 +35,7 @@ import (
 	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
-	custonrules "github.com/ZupIT/horusec/internal/services/custom_rules"
+	customrules "github.com/ZupIT/horusec/internal/services/custom_rules"
 	"github.com/ZupIT/horusec/internal/services/docker"
 	"github.com/ZupIT/horusec/internal/services/git"
 	"github.com/ZupIT/horusec/internal/utils/file"
@@ -71,7 +71,7 @@ func NewFormatterService(analysiss *analysis.Analysis, dockerSvc docker.Docker, 
 		docker:      dockerSvc,
 		git:         git.New(cfg),
 		config:      cfg,
-		customRules: custonrules.NewCustomRulesService(cfg),
+		customRules: customrules.NewCustomRulesService(cfg),
 	}
 }
 

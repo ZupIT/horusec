@@ -26,7 +26,6 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 
 	"github.com/ZupIT/horusec/config"
-	customrules "github.com/ZupIT/horusec/internal/entities/custom_rules"
 )
 
 // Service represents the custom rule service responsible to
@@ -77,7 +76,7 @@ func (s *Service) loadCustomRules() *Service {
 	return s
 }
 
-func (s *Service) validateAndParseCustomRule(rule *customrules.CustomRule) {
+func (s *Service) validateAndParseCustomRule(rule *CustomRule) {
 	if err := rule.Validate(); err != nil {
 		errMsg := fmt.Sprintf("{HORUSEC_CLI} invalid custom rule: %s", rule.String())
 		logger.LogError(errMsg, err)
@@ -89,7 +88,7 @@ func (s *Service) validateAndParseCustomRule(rule *customrules.CustomRule) {
 	)
 }
 
-func (s *Service) openCustomRulesJSONFile() (customRules []*customrules.CustomRule, err error) {
+func (s *Service) openCustomRulesJSONFile() (customRules []*CustomRule, err error) {
 	file, err := os.Open(s.config.CustomRulesPath)
 	if err != nil {
 		return nil, err
@@ -103,7 +102,7 @@ func (s *Service) openCustomRulesJSONFile() (customRules []*customrules.CustomRu
 	return customRules, json.Unmarshal(bytes, &customRules)
 }
 
-func (s *Service) parseCustomRuleToTextRule(rule *customrules.CustomRule) text.TextRule {
+func (s *Service) parseCustomRuleToTextRule(rule *CustomRule) text.TextRule {
 	return text.TextRule{
 		Metadata: engine.Metadata{
 			ID:          rule.ID,
