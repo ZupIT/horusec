@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.3-alpine
+FROM golang:1.17.4-alpine
 
 RUN apk add curl
 
