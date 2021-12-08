@@ -31,6 +31,7 @@ builds:
       - amd64
       - arm64
       - 386
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
   - id: horusec-standalone
     env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
@@ -48,6 +49,7 @@ builds:
       - amd64
       - arm64
       - 386
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}_stand_alone
 changelog:
   skip: true
 snapshot:
@@ -121,7 +123,7 @@ dockers:
     skip_push: false
     goos: linux
     goarch: amd64
-    dockerfile: ./deployments/Dockerfile-gorelease
+    dockerfile: ./deployments/Dockerfile-gorelease-amd64
     use: docker
     build_flag_templates:
       - "--pull"
@@ -137,7 +139,7 @@ dockers:
     skip_push: false
     goos: linux
     goarch: arm64
-    dockerfile: ./deployments/Dockerfile-gorelease
+    dockerfile: ./deployments/Dockerfile-gorelease-arm64
     use: docker
     build_flag_templates:
       - "--pull"
