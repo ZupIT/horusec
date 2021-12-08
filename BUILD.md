@@ -19,7 +19,11 @@ The **BUILD.md** is a file to check the environment and build specifications of 
 
 ## **Environment**
 
-- **Golang**: ^1.17.X
+- [**Golang**: ^1.17.X](https://go.dev/dl/)
+- [**GNU Make**: ^4.2.X](https://www.gnu.org/software/make/)
+- [**Git**: ^2.25.X](https://git-scm.com/)
+- [**Docker**: ^19.3.X](https://docs.docker.com/get-docker/)
+
 
 ## **Development**
 
@@ -33,10 +37,20 @@ From the root of the project, run the command below to download the dependencies
 go mod download
 ```
 
-The command below allows the execution of the program, run it in the root folder:
+The command below build the Horusec cli for development:
 
 ```bash
-make build-dev && ./horusec
+make build-dev
+```
+After build successful you can execute running:
+
+```bash
+./horusec
+```
+Or on Windows:
+
+```bash
+horusec
 ```
 
 ### **Style Guide**
