@@ -27,12 +27,12 @@ jobs:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
 
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -43,6 +43,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -91,6 +92,7 @@ jobs:
           cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-cli:alpha
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
+
       - name: Create local tag
         run: mage -v createAlphaTag
 
@@ -106,6 +108,7 @@ jobs:
           GORELEASER_CURRENT_TAG: v0.0.0-alpha
           CURRENT_DATE: ${{ steps.date.outputs.date }}
           CLI_VERSION: alpha
+
       - name: Delete outdate release
         uses: dev-drprasad/delete-tag-and-release@v0.2.0
         env:
@@ -113,58 +116,61 @@ jobs:
         with:
           delete_release: true
           tag_name: alpha
+
       - name: Update alpha release
-        uses: meeDamian/github-release@2.0
+        uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: alpha
           name: alpha
-          draft: false
+          tag_name: alpha
           prerelease: true
-          commitish: ${{ github.sha }}
-          gzip: false
-          allow_override: true
-          files: |
-            checksums.txt:./dist/checksums.txt
-            checksums.txt.sig:./dist/checksums.txt.sig
-            cosign.pub:./deployments/cosign.pub
-            horusec_linux_amd64:./dist/horusec_linux_amd64/horusec
-            horusec_linux_amd64.sig:./dist/horusec_linux_amd64/horusec.sig
-            horusec_linux_x86:./dist/horusec_linux_386/horusec
-            horusec_linux_x86.sig:./dist/horusec_linux_386/horusec.sig
-            horusec_mac_amd64:./dist/horusec_darwin_amd64/horusec
-            horusec_mac_amd64.sig:./dist/horusec_darwin_amd64/horusec.sig
-            horusec_win_amd64.exe:./dist/horusec_windows_amd64/horusec.exe
-            horusec_win_amd64.exe.sig:./dist/horusec_windows_amd64/horusec.exe.sig
-            horusec_win_x86.exe:./dist/horusec_windows_386/horusec.exe
-            horusec_win_x86.exe.sig:./dist/horusec_windows_386/horusec.exe.sig
-            horusec_linux_arm64:./dist/horusec_linux_arm64/horusec
-            horusec_linux_arm64.sig:./dist/horusec_linux_arm64/horusec.sig
-            horusec_win_arm64.exe:./dist/horusec_windows_arm64/horusec.exe
-            horusec_win_arm64.exe.sig:./dist/horusec_windows_arm64/horusec.exe.sig
-            horusec_mac_arm64:./dist/horusec_darwin_arm64/horusec
-            horusec_mac_arm64.sig:./dist/horusec_darwin_arm64/horusec.sig
-
-
-            horusec_linux_amd64_stand_alone:./dist/horusec-standalone_linux_amd64/horusec
-            horusec_linux_amd64_stand_alone.sig:./dist/horusec-standalone_linux_amd64/horusec.sig
-            horusec_linux_x86_stand_alone:./dist/horusec-standalone_linux_386/horusec
-            horusec_linux_x86_stand_alone.sig:./dist/horusec-standalone_linux_386/horusec.sig
-            horusec_mac_amd64_stand_alone:./dist/horusec-standalone_darwin_amd64/horusec
-            horusec_mac_amd64_stand_alone.sig:./dist/horusec-standalone_darwin_amd64/horusec.sig
-            horusec_win_amd64_stand_alone.exe:./dist/horusec-standalone_windows_amd64/horusec.exe
-            horusec_win_amd64_stand_alone.exe.sig:./dist/horusec-standalone_windows_amd64/horusec.exe.sig
-            horusec_win_x86.exe_stand_alone:./dist/horusec-standalone_windows_386/horusec.exe
-            horusec_win_x86.exe_stand_alone.sig:./dist/horusec-standalone_windows_386/horusec.exe.sig
-            horusec_linux_arm64_stand_alone:./dist/horusec-standalone_linux_arm64/horusec
-            horusec_linux_arm64_stand_alone.sig:./dist/horusec-standalone_linux_arm64/horusec.sig
-            horusec_win_arm64_stand_alone.exe:./dist/horusec-standalone_windows_arm64/horusec.exe
-            horusec_win_arm64_stand_alone.exe.sig:./dist/horusec-standalone_windows_arm64/horusec.exe.sig
-            horusec_mac_arm64_stand_alone:./dist/horusec-standalone_darwin_arm64/horusec
-            horusec_mac_arm64_stand_alone.sig:./dist/horusec-standalone_darwin_arm64/horusec.sig
-
+          draft: false
+          target_commitish: ${{ github.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
+            ## Description
+
+            This tag it's updated every time there's a change in the main branch. It's a developement tag and should not be used in production.
+
             ## Docker images
+
             - `docker pull horuszup/horusec-cli:alpha`
+          files: |
+            ./dist/checksums.txt
+            ./dist/checksums.txt.sig
+            ./deployments/cosign.pub
+            ./dist/horusec_linux_amd64/horusec_linux_amd64
+            ./dist/horusec_linux_amd64/horusec_linux_amd64.sig
+            ./dist/horusec_linux_386/horusec_linux_x86
+            ./dist/horusec_linux_386/horusec_linux_x86.sig
+            ./dist/horusec_darwin_amd64/horusec_mac_amd64
+            ./dist/horusec_darwin_amd64/horusec_mac_amd64.sig
+            ./dist/horusec_windows_amd64/horusec_win_amd64.exe
+            ./dist/horusec_windows_amd64/horusec_win_amd64.exe.sig
+            ./dist/horusec_windows_386/horusec_win_x86.exe
+            ./dist/horusec_windows_386/horusec_win_x86.exe.sig
+            ./dist/horusec_linux_arm64/horusec_linux_arm64
+            ./dist/horusec_linux_arm64/horusec_linux_arm64.sig
+            ./dist/horusec_windows_arm64/horusec_win_arm64.exe
+            ./dist/horusec_windows_arm64/horusec_win_arm64.exe.sig
+            ./dist/horusec_darwin_arm64/horusec_mac_arm64
+            ./dist/horusec_darwin_arm64/horusec_mac_arm64.sig
+
+            ./dist/horusec-standalone_linux_amd64/horusec_linux_amd64_stand_alone
+            ./dist/horusec-standalone_linux_amd64/horusec_linux_amd64_stand_alone.sig
+            ./dist/horusec-standalone_linux_386/horusec_linux_x86_stand_alone
+            ./dist/horusec-standalone_linux_386/horusec_linux_x86_stand_alone.sig
+            ./dist/horusec-standalone_darwin_amd64/horusec_mac_amd64_stand_alone
+            ./dist/horusec-standalone_darwin_amd64/horusec_mac_amd64_stand_alone.sig
+            ./dist/horusec-standalone_windows_amd64/horusec_win_amd64_stand_alone.exe
+            ./dist/horusec-standalone_windows_amd64/horusec_win_amd64_stand_alone.exe.sig
+            ./dist/horusec-standalone_windows_386/horusec_win_x86_stand_alone.exe
+            ./dist/horusec-standalone_windows_386/horusec_win_x86_stand_alone.exe.sig
+            ./dist/horusec-standalone_linux_arm64/horusec_linux_arm64_stand_alone
+            ./dist/horusec-standalone_linux_arm64/horusec_linux_arm64_stand_alone.sig
+            ./dist/horusec-standalone_windows_arm64/horusec_win_arm64_stand_alone.exe
+            ./dist/horusec-standalone_windows_arm64/horusec_win_arm64_stand_alone.exe.sig
+            ./dist/horusec-standalone_darwin_arm64/horusec_mac_arm64_stand_alone
+            ./dist/horusec-standalone_darwin_arm64/horusec_mac_arm64_stand_alone.sig
+
       - name: Push updates
         run: mage -v gitPushAlpha
