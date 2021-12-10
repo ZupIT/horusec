@@ -39,10 +39,12 @@ import (
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/docker"
-	enumErrors "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
+
+// ErrImageTagCmdRequired occurs when an docker image or docker command is empty to start analysis.
+var ErrImageTagCmdRequired = errors.New("image or cmd is empty")
 
 // Docker is the interface that abstract the Docker API.
 type Docker interface {
@@ -122,7 +124,7 @@ func New(client Client, cfg *config.Config, analysisID uuid.UUID) *API {
 
 func (d *API) CreateLanguageAnalysisContainer(data *docker.AnalysisData) (containerOutPut string, err error) {
 	if data.IsInvalid() {
-		return "", enumErrors.ErrImageTagCmdRequired
+		return "", ErrImageTagCmdRequired
 	}
 
 	return d.logStatusAndExecuteCRDContainer(data.GetCustomOrDefaultImage(), d.replaceCMDAnalysisID(data.CMD))

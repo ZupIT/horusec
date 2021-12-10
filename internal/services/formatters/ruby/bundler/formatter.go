@@ -16,6 +16,7 @@ package bundler
 
 import (
 	"bufio"
+	"errors"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -28,7 +29,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
@@ -36,6 +36,11 @@ import (
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
+
+// ErrGemLockNotFound occurs when bundles does not find gemfile.lock.
+//
+// nolint: lll
+var ErrGemLockNotFound = errors.New("project doesn't have a gemfile.lock file, it would be a good idea to commit it so horusec can check for vulnerabilities")
 
 type Formatter struct {
 	formatters.IService
@@ -85,7 +90,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 
 func (f *Formatter) verifyGemLockError(output string) error {
 	if strings.Contains(output, "No such file or directory") && strings.Contains(output, "Errno::ENOENT") {
-		return errorsEnums.ErrGemLockNotFound
+		return ErrGemLockNotFound
 	}
 
 	return nil

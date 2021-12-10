@@ -16,6 +16,7 @@ package brakeman
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -24,13 +25,14 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/ruby/brakeman/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
+
+var ErrNotFoundRailsProject = errors.New("brakeman only works on Ruby On Rails project")
 
 type Formatter struct {
 	formatters.IService
@@ -84,7 +86,7 @@ func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 
 func (f *Formatter) newContainerOutputFromString(containerOutput string) (output entities.Output, err error) {
 	if f.isNotFoundRailsProject(containerOutput) {
-		return entities.Output{}, errorsEnums.ErrNotFoundRailsProject
+		return entities.Output{}, ErrNotFoundRailsProject
 	}
 
 	err = json.Unmarshal([]byte(containerOutput), &output)
