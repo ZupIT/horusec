@@ -401,7 +401,7 @@ func (c *Config) ConfigureLogger() error {
 	if err != nil {
 		return err
 	}
-	logger.LogSetOutput(log, os.Stdout)
+	logger.LogSetOutput(log, os.Stderr)
 	logger.LogDebugWithLevel("Set log file to " + log.Name())
 	return nil
 }
