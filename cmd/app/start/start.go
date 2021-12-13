@@ -356,7 +356,7 @@ func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
 
 func (s *Start) executeAnalysisDirectory() (totalVulns int, err error) {
 	if s.analyzer == nil {
-		s.analyzer = analyzer.NewAnalyzer(s.configs)
+		s.analyzer = analyzer.New(s.configs)
 	}
 
 	return s.analyzer.Analyze()
