@@ -472,6 +472,97 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  SampleMavenVulnerableHSJAVA150,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<groupId>org.apache.logging.log4j</groupId>",
+					SourceLocation: engine.Location{
+						Line:   11,
+						Column: 12,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample2GradleVulnerableHSJAVA150,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'",
+					SourceLocation: engine.Location{
+						Line:   16,
+						Column: 4,
+					},
+				},
+				{
+					CodeSample: "compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'",
+					SourceLocation: engine.Location{
+						Line:   17,
+						Column: 4,
+					},
+				},
+				{
+					CodeSample: "compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'",
+					SourceLocation: engine.Location{
+						Line:   18,
+						Column: 4,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample3GradleVulnerableHSJAVA150,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "compile 'org.slf4j:slf4j-log4j12:1.7.26'",
+					SourceLocation: engine.Location{
+						Line:   23,
+						Column: 4,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample4IvyVulnerableHSJAVA150,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<dependency org=\"org.apache.logging.log4j\" name=\"log4j-api\" rev=\"2.11.0\" />",
+					SourceLocation: engine.Location{
+						Line:   15,
+						Column: 4,
+					},
+				},
+				{
+					CodeSample: "<dependency org=\"org.apache.logging.log4j\" name=\"log4j-core\" rev=\"2.14.1\" />",
+					SourceLocation: engine.Location{
+						Line:   16,
+						Column: 4,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample5MavenVulnerableHSJAVA150,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<log4j2.version>2.8.2</log4j2.version>",
+					SourceLocation: engine.Location{
+						Line:   16,
+						Column: 8,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -658,6 +749,31 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-JAVA-149",
 			Rule: NewDatabasesPasswordNotProtected(),
 			Src:  SampleSafeHSJAVA149,
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  SampleMavenSafeHSJAVA150,
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample2GradleSafeHSJAVA150,
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample3GradleSafeHSJAVA150,
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample4IvySafeHSJAVA150,
+		},
+		{
+			Name: "HS-JAVA-150",
+			Rule: NewVulnerableRemoteCodeInjectionApacheLog4j(),
+			Src:  Sample5MavenSafeHSJAVA150,
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

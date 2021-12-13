@@ -26,7 +26,7 @@ func NewRules() *engines.RuleManager {
 }
 
 func extensions() []string {
-	return []string{".java"}
+	return []string{".java", ".xml", ".gradle"}
 }
 
 // Rules return all rules registred to Java engine.
@@ -186,6 +186,7 @@ func Rules() []engine.Rule {
 		NewRequestMappingMethodsNotPublic(),
 		NewLDAPDeserializationNotDisabled(),
 		NewDatabasesPasswordNotProtected(),
+		NewVulnerableRemoteCodeInjectionApacheLog4j(),
 	}
 	return append(java, jvm.Rules()...)
 }
