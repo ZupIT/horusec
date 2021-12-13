@@ -224,14 +224,16 @@ func TestGetConfigProjectPath(t *testing.T) {
 
 func TestAddWorkDirInCmd(t *testing.T) {
 	t.Run("should success add workdir with no errors", func(t *testing.T) {
-		workDirString := "{{WORK_DIR}}"
+		workDirString := "{{WORK_DIR}} "
 		cmd := "testcmd"
 		cmdWithWorkDir := workDirString + cmd
 		projectSubPath := filepath.Join("random", "file", "path")
-		expectedString := "cd " + projectSubPath + cmd
+
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
 
 		result := monitorController.AddWorkDirInCmd(cmdWithWorkDir, projectSubPath, tools.SecurityCodeScan)
+
+		expectedString := fmt.Sprintf("cd random/file/path %s", cmd)
 
 		assert.Equal(t, expectedString, result)
 	})
@@ -493,15 +495,17 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
 				WorkDir:     &workdir.WorkDir{Go: []string{"a", "b"}},
 			},
 		}
+
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
+
 		dirName := filepath.Join(cfg.ProjectPath, ".horusec", monitorController.GetAnalysisID())
-		relativeFilePath := filepath.Join("examples", "go", "example1", "/")
+		relativeFilePath := filepath.Join("examples", "go", "example1")
 		filename := "package-lock.json"
 
 		err := os.MkdirAll(filepath.Join(dirName, relativeFilePath), 0o700)
 		assert.NoError(t, err)
+
 		file, err := os.Create(filepath.Join(dirName, relativeFilePath, filename))
-		assert.NotNil(t, file)
 		assert.NoError(t, err)
 
 		cmdWithWorkdir := `
@@ -516,7 +520,7 @@ func TestGetConfigCMDByFileExtension(t *testing.T) {
       fi
   `
 		expectedCmd := `
- 	  cd ` + relativeFilePath + string(os.PathSeparator) + `
+ 	  cd examples/go/example1
       if [ -f package-lock.json ]; then
         npm audit --only=prod --json > /tmp/results-ANALYSISID.json 2> /tmp/errorNpmaudit-ANALYSISID
         jq -j -M -c . /tmp/results-ANALYSISID.json

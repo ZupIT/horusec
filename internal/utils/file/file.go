@@ -17,6 +17,7 @@ package file
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -77,18 +78,21 @@ func ReplacePathSeparator(path string) string {
 }
 
 // GetSubPathByExtension returns the path inside projectPath + subPath that contains
-// the files with a given ext inside projectPath.
+// the files with a given ext inside projectPath. Note that the path returned here will
+// be the first path that match ext.
 //
-// nolint: funlen
-func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) {
-	pathToWalk := projectPathWithSubPath(projectPath, subPath)
-	err := filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
+// nolint: funlen,gocyclo
+func GetSubPathByExtension(projectPath, subPath, ext string) (extensionPath string) {
+	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
+	logger.LogDebugWithLevel(fmt.Sprintf("Seaching for files with %s extension on %s", ext, pathToWalk))
+
+	err := filepath.Walk(pathToWalk, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if result := verifyMatchAndFormat(projectPath, walkPath, ext); result != "" {
-			finalPath = result
+		if result := relativeDirIfPathMatch(projectPath, path, ext); result != "" {
+			extensionPath = result
 			return io.EOF
 		}
 		return nil
@@ -103,39 +107,51 @@ func GetSubPathByExtension(projectPath, subPath, ext string) (finalPath string) 
 		return ""
 	}
 
-	return finalPath
+	if extensionPath != "" {
+		extensionPath = filepath.Clean(extensionPath)
+		logger.LogDebugWithLevel(fmt.Sprintf("Found files of extension %s on %s", ext, extensionPath))
+		return extensionPath
+	}
+	return ""
 }
 
 func buildPattern(ext string) string {
 	return "*" + ext
 }
 
-func verifyMatchAndFormat(projectPath, walkPath, ext string) string {
-	matched, err := filepath.Match(buildPattern(ext), filepath.Base(walkPath))
+// relativeDirIfPathMatch return relative directory of path based on projectPath
+// if path extension match ext.
+func relativeDirIfPathMatch(projectPath, path, ext string) string {
+	matched, err := filepath.Match(buildPattern(ext), filepath.Base(path))
 	if err != nil || !matched {
 		return ""
 	}
-	return formatExtPath(projectPath, walkPath)
+	return relativeDirectoryFromPath(projectPath, path)
 }
 
-func projectPathWithSubPath(projectPath, projectSubPath string) string {
+func joinProjectPathWithSubPath(projectPath, projectSubPath string) string {
 	if projectSubPath != "" {
-		projectPath = filepath.Join(projectPath, projectSubPath)
+		return filepath.Join(projectPath, projectSubPath)
 	}
 
 	return projectPath
 }
 
-func formatExtPath(projectPath, walkPath string) string {
-	// TODO(matheus): This code seems confusing. We should use a better approach here.
-	basePathRemoved := strings.ReplaceAll(walkPath, projectPath, "")
-	extensionFileRemoved := strings.ReplaceAll(basePathRemoved, filepath.Base(walkPath), "")
-
-	if extensionFileRemoved != "" && extensionFileRemoved[0:1] == string(os.PathSeparator) {
-		extensionFileRemoved = extensionFileRemoved[1:]
+// relativeDirectoryFromPath return the relative path directory of path
+// based on projectPath.
+//
+// Example:
+// relativeDirectoryFromPath("/foo/bar/.horusec/123", "/foo/bar/.horusec/123/some/path/main.go")
+// Return: some/path
+func relativeDirectoryFromPath(projectPath, path string) string {
+	rel, err := filepath.Rel(projectPath, path)
+	if err != nil {
+		// Since path always will be relative on projectPath this should never happen.
+		logger.LogError("Error to get relative directory path", err)
+		return path
 	}
 
-	return extensionFileRemoved
+	return filepath.Dir(rel)
 }
 
 // GetFilenameByExt return the first filename that match extension ext
@@ -143,7 +159,7 @@ func formatExtPath(projectPath, walkPath string) string {
 //
 // nolint: funlen
 func GetFilenameByExt(projectPath, subPath, ext string) (string, error) {
-	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
 	filename := ""
 	err := filepath.Walk(pathToWalk, func(walkPath string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -232,7 +248,7 @@ func GetDependencyCodeFilepathAndLine(
 func getPathsByExtension(projectPath, subPath string, extensions ...string) ([]string, error) {
 	var paths []string
 
-	pathToWalk := projectPathWithSubPath(projectPath, subPath)
+	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
 	return paths, filepath.Walk(pathToWalk, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
