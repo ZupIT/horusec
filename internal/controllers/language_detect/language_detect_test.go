@@ -17,8 +17,10 @@ package languagedetect
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -45,7 +47,51 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestNewLanguageDetect(t *testing.T) {
+func TestLanguageDetectIgnoreFilesUsingWindowsPaths(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Only check if files is ignored correctly using Windows paths")
+	}
+	logger.LogSetOutput(io.Discard)
+
+	cfg := config.New()
+	cfg.FilesOrPathsToIgnore = []string{"**\\routes\\**", "**\\*.mod", "**\\*.sum"}
+	cfg.ProjectPath = testutil.GoExample1
+
+	assertTestLanguageDetectIgnoreFiles(t, cfg)
+}
+
+func TestLanguageDetectIgnoreFiles(t *testing.T) {
+	logger.LogSetOutput(io.Discard)
+
+	cfg := config.New()
+	cfg.FilesOrPathsToIgnore = []string{"**/routes/**", "**/*.mod", "**/*.sum"}
+	cfg.ProjectPath = testutil.GoExample1
+
+	assertTestLanguageDetectIgnoreFiles(t, cfg)
+}
+
+func assertTestLanguageDetectIgnoreFiles(t *testing.T, cfg *config.Config) {
+	analysisID := uuid.New()
+
+	ld := NewLanguageDetect(cfg, analysisID)
+
+	langs, err := ld.Detect(cfg.ProjectPath)
+
+	assert.NoError(t, err, "Expected no error to detect languages: %v", err)
+
+	assert.Equal(t, []languages.Language{languages.Leaks, languages.Generic, languages.Go}, langs)
+
+	analysisPath := filepath.Join(cfg.ProjectPath, ".horusec", analysisID.String())
+	assert.NoDirExists(t, filepath.Join(analysisPath, "api", "routes"))
+	assert.NoFileExists(t, filepath.Join(analysisPath, "go.mod"))
+	assert.NoFileExists(t, filepath.Join(analysisPath, "go.sum"))
+
+	assert.FileExists(t, filepath.Join(analysisPath, "api", "server.go"))
+	assert.FileExists(t, filepath.Join(analysisPath, "api", "util", "util.go"))
+}
+
+func TestLanguageDetect(t *testing.T) {
+	logger.LogSetOutput(io.Discard)
 	t.Cleanup(func() {
 		err := os.RemoveAll(filepath.Join(testutil.ExamplesPath, ".horusec"))
 		assert.NoError(t, err)
@@ -54,20 +100,26 @@ func TestNewLanguageDetect(t *testing.T) {
 			assert.NoError(t, err)
 		}
 	})
+
 	t.Run("Should return error when the folder not exists", func(t *testing.T) {
 		controller := NewLanguageDetect(config.New(), uuid.New())
 
-		monitor, err := controller.Detect("./NOT-EXIST-PATH")
+		langs, err := controller.Detect("./NOT-EXIST-PATH")
 
 		assert.Error(t, err)
-		assert.Nil(t, monitor)
+		assert.Nil(t, langs)
 	})
 
 	t.Run("Should ignore files of the type images", func(t *testing.T) {
 		dstPath := filepath.Join(tmpPath, uuid.New().String())
 		srcPath := filepath.Join(testutil.RootPath, "assets")
+		t.Cleanup(func() {
+			assert.NoError(t, os.RemoveAll(filepath.Join(srcPath, ".horusec")))
+		})
+
 		err := copy.Copy(srcPath, dstPath, func(src string) bool { return false })
 		assert.NoError(t, err)
+
 		controller := NewLanguageDetect(config.New(), uuid.New())
 
 		langs, err := controller.Detect(srcPath)
@@ -76,7 +128,6 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Generic)
 		assert.Len(t, langs, 2)
-		assert.NoError(t, os.RemoveAll(filepath.Join(srcPath, ".horusec")))
 	})
 
 	t.Run("Should ignore additional folder setup in configs", func(t *testing.T) {
@@ -253,17 +304,30 @@ func TestNewLanguageDetect(t *testing.T) {
 		assert.Len(t, langs, len(languages.Values())-2)
 	})
 	t.Run("Should ignore folders present in toignore.GetDefaultFoldersToIgnore()", func(t *testing.T) {
-		controller := NewLanguageDetect(config.New(), uuid.New())
 		wd, err := os.Getwd()
 		assert.NoError(t, err)
+
+		t.Cleanup(func() {
+			logger.SetLogLevel("info")
+			logger.LogSetOutput(os.Stdout)
+			for _, folderName := range toignore.GetDefaultFoldersToIgnore() {
+				err = os.RemoveAll(filepath.Join(wd, folderName))
+			}
+		})
+
+		controller := NewLanguageDetect(config.New(), uuid.New())
+
 		logger.SetLogLevel("debug")
 		stdOutMock := bytes.NewBufferString("")
 		logger.LogSetOutput(stdOutMock)
+
 		for _, folderName := range toignore.GetDefaultFoldersToIgnore() {
 			err = os.MkdirAll(filepath.Join(wd, folderName), 0o700)
 			assert.NoError(t, err)
 		}
+
 		langs, err := controller.Detect(wd)
+
 		assert.NoError(t, err)
 		assert.Len(t, langs, 3)
 		assert.Contains(t, langs, languages.Go)
@@ -274,24 +338,21 @@ func TestNewLanguageDetect(t *testing.T) {
 			log := fmt.Sprint(messages.MsgDebugFolderOrFileIgnored, "[", filepath.Join(wd, folderName), "]")
 			assert.Contains(t, stdOutMock.String(), strings.ReplaceAll(log, `\`, `\\`))
 		}
-		t.Cleanup(func() {
-			logger.SetLogLevel("info")
-			logger.LogSetOutput(os.Stdout)
-			for _, folderName := range toignore.GetDefaultFoldersToIgnore() {
-				err = os.RemoveAll(filepath.Join(wd, folderName))
-			}
-		})
 	})
 	t.Run("Should read git submodule path and copy to .horusec folder git submodule correctly", func(t *testing.T) {
 		analysisID := uuid.New()
 		configs := config.New()
 		configs.EnableGitHistoryAnalysis = true
+
 		controller := NewLanguageDetect(configs, analysisID)
 		_, err := controller.Detect(testutil.ExamplesPath)
+
 		assert.NoError(t, err)
+
 		projectClonedPath := filepath.Join(testutil.ExamplesPath, ".horusec", analysisID.String())
 		fileInfo, err := os.Stat(filepath.Join(projectClonedPath, ".git"))
 		assert.NoError(t, err)
+
 		assert.True(t, fileInfo.IsDir())
 	})
 }
