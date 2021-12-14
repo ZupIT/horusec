@@ -2594,3 +2594,23 @@ func NewDatabasesPasswordNotProtected() text.TextRule {
 		},
 	}
 }
+
+func NewVulnerableRemoteCodeInjectionApacheLog4j() text.TextRule {
+	return text.TextRule{
+		Metadata: engine.Metadata{
+			ID:          "HS-JAVA-150",
+			Name:        "Remote code injection Apache Log4j",
+			Description: "Log4j versions prior to 2.15.0 are subject to a remote code execution vulnerability via the ldap JNDI parser. For more information checkout the CVE-2021-44228 (https://nvd.nist.gov/vuln/detail/CVE-2021-44228) advisory.",
+			Severity:    severities.Critical.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`compile.*group:.*org\.apache\.logging\.log4j.*name:.*log4j.*version:.*(('|")((2\.([0-9]\.|1[0-4]))|(1\.))).*('|")`),
+			regexp.MustCompile(`compile.*log4j.*(:((2\.([0-9]\.|1[0-4]))|(1\.))).*('|")`),
+			regexp.MustCompile(`<groupId>(.*|\n).*org\.apache\.logging\.log4j.*(.*|\n).*<artifactId>.*log4j.*</artifactId>(.*|\n)*(version>((2\.([0-9]\.|1[0-4]))|(1\.)))(.*|\n)*</version>`),
+			regexp.MustCompile(`<dependency.*org.*org\.apache\.logging\.log4j.*name.*log4j.*rev.*((2\.([0-9]\.|1[0-4]))|(1\.)).*/>`),
+			regexp.MustCompile(`<(log4j2|log4j)\.version>.*((2\.([0-9]\.|1[0-4]))|(1\.)).*</(log4j2|log4j)\.version>`),
+		},
+	}
+}
