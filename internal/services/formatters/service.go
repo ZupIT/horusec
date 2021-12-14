@@ -96,6 +96,9 @@ func (s *Service) GetConfigProjectPath() string {
 
 func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) string {
 	if projectSubPath != "" {
+		// Since the command will run inside a Docker container we need
+		// to convert any Windows slash (\) to Unix slash (/).
+		projectSubPath = filepath.ToSlash(projectSubPath)
 		logger.LogDebugWithLevel(messages.MsgDebugShowWorkdir, tool.ToString(), projectSubPath)
 		return strings.ReplaceAll(cmd, "{{WORK_DIR}}", fmt.Sprintf("cd %s", projectSubPath))
 	}

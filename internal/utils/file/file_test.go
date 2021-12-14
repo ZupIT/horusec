@@ -51,14 +51,12 @@ func TestGetFilePathIntoBasePath(t *testing.T) {
 
 func TestGetSubPathByExtension(t *testing.T) {
 	t.Run("Should return sub path for .go", func(t *testing.T) {
-		path, _ := filepath.Abs(".")
-		response := file.GetSubPathByExtension(path, "", "*.go")
-		assert.Equal(t, "", response)
+		response := file.GetSubPathByExtension(testutil.GoExample1, "", "*.go")
+		assert.Equal(t, filepath.Join("api", "routes"), response)
 	})
 
-	t.Run("Should not matches matches", func(t *testing.T) {
-		path, _ := filepath.Abs(".")
-		response := file.GetSubPathByExtension(path, "test", "*.test")
+	t.Run("Should return empty path for not found extension", func(t *testing.T) {
+		response := file.GetSubPathByExtension(testutil.GoExample1, "", "*.test")
 		assert.Equal(t, "", response)
 	})
 }
