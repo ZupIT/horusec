@@ -166,7 +166,7 @@ docker_manifests:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
       - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
     skip_push: auto
-  - name_template: 'horuszup/horusec-cli:v{{ .Major }}{{ .Minor }}'
+  - name_template: 'horuszup/horusec-cli:v{{ .Major }}.{{ .Minor }}'
     image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
       - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
