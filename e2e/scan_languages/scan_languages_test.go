@@ -79,7 +79,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "Go",
 			target:        filepath.Join("go", "example1"),
-			vulnerabilies: 19,
+			vulnerabilies: 5,
 		},
 		{
 			name:          "Csharp",
@@ -89,7 +89,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "Ruby",
 			target:        filepath.Join("ruby", "example1"),
-			vulnerabilies: 55,
+			vulnerabilies: 21,
 		},
 		{
 			name:          "PythonBandit",
@@ -99,7 +99,7 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "PythonSafety",
 			target:        filepath.Join("python", "example2"),
-			vulnerabilies: 20,
+			vulnerabilies: 21,
 		},
 		{
 			name:          "Java",
@@ -114,12 +114,12 @@ func TestHorusecCLI(t *testing.T) {
 		{
 			name:          "JavascriptNPM",
 			target:        filepath.Join("javascript", "example1"),
-			vulnerabilies: 29,
+			vulnerabilies: 12,
 		},
 		{
 			name:          "JavascriptYarn",
 			target:        filepath.Join("javascript", "example2"),
-			vulnerabilies: 28,
+			vulnerabilies: 10,
 		},
 		{
 			name:          "HCL",
