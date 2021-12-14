@@ -23,7 +23,6 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
@@ -32,7 +31,13 @@ const (
 	MinSubVersionDockerAccept = 0o3
 )
 
-var ErrMinVersion = fmt.Errorf("%v.%v", MinVersionDockerAccept, MinSubVersionDockerAccept)
+var (
+	// ErrMinVersion occur when the installed Docker version is not the minimum supported.
+	ErrMinVersion = fmt.Errorf("%v.%v", MinVersionDockerAccept, MinSubVersionDockerAccept)
+
+	// ErrDockerNotInstalled occurs when Docker is not installed.
+	ErrDockerNotInstalled = errors.New("docker not found. Please check and try again")
+)
 
 type RequirementDocker struct{}
 
@@ -55,7 +60,7 @@ func (r *RequirementDocker) validateIfDockerIsInstalled() (string, error) {
 		return "", err
 	}
 	if !r.checkIfContainsDockerVersion(response) {
-		return "", errorsEnums.ErrDockerNotInstalled
+		return "", ErrDockerNotInstalled
 	}
 	return response, r.checkIfDockerIsRunning()
 }
@@ -106,7 +111,7 @@ func (r *RequirementDocker) validateIfDockerIsRunningInMinVersion(response strin
 func (r *RequirementDocker) extractDockerVersionFromString(response string) (int, int, error) {
 	responseSpited := strings.Split(strings.ToLower(response), "docker version ")
 	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 8 {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
+		return 0, 0, ErrDockerNotInstalled
 	}
 	return r.getVersionAndSubVersion(responseSpited[1])
 }
@@ -118,11 +123,11 @@ func (r *RequirementDocker) checkIfContainsDockerVersion(response string) bool {
 func (r *RequirementDocker) getVersionAndSubVersion(fullVersion string) (int, int, error) {
 	version, err := strconv.Atoi(fullVersion[0:2])
 	if err != nil {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
+		return 0, 0, ErrDockerNotInstalled
 	}
 	subversion, err := strconv.Atoi(fullVersion[3:5])
 	if err != nil {
-		return 0, 0, errorsEnums.ErrDockerNotInstalled
+		return 0, 0, ErrDockerNotInstalled
 	}
 	return version, subversion, nil
 }

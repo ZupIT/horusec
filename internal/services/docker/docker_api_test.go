@@ -30,7 +30,6 @@ import (
 
 	cliConfig "github.com/ZupIT/horusec/config"
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
-	errorsenum "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/services/docker/client"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
@@ -72,7 +71,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, errorsenum.ErrImageTagCmdRequired)
+		assert.ErrorIs(t, err, ErrImageTagCmdRequired)
 	})
 
 	t.Run("Should return error when cmd is empty", func(t *testing.T) {
@@ -83,7 +82,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		})
 
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, errorsenum.ErrImageTagCmdRequired)
+		assert.ErrorIs(t, err, ErrImageTagCmdRequired)
 	})
 
 	t.Run("Should return error when pull image aleatory", func(t *testing.T) {

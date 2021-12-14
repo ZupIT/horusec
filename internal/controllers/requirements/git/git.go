@@ -15,6 +15,7 @@
 package git
 
 import (
+	"errors"
 	"fmt"
 	"os/exec"
 	"strconv"
@@ -22,7 +23,6 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	errorsEnums "github.com/ZupIT/horusec/internal/enums/errors"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
@@ -31,7 +31,16 @@ const (
 	MinSubVersionGitAccept = 0o1
 )
 
-var ErrMinVersion = fmt.Errorf("%v.%v", MinVersionGitAccept, MinSubVersionGitAccept)
+var (
+	// ErrMinVersion is the error logged when the installed Git version is not the minimum supported.
+	ErrMinVersion = fmt.Errorf("%v.%v", MinVersionGitAccept, MinSubVersionGitAccept)
+
+	// ErrGitNotInstalled occurs when Git is not installed.
+	ErrGitNotInstalled = errors.New("git not found. Please check and try again")
+
+	// ErrGitLowerVersion occur when the installed Git version is not the minimum supported.
+	ErrGitLowerVersion = errors.New("git version is lower of 2.01. Please check and try again")
+)
 
 type RequirementGit struct{}
 
@@ -53,7 +62,7 @@ func (r *RequirementGit) validateIfGitIsInstalled() (string, error) {
 		return "", err
 	}
 	if !r.checkIfContainsGitVersion(response) {
-		return "", errorsEnums.ErrGitNotInstalled
+		return "", ErrGitNotInstalled
 	}
 	return response, nil
 }
@@ -83,10 +92,10 @@ func (r *RequirementGit) validateIfGitIsRunningInMinVersion(response string) err
 	}
 	if version < MinVersionGitAccept {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion)
-		return errorsEnums.ErrGitLowerVersion
+		return ErrGitLowerVersion
 	} else if version == MinVersionGitAccept && subversion < MinSubVersionGitAccept {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenGitIsLowerVersion, ErrMinVersion)
-		return errorsEnums.ErrGitLowerVersion
+		return ErrGitLowerVersion
 	}
 	return nil
 }
@@ -94,7 +103,7 @@ func (r *RequirementGit) validateIfGitIsRunningInMinVersion(response string) err
 func (r *RequirementGit) extractGitVersionFromString(response string) (int, int, error) {
 	responseSpited := strings.Split(strings.ToLower(response), "git version ")
 	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 3 {
-		return 0, 0, errorsEnums.ErrGitNotInstalled
+		return 0, 0, ErrGitNotInstalled
 	}
 	return r.getVersionAndSubVersion(responseSpited[1])
 }
@@ -106,11 +115,11 @@ func (r *RequirementGit) checkIfContainsGitVersion(response string) bool {
 func (r *RequirementGit) getVersionAndSubVersion(fullVersion string) (int, int, error) {
 	version, err := strconv.Atoi(fullVersion[0:1])
 	if err != nil {
-		return 0, 0, errorsEnums.ErrGitNotInstalled
+		return 0, 0, ErrGitNotInstalled
 	}
 	subversion, err := strconv.Atoi(fullVersion[2:4])
 	if err != nil {
-		return 0, 0, errorsEnums.ErrGitNotInstalled
+		return 0, 0, ErrGitNotInstalled
 	}
 	return version, subversion, nil
 }
