@@ -32,7 +32,7 @@ horusecSetVersion() {
     echo "Version set to $LATEST_BETA"
     VERSION_DOWNLOAD=$LATEST_BETA
   elif [ "$VERSION_DOWNLOAD" = "latest" ]; then
-    echo "Version set to $LATEST_BETA"
+    echo "Version set to latest"
     VERSION_DOWNLOAD='latest'
   elif echo $VERSION_DOWNLOAD | grep -Eq $regex; then
     echo "Version set to $VERSION_DOWNLOAD"
@@ -40,7 +40,6 @@ horusecSetVersion() {
     echo "input not match required params: 'latest-rc' 'latest-beta' 'latest' or a semantic version compliant, check https://github.com/ZupIT/horusec/releases"
     exit 1
   fi
-  echo "Download version: $VERSION_DOWNLOAD"
 }
 
 horusecIdentifyOSLatest() {
@@ -145,9 +144,11 @@ horusecIdentifyOS() {
 # correct download link for the version informed by the user.
 isOldURLVersion() {
   if [ $VERSION_DOWNLOAD != "latest" ]; then
-    VERSION_WITHOUT_PREFIX=$(echo "$VERSION_DOWNLOAD" | sed -e "s/v//g")
 
-    VERSION_WITHOUT_DOTS=$(echo "$VERSION_WITHOUT_PREFIX" | sed -e "s/\.//g")
+    VERSION_WITHOUT_V_PREFIX=$(echo "$VERSION_DOWNLOAD" | sed -e "s/v//g")
+    VERSION_WITHOUT_BETA_PREFIX=$(echo "$VERSION_WITHOUT_V_PREFIX" | sed -r "s/-beta\.[0-9]+//g")
+    VERSION_WITHOUT_RC_PREFIX=$(echo "$VERSION_WITHOUT_BETA_PREFIX" | sed -r "s/-rc\.[0-9]+//g")
+    VERSION_WITHOUT_DOTS=$(echo "$VERSION_WITHOUT_RC_PREFIX" | sed -e "s/\.//g")
 
     if [ "$VERSION_WITHOUT_DOTS" -gt 264 ]; then
       IS_NEW_URL=true
