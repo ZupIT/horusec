@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package brakeman
 
 import (
 	"testing"
@@ -23,38 +23,38 @@ import (
 
 func TestGetDetails(t *testing.T) {
 	t.Run("Should return output details and message", func(t *testing.T) {
-		output := Warning{
+		output := warning{
 			Details: "test",
 			Message: "test",
 		}
 
-		assert.Equal(t, "test test", output.GetDetails())
+		assert.Equal(t, "test test", output.getDetails())
 	})
 }
 
 func TestGetSeverity(t *testing.T) {
 	t.Run("Should return output high severity", func(t *testing.T) {
-		output := Warning{Confidence: "High"}
-		assert.Equal(t, severities.High, output.GetSeverity())
+		output := warning{Confidence: "High"}
+		assert.Equal(t, severities.High, output.getSeverity())
 	})
 
 	t.Run("Should return output medium severity", func(t *testing.T) {
-		output := Warning{Confidence: "Medium"}
-		assert.Equal(t, severities.Medium, output.GetSeverity())
+		output := warning{Confidence: "Medium"}
+		assert.Equal(t, severities.Medium, output.getSeverity())
 	})
 
 	t.Run("Should return output low severity", func(t *testing.T) {
-		output := Warning{Confidence: "Low"}
-		assert.Equal(t, severities.Low, output.GetSeverity())
+		output := warning{Confidence: "Low"}
+		assert.Equal(t, severities.Low, output.getSeverity())
 	})
 }
 
 func TestGetLine(t *testing.T) {
 	t.Run("Should parse line to string and return", func(t *testing.T) {
-		output := Warning{
+		output := warning{
 			Line: 123,
 		}
 
-		assert.Equal(t, "123", output.GetLine())
+		assert.Equal(t, "123", output.getLine())
 	})
 }

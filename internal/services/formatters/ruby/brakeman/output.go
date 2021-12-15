@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package brakeman
 
 import (
 	"fmt"
@@ -22,7 +22,16 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Warning struct {
+const (
+	confidenceHigh   = "High"
+	confidenceMedium = "Medium"
+)
+
+type brakemanOutput struct {
+	Warnings []warning `json:"warnings"`
+}
+
+type warning struct {
 	Type       string `json:"warning_type"`
 	Code       string `json:"code"`
 	Message    string `json:"message"`
@@ -32,16 +41,11 @@ type Warning struct {
 	Confidence string `json:"confidence"`
 }
 
-const (
-	confidenceHigh   = "High"
-	confidenceMedium = "Medium"
-)
-
-func (o *Warning) GetDetails() string {
+func (o *warning) getDetails() string {
 	return fmt.Sprintf("%s %s", o.Details, o.Message)
 }
 
-func (o *Warning) GetSeverity() severities.Severity {
+func (o *warning) getSeverity() severities.Severity {
 	if o.Confidence == confidenceHigh {
 		return severities.High
 	}
@@ -53,7 +57,7 @@ func (o *Warning) GetSeverity() severities.Severity {
 	return severities.Low
 }
 
-func (o *Warning) GetConfidence() confidence.Confidence {
+func (o *warning) getConfidence() confidence.Confidence {
 	if o.Confidence == confidenceHigh {
 		return confidence.High
 	}
@@ -65,6 +69,6 @@ func (o *Warning) GetConfidence() confidence.Confidence {
 	return confidence.Low
 }
 
-func (o *Warning) GetLine() string {
+func (o *warning) getLine() string {
 	return strconv.Itoa(o.Line)
 }
