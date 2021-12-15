@@ -18,6 +18,7 @@
 package main
 
 import (
+	"fmt"
 
 	// mage:import
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/mageutils"
@@ -26,5 +27,10 @@ import (
 
 // GetCurrentDate execute "echo", `::set-output name=date::$(date "+%a %b %d %H:%M:%S %Y")`
 func GetCurrentDate() error {
-	return sh.RunV("echo", `::set-output name=date::$(date "+%a %b %d %H:%M:%S %Y")`)
+	date, err := sh.Output("date", "+%a %b %d %H:%M:%S %Y")
+	if err != nil {
+		return err
+	}
+
+	return sh.RunV("echo", fmt.Sprintf("::set-output name=date::%s", date))
 }
