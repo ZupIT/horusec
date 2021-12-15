@@ -29,7 +29,7 @@ const (
 	MsgDebugConfigFileRunningOnPath      = "{HORUSEC_CLI} Config file running on path: "
 	MsgDebugFolderOrFileIgnored          = "{HORUSEC_CLI} The file or folder was ignored to send analysis:"
 	MsgDebugShowConfigs                  = "{HORUSEC_CLI} The current configuration for this analysis are:"
-	MsgDebugShowWorkdir                  = "{HORUSEC_CLI} The workdir setup for run in path:"
+	MsgDebugShowWorkdir                  = "{HORUSEC_CLI} Using path %s as workdir to run tool %s"
 	MsgDebugToolIgnored                  = "{HORUSEC_CLI} The tool was ignored for run in this analysis: "
 	MsgDebugVulnHashToFix                = "{HORUSEC_CLI} Vulnerability Hash expected to be FIXED: "
 	MsgDebugDockerImageDoesNotExists     = "{HORUSEC_CLI} Image %s does not exists. Pulling from registry"
