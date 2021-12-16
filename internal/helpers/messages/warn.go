@@ -47,5 +47,5 @@ const (
 	MsgWarnFoundErrorsInAnalysis        = "{HORUSEC_CLI} During execution we found some problems:"
 	MsgWarnGitRepositoryIsNotFullCloned = "{HORUSEC_CLI} Repository is not fully cloned." +
 		"Commit author can result wrong authors. Check the documentation for more info." +
-		"https://horusec.io/docs/cli/installation/#2-installation-via-pipeline"
+		"https://docs.horusec.io/docs/cli/installation/#2-installation-via-pipeline"
 )
