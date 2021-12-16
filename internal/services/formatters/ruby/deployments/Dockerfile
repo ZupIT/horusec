@@ -14,5 +14,7 @@
 
 FROM ruby:2.7.5-alpine
 
+RUN apk add git
+
 RUN gem install brakeman -v 5.1.1
-RUN gem install bundler-audit -v 0.9.0
+RUN gem install bundler-audit -v 0.9.0.1
