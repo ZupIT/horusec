@@ -29,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/docker/docker/api/types"
@@ -156,7 +157,7 @@ func TestAnalyzerWithoutMock(t *testing.T) {
 		_, err := controller.Analyze()
 		assert.NoError(t, err)
 	})
-	t.Run("Should run all analysis with and send to server correctly", func(t *testing.T) {
+	t.Run("Should run all analysis and send to server correctly", func(t *testing.T) {
 		cfg := config.New()
 
 		cfg.ProjectPath = testutil.GoExample
@@ -186,7 +187,7 @@ func TestAnalyzerWithoutMock(t *testing.T) {
 	})
 }
 
-func TestAnalyzer_AnalysisDirectory(t *testing.T) {
+func TestAnalyze(t *testing.T) {
 	t.Run("Should run all analysis with no timeout and error", func(t *testing.T) {
 		configs := config.New()
 		configs.WorkDir = &workdir.WorkDir{Go: []string{"test"}}
@@ -347,5 +348,48 @@ func TestAnalyzer_AnalysisDirectory(t *testing.T) {
 		totalVulns, err := controller.Analyze()
 		assert.Error(t, err)
 		assert.Equal(t, 0, totalVulns)
+	})
+	t.Run("should not remove info vulnerabilities when enable information severity enabled", func(t *testing.T) {
+		cfg := config.New()
+		cfg.EnableInformationSeverity = true
+		cfg.DisableDocker = true
+
+		ld := testutil.NewLanguageDetectMock()
+		ld.On("LanguageDetect").Return([]languages.Language{languages.C}, nil)
+
+		horusecAPI := testutil.NewHorusecAPIMock()
+		horusecAPI.On("SendAnalysis").Return(nil)
+		horusecAPI.On("GetAnalysis").Return(new(entitiesAnalysis.Analysis), nil)
+
+		docker := docker.New(testutil.NewDockerClientMock(), cfg, uuid.New())
+
+		analysis := new(entitiesAnalysis.Analysis)
+		analysis.AnalysisVulnerabilities = append(
+			analysis.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{
+				Vulnerability: vulnerability.Vulnerability{
+					Severity: severities.Info,
+				},
+			},
+		)
+
+		pr := testutil.NewPrintResultsMock()
+		pr.On("StartPrintResults").Return(0, nil)
+		pr.On("SetAnalysis")
+
+		analyzer := &Analyzer{
+			docker:          docker,
+			config:          cfg,
+			languageDetect:  ld,
+			printController: pr,
+			horusec:         horusecAPI,
+			formatter:       formatters.NewFormatterService(analysis, docker, cfg),
+			loading:         newScanLoading(cfg),
+			analysis:        analysis,
+		}
+
+		_, err := analyzer.Analyze()
+		require.NoError(t, err, "Expected no error to execute analysis")
+
+		assert.Len(t, analysis.AnalysisVulnerabilities, 1, "Expected that analysis contains info vulnerabilities")
 	})
 }

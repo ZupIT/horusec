@@ -631,6 +631,7 @@ func (a *Analyzer) removeInfoVulnerabilities() *analysis.Analysis {
 	return a.analysis
 }
 
+// nolint: funlen,gocyclo
 func (a *Analyzer) removeVulnerabilitiesBySeverity() *analysis.Analysis {
 	var vulnerabilities []analysis.AnalysisVulnerabilities
 	severitiesToIgnore := a.config.SeveritiesToIgnore
@@ -639,6 +640,11 @@ outer:
 	for index := range a.analysis.AnalysisVulnerabilities {
 		vuln := a.analysis.AnalysisVulnerabilities[index]
 		for _, severity := range severitiesToIgnore {
+			// Force to print INFO vulnerabilities when information severity is enabled.
+			if severity == severities.Info.ToString() && a.config.EnableInformationSeverity {
+				continue
+			}
+
 			if strings.EqualFold(string(vuln.Vulnerability.Severity), severity) {
 				continue outer
 			}
