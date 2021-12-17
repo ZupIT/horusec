@@ -15,9 +15,13 @@
 package trivy
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -161,9 +165,32 @@ func (f *Formatter) setVulnerabilities(cmd string, result *entities.Result, path
 	}
 }
 
+func findLineByFilename(target string, pkgName string, installedVersion string) string {
+	line := 0
+	file, err := os.Open(target)
+	if err != nil {
+		return strconv.Itoa(line)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if strings.HasPrefix(scanner.Text(), pkgName+" v"+installedVersion) {
+			return strconv.Itoa(line)
+		}
+		line++
+	}
+
+	if err := scanner.Err(); err != nil {
+		line = 0
+	}
+	return strconv.Itoa(line)
+}
+
 func (f *Formatter) setVulnerabilitiesOutput(vulnerabilities []*entities.Vulnerability, target string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
+		addVuln.Line = findLineByFilename(target, vuln.PkgName, vuln.InstalledVersion)
 		addVuln.File = target
 		addVuln.Code = vuln.PkgName
 		addVuln.Details = vuln.GetDetails()
