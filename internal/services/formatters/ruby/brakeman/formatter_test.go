@@ -18,71 +18,66 @@ import (
 	"errors"
 	"testing"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
-func TestParseOutput(t *testing.T) {
+func TestParseBrakemanOutput(t *testing.T) {
 	t.Run("Should success parse output to analysis", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := new(analysis.Analysis)
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		cfg := config.New()
+		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.RubyExample1)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputMock, nil)
 
-		output := "{\"warnings\":[{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Low\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Medium\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"High\"},{\"warning_type\":\"Command Injection\",\"warning_code\":14,\"check_name\":\"Execute\",\"message\":\"Possible command injection\",\"file\":\"app/controllers/application_controller.rb\",\"line\":4,\"code\":\"system(\\\"ls #{options}\\\")\",\"render_path\":null,\"user_input\":\"options\",\"confidence\":\"Test\"}]}"
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
 
 		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		formatter.StartAnalysis("")
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 4)
+
+		for _, v := range analysis.AnalysisVulnerabilities {
+			vuln := v.Vulnerability
+
+			assert.Equal(t, tools.Brakeman, vuln.SecurityTool)
+			assert.Equal(t, languages.Ruby, vuln.Language)
+			assert.NotEmpty(t, vuln.Details, "Expected not empty details")
+			assert.NotEmpty(t, vuln.Code, "Expected not empty code")
+			assert.NotEmpty(t, vuln.File, "Expected not empty file name")
+			assert.NotEmpty(t, vuln.Line, "Expected not empty line")
+			assert.NotEmpty(t, vuln.Severity, "Expected not empty severity")
+
+		}
 	})
 
 	t.Run("Should success parse output empty to analysis", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		output := ""
-
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 
 		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		formatter.StartAnalysis("")
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
-	t.Run("Should error rails not found when parse output to analysis", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("Should add error rails not found on analysis when parse output to analysis", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -91,63 +86,114 @@ func TestParseOutput(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 
 		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		formatter.StartAnalysis("")
 
 		assert.NotEmpty(t, analysis.Errors)
 	})
 
-	t.Run("Should return error when parsing invalid output", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("Should add error on analysis when parsing invalid output", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
-	t.Run("Should return error when something went wrong in container", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+	t.Run("Should add error on analysis when something went wrong in container", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
 
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.ToolsConfig = toolsconfig.ToolsConfig{
+
+		cfg := config.New()
+		cfg.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.Brakeman: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-		formatter := NewFormatter(service)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
 
+		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 	})
 }
+
+const outputMock = `
+{
+  "warnings": [
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/application_controller.rb",
+      "line": 4,
+      "code": "system(\"ls #{options}\")",
+      "render_path": null,
+      "user_input": "options",
+      "confidence": "Low"
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/application_controller.rb",
+      "line": 4,
+      "code": "system(\"ls #{options}\")",
+      "render_path": null,
+      "user_input": "options",
+      "confidence": "Medium"
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/application_controller.rb",
+      "line": 4,
+      "code": "system(\"ls #{options}\")",
+      "render_path": null,
+      "user_input": "options",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/application_controller.rb",
+      "line": 4,
+      "code": "system(\"ls #{options}\")",
+      "render_path": null,
+      "user_input": "options",
+      "confidence": "Test"
+    }
+  ]
+}
+`
