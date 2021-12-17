@@ -54,7 +54,7 @@
 Horusec is an open source tool that performs a static code analysis to identify security flaws during the development process. Currently, the languages for analysis are C#, Java, Kotlin, Python, Ruby, Golang, Terraform, Javascript, Typescript, Kubernetes, PHP, C, HTML, JSON, Dart, Elixir, Shell, Nginx. 
 The tool has options to search for key leaks and security flaws in all your project's files, as well as in Git history. Horusec can be used by the developer through the CLI and by the DevSecOps team on CI /CD mats. 
 
-Check out our [**Documentation**](https://horusec.io/docs/overview/), you will see the complete list of tools and languages Horusec performs analysis.
+Check out our [**Documentation**](https://docs.horusec.io/docs/overview/), you will see the complete list of tools and languages Horusec performs analysis.
 
 <p align="center" margin="20 0"><img src="assets/horusec-complete-architecture.png" alt="architecture" width="100%" style="max-width:100%;"/></p>
 
@@ -69,7 +69,7 @@ Check out our [**Documentation**](https://horusec.io/docs/overview/), you will s
 - Docker
 
 You need Docker installed in your machine in order to run Horusec with all the tools we use.
-If you don't have Docker, we have a [**flag**](https://horusec.io/docs/cli/resources/#3-flags) `-D true` that will disable the dependency, but it also loses much of the analysis power. 
+If you don't have Docker, we have a [**flag**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags) `-D true` that will disable the dependency, but it also loses much of the analysis power. 
 We recommend using it with Docker.
 
 If you enable commit authors `-G true`, there is also a `git` dependency.
@@ -86,19 +86,33 @@ or
 curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
 ```
 
-### **Windows**
-```sh
-curl -k "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_x64.exe" -o "./horusec.exe" -L && ./horusec.exe version
-```
-
-- You can find all binaries with versions in our [**releases page**](https://github.com/ZupIT/horusec/releases).
-
-- For more details on how to install, check out the [**documentation**](https://horusec.io/docs/cli/installation) 
-
 #### **Check the installation**
 ```bash
 horusec version
 ```
+
+### **Windows**
+- **amd64**
+    ```sh
+    curl -k "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_amd64.exe" -o "./horusec.exe" -L
+    ```
+
+- **arm64**
+    ```sh
+    curl -k "https://github.com/ZupIT/horusec/releases/latest/download/horusec_win_arm64.exe" -o "./horusec.exe" -L
+    ```
+
+#### **Check the installation**
+```bash
+./horusec.exe version
+```
+
+### **And more**
+
+- You can find all binaries with versions in our [**releases page**](https://github.com/ZupIT/horusec/releases).
+
+- For more details on how to install, check out the [**documentation**](https://docs.horusec.io/docs/cli/installation) 
+
 
 ## **Usage**
 ### **CLI Usage**
@@ -128,7 +142,7 @@ will be also needed to pass the project path to mount the volume `-v $(pwd):/src
 
 Horusec's v1 is still available.
 
-**WARNING:** The endpoint with v1 will be deprecated, please upgrade your CLI to v2. Check out more details in the [**documentation**](https://horusec.io/docs/migrate-v1-to-v2/). 
+**WARNING:** The endpoint with v1 will be deprecated, please upgrade your CLI to v2. Check out more details in the [**documentation**](https://docs.horusec.io/docs/migrate-v1-to-v2/). 
 
 ### **Mac or Linux**
 ``` sh
@@ -152,26 +166,26 @@ Check out the example below, it is sending an analysis to Horusec web services:
 horusec start -p <PATH_TO_YOUR_PROJECT> -a <YOUR_AUTHORIZATION_TOKEN>
 ```
 
-Check out [**the tutorial on how to create an authorization token through Horusec Manager Web Service**](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token).
+Check out [**the tutorial on how to create an authorization token through Horusec Manager Web Service**](https://docs.horusec.io/docs/tutorials/how-to-create-an-authorization-token).
 
-**WARNING:** Our web services was moved to a [**new repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://horusec.io/docs/migrate-v1-to-v2).
+**WARNING:** Our web services was moved to a [**new repository**](https://github.com/ZupIT/horusec-platform). You need to upgrade to v2, check out [**how to migrate from v1 to v2**](https://docs.horusec.io/docs/migrate-v1-to-v2).
 
 ### **Using Visual Studio Code**
 You can analyze your project using Horusec's Visual Studio Code extension.
-For more information, [**check out the documentation**](https://horusec.io/docs/extensions/visual-studio-code/).
+For more information, [**check out the documentation**](https://docs.horusec.io/docs/extensions/visual-studio-code/).
 
 ### **Using the Pipeline**
 You can perform an analysis of your project before you hold deployment in your environment by ensuring maximum security in your organization.
-For more information, [**check out the documentation**](https://horusec.io/docs/cli/installation/#installation-via-pipeline):
+For more information, [**check out the documentation**](https://docs.horusec.io/docs/cli/installation/#installation-via-pipeline):
 
 ### **Features**
 See below: 
 - Analyzes simultaneously 18 languages with 20 different security tools to increase accuracy;
 - Search for their historical git by secrets and other contents exposed;
-- Your analysis can be fully configurable, [**see all CLI available resources**](https://horusec.io/docs/cli/resources/#3-flags).
+- Your analysis can be fully configurable, [**see all CLI available resources**](https://docs.horusec.io/docs/cli/commands-and-flags/#3-flags).
 
 ## **Documentation**
-You can find Horusec's documentation on our [**website**](https://horusec.io/docs/).
+You can find Horusec's documentation on our [**website**](https://docs.horusec.io/docs/overview/).
 
 ## **Roadmap**
 We have a project [**roadmap**](ROADMAP.md), you can contribute with us!
