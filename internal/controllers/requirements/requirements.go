@@ -15,39 +15,28 @@
 package requirements
 
 import (
-	"errors"
-
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
 	"github.com/ZupIT/horusec/internal/controllers/requirements/docker"
 	"github.com/ZupIT/horusec/internal/controllers/requirements/git"
-	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
-var ErrRequirements = errors.New("check the requirements for run and try again")
+type ValidationFn func() error
 
 type Requirements struct {
-	gitRequirements    *git.RequirementGit
-	dockerRequirements *docker.RequirementDocker
+	gitValidationFn    ValidationFn
+	dockerValidationFn ValidationFn
 }
 
 func NewRequirements() *Requirements {
 	return &Requirements{
-		gitRequirements:    git.NewRequirementGit(),
-		dockerRequirements: docker.NewRequirementDocker(),
+		gitValidationFn:    git.Validate,
+		dockerValidationFn: docker.Validate,
 	}
 }
 
-func (r *Requirements) ValidateDocker() {
-	err := r.dockerRequirements.ValidateDocker()
-	if err != nil {
-		logger.LogPanicWithLevel(messages.MsgPanicDockerRequirementsToRunHorusec, ErrRequirements)
-	}
+func (r *Requirements) ValidateDocker() error {
+	return r.dockerValidationFn()
 }
 
-func (r *Requirements) ValidateGit() {
-	err := r.gitRequirements.ValidateGit()
-	if err != nil {
-		logger.LogPanicWithLevel(messages.MsgPanicGitRequirementsToRunHorusec, ErrRequirements)
-	}
+func (r *Requirements) ValidateGit() error {
+	return r.gitValidationFn()
 }

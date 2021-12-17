@@ -20,14 +20,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateRequirements(t *testing.T) {
+func TestValidateAllRequirements(t *testing.T) {
 	t.Run("should return no error when everything it is ok", func(t *testing.T) {
 		controller := NewRequirements()
-		assert.NotPanics(t, func() {
-			controller.ValidateDocker()
-		})
-		assert.NotPanics(t, func() {
-			controller.ValidateGit()
-		})
+		err := controller.ValidateGit()
+		assert.NoError(t, err)
+		err = controller.ValidateDocker()
+		assert.NoError(t, err)
 	})
 }

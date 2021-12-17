@@ -15,6 +15,7 @@
 package testutil
 
 import (
+	mockutils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -26,10 +27,12 @@ func NewRequirementsMock() *RequirementsMock {
 	return new(RequirementsMock)
 }
 
-func (m *RequirementsMock) ValidateDocker() {
-	_ = m.MethodCalled("ValidateDocker")
+func (m *RequirementsMock) ValidateDocker() error {
+	args := m.MethodCalled("ValidateDocker")
+	return mockutils.ReturnNilOrError(args, 0)
 }
 
-func (m *RequirementsMock) ValidateGit() {
-	_ = m.MethodCalled("ValidateGit")
+func (m *RequirementsMock) ValidateGit() error {
+	args := m.MethodCalled("ValidateGit")
+	return mockutils.ReturnNilOrError(args, 0)
 }

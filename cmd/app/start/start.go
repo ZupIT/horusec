@@ -49,8 +49,8 @@ type Prompt interface {
 // Requirements is the interface that validate Horusec dynamic
 // requirements to execute analysis
 type Requirements interface {
-	ValidateDocker()
-	ValidateGit()
+	ValidateDocker() error
+	ValidateGit() error
 }
 
 type Start struct {
@@ -319,20 +319,27 @@ func (s *Start) validateConfig() error {
 		return err
 	}
 
-	s.validateRequirements()
+	if err := s.validateRequirements(); err != nil {
+		return err
+	}
 
 	logger.LogDebugWithLevel(messages.MsgDebugShowConfigs + string(s.configs.Bytes()))
 	return nil
 }
 
-func (s *Start) validateRequirements() {
+func (s *Start) validateRequirements() error {
 	if s.configs.EnableGitHistoryAnalysis {
-		s.requirements.ValidateGit()
+		if err := s.requirements.ValidateGit(); err != nil {
+			return err
+		}
 	}
 
 	if !s.configs.DisableDocker {
-		s.requirements.ValidateDocker()
+		if err := s.requirements.ValidateDocker(); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func (s *Start) isRunPromptQuestion(cmd *cobra.Command) bool {
