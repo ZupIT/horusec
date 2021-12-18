@@ -13,7 +13,7 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20211203214250-4735fba0c1d9
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
-	github.com/magefile/mage v1.11.0
+	github.com/magefile/mage v1.12.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
