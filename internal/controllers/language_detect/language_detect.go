@@ -51,8 +51,10 @@ func NewLanguageDetect(cfg *config.Config, analysisID uuid.UUID) *LanguageDetect
 }
 
 // Detect implements analyzer.LanguageDetect.Detect.
+//
+// nolint: funlen
 func (ld *LanguageDetect) Detect(directory string) ([]languages.Language, error) {
-	langs := []string{languages.Leaks.ToString(), languages.Generic.ToString()}
+	langs := []languages.Language{languages.Leaks, languages.Generic}
 
 	languagesFound, err := ld.getLanguages(directory)
 	if err != nil {
@@ -60,13 +62,17 @@ func (ld *LanguageDetect) Detect(directory string) ([]languages.Language, error)
 		return nil, err
 	}
 
-	langs = ld.appendLanguagesFound(langs, languagesFound)
+	for _, lang := range languagesFound {
+		if l := ld.parseLanguage(lang); l != languages.Unknown {
+			langs = append(langs, l)
+		}
+	}
 
 	if errCopy := ld.copyProjectToHorusecFolder(directory); errCopy != nil {
 		return nil, errCopy
 	}
 
-	return ld.filterSupportedLanguages(langs), err
+	return ld.uniqueLanguages(langs), nil
 }
 
 // getLanguages return all unique languages that exists on directory.
@@ -80,11 +86,13 @@ func (ld *LanguageDetect) getLanguages(directory string) ([]string, error) {
 		logger.LogWarnWithLevel(fmt.Sprintf(messages.MsgWarnTotalFolderOrFileWasIgnored, skipedFiles))
 	}
 
-	return ld.uniqueLanguages(langs), err
+	return langs, nil
 }
 
 // detectAllLanguages return all languages that exists on directory and how many
 // files was skipped when detecting their languages.
+//
+// nolint: funlen
 func (ld *LanguageDetect) detectAllLanguages(directory string) (totalToSkip int, languagesFound []string, err error) {
 	err = filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -94,9 +102,10 @@ func (ld *LanguageDetect) detectAllLanguages(directory string) (totalToSkip int,
 		newLanguages, skip := ld.detectLanguages(path, info)
 		if skip {
 			totalToSkip++
+			return nil
 		}
 
-		languagesFound = ld.appendLanguagesFound(languagesFound, newLanguages)
+		languagesFound = append(languagesFound, newLanguages...)
 		return nil
 	})
 
@@ -107,7 +116,7 @@ func (ld *LanguageDetect) detectAllLanguages(directory string) (totalToSkip int,
 // skipped, detectLanguages return nil and true, otherwise will return all languages and false
 // if path is not a directory.
 func (ld *LanguageDetect) detectLanguages(path string, info os.FileInfo) ([]string, bool) {
-	if skip := ld.isPathToIgnore(path); skip {
+	if ld.isPathToIgnore(path) {
 		logger.LogDebugWithLevel(messages.MsgDebugFolderOrFileIgnored, filepath.Clean(path))
 		return nil, true
 	}
@@ -121,8 +130,8 @@ func (ld *LanguageDetect) detectLanguages(path string, info os.FileInfo) ([]stri
 	return langs, false
 }
 
-func (ld *LanguageDetect) uniqueLanguages(languagesFound []string) (output []string) {
-	for _, language := range languagesFound {
+func (ld *LanguageDetect) uniqueLanguages(langs []languages.Language) (output []languages.Language) {
+	for _, language := range langs {
 		if len(output) == 0 {
 			output = append(output, language)
 			continue
@@ -132,18 +141,20 @@ func (ld *LanguageDetect) uniqueLanguages(languagesFound []string) (output []str
 	return output
 }
 
-func (ld *LanguageDetect) appendIfLanguageNotExists(allLanguages []string, newLanguage string) []string {
+func (ld *LanguageDetect) appendIfLanguageNotExists(
+	langs []languages.Language, newLang languages.Language,
+) []languages.Language {
 	existing := false
-	for _, lang := range allLanguages {
-		if lang == newLanguage {
+	for _, lang := range langs {
+		if lang == newLang {
 			existing = true
 			break
 		}
 	}
 	if !existing {
-		allLanguages = append(allLanguages, newLanguage)
+		langs = append(langs, newLang)
 	}
-	return allLanguages
+	return langs
 }
 
 func (ld *LanguageDetect) isPathToIgnore(path string) bool {
@@ -198,44 +209,16 @@ func (ld *LanguageDetect) copyProjectToHorusecFolder(directory string) error {
 	return ld.copyGitFolderWhenIsSubmodule(directory, folderDstName)
 }
 
-func (ld *LanguageDetect) filterSupportedLanguages(langs []string) (onlySupportedLangs []languages.Language) {
-	for _, lang := range langs {
-		if ld.isSupportedLanguage(lang) {
-			onlySupportedLangs = append(onlySupportedLangs, languages.ParseStringToLanguage(lang))
-		}
-	}
-
-	return onlySupportedLangs
-}
-
-func (ld *LanguageDetect) isSupportedLanguage(langName string) bool {
-	for _, lang := range languages.Values() {
-		if langName == lang.ToString() {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (ld *LanguageDetect) appendLanguagesFound(existingLanguages, languagesFound []string) []string {
-	for _, lang := range languagesFound {
-		existingLanguages = ld.updateExistingLanguages(lang, existingLanguages)
-	}
-
-	return ld.uniqueLanguages(existingLanguages)
-}
-
-func (ld *LanguageDetect) updateExistingLanguages(lang string, existingLanguages []string) []string {
+func (ld *LanguageDetect) parseLanguage(lang string) languages.Language {
 	switch {
 	case ld.isTypescriptOrJavascriptLang(lang):
-		return append(existingLanguages, languages.Javascript.ToString())
+		return languages.Javascript
 	case ld.isCPlusPLusOrCLang(lang):
-		return append(existingLanguages, languages.C.ToString())
+		return languages.C
 	case ld.isBatFileOrShellFile(lang):
-		return append(existingLanguages, languages.Shell.ToString())
+		return languages.Shell
 	default:
-		return append(existingLanguages, lang)
+		return languages.ParseStringToLanguage(lang)
 	}
 }
 
