@@ -28,7 +28,7 @@ const (
 	Leaks           = "horuszup/horusec-leaks:v1.1.0"
 	PHP             = "horuszup/horusec-php:v1.0.1"
 	Python          = "horuszup/horusec-python:v1.0.0"
-	Ruby            = "horuszup/horusec-ruby:v1.1.0"
+	Ruby            = "horuszup/horusec-ruby:v1.1.1"
 	Shell           = "horuszup/horusec-shell:v1.0.1"
 )
 
