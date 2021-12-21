@@ -166,7 +166,7 @@ func (f *Formatter) setVulnerabilitiesOutput(vulnerabilities []*entities.Vulnera
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
 		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
-		_, _, addVuln.Line = file.GetDependencyInfo([]string{target}, addVuln.Code)
+		_, _, addVuln.Line = file.GetDependencyInfo(addVuln.Code, target)
 		addVuln.File = target
 		addVuln.Details = vuln.GetDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
