@@ -241,7 +241,7 @@ func GetDependencyCodeFilepathAndLine(
 		return "", "", ""
 	}
 
-	return getDependencyInfo(paths, dependency)
+	return GetDependencyInfo(dependency, paths...)
 }
 
 // nolint: funlen
@@ -266,12 +266,12 @@ func getPathsByExtension(projectPath, subPath string, extensions ...string) ([]s
 	})
 }
 
-// getDependencyInfo return the path inside paths that match the dependency.
+// GetDependencyInfo return the path inside paths that match the dependency.
 //
 // The line and the dependency trimmed is also returned.
 //
 //nolint:funlen,gocyclo
-func getDependencyInfo(paths []string, dependency string) (string, string, string) {
+func GetDependencyInfo(dependency string, paths ...string) (string, string, string) {
 	var line int
 
 	for _, path := range paths {

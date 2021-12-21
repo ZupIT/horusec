@@ -34,6 +34,7 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy/entities"
+	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -164,8 +165,9 @@ func (f *Formatter) setVulnerabilities(cmd string, result *entities.Result, path
 func (f *Formatter) setVulnerabilitiesOutput(vulnerabilities []*entities.Vulnerability, target string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
+		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
+		_, _, addVuln.Line = file.GetDependencyInfo(addVuln.Code, target)
 		addVuln.File = target
-		addVuln.Code = vuln.PkgName
 		addVuln.Details = vuln.GetDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
