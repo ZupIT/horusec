@@ -63,10 +63,20 @@ func GetPathFromFilename(filename, basePath string) string {
 	return filePath
 }
 
-func isSameExtensions(filename, path string) bool {
-	filenameExt := filepath.Ext(filename)
-	basePathExt := filepath.Ext(path)
-	return filenameExt == basePathExt
+// GetSubPathByFilename works like GetSubPathByExtension but for filenames.
+//
+// The value returned will be the first path that contains a file with a given
+// filename, otherwise will return an empty string.
+func GetSubPathByFilename(projectPath, subPath, filename string) string {
+	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
+	logger.LogDebugWithLevel(fmt.Sprintf("Seaching for files with %s name on %s", filename, pathToWalk))
+
+	if path := GetPathFromFilename(filename, pathToWalk); path != "" {
+		logger.LogDebugWithLevel(fmt.Sprintf("Found file %s on %s", filename, path))
+		return filepath.Dir(path)
+	}
+
+	return ""
 }
 
 // ReplacePathSeparator replace slashes from path to OS specific.
@@ -113,10 +123,6 @@ func GetSubPathByExtension(projectPath, subPath, ext string) (extensionPath stri
 		return extensionPath
 	}
 	return ""
-}
-
-func buildPattern(ext string) string {
-	return "*" + ext
 }
 
 // relativeDirIfPathMatch return relative directory of path based on projectPath
@@ -315,4 +321,14 @@ func CreateAndWriteFile(input, filename string) error {
 	}()
 	_, err = file.WriteString(input)
 	return err
+}
+
+func isSameExtensions(filename, path string) bool {
+	filenameExt := filepath.Ext(filename)
+	basePathExt := filepath.Ext(path)
+	return filenameExt == basePathExt
+}
+
+func buildPattern(ext string) string {
+	return "*" + ext
 }

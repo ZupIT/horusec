@@ -29,6 +29,7 @@ import (
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
+	fileutils "github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -118,7 +119,11 @@ func (f *Formatter) newVulnerability(output *warning, projectSubPath string) *vu
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
 	analysisData := &docker.AnalysisData{
-		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Brakeman),
+		CMD: f.AddWorkDirInCmd(
+			CMD,
+			fileutils.GetSubPathByFilename(f.GetConfigProjectPath(), projectSubPath, "Gemfile"),
+			tools.Brakeman,
+		),
 		Language: languages.Ruby,
 	}
 

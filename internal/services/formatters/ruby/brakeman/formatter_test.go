@@ -33,14 +33,11 @@ func TestParseBrakemanOutput(t *testing.T) {
 	t.Run("Should success parse output to analysis", func(t *testing.T) {
 		analysis := new(analysis.Analysis)
 
-		cfg := config.New()
-		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.RubyExample1)
-
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputMock, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
@@ -68,7 +65,7 @@ func TestParseBrakemanOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
@@ -86,7 +83,7 @@ func TestParseBrakemanOutput(t *testing.T) {
 
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
@@ -101,7 +98,7 @@ func TestParseBrakemanOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
@@ -116,7 +113,7 @@ func TestParseBrakemanOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
@@ -141,6 +138,12 @@ func TestParseBrakemanOutput(t *testing.T) {
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 	})
+}
+
+func newTestConfig(t *testing.T, analysis *analysis.Analysis) *config.Config {
+	cfg := config.New()
+	cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.RubyExample)
+	return cfg
 }
 
 const outputMock = `
