@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package dependencycheck
 
 import (
 	"testing"
@@ -22,10 +22,10 @@ import (
 
 func TestGetVulnerability(t *testing.T) {
 	t.Run("should success get vulnerability without cwe", func(t *testing.T) {
-		dependency := &Dependency{
+		dependency := &dependencyCheckDependency{
 			FileName: "test",
 			FilePath: "test",
-			Vulnerabilities: []*Vulnerability{
+			Vulnerabilities: []*dependencyCheckVulnerability{
 				{
 					Description: "test",
 					Severity:    "test",
@@ -34,14 +34,14 @@ func TestGetVulnerability(t *testing.T) {
 			},
 		}
 
-		assert.NotNil(t, dependency.GetVulnerability())
+		assert.NotNil(t, dependency.getVulnerability())
 	})
 
 	t.Run("should success get vulnerability with cwe", func(t *testing.T) {
-		dependency := &Dependency{
+		dependency := &dependencyCheckDependency{
 			FileName: "test",
 			FilePath: "test",
-			Vulnerabilities: []*Vulnerability{
+			Vulnerabilities: []*dependencyCheckVulnerability{
 				{
 					Description: "test",
 					Severity:    "test",
@@ -50,33 +50,33 @@ func TestGetVulnerability(t *testing.T) {
 			},
 		}
 
-		assert.NotNil(t, dependency.GetVulnerability())
+		assert.NotNil(t, dependency.getVulnerability())
 	})
 
 	t.Run("should return nil when do not contains vulnerability", func(t *testing.T) {
-		dependency := &Dependency{}
+		dependency := &dependencyCheckDependency{}
 
-		assert.Nil(t, dependency.GetVulnerability())
+		assert.Nil(t, dependency.getVulnerability())
 	})
 }
 
 func TestGetFile(t *testing.T) {
 	t.Run("should success get file", func(t *testing.T) {
-		dependency := &Dependency{
+		dependency := &dependencyCheckDependency{
 			FilePath: "test?test",
 		}
 
-		file := dependency.GetFile()
+		file := dependency.getFile()
 		assert.NotEmpty(t, file)
 		assert.Equal(t, "test", file)
 	})
 
 	t.Run("should success get file", func(t *testing.T) {
-		dependency := &Dependency{
+		dependency := &dependencyCheckDependency{
 			FilePath: "test2",
 		}
 
-		file := dependency.GetFile()
+		file := dependency.getFile()
 		assert.NotEmpty(t, file)
 		assert.Equal(t, "test2", file)
 	})
