@@ -16,91 +16,79 @@ package sobelow
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
-func getOutputString() string {
-	return `
-
-
-		[31m[+][0m Config.CSP: Missing Content-Security-Policy - lib/built_with_elixir_web/router.ex:9
-		[31m[+][0m Config.Secrets: Hardcoded Secret - config/travis.exs:24
-		[31m[+][0m Config.HTTPS: HTTPS Not Enabled - config/prod.exs:0
-		[32m[+][0m XSS.Raw: XSS - lib/built_with_elixir_web/templates/layout/app.html.eex:17
-		test
-
-`
-}
-
-func TestStartCFlawfinder(t *testing.T) {
-	t.Run("should success execute container and process output", func(t *testing.T) {
+func TestSobelowStartAnalysis(t *testing.T) {
+	t.Run("should add 4 vulnerabilities on analysis with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		entity := &analysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		output := getOutputString()
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
+		entity := new(analysis.Analysis)
+
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, newTestConfig(t, entity))
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")
 
-		assert.NotEmpty(t, entity)
 		assert.Len(t, entity.AnalysisVulnerabilities, 4)
+
+		for _, v := range entity.AnalysisVulnerabilities {
+			vuln := v.Vulnerability
+
+			assert.Equal(t, tools.Sobelow, vuln.SecurityTool)
+			assert.Equal(t, languages.Elixir, vuln.Language)
+			assert.NotEmpty(t, vuln.Details, "Expected not empty details")
+			assert.NotEmpty(t, vuln.File, "Expected not empty file name")
+			assert.NotEmpty(t, vuln.Line, "Expected not empty line")
+			assert.NotEmpty(t, vuln.Severity, "Expected not empty severity")
+
+		}
 	})
 
-	t.Run("should return error when invalid output", func(t *testing.T) {
+	t.Run("should not add error on analysis when empty output", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		analysis := &analysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		output := ""
+		analysis := new(analysis.Analysis)
 
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
 
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
 	})
 
 	t.Run("should return error when executing container", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		entity := &analysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, config)
-		formatter := NewFormatter(service)
+		entity := new(analysis.Analysis)
 
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		service := formatters.NewFormatterService(entity, dockerAPIControllerMock, newTestConfig(t, entity))
+		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
+
+		assert.True(t, entity.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
-		entity := &analysis.Analysis{}
+		entity := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+
+		config := config.New()
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.Sobelow: toolsconfig.Config{
 				IsToIgnore: true,
@@ -113,3 +101,16 @@ func TestStartCFlawfinder(t *testing.T) {
 		formatter.StartAnalysis("")
 	})
 }
+
+func newTestConfig(t *testing.T, analysiss *analysis.Analysis) *config.Config {
+	cfg := config.New()
+	cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysiss, testutil.ElixirExample)
+	return cfg
+}
+
+var output = `
+		[31m[+][0m Config.CSP: Missing Content-Security-Policy - ` + filepath.Join("lib", "built_with_elixir_web", "router") + `.ex:9
+		[31m[+][0m Config.Secrets: Hardcoded Secret - ` + filepath.Join("config", "prod") + `.exs:1
+		[31m[+][0m Config.HTTPS: HTTPS Not Enabled - ` + filepath.Join("config", "dev") + `.exs:1
+		[32m[+][0m XSS.Raw: XSS - ` + filepath.Join("lib", "built_with_elixir_web", "templates", "layout", "app.html") + `.eex:17
+`
