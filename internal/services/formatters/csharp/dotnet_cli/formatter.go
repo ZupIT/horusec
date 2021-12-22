@@ -76,7 +76,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
 		Language: languages.CSharp,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
 // nolint:gocyclo

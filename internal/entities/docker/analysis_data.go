@@ -23,6 +23,8 @@ import (
 	"github.com/ZupIT/horusec/internal/enums/images"
 )
 
+// AnalysisData holds the image and command that will be used to start an
+// analysis of a tool inside a Docker container.
 type AnalysisData struct {
 	CustomImage  string
 	DefaultImage string
@@ -30,17 +32,23 @@ type AnalysisData struct {
 	Language     languages.Language
 }
 
+// IsInvalid check if current analysis data contains an empty image ou command.
 func (a *AnalysisData) IsInvalid() bool {
 	return a.DefaultImage == "" || a.CMD == ""
 }
 
-func (a *AnalysisData) SetData(customImage, imageWithTag string) *AnalysisData {
+// SetImage set the custom image and default image that will be used by analysis
+//
+// Note that customImage could be an empty string and defaultImage **should**
+// contains docker tag, e.g go:1.17.
+func (a *AnalysisData) SetImage(customImage, defaultImage string) *AnalysisData {
 	a.CustomImage = customImage
-	a.DefaultImage = path.Join(images.DefaultRegistry, imageWithTag)
+	a.DefaultImage = path.Join(images.DefaultRegistry, defaultImage)
 
 	return a
 }
 
+// GetCustomOrDefaultImage return the user custom image or default.
 func (a *AnalysisData) GetCustomOrDefaultImage() string {
 	if a.CustomImage != "" {
 		return a.CustomImage

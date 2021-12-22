@@ -146,7 +146,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData 
 
 	analysisData.SetSlnName(filename)
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
 func (f *Formatter) getSeverity(ruleID string) severities.Severity {

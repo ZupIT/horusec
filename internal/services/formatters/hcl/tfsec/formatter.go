@@ -70,7 +70,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.HCL,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.HCL), images.HCL)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.HCL), images.HCL)
 }
 
 func (f *Formatter) parseOutput(output string) error {

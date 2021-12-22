@@ -70,7 +70,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData 
 		Language: languages.Generic,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
 func (f *Formatter) parseOutput(output string) error {

@@ -85,7 +85,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby)
 }
 
 func (f *Formatter) verifyGemLockError(output string) error {

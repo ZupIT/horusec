@@ -125,7 +125,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Leaks,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Leaks), images.Leaks)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Leaks), images.Leaks)
 }
 
 func (f *Formatter) getDefaultSeverity() *vulnerability.Vulnerability {

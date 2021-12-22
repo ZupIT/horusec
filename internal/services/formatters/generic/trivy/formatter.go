@@ -131,7 +131,7 @@ func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *dockerEntities.
 		Language: languages.Generic,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
 func (f *Formatter) parseOutput(output, cmd, projectSubPath string) error {

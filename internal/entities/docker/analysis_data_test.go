@@ -42,7 +42,7 @@ func TestSetData(t *testing.T) {
 			CMD: "test",
 		}
 
-		newData := data.SetData("other-host.io/t/test:latest", "test:v1.0.0")
+		newData := data.SetImage("other-host.io/t/test:latest", "test:v1.0.0")
 		assert.Equal(t, "other-host.io/t/test:latest", newData.CustomImage)
 		assert.Equal(t, "docker.io/test:v1.0.0", newData.DefaultImage)
 	})
