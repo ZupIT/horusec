@@ -12,19 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package mixaudit
 
 import (
 	"fmt"
 	"strings"
 )
 
-type Vulnerability struct {
-	Advisory   Advisory   `json:"advisory"`
-	Dependency Dependency `json:"dependency"`
+type mixAuditResult struct {
+	Vulnerabilities []mixAuditVulnerability `json:"vulnerabilities"`
 }
 
-func (v *Vulnerability) GetDetails() string {
+type mixAuditVulnerability struct {
+	Advisory struct {
+		Description string `json:"description"`
+		Package     string `json:"package"`
+		Title       string `json:"title"`
+	} `json:"advisory"`
+	Dependency struct {
+		Lockfile string `json:"lockfile"`
+		Version  string `json:"version"`
+	} `json:"dependency"`
+}
+
+func (v *mixAuditVulnerability) getDetails() string {
 	title := strings.ReplaceAll(v.Advisory.Title, "\n", "")
 	description := strings.ReplaceAll(v.Advisory.Description, "\n", "")
 	return fmt.Sprintf("%s\n%s", title, description)
