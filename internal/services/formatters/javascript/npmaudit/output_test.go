@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package npmaudit
 
 import (
 	"testing"
@@ -23,61 +23,61 @@ import (
 
 func TestGetVersion(t *testing.T) {
 	t.Run("should return finding version", func(t *testing.T) {
-		issue := Issue{
-			Findings: []Finding{
+		issue := npmIssue{
+			Findings: []npmFinding{
 				{
 					Version: "test",
 				},
 			},
 		}
 
-		assert.Equal(t, "test", issue.GetVersion())
+		assert.Equal(t, "test", issue.getVersion())
 	})
 
 	t.Run("should return no version", func(t *testing.T) {
-		issue := Issue{}
-		assert.Empty(t, issue.GetVersion())
+		issue := npmIssue{}
+		assert.Empty(t, issue.getVersion())
 	})
 }
 
 func TestGetSeverity(t *testing.T) {
 	t.Run("should return a low severity", func(t *testing.T) {
-		issue := Issue{
+		issue := npmIssue{
 			Severity: "low",
 		}
 
-		assert.Equal(t, severities.Low, issue.GetSeverity())
+		assert.Equal(t, severities.Low, issue.getSeverity())
 	})
 
 	t.Run("should return a medium severity", func(t *testing.T) {
-		issue := Issue{
+		issue := npmIssue{
 			Severity: "moderate",
 		}
 
-		assert.Equal(t, severities.Medium, issue.GetSeverity())
+		assert.Equal(t, severities.Medium, issue.getSeverity())
 	})
 
 	t.Run("should return a critical severity", func(t *testing.T) {
-		issue := Issue{
+		issue := npmIssue{
 			Severity: "critical",
 		}
 
-		assert.Equal(t, severities.Critical, issue.GetSeverity())
+		assert.Equal(t, severities.Critical, issue.getSeverity())
 	})
 
 	t.Run("should return a info severity", func(t *testing.T) {
-		issue := Issue{
+		issue := npmIssue{
 			Severity: "info",
 		}
 
-		assert.Equal(t, severities.Info, issue.GetSeverity())
+		assert.Equal(t, severities.Info, issue.getSeverity())
 	})
 
 	t.Run("should return a unknown severity", func(t *testing.T) {
-		issue := Issue{
+		issue := npmIssue{
 			Severity: "",
 		}
 
-		assert.Equal(t, severities.Unknown, issue.GetSeverity())
+		assert.Equal(t, severities.Unknown, issue.getSeverity())
 	})
 }
