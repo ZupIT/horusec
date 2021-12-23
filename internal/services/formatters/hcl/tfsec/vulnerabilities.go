@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package tfsec
 
-type Location struct {
-	Filename  string `json:"filename"`
-	StartLine int    `json:"start_line"`
-	EndLine   int    `json:"end_line"`
+type tfsecVulnerabilities struct {
+	Results []tfsecResult `json:"results"`
 }

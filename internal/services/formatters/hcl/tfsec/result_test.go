@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package tfsec
 
 import (
 	"testing"
@@ -20,8 +20,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func resultMock() *Result {
-	return &Result{
+func resultMock() *tfsecResult {
+	return &tfsecResult{
 		RuleID: "AWS123",
 		Link:   "test",
 		Location: Location{
@@ -36,24 +36,24 @@ func resultMock() *Result {
 
 func TestGetDetails(t *testing.T) {
 	t.Run("should success get result details", func(t *testing.T) {
-		assert.NotEmpty(t, resultMock().GetDetails())
+		assert.NotEmpty(t, resultMock().getDetails())
 	})
 }
 
 func TestGetStartLine(t *testing.T) {
 	t.Run("should success get start line", func(t *testing.T) {
-		assert.NotEmpty(t, resultMock().GetStartLine())
+		assert.NotEmpty(t, resultMock().getStartLine())
 	})
 }
 
 func TestGetCode(t *testing.T) {
 	t.Run("should success get code", func(t *testing.T) {
-		assert.NotEmpty(t, resultMock().GetCode())
+		assert.NotEmpty(t, resultMock().getCode())
 	})
 }
 
 func TestGetFilename(t *testing.T) {
 	t.Run("should success get filename", func(t *testing.T) {
-		assert.NotEmpty(t, resultMock().GetFilename())
+		assert.NotEmpty(t, resultMock().getFilename())
 	})
 }

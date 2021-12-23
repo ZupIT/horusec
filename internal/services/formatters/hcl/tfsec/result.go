@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package tfsec
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Result struct {
+type tfsecResult struct {
 	RuleID      string   `json:"rule_id"`
 	Link        string   `json:"link"`
 	Location    Location `json:"location"`
@@ -29,27 +29,27 @@ type Result struct {
 	Severity    string   `json:"severity"`
 }
 
-func (r *Result) GetDetails() string {
+func (r *tfsecResult) getDetails() string {
 	return r.RuleID + " -> [" + r.Description + "]"
 }
 
-func (r *Result) GetStartLine() string {
+func (r *tfsecResult) getStartLine() string {
 	return strconv.Itoa(r.Location.StartLine)
 }
 
-func (r *Result) GetCode() string {
+func (r *tfsecResult) getCode() string {
 	return fmt.Sprintf("code beetween line %d and %d.", r.Location.StartLine, r.Location.EndLine)
 }
 
-func (r *Result) GetFilename() string {
+func (r *tfsecResult) getFilename() string {
 	return r.Location.Filename
 }
 
-func (r *Result) GetSeverity() severities.Severity {
+func (r *tfsecResult) getSeverity() severities.Severity {
 	return r.mapSeverityValues()[r.Severity]
 }
 
-func (r *Result) mapSeverityValues() map[string]severities.Severity {
+func (r *tfsecResult) mapSeverityValues() map[string]severities.Severity {
 	return map[string]severities.Severity{
 		"ERROR":   severities.High,
 		"WARNING": severities.Medium,

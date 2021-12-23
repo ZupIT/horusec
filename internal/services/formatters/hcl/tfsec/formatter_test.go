@@ -18,83 +18,148 @@ import (
 	"errors"
 	"testing"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
-func TestStartHCLTfSec(t *testing.T) {
-	t.Run("should success execute container and process output", func(t *testing.T) {
+func TestTFSecParseOutput(t *testing.T) {
+	t.Run("should add 5 vulnerabilities on analysis with no errors", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		analysis := &entitiesAnalysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		output := `{"results":[{"rule_id":"AWS018","link":"https://github.com/liamg/tfsec/wiki/AWS018","location":{"filename":"/src/terraform/main.tf","start_line":2,"end_line":5},"description":"Resource 'aws_security_group_rule.my-rule' should include a description for auditing purposes.","severity":"ERROR"},{"rule_id":"AWS006","link":"https://github.com/liamg/tfsec/wiki/AWS006","location":{"filename":"/src/terraform/main.tf","start_line":4,"end_line":4},"description":"Resource 'aws_security_group_rule.my-rule' defines a fully open ingress security group rule.","severity":"WARNING"},{"rule_id":"AWS004","link":"https://github.com/liamg/tfsec/wiki/AWS004","location":{"filename":"/src/terraform/main.tf","start_line":9,"end_line":9},"description":"Resource 'aws_alb_listener.my-alb-listener' uses plain HTTP instead of HTTPS.","severity":"ERROR"},{"rule_id":"AWS003","link":"https://github.com/liamg/tfsec/wiki/AWS003","location":{"filename":"/src/terraform/main.tf","start_line":12,"end_line":14},"description":"Resource 'aws_db_security_group.my-group' uses EC2 Classic. Use a VPC instead.","severity":"ERROR"},{"rule_id":"AZU003","link":"https://github.com/liamg/tfsec/wiki/AZU003","location":{"filename":"/src/terraform/main.tf","start_line":18,"end_line":18},"description":"Resource 'azurerm_managed_disk.source' defines an unencrypted managed disk.","severity":"ERROR"}]}`
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+
+		analysis := new(analysis.Analysis)
+		config := config.New()
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
 
-		assert.NotEmpty(t, analysis)
 		assert.Len(t, analysis.AnalysisVulnerabilities, 5)
+		for _, v := range analysis.AnalysisVulnerabilities {
+			vuln := v.Vulnerability
+
+			assert.Equal(t, tools.TfSec, vuln.SecurityTool)
+			assert.Equal(t, languages.HCL, vuln.Language)
+			assert.NotEmpty(t, vuln.Details, "Expected not empty details")
+			assert.NotEmpty(t, vuln.Code, "Expected not empty code")
+			assert.NotEmpty(t, vuln.File, "Expected not emppty file name")
+			assert.NotEmpty(t, vuln.Line, "Expected not empty line")
+			assert.NotEmpty(t, vuln.Severity, "Expected not empty severity")
+
+		}
 	})
 
-	t.Run("should return error when invalid output", func(t *testing.T) {
+	t.Run("should add error on analysis when invalid output", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		analysis := &entitiesAnalysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid", nil)
 
-		output := "!@#!@#"
+		analysis := new(analysis.Analysis)
 
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
+		config := config.New()
 
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
 
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
-	t.Run("should return error when executing container", func(t *testing.T) {
+	t.Run("should add error of executing container on analysis", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		analysis := &entitiesAnalysis.Analysis{}
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
+		analysis := new(analysis.Analysis)
+
+		config := config.New()
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
 
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+
+		config := config.New()
 		config.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.TfSec: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
+
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
 	})
 }
+
+const output = `
+{
+  "results": [
+    {
+      "rule_id": "AWS018",
+      "link": "https://github.com/liamg/tfsec/wiki/AWS018",
+      "location": {
+        "filename": "/src/terraform/main.tf",
+        "start_line": 2,
+        "end_line": 5
+      },
+      "description": "Resource 'aws_security_group_rule.my-rule' should include a description for auditing purposes.",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "AWS006",
+      "link": "https://github.com/liamg/tfsec/wiki/AWS006",
+      "location": {
+        "filename": "/src/terraform/main.tf",
+        "start_line": 4,
+        "end_line": 4
+      },
+      "description": "Resource 'aws_security_group_rule.my-rule' defines a fully open ingress security group rule.",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "AWS004",
+      "link": "https://github.com/liamg/tfsec/wiki/AWS004",
+      "location": {
+        "filename": "/src/terraform/main.tf",
+        "start_line": 9,
+        "end_line": 9
+      },
+      "description": "Resource 'aws_alb_listener.my-alb-listener' uses plain HTTP instead of HTTPS.",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "AWS003",
+      "link": "https://github.com/liamg/tfsec/wiki/AWS003",
+      "location": {
+        "filename": "/src/terraform/main.tf",
+        "start_line": 12,
+        "end_line": 14
+      },
+      "description": "Resource 'aws_db_security_group.my-group' uses EC2 Classic. Use a VPC instead.",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "AZU003",
+      "link": "https://github.com/liamg/tfsec/wiki/AZU003",
+      "location": {
+        "filename": "/src/terraform/main.tf",
+        "start_line": 18,
+        "end_line": 18
+      },
+      "description": "Resource 'azurerm_managed_disk.source' defines an unencrypted managed disk.",
+      "severity": "ERROR"
+    }
+  ]
+}
+`
