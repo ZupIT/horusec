@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package checkov
 
 import (
 	"fmt"
 	"strconv"
-
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Check struct {
+type checkovCheck struct {
 	CheckID       string  `json:"check_id"`
 	BCCheckID     string  `json:"bc_check_id"`
 	CheckName     string  `json:"check_name"`
@@ -33,22 +31,14 @@ type Check struct {
 	Guideline     *string `json:"guideline"`
 }
 
-func (c *Check) GetDetails() string {
+func (c *checkovCheck) getDetails() string {
 	return fmt.Sprintf("%s -> [%s]", c.CheckID, c.CheckName)
 }
 
-func (c *Check) GetStartLine() string {
+func (c *checkovCheck) getStartLine() string {
 	return strconv.Itoa(c.FileLineRange[0])
 }
 
-func (c *Check) GetCode() string {
+func (c *checkovCheck) getCode() string {
 	return fmt.Sprintf("code beetween line %d and %d.", c.FileLineRange[0], c.FileLineRange[1])
-}
-
-func (c *Check) GetFilename() string {
-	return c.FileAbsPath
-}
-
-func (c *Check) GetSeverity() severities.Severity {
-	return severities.Unknown
 }

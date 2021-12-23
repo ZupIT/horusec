@@ -16,4 +16,4 @@ package checkov
 
 const CMD = `{{WORK_DIR}} checkov --quiet --framework terraform -d . -o json `
 
-var CheckovEmptyValue = []byte("[]\r\n")
+var checkovEmptyValue = []byte("[]\r\n")

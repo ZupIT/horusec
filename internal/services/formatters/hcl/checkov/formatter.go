@@ -20,15 +20,15 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/pborman/ansi"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl/checkov/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -64,8 +64,8 @@ func (f *Formatter) startCheckov(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.Checkov),
 		Language: languages.HCL,
 	}
@@ -74,36 +74,31 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var vuln *entities.Vulnerability
+	var vuln *checkovVulnerability
 	binary, _ := ansi.Strip([]byte(output))
 	// For some reason checkov returns an empty list when no vulnerabilities are found
 	// and an object if vulnerabitilies are found, this checks ignores result when we have no vulnerabilities
-	if bytes.Equal(binary, CheckovEmptyValue) {
+	if bytes.Equal(binary, checkovEmptyValue) {
 		return nil
 	}
 	if err := json.Unmarshal(binary, &vuln); err != nil {
 		return err
 	}
 	for _, check := range vuln.Results.FailedChecks {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(check))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(check))
 	}
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(check *entities.Check) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilityData()
-	vuln.Severity = check.GetSeverity()
-	vuln.Details = check.GetDetails()
-	vuln.Line = check.GetStartLine()
-	vuln.Code = f.GetCodeWithMaxCharacters(check.GetCode(), 0)
-	vuln.File = f.RemoveSrcFolderFromPath(check.GetFilename())
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
-}
-
-func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.Checkov
-	vulnerabilitySeverity.Language = languages.HCL
-	return vulnerabilitySeverity
+func (f *Formatter) newVulnerability(check *checkovCheck) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.Checkov,
+		Language:     languages.HCL,
+		Severity:     severities.Unknown,
+		Details:      check.getDetails(),
+		Line:         check.getStartLine(),
+		Code:         f.GetCodeWithMaxCharacters(check.getCode(), 0),
+		File:         f.RemoveSrcFolderFromPath(check.FileAbsPath),
+	}
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }

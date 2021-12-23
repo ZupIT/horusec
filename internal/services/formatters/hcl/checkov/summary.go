@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package checkov
 
-type Summary struct {
+type checkovSummary struct {
 	Passed         int    `json:"passed"`
 	Failed         int    `json:"failed"`
 	Skipped        int    `json:"skipped"`
