@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package dependencycheck
 
 import (
 	"strings"
 )
 
-type Dependency struct {
-	FileName        string           `json:"fileName"`
-	FilePath        string           `json:"filePath"`
-	Vulnerabilities []*Vulnerability `json:"vulnerabilities"`
+type dependencyCheckDependency struct {
+	FileName        string                          `json:"fileName"`
+	FilePath        string                          `json:"filePath"`
+	Vulnerabilities []*dependencyCheckVulnerability `json:"vulnerabilities"`
 }
 
-func (d *Dependency) GetVulnerability() *Vulnerability {
+func (d *dependencyCheckDependency) getVulnerability() *dependencyCheckVulnerability {
 	for _, vulnerability := range d.Vulnerabilities {
 		if strings.Contains(vulnerability.Name, "CWE") {
 			return vulnerability
@@ -38,7 +38,7 @@ func (d *Dependency) GetVulnerability() *Vulnerability {
 	return nil
 }
 
-func (d *Dependency) GetFile() string {
+func (d *dependencyCheckDependency) getFile() string {
 	index := strings.Index(d.FilePath, "?")
 	if index < 0 {
 		return d.FilePath

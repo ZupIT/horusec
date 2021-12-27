@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package dependencycheck
 
-type Analysis struct {
-	Dependencies []*Dependency `json:"dependencies"`
+type dependencyCheckAnalysis struct {
+	Dependencies []*dependencyCheckDependency `json:"dependencies"`
 }

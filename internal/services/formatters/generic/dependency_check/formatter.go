@@ -23,11 +23,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	dependencyCheckEntities "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -35,7 +34,7 @@ type Formatter struct {
 	formatters.IService
 }
 
-func NewFormatter(service formatters.IService) formatters.IFormatter {
+func NewFormatter(service formatters.IService) *Formatter {
 	return &Formatter{
 		service,
 	}
@@ -63,8 +62,8 @@ func (f *Formatter) startDependencyCheck(projectSubPath string) (string, error) 
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.OwaspDependencyCheck),
 		Language: languages.Generic,
 	}
@@ -73,7 +72,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var analysis *dependencyCheckEntities.Analysis
+	var analysis *dependencyCheckAnalysis
 
 	index := strings.Index(output, "{")
 	if index < 0 || output == "" {
@@ -88,30 +87,28 @@ func (f *Formatter) parseOutput(output string) error {
 	return nil
 }
 
-func (f *Formatter) parseToVulnerability(analysis *dependencyCheckEntities.Analysis) {
+func (f *Formatter) parseToVulnerability(analysis *dependencyCheckAnalysis) {
 	for _, dependency := range analysis.Dependencies {
-		vulnData := dependency.GetVulnerability()
+		vulnData := dependency.getVulnerability()
 		if vulnData == nil {
 			continue
 		}
 
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(vulnData, dependency))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(vulnData, dependency))
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(vulnData *dependencyCheckEntities.Vulnerability,
-	dependency *dependencyCheckEntities.Dependency) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Severity = vulnData.GetSeverity()
-	vuln.Details = vulnData.Description
-	vuln.Code = f.GetCodeWithMaxCharacters(dependency.FileName, 0)
-	vuln.File = f.RemoveSrcFolderFromPath(dependency.GetFile())
-	return vulnhash.Bind(vuln)
-}
+func (f *Formatter) newVulnerability(
+	vulnData *dependencyCheckVulnerability, dependency *dependencyCheckDependency,
+) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.OwaspDependencyCheck,
+		Language:     languages.Generic,
+		Severity:     vulnData.getSeverity(),
+		Details:      vulnData.Description,
+		Code:         f.GetCodeWithMaxCharacters(dependency.FileName, 0),
+		File:         f.RemoveSrcFolderFromPath(dependency.getFile()),
+	}
 
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.OwaspDependencyCheck
-	vulnerabilitySeverity.Language = languages.Generic
-	return vulnerabilitySeverity
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
