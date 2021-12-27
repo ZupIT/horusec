@@ -29,11 +29,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/npmaudit/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -69,8 +68,8 @@ func (f *Formatter) startNpmAudit(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output, projectSubPath)
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "package-lock.json", tools.NpmAudit),
 		Language: languages.Javascript,
 	}
@@ -100,56 +99,50 @@ func (f *Formatter) IsNotFoundError(containerOutput string) error {
 	return nil
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *entities.Output, err error) {
+func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *npmOutput, err error) {
 	if containerOutput == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty, map[string]interface{}{"tool": tools.NpmAudit.ToString()})
-		return &entities.Output{}, nil
+		return &npmOutput{}, nil
 	}
 
 	return output, json.Unmarshal([]byte(containerOutput), &output)
 }
 
-func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {
+func (f *Formatter) processOutput(output *npmOutput, projectSubPath string) {
 	for _, advisory := range output.Advisories {
 		advisoryPointer := advisory
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer, projectSubPath))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&advisoryPointer, projectSubPath))
 	}
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(
-	issue *entities.Issue, projectSubPath string) (data *vulnerability.Vulnerability) {
-	data = f.getDefaultVulnerabilitySeverity(projectSubPath)
-	data.Severity = issue.GetSeverity()
-	data.Details = issue.Overview
-	data.Code = issue.ModuleName
-	data.Line = f.getVulnerabilityLineByName(f.getVersionText(issue.GetVersion()), data.Code, data.File)
-	data = vulnhash.Bind(data)
-	return f.SetCommitAuthor(data)
-}
-
-func (f *Formatter) getDefaultVulnerabilitySeverity(projectSubPath string) *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.File = f.GetFilepathFromFilename("package-lock.json", projectSubPath)
-	vulnerabilitySeverity.SecurityTool = tools.NpmAudit
-	vulnerabilitySeverity.Language = languages.Javascript
-	return vulnerabilitySeverity
+func (f *Formatter) newVulnerability(issue *npmIssue, projectSubPath string) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		File:         f.GetFilepathFromFilename("package-lock.json", projectSubPath),
+		SecurityTool: tools.NpmAudit,
+		Language:     languages.Javascript,
+		Severity:     issue.getSeverity(),
+		Details:      issue.Overview,
+		Code:         issue.ModuleName,
+	}
+	vuln.Line = f.getVulnerabilityLineByName(f.getVersionText(issue.getVersion()), vuln.Code, vuln.File)
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
 
 func (f *Formatter) getVersionText(version string) string {
 	return fmt.Sprintf(`"version": %q`, version)
 }
 
-func (f *Formatter) getVulnerabilityLineByName(version, module, file string) string {
-	fileExisting, err := os.Open(filepath.Join(f.GetConfigProjectPath(), file))
+func (f *Formatter) getVulnerabilityLineByName(version, module, filename string) string {
+	file, err := os.Open(filepath.Join(f.GetConfigProjectPath(), filename))
 	if err != nil {
 		return ""
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, file.Close())
 	}()
 
-	return f.getLine(version, module, bufio.NewScanner(fileExisting))
+	return f.getLine(version, module, bufio.NewScanner(file))
 }
 
 func (f *Formatter) getLine(version, module string, scanner *bufio.Scanner) string {

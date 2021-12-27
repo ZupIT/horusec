@@ -12,24 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package npmaudit
 
 import "github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 
-type Issue struct {
-	Findings           []Finding `json:"findings"`
-	ID                 int       `json:"id"`
-	ModuleName         string    `json:"module_name"`
-	VulnerableVersions string    `json:"vulnerable_versions"`
-	Severity           string    `json:"severity"`
-	Overview           string    `json:"overview"`
+type npmOutput struct {
+	Advisories map[string]npmIssue `json:"advisories"`
+	Metadata   npmMetadata         `json:"metadata"`
 }
 
-func (i *Issue) GetSeverity() severities.Severity {
+type npmMetadata struct {
+	Vulnerabilities npmVulnerabilities `json:"vulnerabilities"`
+}
+
+type npmVulnerabilities struct {
+	Info     int `json:"info"`
+	Low      int `json:"low"`
+	Moderate int `json:"moderate"`
+	High     int `json:"high"`
+	Critical int `json:"critical"`
+}
+
+type npmFinding struct {
+	Version string `json:"version"`
+}
+
+type npmIssue struct {
+	Findings           []npmFinding `json:"findings"`
+	ID                 int          `json:"id"`
+	ModuleName         string       `json:"module_name"`
+	VulnerableVersions string       `json:"vulnerable_versions"`
+	Severity           string       `json:"severity"`
+	Overview           string       `json:"overview"`
+}
+
+func (i *npmIssue) getSeverity() severities.Severity {
 	return i.mapSeverities()[i.Severity]
 }
 
-func (i *Issue) mapSeverities() map[string]severities.Severity {
+func (i *npmIssue) mapSeverities() map[string]severities.Severity {
 	return map[string]severities.Severity{
 		"critical": severities.Critical,
 		"high":     severities.High,
@@ -40,7 +61,7 @@ func (i *Issue) mapSeverities() map[string]severities.Severity {
 	}
 }
 
-func (i *Issue) GetVersion() string {
+func (i *npmIssue) getVersion() string {
 	if len(i.Findings) > 0 {
 		return i.Findings[0].Version
 	}
