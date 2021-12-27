@@ -25,15 +25,14 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	enumvulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/google/uuid"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy/entities"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
@@ -125,8 +124,8 @@ func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string)
 	return fileSystemOutput, f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
 }
 
-func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(cmd, projectSubPath, tools.Trivy),
 		Language: languages.Generic,
 	}
@@ -135,7 +134,7 @@ func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *dockerEntities.
 }
 
 func (f *Formatter) parseOutput(output, cmd, projectSubPath string) error {
-	report := &entities.Output{}
+	report := new(trivyOutput)
 
 	if output == "" {
 		return nil
@@ -146,42 +145,43 @@ func (f *Formatter) parseOutput(output, cmd, projectSubPath string) error {
 	}
 
 	for _, result := range report.Results {
-		f.setVulnerabilities(cmd, result, filepath.Join(projectSubPath, result.Target))
+		f.addVulnerabilities(cmd, result, filepath.Join(projectSubPath, result.Target))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilities(cmd string, result *entities.Result, path string) {
+func (f *Formatter) addVulnerabilities(cmd string, result *trivyOutputResult, path string) {
 	switch cmd {
 	case CmdFs:
-		f.setVulnerabilitiesOutput(result.Vulnerabilities, path)
+		f.addVulnerabilitiesOutput(result.Vulnerabilities, path)
 	case CmdConfig:
-		f.setVulnerabilitiesOutput(result.Vulnerabilities, path)
-		f.setMisconfigurationOutput(result.Misconfigurations, path)
+		f.addVulnerabilitiesOutput(result.Vulnerabilities, path)
+		f.addMisconfigurationOutput(result.Misconfigurations, path)
 	}
 }
 
-func (f *Formatter) setVulnerabilitiesOutput(vulnerabilities []*entities.Vulnerability, target string) {
+func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerability, target string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
 		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
 		_, _, addVuln.Line = file.GetDependencyInfo(addVuln.Code, target)
 		addVuln.File = target
-		addVuln.Details = vuln.GetDetails()
+		addVuln.Details = vuln.getDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
 	}
 }
 
-func (f *Formatter) setMisconfigurationOutput(result []*entities.Misconfiguration, target string) {
+func (f *Formatter) addMisconfigurationOutput(result []*trivyMisconfiguration, target string) {
 	for _, vuln := range result {
 		addVuln := f.getVulnBase()
 		addVuln.File = target
 		addVuln.Code = vuln.Title
-		addVuln.Details = fmt.Sprintf("%s - %s - %s - %s",
-			vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
+		addVuln.Details = fmt.Sprintf(
+			"%s - %s - %s - %s", vuln.Description, vuln.Message, vuln.Resolution, vuln.References,
+		)
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
@@ -196,6 +196,6 @@ func (f *Formatter) getVulnBase() *vulnerability.Vulnerability {
 		Confidence:      confidence.Medium,
 		SecurityTool:    tools.Trivy,
 		Language:        languages.Generic,
-		Type:            enumsVulnerability.Vulnerability,
+		Type:            enumvulnerability.Vulnerability,
 	}
 }

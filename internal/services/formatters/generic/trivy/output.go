@@ -12,14 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package trivy
 
 import (
 	"fmt"
 	"strings"
 )
 
-type Vulnerability struct {
+type trivyOutput struct {
+	ArtifactName string               `json:"artifactName"`
+	ArtifactType string               `json:"artifactType"`
+	Results      []*trivyOutputResult `json:"results"`
+}
+
+type trivyOutputResult struct {
+	Target            string                   `json:"target"`
+	Class             string                   `json:"class"`
+	Type              string                   `json:"type"`
+	Vulnerabilities   []*trivyVulnerability    `json:"vulnerabilities"`
+	Misconfigurations []*trivyMisconfiguration `json:"misconfigurations"`
+}
+
+type trivyMisconfiguration struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Message     string   `json:"message"`
+	Resolution  string   `json:"resolution"`
+	References  []string `json:"references"`
+	Severity    string   `json:"severity"`
+}
+
+type trivyVulnerability struct {
 	VulnerabilityID  string   `json:"vulnerabilityID"`
 	PkgName          string   `json:"pkgName"`
 	InstalledVersion string   `json:"installedVersion"`
@@ -32,7 +55,7 @@ type Vulnerability struct {
 	CweIDs           []string `json:"cweIDs"`
 }
 
-func (v *Vulnerability) GetDetails() string {
+func (v *trivyVulnerability) getDetails() string {
 	details := v.getBaseDetailsWithoutCWEs()
 
 	if len(v.CweIDs) > 0 {
@@ -42,7 +65,7 @@ func (v *Vulnerability) GetDetails() string {
 	return strings.TrimRight(details, "\n")
 }
 
-func (v *Vulnerability) getBaseDetailsWithoutCWEs() (details string) {
+func (v *trivyVulnerability) getBaseDetailsWithoutCWEs() (details string) {
 	if v.Description != "" {
 		details += v.Description + "\n"
 	}
@@ -60,7 +83,7 @@ func (v *Vulnerability) getBaseDetailsWithoutCWEs() (details string) {
 }
 
 // nolint:gomnd // magic number "2" is not necessary to check
-func (v *Vulnerability) getDetailsWithCWEs(details string) string {
+func (v *trivyVulnerability) getDetailsWithCWEs(details string) string {
 	details += "Cwe Links: "
 
 	for _, ID := range v.CweIDs {
@@ -73,7 +96,7 @@ func (v *Vulnerability) getDetailsWithCWEs(details string) string {
 	return strings.TrimRight(details, ",")
 }
 
-func (v *Vulnerability) addCWELinkInDetails(details, cweID string) string {
+func (v *trivyVulnerability) addCWELinkInDetails(details, cweID string) string {
 	basePath := "https://cwe.mitre.org/data/definitions/"
 
 	cweLink := basePath + cweID + ".html"
