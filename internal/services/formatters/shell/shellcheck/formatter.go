@@ -117,7 +117,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		Language: languages.Shell,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Shell), images.Shell)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Shell), images.Shell)
 }
 
 func (f *Formatter) isIgnoredFix(message string) bool {

@@ -132,7 +132,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData 
 		Language: languages.Go,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.Go), images.Go)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Go), images.Go)
 }
 
 func (f *Formatter) removeHorusecFolder(path string) string {

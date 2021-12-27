@@ -66,7 +66,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
 		Language: languages.C,
 	}
 
-	return analysisData.SetData(f.GetCustomImageByLanguage(languages.C), images.C)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.C), images.C)
 }
 
 func (f *Formatter) parseOutput(output string) error {

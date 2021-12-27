@@ -144,7 +144,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetData("", Image)
+		ad.SetImage("", Image)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -165,7 +165,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetData("", Image)
+		ad.SetImage("", Image)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -193,7 +193,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetData("", Image)
+		ad.SetImage("", Image)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -218,7 +218,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetData("", Image)
+		ad.SetImage("", Image)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.Error(t, err)
@@ -243,7 +243,7 @@ func TestDockerAPI_CreateLanguageAnalysisContainer(t *testing.T) {
 		ad := &dockerEntities.AnalysisData{
 			CMD: Cmd,
 		}
-		ad.SetData("", Image)
+		ad.SetImage("", Image)
 		_, err := api.CreateLanguageAnalysisContainer(ad)
 
 		assert.NoError(t, err)
