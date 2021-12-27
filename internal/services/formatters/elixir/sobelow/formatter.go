@@ -24,28 +24,31 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
+
+const (
+	replaceDefaultMessage = "Checking Sobelow version..."
+
+	// nolint: lll
+	notAPhoenixApplication = "project not appear to be a Phoenix application. If this is an Umbrella application, each application should be scanned separately"
+)
+
+var ErrorNotAPhoenixApplication = errors.New(notAPhoenixApplication)
 
 type Formatter struct {
 	formatters.IService
 }
 
-func NewFormatter(service formatters.IService) formatters.IFormatter {
+func NewFormatter(service formatters.IService) *Formatter {
 	return &Formatter{
 		service,
 	}
 }
-
-const NotAPhoenixApplication = "this does not appear to be a Phoenix application. if this is an Umbrella application," +
-	" each application should be scanned separately"
-
-var ErrorNotAPhoenixApplication = errors.New(NotAPhoenixApplication)
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
 	if f.ToolIsToIgnore(tools.Sobelow) || f.IsDockerDisabled() {
@@ -66,7 +69,7 @@ func (f *Formatter) startSobelow(projectSubPath string) (string, error) {
 		return output, err
 	}
 
-	if strings.Contains(output, NotAPhoenixApplication) {
+	if strings.Contains(output, notAPhoenixApplication) {
 		return output, ErrorNotAPhoenixApplication
 	}
 
@@ -74,8 +77,8 @@ func (f *Formatter) startSobelow(projectSubPath string) (string, error) {
 	return output, nil
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "mix.lock", tools.Sobelow),
 		Language: languages.Elixir,
 	}
@@ -84,7 +87,6 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output, projectSubPath string) {
-	const replaceDefaultMessage = "Checking Sobelow version..."
 	output = strings.ReplaceAll(strings.ReplaceAll(output, replaceDefaultMessage, ""), "\r", "")
 
 	for _, value := range strings.Split(output, "\n") {
@@ -92,13 +94,13 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 			continue
 		}
 
-		if data := f.setOutputData(value); data != nil {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(data, projectSubPath))
+		if data := f.newOutput(value); data != nil {
+			f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(data, projectSubPath))
 		}
 	}
 }
 
-func (f *Formatter) setOutputData(output string) *entities.Output {
+func (f *Formatter) newOutput(output string) *sobelowOutput {
 	indexFirstColon := strings.Index(output, ":")
 	indexLastColon := strings.LastIndex(output, ":")
 	indexTrace := strings.LastIndex(output, "-")
@@ -107,26 +109,21 @@ func (f *Formatter) setOutputData(output string) *entities.Output {
 		return nil
 	}
 
-	return &entities.Output{
+	return &sobelowOutput{
 		Title: strings.TrimSpace(output[indexFirstColon+1 : indexTrace]),
 		File:  strings.TrimSpace(output[indexTrace+1 : indexLastColon]),
 		Line:  strings.TrimSpace(output[indexLastColon+1:]),
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(output *entities.Output, projectSubPath string) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Details = output.Title
-	vuln.File = f.GetFilepathFromFilename(output.File, projectSubPath)
-	vuln.Line = output.Line
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
-}
-
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.Sobelow
-	vulnerabilitySeverity.Language = languages.Elixir
-	vulnerabilitySeverity.Severity = severities.Unknown
-	return vulnerabilitySeverity
+func (f *Formatter) newVulnerability(output *sobelowOutput, projectSubPath string) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.Sobelow,
+		Language:     languages.Elixir,
+		Severity:     severities.Unknown,
+		Details:      output.Title,
+		File:         f.GetFilepathFromFilename(output.File, projectSubPath),
+		Line:         output.Line,
+	}
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
