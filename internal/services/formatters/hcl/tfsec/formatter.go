@@ -16,7 +16,7 @@ package tfsec
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -24,11 +24,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -64,8 +63,8 @@ func (f *Formatter) startTfSec(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.AddWorkDirInCmd(CMD, projectSubPath, tools.TfSec),
 		Language: languages.HCL,
 	}
@@ -74,37 +73,32 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var vulnerabilities *entities.Vulnerabilities
+	var vulnerabilities *tfsecVulnerabilities
 
 	if err := json.Unmarshal([]byte(output), &vulnerabilities); err != nil {
 		if !strings.Contains(output, "panic") {
-			return fmt.Errorf("{HORUSEC_CLI} Error %s", output)
+			return errors.New(output)
 		}
-
 		return err
 	}
 
 	for index := range vulnerabilities.Results {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(index, vulnerabilities.Results))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&vulnerabilities.Results[index]))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(index int, results []entities.Result) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilityData()
-	vuln.Severity = results[index].GetSeverity()
-	vuln.Details = results[index].GetDetails()
-	vuln.Line = results[index].GetStartLine()
-	vuln.Code = f.GetCodeWithMaxCharacters(results[index].GetCode(), 0)
-	vuln.File = f.RemoveSrcFolderFromPath(results[index].GetFilename())
+func (f *Formatter) newVulnerability(result *tfsecResult) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.TfSec,
+		Language:     languages.HCL,
+		Severity:     result.getSeverity(),
+		Details:      result.getDetails(),
+		Line:         result.getStartLine(),
+		Code:         f.GetCodeWithMaxCharacters(result.getCode(), 0),
+		File:         f.RemoveSrcFolderFromPath(result.getFilename()),
+	}
 	vuln = vulnhash.Bind(vuln)
 	return f.SetCommitAuthor(vuln)
-}
-
-func (f *Formatter) getDefaultVulnerabilityData() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.TfSec
-	vulnerabilitySeverity.Language = languages.HCL
-	return vulnerabilitySeverity
 }
