@@ -432,6 +432,24 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 		})
 	})
 
+	When("--enable-owasp-dependency-check is passed", func() {
+		owaspDependencyCheck := "true"
+
+		BeforeEach(func() {
+			flags = map[string]string{
+				testutil.StartFlagProjectPath:                projectPath,
+				testutil.StartFlagEnableOwaspDependencyCheck: owaspDependencyCheck,
+			}
+		})
+
+		It("Checks if the enable owasp dependecy was set with true", func() {
+			Expect(session.Out.Contents()).To(ContainSubstring(fmt.Sprintf(`\"enable_owasp_dependency_check\": %s,\n`, owaspDependencyCheck)))
+			Expect(session.Out.Contents()).To(Not(ContainSubstring("{HORUSEC_CLI} The tool was ignored for run in this analysis: OwaspDependencyCheck")))
+			Expect(session.Out.Contents()).To(ContainSubstring("Running OwaspDependencyCheck"))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Running OwaspDependencyCheck`))
+		})
+	})
+
 	When("--container-bind-project-path is passed", func() {
 		filePathAnalyzed := filepath.Join(os.TempDir(), "test.js")
 
