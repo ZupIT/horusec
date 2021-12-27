@@ -23,11 +23,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/elixir/mixaudit/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -35,7 +34,7 @@ type Formatter struct {
 	formatters.IService
 }
 
-func NewFormatter(service formatters.IService) formatters.IFormatter {
+func NewFormatter(service formatters.IService) *Formatter {
 	return &Formatter{
 		service,
 	}
@@ -56,15 +55,15 @@ func (f *Formatter) startMixAudit(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.MixAudit, languages.Elixir)
 
 	output, err := f.ExecuteContainer(f.getConfigData(projectSubPath))
-	if err != nil {
+	if err != nil || output == "" {
 		return output, err
 	}
 
 	return output, f.parseOutput(output)
 }
 
-func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "mix.lock", tools.MixAudit),
 		Language: languages.Elixir,
 	}
@@ -73,33 +72,27 @@ func (f *Formatter) getConfigData(projectSubPath string) *dockerEntities.Analysi
 }
 
 func (f *Formatter) parseOutput(output string) error {
-	var result entities.Result
+	var result mixAuditResult
 
 	if err := json.Unmarshal([]byte(output), &result); err != nil {
 		return err
 	}
 
 	for index := range result.Vulnerabilities {
-		f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(result.Vulnerabilities, index))
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&result.Vulnerabilities[index]))
 	}
 
 	return nil
 }
 
-func (f *Formatter) setVulnerabilityData(
-	vulnerabilities []entities.Vulnerability, index int) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Severity = severities.High
-	vuln.Details = vulnerabilities[index].GetDetails()
-	vuln.Code = f.GetCodeWithMaxCharacters(vulnerabilities[index].Advisory.Package, 0)
-	vuln.File = f.RemoveSrcFolderFromPath(vulnerabilities[index].Dependency.Lockfile)
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
-}
-
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.MixAudit
-	vulnerabilitySeverity.Language = languages.Elixir
-	return vulnerabilitySeverity
+func (f *Formatter) newVulnerability(mixVuln *mixAuditVulnerability) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.MixAudit,
+		Language:     languages.Elixir,
+		Severity:     severities.High,
+		Details:      mixVuln.getDetails(),
+		Code:         f.GetCodeWithMaxCharacters(mixVuln.Advisory.Package, 0),
+		File:         f.RemoveSrcFolderFromPath(mixVuln.Dependency.Lockfile),
+	}
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
