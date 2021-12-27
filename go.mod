@@ -6,7 +6,7 @@ require (
 	github.com/ZupIT/horusec-devkit v1.0.21
 	github.com/ZupIT/horusec-engine v0.3.6
 	github.com/bmatcuk/doublestar/v4 v4.0.2
-	github.com/briandowns/spinner v1.16.0
+	github.com/briandowns/spinner v1.18.0
 	github.com/docker/docker v20.10.9+incompatible
 	github.com/go-enry/go-enry/v2 v2.8.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
