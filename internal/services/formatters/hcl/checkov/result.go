@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package checkov
 
-type Result struct {
-	PassedChecks  []*Check `json:"passed_checks"` // ignore results other than vulnerabilities
-	FailedChecks  []*Check `json:"failed_checks"`
-	SkippedChecks []*Check `json:"skipped_checks"` // ignore results other than vulnerabilities
-	ParsingErrors []*Check `json:"parsing_errors"` // ignore results other than vulnerabilities
+type checkovResult struct {
+	PassedChecks  []*checkovCheck `json:"passed_checks"` // ignore results other than vulnerabilities
+	FailedChecks  []*checkovCheck `json:"failed_checks"`
+	SkippedChecks []*checkovCheck `json:"skipped_checks"` // ignore results other than vulnerabilities
+	ParsingErrors []*checkovCheck `json:"parsing_errors"` // ignore results other than vulnerabilities
 }

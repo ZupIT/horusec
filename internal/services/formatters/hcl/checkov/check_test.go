@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package checkov
 
 import (
 	"testing"
@@ -20,9 +20,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func checkMock() *Check {
+func checkMock() *checkovCheck {
 	guideline := "test"
-	return &Check{
+	return &checkovCheck{
 		CheckID:       "CKV_AWS_41",
 		CheckName:     "test",
 		Guideline:     &guideline,
@@ -33,24 +33,18 @@ func checkMock() *Check {
 
 func TestGetDetails(t *testing.T) {
 	t.Run("should success get result details", func(t *testing.T) {
-		assert.NotEmpty(t, checkMock().GetDetails())
+		assert.NotEmpty(t, checkMock().getDetails())
 	})
 }
 
 func TestGetStartLine(t *testing.T) {
 	t.Run("should success get start line", func(t *testing.T) {
-		assert.NotEmpty(t, checkMock().GetStartLine())
+		assert.NotEmpty(t, checkMock().getStartLine())
 	})
 }
 
 func TestGetCode(t *testing.T) {
 	t.Run("should success get code", func(t *testing.T) {
-		assert.NotEmpty(t, checkMock().GetCode())
-	})
-}
-
-func TestGetFilename(t *testing.T) {
-	t.Run("should success get filename", func(t *testing.T) {
-		assert.NotEmpty(t, checkMock().GetFilename())
+		assert.NotEmpty(t, checkMock().getCode())
 	})
 }
