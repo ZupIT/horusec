@@ -30,6 +30,7 @@ jobs:
           fetch-depth: 0
       - name: security
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
           HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
           HORUSEC_CLI_REPOSITORY_NAME: ${{ secrets.HORUSEC_CLI_REPOSITORY_NAME }}

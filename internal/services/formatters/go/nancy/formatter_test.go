@@ -16,6 +16,7 @@ package nancy
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -27,12 +28,14 @@ import (
 
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
+	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseOutput(t *testing.T) {
 	t.Run("should success parse output to analysis", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
 		analysis := new(analysis.Analysis)
 
 		cfg := config.New()
@@ -75,6 +78,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should success parse output empty to analysis", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
 		analysis := new(analysis.Analysis)
 
 		cfg := config.New()
@@ -92,6 +96,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should add error on analysis when parsing invalid output", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
 		analysis := new(analysis.Analysis)
 
 		cfg := config.New()
@@ -108,7 +113,45 @@ func TestParseOutput(t *testing.T) {
 		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
+	t.Run("should not run nancy tool because not exists environment", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "")
+		analysis := new(analysis.Analysis)
+
+		cfg := config.New()
+
+		dockerAPIControllerMock := testutil.NewDockerMock()
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputRateLimit, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
+
+		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
+
+		assert.False(t, analysis.HasErrors(), "Expected errors on analysis")
+	})
+
+	t.Run("should add error on analysis when output return rate limit requests", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
+		analysis := new(analysis.Analysis)
+
+		cfg := config.New()
+
+		dockerAPIControllerMock := testutil.NewDockerMock()
+		dockerAPIControllerMock.On("SetAnalysisID")
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(outputRateLimit, nil)
+
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
+
+		formatter := NewFormatter(service)
+		formatter.StartAnalysis("")
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
+		assert.Equal(t, messages.MsgErrorNancyRateLimit, analysis.Errors)
+	})
+
 	t.Run("should add error on analysis when something went wrong executing container", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
 		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
@@ -126,6 +169,7 @@ func TestParseOutput(t *testing.T) {
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
+		_ = os.Setenv("GITHUB_TOKEN", "1243567890")
 		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
@@ -221,3 +265,51 @@ const output = `
   ]
 }
 `
+
+const outputRateLimit = `Error: Failed to query the GitHub API for updates.
+
+This is most likely due to GitHub rate-limiting on unauthenticated requests.
+
+To make authenticated requests please:
+
+  1. Generate a token at https://github.com/settings/tokens
+  2. Set the token by either adding it to your ~/.gitconfig or
+     setting the GITHUB_TOKEN environment variable.
+
+Instructions for generating a token can be found at:
+https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+
+We call the GitHub releases API to look for new releases.
+More information about that API can be found here: https://developer.github.com/v3/repos/releases/
+
+: Get \"https://api.github.com/repos/sonatype-nexus-community/nancy/releases\": net/http: TLS handshake timeout
+
+For more information, check the log file at /root/.ossindex/nancy.combined.log
+nancy version: 1.0.28
+
+Usage:
+  nancy sleuth [flags]
+
+Examples:
+  go list -json -deps | nancy sleuth --username your_user --token your_token
+  nancy sleuth -p Gopkg.lock --username your_user --token your_token
+
+Flags:
+  -e, --exclude-vulnerability CveListFlag   Comma separated list of CVEs or OSS Index IDs to exclude (default [])
+  -x, --exclude-vulnerability-file string   Path to a file containing newline separated CVEs or OSS Index IDs to be excluded (default \"./.nancy-ignore\")
+  -h, --help                                help for sleuth
+  -n, --no-color                            indicate output should not be colorized
+  -o, --output string                       Styling for output format. json, json-pretty, text, csv (default \"text\")
+
+Global Flags:
+  -v, -- count                 Set log level, multiple v's is more verbose
+  -d, --db-cache-path string   Specify an alternate path for caching responses from OSS Inde, example: /tmp
+      --loud                   indicate output should include non-vulnerable packages
+  -p, --path string            Specify a path to a dep Gopkg.lock file for scanning
+  -q, --quiet                  indicate output should contain only packages with vulnerabilities (default true)
+      --skip-update-check      Skip the check for updates.
+  -t, --token string           Specify OSS Index API token for request
+  -u, --username string        Specify OSS Index username for request
+  -V, --version                Get the version
+
+go list -m: dmitri.shuralyov.com/gpu/mtl@v0.0.0-20190408044501-666a987793e9: Get \"https://proxy.golang.org/dmitri.shuralyov.com/gpu/mtl/@v/v0.0.0-20190408044501-666a987793e9.mod\": net/http: TLS handshake timeout`

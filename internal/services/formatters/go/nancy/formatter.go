@@ -16,6 +16,8 @@ package nancy
 
 import (
 	"encoding/json"
+	"errors"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -34,8 +36,10 @@ import (
 )
 
 const (
-	goModulesExt = ".mod"
-	goSumExt     = ".sum"
+	goModulesExt        = ".mod"
+	goSumExt            = ".sum"
+	rateLimitValidation = "this is most likely due to github rate-limiting on unauthenticated requests"
+	rateLimitPrefix     = "error: failed to query the github api for updates"
 )
 
 type Formatter struct {
@@ -54,8 +58,13 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 		return
 	}
 
-	output, err := f.startNancy(projectSubPath)
-	f.SetAnalysisError(err, tools.Nancy, output, projectSubPath)
+	if os.Getenv("GITHUB_TOKEN") == "" {
+		logger.LogWarnWithLevel(messages.MsgErrorNancyRateLimit)
+	} else {
+		output, err := f.startNancy(projectSubPath)
+		f.SetAnalysisError(err, tools.Nancy, output, projectSubPath)
+	}
+
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Nancy, languages.Go)
 }
 
@@ -66,9 +75,12 @@ func (f *Formatter) startNancy(projectSubPath string) (string, error) {
 	if err != nil {
 		return output, err
 	}
-
 	if output == "" {
 		return output, nil
+	}
+	if strings.Contains(strings.ToLower(output), rateLimitPrefix) &&
+		strings.Contains(strings.ToLower(output), rateLimitValidation) {
+		return "", errors.New(messages.MsgErrorNancyRateLimit)
 	}
 
 	return output, f.processOutput(output, projectSubPath)
