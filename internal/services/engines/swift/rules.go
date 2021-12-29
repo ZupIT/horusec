@@ -48,14 +48,13 @@ func NewCoreDataDatabase() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-2",
 			Name:        "CoreData Database",
-			Description: "App uses CoreData Database. Sensitive Information should be encrypted.",
+			Description: "App uses CoreData Database. Sensitive Information should be encrypted. For more information checkout the CWE-311 (https://cwe.mitre.org/data/definitions/311.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`NSManagedObjectContext`),
-			regexp.MustCompile(`\.save\(\)`),
+			regexp.MustCompile(`(?i)(NSManagedObjectContext)(([^C]|C[^r]|Cr[^y]|Cry[^p]|Cryp[^t])*)(\.save\(\))`),
 		},
 	}
 }
@@ -64,15 +63,14 @@ func NewDTLS12NotUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-3",
-			Name:        "DTLS 1.2 not used",
-			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0.",
+			Name:        "DTLS 1.0 or 1.1 not used",
+			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.TLSMinimumSupportedProtocolVersion`),
-			regexp.MustCompile(`tls_protocol_version_t\.DTLSv10`),
+			regexp.MustCompile(`tls_protocol_version_t\.DTLSv[0-1][0-1]`),
 		},
 	}
 }
@@ -81,15 +79,14 @@ func NewTLS13NotUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-4",
-			Name:        "TLS 1.3 not used",
-			Description: "Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Name:        "TLS 1.0 or TLS 1.1 not be used",
+			Description: "TLS 1.2 should be used. Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.TLSMinimumSupportedProtocolVersion`),
-			regexp.MustCompile(`tls_protocol_version_t\.TLSv12`),
+			regexp.MustCompile(`tls_protocol_version_t\.TLSv(0|1[0-1])`),
 		},
 	}
 }
@@ -99,7 +96,7 @@ func NewReverseEngineering() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-5",
 			Name:        "Reverse engineering",
-			Description: "This App may have Reverse engineering detection capabilities.",
+			Description: "This App may have Reverse engineering detection capabilities. For more information checkout the OWASP-M9 (https://owasp.org/www-project-mobile-top-10/2016-risks/m9-reverse-engineering) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -108,7 +105,6 @@ func NewReverseEngineering() *text.Rule {
 			regexp.MustCompile(`"FridaGadget"`),
 			regexp.MustCompile(`"cynject"`),
 			regexp.MustCompile(`"libcycript"`),
-			regexp.MustCompile(`"/usr/sbin/frida-server"`),
 		},
 	}
 }
@@ -226,6 +222,7 @@ func NewSha1Collision() *text.Rule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)\.SHA1\.hash`),
 			regexp.MustCompile(`(?i)SHA1\(`),
 			regexp.MustCompile(`CC_SHA1\(`),
 		},
@@ -305,8 +302,7 @@ func NewLoadHTMLString() *text.Rule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`loadHTMLString`),
-			regexp.MustCompile(`webView`),
+			regexp.MustCompile(`loadHTMLString\(((.*["|']\+.*\+["|'])|([^"]\w*,?))`),
 		},
 	}
 }
@@ -337,7 +333,7 @@ func NewRealmDatabase() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`realm\.write`),
 		},
@@ -353,7 +349,7 @@ func NewTLSMinimum() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`\.tlsMinimumSupportedProtocol`),
 		},
@@ -369,7 +365,7 @@ func NewUIPasteboard() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`UIPasteboard`),
 		},
@@ -385,7 +381,7 @@ func NewFileProtection() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)\.noFileProtection`),
 		},
@@ -401,9 +397,9 @@ func NewWebViewSafari() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`UIWebView|SFSafariViewController`),
+			regexp.MustCompile(`UIWebView\(\)|SFSafariViewController`),
 		},
 	}
 }
@@ -417,7 +413,7 @@ func NewKeyboardCache() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`.autocorrectionType = .no`),
 		},
@@ -433,7 +429,7 @@ func NewMD4Collision() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CC_MD4\(`),
 		},
@@ -449,7 +445,7 @@ func NewMD2Collision() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CC_MD2\(`),
 		},
@@ -465,7 +461,7 @@ func NewSQLInjection() *text.Rule {
 			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)((sqlite3_exec|executeChange|raw)\(.?((.*|\n)*)?)(select|update|insert|delete)((.*|\n)*)?.*((["|']*)(\s?)(\+))`),
 		},
