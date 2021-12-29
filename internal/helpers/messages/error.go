@@ -39,6 +39,13 @@ const (
 	MsgErrorGemLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
 		"it would be a good idea to commit it so horusec can check for vulnerabilities"
 	MsgErrorGetFilenameByExt = "Could not get filename by extension: "
+	MsgErrorNancyRateLimit   = `{HORUSEC_CLI} Nancy tool failed to query the GitHub API for updates.
+This is most likely due to GitHub rate-limiting on unauthenticated requests.
+To make authenticated requests please:
+  1. Generate a token at https://github.com/settings/tokens
+  2. Set the token by setting the GITHUB_TOKEN environment variable.
+Instructions for generating a token can be found at:
+https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line. `
 )
 
 // Block of messages usage into log of the level error
