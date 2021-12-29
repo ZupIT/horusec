@@ -923,7 +923,7 @@ public class Foo {
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.0</version>
+            <version>2.17.1</version>
         </dependency>
     </dependencies>
 </project>
@@ -973,9 +973,9 @@ repositories {
 dependencies {
 
     // SLF4J as a facade over Log4j2 required dependencies
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.1'
 
     // Bridges from other logging implementations to SLF4J. Be careful not to bridge SLF4J itself to
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.25' // JUL bridge
@@ -1042,7 +1042,7 @@ dependencies {
     compile 'com.epam.reportportal:agent-java-testng:4.2.3'
     
     compile 'com.epam.reportportal:logger-java-log4j:4.0.1'
-    compile 'org.slf4j:slf4j-log4j12:2.17.0'
+    compile 'org.slf4j:slf4j-log4j12:2.17.1'
 }
 
 
@@ -1095,8 +1095,8 @@ test {
     <dependency org="com.auth0" name="java-jwt" rev="3.3.0" />
     <dependency org="com.zaxxer" name="HikariCP" rev="3.1.0" />
     <dependency org="org.postgresql" name="postgresql" rev="42.2.2" />
-    <dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.17.0" />
-    <dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.17.0" />
+    <dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.17.1" />
+    <dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.17.1" />
 
 
 
@@ -1162,7 +1162,7 @@ test {
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j2.version>2.17.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
     </properties>
 
     <dependencies>
