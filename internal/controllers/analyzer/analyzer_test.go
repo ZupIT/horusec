@@ -25,7 +25,7 @@ import (
 	"os"
 	"testing"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -41,7 +41,6 @@ import (
 	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/docker"
-	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
@@ -56,7 +55,7 @@ func BenchmarkAnalyzerAnalyze(b *testing.B) {
 
 	cfg := config.New()
 	cfg.ProjectPath = testutil.GoExample
-	analyzer := NewAnalyzer(cfg)
+	analyzer := New(cfg)
 
 	for i := 0; i < b.N; i++ {
 		if _, err := analyzer.Analyze(); err != nil {
@@ -110,10 +109,10 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 
 	for _, tt := range testcases {
 		t.Run(tt.name, func(t *testing.T) {
-			analyzer := NewAnalyzer(config.New())
+			analyzer := New(config.New())
 
 			analyzer.analysis.AnalysisVulnerabilities = append(
-				analyzer.analysis.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{
+				analyzer.analysis.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
 					AnalysisID:    uuid.New(),
 					Vulnerability: tt.vulnerability,
 				},
@@ -144,7 +143,7 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 
 func TestNewAnalyzer(t *testing.T) {
 	t.Run("Should return type os struct correctly", func(t *testing.T) {
-		assert.IsType(t, &Analyzer{}, NewAnalyzer(&config.Config{}))
+		assert.IsType(t, &Analyzer{}, New(&config.Config{}))
 	})
 }
 
@@ -153,7 +152,7 @@ func TestAnalyzerWithoutMock(t *testing.T) {
 		cfg := config.New()
 
 		cfg.ProjectPath = testutil.GoExample
-		controller := NewAnalyzer(cfg)
+		controller := New(cfg)
 		_, err := controller.Analyze()
 		assert.NoError(t, err)
 	})
@@ -181,7 +180,7 @@ func TestAnalyzerWithoutMock(t *testing.T) {
 		cfg.HorusecAPIUri = svr.URL
 		defer svr.Close()
 
-		controller := NewAnalyzer(cfg)
+		controller := New(cfg)
 		_, err := controller.Analyze()
 		assert.NoError(t, err)
 	})
@@ -218,7 +217,7 @@ func TestAnalyze(t *testing.T) {
 
 		horusecAPIMock := testutil.NewHorusecAPIMock()
 		horusecAPIMock.On("SendAnalysis").Return(nil)
-		horusecAPIMock.On("GetAnalysis").Return(&entitiesAnalysis.Analysis{}, nil)
+		horusecAPIMock.On("GetAnalysis").Return(&analysis.Analysis{}, nil)
 
 		dockerMocker := testutil.NewDockerClientMock()
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
@@ -231,19 +230,15 @@ func TestAnalyze(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
-
 		controller := &Analyzer{
-			docker:          dockerSDK,
 			config:          configs,
 			languageDetect:  languageDetectMock,
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
-			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
-			loading:         newScanLoading(configs),
+			runner:          newRunner(configs, new(analysis.Analysis), docker.New(dockerMocker, configs, uuid.New())),
 		}
 
-		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
+		controller.analysis = &analysis.Analysis{ID: uuid.New()}
 		totalVulns, err := controller.Analyze()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
@@ -289,19 +284,15 @@ func TestAnalyze(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
-
 		controller := &Analyzer{
-			docker:          dockerSDK,
 			config:          configs,
 			languageDetect:  languageDetectMock,
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
-			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
-			loading:         newScanLoading(configs),
+			runner:          newRunner(configs, new(analysis.Analysis), docker.New(dockerMocker, configs, uuid.New())),
 		}
 
-		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
+		controller.analysis = &analysis.Analysis{ID: uuid.New()}
 		totalVulns, err := controller.Analyze()
 		assert.NoError(t, err)
 		assert.Equal(t, 0, totalVulns)
@@ -319,7 +310,7 @@ func TestAnalyze(t *testing.T) {
 
 		horusecAPIMock := testutil.NewHorusecAPIMock()
 		horusecAPIMock.On("SendAnalysis").Return(nil)
-		horusecAPIMock.On("GetAnalysis").Return(&entitiesAnalysis.Analysis{}, nil)
+		horusecAPIMock.On("GetAnalysis").Return(&analysis.Analysis{}, nil)
 
 		dockerMocker := testutil.NewDockerClientMock()
 		dockerMocker.On("CreateLanguageAnalysisContainer").Return("", nil)
@@ -332,19 +323,15 @@ func TestAnalyze(t *testing.T) {
 		dockerMocker.On("ContainerRemove").Return(nil)
 		dockerMocker.On("ContainerList").Return([]types.Container{{ID: "test"}}, nil)
 
-		dockerSDK := docker.New(dockerMocker, configs, uuid.New())
-
 		controller := &Analyzer{
-			docker:          dockerSDK,
 			config:          configs,
 			languageDetect:  languageDetectMock,
 			printController: printResultMock,
 			horusec:         horusecAPIMock,
-			formatter:       formatters.NewFormatterService(&entitiesAnalysis.Analysis{}, dockerSDK, configs),
-			loading:         newScanLoading(configs),
+			runner:          newRunner(configs, new(analysis.Analysis), docker.New(dockerMocker, configs, uuid.New())),
 		}
 
-		controller.analysis = &entitiesAnalysis.Analysis{ID: uuid.New()}
+		controller.analysis = &analysis.Analysis{ID: uuid.New()}
 		totalVulns, err := controller.Analyze()
 		assert.Error(t, err)
 		assert.Equal(t, 0, totalVulns)
@@ -359,13 +346,11 @@ func TestAnalyze(t *testing.T) {
 
 		horusecAPI := testutil.NewHorusecAPIMock()
 		horusecAPI.On("SendAnalysis").Return(nil)
-		horusecAPI.On("GetAnalysis").Return(new(entitiesAnalysis.Analysis), nil)
+		horusecAPI.On("GetAnalysis").Return(new(analysis.Analysis), nil)
 
-		docker := docker.New(testutil.NewDockerClientMock(), cfg, uuid.New())
-
-		analysis := new(entitiesAnalysis.Analysis)
-		analysis.AnalysisVulnerabilities = append(
-			analysis.AnalysisVulnerabilities, entitiesAnalysis.AnalysisVulnerabilities{
+		analysiss := new(analysis.Analysis)
+		analysiss.AnalysisVulnerabilities = append(
+			analysiss.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
 				Vulnerability: vulnerability.Vulnerability{
 					Severity: severities.Info,
 				},
@@ -377,19 +362,17 @@ func TestAnalyze(t *testing.T) {
 		pr.On("SetAnalysis")
 
 		analyzer := &Analyzer{
-			docker:          docker,
 			config:          cfg,
 			languageDetect:  ld,
 			printController: pr,
 			horusec:         horusecAPI,
-			formatter:       formatters.NewFormatterService(analysis, docker, cfg),
-			loading:         newScanLoading(cfg),
-			analysis:        analysis,
+			analysis:        analysiss,
+			runner:          newRunner(cfg, analysiss, docker.New(testutil.NewDockerClientMock(), cfg, uuid.New())),
 		}
 
 		_, err := analyzer.Analyze()
 		require.NoError(t, err, "Expected no error to execute analysis")
 
-		assert.Len(t, analysis.AnalysisVulnerabilities, 1, "Expected that analysis contains info vulnerabilities")
+		assert.Len(t, analysiss.AnalysisVulnerabilities, 1, "Expected that analysis contains info vulnerabilities")
 	})
 }

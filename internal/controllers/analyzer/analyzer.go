@@ -16,14 +16,7 @@ package analyzer
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"os"
-	"os/signal"
-	"path"
-	"path/filepath"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -34,60 +27,16 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	enumsVulnerability "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/briandowns/spinner"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/horusec/config"
 	languagedetect "github.com/ZupIT/horusec/internal/controllers/language_detect"
 	"github.com/ZupIT/horusec/internal/controllers/printresults"
-	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/docker"
-	dockerClient "github.com/ZupIT/horusec/internal/services/docker/client"
-	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/c/flawfinder"
-	dotnetcli "github.com/ZupIT/horusec/internal/services/formatters/csharp/dotnet_cli"
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/horuseccsharp"
-	"github.com/ZupIT/horusec/internal/services/formatters/csharp/scs"
-	"github.com/ZupIT/horusec/internal/services/formatters/dart/horusecdart"
-	"github.com/ZupIT/horusec/internal/services/formatters/elixir/mixaudit"
-	"github.com/ZupIT/horusec/internal/services/formatters/elixir/sobelow"
-	dependencycheck "github.com/ZupIT/horusec/internal/services/formatters/generic/dependency_check"
-	"github.com/ZupIT/horusec/internal/services/formatters/generic/semgrep"
-	"github.com/ZupIT/horusec/internal/services/formatters/generic/trivy"
-	"github.com/ZupIT/horusec/internal/services/formatters/go/gosec"
-	"github.com/ZupIT/horusec/internal/services/formatters/go/nancy"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl/checkov"
-	"github.com/ZupIT/horusec/internal/services/formatters/hcl/tfsec"
-	"github.com/ZupIT/horusec/internal/services/formatters/java/horusecjava"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/horusecjavascript"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/npmaudit"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/yarnaudit"
-	"github.com/ZupIT/horusec/internal/services/formatters/kotlin/horuseckotlin"
-	"github.com/ZupIT/horusec/internal/services/formatters/leaks/gitleaks"
-	"github.com/ZupIT/horusec/internal/services/formatters/leaks/horusecleaks"
-	"github.com/ZupIT/horusec/internal/services/formatters/nginx/horusecnginx"
-	"github.com/ZupIT/horusec/internal/services/formatters/php/phpcs"
-	"github.com/ZupIT/horusec/internal/services/formatters/python/bandit"
-	"github.com/ZupIT/horusec/internal/services/formatters/python/safety"
-	"github.com/ZupIT/horusec/internal/services/formatters/ruby/brakeman"
-	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler"
-	"github.com/ZupIT/horusec/internal/services/formatters/shell/shellcheck"
-	"github.com/ZupIT/horusec/internal/services/formatters/swift/horusecswift"
-	"github.com/ZupIT/horusec/internal/services/formatters/yaml/horuseckubernetes"
-	horusecAPI "github.com/ZupIT/horusec/internal/services/horusec_api"
+	"github.com/ZupIT/horusec/internal/services/docker/client"
+	horusec_api "github.com/ZupIT/horusec/internal/services/horusec_api"
 )
-
-const LoadingDelay = 200 * time.Millisecond
-
-// detectVulnerabilityFn is a func that detect vulnerabilities on path.
-// detectVulnerabilityFn funcs run all in parallel, so a WaitGroup is required
-// to synchronize states of running analysis.
-//
-// detectVulnerabilityFn funcs can also spawn other detectVulnerabilityFn funcs
-// just passing the received WaitGroup to underlying funcs.
-type detectVulnerabilityFn func(wg *sync.WaitGroup, path string) error
 
 // LanguageDetect is the interface that detect all languages in some directory.
 type LanguageDetect interface {
@@ -108,64 +57,45 @@ type HorusecService interface {
 	GetAnalysis(uuid.UUID) (*analysis.Analysis, error)
 }
 
+// Analyzer is responsible to orchestrate the pipeline of an analysis.
+//
+// Basically, an analysis has the following steps:
+// 	1 - Detect all languages on project path.
+// 	2 - Execute all tools to all languages founded.
+//	3 - Send analysis to Horusuec Manager if access token is set.
+//	4 - Print analysis results.
 type Analyzer struct {
-	docker          docker.Docker
 	analysis        *analysis.Analysis
 	config          *config.Config
 	languageDetect  LanguageDetect
 	printController PrintResults
 	horusec         HorusecService
-	formatter       formatters.IService
-	loading         *spinner.Spinner
+	runner          *runner
 }
 
-//nolint:funlen
-func NewAnalyzer(cfg *config.Config) *Analyzer {
-	entity := &analysis.Analysis{
+// New create a new analyzer to a given config.
+func New(cfg *config.Config) *Analyzer {
+	analysiss := &analysis.Analysis{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		Status:    enumsAnalysis.Running,
 	}
-	dockerAPI := docker.New(dockerClient.NewDockerClient(), cfg, entity.ID)
+	dockerAPI := docker.New(client.NewDockerClient(), cfg, analysiss.ID)
 	return &Analyzer{
-		docker:          dockerAPI,
-		analysis:        entity,
+		analysis:        analysiss,
 		config:          cfg,
-		languageDetect:  languagedetect.NewLanguageDetect(cfg, entity.ID),
-		printController: printresults.NewPrintResults(entity, cfg),
-		horusec:         horusecAPI.NewHorusecAPIService(cfg),
-		formatter:       formatters.NewFormatterService(entity, dockerAPI, cfg),
-		loading:         newScanLoading(cfg),
+		languageDetect:  languagedetect.NewLanguageDetect(cfg, analysiss.ID),
+		printController: printresults.NewPrintResults(analysiss, cfg),
+		horusec:         horusec_api.NewHorusecAPIService(cfg),
+		runner:          newRunner(cfg, analysiss, dockerAPI),
 	}
 }
 
-func (a *Analyzer) Analyze() (totalVulns int, err error) {
-	a.removeTrashByInterruptProcess()
-	totalVulns, err = a.runAnalysis()
-	a.removeHorusecFolder()
-	return totalVulns, err
-}
-
-func (a *Analyzer) removeTrashByInterruptProcess() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for range c {
-			a.removeHorusecFolder()
-			log.Fatal()
-		}
-	}()
-}
-
-func (a *Analyzer) removeHorusecFolder() {
-	err := os.RemoveAll(filepath.Join(a.config.ProjectPath, ".horusec"))
-	logger.LogErrorWithLevel(messages.MsgErrorRemoveAnalysisFolder, err)
-	if !a.config.DisableDocker {
-		a.docker.DeleteContainersFromAPI()
-	}
-}
-
-func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
+// Analyze start an analysis and return the total of vulnerabilities founded
+// and an error if exists.
+//
+// nolint: funlen
+func (a *Analyzer) Analyze() (int, error) {
 	langs, err := a.languageDetect.Detect(a.config.ProjectPath)
 	if err != nil {
 		return 0, err
@@ -176,10 +106,14 @@ func (a *Analyzer) runAnalysis() (totalVulns int, err error) {
 		fmt.Println()
 	}
 
-	a.startDetectVulnerabilities(langs)
+	for _, err := range a.runner.run(langs) {
+		a.setAnalysisError(err)
+	}
+
 	if err = a.sendAnalysis(); err != nil {
 		logger.LogStringAsError(fmt.Sprintf("[HORUSEC] %s", err.Error()))
 	}
+
 	return a.startPrintResults()
 }
 
@@ -225,236 +159,6 @@ func (a *Analyzer) formatAnalysisToSendToAPI() {
 	}
 }
 
-// startDetectVulnerabilities handle execution of all analysis in parallel
-//
-// We ignore the funlen and gocyclo lint here because concurrency code is complicated
-// nolint:funlen,gocyclo
-func (a *Analyzer) startDetectVulnerabilities(langs []languages.Language) {
-	var wg sync.WaitGroup
-	done := make(chan struct{})
-
-	funcs := a.detectVulnerabilityFuncs()
-
-	a.loading.Start()
-
-	go func() {
-		defer close(done)
-		for _, language := range langs {
-			for _, subPath := range a.config.WorkDir.PathsOfLanguage(language) {
-				projectSubPath := subPath
-				a.logProjectSubPath(language, projectSubPath)
-
-				if fn, exist := funcs[language]; exist {
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						if err := fn(&wg, projectSubPath); err != nil {
-							a.setAnalysisError(err)
-						}
-					}()
-				}
-			}
-		}
-		wg.Wait()
-	}()
-
-	timeout := time.After(time.Duration(a.config.TimeoutInSecondsAnalysis) * time.Second)
-	for {
-		select {
-		case <-done:
-			a.loading.Stop()
-			return
-		case <-timeout:
-			a.docker.DeleteContainersFromAPI()
-			a.config.IsTimeout = true
-			a.loading.Stop()
-			return
-		}
-	}
-}
-
-// detectVulnerabilityFuncs returns a map of language and functions
-// that detect vulnerabilities on some path.
-//
-// All Languages is greater than 15
-//nolint:funlen
-func (a *Analyzer) detectVulnerabilityFuncs() map[languages.Language]detectVulnerabilityFn {
-	return map[languages.Language]detectVulnerabilityFn{
-		languages.CSharp:     a.detectVulnerabilityCsharp,
-		languages.Leaks:      a.detectVulnerabilityLeaks,
-		languages.Go:         a.detectVulnerabilityGo,
-		languages.Java:       a.detectVulnerabilityJava,
-		languages.Kotlin:     a.detectVulnerabilityKotlin,
-		languages.Javascript: a.detectVulnerabilityJavascript,
-		languages.Python:     a.detectVulnerabilityPython,
-		languages.Ruby:       a.detectVulnerabilityRuby,
-		languages.HCL:        a.detectVulnerabilityHCL,
-		languages.Generic:    a.detectVulnerabilityGeneric,
-		languages.Yaml:       a.detectVulnerabilityYaml,
-		languages.C:          a.detectVulnerabilityC,
-		languages.PHP:        a.detectVulnerabilityPHP,
-		languages.Dart:       a.detectVulnerabilityDart,
-		languages.Elixir:     a.detectVulnerabilityElixir,
-		languages.Shell:      a.detectVulnerabilityShell,
-		languages.Nginx:      a.detectVulnerabilityNginx,
-		languages.Swift:      a.detectVulneravilitySwift,
-	}
-}
-
-func (a *Analyzer) detectVulneravilitySwift(_ *sync.WaitGroup, projectSubPath string) error {
-	horusecswift.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityCsharp(wg *sync.WaitGroup, projectSubPath string) error {
-	spawn(wg, horuseccsharp.NewFormatter(a.formatter), projectSubPath)
-
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.CSharp)); err != nil {
-		return err
-	}
-
-	spawn(wg, scs.NewFormatter(a.formatter), projectSubPath)
-	dotnetcli.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityLeaks(wg *sync.WaitGroup, projectSubPath string) error {
-	spawn(wg, horusecleaks.NewFormatter(a.formatter), projectSubPath)
-
-	if a.config.EnableGitHistoryAnalysis {
-		if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Leaks)); err != nil {
-			return err
-		}
-		gitleaks.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	}
-
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityGo(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Go)); err != nil {
-		return err
-	}
-
-	spawn(wg, gosec.NewFormatter(a.formatter), projectSubPath)
-	nancy.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityJava(_ *sync.WaitGroup, projectSubPath string) error {
-	horusecjava.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityKotlin(_ *sync.WaitGroup, projectSubPath string) error {
-	horuseckotlin.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityNginx(_ *sync.WaitGroup, projectSubPath string) error {
-	horusecnginx.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityJavascript(wg *sync.WaitGroup, projectSubPath string) error {
-	spawn(wg, horusecjavascript.NewFormatter(a.formatter), projectSubPath)
-
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Javascript)); err != nil {
-		return err
-	}
-	spawn(wg, yarnaudit.NewFormatter(a.formatter), projectSubPath)
-	npmaudit.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityPython(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Python)); err != nil {
-		return err
-	}
-	spawn(wg, bandit.NewFormatter(a.formatter), projectSubPath)
-	safety.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityRuby(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Ruby)); err != nil {
-		return err
-	}
-	spawn(wg, brakeman.NewFormatter(a.formatter), projectSubPath)
-	bundler.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityHCL(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.HCL)); err != nil {
-		return err
-	}
-	spawn(wg, tfsec.NewFormatter(a.formatter), projectSubPath)
-	checkov.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityYaml(_ *sync.WaitGroup, projectSubPath string) error {
-	horuseckubernetes.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityC(_ *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.C)); err != nil {
-		return err
-	}
-	flawfinder.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityPHP(_ *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.PHP)); err != nil {
-		return err
-	}
-	phpcs.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityGeneric(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Generic)); err != nil {
-		return err
-	}
-
-	spawn(wg, trivy.NewFormatter(a.formatter), projectSubPath)
-	spawn(wg, semgrep.NewFormatter(a.formatter), projectSubPath)
-	dependencycheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityDart(_ *sync.WaitGroup, projectSubPath string) error {
-	horusecdart.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityElixir(wg *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Elixir)); err != nil {
-		return err
-	}
-	spawn(wg, mixaudit.NewFormatter(a.formatter), projectSubPath)
-	sobelow.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) detectVulnerabilityShell(_ *sync.WaitGroup, projectSubPath string) error {
-	if err := a.docker.PullImage(a.getCustomOrDefaultImage(languages.Shell)); err != nil {
-		return err
-	}
-	shellcheck.NewFormatter(a.formatter).StartAnalysis(projectSubPath)
-	return nil
-}
-
-func (a *Analyzer) logProjectSubPath(language languages.Language, subPath string) {
-	if subPath != "" {
-		msg := fmt.Sprintf("Running %s in subpath: %s", language.ToString(), subPath)
-		logger.LogDebugWithLevel(msg)
-	}
-}
-
 // nolint:gocyclo
 func (a *Analyzer) checkIfNoExistHashAndLog(list []string) {
 	for _, hash := range list {
@@ -491,15 +195,6 @@ func (a *Analyzer) setAnalysisError(err error) {
 		}
 		a.analysis.Errors += toAppend + err.Error()
 	}
-}
-
-func (a *Analyzer) getCustomOrDefaultImage(language languages.Language) string {
-	// Images can be set to empty on config file, so we need to use only if its not empty.
-	// If its empty we return the default value.
-	if customImage := a.config.CustomImages[language]; customImage != "" {
-		return customImage
-	}
-	return path.Join(images.DefaultRegistry, images.MapValues()[language])
 }
 
 // SetFalsePositivesAndRiskAcceptInVulnerabilities set analysis vulnerabilities to false
@@ -565,11 +260,14 @@ func (a *Analyzer) sortVulnerabilitiesByCriticality() *analysis.Analysis {
 func (a *Analyzer) sortVulnerabilitiesByType() *analysis.Analysis {
 	analysisVulnerabilities := a.getVulnerabilitiesByType(enumsVulnerability.Vulnerability)
 	analysisVulnerabilities = append(analysisVulnerabilities,
-		a.getVulnerabilitiesByType(enumsVulnerability.RiskAccepted)...)
+		a.getVulnerabilitiesByType(enumsVulnerability.RiskAccepted)...,
+	)
 	analysisVulnerabilities = append(analysisVulnerabilities,
-		a.getVulnerabilitiesByType(enumsVulnerability.FalsePositive)...)
+		a.getVulnerabilitiesByType(enumsVulnerability.FalsePositive)...,
+	)
 	analysisVulnerabilities = append(analysisVulnerabilities,
-		a.getVulnerabilitiesByType(enumsVulnerability.Corrected)...)
+		a.getVulnerabilitiesByType(enumsVulnerability.Corrected)...,
+	)
 	a.analysis.AnalysisVulnerabilities = analysisVulnerabilities
 	return a.analysis
 }
@@ -671,23 +369,4 @@ func (a *Analyzer) removeVulnerabilitiesByTypes() *analysis.Analysis {
 	a.analysis.AnalysisVulnerabilities = vulnerabilities
 
 	return a.analysis
-}
-
-func spawn(wg *sync.WaitGroup, f formatters.IFormatter, src string) {
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		f.StartAnalysis(src)
-	}()
-}
-
-func newScanLoading(cfg *config.Config) *spinner.Spinner {
-	loading := spinner.New(spinner.CharSets[11], LoadingDelay)
-	loading.Suffix = messages.MsgInfoAnalysisLoading
-
-	if cfg.LogLevel == logrus.DebugLevel.String() || cfg.LogLevel == logrus.TraceLevel.String() {
-		loading.Writer = io.Discard
-	}
-
-	return loading
 }
