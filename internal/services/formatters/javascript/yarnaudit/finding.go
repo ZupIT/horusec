@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package yarnaudit
 
-type Output struct {
-	Advisories []Issue  `json:"advisories"`
-	Metadata   Metadata `json:"metadata"`
+type finding struct {
+	Version string `json:"version"`
 }

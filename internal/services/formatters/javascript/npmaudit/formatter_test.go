@@ -69,7 +69,7 @@ func TestNpmAuditParseOutput(t *testing.T) {
 		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
 	})
 
-	t.Run("Should add error on analysos when parse output with not found error", func(t *testing.T) {
+	t.Run("Should add error on analysis when parse output with not found error", func(t *testing.T) {
 		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
