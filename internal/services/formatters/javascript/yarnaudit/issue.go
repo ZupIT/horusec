@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package yarnaudit
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
-type Issue struct {
-	Findings           []Finding `json:"findings"`
+type issue struct {
+	Findings           []finding `json:"findings"`
 	ID                 int       `json:"id"`
 	ModuleName         string    `json:"module_name"`
 	VulnerableVersions string    `json:"vulnerable_versions"`
@@ -27,11 +27,11 @@ type Issue struct {
 	Overview           string    `json:"overview"`
 }
 
-func (i *Issue) GetSeverity() severities.Severity {
+func (i *issue) getSeverity() severities.Severity {
 	return i.mapSeverities()[i.Severity]
 }
 
-func (i *Issue) mapSeverities() map[string]severities.Severity {
+func (i *issue) mapSeverities() map[string]severities.Severity {
 	return map[string]severities.Severity{
 		"critical": severities.Critical,
 		"high":     severities.High,
@@ -42,7 +42,7 @@ func (i *Issue) mapSeverities() map[string]severities.Severity {
 	}
 }
 
-func (i *Issue) GetVersion() string {
+func (i *issue) getVersion() string {
 	if len(i.Findings) > 0 {
 		return i.Findings[0].Version
 	}
