@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package yarnaudit
 
-type Vulnerabilities struct {
-	Info     int `json:"info"`
-	Low      int `json:"low"`
-	Moderate int `json:"moderate"`
-	High     int `json:"high"`
-	Critical int `json:"critical"`
+type metadata struct {
+	Vulnerabilities vulnerabilities `json:"vulnerabilities"`
 }

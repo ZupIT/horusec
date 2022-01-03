@@ -29,11 +29,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
+	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/javascript/yarnaudit/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -45,7 +44,7 @@ type Formatter struct {
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return &Formatter{
 		IService: service,
-		modules:  map[string]bool{},
+		modules:  make(map[string]bool),
 	}
 }
 
@@ -71,8 +70,8 @@ func (f *Formatter) startYarnAudit(projectSubPath string) (string, error) {
 	return output, f.parseOutput(output, projectSubPath)
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
-	analysisData := &dockerEntities.AnalysisData{
+func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+	analysisData := &docker.AnalysisData{
 		CMD:      f.GetConfigCMDByFileExtension(projectSubPath, CMD, "yarn.lock", tools.YarnAudit),
 		Language: languages.Javascript,
 	}
@@ -95,74 +94,69 @@ func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 }
 
 func (f *Formatter) VerifyErrors(containerOutput string) error {
-	if f.IsNotFoundError(containerOutput) {
+	if f.isNotFoundError(containerOutput) {
 		return errors.New(messages.MsgErrorYarnLockNotFound)
 	}
 
-	if f.IsRunningError(containerOutput) {
+	if f.isRunningError(containerOutput) {
 		return errors.New(messages.MsgErrorYarnProcess + containerOutput)
 	}
 
 	return nil
 }
 
-func (f *Formatter) IsNotFoundError(containerOutput string) bool {
+func (f *Formatter) isNotFoundError(containerOutput string) bool {
 	return strings.Contains(containerOutput, "ERROR_YARN_LOCK_NOT_FOUND")
 }
 
-func (f *Formatter) IsRunningError(containerOutput string) bool {
+func (f *Formatter) isRunningError(containerOutput string) bool {
 	return strings.Contains(containerOutput, "ERROR_RUNNING_YARN_AUDIT")
 }
 
-func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *entities.Output, err error) {
+func (f *Formatter) newContainerOutputFromString(containerOutput string) (output *yarnOutput, err error) {
 	if containerOutput == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
-			map[string]interface{}{"tool": tools.YarnAudit.ToString()})
-		return &entities.Output{}, nil
+			map[string]interface{}{"tool": tools.YarnAudit.ToString()},
+		)
+		return &yarnOutput{}, nil
 	}
 
 	return output, json.Unmarshal([]byte(containerOutput), &output)
 }
 
-func (f *Formatter) processOutput(output *entities.Output, projectSubPath string) {
+func (f *Formatter) processOutput(output *yarnOutput, projectSubPath string) {
 	for _, advisory := range output.Advisories {
 		if f.notContainsModule(advisory.ModuleName) {
 			advisoryPointer := advisory
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilitySeverityData(&advisoryPointer, projectSubPath))
+			f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&advisoryPointer, projectSubPath))
 		}
 	}
 }
 
-func (f *Formatter) setVulnerabilitySeverityData(
-	output *entities.Issue, projectSubPath string) *vulnerability.Vulnerability {
-	data := f.getDefaultVulnerabilitySeverity(projectSubPath)
-	data.Severity = output.GetSeverity()
-	data.Details = output.Overview
-	data.Code = output.ModuleName
-	data.Line = f.getVulnerabilityLineByName(data.Code, output.GetVersion(), data.File)
-	data = vulnhash.Bind(data)
-	return f.SetCommitAuthor(data)
+func (f *Formatter) newVulnerability(output *issue, projectSubPath string) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.YarnAudit,
+		Language:     languages.Javascript,
+		File:         f.GetFilepathFromFilename("yarn.lock", projectSubPath),
+		Severity:     output.getSeverity(),
+		Details:      output.Overview,
+		Code:         output.ModuleName,
+	}
+	vuln.Line = f.getVulnerabilityLineByName(vuln.Code, output.getVersion(), vuln.File)
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverity(projectSubPath string) *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.YarnAudit
-	vulnerabilitySeverity.Language = languages.Javascript
-	vulnerabilitySeverity.File = f.GetFilepathFromFilename("yarn.lock", projectSubPath)
-	return vulnerabilitySeverity
-}
-
-func (f *Formatter) getVulnerabilityLineByName(module, version, file string) string {
-	fileExisting, err := os.Open(filepath.Join(f.GetConfigProjectPath(), file))
+func (f *Formatter) getVulnerabilityLineByName(module, version, filename string) string {
+	file, err := os.Open(filepath.Join(f.GetConfigProjectPath(), filename))
 	if err != nil {
 		return ""
 	}
 
 	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, file.Close())
 	}()
 
-	return f.getLine(module, version, bufio.NewScanner(fileExisting))
+	return f.getLine(module, version, bufio.NewScanner(file))
 }
 
 func (f *Formatter) getLine(module, version string, scanner *bufio.Scanner) string {
@@ -180,7 +174,7 @@ func (f *Formatter) getLine(module, version string, scanner *bufio.Scanner) stri
 }
 
 func (f *Formatter) validateIfExistNameInScannerText(scannerText, module, version string) bool {
-	for _, name := range f.mapPossibleExistingNames(module, version) {
+	for _, name := range f.possibleExistingNames(module, version) {
 		if strings.Contains(strings.ToLower(scannerText), name) {
 			return true
 		}
@@ -189,7 +183,7 @@ func (f *Formatter) validateIfExistNameInScannerText(scannerText, module, versio
 	return false
 }
 
-func (f *Formatter) mapPossibleExistingNames(module, version string) []string {
+func (f *Formatter) possibleExistingNames(module, version string) []string {
 	return []string{
 		strings.ToLower(fmt.Sprintf("%s@%s", module, version)),
 		strings.ToLower(fmt.Sprintf("%s@~%s", module, version)),

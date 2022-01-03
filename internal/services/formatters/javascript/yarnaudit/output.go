@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package yarnaudit
 
-type Metadata struct {
-	Vulnerabilities Vulnerabilities `json:"vulnerabilities"`
+type yarnOutput struct {
+	Advisories []issue  `json:"advisories"`
+	Metadata   metadata `json:"metadata"`
 }
