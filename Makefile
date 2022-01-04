@@ -14,8 +14,6 @@ PATH_BINARY_BUILD_CLI ?= $(GOPATH)/bin
 ARCH_ARM64 ?= arm64
 ARCH_AMD64 ?= amd64
 MAIN = ./cmd/app
-LATEST_RC=$$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-rc.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
-LATEST_BETA=$$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-beta.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
 
 lint:
 	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -140,10 +138,10 @@ install:
 	./deployments/scripts/install.sh latest
 
 install-beta:
-	./deployments/scripts/install.sh $(LATEST_BETA)
+	./deployments/scripts/install.sh latest-beta
 
 install-rc:
-	./deployments/scripts/install.sh $(LATEST_RC)
+	./deployments/scripts/install.sh latest-rc
 
 
 pipeline: format lint test coverage security
