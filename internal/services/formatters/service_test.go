@@ -163,8 +163,7 @@ func TestGetAnalysisIDErrorMessage(t *testing.T) {
 		result := monitorController.GetAnalysisIDErrorMessage(tools.Bandit, "test")
 
 		assert.NotEmpty(t, result)
-		assert.Equal(t, "{HORUSEC_CLI} Something error went wrong in Bandit tool"+
-			" | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> test", result)
+		assert.Equal(t, "{HORUSEC_CLI} Error to execute tool Bandit | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> test", result)
 	})
 }
 
@@ -219,7 +218,7 @@ func TestLogDebugWithReplace(t *testing.T) {
 		assert.NotPanics(t, func() {
 			monitorController.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.NpmAudit, languages.Javascript)
 		})
-		assert.Contains(t, stdOutMock.String(), `level=debug msg="{HORUSEC_CLI} Running NpmAudit - JavaScript in analysisID: [00000000-0000-0000-0000-000000000000]`)
+		assert.Contains(t, stdOutMock.String(), `level=debug msg="{HORUSEC_CLI} Running NpmAudit - JavaScript in analysisID: 00000000-0000-0000-0000-000000000000`)
 	})
 }
 
@@ -241,7 +240,7 @@ func TestLogAnalysisError(t *testing.T) {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "container err", "")
 			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "container err", "")
 		})
-		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err`)
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Error to execute tool GoSec | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err`)
 	})
 	t.Run("should not panic when logging error and exists projectSubPath", func(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
@@ -252,7 +251,7 @@ func TestLogAnalysisError(t *testing.T) {
 			monitorController.SetAnalysisError(errors.New("test"), tools.GoSec, "container err", "/tmp")
 			monitorController.SetAnalysisError(errors.New("test2"), tools.GitLeaks, "container err", "/tmp")
 		})
-		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Something error went wrong in GoSec tool | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err | ProjectSubPath -> /tmp - test"`)
+		assert.Contains(t, stdOutMock.String(), `{HORUSEC_CLI} Error to execute tool GoSec | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> container err | ProjectSubPath -> /tmp - test"`)
 	})
 }
 

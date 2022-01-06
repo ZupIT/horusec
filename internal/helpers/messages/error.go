@@ -15,6 +15,8 @@
 package messages
 
 // Block of messages usage into error response
+//
+// nolint:lll
 const (
 	MsgErrorPathNotValid                        = "invalid path:"
 	MsgErrorJSONOutputFilePathNotValidExtension = "Output File path not valid file of type:"
@@ -22,10 +24,9 @@ const (
 	MsgErrorSeverityNotValid                    = "Type of severity not valid. See severities enable:"
 	MsgErrorAskForUserCancelled                 = "{HORUSEC_CLI} Operation was canceled by user"
 	MsgVulnerabilityTypeToShowInvalid           = "{HORUSEC_CLI} Error on validate vulnerability type is wrong type: "
-	MsgErrorRunToolInDocker                     = "{HORUSEC_CLI} Something error went wrong in {{0}} tool " +
-		"| analysisID -> {{1}} | output -> {{2}}"
-	MsgErrorInvalidWorkDir           = "{HORUSEC_CLI} Workdir is nil! Check the configuration and try again"
-	MsgErrorParseStringToToolsConfig = "{HORUSEC_CLI} Error when try parse tools config string to entity. " +
+	MsgErrorRunToolInDocker                     = "{HORUSEC_CLI} Error to execute tool %s | analysisID -> %s | output -> %s"
+	MsgErrorInvalidWorkDir                      = "{HORUSEC_CLI} Workdir is nil! Check the configuration and try again"
+	MsgErrorParseStringToToolsConfig            = "{HORUSEC_CLI} Error when try parse tools config string to entity. " +
 		"Returning default values"
 	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt not found in python project to " +
 		"start analysis. It would be a good idea to commit it so horusec can check for vulnerabilities"

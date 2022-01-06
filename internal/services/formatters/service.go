@@ -80,10 +80,7 @@ func (s *Service) ExecuteContainer(data *dockerentity.AnalysisData) (output stri
 }
 
 func (s *Service) GetAnalysisIDErrorMessage(tool tools.Tool, output string) string {
-	msg := strings.ReplaceAll(messages.MsgErrorRunToolInDocker, "{{0}}", tool.ToString())
-	msg = strings.ReplaceAll(msg, "{{1}}", s.GetAnalysisID())
-	msg = strings.ReplaceAll(msg, "{{2}}", output)
-	return msg
+	return fmt.Sprintf(messages.MsgErrorRunToolInDocker, tool, s.GetAnalysisID(), output)
 }
 
 func (s *Service) GetConfigProjectPath() string {
@@ -103,9 +100,7 @@ func (s *Service) AddWorkDirInCmd(cmd, projectSubPath string, tool tools.Tool) s
 }
 
 func (s *Service) LogDebugWithReplace(msg string, tool tools.Tool, lang languages.Language) {
-	newMsg := strings.ReplaceAll(msg, "{{0}}", tool.ToString())
-	newMsg = strings.ReplaceAll(newMsg, "{{1}}", lang.ToString())
-	logger.LogDebugWithLevel(newMsg, s.analysis.GetIDString())
+	logger.LogDebugWithLevel(fmt.Sprintf(msg, tool, lang, s.analysis.GetIDString()))
 }
 
 func (s *Service) GetAnalysisID() string {
