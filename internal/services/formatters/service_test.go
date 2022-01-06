@@ -36,7 +36,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec/config"
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
 	"github.com/ZupIT/horusec/internal/entities/workdir"
@@ -107,7 +106,6 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		mock.On("SetAnalysisError").Return()
 		mock.On("ExecuteContainer").Return("", nil)
 		mock.On("GetAnalysisIDErrorMessage").Return("")
-		mock.On("GetCommitAuthor").Return(commitauthor.CommitAuthor{})
 		mock.On("AddWorkDirInCmd").Return("")
 		mock.On("GetConfigProjectPath").Return("")
 		mock.On("GetAnalysis").Return(&analysis.Analysis{})
@@ -120,7 +118,6 @@ func TestMock_AddWorkDirInCmd(t *testing.T) {
 		_ = mock.GetAnalysisID()
 		_, _ = mock.ExecuteContainer(&dockerentities.AnalysisData{})
 		_ = mock.GetAnalysisIDErrorMessage("", "")
-		_ = mock.GetCommitAuthor("", "")
 		_ = mock.AddWorkDirInCmd("", "", "")
 		_ = mock.GetConfigProjectPath()
 		mock.SetAnalysisError(errors.New(""), "", "", "")
@@ -168,40 +165,6 @@ func TestGetAnalysisIDErrorMessage(t *testing.T) {
 		assert.NotEmpty(t, result)
 		assert.Equal(t, "{HORUSEC_CLI} Something error went wrong in Bandit tool"+
 			" | analysisID -> 00000000-0000-0000-0000-000000000000 | output -> test", result)
-	})
-}
-
-func TestGetCommitAuthor(t *testing.T) {
-	t.Run("should get commit author default values when .git folder is not found", func(t *testing.T) {
-		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), &config.Config{})
-
-		result := monitorController.GetCommitAuthor("", "")
-		assert.Equal(t, "-", result.Author)
-		assert.Equal(t, "-", result.CommitHash)
-		assert.Equal(t, "-", result.Date)
-		assert.Equal(t, "-", result.Email)
-		assert.Equal(t, "-", result.Message)
-		assert.NotEmpty(t, result)
-	})
-	t.Run("should get commit author values when .git folder is found", func(t *testing.T) {
-		cfg := &config.Config{
-			StartOptions: config.StartOptions{
-				ProjectPath:        testutil.ExamplesPath,
-				EnableCommitAuthor: true,
-			},
-		}
-		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
-
-		result := monitorController.GetCommitAuthor("15", filepath.Join(testutil.GoExample1, "api", "server.go"))
-		notExpected := commitauthor.CommitAuthor{
-			Author:     "-",
-			Email:      "-",
-			CommitHash: "-",
-			Message:    "-",
-			Date:       "-",
-		}
-		assert.NotEmpty(t, result)
-		assert.NotEqual(t, notExpected, result)
 	})
 }
 

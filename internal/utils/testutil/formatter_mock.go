@@ -22,7 +22,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/stretchr/testify/mock"
 
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentities "github.com/ZupIT/horusec/internal/entities/docker"
 )
 
@@ -51,11 +50,6 @@ func (m *FormatterMock) ExecuteContainer(_ *dockerentities.AnalysisData) (output
 func (m *FormatterMock) GetAnalysisIDErrorMessage(_ tools.Tool, _ string) string {
 	args := m.MethodCalled("GetAnalysisIDErrorMessage")
 	return args.Get(0).(string)
-}
-
-func (m *FormatterMock) GetCommitAuthor(_, _ string) (author commitauthor.CommitAuthor) {
-	args := m.MethodCalled("GetCommitAuthor")
-	return args.Get(0).(commitauthor.CommitAuthor)
 }
 
 func (m *FormatterMock) AddWorkDirInCmd(_, _ string, _ tools.Tool) string {
@@ -89,11 +83,6 @@ func (m *FormatterMock) ToolIsToIgnore(_ tools.Tool) bool {
 
 func (m *FormatterMock) GetFilepathFromFilename(_, _ string) string {
 	args := m.MethodCalled("GetFilepathFromFilename")
-	return args.Get(0).(string)
-}
-
-func (m *FormatterMock) GetProjectPathWithWorkdir(_ string) string {
-	args := m.MethodCalled("GetProjectPathWithWorkdir")
 	return args.Get(0).(string)
 }
 

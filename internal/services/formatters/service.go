@@ -86,10 +86,6 @@ func (s *Service) GetAnalysisIDErrorMessage(tool tools.Tool, output string) stri
 	return msg
 }
 
-func (s *Service) GetCommitAuthor(line, filePath string) commitauthor.CommitAuthor {
-	return s.git.CommitAuthor(line, filePath)
-}
-
 func (s *Service) GetConfigProjectPath() string {
 	return filepath.Join(s.config.ProjectPath, ".horusec", s.analysis.ID.String())
 }
@@ -196,7 +192,7 @@ func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) strin
 }
 
 func (s *Service) SetCommitAuthor(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {
-	author := s.GetCommitAuthor(vuln.Line, vuln.File)
+	author := s.git.CommitAuthor(vuln.Line, vuln.File)
 
 	vuln.CommitAuthor = author.Author
 	vuln.CommitEmail = author.Email
@@ -265,12 +261,6 @@ func (s *Service) GetConfigCMDByFileExtension(projectSubPath, imageCmd, ext stri
 	}
 
 	return s.AddWorkDirInCmd(imageCmd, projectSubPath, tool)
-}
-
-// NOTE(iancardosozup): i think this functions below could be erased from service interface
-// since they only get a value that could be accessed directly
-func (s *Service) GetProjectPathWithWorkdir(projectSubPath string) string {
-	return filepath.Join(s.GetConfigProjectPath(), projectSubPath)
 }
 
 func (s *Service) IsDockerDisabled() bool {
