@@ -15,6 +15,8 @@
 
 URL_DOWNLOAD=""
 VERSION_DOWNLOAD=$1
+# Contains the value of the latest stable release launched by horusec cli.
+LATEST=$(curl -sL https://api.github.com/repos/ZupIT/horusec/releases/latest | jq -r ".tag_name")
 LATEST_RC=$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-rc.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
 LATEST_BETA=$(git ls-remote --exit-code --sort='v:refname' --tags https://github.com/ZupIT/horusec.git --ref 'v*.*.*-beta.*' | cut --delimiter='/' --fields=3 | tail --lines=1 | sed 's/.*\///; s/\^{}//')
 IS_NEW_URL=false
@@ -26,11 +28,11 @@ horusecSetVersion() {
     echo "invalid input, empty string"
     exit 1
   elif [ "$VERSION_DOWNLOAD" = "latest-rc" ]; then
-    echo "Version set to $LATEST_RC"
-    VERSION_DOWNLOAD=$LATEST_RC
+    latestRc
+    echo "Version set to $VERSION_DOWNLOAD"
   elif [ "$VERSION_DOWNLOAD" = "latest-beta" ]; then
-    echo "Version set to $LATEST_BETA"
-    VERSION_DOWNLOAD=$LATEST_BETA
+    latestBeta
+    echo "Version set to $VERSION_DOWNLOAD"
   elif [ "$VERSION_DOWNLOAD" = "latest" ]; then
     echo "Version set to latest"
     VERSION_DOWNLOAD='latest'
@@ -154,6 +156,44 @@ isOldURLVersion() {
       IS_NEW_URL=true
     fi
   fi
+}
+
+# Checks if the latest launched rc is in a greater version than the latest version, if the rc is in a lower version
+# the latest should be used instead of the rc. This is needed to avoid users missing patch releases, since they will
+# not have rc releases.
+latestRc() {
+      LATEST_RC_WITHOUT_V_PREFIX=$(echo "$LATEST_RC" | sed -e "s/v//g")
+      LATEST_RC_WITHOUT_BETA_PREFIX=$(echo "$LATEST_RC_WITHOUT_V_PREFIX" | sed -r "s/-beta\.[0-9]+//g")
+      LATEST_RC_WITHOUT_RC_PREFIX=$(echo "$LATEST_RC_WITHOUT_BETA_PREFIX" | sed -r "s/-rc\.[0-9]+//g")
+      LATEST_RC_WITHOUT_DOTS=$(echo "$LATEST_RC_WITHOUT_RC_PREFIX" | sed -e "s/\.//g")
+
+      LATEST_WITHOUT_V_PREFIX=$(echo "$LATEST" | sed -e "s/v//g")
+      LATEST_WITHOUT_DOTS=$(echo "$LATEST_WITHOUT_V_PREFIX" | sed -e "s/\.//g")
+
+      if [ "$LATEST_RC_WITHOUT_DOTS" -gt "$LATEST_WITHOUT_DOTS" ]; then
+        VERSION_DOWNLOAD=$LATEST_RC
+      else
+        VERSION_DOWNLOAD=$LATEST
+      fi
+}
+
+# Checks if the latest launched beta is in a greater version than the latest version, if the beta is in a lower version
+# the latest should be used instead of the beta. This is needed to avoid users missing patch releases, since they will
+# not have beta releases.
+latestBeta() {
+      LATEST_BETA_WITHOUT_V_PREFIX=$(echo "$LATEST_BETA" | sed -e "s/v//g")
+      LATEST_BETA_WITHOUT_BETA_PREFIX=$(echo "$LATEST_BETA_WITHOUT_V_PREFIX" | sed -r "s/-beta\.[0-9]+//g")
+      LATEST_BETA_WITHOUT_RC_PREFIX=$(echo "$LATEST_BETA_WITHOUT_BETA_PREFIX" | sed -r "s/-rc\.[0-9]+//g")
+      LATEST_BETA_WITHOUT_DOTS=$(echo "$LATEST_BETA_WITHOUT_RC_PREFIX" | sed -e "s/\.//g")
+
+      LATEST_WITHOUT_V_PREFIX=$(echo "$LATEST" | sed -e "s/v//g")
+      LATEST_WITHOUT_DOTS=$(echo "$LATEST_WITHOUT_V_PREFIX" | sed -e "s/\.//g")
+
+      if [ "$LATEST_BETA_WITHOUT_DOTS" -gt "$LATEST_WITHOUT_DOTS" ]; then
+        VERSION_DOWNLOAD=$LATEST_BETA
+      else
+        VERSION_DOWNLOAD=$LATEST
+      fi
 }
 
 horusecSetVersion
