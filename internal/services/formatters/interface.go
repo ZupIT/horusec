@@ -20,7 +20,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	engine "github.com/ZupIT/horusec-engine"
 
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/entities/docker"
 )
 
@@ -48,9 +47,6 @@ type IService interface {
 	// generate the error and the error itself.
 	GetAnalysisIDErrorMessage(tool tools.Tool, output string) string
 
-	// GetCommitAuthor return commit author info to a given line and filepath.
-	GetCommitAuthor(line, filePath string) commitauthor.CommitAuthor
-
 	// AddWorkDirInCmd replace {{WORK_DIR}} from cmd with a `cd` into projectSubPath.
 	AddWorkDirInCmd(cmd string, projectSubPath string, tool tools.Tool) string
 
@@ -74,9 +70,6 @@ type IService interface {
 	// GetFilepathFromFilename return the relative file path inside projectSubpath
 	// to a given filename
 	GetFilepathFromFilename(filename, projectSubPath string) string
-
-	// GetProjectPathWithWorkdir return the project path inside working directory.
-	GetProjectPathWithWorkdir(projectSubPath string) string
 
 	// SetCommitAuthor set commit author info on vulnerability.
 	SetCommitAuthor(vulnerability *vulnerability.Vulnerability) *vulnerability.Vulnerability

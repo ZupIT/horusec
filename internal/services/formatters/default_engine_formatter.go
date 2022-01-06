@@ -15,6 +15,8 @@
 package formatters
 
 import (
+	"path/filepath"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
@@ -65,7 +67,7 @@ func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
 }
 
 func (f *DefaultFormatter) execEngineAnalysis(src string) ([]engine.Finding, error) {
-	textUnit, err := f.manager.GetTextUnitByRulesExt(f.svc.GetProjectPathWithWorkdir(src))
+	textUnit, err := f.manager.GetTextUnitByRulesExt(filepath.Join(f.svc.GetConfigProjectPath(), src))
 	if err != nil {
 		return nil, err
 	}

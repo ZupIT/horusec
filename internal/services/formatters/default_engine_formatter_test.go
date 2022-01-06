@@ -87,7 +87,7 @@ func TestStartAnalysis(t *testing.T) {
 				service.On("SetToolFinishedAnalysis")
 				service.On("SetAnalysisError")
 				service.On("ToolIsToIgnore").Return(false)
-				service.On("GetProjectPathWithWorkdir").Return(".")
+				service.On("GetConfigProjectPath").Return(".")
 				service.On("ParseFindingsToVulnerabilities").Return(nil)
 				service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
 
@@ -105,7 +105,7 @@ func TestStartAnalysis(t *testing.T) {
 				service.On("SetToolFinishedAnalysis")
 				service.On("SetAnalysisError")
 				service.On("ToolIsToIgnore").Return(false)
-				service.On("GetProjectPathWithWorkdir").Return("!!!")
+				service.On("GetConfigProjectPath").Return(".")
 				service.On("ParseFindingsToVulnerabilities").Return(nil)
 				service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
 
