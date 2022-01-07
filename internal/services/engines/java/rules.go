@@ -2600,7 +2600,7 @@ func NewVulnerableRemoteCodeInjectionApacheLog4j() text.TextRule {
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-150",
 			Name:        "Remote code injection Apache Log4j",
-			Description: "Log4j versions prior to 2.17.0 are subject to a remote code execution vulnerability via the ldap JNDI parser, uncontrolled recursion from self-referential lookups and some other vulnerabilities. For more information checkout the CVE-2021-44228 (https://nvd.nist.gov/vuln/detail/CVE-2021-44228), CVE-2021-45046 (https://nvd.nist.gov/vuln/detail/CVE-2021-45046) and CVE-2021-45105 (https://nvd.nist.gov/vuln/detail/CVE-2021-45105) advisories.",
+			Description: "Log4j versions prior to 2.17.0 are subject to a remote code execution vulnerability via the ldap JNDI parser, uncontrolled recursion from self-referential lookups and some other vulnerabilities. For more information checkout the CVE-2021-44228 (https://nvd.nist.gov/vuln/detail/CVE-2021-44228), CVE-2021-45046 (https://nvd.nist.gov/vuln/detail/CVE-2021-45046), CVE-2021-45105 (https://nvd.nist.gov/vuln/detail/CVE-2021-45105) and CVE-2021-44832 (https://nvd.nist.gov/vuln/detail/CVE-2021-44832) advisories.",
 			Severity:    severities.Critical.ToString(),
 			Confidence:  confidence.Medium.ToString(),
 		},
