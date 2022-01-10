@@ -53,17 +53,13 @@ func NewFormatter(service formatters.IService) formatters.IFormatter {
 }
 
 func (f *Formatter) StartAnalysis(projectSubPath string) {
-	if f.ToolIsToIgnore(tools.Nancy) || f.IsDockerDisabled() {
+	if f.ToolIsToIgnore(tools.Nancy) || f.IsDockerDisabled() || os.Getenv("GITHUB_TOKEN") == "" {
 		logger.LogDebugWithLevel(messages.MsgDebugToolIgnored + tools.Nancy.ToString())
 		return
 	}
 
-	if os.Getenv("GITHUB_TOKEN") == "" {
-		logger.LogWarnWithLevel(messages.MsgErrorNancyRateLimit)
-	} else {
-		output, err := f.startNancy(projectSubPath)
-		f.SetAnalysisError(err, tools.Nancy, output, projectSubPath)
-	}
+	output, err := f.startNancy(projectSubPath)
+	f.SetAnalysisError(err, tools.Nancy, output, projectSubPath)
 
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Nancy, languages.Go)
 }
