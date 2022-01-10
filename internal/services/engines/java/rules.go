@@ -25,8 +25,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewXMLParsingVulnerableToXXE() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXE() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-1",
 			Name:        "XML parsing vulnerable to XXE",
@@ -43,8 +43,8 @@ func NewXMLParsingVulnerableToXXE() text.TextRule {
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithXMLInputFactory() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithXMLInputFactory() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-2",
 			Name:        "XML parsing vulnerable to XXE With XMLInputFactory",
@@ -60,8 +60,8 @@ func NewXMLParsingVulnerableToXXEWithXMLInputFactory() text.TextRule {
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithDocumentBuilder() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithDocumentBuilder() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-3",
 			Name:        "XML parsing vulnerable to XXE With DocumentBuilder",
@@ -78,8 +78,8 @@ func NewXMLParsingVulnerableToXXEWithDocumentBuilder() text.TextRule {
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithSAXParserFactory() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithSAXParserFactory() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-4",
 			Name:        "XML parsing vulnerable to XXE With SAXParserFactory",
@@ -96,8 +96,8 @@ func NewXMLParsingVulnerableToXXEWithSAXParserFactory() text.TextRule {
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithTransformerFactory() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-5",
 			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
@@ -116,8 +116,8 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-5
 //
-//func NewXMLParsingVulnerableToXXEWithSchemaFactory() text.TextRule {
-//	return text.TextRule{
+//func NewXMLParsingVulnerableToXXEWithSchemaFactory() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-6",
 //			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
@@ -132,8 +132,8 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() text.TextRule {
 //	}
 //}
 
-func NewXMLParsingVulnerableToXXEWithDom4j() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithDom4j() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-7",
 			Name:        "XML parsing vulnerable to XXE With Dom4j",
@@ -149,8 +149,8 @@ func NewXMLParsingVulnerableToXXEWithDom4j() text.TextRule {
 	}
 }
 
-func NewXMLParsingVulnerableToXXEWithJdom2() text.TextRule {
-	return text.TextRule{
+func NewXMLParsingVulnerableToXXEWithJdom2() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-8",
 			Name:        "XML parsing vulnerable to XXE With Jdom2",
@@ -166,8 +166,8 @@ func NewXMLParsingVulnerableToXXEWithJdom2() text.TextRule {
 	}
 }
 
-func NewInsecureImplementationOfSSL() text.TextRule {
-	return text.TextRule{
+func NewInsecureImplementationOfSSL() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-9",
 			Name:        "Insecure Implementation of SSL",
@@ -183,8 +183,8 @@ func NewInsecureImplementationOfSSL() text.TextRule {
 	}
 }
 
-func NewMessageDigestIsCustom() text.TextRule {
-	return text.TextRule{
+func NewMessageDigestIsCustom() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-10",
 			Name:        "Message digest is custom",
@@ -201,8 +201,8 @@ func NewMessageDigestIsCustom() text.TextRule {
 	}
 }
 
-func NewTrustManagerThatAcceptAnyCertificatesClient() text.TextRule {
-	return text.TextRule{
+func NewTrustManagerThatAcceptAnyCertificatesClient() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-11",
 			Name:        "TrustManager that accept any certificates Client",
@@ -219,8 +219,8 @@ func NewTrustManagerThatAcceptAnyCertificatesClient() text.TextRule {
 	}
 }
 
-func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() text.TextRule {
-	return text.TextRule{
+func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-12",
 			Name:        "Server hostnames should be verified during SSL/TLS connections",
@@ -237,8 +237,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() text.TextRule {
 	}
 }
 
-func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail() text.TextRule {
-	return text.TextRule{
+func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-13",
 			Name:        "Server hostnames should be verified during SSL/TLS connections With SimpleEmail",
@@ -254,8 +254,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail() 
 	}
 }
 
-func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.TextRule {
-	return text.TextRule{
+func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-14",
 			Name:        "Server hostnames should be verified during SSL/TLS connections With Mail's",
@@ -274,8 +274,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-14
 //
-//func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() text.TextRule {
-//	return text.TextRule{
+//func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithJakartaMail() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-15",
 //			Name:        "Server hostnames should be verified during SSL/TLS connections With Mail's",
@@ -293,8 +293,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-11
 //
-//func NewTrustManagerThatAcceptAnyCertificatesServer() text.TextRule {
-//	return text.TextRule{
+//func NewTrustManagerThatAcceptAnyCertificatesServer() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-16",
 //			Name:        "TrustManager that accept any certificates Server",
@@ -313,8 +313,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-11
 //
-//func NewTrustManagerThatAcceptAnyCertificatesIssuers() text.TextRule {
-//	return text.TextRule{
+//func NewTrustManagerThatAcceptAnyCertificatesIssuers() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-17",
 //			Name:        "TrustManager that accept any certificates Issuers",
@@ -331,8 +331,8 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() text.Te
 //	}
 //}
 
-func NewWebViewLoadFilesFromExternalStorage() text.TextRule {
-	return text.TextRule{
+func NewWebViewLoadFilesFromExternalStorage() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-18",
 			Name:        "WebView Load Files From External Storage",
@@ -348,8 +348,8 @@ func NewWebViewLoadFilesFromExternalStorage() text.TextRule {
 	}
 }
 
-func NewInsecureWebViewImplementation() text.TextRule {
-	return text.TextRule{
+func NewInsecureWebViewImplementation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-19",
 			Name:        "Insecure Web View Implementation",
@@ -369,8 +369,8 @@ func NewInsecureWebViewImplementation() text.TextRule {
 // depend on what is stored, how it was stored and the sql cipher version, removed to avoid false positives.
 // reference: https://www.zetetic.net/blog/2019/08/14/defcon-sqlite-attacks/
 //
-//func NewNoUseSQLCipherAndMatch() text.TextRule {
-//	return text.TextRule{
+//func NewNoUseSQLCipherAndMatch() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-20",
 //			Name:        "No Use SQL Cipher",
@@ -390,8 +390,8 @@ func NewInsecureWebViewImplementation() text.TextRule {
 // will only lead to false positives, leaks engine already does a search for hardcoded credentials.
 // reference: https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-6301?search=realm
 //
-//func NewNoUseRealmDatabaseWithEncryptionKey() text.TextRule {
-//	return text.TextRule{
+//func NewNoUseRealmDatabaseWithEncryptionKey() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-21",
 //			Name:        "No Use Realm Database With Encryption Key",
@@ -407,8 +407,8 @@ func NewInsecureWebViewImplementation() text.TextRule {
 //	}
 //}
 
-func NewNoUseWebviewDebuggingEnable() text.TextRule {
-	return text.TextRule{
+func NewNoUseWebviewDebuggingEnable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-22",
 			Name:        "No Use Webview Debugging Enable",
@@ -424,8 +424,8 @@ func NewNoUseWebviewDebuggingEnable() text.TextRule {
 	}
 }
 
-func NewNoListenToClipboard() text.TextRule {
-	return text.TextRule{
+func NewNoListenToClipboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-23",
 			Name:        "No Listen To Clipboard",
@@ -441,8 +441,8 @@ func NewNoListenToClipboard() text.TextRule {
 	}
 }
 
-func NewNoCopyContentToClipboard() text.TextRule {
-	return text.TextRule{
+func NewNoCopyContentToClipboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-24",
 			Name:        "No copy content to clipboard",
@@ -458,8 +458,8 @@ func NewNoCopyContentToClipboard() text.TextRule {
 	}
 }
 
-func NewNoUseWebviewIgnoringSSL() text.TextRule {
-	return text.TextRule{
+func NewNoUseWebviewIgnoringSSL() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-25",
 			Name:        "No Use Webview Ignoring SSL",
@@ -476,8 +476,8 @@ func NewNoUseWebviewIgnoringSSL() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithSqlUtil() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithSqlUtil() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-26",
 			Name:        "SQL Injection With SqlUtil",
@@ -493,8 +493,8 @@ func NewSQLInjectionWithSqlUtil() text.TextRule {
 }
 
 // NewNoUseFridaServer Frida seems to be a pentest tool. I couldn't find an example similar to what our rule is looking for, so it's remains without tests.
-func NewNoUseFridaServer() text.TextRule {
-	return text.TextRule{
+func NewNoUseFridaServer() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-27",
 			Name:        "No Use Frida Server",
@@ -511,8 +511,8 @@ func NewNoUseFridaServer() text.TextRule {
 }
 
 // NewNoUseSSLPinningLib not really sure about this vulnerability, needs to be revised in the future.
-func NewNoUseSSLPinningLib() text.TextRule {
-	return text.TextRule{
+func NewNoUseSSLPinningLib() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-28",
 			Name:        "No Use SSL Pinning Lib",
@@ -528,8 +528,8 @@ func NewNoUseSSLPinningLib() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardAppDebuggable() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardAppDebuggable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-29",
 			Name:        "DexGuard Debug Detection",
@@ -545,8 +545,8 @@ func NewNoUseDexGuardAppDebuggable() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardDebuggerConnected() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardDebuggerConnected() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-30",
 			Name:        "No Use DexGuard Debugger Connected",
@@ -562,8 +562,8 @@ func NewNoUseDexGuardDebuggerConnected() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardEmulatorDetection() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardEmulatorDetection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-31",
 			Name:        "No Use DexGuard Emulator Detection",
@@ -579,8 +579,8 @@ func NewNoUseDexGuardEmulatorDetection() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardWithDebugKey() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardWithDebugKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-32",
 			Name:        "No Use DexGuard With Debug Key",
@@ -596,8 +596,8 @@ func NewNoUseDexGuardWithDebugKey() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardRoot() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardRoot() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-33",
 			Name:        "No Use DexGuard Root",
@@ -613,8 +613,8 @@ func NewNoUseDexGuardRoot() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuard() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-34",
 			Name:        "No Use DexGuard",
@@ -630,8 +630,8 @@ func NewNoUseDexGuard() text.TextRule {
 	}
 }
 
-func NewNoUseDexGuardInSigner() text.TextRule {
-	return text.TextRule{
+func NewNoUseDexGuardInSigner() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-35",
 			Name:        "No Use DexGuard in signer",
@@ -647,8 +647,8 @@ func NewNoUseDexGuardInSigner() text.TextRule {
 	}
 }
 
-func NewNoUsePackageWithTamperDetection() text.TextRule {
-	return text.TextRule{
+func NewNoUsePackageWithTamperDetection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-36",
 			Name:        "No use package with tamper detection.",
@@ -664,8 +664,8 @@ func NewNoUsePackageWithTamperDetection() text.TextRule {
 	}
 }
 
-func NewLoadAndManipulateDexFiles() text.TextRule {
-	return text.TextRule{
+func NewLoadAndManipulateDexFiles() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-37",
 			Name:        "Load and Manipulate Dex Files",
@@ -681,8 +681,8 @@ func NewLoadAndManipulateDexFiles() text.TextRule {
 	}
 }
 
-func NewObfuscation() text.TextRule {
-	return text.TextRule{
+func NewObfuscation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-38",
 			Name:        "Obfuscation",
@@ -698,8 +698,8 @@ func NewObfuscation() text.TextRule {
 	}
 }
 
-func NewExecuteOSCommand() text.TextRule {
-	return text.TextRule{
+func NewExecuteOSCommand() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-39",
 			Name:        "Execute OS Command",
@@ -716,8 +716,8 @@ func NewExecuteOSCommand() text.TextRule {
 	}
 }
 
-func NewTCPServerSocket() text.TextRule {
-	return text.TextRule{
+func NewTCPServerSocket() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-40",
 			Name:        "TCP Server Socket",
@@ -733,8 +733,8 @@ func NewTCPServerSocket() text.TextRule {
 	}
 }
 
-func NewTCPSocket() text.TextRule {
-	return text.TextRule{
+func NewTCPSocket() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-41",
 			Name:        "TCP Socket",
@@ -750,8 +750,8 @@ func NewTCPSocket() text.TextRule {
 	}
 }
 
-func NewUDPDatagramPacket() text.TextRule {
-	return text.TextRule{
+func NewUDPDatagramPacket() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-42",
 			Name:        "UDP Datagram Packet",
@@ -767,8 +767,8 @@ func NewUDPDatagramPacket() text.TextRule {
 	}
 }
 
-func NewUDPDatagramSocket() text.TextRule {
-	return text.TextRule{
+func NewUDPDatagramSocket() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-43",
 			Name:        "UDP Datagram Socket",
@@ -784,8 +784,8 @@ func NewUDPDatagramSocket() text.TextRule {
 	}
 }
 
-func NewWebViewScriptInterface() text.TextRule {
-	return text.TextRule{
+func NewWebViewScriptInterface() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-44",
 			Name:        "WebView Script Interface",
@@ -801,8 +801,8 @@ func NewWebViewScriptInterface() text.TextRule {
 	}
 }
 
-func NewGetCellInformation() text.TextRule {
-	return text.TextRule{
+func NewGetCellInformation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-45",
 			Name:        "Get Cell Information",
@@ -818,8 +818,8 @@ func NewGetCellInformation() text.TextRule {
 	}
 }
 
-func NewGetCellLocation() text.TextRule {
-	return text.TextRule{
+func NewGetCellLocation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-46",
 			Name:        "Get Cell Location",
@@ -835,8 +835,8 @@ func NewGetCellLocation() text.TextRule {
 	}
 }
 
-func NewGetSubscriberID() text.TextRule {
-	return text.TextRule{
+func NewGetSubscriberID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-47",
 			Name:        "Get Subscriber ID",
@@ -852,8 +852,8 @@ func NewGetSubscriberID() text.TextRule {
 	}
 }
 
-func NewGetDeviceID() text.TextRule {
-	return text.TextRule{
+func NewGetDeviceID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-48",
 			Name:        "Get Device ID",
@@ -869,8 +869,8 @@ func NewGetDeviceID() text.TextRule {
 	}
 }
 
-func NewGetSoftwareVersion() text.TextRule {
-	return text.TextRule{
+func NewGetSoftwareVersion() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-49",
 			Name:        "Get Software Version, IMEI/SV etc",
@@ -886,8 +886,8 @@ func NewGetSoftwareVersion() text.TextRule {
 	}
 }
 
-func NewGetSIMSerialNumber() text.TextRule {
-	return text.TextRule{
+func NewGetSIMSerialNumber() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-50",
 			Name:        "Get SIM Serial Number",
@@ -903,8 +903,8 @@ func NewGetSIMSerialNumber() text.TextRule {
 	}
 }
 
-func NewGetSIMProviderDetails() text.TextRule {
-	return text.TextRule{
+func NewGetSIMProviderDetails() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-51",
 			Name:        "Get SIM Provider Details",
@@ -920,8 +920,8 @@ func NewGetSIMProviderDetails() text.TextRule {
 	}
 }
 
-func NewGetSIMOperatorName() text.TextRule {
-	return text.TextRule{
+func NewGetSIMOperatorName() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-52",
 			Name:        "Get SIM Operator Name",
@@ -937,8 +937,8 @@ func NewGetSIMOperatorName() text.TextRule {
 	}
 }
 
-func NewQueryDatabaseOfSMSContacts() text.TextRule {
-	return text.TextRule{
+func NewQueryDatabaseOfSMSContacts() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-53",
 			Name:        "Query Database of SMS, Contacts etc.",
@@ -955,8 +955,8 @@ func NewQueryDatabaseOfSMSContacts() text.TextRule {
 }
 
 // Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
-func NewPotentialPathTraversal() text.TextRule {
-	return text.TextRule{
+func NewPotentialPathTraversal() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-54",
 			Name:        "Potential Path Traversal (file read)",
@@ -972,8 +972,8 @@ func NewPotentialPathTraversal() text.TextRule {
 	}
 }
 
-func NewJakartaAndPotentialPathTraversal() text.TextRule {
-	return text.TextRule{
+func NewJakartaAndPotentialPathTraversal() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-55",
 			Name:        "Potential Path Traversal (file read)",
@@ -989,8 +989,8 @@ func NewJakartaAndPotentialPathTraversal() text.TextRule {
 	}
 }
 
-func NewPotentialPathTraversalUsingScalaAPI() text.TextRule {
-	return text.TextRule{
+func NewPotentialPathTraversalUsingScalaAPI() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-56",
 			Name:        "Potential Path Traversal Using scala API (file read)",
@@ -1005,8 +1005,8 @@ func NewPotentialPathTraversalUsingScalaAPI() text.TextRule {
 	}
 }
 
-func NewSMTPHeaderInjection() text.TextRule {
-	return text.TextRule{
+func NewSMTPHeaderInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-57",
 			Name:        "SMTP Header Injection",
@@ -1023,8 +1023,8 @@ func NewSMTPHeaderInjection() text.TextRule {
 	}
 }
 
-func NewInsecureSMTPSSLConnection() text.TextRule {
-	return text.TextRule{
+func NewInsecureSMTPSSLConnection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-58",
 			Name:        "Insecure SMTP SSL connection",
@@ -1040,8 +1040,8 @@ func NewInsecureSMTPSSLConnection() text.TextRule {
 	}
 }
 
-func NewPersistentCookieUsage() text.TextRule {
-	return text.TextRule{
+func NewPersistentCookieUsage() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-59",
 			Name:        "Persistent Cookie Usage",
@@ -1057,8 +1057,8 @@ func NewPersistentCookieUsage() text.TextRule {
 	}
 }
 
-func NewAnonymousLDAPBind() text.TextRule {
-	return text.TextRule{
+func NewAnonymousLDAPBind() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-60",
 			Name:        "Anonymous LDAP bind",
@@ -1074,8 +1074,8 @@ func NewAnonymousLDAPBind() text.TextRule {
 	}
 }
 
-func NewLDAPEntryPoisoning() text.TextRule {
-	return text.TextRule{
+func NewLDAPEntryPoisoning() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-61",
 			Name:        "LDAP Entry Poisoning",
@@ -1091,8 +1091,8 @@ func NewLDAPEntryPoisoning() text.TextRule {
 	}
 }
 
-func NewIgnoringXMLCommentsInSAML() text.TextRule {
-	return text.TextRule{
+func NewIgnoringXMLCommentsInSAML() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-62",
 			Name:        "Ignoring XML comments in SAML",
@@ -1108,8 +1108,8 @@ func NewIgnoringXMLCommentsInSAML() text.TextRule {
 	}
 }
 
-func NewInformationExposureThroughAnErrorMessage() text.TextRule {
-	return text.TextRule{
+func NewInformationExposureThroughAnErrorMessage() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-63",
 			Name:        "Information Exposure Through An Error Message",
@@ -1125,8 +1125,8 @@ func NewInformationExposureThroughAnErrorMessage() text.TextRule {
 	}
 }
 
-func NewHTTPParameterPollution() text.TextRule {
-	return text.TextRule{
+func NewHTTPParameterPollution() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-64",
 			Name:        "HTTP Parameter Pollution",
@@ -1142,8 +1142,8 @@ func NewHTTPParameterPollution() text.TextRule {
 	}
 }
 
-func NewAWSQueryInjection() text.TextRule {
-	return text.TextRule{
+func NewAWSQueryInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-65",
 			Name:        "AWS Query Injection",
@@ -1161,8 +1161,8 @@ func NewAWSQueryInjection() text.TextRule {
 	}
 }
 
-func NewPotentialTemplateInjectionPebble() text.TextRule {
-	return text.TextRule{
+func NewPotentialTemplateInjectionPebble() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-66",
 			Name:        "Potential template injection with Pebble ",
@@ -1179,8 +1179,8 @@ func NewPotentialTemplateInjectionPebble() text.TextRule {
 	}
 }
 
-func NewPotentialTemplateInjectionFreemarker() text.TextRule {
-	return text.TextRule{
+func NewPotentialTemplateInjectionFreemarker() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-67",
 			Name:        "Potential template injection with Freemarker ",
@@ -1197,8 +1197,8 @@ func NewPotentialTemplateInjectionFreemarker() text.TextRule {
 	}
 }
 
-func NewRequestDispatcherFileDisclosure() text.TextRule {
-	return text.TextRule{
+func NewRequestDispatcherFileDisclosure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-68",
 			Name:        "Request Dispatcher File Disclosure",
@@ -1214,8 +1214,8 @@ func NewRequestDispatcherFileDisclosure() text.TextRule {
 	}
 }
 
-func NewSpringFileDisclosure() text.TextRule {
-	return text.TextRule{
+func NewSpringFileDisclosure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-69",
 			Name:        "Spring File Disclosure ",
@@ -1231,8 +1231,8 @@ func NewSpringFileDisclosure() text.TextRule {
 	}
 }
 
-func NewPotentialCodeScriptInjection() text.TextRule {
-	return text.TextRule{
+func NewPotentialCodeScriptInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-70",
 			Name:        "Potential code injection when using Script Engine",
@@ -1249,8 +1249,8 @@ func NewPotentialCodeScriptInjection() text.TextRule {
 	}
 }
 
-func NewStrutsFileDisclosure() text.TextRule {
-	return text.TextRule{
+func NewStrutsFileDisclosure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-71",
 			Name:        "Struts File Disclosure ",
@@ -1266,8 +1266,8 @@ func NewStrutsFileDisclosure() text.TextRule {
 	}
 }
 
-func NewUnsafeJacksonDeserializationConfiguration() text.TextRule {
-	return text.TextRule{
+func NewUnsafeJacksonDeserializationConfiguration() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-72",
 			Name:        "Unsafe Jackson deserialization configuration ",
@@ -1284,8 +1284,8 @@ func NewUnsafeJacksonDeserializationConfiguration() text.TextRule {
 	}
 }
 
-func NewObjectDeserializationUsed() text.TextRule {
-	return text.TextRule{
+func NewObjectDeserializationUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-73",
 			Name:        "Object deserialization is used",
@@ -1303,8 +1303,8 @@ func NewObjectDeserializationUsed() text.TextRule {
 	}
 }
 
-func NewPotentialCodeScriptInjectionWithSpringExpression() text.TextRule {
-	return text.TextRule{
+func NewPotentialCodeScriptInjectionWithSpringExpression() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-74",
 			Name:        "Potential code injection when using Spring Expression",
@@ -1320,8 +1320,8 @@ func NewPotentialCodeScriptInjectionWithSpringExpression() text.TextRule {
 	}
 }
 
-func NewCookieWithoutTheHttpOnlyFlag() text.TextRule {
-	return text.TextRule{
+func NewCookieWithoutTheHttpOnlyFlag() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-75",
 			Name:        "Cookie without the HttpOnly flag ",
@@ -1337,8 +1337,8 @@ func NewCookieWithoutTheHttpOnlyFlag() text.TextRule {
 	}
 }
 
-func NewWebViewWithGeolocationActivated() text.TextRule {
-	return text.TextRule{
+func NewWebViewWithGeolocationActivated() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-76",
 			Name:        "WebView with geolocation activated",
@@ -1355,8 +1355,8 @@ func NewWebViewWithGeolocationActivated() text.TextRule {
 	}
 }
 
-func NewUseOfESAPIEncryptor() text.TextRule {
-	return text.TextRule{
+func NewUseOfESAPIEncryptor() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-77",
 			Name:        "Use of ESAPI Encryptor",
@@ -1374,8 +1374,8 @@ func NewUseOfESAPIEncryptor() text.TextRule {
 	}
 }
 
-func NewStaticIV() text.TextRule {
-	return text.TextRule{
+func NewStaticIV() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-78",
 			Name:        "Static IV",
@@ -1391,8 +1391,8 @@ func NewStaticIV() text.TextRule {
 	}
 }
 
-func NewXMLDecoderUsage() text.TextRule {
-	return text.TextRule{
+func NewXMLDecoderUsage() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-79",
 			Name:        "XML Decoder usage",
@@ -1408,8 +1408,8 @@ func NewXMLDecoderUsage() text.TextRule {
 	}
 }
 
-func NewPotentialXSSInServlet() text.TextRule {
-	return text.TextRule{
+func NewPotentialXSSInServlet() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-80",
 			Name:        "Potential XSS in Servlet",
@@ -1426,8 +1426,8 @@ func NewPotentialXSSInServlet() text.TextRule {
 	}
 }
 
-func NewEscapingOfSpecialXMLCharactersIsDisabled() text.TextRule {
-	return text.TextRule{
+func NewEscapingOfSpecialXMLCharactersIsDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-81",
 			Name:        "Escaping of special XML characters is disabled",
@@ -1443,8 +1443,8 @@ func NewEscapingOfSpecialXMLCharactersIsDisabled() text.TextRule {
 	}
 }
 
-func NewDynamicVariableInSpringExpression() text.TextRule {
-	return text.TextRule{
+func NewDynamicVariableInSpringExpression() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-82",
 			Name:        "Dynamic variable in Spring expression",
@@ -1460,8 +1460,8 @@ func NewDynamicVariableInSpringExpression() text.TextRule {
 	}
 }
 
-func NewRSAUsageWithShortKey() text.TextRule {
-	return text.TextRule{
+func NewRSAUsageWithShortKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-83",
 			Name:        "RSA usage with short key",
@@ -1477,8 +1477,8 @@ func NewRSAUsageWithShortKey() text.TextRule {
 	}
 }
 
-func NewBlowfishUsageWithShortKey() text.TextRule {
-	return text.TextRule{
+func NewBlowfishUsageWithShortKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-84",
 			Name:        "Blowfish usage with short key",
@@ -1494,8 +1494,8 @@ func NewBlowfishUsageWithShortKey() text.TextRule {
 	}
 }
 
-func NewClassesShouldNotBeLoadedDynamically() text.TextRule {
-	return text.TextRule{
+func NewClassesShouldNotBeLoadedDynamically() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-85",
 			Name:        "Classes should not be loaded dynamically",
@@ -1513,8 +1513,8 @@ func NewClassesShouldNotBeLoadedDynamically() text.TextRule {
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-12
 //
-//func NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue() text.TextRule {
-//	return text.TextRule{
+//func NewHostnameVerifierVerifyShouldNotAlwaysReturnTrue() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-86",
 //			Name:        "HostnameVerifier.verify should not always return true",
@@ -1531,8 +1531,8 @@ func NewClassesShouldNotBeLoadedDynamically() text.TextRule {
 //	}
 //}
 
-func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() text.TextRule {
-	return text.TextRule{
+func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-87",
 			Name:        "XPath expressions should not be vulnerable to injection attacks",
@@ -1548,8 +1548,8 @@ func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() text.TextRule 
 	}
 }
 
-func NewExceptionsShouldNotBeThrownFromServletMethods() text.TextRule {
-	return text.TextRule{
+func NewExceptionsShouldNotBeThrownFromServletMethods() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-88",
 			Name:        "Exceptions should not be thrown from servlet methods",
@@ -1566,8 +1566,8 @@ func NewExceptionsShouldNotBeThrownFromServletMethods() text.TextRule {
 	}
 }
 
-func NewFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks() text.TextRule {
-	return text.TextRule{
+func NewFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:   "HS-JAVA-89",
 			Name: "I/O function calls should not be vulnerable to path injection attacks",
@@ -1586,8 +1586,8 @@ A successful attack might give an attacker the ability to read, modify, or delet
 	}
 }
 
-func NewActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization() text.TextRule {
-	return text.TextRule{
+func NewActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-90",
 			Name:        "ActiveMQConnectionFactory should not be vulnerable to malicious code deserialization",
@@ -1603,8 +1603,8 @@ func NewActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization() text
 	}
 }
 
-func NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks() text.TextRule {
-	return text.TextRule{
+func NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-91",
 			Name:        "HTTP response headers should not be vulnerable to injection attacks",
@@ -1621,8 +1621,8 @@ func NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks() text.TextRu
 	}
 }
 
-func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.TextRule {
-	return text.TextRule{
+func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-92",
 			Name:        "OpenSAML2 should be configured to prevent authentication bypass",
@@ -1639,8 +1639,8 @@ func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() text.TextRule
 }
 
 // Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
-func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-93",
 			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
@@ -1656,8 +1656,8 @@ func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-94",
 			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
@@ -1673,8 +1673,8 @@ func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() text.
 	}
 }
 
-func NewLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
-	return text.TextRule{
+func NewLDAPAuthenticatedAnalyzeYourCode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-95",
 			Name:        "LDAP authenticated Analyze your code",
@@ -1691,8 +1691,8 @@ func NewLDAPAuthenticatedAnalyzeYourCode() text.TextRule {
 }
 
 // Deprecated: the javax package is deprecated in the Jakarta EE newest version. We'll use jakarta package.
-func NewWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
-	return text.TextRule{
+func NewWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-96",
 			Name:        "Web applications should not have a main method",
@@ -1708,8 +1708,8 @@ func NewWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	}
 }
 
-func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
-	return text.TextRule{
+func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-97",
 			Name:        "Web applications should not have a main method",
@@ -1725,8 +1725,8 @@ func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() text.TextRule {
 	}
 }
 
-func NewSecureRandomSeedsShouldNotBePredictable() text.TextRule {
-	return text.TextRule{
+func NewSecureRandomSeedsShouldNotBePredictable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-98",
 			Name:        "SecureRandom seeds should not be predictable",
@@ -1742,8 +1742,8 @@ func NewSecureRandomSeedsShouldNotBePredictable() text.TextRule {
 	}
 }
 
-func NewFileIsWorldReadable() text.TextRule {
-	return text.TextRule{
+func NewFileIsWorldReadable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-99",
 			Name:        "File Is World Readable",
@@ -1759,8 +1759,8 @@ func NewFileIsWorldReadable() text.TextRule {
 	}
 }
 
-func NewFileIsWorldWritable() text.TextRule {
-	return text.TextRule{
+func NewFileIsWorldWritable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-100",
 			Name:        "File Is World Writable",
@@ -1776,8 +1776,8 @@ func NewFileIsWorldWritable() text.TextRule {
 	}
 }
 
-func NewNoWriteExternalContent() text.TextRule {
-	return text.TextRule{
+func NewNoWriteExternalContent() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-101",
 			Name:        "No Write External Content",
@@ -1793,8 +1793,8 @@ func NewNoWriteExternalContent() text.TextRule {
 	}
 }
 
-func NewNoUseIVsWeak() text.TextRule {
-	return text.TextRule{
+func NewNoUseIVsWeak() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-102",
 			Name:        "No use IVs weak",
@@ -1810,8 +1810,8 @@ func NewNoUseIVsWeak() text.TextRule {
 	}
 }
 
-func NewRootDetectionCapabilities() text.TextRule {
-	return text.TextRule{
+func NewRootDetectionCapabilities() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-103",
 			Name:        "This App may have root detection capabilities.",
@@ -1832,8 +1832,8 @@ func NewRootDetectionCapabilities() text.TextRule {
 	}
 }
 
-func NewJARURLConnection() text.TextRule {
-	return text.TextRule{
+func NewJARURLConnection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-104",
 			Name:        "JAR URL Connection",
@@ -1852,8 +1852,8 @@ func NewJARURLConnection() text.TextRule {
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-23
 //
-//func NewSetOrReadClipboardData() text.TextRule {
-//	return text.TextRule{
+//func NewSetOrReadClipboardData() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-JAVA-105",
 //			Name:        "Set or Read Clipboard data",
@@ -1872,8 +1872,8 @@ func NewJARURLConnection() text.TextRule {
 
 // Deprecated: Repeated vulnerability, same as HS-JAVA-111
 //
-//func NewMessageDigest() text.TextRule {
-//	return text.TextRule{
+//func NewMessageDigest() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:   "HS-JAVA-106",
 //			Name: "Message Digest",
@@ -1890,8 +1890,8 @@ func NewJARURLConnection() text.TextRule {
 //	}
 //}
 
-func NewOverlyPermissiveFilePermission() text.TextRule {
-	return text.TextRule{
+func NewOverlyPermissiveFilePermission() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-107",
 			Name:        "Overly permissive file permission",
@@ -1909,8 +1909,8 @@ func NewOverlyPermissiveFilePermission() text.TextRule {
 	}
 }
 
-func NewCipherGetInstanceInsecure() text.TextRule {
-	return text.TextRule{
+func NewCipherGetInstanceInsecure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-108",
 			Name:        "DES, DESede, RSA is insecure",
@@ -1930,8 +1930,8 @@ func NewCipherGetInstanceInsecure() text.TextRule {
 	}
 }
 
-func NewHiddenElements() text.TextRule {
-	return text.TextRule{
+func NewHiddenElements() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-109",
 			Name:        "Hidden elements",
@@ -1946,8 +1946,8 @@ func NewHiddenElements() text.TextRule {
 	}
 }
 
-func NewWeakCypherBlockMode() text.TextRule {
-	return text.TextRule{
+func NewWeakCypherBlockMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-110",
 			Name:        "Weak block mode for Cryptographic Hash Function",
@@ -1966,8 +1966,8 @@ func NewWeakCypherBlockMode() text.TextRule {
 	}
 }
 
-func NewWeakHash() text.TextRule {
-	return text.TextRule{
+func NewWeakHash() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-111",
 			Name:        "Weak Cryptographic Hash Function used",
@@ -1986,8 +1986,8 @@ func NewWeakHash() text.TextRule {
 	}
 }
 
-func NewPossibleFileWithVulnerabilityWhenOpen() text.TextRule {
-	return text.TextRule{
+func NewPossibleFileWithVulnerabilityWhenOpen() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-112",
 			Name:        "Possible  File With Vulnerability When Open",
@@ -2002,8 +2002,8 @@ func NewPossibleFileWithVulnerabilityWhenOpen() text.TextRule {
 	}
 }
 
-func NewSensitiveInformationNotEncrypted() text.TextRule {
-	return text.TextRule{
+func NewSensitiveInformationNotEncrypted() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-113",
 			Name:        "Sensitive Information Not Encrypted",
@@ -2018,8 +2018,8 @@ func NewSensitiveInformationNotEncrypted() text.TextRule {
 	}
 }
 
-func NewInsecureRandomNumberGenerator() text.TextRule {
-	return text.TextRule{
+func NewInsecureRandomNumberGenerator() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-114",
 			Name:        "Insecure Random Number Generator",
@@ -2035,8 +2035,8 @@ func NewInsecureRandomNumberGenerator() text.TextRule {
 	}
 }
 
-func NewNoDefaultHash() text.TextRule {
-	return text.TextRule{
+func NewNoDefaultHash() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-115",
 			Name:        "No Default  Hash",
@@ -2051,8 +2051,8 @@ func NewNoDefaultHash() text.TextRule {
 	}
 }
 
-func NewLayoutParamsFlagSecure() text.TextRule {
-	return text.TextRule{
+func NewLayoutParamsFlagSecure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-116",
 			Name:        "Layout Params Flag Secure",
@@ -2067,8 +2067,8 @@ func NewLayoutParamsFlagSecure() text.TextRule {
 	}
 }
 
-func NewNoUseSQLCipher() text.TextRule {
-	return text.TextRule{
+func NewNoUseSQLCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-117",
 			Name:        "No use SQL Cipher",
@@ -2083,8 +2083,8 @@ func NewNoUseSQLCipher() text.TextRule {
 	}
 }
 
-func NewPreventTapJackingAttacks() text.TextRule {
-	return text.TextRule{
+func NewPreventTapJackingAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-118",
 			Name:        "Prevent Tap Jacking Attacks",
@@ -2099,8 +2099,8 @@ func NewPreventTapJackingAttacks() text.TextRule {
 	}
 }
 
-func NewPreventWriteSensitiveInformationInTmpFile() text.TextRule {
-	return text.TextRule{
+func NewPreventWriteSensitiveInformationInTmpFile() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-119",
 			Name:        "Prevent Write sensitive information in tmp file",
@@ -2115,8 +2115,8 @@ func NewPreventWriteSensitiveInformationInTmpFile() text.TextRule {
 	}
 }
 
-func NewGetWindowFlagSecure() text.TextRule {
-	return text.TextRule{
+func NewGetWindowFlagSecure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-120",
 			Name:        "Get Window Flag Secure",
@@ -2131,8 +2131,8 @@ func NewGetWindowFlagSecure() text.TextRule {
 	}
 }
 
-func NewLoadingNativeCode() text.TextRule {
-	return text.TextRule{
+func NewLoadingNativeCode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-121",
 			Name:        "Loading Native Code",
@@ -2147,8 +2147,8 @@ func NewLoadingNativeCode() text.TextRule {
 	}
 }
 
-func NewDynamicClassAndDexloading() text.TextRule {
-	return text.TextRule{
+func NewDynamicClassAndDexloading() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-122",
 			Name:        "Dynamic Class and Dexloading",
@@ -2163,8 +2163,8 @@ func NewDynamicClassAndDexloading() text.TextRule {
 	}
 }
 
-func NewCryptoImport() text.TextRule {
-	return text.TextRule{
+func NewCryptoImport() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-123",
 			Name:        " Crypto import",
@@ -2179,8 +2179,8 @@ func NewCryptoImport() text.TextRule {
 	}
 }
 
-func NewStartingService() text.TextRule {
-	return text.TextRule{
+func NewStartingService() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-124",
 			Name:        "Starting Service",
@@ -2195,8 +2195,8 @@ func NewStartingService() text.TextRule {
 	}
 }
 
-func NewSendingBroadcast() text.TextRule {
-	return text.TextRule{
+func NewSendingBroadcast() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-125",
 			Name:        "Sending Broadcast",
@@ -2211,8 +2211,8 @@ func NewSendingBroadcast() text.TextRule {
 	}
 }
 
-func NewLocalFileOperations() text.TextRule {
-	return text.TextRule{
+func NewLocalFileOperations() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-126",
 			Name:        "Local File I/O Operations",
@@ -2227,8 +2227,8 @@ func NewLocalFileOperations() text.TextRule {
 	}
 }
 
-func NewInterProcessCommunication() text.TextRule {
-	return text.TextRule{
+func NewInterProcessCommunication() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-127",
 			Name:        "Inter Process Communication",
@@ -2243,8 +2243,8 @@ func NewInterProcessCommunication() text.TextRule {
 	}
 }
 
-func NewDefaultHttpClient() text.TextRule {
-	return text.TextRule{
+func NewDefaultHttpClient() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-128",
 			Name:        "DefaultHttpClient with default constructor is not compatible with TLS 1.2",
@@ -2259,8 +2259,8 @@ func NewDefaultHttpClient() text.TextRule {
 	}
 }
 
-func NewWeakSSLContext() text.TextRule {
-	return text.TextRule{
+func NewWeakSSLContext() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-129",
 			Name:        "Weak SSLContext",
@@ -2275,8 +2275,8 @@ func NewWeakSSLContext() text.TextRule {
 	}
 }
 
-func NewHostnameVerifierThatAcceptAnySignedCertificates() text.TextRule {
-	return text.TextRule{
+func NewHostnameVerifierThatAcceptAnySignedCertificates() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-130",
 			Name:        "HostnameVerifier that accept any signed certificates",
@@ -2291,8 +2291,8 @@ func NewHostnameVerifierThatAcceptAnySignedCertificates() text.TextRule {
 	}
 }
 
-func NewURLRewritingMethod() text.TextRule {
-	return text.TextRule{
+func NewURLRewritingMethod() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-131",
 			Name:        "URL rewriting method",
@@ -2307,8 +2307,8 @@ func NewURLRewritingMethod() text.TextRule {
 	}
 }
 
-func NewDisablingHTMLEscaping() text.TextRule {
-	return text.TextRule{
+func NewDisablingHTMLEscaping() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-132",
 			Name:        "Disabling HTML escaping",
@@ -2323,8 +2323,8 @@ func NewDisablingHTMLEscaping() text.TextRule {
 	}
 }
 
-func NewOverlyPermissiveCORSPolicy() text.TextRule {
-	return text.TextRule{
+func NewOverlyPermissiveCORSPolicy() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-133",
 			Name:        "Overly permissive CORS policy",
@@ -2339,8 +2339,8 @@ func NewOverlyPermissiveCORSPolicy() text.TextRule {
 	}
 }
 
-func NewSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-134",
 			Name:        "SQL Injection",
@@ -2355,8 +2355,8 @@ func NewSQLInjection() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithTurbine() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithTurbine() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-135",
 			Name:        "SQL Injection With Turbine",
@@ -2371,8 +2371,8 @@ func NewSQLInjectionWithTurbine() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithHibernate() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithHibernate() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-136",
 			Name:        "SQL Injection With Hibernate",
@@ -2387,8 +2387,8 @@ func NewSQLInjectionWithHibernate() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithJDO() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithJDO() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-137",
 			Name:        "SQL Injection With JDO",
@@ -2403,8 +2403,8 @@ func NewSQLInjectionWithJDO() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithJPA() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithJPA() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-138",
 			Name:        "SQL Injection With JPA",
@@ -2419,8 +2419,8 @@ func NewSQLInjectionWithJPA() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithSpringJDBC() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithSpringJDBC() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-139",
 			Name:        "SQL Injection Spring JDBC",
@@ -2435,8 +2435,8 @@ func NewSQLInjectionWithSpringJDBC() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithJDBC() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithJDBC() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-140",
 			Name:        "SQL Injection JDBC",
@@ -2451,8 +2451,8 @@ func NewSQLInjectionWithJDBC() text.TextRule {
 	}
 }
 
-func NewLDAPInjection() text.TextRule {
-	return text.TextRule{
+func NewLDAPInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-141",
 			Name:        "Potential LDAP Injection",
@@ -2467,8 +2467,8 @@ func NewLDAPInjection() text.TextRule {
 	}
 }
 
-func NewPotentialExternalControl() text.TextRule {
-	return text.TextRule{
+func NewPotentialExternalControl() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-142",
 			Name:        "Potential external control of configuration",
@@ -2483,8 +2483,8 @@ func NewPotentialExternalControl() text.TextRule {
 	}
 }
 
-func NewBadHexadecimalConcatenation() text.TextRule {
-	return text.TextRule{
+func NewBadHexadecimalConcatenation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-143",
 			Name:        "Bad hexadecimal concatenation",
@@ -2499,8 +2499,8 @@ func NewBadHexadecimalConcatenation() text.TextRule {
 	}
 }
 
-func NewNullCipherInsecure() text.TextRule {
-	return text.TextRule{
+func NewNullCipherInsecure() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-144",
 			Name:        "NullCipher is insecure",
@@ -2515,8 +2515,8 @@ func NewNullCipherInsecure() text.TextRule {
 	}
 }
 
-func NewUnsafeHashEquals() text.TextRule {
-	return text.TextRule{
+func NewUnsafeHashEquals() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-145",
 			Name:        "Unsafe hash equals",
@@ -2531,8 +2531,8 @@ func NewUnsafeHashEquals() text.TextRule {
 	}
 }
 
-func NewUnvalidatedRedirect() text.TextRule {
-	return text.TextRule{
+func NewUnvalidatedRedirect() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-146",
 			Name:        "Unvalidated Redirect",
@@ -2547,8 +2547,8 @@ func NewUnvalidatedRedirect() text.TextRule {
 	}
 }
 
-func NewRequestMappingMethodsNotPublic() text.TextRule {
-	return text.TextRule{
+func NewRequestMappingMethodsNotPublic() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-147",
 			Name:        "@RequestMapping methods should be public",
@@ -2563,8 +2563,8 @@ func NewRequestMappingMethodsNotPublic() text.TextRule {
 	}
 }
 
-func NewLDAPDeserializationNotDisabled() text.TextRule {
-	return text.TextRule{
+func NewLDAPDeserializationNotDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-148",
 			Name:        "LDAP deserialization should be disabled",
@@ -2579,8 +2579,8 @@ func NewLDAPDeserializationNotDisabled() text.TextRule {
 	}
 }
 
-func NewDatabasesPasswordNotProtected() text.TextRule {
-	return text.TextRule{
+func NewDatabasesPasswordNotProtected() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-149",
 			Name:        "Databases should be password-protected",
@@ -2595,8 +2595,8 @@ func NewDatabasesPasswordNotProtected() text.TextRule {
 	}
 }
 
-func NewVulnerableRemoteCodeInjectionApacheLog4j() text.TextRule {
-	return text.TextRule{
+func NewVulnerableRemoteCodeInjectionApacheLog4j() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-150",
 			Name:        "Remote code injection Apache Log4j",

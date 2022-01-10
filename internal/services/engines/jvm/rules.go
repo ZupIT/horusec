@@ -73,8 +73,8 @@ func Rules() []engine.Rule {
 	}
 }
 
-func NewNoLogSensitiveInformation() text.TextRule {
-	return text.TextRule{
+func NewNoLogSensitiveInformation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-1",
 			Name:        "No Log Sensitive Information",
@@ -89,8 +89,8 @@ func NewNoLogSensitiveInformation() text.TextRule {
 	}
 }
 
-func NewHTTPRequestsConnectionsAndSessions() text.TextRule {
-	return text.TextRule{
+func NewHTTPRequestsConnectionsAndSessions() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-2",
 			Name:        "HTTP Requests, Connections and Sessions",
@@ -105,8 +105,8 @@ func NewHTTPRequestsConnectionsAndSessions() text.TextRule {
 	}
 }
 
-func NewNoUsesSafetyNetAPI() text.TextRule {
-	return text.TextRule{
+func NewNoUsesSafetyNetAPI() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-3",
 			Name:        "No uses safety api",
@@ -121,8 +121,8 @@ func NewNoUsesSafetyNetAPI() text.TextRule {
 	}
 }
 
-func NewNoUsesContentProvider() text.TextRule {
-	return text.TextRule{
+func NewNoUsesContentProvider() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-4",
 			Name:        "No uses Content Provider",
@@ -137,8 +137,8 @@ func NewNoUsesContentProvider() text.TextRule {
 	}
 }
 
-func NewNoUseWithUnsafeBytes() text.TextRule {
-	return text.TextRule{
+func NewNoUseWithUnsafeBytes() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-5",
 			Name:        "No Use With Unsafe Bytes",
@@ -153,8 +153,8 @@ func NewNoUseWithUnsafeBytes() text.TextRule {
 	}
 }
 
-func NewNoUseLocalFileIOOperations() text.TextRule {
-	return text.TextRule{
+func NewNoUseLocalFileIOOperations() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-6",
 			Name:        "Local File I/O Operations",
@@ -169,8 +169,8 @@ func NewNoUseLocalFileIOOperations() text.TextRule {
 	}
 }
 
-func NewWebViewComponent() text.TextRule {
-	return text.TextRule{
+func NewWebViewComponent() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-7",
 			Name:        "WebView Component",
@@ -185,8 +185,8 @@ func NewWebViewComponent() text.TextRule {
 	}
 }
 
-func NewEncryptionAPI() text.TextRule {
-	return text.TextRule{
+func NewEncryptionAPI() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-8",
 			Name:        "Encryption API",
@@ -201,8 +201,8 @@ func NewEncryptionAPI() text.TextRule {
 	}
 }
 
-func NewKeychainAccess() text.TextRule {
-	return text.TextRule{
+func NewKeychainAccess() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-9",
 			Name:        "Keychain Access",
@@ -217,8 +217,8 @@ func NewKeychainAccess() text.TextRule {
 	}
 }
 
-func NewNoUseProhibitedAPIs() text.TextRule {
-	return text.TextRule{
+func NewNoUseProhibitedAPIs() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-10",
 			Name:        "No Use Prohibited APIs",
@@ -233,8 +233,8 @@ func NewNoUseProhibitedAPIs() text.TextRule {
 	}
 }
 
-func NewApplicationAllowMITMAttacks() text.TextRule {
-	return text.TextRule{
+func NewApplicationAllowMITMAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-11",
 			Name:        "Application allow MITM attacks",
@@ -249,8 +249,8 @@ func NewApplicationAllowMITMAttacks() text.TextRule {
 	}
 }
 
-func NewUIWebViewInApplicationIgnoringErrorsSSL() text.TextRule {
-	return text.TextRule{
+func NewUIWebViewInApplicationIgnoringErrorsSSL() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-12",
 			Name:        "UIWebView in application ignoring errors SSL",
@@ -265,8 +265,8 @@ func NewUIWebViewInApplicationIgnoringErrorsSSL() text.TextRule {
 	}
 }
 
-func NewNoListClipboardChanges() text.TextRule {
-	return text.TextRule{
+func NewNoListClipboardChanges() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-13",
 			Name:        "No List changes on the clipboard",
@@ -281,8 +281,8 @@ func NewNoListClipboardChanges() text.TextRule {
 	}
 }
 
-func NewApplicationUsingSQLite() text.TextRule {
-	return text.TextRule{
+func NewApplicationUsingSQLite() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-14",
 			Name:        "The application is using SQLite. Confidential information must be encrypted.",
@@ -297,8 +297,8 @@ func NewApplicationUsingSQLite() text.TextRule {
 	}
 }
 
-func NewNoUseNSTemporaryDirectory() text.TextRule {
-	return text.TextRule{
+func NewNoUseNSTemporaryDirectory() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-15",
 			Name:        "No use NSTemporaryDirectory",
@@ -313,8 +313,8 @@ func NewNoUseNSTemporaryDirectory() text.TextRule {
 	}
 }
 
-func NewNoCopiesDataToTheClipboard() text.TextRule {
-	return text.TextRule{
+func NewNoCopiesDataToTheClipboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-16",
 			Name:        "No copies data to the Clipboard",
@@ -329,8 +329,8 @@ func NewNoCopiesDataToTheClipboard() text.TextRule {
 	}
 }
 
-func NewNoDownloadFileUsingAndroidDownloadManager() text.TextRule {
-	return text.TextRule{
+func NewNoDownloadFileUsingAndroidDownloadManager() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-17",
 			Name:        "No Download File Using Android Download Manager",
@@ -346,8 +346,8 @@ func NewNoDownloadFileUsingAndroidDownloadManager() text.TextRule {
 	}
 }
 
-func NewAndroidKeystore() text.TextRule {
-	return text.TextRule{
+func NewAndroidKeystore() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-18",
 			Name:        "Android Keystore",
@@ -363,8 +363,8 @@ func NewAndroidKeystore() text.TextRule {
 	}
 }
 
-func NewAndroidNotifications() text.TextRule {
-	return text.TextRule{
+func NewAndroidNotifications() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-19",
 			Name:        "Android Notifications",
@@ -380,8 +380,8 @@ func NewAndroidNotifications() text.TextRule {
 	}
 }
 
-func NewPotentialAndroidSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewPotentialAndroidSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-20",
 			Name:        "Potential Android SQL Injection",
@@ -397,8 +397,8 @@ func NewPotentialAndroidSQLInjection() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWithSQLite() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWithSQLite() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-21",
 			Name:        "SQL Injection With SQLite",
@@ -414,8 +414,8 @@ func NewSQLInjectionWithSQLite() text.TextRule {
 	}
 }
 
-func NewWebViewGETRequest() text.TextRule {
-	return text.TextRule{
+func NewWebViewGETRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-22",
 			Name:        "WebView GET Request",
@@ -432,8 +432,8 @@ func NewWebViewGETRequest() text.TextRule {
 	}
 }
 
-func NewWebViewPOSTRequest() text.TextRule {
-	return text.TextRule{
+func NewWebViewPOSTRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-23",
 			Name:        "WebView POST Request",
@@ -450,8 +450,8 @@ func NewWebViewPOSTRequest() text.TextRule {
 	}
 }
 
-func NewBase64Decode() text.TextRule {
-	return text.TextRule{
+func NewBase64Decode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-24",
 			Name:        "Base64 Decode",
@@ -467,8 +467,8 @@ func NewBase64Decode() text.TextRule {
 	}
 }
 
-func NewKeychainAccessAndMatch() text.TextRule {
-	return text.TextRule{
+func NewKeychainAccessAndMatch() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-25",
 			Name:        "WebView Load Request",
@@ -484,8 +484,8 @@ func NewKeychainAccessAndMatch() text.TextRule {
 	}
 }
 
-func NewWebViewLoadRequest() text.TextRule {
-	return text.TextRule{
+func NewWebViewLoadRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-26",
 			Name:        "WebView Load Request",
@@ -501,8 +501,8 @@ func NewWebViewLoadRequest() text.TextRule {
 	}
 }
 
-func NewCookieStorage() text.TextRule {
-	return text.TextRule{
+func NewCookieStorage() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-27",
 			Name:        "Cookie Storage",
@@ -518,8 +518,8 @@ func NewCookieStorage() text.TextRule {
 	}
 }
 
-func NewSetReadClipboard() text.TextRule {
-	return text.TextRule{
+func NewSetReadClipboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-28",
 			Name:        "Set or Read Clipboard",
@@ -535,8 +535,8 @@ func NewSetReadClipboard() text.TextRule {
 	}
 }
 
-func NewUsingLoadHTMLStringCanResultInject() text.TextRule {
-	return text.TextRule{
+func NewUsingLoadHTMLStringCanResultInject() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-29",
 			Name:        "Using LoadHTMLString can result Inject",
@@ -552,8 +552,8 @@ func NewUsingLoadHTMLStringCanResultInject() text.TextRule {
 	}
 }
 
-func NewNoUseSFAntiPiracyJailbreak() text.TextRule {
-	return text.TextRule{
+func NewNoUseSFAntiPiracyJailbreak() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-30",
 			Name:        "No Use SFAntiPiracy Jailbreak",
@@ -570,8 +570,8 @@ func NewNoUseSFAntiPiracyJailbreak() text.TextRule {
 	}
 }
 
-func NewNoUseSFAntiPiracyIsPirated() text.TextRule {
-	return text.TextRule{
+func NewNoUseSFAntiPiracyIsPirated() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-31",
 			Name:        "No Use SFAntiPiracy IsPirated",
@@ -588,8 +588,8 @@ func NewNoUseSFAntiPiracyIsPirated() text.TextRule {
 	}
 }
 
-func NewWeakMd5HashUsing() text.TextRule {
-	return text.TextRule{
+func NewWeakMd5HashUsing() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-32",
 			Name:        "Weak md5 hash using",
@@ -605,8 +605,8 @@ func NewWeakMd5HashUsing() text.TextRule {
 	}
 }
 
-func NewWeakSha1HashUsing() text.TextRule {
-	return text.TextRule{
+func NewWeakSha1HashUsing() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-33",
 			Name:        "Weak sha1 hash using",
@@ -622,8 +622,8 @@ func NewWeakSha1HashUsing() text.TextRule {
 	}
 }
 
-func NewWeakECBEncryptionAlgorithmUsing() text.TextRule {
-	return text.TextRule{
+func NewWeakECBEncryptionAlgorithmUsing() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-34",
 			Name:        "Weak ECB encryption algorithm using",
@@ -639,8 +639,8 @@ func NewWeakECBEncryptionAlgorithmUsing() text.TextRule {
 	}
 }
 
-func NewUsingPtrace() text.TextRule {
-	return text.TextRule{
+func NewUsingPtrace() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-35",
 			Name:        "The application has anti-debugger using ptrace()",
@@ -656,8 +656,8 @@ func NewUsingPtrace() text.TextRule {
 	}
 }
 
-func NewSuperUserPrivileges() text.TextRule {
-	return text.TextRule{
+func NewSuperUserPrivileges() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-36",
 			Name:        "Super User Privileges",
@@ -676,8 +676,8 @@ func NewSuperUserPrivileges() text.TextRule {
 	}
 }
 
-func NewSendSMS() text.TextRule {
-	return text.TextRule{
+func NewSendSMS() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-37",
 			Name:        "Send SMS",
@@ -695,8 +695,8 @@ func NewSendSMS() text.TextRule {
 	}
 }
 
-func NewBase64Encode() text.TextRule {
-	return text.TextRule{
+func NewBase64Encode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-38",
 			Name:        "Base64 Encode",
@@ -713,8 +713,8 @@ func NewBase64Encode() text.TextRule {
 	}
 }
 
-func NewGpsLocation() text.TextRule {
-	return text.TextRule{
+func NewGpsLocation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-39",
 			Name:        "GPS Location",
@@ -733,8 +733,8 @@ func NewGpsLocation() text.TextRule {
 	}
 }
 
-func NewApplicationMayContainJailbreakDetectionMechanisms() text.TextRule {
-	return text.TextRule{
+func NewApplicationMayContainJailbreakDetectionMechanisms() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JVM-40",
 			Name:        "The application may contain Jailbreak detection mechanisms",

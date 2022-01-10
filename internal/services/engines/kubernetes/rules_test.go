@@ -15,6 +15,8 @@
 package kubernetes
 
 import (
+	"fmt"
+	"path/filepath"
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
@@ -23,17 +25,20 @@ import (
 )
 
 func TestRulesVulnerableCode(t *testing.T) {
+	tempDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-KUBERNETES-1",
-			Rule: NewAllowPrivilegeEscalation(),
-			Src:  SampleVulnerableHSKUBERNETES1,
+			Name:     "HS-KUBERNETES-1",
+			Rule:     NewAllowPrivilegeEscalation(),
+			Src:      SampleVulnerableHSKUBERNETES1,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVASCRIPT-2", ".test")),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "allowPrivilegeEscalation: true",
 					SourceLocation: engine.Location{
-						Line:   10,
-						Column: 1,
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVASCRIPT-2", ".test")),
+						Line:     10,
+						Column:   1,
 					},
 				},
 			},
@@ -44,11 +49,13 @@ func TestRulesVulnerableCode(t *testing.T) {
 }
 
 func TestRulesSafeCode(t *testing.T) {
+	tempDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-KUBERNETES-1",
-			Rule: NewAllowPrivilegeEscalation(),
-			Src:  SampleSafeHSKUBERNETES1,
+			Name:     "HS-KUBERNETES-1",
+			Rule:     NewAllowPrivilegeEscalation(),
+			Src:      SampleSafeHSKUBERNETES1,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVASCRIPT-2", ".test")),
 		},
 	}
 

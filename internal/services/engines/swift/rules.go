@@ -26,8 +26,8 @@ import (
 // Deprecated: This rule is not usage really in any swift project,
 // because when use sqlite3_exec internally it's running the commands sqlite3_prepare_v2, sqlite3_step, sqlite3_finalize
 // then is not necessary use sqlite3_finalize and this rule not will get anywhere vulnerability
-//func NewSQLiteDatabase() text.TextRule {
-//	return text.TextRule{
+//func NewSQLiteDatabase() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-SWIFT-1",
 //			Name:        "SQLite Database",
@@ -43,8 +43,8 @@ import (
 //	}
 //}
 
-func NewCoreDataDatabase() text.TextRule {
-	return text.TextRule{
+func NewCoreDataDatabase() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-2",
 			Name:        "CoreData Database",
@@ -60,8 +60,8 @@ func NewCoreDataDatabase() text.TextRule {
 	}
 }
 
-func NewDTLS12NotUsed() text.TextRule {
-	return text.TextRule{
+func NewDTLS12NotUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-3",
 			Name:        "DTLS 1.2 not used",
@@ -77,8 +77,8 @@ func NewDTLS12NotUsed() text.TextRule {
 	}
 }
 
-func NewTLS13NotUsed() text.TextRule {
-	return text.TextRule{
+func NewTLS13NotUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-4",
 			Name:        "TLS 1.3 not used",
@@ -94,8 +94,8 @@ func NewTLS13NotUsed() text.TextRule {
 	}
 }
 
-func NewReverseEngineering() text.TextRule {
-	return text.TextRule{
+func NewReverseEngineering() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-5",
 			Name:        "Reverse engineering",
@@ -113,8 +113,8 @@ func NewReverseEngineering() text.TextRule {
 	}
 }
 
-func NewWeakMD5CryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakMD5CryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-6",
 			Name:        "Weak MD5 hash using",
@@ -130,8 +130,8 @@ func NewWeakMD5CryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakCommonDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakCommonDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-7",
 			Name:        "Weak DES hash using",
@@ -147,8 +147,8 @@ func NewWeakCommonDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakIDZDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakIDZDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-8",
 			Name:        "Weak DES hash using",
@@ -164,8 +164,8 @@ func NewWeakIDZDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakBlowfishCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakBlowfishCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-9",
 			Name:        "Weak Cipher Mode",
@@ -181,8 +181,8 @@ func NewWeakBlowfishCryptoCipher() text.TextRule {
 	}
 }
 
-func NewMD6Collision() text.TextRule {
-	return text.TextRule{
+func NewMD6Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-10",
 			Name:        "Weak MD6 hash using",
@@ -198,8 +198,8 @@ func NewMD6Collision() text.TextRule {
 	}
 }
 
-func NewMD5Collision() text.TextRule {
-	return text.TextRule{
+func NewMD5Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-11",
 			Name:        "Weak MD5 hash using",
@@ -215,8 +215,8 @@ func NewMD5Collision() text.TextRule {
 	}
 }
 
-func NewSha1Collision() text.TextRule {
-	return text.TextRule{
+func NewSha1Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-12",
 			Name:        "Weak SHA1 hash using",
@@ -232,8 +232,8 @@ func NewSha1Collision() text.TextRule {
 	}
 }
 
-func NewJailbreakDetect() text.TextRule {
-	return text.TextRule{
+func NewJailbreakDetect() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-13",
 			Name:        "Jailbreak detection",
@@ -294,8 +294,8 @@ func NewJailbreakDetect() text.TextRule {
 	}
 }
 
-func NewLoadHTMLString() text.TextRule {
-	return text.TextRule{
+func NewLoadHTMLString() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-14",
 			Name:        "Javascript injection",
@@ -311,8 +311,8 @@ func NewLoadHTMLString() text.TextRule {
 	}
 }
 
-func NewWeakDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-15",
 			Name:        "Weak Cipher Mode",
@@ -328,8 +328,8 @@ func NewWeakDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewRealmDatabase() text.TextRule {
-	return text.TextRule{
+func NewRealmDatabase() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-16",
 			Name:        "Realm Database",
@@ -344,8 +344,8 @@ func NewRealmDatabase() text.TextRule {
 	}
 }
 
-func NewTLSMinimum() text.TextRule {
-	return text.TextRule{
+func NewTLSMinimum() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-17",
 			Name:        "Deperected tls property",
@@ -360,8 +360,8 @@ func NewTLSMinimum() text.TextRule {
 	}
 }
 
-func NewUIPasteboard() text.TextRule {
-	return text.TextRule{
+func NewUIPasteboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-18",
 			Name:        "UIPasteboard",
@@ -376,8 +376,8 @@ func NewUIPasteboard() text.TextRule {
 	}
 }
 
-func NewFileProtection() text.TextRule {
-	return text.TextRule{
+func NewFileProtection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-19",
 			Name:        "File protection",
@@ -392,8 +392,8 @@ func NewFileProtection() text.TextRule {
 	}
 }
 
-func NewWebViewSafari() text.TextRule {
-	return text.TextRule{
+func NewWebViewSafari() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-20",
 			Name:        "WebView Safari",
@@ -408,8 +408,8 @@ func NewWebViewSafari() text.TextRule {
 	}
 }
 
-func NewKeyboardCache() text.TextRule {
-	return text.TextRule{
+func NewKeyboardCache() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-21",
 			Name:        "Keyboard cache",
@@ -424,8 +424,8 @@ func NewKeyboardCache() text.TextRule {
 	}
 }
 
-func NewMD4Collision() text.TextRule {
-	return text.TextRule{
+func NewMD4Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-22",
 			Name:        "Weak MD4 hash using",
@@ -440,8 +440,8 @@ func NewMD4Collision() text.TextRule {
 	}
 }
 
-func NewMD2Collision() text.TextRule {
-	return text.TextRule{
+func NewMD2Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-23",
 			Name:        "Weak MD2 hash using",
@@ -456,8 +456,8 @@ func NewMD2Collision() text.TextRule {
 	}
 }
 
-func NewSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-24",
 			Name:        "SQL Injection",

@@ -23,8 +23,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewNoLogSensitiveInformationInConsole() text.TextRule {
-	return text.TextRule{
+func NewNoLogSensitiveInformationInConsole() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-1",
 			Name:        "No Log Sensitive Information in console",
@@ -39,8 +39,8 @@ func NewNoLogSensitiveInformationInConsole() text.TextRule {
 	}
 }
 
-func NewNoUseEval() text.TextRule {
-	return text.TextRule{
+func NewNoUseEval() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-2",
 			Name:        "No use eval",
@@ -55,8 +55,8 @@ func NewNoUseEval() text.TextRule {
 	}
 }
 
-func NewNoDisableTlsRejectUnauthorized() text.TextRule {
-	return text.TextRule{
+func NewNoDisableTlsRejectUnauthorized() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-3",
 			Name:        "No disable tls reject unauthorized",
@@ -71,8 +71,8 @@ func NewNoDisableTlsRejectUnauthorized() text.TextRule {
 	}
 }
 
-func NewNoUseMD5Hashing() text.TextRule {
-	return text.TextRule{
+func NewNoUseMD5Hashing() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-4",
 			Name:        "No use MD5 hashing",
@@ -87,8 +87,8 @@ func NewNoUseMD5Hashing() text.TextRule {
 	}
 }
 
-func NewNoUseSHA1Hashing() text.TextRule {
-	return text.TextRule{
+func NewNoUseSHA1Hashing() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-5",
 			Name:        "No use SAH1 hashing",
@@ -103,8 +103,8 @@ func NewNoUseSHA1Hashing() text.TextRule {
 	}
 }
 
-func NewNoUseWeakRandom() text.TextRule {
-	return text.TextRule{
+func NewNoUseWeakRandom() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-6",
 			Name:        "No use weak random number generator",
@@ -119,8 +119,8 @@ func NewNoUseWeakRandom() text.TextRule {
 	}
 }
 
-func NewNoReadFileUsingDataFromRequest() text.TextRule {
-	return text.TextRule{
+func NewNoReadFileUsingDataFromRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-7",
 			Name:        "No read file using data from request",
@@ -135,8 +135,8 @@ func NewNoReadFileUsingDataFromRequest() text.TextRule {
 	}
 }
 
-func NewNoCreateReadStreamUsingDataFromRequest() text.TextRule {
-	return text.TextRule{
+func NewNoCreateReadStreamUsingDataFromRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-8",
 			Name:        "No create read stream using data from request",
@@ -151,8 +151,8 @@ func NewNoCreateReadStreamUsingDataFromRequest() text.TextRule {
 	}
 }
 
-func NewSQLInjectionUsingParams() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionUsingParams() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-9",
 			Name:        "SQL Injection Using params",
@@ -167,8 +167,8 @@ func NewSQLInjectionUsingParams() text.TextRule {
 	}
 }
 
-func NewXMLParsersShouldNotBeVulnerableToXXEAttacks() text.TextRule {
-	return text.TextRule{
+func NewXMLParsersShouldNotBeVulnerableToXXEAttacks() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-10",
 			Name:        "XML parsers should not be vulnerable to XXE attacks",
@@ -183,8 +183,8 @@ func NewXMLParsersShouldNotBeVulnerableToXXEAttacks() text.TextRule {
 	}
 }
 
-func NewOriginsNotVerified() text.TextRule {
-	return text.TextRule{
+func NewOriginsNotVerified() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:   "HS-JAVASCRIPT-11",
 			Name: "Origins should be verified during cross-origin communications",
@@ -201,8 +201,8 @@ When receiving message with message event, the sender's identity should be verif
 	}
 }
 
-func NewWeakSSLTLSProtocolsShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewWeakSSLTLSProtocolsShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-12",
 			Name:        "Weak SSL/TLS protocols should not be used",
@@ -217,8 +217,8 @@ func NewWeakSSLTLSProtocolsShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewWebSQLDatabasesShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewWebSQLDatabasesShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:   "HS-JAVASCRIPT-13",
 			Name: "Web SQL databases should not be used",
@@ -235,8 +235,8 @@ Further, the use of a Web SQL Database poses security concerns, since you only n
 	}
 }
 
-func NewLocalStorageShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewLocalStorageShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-14",
 			Name:        "Local storage should not be used",
@@ -252,8 +252,8 @@ func NewLocalStorageShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewDebuggerStatementsShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewDebuggerStatementsShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-15",
 			Name:        "Debugger statements should not be used",
@@ -268,8 +268,8 @@ func NewDebuggerStatementsShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewAlertStatementsShouldNotBeUsed() text.TextRule {
-	return text.TextRule{
+func NewAlertStatementsShouldNotBeUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-16",
 			Name:        "Alert statements should not be used",
@@ -284,8 +284,8 @@ func NewAlertStatementsShouldNotBeUsed() text.TextRule {
 	}
 }
 
-func NewStaticallyServingHiddenFilesIsSecuritySensitive() text.TextRule {
-	return text.TextRule{
+func NewStaticallyServingHiddenFilesIsSecuritySensitive() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-17",
 			Name:        "Statically serving hidden files is security-sensitive",
@@ -300,8 +300,8 @@ func NewStaticallyServingHiddenFilesIsSecuritySensitive() text.TextRule {
 	}
 }
 
-func NewUsingIntrusivePermissionsWithGeolocation() text.TextRule {
-	return text.TextRule{
+func NewUsingIntrusivePermissionsWithGeolocation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:   "HS-JAVASCRIPT-18",
 			Name: "Using intrusive permissions With Geolocation",
@@ -319,8 +319,8 @@ This rule highlights intrusive permissions when requested with the future standa
 	}
 }
 
-func NewHavingAPermissiveCrossOriginResourceSharingPolicy() text.TextRule {
-	return text.TextRule{
+func NewHavingAPermissiveCrossOriginResourceSharingPolicy() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-19",
 			Name:        "Having a permissive Cross-Origin Resource Sharing policy",
@@ -337,8 +337,8 @@ func NewHavingAPermissiveCrossOriginResourceSharingPolicy() text.TextRule {
 	}
 }
 
-func NewReadingTheStandardInput() text.TextRule {
-	return text.TextRule{
+func NewReadingTheStandardInput() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-20",
 			Name:        "Reading the Standard Input",
@@ -354,8 +354,8 @@ func NewReadingTheStandardInput() text.TextRule {
 	}
 }
 
-func NewUsingCommandLineArguments() text.TextRule {
-	return text.TextRule{
+func NewUsingCommandLineArguments() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-21",
 			Name:        "Using command line arguments",
@@ -370,8 +370,8 @@ func NewUsingCommandLineArguments() text.TextRule {
 	}
 }
 
-func NewRedirectToUnknownPath() text.TextRule {
-	return text.TextRule{
+func NewRedirectToUnknownPath() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-22",
 			Name:        "Redirect to unknown path",
@@ -386,8 +386,8 @@ func NewRedirectToUnknownPath() text.TextRule {
 	}
 }
 
-func NewNoRenderContentFromRequest() text.TextRule {
-	return text.TextRule{
+func NewNoRenderContentFromRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-23",
 			Name:        "No render content from request",
@@ -403,8 +403,8 @@ func NewNoRenderContentFromRequest() text.TextRule {
 	}
 }
 
-func NewNoWriteOnDocumentContentFromRequest() text.TextRule {
-	return text.TextRule{
+func NewNoWriteOnDocumentContentFromRequest() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-24",
 			Name:        "No write content from request on HTML",
@@ -419,8 +419,8 @@ func NewNoWriteOnDocumentContentFromRequest() text.TextRule {
 	}
 }
 
-func NewNoExposeStackTrace() text.TextRule {
-	return text.TextRule{
+func NewNoExposeStackTrace() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-25",
 			Name:        "Stack trace exposure",
@@ -435,8 +435,8 @@ func NewNoExposeStackTrace() text.TextRule {
 	}
 }
 
-func NewInsecureDownload() text.TextRule {
-	return text.TextRule{
+func NewInsecureDownload() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-26",
 			Name:        "Insecure download of executable file",
@@ -451,8 +451,8 @@ func NewInsecureDownload() text.TextRule {
 	}
 }
 
-func NewNoUseRequestMethodUsingDataFromRequestOfUserInput() text.TextRule {
-	return text.TextRule{
+func NewNoUseRequestMethodUsingDataFromRequestOfUserInput() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-27",
 			Name:        "No use request method using data from request of user input",
@@ -468,8 +468,8 @@ func NewNoUseRequestMethodUsingDataFromRequestOfUserInput() text.TextRule {
 	}
 }
 
-func NewNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
-	return text.TextRule{
+func NewNoUseGetMethodUsingDataFromRequestOfUserInput() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-28",
 			Name:        "No use .get method using data from request of user input",
@@ -485,8 +485,8 @@ func NewNoUseGetMethodUsingDataFromRequestOfUserInput() text.TextRule {
 	}
 }
 
-func NewCryptographicRsaShouldBeRobust() text.TextRule {
-	return text.TextRule{
+func NewCryptographicRsaShouldBeRobust() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-29",
 			Name:        "Cryptographic RSA should be robust",
@@ -502,8 +502,8 @@ func NewCryptographicRsaShouldBeRobust() text.TextRule {
 	}
 }
 
-func NewCryptographicEcShouldBeRobust() text.TextRule {
-	return text.TextRule{
+func NewCryptographicEcShouldBeRobust() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-30",
 			Name:        "Cryptographic EC should be robust",
@@ -519,8 +519,8 @@ func NewCryptographicEcShouldBeRobust() text.TextRule {
 	}
 }
 
-func NewJWTNeedStrongCipherAlgorithms() text.TextRule {
-	return text.TextRule{
+func NewJWTNeedStrongCipherAlgorithms() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-31",
 			Name:        "JWT should be signed and verified with strong cipher algorithms",
@@ -537,8 +537,8 @@ func NewJWTNeedStrongCipherAlgorithms() text.TextRule {
 	}
 }
 
-func NewServerHostnameNotVerified() text.TextRule {
-	return text.TextRule{
+func NewServerHostnameNotVerified() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-32",
 			Name:        "Server hostnames should be verified during SSL/TLS connections",
@@ -554,8 +554,8 @@ func NewServerHostnameNotVerified() text.TextRule {
 	}
 }
 
-func NewServerCertificatesNotVerified() text.TextRule {
-	return text.TextRule{
+func NewServerCertificatesNotVerified() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-33",
 			Name:        "Server certificates should be verified during SSL/TLS connections",
@@ -571,8 +571,8 @@ func NewServerCertificatesNotVerified() text.TextRule {
 	}
 }
 
-func NewUntrustedContentShouldNotBeIncluded() text.TextRule {
-	return text.TextRule{
+func NewUntrustedContentShouldNotBeIncluded() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-34",
 			Name:        "Untrusted content should not be included",
@@ -589,8 +589,8 @@ func NewUntrustedContentShouldNotBeIncluded() text.TextRule {
 	}
 }
 
-func NewMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
-	return text.TextRule{
+func NewMysqlHardCodedCredentialsSecuritySensitive() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-35",
 			Name:        "Mysql Hard-coded credentials are security-sensitive",
@@ -606,8 +606,8 @@ func NewMysqlHardCodedCredentialsSecuritySensitive() text.TextRule {
 	}
 }
 
-func NewUsingShellInterpreterWhenExecutingOSCommands() text.TextRule {
-	return text.TextRule{
+func NewUsingShellInterpreterWhenExecutingOSCommands() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-36",
 			Name:        "Using shell interpreter when executing OS commands",
@@ -623,8 +623,8 @@ func NewUsingShellInterpreterWhenExecutingOSCommands() text.TextRule {
 	}
 }
 
-func NewForwardingClientIPAddress() text.TextRule {
-	return text.TextRule{
+func NewForwardingClientIPAddress() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-37",
 			Name:        "Forwarding client IP address",
@@ -641,8 +641,8 @@ func NewForwardingClientIPAddress() text.TextRule {
 	}
 }
 
-func NewAllowingConfidentialInformationToBeLoggedWithSignale() text.TextRule {
-	return text.TextRule{
+func NewAllowingConfidentialInformationToBeLoggedWithSignale() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-38",
 			Name:        "Allowing confidential information to be logged with signale",
@@ -659,8 +659,8 @@ func NewAllowingConfidentialInformationToBeLoggedWithSignale() text.TextRule {
 	}
 }
 
-func NewAllowingBrowsersToPerformDNSPrefetching() text.TextRule {
-	return text.TextRule{
+func NewAllowingBrowsersToPerformDNSPrefetching() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-39",
 			Name:        "Allowing browsers to perform DNS prefetching",
@@ -677,8 +677,8 @@ func NewAllowingBrowsersToPerformDNSPrefetching() text.TextRule {
 	}
 }
 
-func NewDisablingCertificateTransparencyMonitoring() text.TextRule {
-	return text.TextRule{
+func NewDisablingCertificateTransparencyMonitoring() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-40",
 			Name:        "Disabling Certificate Transparency monitoring",
@@ -694,8 +694,8 @@ func NewDisablingCertificateTransparencyMonitoring() text.TextRule {
 	}
 }
 
-func NewDisablingStrictHTTPNoReferrerPolicy() text.TextRule {
-	return text.TextRule{
+func NewDisablingStrictHTTPNoReferrerPolicy() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-41",
 			Name:        "Disabling strict HTTP no-referrer policy",
@@ -712,8 +712,8 @@ func NewDisablingStrictHTTPNoReferrerPolicy() text.TextRule {
 	}
 }
 
-func NewAllowingBrowsersToSniffMIMETypes() text.TextRule {
-	return text.TextRule{
+func NewAllowingBrowsersToSniffMIMETypes() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-42",
 			Name:        "Allowing browsers to sniff MIME types",
@@ -729,8 +729,8 @@ func NewAllowingBrowsersToSniffMIMETypes() text.TextRule {
 	}
 }
 
-func NewDisablingContentSecurityPolicyFrameAncestorsDirective() text.TextRule {
-	return text.TextRule{
+func NewDisablingContentSecurityPolicyFrameAncestorsDirective() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-43",
 			Name:        "Disabling content security policy frame-ancestors directive",
@@ -747,8 +747,8 @@ func NewDisablingContentSecurityPolicyFrameAncestorsDirective() text.TextRule {
 	}
 }
 
-func NewAllowingMixedContent() text.TextRule {
-	return text.TextRule{
+func NewAllowingMixedContent() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-44",
 			Name:        "Allowing mixed-content",
@@ -765,8 +765,8 @@ func NewAllowingMixedContent() text.TextRule {
 	}
 }
 
-func NewDisablingContentSecurityPolicyFetchDirectives() text.TextRule {
-	return text.TextRule{
+func NewDisablingContentSecurityPolicyFetchDirectives() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-45",
 			Name:        "Disabling content security policy fetch directives",
@@ -782,8 +782,8 @@ func NewDisablingContentSecurityPolicyFetchDirectives() text.TextRule {
 	}
 }
 
-func NewCreatingCookiesWithoutTheHttpOnlyFlag() text.TextRule {
-	return text.TextRule{
+func NewCreatingCookiesWithoutTheHttpOnlyFlag() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-46",
 			Name:        "Creating cookies without the \"HttpOnly\" flag",
@@ -799,8 +799,8 @@ func NewCreatingCookiesWithoutTheHttpOnlyFlag() text.TextRule {
 	}
 }
 
-func NewCreatingCookiesWithoutTheSecureFlag() text.TextRule {
-	return text.TextRule{
+func NewCreatingCookiesWithoutTheSecureFlag() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-47",
 			Name:        "Creating cookies without the \"secure\" flag",
@@ -816,8 +816,8 @@ func NewCreatingCookiesWithoutTheSecureFlag() text.TextRule {
 	}
 }
 
-func NewNoUseSocketManually() text.TextRule {
-	return text.TextRule{
+func NewNoUseSocketManually() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-48",
 			Name:        "No use socket manually",
@@ -833,8 +833,8 @@ func NewNoUseSocketManually() text.TextRule {
 	}
 }
 
-func NewEncryptionAlgorithmsWeak() text.TextRule {
-	return text.TextRule{
+func NewEncryptionAlgorithmsWeak() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-49",
 			Name:        "Encryption Algorithms Weak",
@@ -850,8 +850,8 @@ func NewEncryptionAlgorithmsWeak() text.TextRule {
 	}
 }
 
-func NewFileUploadsShouldBeRestricted() text.TextRule {
-	return text.TextRule{
+func NewFileUploadsShouldBeRestricted() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-50",
 			Name:        "File uploads should be restricted",
@@ -868,8 +868,8 @@ func NewFileUploadsShouldBeRestricted() text.TextRule {
 	}
 }
 
-func NewAllowingRequestsWithExcessiveContentLengthSecurity() text.TextRule {
-	return text.TextRule{
+func NewAllowingRequestsWithExcessiveContentLengthSecurity() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-51",
 			Name:        "Allowing requests with excessive content length is security-sensitive",
@@ -886,8 +886,8 @@ func NewAllowingRequestsWithExcessiveContentLengthSecurity() text.TextRule {
 	}
 }
 
-func NewNoDisableSanitizeHtml() text.TextRule {
-	return text.TextRule{
+func NewNoDisableSanitizeHtml() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-52",
 			Name:        "No Disable Sanitize Html",
@@ -906,8 +906,8 @@ func NewNoDisableSanitizeHtml() text.TextRule {
 	}
 }
 
-func NewSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVASCRIPT-53",
 			Name:        "SQL Injection",

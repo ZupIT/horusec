@@ -25,8 +25,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewCommandInjection() text.TextRule {
-	return text.TextRule{
+func NewCommandInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-1",
 			Name:        "Command Injection",
@@ -43,8 +43,8 @@ func NewCommandInjection() text.TextRule {
 	}
 }
 
-func NewXPathInjection() text.TextRule {
-	return text.TextRule{
+func NewXPathInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-2",
 			Name:        "XPath Injection",
@@ -61,8 +61,8 @@ func NewXPathInjection() text.TextRule {
 	}
 }
 
-func NewExternalEntityInjection() text.TextRule {
-	return text.TextRule{
+func NewExternalEntityInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-3",
 			Name:        "XML eXternal Entity Injection (XXE)",
@@ -82,8 +82,8 @@ func NewExternalEntityInjection() text.TextRule {
 	}
 }
 
-func NewPathTraversal() text.TextRule {
-	return text.TextRule{
+func NewPathTraversal() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-4",
 			Name:        "Path Traversal",
@@ -100,8 +100,8 @@ func NewPathTraversal() text.TextRule {
 	}
 }
 
-func NewSQLInjectionWebControls() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionWebControls() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-5",
 			Name:        "SQL Injection WebControls",
@@ -117,8 +117,8 @@ func NewSQLInjectionWebControls() text.TextRule {
 	}
 }
 
-func NewWeakCipherOrCBCOrECBMode() text.TextRule {
-	return text.TextRule{
+func NewWeakCipherOrCBCOrECBMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-6",
 			Name:        "Weak Cipher Mode",
@@ -137,8 +137,8 @@ func NewWeakCipherOrCBCOrECBMode() text.TextRule {
 	}
 }
 
-func NewFormsAuthenticationCookielessMode() text.TextRule {
-	return text.TextRule{
+func NewFormsAuthenticationCookielessMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-7",
 			Name:        "Forms Authentication Cookieless Mode",
@@ -154,8 +154,8 @@ func NewFormsAuthenticationCookielessMode() text.TextRule {
 	}
 }
 
-func NewFormsAuthenticationCrossAppRedirects() text.TextRule {
-	return text.TextRule{
+func NewFormsAuthenticationCrossAppRedirects() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-8",
 			Name:        "Forms Authentication Cross App Redirects",
@@ -172,8 +172,8 @@ func NewFormsAuthenticationCrossAppRedirects() text.TextRule {
 	}
 }
 
-func NewFormsAuthenticationWeakCookieProtection() text.TextRule {
-	return text.TextRule{
+func NewFormsAuthenticationWeakCookieProtection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-9",
 			Name:        "Forms Authentication Weak Cookie Protection",
@@ -190,8 +190,8 @@ func NewFormsAuthenticationWeakCookieProtection() text.TextRule {
 	}
 }
 
-func NewFormsAuthenticationWeakTimeout() text.TextRule {
-	return text.TextRule{
+func NewFormsAuthenticationWeakTimeout() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-10",
 			Name:        "Forms Authentication Weak Timeout",
@@ -208,8 +208,8 @@ func NewFormsAuthenticationWeakTimeout() text.TextRule {
 	}
 }
 
-func NewHeaderCheckingDisabled() text.TextRule {
-	return text.TextRule{
+func NewHeaderCheckingDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-11",
 			Name:        "Header Checking Disabled",
@@ -225,8 +225,8 @@ func NewHeaderCheckingDisabled() text.TextRule {
 	}
 }
 
-func NewVersionHeaderEnabled() text.TextRule {
-	return text.TextRule{
+func NewVersionHeaderEnabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-12",
 			Name:        "Version Header Enabled",
@@ -242,8 +242,8 @@ func NewVersionHeaderEnabled() text.TextRule {
 	}
 }
 
-func NewEventValidationDisabled() text.TextRule {
-	return text.TextRule{
+func NewEventValidationDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-13",
 			Name:        "Event Validation Disabled",
@@ -259,8 +259,8 @@ func NewEventValidationDisabled() text.TextRule {
 	}
 }
 
-func NewWeakSessionTimeout() text.TextRule {
-	return text.TextRule{
+func NewWeakSessionTimeout() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-14",
 			Name:        "Weak Session Timeout",
@@ -276,8 +276,8 @@ func NewWeakSessionTimeout() text.TextRule {
 	}
 }
 
-func NewStateServerMode() text.TextRule {
-	return text.TextRule{
+func NewStateServerMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-15",
 			Name:        "Weak Session Timeout",
@@ -293,8 +293,8 @@ func NewStateServerMode() text.TextRule {
 	}
 }
 
-func NewJwtSignatureValidationDisabled() text.TextRule {
-	return text.TextRule{
+func NewJwtSignatureValidationDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-16",
 			Name:        "Jwt Signature Validation Disabled",
@@ -312,8 +312,8 @@ func NewJwtSignatureValidationDisabled() text.TextRule {
 	}
 }
 
-func NewInsecureHttpCookieTransport() text.TextRule {
-	return text.TextRule{
+func NewInsecureHttpCookieTransport() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-17",
 			Name:        "Insecure Http Cookie Transport",
@@ -329,8 +329,8 @@ func NewInsecureHttpCookieTransport() text.TextRule {
 	}
 }
 
-func NewHttpCookieAccessibleViaScript() text.TextRule {
-	return text.TextRule{
+func NewHttpCookieAccessibleViaScript() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-18",
 			Name:        "Http Cookie Accessible Via Script",
@@ -346,8 +346,8 @@ func NewHttpCookieAccessibleViaScript() text.TextRule {
 	}
 }
 
-func NewDirectoryListingEnabled() text.TextRule {
-	return text.TextRule{
+func NewDirectoryListingEnabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-19",
 			Name:        "Directory Listing Enabled",
@@ -363,8 +363,8 @@ func NewDirectoryListingEnabled() text.TextRule {
 	}
 }
 
-func NewLdapAuthenticationDisabled() text.TextRule {
-	return text.TextRule{
+func NewLdapAuthenticationDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-20",
 			Name:        "Ldap Authentication Disabled",
@@ -380,8 +380,8 @@ func NewLdapAuthenticationDisabled() text.TextRule {
 	}
 }
 
-func NewCertificateValidationDisabledAndMatch() text.TextRule {
-	return text.TextRule{
+func NewCertificateValidationDisabledAndMatch() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-21",
 			Name:        "Certificate Validation Disabled",
@@ -397,8 +397,8 @@ func NewCertificateValidationDisabledAndMatch() text.TextRule {
 	}
 }
 
-func NewActionRequestValidationDisabled() text.TextRule {
-	return text.TextRule{
+func NewActionRequestValidationDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-22",
 			Name:        "Action Request Validation Disabled",
@@ -414,8 +414,8 @@ func NewActionRequestValidationDisabled() text.TextRule {
 	}
 }
 
-func NewXmlDocumentExternalEntityExpansion() text.TextRule {
-	return text.TextRule{
+func NewXmlDocumentExternalEntityExpansion() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-23",
 			Name:        "Xml Document External Entity Expansion",
@@ -431,8 +431,8 @@ func NewXmlDocumentExternalEntityExpansion() text.TextRule {
 	}
 }
 
-func NewLdapInjectionFilterAssignment() text.TextRule {
-	return text.TextRule{
+func NewLdapInjectionFilterAssignment() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-24",
 			Name:        "Ldap Injection Filter Assignment",
@@ -449,8 +449,8 @@ func NewLdapInjectionFilterAssignment() text.TextRule {
 	}
 }
 
-func NewSqlInjectionDynamicNHibernateQuery() text.TextRule {
-	return text.TextRule{
+func NewSqlInjectionDynamicNHibernateQuery() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-25",
 			Name:        "Sql Injection: Dynamic NHibernate Query",
@@ -466,8 +466,8 @@ func NewSqlInjectionDynamicNHibernateQuery() text.TextRule {
 	}
 }
 
-func NewLdapInjectionDirectorySearcher() text.TextRule {
-	return text.TextRule{
+func NewLdapInjectionDirectorySearcher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-26",
 			Name:        "Ldap Injection Directory Searcher",
@@ -483,8 +483,8 @@ func NewLdapInjectionDirectorySearcher() text.TextRule {
 	}
 }
 
-func NewLdapInjectionPathAssignment() text.TextRule {
-	return text.TextRule{
+func NewLdapInjectionPathAssignment() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-27",
 			Name:        "Ldap Injection Path Assignment",
@@ -500,8 +500,8 @@ func NewLdapInjectionPathAssignment() text.TextRule {
 	}
 }
 
-func NewLDAPInjection() text.TextRule {
-	return text.TextRule{
+func NewLDAPInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-28",
 			Name:        "LDAP Injection",
@@ -517,8 +517,8 @@ func NewLDAPInjection() text.TextRule {
 	}
 }
 
-func NewSQLInjectionLinq() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionLinq() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-29",
 			Name:        "SQL Injection LINQ",
@@ -533,8 +533,8 @@ func NewSQLInjectionLinq() text.TextRule {
 	}
 }
 
-func NewInsecureDeserialization() text.TextRule {
-	return text.TextRule{
+func NewInsecureDeserialization() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-30",
 			Name:        "Insecure Deserialization",
@@ -550,8 +550,8 @@ func NewInsecureDeserialization() text.TextRule {
 	}
 }
 
-func NewSQLInjectionEnterpriseLibraryData() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionEnterpriseLibraryData() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-31",
 			Name:        "SQL Injection Enterprise Library Data",
@@ -567,8 +567,8 @@ func NewSQLInjectionEnterpriseLibraryData() text.TextRule {
 	}
 }
 
-func NewCQLInjectionCassandra() text.TextRule {
-	return text.TextRule{
+func NewCQLInjectionCassandra() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-32",
 			Name:        "CQL Injection Cassandra",
@@ -584,8 +584,8 @@ func NewCQLInjectionCassandra() text.TextRule {
 	}
 }
 
-func NewPasswordComplexity() text.TextRule {
-	return text.TextRule{
+func NewPasswordComplexity() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-33",
 			Name:        "Password Complexity",
@@ -603,8 +603,8 @@ func NewPasswordComplexity() text.TextRule {
 	}
 }
 
-func NewCookieWithoutSSLFlag() text.TextRule {
-	return text.TextRule{
+func NewCookieWithoutSSLFlag() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-34",
 			Name:        "Cookie Without SSL Flag",
@@ -622,8 +622,8 @@ func NewCookieWithoutSSLFlag() text.TextRule {
 	}
 }
 
-func NewCookieWithoutHttpOnlyFlag() text.TextRule {
-	return text.TextRule{
+func NewCookieWithoutHttpOnlyFlag() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-35",
 			Name:        "Cookie Without HttpOnly Flag",
@@ -640,8 +640,8 @@ func NewCookieWithoutHttpOnlyFlag() text.TextRule {
 	}
 }
 
-func NewNoInputVariable() text.TextRule {
-	return text.TextRule{
+func NewNoInputVariable() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-36",
 			Name:        "No input variable",
@@ -657,8 +657,8 @@ func NewNoInputVariable() text.TextRule {
 	}
 }
 
-func NewIdentityWeakPasswordComplexity() text.TextRule {
-	return text.TextRule{
+func NewIdentityWeakPasswordComplexity() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-37",
 			Name:        "Identity Weak Password Complexity",
@@ -679,8 +679,8 @@ func NewIdentityWeakPasswordComplexity() text.TextRule {
 	}
 }
 
-func NewNoLogSensitiveInformationInConsole() text.TextRule {
-	return text.TextRule{
+func NewNoLogSensitiveInformationInConsole() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-38",
 			Name:        "No Log Sensitive Information in console",
@@ -695,8 +695,8 @@ func NewNoLogSensitiveInformationInConsole() text.TextRule {
 	}
 }
 
-func NewOutputCacheConflict() text.TextRule {
-	return text.TextRule{
+func NewOutputCacheConflict() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-39",
 			Name:        "OutputCache Conflict",
@@ -711,8 +711,8 @@ func NewOutputCacheConflict() text.TextRule {
 	}
 }
 
-func NewOpenRedirect() text.TextRule {
-	return text.TextRule{
+func NewOpenRedirect() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-40",
 			Name:        "Open Redirect",
@@ -727,8 +727,8 @@ func NewOpenRedirect() text.TextRule {
 	}
 }
 
-func NewRequestValidationDisabledAttribute() text.TextRule {
-	return text.TextRule{
+func NewRequestValidationDisabledAttribute() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-41",
 			Name:        "Request Validation Disabled (Attribute)",
@@ -743,8 +743,8 @@ func NewRequestValidationDisabledAttribute() text.TextRule {
 	}
 }
 
-func NewSQLInjectionOLEDB() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionOLEDB() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-42",
 			Name:        "SQL Injection OLE DB",
@@ -759,8 +759,8 @@ func NewSQLInjectionOLEDB() text.TextRule {
 	}
 }
 
-func NewRequestValidationDisabledConfigurationFile() text.TextRule {
-	return text.TextRule{
+func NewRequestValidationDisabledConfigurationFile() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-43",
 			Name:        "Request Validation Disabled (Configuration File)",
@@ -775,8 +775,8 @@ func NewRequestValidationDisabledConfigurationFile() text.TextRule {
 	}
 }
 
-func NewSQLInjectionMsSQLDataProvider() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionMsSQLDataProvider() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-44",
 			Name:        "SQL Injection MsSQL Data Provider",
@@ -791,8 +791,8 @@ func NewSQLInjectionMsSQLDataProvider() text.TextRule {
 	}
 }
 
-func NewRequestValidationIsEnabledOnlyForPages() text.TextRule {
-	return text.TextRule{
+func NewRequestValidationIsEnabledOnlyForPages() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-45",
 			Name:        "Request validation is enabled only for pages",
@@ -807,8 +807,8 @@ func NewRequestValidationIsEnabledOnlyForPages() text.TextRule {
 	}
 }
 
-func NewSQLInjectionEntityFramework() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionEntityFramework() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-46",
 			Name:        "SQL Injection Entity Framework",
@@ -823,8 +823,8 @@ func NewSQLInjectionEntityFramework() text.TextRule {
 	}
 }
 
-func NewViewStateNotEncrypted() text.TextRule {
-	return text.TextRule{
+func NewViewStateNotEncrypted() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-47",
 			Name:        "View State Not Encrypted",
@@ -839,8 +839,8 @@ func NewViewStateNotEncrypted() text.TextRule {
 	}
 }
 
-func NewSQLInjectionNhibernate() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionNhibernate() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-48",
 			Name:        "SQL Injection Nhibernate",
@@ -855,8 +855,8 @@ func NewSQLInjectionNhibernate() text.TextRule {
 	}
 }
 
-func NewViewStateMacDisabled() text.TextRule {
-	return text.TextRule{
+func NewViewStateMacDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-49",
 			Name:        "View State MAC Disabled",
@@ -871,8 +871,8 @@ func NewViewStateMacDisabled() text.TextRule {
 	}
 }
 
-func NewSQLInjectionNpgsql() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionNpgsql() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-50",
 			Name:        "SQL Injection Npgsql",
@@ -887,8 +887,8 @@ func NewSQLInjectionNpgsql() text.TextRule {
 	}
 }
 
-func NewCertificateValidationDisabled() text.TextRule {
-	return text.TextRule{
+func NewCertificateValidationDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-51",
 			Name:        "Certificate Validation Disabled",
@@ -903,8 +903,8 @@ func NewCertificateValidationDisabled() text.TextRule {
 	}
 }
 
-func NewWeakCipherAlgorithm() text.TextRule {
-	return text.TextRule{
+func NewWeakCipherAlgorithm() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-52",
 			Name:        "Weak cipher algorithm",
@@ -919,8 +919,8 @@ func NewWeakCipherAlgorithm() text.TextRule {
 	}
 }
 
-func NewNoUseHtmlRaw() text.TextRule {
-	return text.TextRule{
+func NewNoUseHtmlRaw() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-53",
 			Name:        "No use Html.Raw",
@@ -935,8 +935,8 @@ func NewNoUseHtmlRaw() text.TextRule {
 	}
 }
 
-func NewNoLogSensitiveInformation() text.TextRule {
-	return text.TextRule{
+func NewNoLogSensitiveInformation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-54",
 			Name:        "No log sensitive information debug mode",
@@ -951,8 +951,8 @@ func NewNoLogSensitiveInformation() text.TextRule {
 	}
 }
 
-func NewNoReturnStringConcatInController() text.TextRule {
-	return text.TextRule{
+func NewNoReturnStringConcatInController() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-55",
 			Name:        "No return string concat in controller",
@@ -967,8 +967,8 @@ func NewNoReturnStringConcatInController() text.TextRule {
 	}
 }
 
-func NewSQLInjectionOdbcCommand() text.TextRule {
-	return text.TextRule{
+func NewSQLInjectionOdbcCommand() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-56",
 			Name:        "SQL Injection OdbcCommand",
@@ -983,8 +983,8 @@ func NewSQLInjectionOdbcCommand() text.TextRule {
 	}
 }
 
-func NewWeakHashingFunctionMd5OrSha1() text.TextRule {
-	return text.TextRule{
+func NewWeakHashingFunctionMd5OrSha1() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-57",
 			Name:        "Weak hashing function md5 or sha1",
@@ -1000,8 +1000,8 @@ func NewWeakHashingFunctionMd5OrSha1() text.TextRule {
 	}
 }
 
-func NewWeakHashingFunctionDESCrypto() text.TextRule {
-	return text.TextRule{
+func NewWeakHashingFunctionDESCrypto() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-58",
 			Name:        "Weak hashing function DES Crypto",
@@ -1019,8 +1019,8 @@ func NewWeakHashingFunctionDESCrypto() text.TextRule {
 	}
 }
 
-func NewNoUseCipherMode() text.TextRule {
-	return text.TextRule{
+func NewNoUseCipherMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-59",
 			Name:        "No Use Cipher mode",
@@ -1038,8 +1038,8 @@ func NewNoUseCipherMode() text.TextRule {
 	}
 }
 
-func NewDebugBuildEnabled() text.TextRule {
-	return text.TextRule{
+func NewDebugBuildEnabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-60",
 			Name:        "Debug Build Enabled",
@@ -1054,8 +1054,8 @@ func NewDebugBuildEnabled() text.TextRule {
 	}
 }
 
-func NewVulnerablePackageReference() text.TextRule {
-	return text.TextRule{
+func NewVulnerablePackageReference() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-61",
 			Name:        "Vulnerable Package Reference",
@@ -1070,8 +1070,8 @@ func NewVulnerablePackageReference() text.TextRule {
 	}
 }
 
-func NewCorsAllowOriginWildCard() text.TextRule {
-	return text.TextRule{
+func NewCorsAllowOriginWildCard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-62",
 			Name:        "Cors Allow Origin Wild Card",
@@ -1086,8 +1086,8 @@ func NewCorsAllowOriginWildCard() text.TextRule {
 	}
 }
 
-func NewMissingAntiForgeryTokenAttribute() text.TextRule {
-	return text.TextRule{
+func NewMissingAntiForgeryTokenAttribute() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-63",
 			Name:        "Missing Anti Forgery Token Attribute",
@@ -1102,8 +1102,8 @@ func NewMissingAntiForgeryTokenAttribute() text.TextRule {
 	}
 }
 
-func NewUnvalidatedWebFormsRedirect() text.TextRule {
-	return text.TextRule{
+func NewUnvalidatedWebFormsRedirect() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-64",
 			Name:        "Unvalidated Web Forms Redirect",
@@ -1118,8 +1118,8 @@ func NewUnvalidatedWebFormsRedirect() text.TextRule {
 	}
 }
 
-func NewIdentityPasswordLockoutDisabled() text.TextRule {
-	return text.TextRule{
+func NewIdentityPasswordLockoutDisabled() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-65",
 			Name:        "Identity Password Lockout Disabled",
@@ -1134,8 +1134,8 @@ func NewIdentityPasswordLockoutDisabled() text.TextRule {
 	}
 }
 
-func NewRawInlineExpression() text.TextRule {
-	return text.TextRule{
+func NewRawInlineExpression() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-66",
 			Name:        "Raw Inline Expression",
@@ -1150,8 +1150,8 @@ func NewRawInlineExpression() text.TextRule {
 	}
 }
 
-func NewRawBindingExpression() text.TextRule {
-	return text.TextRule{
+func NewRawBindingExpression() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-67",
 			Name:        "Raw Binding Expression",
@@ -1166,8 +1166,8 @@ func NewRawBindingExpression() text.TextRule {
 	}
 }
 
-func NewRawWriteLiteralMethod() text.TextRule {
-	return text.TextRule{
+func NewRawWriteLiteralMethod() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-68",
 			Name:        "Raw Write Literal Method",
@@ -1182,8 +1182,8 @@ func NewRawWriteLiteralMethod() text.TextRule {
 	}
 }
 
-func NewUnencodedWebFormsProperty() text.TextRule {
-	return text.TextRule{
+func NewUnencodedWebFormsProperty() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-69",
 			Name:        "Unencoded Web Forms Property",
@@ -1198,8 +1198,8 @@ func NewUnencodedWebFormsProperty() text.TextRule {
 	}
 }
 
-func NewUnencodedLabelText() text.TextRule {
-	return text.TextRule{
+func NewUnencodedLabelText() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-70",
 			Name:        "Unencoded Label Text",
@@ -1214,8 +1214,8 @@ func NewUnencodedLabelText() text.TextRule {
 	}
 }
 
-func NewWeakRandomNumberGenerator() text.TextRule {
-	return text.TextRule{
+func NewWeakRandomNumberGenerator() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-71",
 			Name:        "Weak Random Number Generator",
@@ -1230,8 +1230,8 @@ func NewWeakRandomNumberGenerator() text.TextRule {
 	}
 }
 
-func NewWeakRsaKeyLength() text.TextRule {
-	return text.TextRule{
+func NewWeakRsaKeyLength() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-72",
 			Name:        "Weak Rsa Key Length",
@@ -1246,8 +1246,8 @@ func NewWeakRsaKeyLength() text.TextRule {
 	}
 }
 
-func NewXmlReaderExternalEntityExpansion() text.TextRule {
-	return text.TextRule{
+func NewXmlReaderExternalEntityExpansion() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-73",
 			Name:        "Xml Reader External Entity Expansion",
@@ -1262,8 +1262,8 @@ func NewXmlReaderExternalEntityExpansion() text.TextRule {
 	}
 }
 
-func NewLdapInjectionDirectoryEntry() text.TextRule {
-	return text.TextRule{
+func NewLdapInjectionDirectoryEntry() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-74",
 			Name:        "Ldap Injection Directory Entry",

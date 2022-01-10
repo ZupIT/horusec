@@ -23,8 +23,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewAllowPrivilegeEscalation() text.TextRule {
-	return text.TextRule{
+func NewAllowPrivilegeEscalation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-1",
 			Name:        "Allow Privilege Escalation",
@@ -41,8 +41,8 @@ func NewAllowPrivilegeEscalation() text.TextRule {
 	}
 }
 
-func NewHostAliases() text.TextRule {
-	return text.TextRule{
+func NewHostAliases() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-2",
 			Name:        "Host Aliases",
@@ -59,8 +59,8 @@ func NewHostAliases() text.TextRule {
 	}
 }
 
-func NewDockerSock() text.TextRule {
-	return text.TextRule{
+func NewDockerSock() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-3",
 			Name:        "Docker Sock",
@@ -77,8 +77,8 @@ func NewDockerSock() text.TextRule {
 	}
 }
 
-func NewCapabilitySystemAdmin() text.TextRule {
-	return text.TextRule{
+func NewCapabilitySystemAdmin() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-4",
 			Name:        "Capability System Admin",
@@ -97,8 +97,8 @@ func NewCapabilitySystemAdmin() text.TextRule {
 	}
 }
 
-func NewPrivilegedContainer() text.TextRule {
-	return text.TextRule{
+func NewPrivilegedContainer() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-5",
 			Name:        "Privileged Container",
@@ -115,8 +115,8 @@ func NewPrivilegedContainer() text.TextRule {
 	}
 }
 
-func NewSeccompUnconfined() text.TextRule {
-	return text.TextRule{
+func NewSeccompUnconfined() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-6",
 			Name:        "Seccomp Unconfined",
@@ -132,8 +132,8 @@ func NewSeccompUnconfined() text.TextRule {
 	}
 }
 
-func NewHostIPC() text.TextRule {
-	return text.TextRule{
+func NewHostIPC() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-7",
 			Name:        "Host IPC",
@@ -148,8 +148,8 @@ func NewHostIPC() text.TextRule {
 	}
 }
 
-func NewHostPID() text.TextRule {
-	return text.TextRule{
+func NewHostPID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-8",
 			Name:        "Host PID",
@@ -164,8 +164,8 @@ func NewHostPID() text.TextRule {
 	}
 }
 
-func NewHostNetwork() text.TextRule {
-	return text.TextRule{
+func NewHostNetwork() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-9",
 			Name:        "Host Network",

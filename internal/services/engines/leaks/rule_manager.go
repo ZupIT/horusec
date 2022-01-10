@@ -25,7 +25,7 @@ func NewRules() *engines.RuleManager {
 }
 
 func extensions() []string {
-	return []string{"**"}
+	return []string{engine.AcceptAnyExtension}
 }
 
 // Rules return all rules registred to Leaks engine.

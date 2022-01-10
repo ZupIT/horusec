@@ -15,6 +15,8 @@
 package csharp
 
 import (
+	"fmt"
+	"path/filepath"
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
@@ -23,31 +25,36 @@ import (
 )
 
 func TestRulesVulnerableCode(t *testing.T) {
+	tempDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-CSHARP-1",
-			Rule: NewCommandInjection(),
-			Src:  SampleVulnerableHSCSHARP1,
+			Name:     "HS-CSHARP-1",
+			Rule:     NewCommandInjection(),
+			Src:      SampleVulnerableHSCSHARP1,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-1", ".test")),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var p = new Process();",
 					SourceLocation: engine.Location{
-						Line:   2,
-						Column: 10,
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-1", ".test")),
+						Line:     2,
+						Column:   10,
 					},
 				},
 			},
 		},
 		{
-			Name: "HS-CSHARP-2",
-			Rule: NewXPathInjection(),
-			Src:  SampleVulnerableHSCSHARP2,
+			Name:     "HS-CSHARP-2",
+			Rule:     NewXPathInjection(),
+			Src:      SampleVulnerableHSCSHARP2,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-2", ".test")),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "var doc = new XmlDocument {XmlResolver = null};",
 					SourceLocation: engine.Location{
-						Line:   2,
-						Column: 12,
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-2", ".test")),
+						Line:     2,
+						Column:   12,
 					},
 				},
 			},
@@ -57,16 +64,19 @@ func TestRulesVulnerableCode(t *testing.T) {
 }
 
 func TestRulesSafeCode(t *testing.T) {
+	tempDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-CSHARP-1",
-			Rule: NewCommandInjection(),
-			Src:  SampleSafeHSCSHARP1,
+			Name:     "HS-CSHARP-1",
+			Rule:     NewCommandInjection(),
+			Src:      SampleSafeHSCSHARP1,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-1", ".test")),
 		},
 		{
-			Name: "HS-CSHARP-2",
-			Rule: NewXPathInjection(),
-			Src:  SampleSafeHSCSHARP2,
+			Name:     "HS-CSHARP-2",
+			Rule:     NewXPathInjection(),
+			Src:      SampleSafeHSCSHARP2,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-CSHARP-2", ".test")),
 		},
 	}
 
