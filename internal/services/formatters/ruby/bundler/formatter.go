@@ -37,10 +37,12 @@ import (
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
-// ErrGemLockNotFound occurs when bundles does not find gemfile.lock.
+// ErrGemLockNotFound occurs when project path does not have the Gemfile.lock file.
 //
-// nolint: lll
-var ErrGemLockNotFound = errors.New("project doesn't have a gemfile.lock file, it would be a good idea to commit it so horusec can check for vulnerabilities")
+// nolint: stylecheck
+// We actually want that this error message be capitalized since the file name that was
+// not found is capitalized.
+var ErrGemLockNotFound = errors.New("Gemfile.lock file is required to execute Bundler analysis")
 
 type Formatter struct {
 	formatters.IService
@@ -80,8 +82,11 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) (string, error) {
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
 	analysisData := &dockerEntities.AnalysisData{
-		CMD: f.AddWorkDirInCmd(CMD, file.GetSubPathByExtension(
-			f.GetConfigProjectPath(), projectSubPath, "Gemfile.lock"), tools.SecurityCodeScan),
+		CMD: f.AddWorkDirInCmd(
+			CMD,
+			file.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "Gemfile.lock"),
+			tools.SecurityCodeScan,
+		),
 		Language: languages.Ruby,
 	}
 
@@ -89,7 +94,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 }
 
 func (f *Formatter) verifyGemLockError(output string) error {
-	if strings.Contains(output, "No such file or directory") && strings.Contains(output, "Errno::ENOENT") {
+	if strings.Contains(output, `Could not find "Gemfile.lock"`) {
 		return ErrGemLockNotFound
 	}
 
