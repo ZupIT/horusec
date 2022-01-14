@@ -12,29 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package bundler
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-
-	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler/entities/enums"
 )
 
-type Output struct {
+type bundlerOutput struct {
 	Name        string
 	Version     string
 	Advisory    string
-	Criticality enums.CriticalityType
+	Criticality bundlerCriticalityType
 	URL         string
 	Title       string
 	Solution    string
 }
 
-func (o *Output) SetOutputData(output *Output, value string) {
+func (o *bundlerOutput) setOutputData(output *bundlerOutput, value string) {
 	o.setName(output, value)
 	o.setVersion(output, value)
 	o.setAdvisory(output, value)
@@ -44,49 +41,49 @@ func (o *Output) SetOutputData(output *Output, value string) {
 	o.setSolution(output, value)
 }
 
-func (o *Output) setName(output *Output, value string) {
+func (o *bundlerOutput) setName(output *bundlerOutput, value string) {
 	if !strings.Contains(value, ":") {
 		output.Name = strings.TrimSpace(value)
 	}
 }
 
-func (o *Output) setVersion(output *Output, value string) {
+func (o *bundlerOutput) setVersion(output *bundlerOutput, value string) {
 	if strings.Contains(value, "Version:") {
 		output.Version = strings.TrimSpace(o.getContent(value))
 	}
 }
 
-func (o *Output) setAdvisory(output *Output, value string) {
+func (o *bundlerOutput) setAdvisory(output *bundlerOutput, value string) {
 	if strings.Contains(value, "Advisory:") {
 		output.Advisory = strings.TrimSpace(o.getContent(value))
 	}
 }
 
-func (o *Output) setCriticality(output *Output, value string) {
+func (o *bundlerOutput) setCriticality(output *bundlerOutput, value string) {
 	if strings.Contains(value, "Criticality:") {
-		output.Criticality = enums.GetCriticalityTypeByString(strings.TrimSpace(o.getContent(value)))
+		output.Criticality = getCriticalityTypeByString(strings.TrimSpace(o.getContent(value)))
 	}
 }
 
-func (o *Output) setURL(output *Output, value string) {
+func (o *bundlerOutput) setURL(output *bundlerOutput, value string) {
 	if strings.Contains(value, "URL:") {
 		output.URL = strings.TrimSpace(o.getContent(value))
 	}
 }
 
-func (o *Output) setTitle(output *Output, value string) {
+func (o *bundlerOutput) setTitle(output *bundlerOutput, value string) {
 	if strings.Contains(value, "Title:") {
 		output.Title = strings.TrimSpace(o.getContent(value))
 	}
 }
 
-func (o *Output) setSolution(output *Output, value string) {
+func (o *bundlerOutput) setSolution(output *bundlerOutput, value string) {
 	if strings.Contains(value, "Solution:") {
 		output.Solution = strings.TrimSpace(o.getContent(value))
 	}
 }
 
-func (o *Output) getContent(output string) string {
+func (o *bundlerOutput) getContent(output string) string {
 	index := strings.Index(output, ":")
 	if index < 0 {
 		return ""
@@ -95,32 +92,19 @@ func (o *Output) getContent(output string) string {
 	return output[index+1:]
 }
 
-func (o *Output) GetSeverity() severities.Severity {
+func (o *bundlerOutput) getSeverity() severities.Severity {
 	switch o.Criticality {
-	case enums.High:
+	case High:
 		return severities.High
-	case enums.Medium:
+	case Medium:
 		return severities.Medium
-	case enums.Low:
+	case Low:
 		return severities.Low
 	}
 
 	return severities.Unknown
 }
 
-func (o *Output) GetConfidence() confidence.Confidence {
-	switch o.Criticality {
-	case enums.High:
-		return confidence.High
-	case enums.Medium:
-		return confidence.Medium
-	case enums.Low:
-		return confidence.Low
-	}
-
-	return confidence.Low
-}
-
-func (o *Output) GetDetails() string {
+func (o *bundlerOutput) getDetails() string {
 	return fmt.Sprintf("%s (%s - %s) %s (%s - %s)", o.Title, o.Name, o.Version, o.Solution, o.Advisory, o.URL)
 }
