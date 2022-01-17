@@ -779,6 +779,50 @@ public class VulnerableCodeSQLInjection134 {
 }
 `
 
+	SampleVulnerableHSJAVA141 = `
+NamingEnumeration<SearchResult> answers = context.search("dc=People,dc=example,dc=com",
+        "(uid=" + username + ")", ctrls);
+`
+
+	SampleSafeHSJAVA141 = `
+if(StringUtils.isAlphanumeric(username)) {
+    NamingEnumeration<SearchResult> answers = context.search("dc=People,dc=example,dc=com",
+        "(uid=" + username + ")", ctrls);
+}
+`
+
+	SampleVulnerableHSJAVA142 = `
+conn.setCatalog(request.getParameter("catalog"));
+`
+
+	SampleSafeHSJAVA142 = `
+conn.setCatalog("example");
+`
+
+	SampleVulnerableHSJAVA143 = `
+MessageDigest md = MessageDigest.getInstance("SHA-256");
+byte[] resultBytes = md.digest(password.getBytes("UTF-8"));
+
+StringBuilder stringBuilder = new StringBuilder();
+for(byte b :resultBytes) {
+	stringBuilder.append( Integer.toHexString( b & 0xFF ) );
+}
+
+return stringBuilder.toString();
+`
+
+	SampleSafeHSJAVA143 = `
+MessageDigest md = MessageDigest.getInstance("SHA-256");
+byte[] resultBytes = md.digest(password.getBytes("UTF-8"));
+
+StringBuilder stringBuilder = new StringBuilder();
+for(byte b :resultBytes) {
+	stringBuilder.append( String.format( "%02X", b ) );
+}
+
+return stringBuilder.toString();
+`
+
 	SampleVulnerableHSJAVA144 = `
 public class Foo {
 	public void Bar() {

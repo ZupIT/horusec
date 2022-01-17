@@ -389,6 +389,48 @@ func TestRulesVulnerableCode(t *testing.T) {
 			},
 		},
 		{
+			Name: "HS-JAVA-141",
+			Rule: NewLDAPInjection(),
+			Src:  SampleVulnerableHSJAVA141,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "NamingEnumeration<SearchResult> answers = context.search(\"dc=People,dc=example,dc=com\",",
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 50,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-142",
+			Rule: NewPotentialExternalControl(),
+			Src:  SampleVulnerableHSJAVA142,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "conn.setCatalog(request.getParameter(\"catalog\"));",
+					SourceLocation: engine.Location{
+						Line:   2,
+						Column: 5,
+					},
+				},
+			},
+		},
+		{
+			Name: "HS-JAVA-143",
+			Rule: NewBadHexadecimalConcatenation(),
+			Src:  SampleVulnerableHSJAVA143,
+			Findings: []engine.Finding{
+				{
+					CodeSample: "stringBuilder.append( Integer.toHexString( b & 0xFF ) );",
+					SourceLocation: engine.Location{
+						Line:   7,
+						Column: 46,
+					},
+				},
+			},
+		},
+		{
 			Name: "HS-JAVA-144",
 			Rule: NewNullCipherInsecure(),
 			Src:  SampleVulnerableHSJAVA144,
@@ -724,6 +766,21 @@ func TestRulesSafeCode(t *testing.T) {
 			Name: "HS-JAVA-134",
 			Rule: NewSQLInjection(),
 			Src:  SampleSafeHSJAVA134,
+		},
+		{
+			Name: "HS-JAVA-141",
+			Rule: NewLDAPInjection(),
+			Src:  SampleSafeHSJAVA141,
+		},
+		{
+			Name: "HS-JAVA-142",
+			Rule: NewPotentialExternalControl(),
+			Src:  SampleSafeHSJAVA142,
+		},
+		{
+			Name: "HS-JAVA-143",
+			Rule: NewBadHexadecimalConcatenation(),
+			Src:  SampleSafeHSJAVA143,
 		},
 		{
 			Name: "HS-JAVA-145",
