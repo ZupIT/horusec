@@ -69,6 +69,11 @@ func TestRulesSafeCode(t *testing.T) {
 			Rule: NewSQLInjection(),
 			Src:  SampleSafeHSSWIFT24,
 		},
+		{
+			Name: "HS-SWIFT-24",
+			Rule: NewSQLInjection(),
+			Src:  Sample2SafeHSSWIFT24,
+		},
 	}
 	testutil.TestSafeCode(t, testcases)
 }

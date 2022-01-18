@@ -61,4 +61,85 @@ if let err = SD.executeChange("SELECT * FROM User where user=?", withArgs: [name
     //no error, the row was inserted successfully
 }
 `
+
+	Sample2SafeHSSWIFT24 = `
+public extension Expression {
+    func observe(
+        view: UIView,
+        controller: BeagleControllerProtocol?,
+        updateFunction: @escaping (T?) -> Void
+    ) {
+        switch self {
+        case let .expression(expression):
+            controller?.addBinding(expression: expression, in: view, update: updateFunction)
+        case let .value(value):
+            updateFunction(value)
+        }
+    }
+
+    func evaluate(with view: UIView?, implicitContext: Context? = nil) -> T? {
+        switch self {
+        case let .expression(expression):
+            if let implicitContext = implicitContext {
+                let auxView = UIView()
+                auxView.parentContext = view
+                auxView.setContext(implicitContext)
+                return evaluate(with: auxView)
+            }
+            
+            return view?.evaluateExpression(expression).transform()
+        case let .value(value):
+            return value
+        }
+    }
+}
+
+// MARK: - RepresentableByParsableString
+extension ContextExpression: RepresentableByParsableString {
+    public static var parser = singleOrMultipleExpression
+
+    public var rawValue: String {
+        switch self {
+        case .multiple(let multiple):
+            return multiple.rawValue
+        case .single(let single):
+            return single.rawValue
+        }
+    }
+}
+
+extension SingleExpression: RepresentableByParsableString {
+    public static let parser = singleExpression
+    
+    public var rawValue: String {
+        var result = "@{"
+        switch self {
+        case let .value(value):
+            result += value.rawValue
+        case let .operation(operation):
+            result += operation.rawValue
+        }
+        
+        result += "}"
+        return result
+    }
+}
+
+extension MultipleExpression: RepresentableByParsableString {
+    public static let parser = multipleExpression
+
+    public var rawValue: String {
+        var result = ""
+        for node in nodes {
+            switch node {
+            case let .string(string):
+                result += string
+            case let .expression(expression):
+                result += expression.rawValue
+            }
+        }
+        return result
+    }
+}
+`
 )
