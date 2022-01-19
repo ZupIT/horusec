@@ -15,6 +15,7 @@
 package formatters
 
 import (
+	"bytes"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -124,12 +125,12 @@ func (s *Service) SetAnalysisError(err error, tool tools.Tool, output, projectSu
 
 func (s *Service) addAnalysisError(tool tools.Tool, err error) {
 	if err != nil {
-		toAppend := ""
+		buf := bytes.NewBufferString("")
 		if len(s.analysis.Errors) > 0 {
-			s.analysis.Errors += fmt.Sprintf("; Error while running %s tool: %s", tool.ToString(), err.Error())
-			return
+			fmt.Fprintf(buf, "; ")
 		}
-		s.analysis.Errors += toAppend + err.Error()
+		fmt.Fprintf(buf, "Error while running tool %s: %v", tool, err)
+		s.analysis.Errors += buf.String()
 	}
 }
 
