@@ -18,124 +18,138 @@ import (
 	"errors"
 	"testing"
 
-	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/stretchr/testify/assert"
 
-	cliConfig "github.com/ZupIT/horusec/config"
+	"github.com/ZupIT/horusec/config"
 	"github.com/ZupIT/horusec/internal/entities/toolsconfig"
-	"github.com/ZupIT/horusec/internal/entities/workdir"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/testutil"
 )
 
 func TestParseOutput(t *testing.T) {
-	t.Run("Should success parse output to analysis", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("should add 2 vulnerabilities on analysis with no errors", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-
-		output := "\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8164\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/f6ioe4sdpbY\n\u001B[31mTitle: \u001B[0mPossible Strong Parameters Bypass in ActionPack\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n\n\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8166\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/NOjKiGeXUgw\n\u001B[31mTitle: \u001B[0mAbility to forge per-form CSRF tokens given a global CSRF token\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n"
-
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
-
-		assert.NotPanics(t, func() {
-			formatter.StartAnalysis("")
-		})
+		formatter.StartAnalysis("")
 
 		assert.Len(t, analysis.AnalysisVulnerabilities, 2)
+		for _, v := range analysis.AnalysisVulnerabilities {
+			vuln := v.Vulnerability
+			assert.Equal(t, tools.BundlerAudit, vuln.SecurityTool)
+			assert.Equal(t, languages.Ruby, vuln.Language)
+			assert.Equal(t, confidence.Low, vuln.Confidence)
+			assert.NotEmpty(t, vuln.Details, "Exepcted not empty details")
+			assert.NotContains(t, vuln.Details, "()")
+			assert.NotEmpty(t, vuln.File, "Expected not empty file name")
+			assert.NotEmpty(t, vuln.Line, "Expected not empty line")
+			assert.NotEmpty(t, vuln.Severity, "Expected not empty severity")
+		}
 	})
 
-	t.Run("Should return error when parsing invalid output", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("should add no error and no vulnerabilities on analysis when parse invalid output", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("invalid output", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
-	t.Run("Should return error when gem lock not found", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("Should add error on analysis when Gemfile.lock not found", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
-			Return("No such file or directory Errno::ENOENT", nil)
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(`Could not find "Gemfile.lock"`, nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
-	t.Run("Should return no vulnerabilities", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
-
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
+	t.Run("Should add no vulnerabilities on analysis when empty", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
-		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").
-			Return("No vulnerabilities found", nil)
+		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("No vulnerabilities found", nil)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
+		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 
-	t.Run("Should return error when something went wrong in container", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+	t.Run("Should add error on analysis when something went wrong in container", func(t *testing.T) {
+		analysis := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		config := &cliConfig.Config{}
-		config.WorkDir = &workdir.WorkDir{}
-
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
-
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, newTestConfig(t, analysis))
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
+
+		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("Should not execute tool because it's ignored", func(t *testing.T) {
-		analysis := &entitiesAnalysis.Analysis{}
+		analysis := new(analysis.Analysis)
+
 		dockerAPIControllerMock := testutil.NewDockerMock()
-		config := &cliConfig.Config{}
-		config.ToolsConfig = toolsconfig.ToolsConfig{
+		cfg := config.New()
+		cfg.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.BundlerAudit: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
 		formatter := NewFormatter(service)
-
 		formatter.StartAnalysis("")
 	})
 }
+
+func newTestConfig(t *testing.T, analysiss *analysis.Analysis) *config.Config {
+	cfg := config.New()
+	cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysiss, testutil.RubyExample1)
+	return cfg
+}
+
+// output contains the expected output from bundler
+//
+// Note, output from bundler is colored, and the formatter remove this colors
+// before the parsing, so the expected output.
+//
+// This output has the following schema:
+//
+// Name: actionpack
+// Version: 6.0.0
+// Advisory: CVE-2020-8164
+// Criticality: Unknown
+// URL: https://groups.google.com/forum/#!topic/rubyonrails-security/f6ioe4sdpbY
+// Title: Possible Strong Parameters Bypass in ActionPack
+// Solution: upgrade to ~> 5.2.4.3, >= 6.0.3.1
+//
+const output = "\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8164\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/f6ioe4sdpbY\n\u001B[31mTitle: \u001B[0mPossible Strong Parameters Bypass in ActionPack\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n\n\u001B[31mName: \u001B[0mactionpack\n\u001B[31mVersion: \u001B[0m6.0.0\n\u001B[31mAdvisory: \u001B[0mCVE-2020-8166\n\u001B[31mCriticality: \u001B[0mUnknown\n\u001B[31mURL: \u001B[0mhttps://groups.google.com/forum/#!topic/rubyonrails-security/NOjKiGeXUgw\n\u001B[31mTitle: \u001B[0mAbility to forge per-form CSRF tokens given a global CSRF token\n\u001B[31mSolution: upgrade to \u001B[0m~> 5.2.4.3, >= 6.0.3.1\n"

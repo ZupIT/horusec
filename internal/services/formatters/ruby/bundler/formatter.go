@@ -32,7 +32,6 @@ import (
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/ruby/bundler/entities"
 	"github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
@@ -111,49 +110,48 @@ func (f *Formatter) removeOutputEsc(output string) string {
 }
 
 func (f *Formatter) parseOutput(output, projectSubPath string) {
-	if strings.Contains(output, "No vulnerabilities found") {
+	// If the output does not have the "Name:" string when we split on this string
+	// the strings.Split function will return a list with a single element and this
+	// single element will be the entire invalid output, so we do this strings.Contains
+	// validation to avoid parse an invalid output data.
+	if strings.Contains(output, "No vulnerabilities found") || !strings.Contains(output, "Name:") {
 		return
 	}
 
 	for _, outputSplit := range strings.Split(output, "Name:") {
-		f.setOutput(outputSplit, projectSubPath)
+		f.processOutput(outputSplit, projectSubPath)
 	}
 }
 
-func (f *Formatter) setOutput(outputSplit, projectSubPath string) {
-	if outputSplit == "" {
+func (f *Formatter) processOutput(outputData, projectSubPath string) {
+	if outputData == "" {
 		return
 	}
 
-	output := &entities.Output{}
-	for _, value := range strings.Split(outputSplit, "\r\n") {
+	var output bundlerOutput
+	for _, value := range strings.Split(outputData, "\r\n") {
 		if value == "" || value == "Vulnerabilities found!" {
 			continue
 		}
 
-		output.SetOutputData(output, value)
+		output.setOutputData(&output, value)
 	}
 
-	f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(output, projectSubPath))
+	f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&output, projectSubPath))
 }
 
-func (f *Formatter) setVulnerabilityData(output *entities.Output, projectSubPath string) *vulnerability.Vulnerability {
-	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Confidence = confidence.Low
-	vuln.Severity = output.GetSeverity()
-	vuln.Details = output.GetDetails()
-	vuln.File = f.GetFilepathFromFilename("Gemfile.lock", projectSubPath)
-	vuln.Code = f.GetCodeWithMaxCharacters(output.Name, 0)
+func (f *Formatter) newVulnerability(output *bundlerOutput, projectSubPath string) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		SecurityTool: tools.BundlerAudit,
+		Language:     languages.Ruby,
+		Confidence:   confidence.Low,
+		Severity:     output.getSeverity(),
+		Details:      output.getDetails(),
+		File:         f.GetFilepathFromFilename("Gemfile.lock", projectSubPath),
+		Code:         f.GetCodeWithMaxCharacters(output.Name, 0),
+	}
 	vuln.Line = f.getVulnerabilityLineByName(vuln.Code, vuln.File)
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
-}
-
-func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.SecurityTool = tools.BundlerAudit
-	vulnerabilitySeverity.Language = languages.Ruby
-	return vulnerabilitySeverity
+	return f.SetCommitAuthor(vulnhash.Bind(vuln))
 }
 
 func (f *Formatter) getVulnerabilityLineByName(module, fileName string) string {
