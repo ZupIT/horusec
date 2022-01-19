@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package enums
+package bundler
 
-type CriticalityType string
+type bundlerCriticalityType string
 
 const (
-	High   CriticalityType = "High"
-	Medium CriticalityType = "Medium"
-	Low    CriticalityType = "Low"
+	High   bundlerCriticalityType = "High"
+	Medium bundlerCriticalityType = "Medium"
+	Low    bundlerCriticalityType = "Low"
 )
 
-func (c CriticalityType) ToString() string {
+func (c bundlerCriticalityType) String() string {
 	return string(c)
 }
 
-func GetCriticalityTypeByString(criticalityType string) CriticalityType {
+func getCriticalityTypeByString(criticalityType string) bundlerCriticalityType {
 	switch criticalityType {
-	case High.ToString():
+	case High.String():
 		return High
-	case Medium.ToString():
+	case Medium.String():
 		return Medium
-	case Low.ToString():
+	case Low.String():
 		return Low
 	}
 	return Low
