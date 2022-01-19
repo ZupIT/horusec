@@ -99,6 +99,18 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 	}
 }
 
+func TestSetAnalysisError(t *testing.T) {
+	analysis := new(analysis.Analysis)
+	svc := NewFormatterService(analysis, testutil.NewDockerMock(), config.New())
+
+	svc.SetAnalysisError(errors.New("some error"), tools.HorusecEngine, "testing", "")
+	svc.SetAnalysisError(errors.New("other error"), tools.HorusecEngine, "testing 2", "")
+
+	expectedErrors := "Error while running tool HorusecEngine: some error; Error while running tool HorusecEngine: other error"
+
+	assert.Equal(t, expectedErrors, analysis.Errors)
+}
+
 func TestMock_AddWorkDirInCmd(t *testing.T) {
 	mock := testutil.NewFormatterMock()
 	t.Run("Should mock with success", func(t *testing.T) {

@@ -147,7 +147,7 @@ func TestParseOutput(t *testing.T) {
 		formatter.StartAnalysis("")
 
 		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
-		assert.Equal(t, messages.MsgErrorNancyRateLimit, analysis.Errors)
+		assert.Contains(t, analysis.Errors, messages.MsgErrorNancyRateLimit)
 	})
 
 	t.Run("should add error on analysis when something went wrong executing container", func(t *testing.T) {
