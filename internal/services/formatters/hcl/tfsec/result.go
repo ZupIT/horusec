@@ -45,14 +45,12 @@ func (r *tfsecResult) getFilename() string {
 	return r.Location.Filename
 }
 
+// getSeverity this func will get the TfSec severity and parse to the Horusec severity. TfSec can return the following
+// severities: CRITICAL, HIGH, MEDIUM, LOW and NONE which is represented by an empty string.
 func (r *tfsecResult) getSeverity() severities.Severity {
-	return r.mapSeverityValues()[r.Severity]
-}
-
-func (r *tfsecResult) mapSeverityValues() map[string]severities.Severity {
-	return map[string]severities.Severity{
-		"ERROR":   severities.High,
-		"WARNING": severities.Medium,
-		"":        severities.Low,
+	if r.Severity == "" {
+		return severities.Unknown
 	}
+
+	return severities.Severity(r.Severity)
 }
