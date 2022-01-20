@@ -184,7 +184,8 @@ func TestLanguageDetect(t *testing.T) {
 		assert.Contains(t, langs, languages.Leaks)
 		assert.Contains(t, langs, languages.Java)
 		assert.Contains(t, langs, languages.Generic)
-		assert.Len(t, langs, 3)
+		assert.Contains(t, langs, languages.Shell)
+		assert.Len(t, langs, 4)
 	})
 
 	t.Run("Should run language detect and return JAVASCRIPT and GITLEAKS", func(t *testing.T) {
@@ -210,6 +211,30 @@ func TestLanguageDetect(t *testing.T) {
 		assert.Contains(t, langs, languages.Generic)
 		assert.Contains(t, langs, languages.Yaml)
 		assert.Len(t, langs, 4)
+	})
+
+	t.Run("Should run language detect and return PHP, LEAKS, GENERIC in example2", func(t *testing.T) {
+		controller := NewLanguageDetect(config.New(), uuid.New())
+
+		langs, err := controller.Detect(testutil.PHPExample2)
+
+		assert.NoError(t, err)
+		assert.Contains(t, langs, languages.Leaks)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.PHP)
+		assert.Len(t, langs, 3)
+	})
+
+	t.Run("Should run language detect and return PHP, LEAKS, GENERIC in example1", func(t *testing.T) {
+		controller := NewLanguageDetect(config.New(), uuid.New())
+
+		langs, err := controller.Detect(testutil.PHPExample1)
+
+		assert.NoError(t, err)
+		assert.Contains(t, langs, languages.Leaks)
+		assert.Contains(t, langs, languages.Generic)
+		assert.Contains(t, langs, languages.PHP)
+		assert.Len(t, langs, 3)
 	})
 
 	t.Run("Should run language detect and return KOTLIN and GITLEAKS", func(t *testing.T) {

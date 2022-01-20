@@ -47,21 +47,30 @@ func TestGetColumn(t *testing.T) {
 }
 
 func TestIsValidMessage(t *testing.T) {
-	t.Run("should return false if invalid message", func(t *testing.T) {
+	t.Run("should return true if valid error message", func(t *testing.T) {
 		message := &Message{
-			Message: "This implies that some PHP code is not scanned by PHPCS",
-			Type:    "ERROR",
+			Type: "ERROR",
 		}
 
-		assert.False(t, message.IsValidMessage())
+		assert.True(t, message.isErrorMessage())
+		assert.True(t, message.IsAllowedMessage())
 	})
 
-	t.Run("should return true if valid message", func(t *testing.T) {
+	t.Run("should return true if valid warning message", func(t *testing.T) {
 		message := &Message{
-			Message: "",
-			Type:    "ERROR",
+			Type: "WARNING",
 		}
 
-		assert.True(t, message.IsValidMessage())
+		assert.True(t, message.isWarningMessage())
+		assert.True(t, message.IsAllowedMessage())
+	})
+	t.Run("should return false if invalid type message", func(t *testing.T) {
+		message := &Message{
+			Type: "other",
+		}
+
+		assert.False(t, message.isErrorMessage())
+		assert.False(t, message.isWarningMessage())
+		assert.False(t, message.IsAllowedMessage())
 	})
 }
