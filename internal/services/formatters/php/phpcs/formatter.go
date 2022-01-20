@@ -16,10 +16,10 @@ package phpcs
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
@@ -28,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/services/formatters/php/phpcs/entities"
+	fileutils "github.com/ZupIT/horusec/internal/utils/file"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -94,20 +95,26 @@ func (f *Formatter) parseResults(results map[string]interface{}) {
 
 func (f *Formatter) parseMessages(filepath string, result interface{}) {
 	for _, message := range f.parseToResult(result).Messages {
-		if message.IsValidMessage() {
-			f.AddNewVulnerabilityIntoAnalysis(f.setVulnerabilityData(filepath, message))
+		if message.IsAllowedMessage() && message.IsNotFailedToScan() {
+			vuln := f.setVulnerabilityData(filepath, message)
+			f.AddNewVulnerabilityIntoAnalysis(vuln)
 		}
 	}
 }
 
 func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
-	vuln.Severity = severities.Unknown
+	vuln.Severity = result.GetSeverity()
 	vuln.Details = result.Message
 	vuln.Line = result.GetLine()
 	vuln.Column = result.GetColumn()
 	vuln.File = f.RemoveSrcFolderFromPath(filepath)
 	vuln = vulnhash.Bind(vuln)
+
+	// NOTE: code and details were set after the vulnhash.Bind to avoid changes in the hash generation
+	vuln.Code, _ = fileutils.GetCode(f.GetConfigProjectPath(), vuln.File, result.GetLine())
+	vuln.Details += fmt.Sprintf("\n %s", result.Source)
+
 	return f.SetCommitAuthor(vuln)
 }
 

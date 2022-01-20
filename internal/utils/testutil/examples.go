@@ -100,6 +100,7 @@ var (
 	// PHPExample represents the entire PHP examples directory.
 	PHPExample  = filepath.Join(ExamplesPath, "php")
 	PHPExample1 = filepath.Join(PHPExample, "example1")
+	PHPExample2 = filepath.Join(PHPExample, "example2")
 
 	// PythonExample represents the entire Python examples directory.
 	PythonExample  = filepath.Join(ExamplesPath, "python")
