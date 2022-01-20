@@ -467,7 +467,7 @@ func NewSQLInjection() text.TextRule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(?i)((sqlite3_exec|executeChange|raw)\(.?((.*|\n)*)?)?(select|update|insert|delete)((.*|\n)*)?.*((["|']*)(\s?)(\+))`),
+			regexp.MustCompile(`(?i)((sqlite3_exec|executeChange|raw)\(.?((.*|\n)*)?)(select|update|insert|delete)((.*|\n)*)?.*((["|']*)(\s?)(\+))`),
 		},
 	}
 }
