@@ -169,9 +169,22 @@ func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerabili
 		addVuln.File = target
 		addVuln.Details = vuln.getDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
-		addVuln = vulnhash.Bind(addVuln)
+		addVuln.VulnHash = f.getOldHash(vuln.PkgName, *addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(addVuln)
 	}
+}
+
+// getOldHash func necessary to avoid a breaking change in the trivy hash generation. Since the pull request
+// https://github.com/ZupIT/horusec/pull/882 some changes were made in the line and code, and this data influences
+// directly the hash generation. This func will avoid this hash change by using the same data as before, but for the
+// users the data will be showed with the fixes made in the pull request 882, leading to no braking changes and keeping
+// the fixes.
+// nolint:gocritic // it has to be without pointer
+func (f *Formatter) getOldHash(pkgName string, vuln vulnerability.Vulnerability) string {
+	vuln.Line = "0"
+	vuln.Code = pkgName
+
+	return vulnhash.Bind(&vuln).VulnHash
 }
 
 func (f *Formatter) addMisconfigurationOutput(result []*trivyMisconfiguration, target string) {
