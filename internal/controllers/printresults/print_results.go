@@ -30,7 +30,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/config"
-	sq "github.com/ZupIT/horusec/internal/entities/sonarqube"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/sonarqube"
@@ -40,7 +39,7 @@ import (
 var ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
 
 type SonarQubeConverter interface {
-	ConvertVulnerabilityToSonarQube() sq.Report
+	ConvertVulnerabilityToSonarQube() sonarqube.Report
 }
 
 type analysisOutputJSON struct {
