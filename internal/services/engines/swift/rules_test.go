@@ -15,6 +15,7 @@
 package swift
 
 import (
+	"path/filepath"
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
@@ -23,31 +24,36 @@ import (
 )
 
 func TestRulesVulnerableCode(t *testing.T) {
+	tmpDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-SWIFT-6",
-			Rule: NewWeakMD5CryptoCipher(),
-			Src:  SampleVulnerableHSSWIFT6,
+			Name:     "HS-SWIFT-6",
+			Rule:     NewWeakMD5CryptoCipher(),
+			Src:      SampleVulnerableHSSWIFT6,
+			Filename: filepath.Join(tmpDir, "HS-SWIFT-6"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: `import CryptoSwift`,
 					SourceLocation: engine.Location{
-						Line:   1,
-						Column: 0,
+						Filename: filepath.Join(tmpDir, "HS-SWIFT-6"),
+						Line:     1,
+						Column:   0,
 					},
 				},
 			},
 		},
 		{
-			Name: "HS-SWIFT-24",
-			Src:  SampleVulnerableHSSWIFT24,
-			Rule: NewSQLInjection(),
+			Name:     "HS-SWIFT-24",
+			Src:      SampleVulnerableHSSWIFT24,
+			Rule:     NewSQLInjection(),
+			Filename: filepath.Join(tmpDir, "HS-SWIFT-24"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: `let err = SD.executeChange("SELECT * FROM User where user="+ valuesFromInput) {`,
 					SourceLocation: engine.Location{
-						Line:   2,
-						Column: 13,
+						Filename: filepath.Join(tmpDir, "HS-SWIFT-24"),
+						Line:     2,
+						Column:   13,
 					},
 				},
 			},
@@ -58,21 +64,25 @@ func TestRulesVulnerableCode(t *testing.T) {
 }
 
 func TestRulesSafeCode(t *testing.T) {
+	tmpDir := t.TempDir()
 	testcases := []*testutil.RuleTestCase{
 		{
-			Name: "HS-SWIFT-6",
-			Rule: NewWeakMD5CryptoCipher(),
-			Src:  SampleSafeHSSWIFT6,
+			Name:     "HS-SWIFT-6",
+			Rule:     NewWeakMD5CryptoCipher(),
+			Src:      SampleSafeHSSWIFT6,
+			Filename: filepath.Join(tmpDir, "HS-SWIFT-6"),
 		},
 		{
-			Name: "HS-SWIFT-24",
-			Rule: NewSQLInjection(),
-			Src:  SampleSafeHSSWIFT24,
+			Name:     "HS-SWIFT-24",
+			Rule:     NewSQLInjection(),
+			Src:      SampleSafeHSSWIFT24,
+			Filename: filepath.Join(tmpDir, "HS-SWIFT-24"),
 		},
 		{
-			Name: "HS-SWIFT-24",
-			Rule: NewSQLInjection(),
-			Src:  Sample2SafeHSSWIFT24,
+			Name:     "HS-SWIFT-24",
+			Rule:     NewSQLInjection(),
+			Src:      Sample2SafeHSSWIFT24,
+			Filename: filepath.Join(tmpDir, "HS-SWIFT-24"),
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

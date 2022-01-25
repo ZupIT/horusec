@@ -85,7 +85,6 @@ horusec start -p="/home/user/projects/my-project"
 	cobra.OnInitialize(func() {
 		engine.SetLogLevel(cfg.LogLevel)
 	})
-
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}

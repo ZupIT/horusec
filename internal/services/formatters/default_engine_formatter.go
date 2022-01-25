@@ -15,6 +15,7 @@
 package formatters
 
 import (
+	"context"
 	"path/filepath"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
@@ -22,13 +23,12 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	engine "github.com/ZupIT/horusec-engine"
 
-	"github.com/ZupIT/horusec/internal/enums/engines"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
 
 type RuleManager interface {
 	GetAllRules() []engine.Rule
-	GetTextUnitByRulesExt(src string) ([]engine.Unit, error)
+	GetAllExtensions() []string
 }
 
 // DefaultFormatter is a formatter that can be used with horusec engines implementation
@@ -36,6 +36,7 @@ type DefaultFormatter struct {
 	svc      IService
 	manager  RuleManager
 	language languages.Language
+	engine   *engine.Engine
 }
 
 func NewDefaultFormatter(svc IService, manager RuleManager, language languages.Language) IFormatter {
@@ -43,6 +44,7 @@ func NewDefaultFormatter(svc IService, manager RuleManager, language languages.L
 		svc:      svc,
 		manager:  manager,
 		language: language,
+		engine:   engine.NewEngine(0, manager.GetAllExtensions()...),
 	}
 }
 
@@ -58,20 +60,16 @@ func (f *DefaultFormatter) StartAnalysis(src string) {
 func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
 	f.svc.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine, f.language)
 
-	findings, err := f.execEngineAnalysis(src)
+	rules := append(f.manager.GetAllRules(), f.svc.GetCustomRulesByLanguage(f.language)...)
+	path := f.svc.GetConfigProjectPath()
+	if src != "" {
+		path = filepath.Join(path, src)
+	}
+
+	findings, err := f.engine.Run(context.Background(), path, rules...)
 	if err != nil {
 		return err
 	}
 	f.svc.ParseFindingsToVulnerabilities(findings, tools.HorusecEngine, f.language)
 	return nil
-}
-
-func (f *DefaultFormatter) execEngineAnalysis(src string) ([]engine.Finding, error) {
-	textUnit, err := f.manager.GetTextUnitByRulesExt(filepath.Join(f.svc.GetConfigProjectPath(), src))
-	if err != nil {
-		return nil, err
-	}
-
-	allRules := append(f.manager.GetAllRules(), f.svc.GetCustomRulesByLanguage(f.language)...)
-	return engine.RunMaxUnitsByAnalysis(textUnit, allRules, engines.DefaultMaxUnitsPerAnalysis), nil
 }

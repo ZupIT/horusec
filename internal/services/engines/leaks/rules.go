@@ -23,8 +23,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewAWSManagerID() text.TextRule {
-	return text.TextRule{
+func NewAWSManagerID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-1",
 			Name:        "AWS Manager ID",
@@ -39,8 +39,8 @@ func NewAWSManagerID() text.TextRule {
 	}
 }
 
-func NewAWSSecretKey() text.TextRule {
-	return text.TextRule{
+func NewAWSSecretKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-2",
 			Name:        "AWS Secret Key",
@@ -56,8 +56,8 @@ func NewAWSSecretKey() text.TextRule {
 	}
 }
 
-func NewAWSMWSKey() text.TextRule {
-	return text.TextRule{
+func NewAWSMWSKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-3",
 			Name:        "AWS MWS key",
@@ -72,8 +72,8 @@ func NewAWSMWSKey() text.TextRule {
 	}
 }
 
-func NewFacebookSecretKey() text.TextRule {
-	return text.TextRule{
+func NewFacebookSecretKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-4",
 			Name:        "Facebook Secret Key",
@@ -88,8 +88,8 @@ func NewFacebookSecretKey() text.TextRule {
 	}
 }
 
-func NewFacebookClientID() text.TextRule {
-	return text.TextRule{
+func NewFacebookClientID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-5",
 			Name:        "Facebook Client ID",
@@ -104,8 +104,8 @@ func NewFacebookClientID() text.TextRule {
 	}
 }
 
-func NewTwitterSecretKey() text.TextRule {
-	return text.TextRule{
+func NewTwitterSecretKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-6",
 			Name:        "Twitter Secret Key",
@@ -120,8 +120,8 @@ func NewTwitterSecretKey() text.TextRule {
 	}
 }
 
-func NewTwitterClientID() text.TextRule {
-	return text.TextRule{
+func NewTwitterClientID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-7",
 			Name:        "Twitter Client ID",
@@ -136,8 +136,8 @@ func NewTwitterClientID() text.TextRule {
 	}
 }
 
-func NewGithub() text.TextRule {
-	return text.TextRule{
+func NewGithub() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-8",
 			Name:        "Github",
@@ -152,8 +152,8 @@ func NewGithub() text.TextRule {
 	}
 }
 
-func NewLinkedInClientID() text.TextRule {
-	return text.TextRule{
+func NewLinkedInClientID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-9",
 			Name:        "LinkedIn Client ID",
@@ -168,8 +168,8 @@ func NewLinkedInClientID() text.TextRule {
 	}
 }
 
-func NewLinkedInSecretKey() text.TextRule {
-	return text.TextRule{
+func NewLinkedInSecretKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-10",
 			Name:        "LinkedIn Secret Key",
@@ -184,8 +184,8 @@ func NewLinkedInSecretKey() text.TextRule {
 	}
 }
 
-func NewSlack() text.TextRule {
-	return text.TextRule{
+func NewSlack() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-11",
 			Name:        "Slack",
@@ -201,8 +201,8 @@ func NewSlack() text.TextRule {
 	}
 }
 
-func NewAsymmetricPrivateKey() text.TextRule {
-	return text.TextRule{
+func NewAsymmetricPrivateKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-12",
 			Name:        "Asymmetric Private Key",
@@ -218,8 +218,8 @@ func NewAsymmetricPrivateKey() text.TextRule {
 	}
 }
 
-func NewGoogleAPIKey() text.TextRule {
-	return text.TextRule{
+func NewGoogleAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-13",
 			Name:        "Google API key",
@@ -235,8 +235,8 @@ func NewGoogleAPIKey() text.TextRule {
 	}
 }
 
-func NewGoogleGCPServiceAccount() text.TextRule {
-	return text.TextRule{
+func NewGoogleGCPServiceAccount() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-14",
 			Name:        "Google (GCP) Service Account",
@@ -253,8 +253,8 @@ func NewGoogleGCPServiceAccount() text.TextRule {
 	}
 }
 
-func NewHerokuAPIKey() text.TextRule {
-	return text.TextRule{
+func NewHerokuAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-15",
 			Name:        "Heroku API key",
@@ -269,8 +269,8 @@ func NewHerokuAPIKey() text.TextRule {
 	}
 }
 
-func NewMailChimpAPIKey() text.TextRule {
-	return text.TextRule{
+func NewMailChimpAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-16",
 			Name:        "MailChimp API key",
@@ -285,8 +285,8 @@ func NewMailChimpAPIKey() text.TextRule {
 	}
 }
 
-func NewMailgunAPIKey() text.TextRule {
-	return text.TextRule{
+func NewMailgunAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-17",
 			Name:        "Mailgun API key",
@@ -301,8 +301,8 @@ func NewMailgunAPIKey() text.TextRule {
 	}
 }
 
-func NewPayPalBraintreeAccessToken() text.TextRule {
-	return text.TextRule{
+func NewPayPalBraintreeAccessToken() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-18",
 			Name:        "PayPal Braintree access token",
@@ -317,8 +317,8 @@ func NewPayPalBraintreeAccessToken() text.TextRule {
 	}
 }
 
-func NewPicaticAPIKey() text.TextRule {
-	return text.TextRule{
+func NewPicaticAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-19",
 			Name:        "Picatic API key",
@@ -333,8 +333,8 @@ func NewPicaticAPIKey() text.TextRule {
 	}
 }
 
-func NewSendGridAPIKey() text.TextRule {
-	return text.TextRule{
+func NewSendGridAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-20",
 			Name:        "SendGrid API Key",
@@ -349,8 +349,8 @@ func NewSendGridAPIKey() text.TextRule {
 	}
 }
 
-func NewStripeAPIKey() text.TextRule {
-	return text.TextRule{
+func NewStripeAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-21",
 			Name:        "Stripe API key",
@@ -365,8 +365,8 @@ func NewStripeAPIKey() text.TextRule {
 	}
 }
 
-func NewSquareAccessToken() text.TextRule {
-	return text.TextRule{
+func NewSquareAccessToken() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-22",
 			Name:        "Square access token",
@@ -381,8 +381,8 @@ func NewSquareAccessToken() text.TextRule {
 	}
 }
 
-func NewSquareOAuthSecret() text.TextRule {
-	return text.TextRule{
+func NewSquareOAuthSecret() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-23",
 			Name:        "Square OAuth secret",
@@ -397,8 +397,8 @@ func NewSquareOAuthSecret() text.TextRule {
 	}
 }
 
-func NewTwilioAPIKey() text.TextRule {
-	return text.TextRule{
+func NewTwilioAPIKey() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-24",
 			Name:        "Twilio API key",
@@ -413,8 +413,8 @@ func NewTwilioAPIKey() text.TextRule {
 	}
 }
 
-func NewHardCodedCredentialGeneric() text.TextRule {
-	return text.TextRule{
+func NewHardCodedCredentialGeneric() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-25",
 			Name:        "Potential Hard-coded credential",
@@ -429,8 +429,8 @@ func NewHardCodedCredentialGeneric() text.TextRule {
 	}
 }
 
-func NewHardCodedPassword() text.TextRule {
-	return text.TextRule{
+func NewHardCodedPassword() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-26",
 			Name:        "Hard-coded password",
@@ -449,8 +449,8 @@ func NewHardCodedPassword() text.TextRule {
 	}
 }
 
-func NewPasswordExposedInHardcodedURL() text.TextRule {
-	return text.TextRule{
+func NewPasswordExposedInHardcodedURL() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-27",
 			Name:        "Password found in a hardcoded URL",
@@ -465,8 +465,8 @@ func NewPasswordExposedInHardcodedURL() text.TextRule {
 	}
 }
 
-func NewWPConfig() text.TextRule {
-	return text.TextRule{
+func NewWPConfig() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-LEAKS-28",
 			Name:        "Wordpress configuration file disclosure",

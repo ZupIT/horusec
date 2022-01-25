@@ -25,8 +25,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewUsageLocalDataWithoutCryptography() text.TextRule {
-	return text.TextRule{
+func NewUsageLocalDataWithoutCryptography() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-1",
 			Name:        "Usage Local Data Without Cryptography",
@@ -42,8 +42,8 @@ func NewUsageLocalDataWithoutCryptography() text.TextRule {
 	}
 }
 
-func NewNoSendSensitiveInformation() text.TextRule {
-	return text.TextRule{
+func NewNoSendSensitiveInformation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-2",
 			Name:        "No Send Sensitive Information in alternative channels (sms, mms, notifications)",
@@ -59,8 +59,8 @@ func NewNoSendSensitiveInformation() text.TextRule {
 	}
 }
 
-func NewNoUseBiometricsTypeIOS() text.TextRule {
-	return text.TextRule{
+func NewNoUseBiometricsTypeIOS() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:   "HS-DART-3",
 			Name: "No use biometrics types face or fingerprint for login in account",
@@ -80,8 +80,8 @@ For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-m
 	}
 }
 
-func NewXmlReaderExternalEntityExpansion() text.TextRule {
-	return text.TextRule{
+func NewXmlReaderExternalEntityExpansion() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-4",
 			Name:        "Xml Reader External Entity Expansion",
@@ -98,8 +98,8 @@ func NewXmlReaderExternalEntityExpansion() text.TextRule {
 	}
 }
 
-func NewNoUseConnectionWithoutSSL() text.TextRule {
-	return text.TextRule{
+func NewNoUseConnectionWithoutSSL() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-5",
 			Name:        "No use connection without SSL",
@@ -116,8 +116,8 @@ func NewNoUseConnectionWithoutSSL() text.TextRule {
 	}
 }
 
-func NewSendSMS() text.TextRule {
-	return text.TextRule{
+func NewSendSMS() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-6",
 			Name:        "Send SMS",
@@ -133,8 +133,8 @@ func NewSendSMS() text.TextRule {
 	}
 }
 
-func NewXSSAttack() text.TextRule {
-	return text.TextRule{
+func NewXSSAttack() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-7",
 			Name:        "Prevent XSS Attack",
@@ -149,8 +149,8 @@ func NewXSSAttack() text.TextRule {
 	}
 }
 
-func NewNoLogSensitive() text.TextRule {
-	return text.TextRule{
+func NewNoLogSensitive() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-8",
 			Name:        "No Log Sensitive Information in console",
@@ -167,8 +167,8 @@ func NewNoLogSensitive() text.TextRule {
 	}
 }
 
-func NewWeakHashingFunctionMd5OrSha1() text.TextRule {
-	return text.TextRule{
+func NewWeakHashingFunctionMd5OrSha1() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-9",
 			Name:        "Weak hashing function md5 or sha1",
@@ -186,8 +186,8 @@ func NewWeakHashingFunctionMd5OrSha1() text.TextRule {
 	}
 }
 
-func NewNoUseSelfSignedCertificate() text.TextRule {
-	return text.TextRule{
+func NewNoUseSelfSignedCertificate() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-10",
 			Name:        "No Use Self Signed Certificate",
@@ -203,8 +203,8 @@ func NewNoUseSelfSignedCertificate() text.TextRule {
 	}
 }
 
-func NewNoUseBiometricsTypeAndroid() text.TextRule {
-	return text.TextRule{
+func NewNoUseBiometricsTypeAndroid() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-11",
 			Name:        "No use biometrics types face or fingerprint for login in account",
@@ -219,8 +219,8 @@ func NewNoUseBiometricsTypeAndroid() text.TextRule {
 	}
 }
 
-func NewNoListClipboardChanges() text.TextRule {
-	return text.TextRule{
+func NewNoListClipboardChanges() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-12",
 			Name:        "No List changes on the clipboard",
@@ -235,8 +235,8 @@ func NewNoListClipboardChanges() text.TextRule {
 	}
 }
 
-func NewSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-13",
 			Name:        "SQL Injection",
@@ -251,8 +251,8 @@ func NewSQLInjection() text.TextRule {
 	}
 }
 
-func NewNoUseNSTemporaryDirectory() text.TextRule {
-	return text.TextRule{
+func NewNoUseNSTemporaryDirectory() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-14",
 			Name:        "No use NSTemporaryDirectory",
@@ -267,8 +267,8 @@ func NewNoUseNSTemporaryDirectory() text.TextRule {
 	}
 }
 
-func NewNoUseCipherMode() text.TextRule {
-	return text.TextRule{
+func NewNoUseCipherMode() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-15",
 			Name:        "No Use Cipher mode",
@@ -286,8 +286,8 @@ func NewNoUseCipherMode() text.TextRule {
 	}
 }
 
-func NewCorsAllowOriginWildCard() text.TextRule {
-	return text.TextRule{
+func NewCorsAllowOriginWildCard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-16",
 			Name:        "Cors Allow Origin Wild Card",
@@ -302,8 +302,8 @@ func NewCorsAllowOriginWildCard() text.TextRule {
 	}
 }
 
-func NewUsingShellInterpreterWhenExecutingOSCommand() text.TextRule {
-	return text.TextRule{
+func NewUsingShellInterpreterWhenExecutingOSCommand() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-DART-17",
 			Name:        "Using shell interpreter when executing OS commands",

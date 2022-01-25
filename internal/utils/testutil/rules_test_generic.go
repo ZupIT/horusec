@@ -15,14 +15,13 @@
 package testutil
 
 import (
+	"context"
+	"os"
 	"testing"
 
 	engine "github.com/ZupIT/horusec-engine"
 	"github.com/ZupIT/horusec-engine/text"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
-	enginesenum "github.com/ZupIT/horusec/internal/enums/engines"
 )
 
 func TestVulnerableCode(t *testing.T, testcases []*RuleTestCase) {
@@ -61,23 +60,19 @@ func TestSafeCode(t *testing.T, testcases []*RuleTestCase) {
 }
 
 func executeRule(tb testing.TB, tt *RuleTestCase) []engine.Finding {
-	textFile, err := text.NewTextFile("", []byte(tt.Src))
-	require.Nil(tb, err, "Expected nil error to create text file")
-
-	unit := text.TextUnit{
-		Files: []text.TextFile{
-			textFile,
-		},
-	}
-
-	return engine.RunMaxUnitsByAnalysis(
-		[]engine.Unit{unit}, []engine.Rule{tt.Rule}, enginesenum.DefaultMaxUnitsPerAnalysis,
-	)
+	// TODO(ian): make a better way to assert finding here
+	err := os.WriteFile(tt.Filename, []byte(tt.Src), os.ModePerm)
+	assert.NoError(tb, err)
+	eng := engine.NewEngine(0, "*")
+	findings, err := eng.Run(context.Background(), tt.Filename, tt.Rule)
+	assert.NoError(tb, err)
+	return findings
 }
 
 type RuleTestCase struct {
 	Name     string
 	Src      string
-	Rule     text.TextRule
+	Filename string
+	Rule     *text.Rule
 	Findings []engine.Finding
 }

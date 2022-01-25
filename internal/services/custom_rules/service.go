@@ -84,7 +84,7 @@ func (s *Service) validateAndParseCustomRule(rule *CustomRule) {
 	}
 
 	s.customRules[rule.Language] = append(
-		s.customRules[rule.Language], s.parseCustomRuleToTextRule(rule),
+		s.customRules[rule.Language], s.parseCustomRuleToRule(rule),
 	)
 }
 
@@ -102,8 +102,8 @@ func (s *Service) openCustomRulesJSONFile() (customRules []*CustomRule, err erro
 	return customRules, json.Unmarshal(bytes, &customRules)
 }
 
-func (s *Service) parseCustomRuleToTextRule(rule *CustomRule) text.TextRule {
-	return text.TextRule{
+func (s *Service) parseCustomRuleToRule(rule *CustomRule) engine.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          rule.ID,
 			Name:        rule.Name,
