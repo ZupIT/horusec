@@ -33,7 +33,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 
 	"github.com/ZupIT/horusec/config"
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	customrules "github.com/ZupIT/horusec/internal/services/custom_rules"
@@ -53,7 +52,7 @@ type CustomRules interface {
 
 // Git is the interface that handle Git operations
 type Git interface {
-	CommitAuthor(line string, file string) commitauthor.CommitAuthor
+	CommitAuthor(line string, file string) git.CommitAuthor
 }
 
 type Service struct {

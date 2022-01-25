@@ -27,9 +27,18 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/config"
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 )
+
+// CommitAuthor contains commit author information to a given
+// file and line.
+type CommitAuthor struct {
+	Author     string `json:"author"`
+	Email      string `json:"email"`
+	CommitHash string `json:"commitHash"`
+	Message    string `json:"message"`
+	Date       string `json:"date"`
+}
 
 type Git struct {
 	config *config.Config
@@ -41,14 +50,14 @@ func New(cfg *config.Config) *Git {
 	}
 }
 
-func (g *Git) CommitAuthor(line, filePath string) commitauthor.CommitAuthor {
+func (g *Git) CommitAuthor(line, filePath string) CommitAuthor {
 	if !g.existsGitFolderInPath() || !g.config.EnableCommitAuthor {
 		return g.newCommitAuthorNotFound()
 	}
 	return g.executeGitBlame(line, filePath)
 }
 
-func (g *Git) executeGitBlame(line, filePath string) commitauthor.CommitAuthor {
+func (g *Git) executeGitBlame(line, filePath string) CommitAuthor {
 	if g.lineOrPathNotFound(line, filePath) {
 		return g.newCommitAuthorNotFound()
 	}
@@ -63,8 +72,8 @@ func (g *Git) lineOrPathNotFound(line, path string) bool {
 	return line == "-" || path == "-" || line == "" || path == ""
 }
 
-func (g *Git) newCommitAuthorNotFound() commitauthor.CommitAuthor {
-	return commitauthor.CommitAuthor{
+func (g *Git) newCommitAuthorNotFound() CommitAuthor {
+	return CommitAuthor{
 		Author:     "-",
 		Email:      "-",
 		CommitHash: "-",
@@ -111,7 +120,7 @@ func (g *Git) executeCMD(line, filePath string) ([]byte, error) {
 	return response, err
 }
 
-func (g *Git) parseOutput(output []byte) (author commitauthor.CommitAuthor) {
+func (g *Git) parseOutput(output []byte) (author CommitAuthor) {
 	output = g.replaceCarets(output)
 
 	if err := json.Unmarshal(output, &author); err != nil {
