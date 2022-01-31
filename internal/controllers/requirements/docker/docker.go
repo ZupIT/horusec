@@ -15,15 +15,15 @@
 package docker
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"os/exec"
 	"strconv"
-	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/services/docker/client"
 )
 
 const (
@@ -53,11 +53,7 @@ func validateIfDockerIsInstalled() (string, error) {
 		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
 		return "", err
 	}
-
-	if !checkIfContainsDockerVersion(response) {
-		return "", ErrDockerNotInstalled
-	}
-	return response, checkIfDockerIsRunning()
+	return response, nil
 }
 
 func validateIfDockerIsSupported(version string) error {
@@ -69,22 +65,15 @@ func validateIfDockerIsSupported(version string) error {
 }
 
 func execDockerVersion() (string, error) {
-	responseBytes, err := exec.Command("docker", "-v").CombinedOutput()
+	dockerClient := client.NewDockerClient()
+	version, err := dockerClient.ServerVersion(context.Background())
 	if err != nil {
 		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckRequirementsDocker, errors.New(string(responseBytes)))
+			messages.MsgErrorWhenCheckRequirementsDocker, errors.New(err.Error()),
+		)
 		return "", err
 	}
-	return strings.ToLower(string(responseBytes)), nil
-}
-
-func checkIfDockerIsRunning() error {
-	responseBytes, err := exec.Command("docker", "ps").CombinedOutput()
-	if err != nil {
-		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckDockerRunning, errors.New(string(responseBytes)))
-	}
-	return err
+	return version.Version, nil
 }
 
 func validateIfDockerIsRunningInMinVersion(response string) error {
@@ -93,7 +82,6 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
 	}
-
 	if version <= MinVersionDockerAccept && subversion < MinSubVersionDockerAccept {
 		fmt.Print("\n")
 		logger.LogInfo(messages.MsgInfoDockerLowerVersion)
@@ -104,15 +92,7 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 }
 
 func extractDockerVersionFromString(response string) (int, int, error) {
-	responseSpited := strings.Split(strings.ToLower(response), "docker version ")
-	if len(responseSpited) < 1 || len(responseSpited) > 1 && len(responseSpited[1]) < 8 {
-		return 0, 0, ErrDockerNotInstalled
-	}
-	return getVersionAndSubVersion(responseSpited[1])
-}
-
-func checkIfContainsDockerVersion(response string) bool {
-	return strings.Contains(strings.ToLower(response), "docker version ")
+	return getVersionAndSubVersion(response)
 }
 
 func getVersionAndSubVersion(fullVersion string) (int, int, error) {
