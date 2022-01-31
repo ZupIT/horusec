@@ -68,9 +68,7 @@ func getDockerVersion() (string, error) {
 	dockerClient := client.NewDockerClient()
 	version, err := dockerClient.ServerVersion(context.Background())
 	if err != nil {
-		logger.LogErrorWithLevel(
-			messages.MsgErrorWhenCheckRequirementsDocker, errors.New(err.Error()),
-		)
+		logger.LogErrorWithLevel(messages.MsgErrorWhenCheckRequirementsDocker, err)
 		return "", err
 	}
 	return version.Version, nil
