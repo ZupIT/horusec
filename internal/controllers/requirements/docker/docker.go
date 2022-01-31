@@ -40,11 +40,11 @@ var (
 )
 
 func Validate() error {
-	response, err := validateIfDockerIsInstalled()
+	version, err := validateIfDockerIsInstalled()
 	if err != nil {
 		return err
 	}
-	return validateIfDockerIsSupported(response)
+	return validateIfDockerIsRunningInMinVersion(version)
 }
 
 func validateIfDockerIsInstalled() (string, error) {
@@ -54,14 +54,6 @@ func validateIfDockerIsInstalled() (string, error) {
 		return "", err
 	}
 	return response, nil
-}
-
-func validateIfDockerIsSupported(version string) error {
-	err := validateIfDockerIsRunningInMinVersion(version)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func getDockerVersion() (string, error) {
