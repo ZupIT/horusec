@@ -48,7 +48,7 @@ func Validate() error {
 }
 
 func validateIfDockerIsInstalled() (string, error) {
-	response, err := execDockerVersion()
+	response, err := getDockerVersion()
 	if err != nil {
 		logger.LogInfo(messages.MsgInfoHowToInstallDocker)
 		return "", err
@@ -64,7 +64,7 @@ func validateIfDockerIsSupported(version string) error {
 	return nil
 }
 
-func execDockerVersion() (string, error) {
+func getDockerVersion() (string, error) {
 	dockerClient := client.NewDockerClient()
 	version, err := dockerClient.ServerVersion(context.Background())
 	if err != nil {
