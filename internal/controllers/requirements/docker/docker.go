@@ -77,7 +77,7 @@ func execDockerVersion() (string, error) {
 }
 
 func validateIfDockerIsRunningInMinVersion(response string) error {
-	version, subversion, err := extractDockerVersionFromString(response)
+	version, subversion, err := getVersionAndSubVersion(response)
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorWhenDockerIsLowerVersion, ErrMinVersion)
 		return err
@@ -89,10 +89,6 @@ func validateIfDockerIsRunningInMinVersion(response string) error {
 	}
 
 	return nil
-}
-
-func extractDockerVersionFromString(response string) (int, int, error) {
-	return getVersionAndSubVersion(response)
 }
 
 func getVersionAndSubVersion(fullVersion string) (int, int, error) {
