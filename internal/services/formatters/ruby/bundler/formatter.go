@@ -146,6 +146,7 @@ func (f *Formatter) newVulnerability(output *bundlerOutput, projectSubPath strin
 		Language:     languages.Ruby,
 		Confidence:   confidence.Low,
 		Severity:     output.getSeverity(),
+		RuleID:       output.Advisory,
 		Details:      output.getDetails(),
 		File:         f.GetFilepathFromFilename("Gemfile.lock", projectSubPath),
 		Code:         f.GetCodeWithMaxCharacters(output.Name, 0),
