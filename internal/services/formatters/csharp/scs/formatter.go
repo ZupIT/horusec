@@ -115,6 +115,7 @@ func (f *Formatter) newVulnerability(result *scsResult) *vulnerability.Vulnerabi
 	code, _ := fileutils.GetCode(f.GetConfigProjectPath(), result.getFile(), result.getLine())
 
 	vuln := &vulnerability.Vulnerability{
+		RuleID:       result.RuleID,
 		SecurityTool: tools.SecurityCodeScan,
 		Language:     languages.CSharp,
 		Severity:     f.getSeverity(result.RuleID),
