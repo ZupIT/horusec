@@ -67,8 +67,7 @@ func (s *Sarif) populateReferenceMaps(report *Report) {
 		if _, exists := runsByTool[string(vuln.SecurityTool)]; !exists {
 			report.Runs = append(report.Runs, s.initToolStructure(vuln, runsByTool))
 		}
-		s.resultsByTool[string(vuln.SecurityTool)] =
-			append(s.resultsByTool[string(vuln.SecurityTool)], s.newResult(vuln))
+		s.resultsByTool[string(vuln.SecurityTool)] = append(s.resultsByTool[string(vuln.SecurityTool)], s.newResult(vuln))
 		artifact := s.newArtifact(vuln)
 		s.artifactsByToolAndName[string(vuln.SecurityTool)][artifact.Location.URI] = artifact
 		rule := s.newRule(vuln)
