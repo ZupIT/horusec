@@ -164,6 +164,7 @@ func (f *Formatter) addVulnerabilities(cmd string, result *trivyOutputResult, pa
 func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerability, target string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
+		addVuln.RuleID = vuln.VulnerabilityID
 		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
 		_, _, addVuln.Line = file.GetDependencyInfo(addVuln.Code, target)
 		addVuln.File = target
