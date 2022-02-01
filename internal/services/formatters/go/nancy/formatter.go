@@ -122,6 +122,7 @@ func (f *Formatter) newVulnerability(
 		SecurityTool: tools.Nancy,
 		Severity:     vulnData.getSeverity(),
 		Details:      vulnData.getDescription(),
+		RuleID:       vulnData.Cve,
 		Confidence:   confidence.High,
 		Code:         code,
 		Line:         line,
