@@ -108,6 +108,7 @@ func (f *Formatter) newVulnerability(output *warning, projectSubPath string) *vu
 		Language:     languages.Ruby,
 		Severity:     output.getSeverity(),
 		Confidence:   output.getConfidence(),
+		RuleID:       output.WarningCode,
 		Details:      output.getDetails(),
 		Line:         output.getLine(),
 		File:         f.GetFilepathFromFilename(filepath.FromSlash(output.File), projectSubPath),
