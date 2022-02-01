@@ -121,6 +121,7 @@ func (f *Formatter) newVulnerability(issue *npmIssue, projectSubPath string) *vu
 		SecurityTool: tools.NpmAudit,
 		Language:     languages.Javascript,
 		Severity:     issue.getSeverity(),
+		RuleID:       fmt.Sprint(issue.ID),
 		Details:      issue.Overview,
 		Code:         issue.ModuleName,
 	}
