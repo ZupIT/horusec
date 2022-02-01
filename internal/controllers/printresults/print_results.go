@@ -33,11 +33,16 @@ import (
 	sq "github.com/ZupIT/horusec/internal/entities/sonarqube"
 	"github.com/ZupIT/horusec/internal/enums/outputtype"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
+	"github.com/ZupIT/horusec/internal/services/sarif"
 	"github.com/ZupIT/horusec/internal/services/sonarqube"
 	"github.com/ZupIT/horusec/internal/utils/file"
 )
 
 var ErrOutputJSON = errors.New("{HORUSEC_CLI} error creating and/or writing to the specified file")
+
+type SarifConverter interface {
+	ConvertVulnerabilityToSarif() sarif.Report
+}
 
 type SonarQubeConverter interface {
 	ConvertVulnerabilityToSonarQube() sq.Report
@@ -54,6 +59,7 @@ type PrintResults struct {
 	analysis         *analysis.Analysis
 	config           *config.Config
 	totalVulns       int
+	sarifService     SarifConverter
 	sonarqubeService SonarQubeConverter
 	textOutput       string
 	writer           io.Writer
@@ -64,6 +70,7 @@ func NewPrintResults(entity *analysis.Analysis, cfg *config.Config) *PrintResult
 	return &PrintResults{
 		analysis:         entity,
 		config:           cfg,
+		sarifService:     sarif.NewSarif(entity),
 		sonarqubeService: sonarqube.NewSonarQube(entity),
 		writer:           os.Stdout,
 		totalVulns:       0,
@@ -95,6 +102,8 @@ func (pr *PrintResults) printByOutputType() error {
 	switch {
 	case pr.config.PrintOutputType == outputtype.JSON:
 		return pr.printResultsJSON()
+	case pr.config.PrintOutputType == outputtype.Sarif:
+		return pr.printResultsSarif()
 	case pr.config.PrintOutputType == outputtype.SonarQube:
 		return pr.printResultsSonarQube()
 	default:
@@ -127,6 +136,20 @@ func (pr *PrintResults) printResultsJSON() error {
 	}
 
 	b, err := json.MarshalIndent(a, "", "  ")
+	if err != nil {
+		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
+		return err
+	}
+
+	return pr.createOutputJSON(b)
+}
+
+func (pr *PrintResults) printResultsSarif() error {
+	logger.LogInfoWithLevel(messages.MsgInfoStartGenerateSARIFFile)
+
+	report := pr.sarifService.ConvertVulnerabilityToSarif()
+
+	b, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		logger.LogErrorWithLevel(messages.MsgErrorGenerateJSONFile, err)
 		return err

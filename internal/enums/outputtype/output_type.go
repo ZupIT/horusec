@@ -17,5 +17,6 @@ package outputtype
 const (
 	Text      = "text"
 	JSON      = "json"
+	Sarif     = "sarif"
 	SonarQube = "sonarqube"
 )
