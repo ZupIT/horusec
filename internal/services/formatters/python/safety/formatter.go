@@ -112,6 +112,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 	issues []entities.Issue, index int, projectSubPath string) *vulnerability.Vulnerability {
 	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
 	vuln := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
+	vuln.RuleID = issues[index].ID
 	vuln.Details = issues[index].Description
 	vuln.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vuln.Line = f.getVulnerabilityLineByName(lineContent, vuln.File)
