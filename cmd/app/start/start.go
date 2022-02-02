@@ -96,7 +96,7 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 		StringP(
 			"output-format", "o",
 			s.configs.PrintOutputType,
-			`Output format of analysis ("text"|"json"|"sonarqube"). For json and sonarqube --json-output-file is required`,
+			`Output format of analysis ("text"|"json"|"sarif"|"sonarqube"). For json, sarif, and sonarqube --json-output-file is required`,
 		)
 
 	startCmd.PersistentFlags().

@@ -46,7 +46,7 @@ func ValidateConfig(cfg *config.Config) error {
 		validation.Field(&cfg.TimeoutInSecondsAnalysis, validation.Required, validation.Min(10)),
 		validation.Field(&cfg.MonitorRetryInSeconds, validation.Required, validation.Min(10)),
 		validation.Field(&cfg.RepositoryAuthorization, validation.Required, is.UUID),
-		validation.Field(&cfg.PrintOutputType, validation.In(outputtype.JSON, outputtype.SonarQube, outputtype.Text)),
+		validation.Field(&cfg.PrintOutputType, validation.In(outputtype.JSON, outputtype.Sarif, outputtype.SonarQube, outputtype.Text)),
 		validation.Field(&cfg.JSONOutputFilePath, validation.By(validateJSONOutputFilePath(cfg))),
 		validation.Field(&cfg.SeveritiesToIgnore, validation.By(validationSeverities(cfg))),
 		validation.Field(&cfg.ReturnErrorIfFoundVulnerability, validation.In(true, false)),

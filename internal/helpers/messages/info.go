@@ -25,6 +25,7 @@ const (
 		https://git-scm.com/downloads
 	`
 	MsgInfoStartGenerateSonarQubeFile = "{HORUSEC_CLI} Generating SonarQube output..."
+	MsgInfoStartGenerateSARIFFile     = "{HORUSEC_CLI} Generating SARIF output..."
 	MsgInfoStartWriteFile             = "{HORUSEC_CLI} Writing output JSON to file in the path: "
 	MsgInfoAnalysisLoading            = " Scanning code ..."
 	MsgInfoDockerLowerVersion         = "{HORUSEC_CLI} We recommend version 19.03 or higher of the docker." +
