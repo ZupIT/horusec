@@ -49,7 +49,7 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 	}
 
 	output, err := f.startSemgrep(projectSubPath)
-	f.SetAnalysisError(err, tools.SecurityCodeScan, output, projectSubPath)
+	f.SetAnalysisError(err, tools.Semgrep, output, projectSubPath)
 	f.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.Semgrep, languages.Generic)
 }
 
