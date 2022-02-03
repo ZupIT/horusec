@@ -16,5 +16,5 @@ package semgrep
 
 const CMD = `
 	    {{WORK_DIR}}
-		semgrep --config=p/r2c-ci -q --json .
+		semgrep --disable-metrics --config=p/r2c-ci -q --json .
   `
