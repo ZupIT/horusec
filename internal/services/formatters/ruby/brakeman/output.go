@@ -33,7 +33,7 @@ type brakemanOutput struct {
 
 type warning struct {
 	Type        string `json:"warning_type"`
-	WarningCode string `json:"warning_code"`
+	WarningCode int    `json:"warning_code"`
 	Code        string `json:"code"`
 	Message     string `json:"message"`
 	File        string `json:"file"`

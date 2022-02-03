@@ -17,6 +17,7 @@ package brakeman
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -108,7 +109,7 @@ func (f *Formatter) newVulnerability(output *warning, projectSubPath string) *vu
 		Language:     languages.Ruby,
 		Severity:     output.getSeverity(),
 		Confidence:   output.getConfidence(),
-		RuleID:       output.WarningCode,
+		RuleID:       fmt.Sprint(output.WarningCode),
 		Details:      output.getDetails(),
 		Line:         output.getLine(),
 		File:         f.GetFilepathFromFilename(filepath.FromSlash(output.File), projectSubPath),
