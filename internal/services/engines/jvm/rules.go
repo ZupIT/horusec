@@ -459,10 +459,10 @@ func NewBase64Decode() *text.Rule {
 			Severity:    severities.Low.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`android.util.Base64`),
-			regexp.MustCompile(`.decode`),
+			regexp.MustCompile(`\.decode\(`),
 		},
 	}
 }
@@ -707,8 +707,8 @@ func NewBase64Encode() *text.Rule {
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`android.util.Base64`),
-			regexp.MustCompile(`.encodeToString`),
-			regexp.MustCompile(`.encode`),
+			regexp.MustCompile(`\.encodeToString\(`),
+			regexp.MustCompile(`\.encode\(`),
 		},
 	}
 }
