@@ -26,6 +26,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	vulnerabilityenum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
@@ -340,6 +341,14 @@ func (pr *PrintResults) printCommitAuthor(vulnerability *vulnerability.Vulnerabi
 	pr.printlnf("Commit Email: %s", vulnerability.CommitEmail)
 	pr.printlnf("Commit CommitHash: %s", vulnerability.CommitHash)
 	pr.printlnf("Commit Message: %s", vulnerability.CommitMessage)
+
+	// Rule IDs for orchestrated tools are ignored, as the idea is that they are unique identifiers for a
+	// specific vulnerability in any context and some tools don't have an ID like this. Since we use different
+	// data to fill this field for the orchestrated tools, it can make the result confusing, so these IDs are
+	// going to be used only to fulfill the SARIF output format requirements.
+	if vulnerability.RuleID != "" && vulnerability.SecurityTool == tools.HorusecEngine {
+		pr.printlnf("RuleID: %s", vulnerability.RuleID)
+	}
 }
 
 func (pr *PrintResults) verifyRepositoryAuthorizationToken() {
