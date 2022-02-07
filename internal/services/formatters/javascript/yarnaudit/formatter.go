@@ -139,7 +139,7 @@ func (f *Formatter) newVulnerability(output *issue, projectSubPath string) *vuln
 		Language:     languages.Javascript,
 		File:         f.GetFilepathFromFilename("yarn.lock", projectSubPath),
 		Severity:     output.getSeverity(),
-		RuleID:       fmt.Sprint(output.ID),
+		RuleID:       strconv.Itoa(output.ID),
 		Details:      output.Overview,
 		Code:         output.ModuleName,
 	}
