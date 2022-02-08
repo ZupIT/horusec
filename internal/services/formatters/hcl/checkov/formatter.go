@@ -17,13 +17,13 @@ package checkov
 import (
 	"bytes"
 	"encoding/json"
+	"regexp"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/pborman/ansi"
 
 	"github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
@@ -75,7 +75,8 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData 
 
 func (f *Formatter) parseOutput(output string) error {
 	var vuln *checkovVulnerability
-	binary, _ := ansi.Strip([]byte(output))
+
+	binary := f.removeAnsiCharacters(output)
 	// For some reason checkov returns an empty list when no vulnerabilities are found
 	// and an object if vulnerabitilies are found, this checks ignores result when we have no vulnerabilities
 	if bytes.Equal(binary, checkovEmptyValue) {
@@ -88,6 +89,16 @@ func (f *Formatter) parseOutput(output string) error {
 		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(check))
 	}
 	return nil
+}
+
+// nolint:lll // const ansi is a regex and cannot be break into more lines
+func (f *Formatter) removeAnsiCharacters(output string) []byte {
+	// ansi represents a regex that will match ansi characters ,so we can use just the ASCII characters to parse the results of checkov tool
+	const ansi = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
+
+	re := regexp.MustCompile(ansi)
+	binary := []byte(re.ReplaceAllString(output, ""))
+	return binary
 }
 
 func (f *Formatter) newVulnerability(check *checkovCheck) *vulnerability.Vulnerability {
