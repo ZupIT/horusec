@@ -31,20 +31,23 @@ func TestGetFilePathIntoBasePath(t *testing.T) {
 	t.Run("Should return path correctly", func(t *testing.T) {
 		filePath := filepath.Join("file", "file_test.go")
 		volume := testutil.RootPath
-		response := file.GetPathFromFilename(filePath, volume)
+		response, err := file.GetPathFromFilename(filePath, volume)
+		assert.NoError(t, err)
 		assert.NotEqual(t, response, filePath)
 		assert.Equal(t, filepath.Join("internal", "utils", "file", "file_test.go"), response)
 	})
 	t.Run("Should return filePath because not found", func(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
 		volume := testutil.RootPath
-		response := file.GetPathFromFilename(filePath, volume)
+		response, err := file.GetPathFromFilename(filePath, volume)
+		assert.NoError(t, err)
 		assert.Equal(t, "", response)
 	})
 	t.Run("Should return filePath because base path is wrong", func(t *testing.T) {
 		filePath := "some_other_not_existing_file.go"
 		volume := "S0M3 N0T E3X1$t"
-		response := file.GetPathFromFilename(filePath, volume)
+		response, err := file.GetPathFromFilename(filePath, volume)
+		assert.Error(t, err)
 		assert.Equal(t, "", response)
 	})
 }
@@ -107,31 +110,33 @@ func TestCreateAndWriteFile(t *testing.T) {
 
 func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
 	t.Run("Should run with success", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine(
+		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
 			testutil.CsharpExample1, "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
 		)
 
 		expectedCode := "<PackageReference Include=\"Microsoft.AspNetCore.Http\" Version=\"2.2.2\"/>"
 		expectedFile := filepath.Join(testutil.CsharpExample1, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj")
 		expectedLine := "7"
+		assert.NoError(t, err)
 		assert.Equal(t, expectedLine, line)
 		assert.Equal(t, expectedFile, file)
 		assert.Equal(t, expectedCode, code)
 	})
 	t.Run("Should return empty when path is invalid", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine(
+		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
 			"invalidPath", "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
 		)
 
+		assert.Error(t, err)
 		assert.Zero(t, code)
 		assert.Zero(t, file)
 		assert.Zero(t, line)
 	})
 	t.Run("Should return empty when path is valid but has no files", func(t *testing.T) {
-		code, file, line := file.GetDependencyCodeFilepathAndLine(
+		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
 			t.TempDir(), "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
 		)
-
+		assert.NoError(t, err)
 		assert.Zero(t, code)
 		assert.Zero(t, file)
 		assert.Zero(t, line)

@@ -89,13 +89,21 @@ func (f *Formatter) processOutput(output, projectSubPath string) error {
 		return err
 	}
 
-	for _, vulnerable := range analysis.Vulnerable {
-		f.AddNewVulnerabilityIntoAnalysis(
-			f.newVulnerability(vulnerable.getVulnerability(), vulnerable, projectSubPath),
-		)
-	}
+	f.addVulnIntoAnalysis(analysis, projectSubPath)
 
 	return nil
+}
+
+func (f *Formatter) addVulnIntoAnalysis(analysis *nancyAnalysis, projectSubPath string) {
+	for _, vulnerable := range analysis.Vulnerable {
+		vuln, err := f.newVulnerability(vulnerable.getVulnerability(), vulnerable, projectSubPath)
+		if err != nil {
+			f.SetAnalysisError(err, tools.Nancy, err.Error(), "")
+			logger.LogErrorWithLevel(messages.MsgErrorGetDependencyCodeFilepathAndLine, err)
+			continue
+		}
+		f.AddNewVulnerabilityIntoAnalysis(vuln)
+	}
 }
 
 func (f *Formatter) getOutputText(output string) string {
@@ -108,14 +116,15 @@ func (f *Formatter) getOutputText(output string) string {
 }
 
 // nolint:funlen
-func (f *Formatter) newVulnerability(
-	vulnData *nancyVulnerability,
-	vulnerable *nancyVulnerable,
+func (f *Formatter) newVulnerability(vulnData *nancyVulnerability, vulnerable *nancyVulnerable,
 	projectSubPath string,
-) *vulnerability.Vulnerability {
-	code, filePath, line := file.GetDependencyCodeFilepathAndLine(
+) (*vulnerability.Vulnerability, error) {
+	code, filePath, line, err := file.GetDependencyCodeFilepathAndLine(
 		f.GetConfigProjectPath(), projectSubPath, vulnerable.getDependency(), goModulesExt, goSumExt,
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	vuln := &vulnerability.Vulnerability{
 		Language:     languages.Go,
@@ -127,7 +136,7 @@ func (f *Formatter) newVulnerability(
 		Line:         line,
 		File:         f.removeHorusecFolder(filePath),
 	}
-	return f.SetCommitAuthor(vulnHash.Bind(vuln))
+	return f.SetCommitAuthor(vulnHash.Bind(vuln)), err
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {

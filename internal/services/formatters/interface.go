@@ -69,7 +69,7 @@ type IService interface {
 
 	// GetFilepathFromFilename return the relative file path inside projectSubpath
 	// to a given filename
-	GetFilepathFromFilename(filename, projectSubPath string) string
+	GetFilepathFromFilename(filename, projectSubPath string) (string, error)
 
 	// SetCommitAuthor set commit author info on vulnerability.
 	SetCommitAuthor(vulnerability *vulnerability.Vulnerability) *vulnerability.Vulnerability

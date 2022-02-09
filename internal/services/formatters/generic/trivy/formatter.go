@@ -161,16 +161,23 @@ func (f *Formatter) addVulnerabilities(cmd string, result *trivyOutputResult, pa
 	}
 }
 
+// nolint: funlen // needs to be bigger
 func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerability, target string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
 		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
-		_, _, addVuln.Line = file.GetDependencyInfo(addVuln.Code, target)
+		_, _, line, err := file.GetDependencyInfo(addVuln.Code, filepath.Join(f.GetConfigProjectPath(), target))
+		if err != nil {
+			f.SetAnalysisError(err, tools.Trivy, err.Error(), "")
+			logger.LogErrorWithLevel(messages.MsgErrorGetDependencyInfo, err)
+			continue
+		}
+		addVuln.Line = line
 		addVuln.File = target
 		addVuln.Details = vuln.getDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln.VulnHash = f.getOldHash(vuln.PkgName, *addVuln)
-		f.AddNewVulnerabilityIntoAnalysis(addVuln)
+		f.AddNewVulnerabilityIntoAnalysis(f.SetCommitAuthor(addVuln))
 	}
 }
 
@@ -197,7 +204,7 @@ func (f *Formatter) addMisconfigurationOutput(result []*trivyMisconfiguration, t
 		)
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
-		f.AddNewVulnerabilityIntoAnalysis(addVuln)
+		f.AddNewVulnerabilityIntoAnalysis(f.SetCommitAuthor(addVuln))
 	}
 }
 

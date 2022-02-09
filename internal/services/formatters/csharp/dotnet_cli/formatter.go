@@ -79,7 +79,6 @@ func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
 	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.CSharp), images.Csharp)
 }
 
-// nolint:gocyclo
 func (f *Formatter) parseOutput(output, projectSubPath string) {
 	if f.isInvalidOutput(output) {
 		return
@@ -90,10 +89,20 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 		startIndex = 0
 	}
 
+	f.addVulnIntoAnalysis(output, projectSubPath, startIndex)
+}
+
+func (f *Formatter) addVulnIntoAnalysis(output, projectSubPath string, startIndex int) {
 	for _, value := range strings.Split(output[startIndex:], separator) {
 		dependency := f.parseDependencyValue(value)
 		if dependency != nil && *dependency != (dotnetDependency{}) {
-			f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(dependency, projectSubPath))
+			vuln, err := f.newVulnerability(dependency, projectSubPath)
+			if err != nil {
+				f.SetAnalysisError(err, tools.DotnetCli, err.Error(), "")
+				logger.LogErrorWithLevel(messages.MsgErrorGetDependencyCodeFilepathAndLine, err)
+				continue
+			}
+			f.AddNewVulnerabilityIntoAnalysis(vuln)
 		}
 	}
 }
@@ -141,11 +150,14 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 	}
 }
 
-func (f *Formatter) newVulnerability(dependency *dotnetDependency, projectSubPath string) *vulnerability.Vulnerability {
-	code, filePath, line := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, dependency.Name, CsProjExt,
-	)
-
+// nolint: funlen // needs to be bigger
+func (f *Formatter) newVulnerability(dependency *dotnetDependency,
+	projectSubPath string) (*vulnerability.Vulnerability, error,
+) {
+	code, filePath, line, err := f.getCodeFilePathAndLine(dependency, projectSubPath)
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.DotnetCli,
 		Language:     languages.CSharp,
@@ -156,7 +168,19 @@ func (f *Formatter) newVulnerability(dependency *dotnetDependency, projectSubPat
 		Line:         line,
 		Severity:     dependency.getSeverity(),
 	}
-	return f.SetCommitAuthor(vulnHash.Bind(vuln))
+	return f.SetCommitAuthor(vulnHash.Bind(vuln)), nil
+}
+
+func (f *Formatter) getCodeFilePathAndLine(dependency *dotnetDependency,
+	projectSubPath string) (string, string, string, error,
+) {
+	code, filePath, line, err := file.GetDependencyCodeFilepathAndLine(
+		f.GetConfigProjectPath(), projectSubPath, dependency.Name, CsProjExt,
+	)
+	if err != nil {
+		return "", "", "", err
+	}
+	return code, filePath, line, nil
 }
 
 func (f *Formatter) checkOutputErrors(output string, err error) (string, error) {

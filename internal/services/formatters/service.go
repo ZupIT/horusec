@@ -179,11 +179,14 @@ func (s *Service) truncatedCode(code string, column int) string {
 	return codeFromColumn
 }
 
-func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) string {
+func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) (string, error) {
 	basePath := filepath.Join(s.GetConfigProjectPath(), projectSubPath)
-	filepathWithFileName := file.GetPathFromFilename(filename, basePath)
+	filepathWithFileName, err := file.GetPathFromFilename(filename, basePath)
+	if err != nil {
+		return "", err
+	}
 
-	return filepath.Join(projectSubPath, filepathWithFileName)
+	return filepath.Join(projectSubPath, filepathWithFileName), err
 }
 
 func (s *Service) SetCommitAuthor(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {
