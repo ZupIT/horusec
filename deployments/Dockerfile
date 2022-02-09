@@ -25,6 +25,8 @@ RUN env GOOS=linux go build -ldflags '-s -w' -o /bin/horusec ./cmd/app/main.go
 
 FROM docker:20.10-git
 
+RUN apk update && apk upgrade
+
 COPY --from=builder /bin/horusec /usr/local/bin
 RUN chmod +x /usr/local/bin/horusec
 
