@@ -34,7 +34,7 @@ func NewAllowPrivilegeEscalation() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`allowPrivilegeEscalation:\strue`),
+			regexp.MustCompile(`allowPrivilegeEscalation:\s*true`),
 			regexp.MustCompile(`containers:`),
 			regexp.MustCompile(`securityContext:`),
 		},
@@ -88,7 +88,7 @@ func NewCapabilitySystemAdmin() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`-\sSYS_ADMIN`),
+			regexp.MustCompile(`-\s*SYS_ADMIN`),
 			regexp.MustCompile(`add:`),
 			regexp.MustCompile(`capabilities:`),
 			regexp.MustCompile(`securityContext:`),
@@ -108,7 +108,7 @@ func NewPrivilegedContainer() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`privileged:\strue`),
+			regexp.MustCompile(`privileged:\s*true`),
 			regexp.MustCompile(`securityContext:`),
 			regexp.MustCompile(`(initContainers:|containers:)`),
 		},
@@ -126,8 +126,8 @@ func NewSeccompUnconfined() *text.Rule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+: unconfined`),
-			regexp.MustCompile(`[\[ ]seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:unconfined[\] ]`),
+			regexp.MustCompile(`seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:\s*unconfined`),
+			regexp.MustCompile(`[\[ ]seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:\s*unconfined[\] ]`),
 		},
 	}
 }
@@ -141,9 +141,9 @@ func NewHostIPC() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostIPC:\strue`),
+			regexp.MustCompile(`hostIPC:\s*true`),
 		},
 	}
 }
@@ -157,9 +157,9 @@ func NewHostPID() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostPID:\strue`),
+			regexp.MustCompile(`hostPID:\s*true`),
 		},
 	}
 }
@@ -173,9 +173,9 @@ func NewHostNetwork() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostNetwork:\strue`),
+			regexp.MustCompile(`hostNetwork:\s*true`),
 		},
 	}
 }
