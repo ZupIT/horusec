@@ -14,7 +14,7 @@
 
 FROM docker:20.10-git
 
-RUN apk update && apk upgrade
+RUN apk update --no-cache && apk upgrade --no-cache
 
 COPY /horusec_linux_amd64 /usr/local/bin/horusec
 
