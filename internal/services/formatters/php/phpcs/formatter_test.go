@@ -16,6 +16,8 @@ package phpcs
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"testing"
 
 	entitiesAnalysis "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -31,6 +33,25 @@ import (
 )
 
 func TestStartPHPCodeSniffer(t *testing.T) {
+	dirName := filepath.Join(".horusec", "00000000-0000-0000-0000-000000000000", "src", "tool-examples")
+	err := os.MkdirAll(dirName, 0o777)
+	assert.NoError(t, err)
+	srcFiles := []string{"sql-injection.php", "sql-injection_2.php", "basic-collection.php", "cross-site-scripting-xss.php"}
+	toolExamplesFiles := []string{"progpilot.php", "phpcs-security-audit.php", "php-security-scanner.php"}
+	for _, file := range srcFiles {
+		newFile, err := os.Create(filepath.Join(".horusec", "00000000-0000-0000-0000-000000000000", "src", file))
+		defer newFile.Close()
+		assert.NoError(t, err)
+	}
+	for _, file := range toolExamplesFiles {
+		newFile, err := os.Create(filepath.Join(dirName, file))
+		defer newFile.Close()
+		assert.NoError(t, err)
+	}
+	t.Cleanup(func() {
+		err = os.RemoveAll(".horusec")
+		assert.NoError(t, err)
+	})
 	t.Run("should success execute container and process output", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		analysis := &entitiesAnalysis.Analysis{}

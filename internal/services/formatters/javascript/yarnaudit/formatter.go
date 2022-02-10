@@ -128,26 +128,36 @@ func (f *Formatter) processOutput(output *yarnOutput, projectSubPath string) {
 	for _, advisory := range output.Advisories {
 		if f.notContainsModule(advisory.ModuleName) {
 			advisoryPointer := advisory
-			f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&advisoryPointer, projectSubPath))
+			vuln, err := f.newVulnerability(&advisoryPointer, projectSubPath)
+			if err != nil {
+				f.SetAnalysisError(err, tools.YarnAudit, err.Error(), "")
+				continue
+			}
+			f.AddNewVulnerabilityIntoAnalysis(vuln)
 		}
 	}
 }
 
-func (f *Formatter) newVulnerability(output *issue, projectSubPath string) *vulnerability.Vulnerability {
+func (f *Formatter) newVulnerability(output *issue, projectSubPath string) (*vulnerability.Vulnerability, error) {
+	filePath, err := f.GetFilepathFromFilename("yarn.lock", projectSubPath)
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.YarnAudit,
 		Language:     languages.Javascript,
-		File:         f.GetFilepathFromFilename("yarn.lock", projectSubPath),
+		File:         filePath,
 		Severity:     output.getSeverity(),
 		Details:      output.Overview,
 		Code:         output.ModuleName,
 	}
 	vuln.Line = f.getVulnerabilityLineByName(vuln.Code, output.getVersion(), vuln.File)
-	return f.SetCommitAuthor(vulnhash.Bind(vuln))
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
 }
 
 func (f *Formatter) getVulnerabilityLineByName(module, version, filename string) string {
-	file, err := os.Open(filepath.Join(f.GetConfigProjectPath(), filename))
+	filePath := filepath.Join(f.GetConfigProjectPath(), filepath.Clean(filename))
+	file, err := os.Open(filePath)
 	if err != nil {
 		return ""
 	}

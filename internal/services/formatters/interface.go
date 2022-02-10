@@ -73,7 +73,7 @@ type IService interface {
 
 	// GetFilepathFromFilename return the relative file path inside projectSubpath
 	// to a given filename
-	GetFilepathFromFilename(filename, projectSubPath string) string
+	GetFilepathFromFilename(filename, projectSubPath string) (string, error)
 
 	// GetProjectPathWithWorkdir return the project path inside working directory.
 	GetProjectPathWithWorkdir(projectSubPath string) string

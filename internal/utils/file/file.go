@@ -35,7 +35,7 @@ import (
 // occurred.
 //
 // nolint:funlen,gocyclo
-func GetPathFromFilename(filename, basePath string) string {
+func GetPathFromFilename(filename, basePath string) (string, error) {
 	var filePath string
 
 	err := filepath.Walk(basePath, func(path string, info fs.FileInfo, err error) error {
@@ -53,38 +53,30 @@ func GetPathFromFilename(filename, basePath string) string {
 		return nil
 	})
 	if err != nil && !errors.Is(err, io.EOF) {
-		logger.LogError("Error to find filepath", err, map[string]interface{}{
+		logger.LogErrorWithLevel("Error to find filepath", err, map[string]interface{}{
 			"filename": filename,
 			"basePath": basePath,
 		})
-		return ""
+		return "", err
 	}
 
-	return filePath
+	return filePath, nil
 }
 
 // GetSubPathByFilename works like GetSubPathByExtension but for filenames.
 //
 // The value returned will be the first path that contains a file with a given
 // filename, otherwise will return an empty string.
-func GetSubPathByFilename(projectPath, subPath, filename string) string {
+func GetSubPathByFilename(projectPath, subPath, filename string) (string, error) {
 	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
 	logger.LogDebugWithLevel(fmt.Sprintf("Seaching for files with %s name on %s", filename, pathToWalk))
 
-	if path := GetPathFromFilename(filename, pathToWalk); path != "" {
+	if path, err := GetPathFromFilename(filename, pathToWalk); path != "" {
 		logger.LogDebugWithLevel(fmt.Sprintf("Found file %s on %s", filename, path))
-		return filepath.Dir(path)
+		return filepath.Dir(path), err
 	}
 
-	return ""
-}
-
-// ReplacePathSeparator replace slashes from path to OS specific.
-//
-// We usually use this function to replace paths that was returned by
-// a tool running on Docker when running on Windows.
-func ReplacePathSeparator(path string) string {
-	return strings.ReplaceAll(path, "/", string(os.PathSeparator))
+	return "", nil
 }
 
 // GetSubPathByExtension returns the path inside projectPath + subPath that contains
@@ -108,7 +100,7 @@ func GetSubPathByExtension(projectPath, subPath, ext string) (extensionPath stri
 		return nil
 	})
 	if err != nil && !errors.Is(err, io.EOF) {
-		logger.LogError("Error to walk on path", err, map[string]interface{}{
+		logger.LogErrorWithLevel("Error to walk on path", err, map[string]interface{}{
 			"path":        pathToWalk,
 			"projectPath": projectPath,
 			"subPath":     subPath,
@@ -153,7 +145,7 @@ func relativeDirectoryFromPath(projectPath, path string) string {
 	rel, err := filepath.Rel(projectPath, path)
 	if err != nil {
 		// Since path always will be relative on projectPath this should never happen.
-		logger.LogError("Error to get relative directory path", err)
+		logger.LogErrorWithLevel("Error to get relative directory path", err)
 		return path
 	}
 
@@ -180,7 +172,7 @@ func GetFilenameByExt(projectPath, subPath, ext string) (string, error) {
 		return nil
 	})
 	if err != nil && !errors.Is(err, io.EOF) {
-		logger.LogError("Error to walk on path", err, map[string]interface{}{
+		logger.LogErrorWithLevel("Error to walk on path", err, map[string]interface{}{
 			"path":        pathToWalk,
 			"projectPath": projectPath,
 			"subPath":     subPath,
@@ -198,7 +190,7 @@ func GetCode(projectPath, filename, line string) (string, error) {
 
 	file, err := os.Open(filepath.Clean(path))
 	if err != nil {
-		logger.LogError("Error to open file to get code sample", err, map[string]interface{}{
+		logger.LogErrorWithLevel("Error to open file to get code sample", err, map[string]interface{}{
 			"projectPath": projectPath,
 			"filename":    filename,
 			"line":        line,
@@ -239,12 +231,12 @@ func getCodeFromDesiredLine(file *os.File, desiredLine int) string {
 // ext that match the dependency name.
 //
 // Return the file, code sample and line that match the dependency name.
-func GetDependencyCodeFilepathAndLine(
-	projectPath, subPath, dependency string, extensions ...string,
-) (code, file, line string) {
+func GetDependencyCodeFilepathAndLine(projectPath, subPath, dependency string,
+	extensions ...string) (code, file, line string, err error,
+) {
 	paths, err := getPathsByExtension(projectPath, subPath, extensions...)
 	if err != nil {
-		return "", "", ""
+		return "", "", "", err
 	}
 
 	return GetDependencyInfo(dependency, paths...)
@@ -277,13 +269,12 @@ func getPathsByExtension(projectPath, subPath string, extensions ...string) ([]s
 // The line and the dependency trimmed is also returned.
 //
 //nolint:funlen,gocyclo
-func GetDependencyInfo(dependency string, paths ...string) (string, string, string) {
-	var line int
-
+func GetDependencyInfo(dependency string, paths ...string) (string, string, string, error) {
 	for _, path := range paths {
+		line := 0
 		file, err := os.Open(filepath.Clean(path))
 		if err != nil {
-			return "", "", ""
+			return "", "", "", err
 		}
 
 		scanner := bufio.NewScanner(file)
@@ -291,20 +282,20 @@ func GetDependencyInfo(dependency string, paths ...string) (string, string, stri
 			line++
 
 			if strings.Contains(scanner.Text(), dependency) {
-				if err := file.Close(); err != nil {
-					logger.LogError(messages.MsgErrorDeferFileClose, err)
+				if err = file.Close(); err != nil {
+					logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, err)
 				}
-				return strings.TrimSpace(scanner.Text()), path, strconv.Itoa(line)
+				return strings.TrimSpace(scanner.Text()), path, strconv.Itoa(line), err
 			}
 		}
 
-		if err := file.Close(); err != nil {
-			logger.LogError(messages.MsgErrorDeferFileClose, err)
-			return "", "", ""
+		if err = file.Close(); err != nil {
+			logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, err)
+			return "", "", "", err
 		}
 	}
 
-	return "", "", ""
+	return "", "", "", nil
 }
 
 func CreateAndWriteFile(input, filename string) error {

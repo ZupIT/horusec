@@ -66,8 +66,11 @@ func (f *Formatter) StartAnalysis(projectSubPath string) {
 
 func (f *Formatter) startBrakeman(projectSubPath string) (string, error) {
 	f.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.Brakeman, languages.Ruby)
-
-	output, err := f.ExecuteContainer(f.getDockerConfig(projectSubPath))
+	dockerConfig, err := f.getDockerConfig(projectSubPath)
+	if err != nil {
+		return "", err
+	}
+	output, err := f.ExecuteContainer(dockerConfig)
 	if err != nil {
 		return output, err
 	}
@@ -85,12 +88,21 @@ func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 		return err
 	}
 
-	for _, warning := range brakemanOutput.Warnings {
-		value := warning
-		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&value, projectSubPath))
-	}
+	f.addVulnIntoAnalysis(brakemanOutput, projectSubPath)
 
 	return nil
+}
+
+func (f *Formatter) addVulnIntoAnalysis(brakemanOutput brakemanOutput, projectSubPath string) {
+	for _, warning := range brakemanOutput.Warnings {
+		value := warning
+		vuln, err := f.newVulnerability(&value, projectSubPath)
+		if err != nil {
+			f.SetAnalysisError(err, tools.Brakeman, err.Error(), "")
+			continue
+		}
+		f.AddNewVulnerabilityIntoAnalysis(vuln)
+	}
 }
 
 func (f *Formatter) newContainerOutputFromString(containerOutput string) (output brakemanOutput, err error) {
@@ -102,7 +114,12 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 	return output, err
 }
 
-func (f *Formatter) newVulnerability(output *warning, projectSubPath string) *vulnerability.Vulnerability {
+// nolint: funlen // needs to be bigger
+func (f *Formatter) newVulnerability(output *warning, projectSubPath string) (*vulnerability.Vulnerability, error) {
+	filePath, err := f.GetFilepathFromFilename(filepath.FromSlash(output.File), projectSubPath)
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.Brakeman,
 		Language:     languages.Ruby,
@@ -110,24 +127,28 @@ func (f *Formatter) newVulnerability(output *warning, projectSubPath string) *vu
 		Confidence:   output.getConfidence(),
 		Details:      output.getDetails(),
 		Line:         output.getLine(),
-		File:         f.GetFilepathFromFilename(filepath.FromSlash(output.File), projectSubPath),
+		File:         filePath,
 		Code:         f.GetCodeWithMaxCharacters(output.Code, 0),
 	}
 
-	return f.SetCommitAuthor(vulnhash.Bind(vuln))
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
 }
 
-func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {
+func (f *Formatter) getDockerConfig(projectSubPath string) (*docker.AnalysisData, error) {
+	subpath, err := fileutils.GetSubPathByFilename(f.GetConfigProjectPath(), projectSubPath, "Gemfile")
+	if err != nil {
+		return nil, err
+	}
 	analysisData := &docker.AnalysisData{
 		CMD: f.AddWorkDirInCmd(
 			CMD,
-			fileutils.GetSubPathByFilename(f.GetConfigProjectPath(), projectSubPath, "Gemfile"),
+			subpath,
 			tools.Brakeman,
 		),
 		Language: languages.Ruby,
 	}
 
-	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby)
+	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby), err
 }
 
 func (f *Formatter) isNotFoundRailsProject(output string) bool {

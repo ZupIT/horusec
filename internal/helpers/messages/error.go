@@ -49,6 +49,8 @@ https://help.github.com/articles/creating-a-personal-access-token-for-the-comman
 )
 
 // Block of messages usage into log of the level error
+//
+// nolint:lll
 const (
 	MsgErrorFalsePositiveNotValid        = "False positive is not valid because is duplicated in risk accept:"
 	MsgErrorRiskAcceptNotValid           = "Risk Accept is not valid because is duplicated in false positive:"
@@ -71,13 +73,15 @@ const (
 	MsgErrorGitCommitAuthorsParseOutput  = "{HORUSEC_CLI} Error when to parse output to commit author struct: "
 	MsgErrorParseStringToWorkDir         = "{HORUSEC_CLI} Error when try parse workdir string to entity." +
 		"Returning default values"
-	MsgErrorDeferFileClose           = "{HORUSEC_CLI} Error defer file close: "
-	MsgErrorSetHeadersOnConfig       = "{HORUSEC-CLI} Error on set headers on configurations"
-	MsgErrorReplayWrong              = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
-	MsgErrorErrorOnCreateConfigFile  = "{HORUSEC-CLI} Error on create config file: "
-	MsgErrorErrorOnReadConfigFile    = "{HORUSEC-CLI} Error on read config file on path: "
-	MsgErrorFailedToPullImage        = "{HORUSEC_CLI} Failed to pull docker image"
-	MsgErrorWhileParsingCustomImages = "{HORUSEC_CLI} Error when parsing custom images config. Using default values"
-	MsgErrorSettingLogFile           = "{HORUSEC_CLI} Error when setting log file"
-	MsgErrorGetRelativePathFromFile  = "{HORUSEC_CLI} Error when get relative path of file"
+	MsgErrorDeferFileClose                   = "{HORUSEC_CLI} Error defer file close: "
+	MsgErrorSetHeadersOnConfig               = "{HORUSEC-CLI} Error on set headers on configurations"
+	MsgErrorReplayWrong                      = "{HORUSEC-CLI} Error on set reply, Please type Y or N. Your current response was: "
+	MsgErrorErrorOnCreateConfigFile          = "{HORUSEC-CLI} Error on create config file: "
+	MsgErrorErrorOnReadConfigFile            = "{HORUSEC-CLI} Error on read config file on path: "
+	MsgErrorFailedToPullImage                = "{HORUSEC_CLI} Failed to pull docker image"
+	MsgErrorWhileParsingCustomImages         = "{HORUSEC_CLI} Error when parsing custom images config. Using default values"
+	MsgErrorSettingLogFile                   = "{HORUSEC_CLI} Error when setting log file"
+	MsgErrorGetRelativePathFromFile          = "{HORUSEC_CLI} Error when get relative path of file"
+	MsgErrorGetDependencyCodeFilepathAndLine = "{HORUSEC_CLI} Error when get dependency code filepath and line"
+	MsgErrorGetDependencyInfo                = "{HORUSEC_CLI} Error when get dependency code info"
 )
