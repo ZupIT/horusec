@@ -14,6 +14,8 @@
 
 FROM docker:20.10-git
 
+RUN apk update && apk upgrade
+
 COPY /horusec_linux_amd64 /usr/local/bin/horusec
 
 CMD [ "sh" ]
