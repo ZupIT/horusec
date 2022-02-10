@@ -2608,7 +2608,7 @@ func NewVulnerableRemoteCodeInjectionApacheLog4j() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`compile.*group:.*org\.apache\.logging\.log4j.*name:.*log4j.*version:.*(('|")(2\.([0-9]\.|1[0-6]|17\.0))|([0-1]\.[0-9]+\.[0-9]+)).*('|")`),
 			regexp.MustCompile(`compile.*log4j.*(:((2\.([0-9]\.|1[0-6]|17\.0))|([0-1]\.[0-9]+\.[0-9]+))).*('|")`),
-			regexp.MustCompile(`<groupId>(.*|\n).*org\.apache\.logging\.log4j.*(.*|\n).*<artifactId>.*log4j.*</artifactId>(.*|\n)*(version>((2\.([0-9]\.|1[0-6]|17\.0))|([0-1]\.[0-9]+\.[0-9]+)))(.*|\n)*</version>`),
+			regexp.MustCompile(`<groupId>\s*org\.apache\.logging\.log4j\s*</groupId>\s*<artifactId>.*\s*log4j.*\s*</artifactId>\s*(<version>\s*((2\.([0-9]\.[0-9]|1[0-6]\.[0-9]|17\.0))|([0-1]\.[0-9]+\.[0-9]+)).*)\s*</version>`),
 			regexp.MustCompile(`<dependency.*org.*org\.apache\.logging\.log4j.*name.*log4j.*rev.*(2\.([0-9]\.|1[0-6]|17\.0))|([0-1]\.[0-9]+\.[0-9]+).*/>`),
 			regexp.MustCompile(`<(log4j2|log4j)\.version>.*(2\.([0-9]\.|1[0-6]|17\.0))|([0-1]\.[0-9]+\.[0-9]+).*</(log4j2|log4j)\.version>`),
 		},
