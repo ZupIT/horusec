@@ -111,13 +111,22 @@ func (f *Formatter) newContainerOutputFromString(containerOutput string) (output
 func (f *Formatter) processOutput(output *npmOutput, projectSubPath string) {
 	for _, advisory := range output.Advisories {
 		advisoryPointer := advisory
-		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(&advisoryPointer, projectSubPath))
+		vuln, err := f.newVulnerability(&advisoryPointer, projectSubPath)
+		if err != nil {
+			f.SetAnalysisError(err, tools.NpmAudit, err.Error(), "")
+			continue
+		}
+		f.AddNewVulnerabilityIntoAnalysis(vuln)
 	}
 }
 
-func (f *Formatter) newVulnerability(issue *npmIssue, projectSubPath string) *vulnerability.Vulnerability {
+func (f *Formatter) newVulnerability(issue *npmIssue, projectSubPath string) (*vulnerability.Vulnerability, error) {
+	filePath, err := f.GetFilepathFromFilename("package-lock.json", projectSubPath)
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
-		File:         f.GetFilepathFromFilename("package-lock.json", projectSubPath),
+		File:         filePath,
 		SecurityTool: tools.NpmAudit,
 		Language:     languages.Javascript,
 		Severity:     issue.getSeverity(),
@@ -125,7 +134,7 @@ func (f *Formatter) newVulnerability(issue *npmIssue, projectSubPath string) *vu
 		Code:         issue.ModuleName,
 	}
 	vuln.Line = f.getVulnerabilityLineByName(f.getVersionText(issue.getVersion()), vuln.Code, vuln.File)
-	return f.SetCommitAuthor(vulnhash.Bind(vuln))
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
 }
 
 func (f *Formatter) getVersionText(version string) string {
@@ -133,7 +142,8 @@ func (f *Formatter) getVersionText(version string) string {
 }
 
 func (f *Formatter) getVulnerabilityLineByName(version, module, filename string) string {
-	file, err := os.Open(filepath.Join(f.GetConfigProjectPath(), filename))
+	filePath := filepath.Join(f.GetConfigProjectPath(), filepath.Clean(filename))
+	file, err := os.Open(filePath)
 	if err != nil {
 		return ""
 	}

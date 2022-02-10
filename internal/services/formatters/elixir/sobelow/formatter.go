@@ -86,6 +86,7 @@ func (f *Formatter) getConfigData(projectSubPath string) *docker.AnalysisData {
 	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Elixir), images.Elixir)
 }
 
+// nolint:funlen // needs to be bigger
 func (f *Formatter) parseOutput(output, projectSubPath string) {
 	output = strings.ReplaceAll(strings.ReplaceAll(output, replaceDefaultMessage, ""), "\r", "")
 
@@ -95,7 +96,12 @@ func (f *Formatter) parseOutput(output, projectSubPath string) {
 		}
 
 		if data := f.newOutput(value); data != nil {
-			f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(data, projectSubPath))
+			vuln, err := f.newVulnerability(data, projectSubPath)
+			if err != nil {
+				f.SetAnalysisError(err, tools.Sobelow, err.Error(), "")
+				continue
+			}
+			f.AddNewVulnerabilityIntoAnalysis(vuln)
 		}
 	}
 }
@@ -116,14 +122,20 @@ func (f *Formatter) newOutput(output string) *sobelowOutput {
 	}
 }
 
-func (f *Formatter) newVulnerability(output *sobelowOutput, projectSubPath string) *vulnerability.Vulnerability {
+func (f *Formatter) newVulnerability(output *sobelowOutput,
+	projectSubPath string) (*vulnerability.Vulnerability, error,
+) {
+	filePath, err := f.GetFilepathFromFilename(output.File, projectSubPath)
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.Sobelow,
 		Language:     languages.Elixir,
 		Severity:     severities.Unknown,
 		Details:      output.Title,
-		File:         f.GetFilepathFromFilename(output.File, projectSubPath),
+		File:         filePath,
 		Line:         output.Line,
 	}
-	return f.SetCommitAuthor(vulnhash.Bind(vuln))
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
 }

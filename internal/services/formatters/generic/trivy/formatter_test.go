@@ -15,6 +15,8 @@
 package trivy
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -29,6 +31,16 @@ import (
 )
 
 func TestTrivyParseOutput(t *testing.T) {
+	dirName := filepath.Join(".horusec", "00000000-0000-0000-0000-000000000000")
+	err := os.MkdirAll(dirName, 0o777)
+	assert.NoError(t, err)
+	file, err := os.Create(filepath.Join(dirName, "go.sum"))
+	defer file.Close()
+	assert.NoError(t, err)
+	t.Cleanup(func() {
+		err = os.RemoveAll(".horusec")
+		assert.NoError(t, err)
+	})
 	t.Run("Should add 2 vulnerabilities on analysis without errors", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 		dockerAPIControllerMock.On("SetAnalysisID")
@@ -41,7 +53,6 @@ func TestTrivyParseOutput(t *testing.T) {
 		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
-
 		assert.Len(t, analysis.AnalysisVulnerabilities, 2)
 
 		for _, v := range analysis.AnalysisVulnerabilities {

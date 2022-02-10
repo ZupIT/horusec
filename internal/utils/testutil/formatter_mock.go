@@ -81,9 +81,9 @@ func (m *FormatterMock) ToolIsToIgnore(_ tools.Tool) bool {
 	return args.Get(0).(bool)
 }
 
-func (m *FormatterMock) GetFilepathFromFilename(_, _ string) string {
+func (m *FormatterMock) GetFilepathFromFilename(_, _ string) (string, error) {
 	args := m.MethodCalled("GetFilepathFromFilename")
-	return args.Get(0).(string)
+	return args.Get(0).(string), mockutils.ReturnNilOrError(args, 1)
 }
 
 func (m *FormatterMock) SetCommitAuthor(_ *vulnerability.Vulnerability) *vulnerability.Vulnerability {
