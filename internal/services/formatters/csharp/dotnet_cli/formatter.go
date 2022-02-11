@@ -22,6 +22,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/internal/entities/docker"
@@ -150,6 +151,7 @@ func (f *Formatter) newVulnerability(dependency *dotnetDependency, projectSubPat
 		SecurityTool: tools.DotnetCli,
 		Language:     languages.CSharp,
 		Confidence:   confidence.High,
+		RuleID:       crypto.GenerateSHA256(dependency.getDescription())[0:8],
 		Details:      dependency.getDescription(),
 		Code:         code,
 		File:         f.removeHorusecFolder(filePath),
