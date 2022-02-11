@@ -22,7 +22,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/internal/entities/docker"
@@ -120,7 +119,7 @@ func (f *Formatter) newOutput(output string) *sobelowOutput {
 func (f *Formatter) newVulnerability(output *sobelowOutput, projectSubPath string) *vulnerability.Vulnerability {
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.Sobelow,
-		RuleID:       crypto.GenerateSHA256(output.Title)[0:8],
+		RuleID:       vulnhash.HashRuleID(output.Title),
 		Language:     languages.Elixir,
 		Severity:     severities.Unknown,
 		Details:      output.Title,

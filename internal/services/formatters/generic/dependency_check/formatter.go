@@ -21,7 +21,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec/internal/entities/docker"
@@ -104,7 +103,7 @@ func (f *Formatter) newVulnerability(
 ) *vulnerability.Vulnerability {
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.OwaspDependencyCheck,
-		RuleID:       crypto.GenerateSHA256(vulnData.Description)[0:8],
+		RuleID:       vulnhash.HashRuleID(vulnData.Description),
 		Language:     languages.Generic,
 		Severity:     vulnData.getSeverity(),
 		Details:      vulnData.Description,

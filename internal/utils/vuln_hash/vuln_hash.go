@@ -57,3 +57,7 @@ func toOneLine(code string) string {
 
 	return oneLineCode
 }
+
+func HashRuleID(desc string) string {
+	return crypto.GenerateSHA256(desc)[0:8]
+}
