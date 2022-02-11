@@ -23,6 +23,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
@@ -96,6 +97,7 @@ func (f *Formatter) setVulnerabilityData(output *entities.Output) *vulnerability
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = severities.Low
 	data.Confidence = confidence.Low
+	data.RuleID = crypto.GenerateSHA256(output.Message)[0:8]
 	data.Details = output.Message
 	data.Column = output.GetColumn()
 	data.Line = output.GetLine()
