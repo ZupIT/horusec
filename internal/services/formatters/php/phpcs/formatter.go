@@ -21,6 +21,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
@@ -105,6 +106,7 @@ func (f *Formatter) parseMessages(filepath string, result interface{}) {
 func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *vulnerability.Vulnerability {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Severity = result.GetSeverity()
+	vuln.RuleID = crypto.GenerateSHA256(result.Message)[0:8]
 	vuln.Details = result.Message
 	vuln.Line = result.GetLine()
 	vuln.Column = result.GetColumn()
