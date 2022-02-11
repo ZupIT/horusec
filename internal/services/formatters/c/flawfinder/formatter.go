@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/gocarina/gocsv"
 
@@ -88,6 +89,7 @@ func (f *Formatter) newVulnerability(result *flawFinderResult) *vulnerability.Vu
 		SecurityTool: tools.Flawfinder,
 		Language:     languages.C,
 		Severity:     result.getSeverity(),
+		RuleID:       crypto.GenerateSHA256(result.getDetails())[0:8],
 		Details:      result.getDetails(),
 		Line:         result.Line,
 		Column:       result.Column,
