@@ -23,6 +23,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
@@ -102,6 +103,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue
 	vulnerabilitySeverity *vulnerability.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
 	vulnerabilitySeverity.Severity = severities.Critical
+	vulnerabilitySeverity.RuleID = crypto.GenerateSHA256(issue.Rule)[0:8]
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File
