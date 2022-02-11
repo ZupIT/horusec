@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker:20.10-git
+FROM docker:20.10-dind
 
-RUN apk update --no-cache && apk upgrade --no-cache
+RUN apk add git --no-cache
 
 COPY /horusec_linux_arm64 /usr/local/bin/horusec
 

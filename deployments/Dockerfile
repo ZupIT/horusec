@@ -14,7 +14,7 @@
 
 FROM golang:1.17-alpine AS builder
 
-RUN apk update && apk add --no-cache git
+RUN apk add --no-cache git
 
 ADD . /horusec
 WORKDIR /horusec
@@ -23,9 +23,9 @@ RUN go mod download
 
 RUN env GOOS=linux go build -ldflags '-s -w' -o /bin/horusec ./cmd/app/main.go
 
-FROM docker:20.10-git
+FROM docker:20.10-dind
 
-RUN apk update --no-cache && apk upgrade --no-cache
+RUN apk add git --no-cache
 
 COPY --from=builder /bin/horusec /usr/local/bin
 RUN chmod +x /usr/local/bin/horusec
