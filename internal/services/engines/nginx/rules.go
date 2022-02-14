@@ -24,8 +24,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewIncludeXFrameOptionsHeader() text.TextRule {
-	return text.TextRule{
+func NewIncludeXFrameOptionsHeader() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-NGINX-1",
 			Name:        "Improper Restriction of Rendered UI Layers or Frames",
@@ -40,8 +40,8 @@ func NewIncludeXFrameOptionsHeader() text.TextRule {
 	}
 }
 
-func NewIncludeXContentTypeOptionsHeader() text.TextRule {
-	return text.TextRule{
+func NewIncludeXContentTypeOptionsHeader() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-NGINX-2",
 			Name:        "Missing X-Content-Type-Options header",
@@ -56,8 +56,8 @@ func NewIncludeXContentTypeOptionsHeader() text.TextRule {
 	}
 }
 
-func NewIncludeContentSecurityPolicyHeader() text.TextRule {
-	return text.TextRule{
+func NewIncludeContentSecurityPolicyHeader() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-NGINX-3",
 			Name:        "Missing Content-Security-Policy header",
@@ -72,8 +72,8 @@ func NewIncludeContentSecurityPolicyHeader() text.TextRule {
 	}
 }
 
-func NewIncludeServerTokensOff() text.TextRule {
-	return text.TextRule{
+func NewIncludeServerTokensOff() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-NGINX-4",
 			Name:        "Exposure of Sensitive Information",

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM elixir:1.13.1-alpine
+FROM elixir:1.13.2-alpine
 
 RUN apk add git
 

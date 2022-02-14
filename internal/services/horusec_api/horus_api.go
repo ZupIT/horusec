@@ -128,8 +128,8 @@ func (s *Service) verifyResponseCreateAnalysis(response *entities.HTTPResponse) 
 		return err
 	}
 	if response.GetStatusCode() == http.StatusBadRequest {
-		return fmt.Errorf("something went wrong while sending analysis to horusec. " +
-			"Check if your current version of Horusec-CLI is compatible with version in Horusec-API -> " +
+		return fmt.Errorf(`something went wrong while sending analysis to horusec. 
+Check if your current version of Horusec-CLI is compatible with version in Horusec-API -> %s`,
 			string(body))
 	}
 	return fmt.Errorf("something went wrong while sending analysis to horusec -> %s", string(body))

@@ -103,25 +103,32 @@ func (f *Formatter) parseOutputToSafetyOutput(output string) (safetyOutput entit
 
 func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue, projectSubPath string) {
 	for index := range issues {
-		vuln := f.setupVulnerabilitiesSeveritiesSafety(issues, index, projectSubPath)
+		vuln, err := f.setupVulnerabilitiesSeveritiesSafety(issues, index, projectSubPath)
+		if err != nil {
+			f.SetAnalysisError(err, tools.NpmAudit, err.Error(), "")
+			continue
+		}
 		f.AddNewVulnerabilityIntoAnalysis(vuln)
 	}
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
-	issues []entities.Issue, index int, projectSubPath string) *vulnerability.Vulnerability {
+	issues []entities.Issue, index int, projectSubPath string) (*vulnerability.Vulnerability, error) {
 	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
-	vuln := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
-	vuln.RuleID = issues[index].ID
+	vuln, err := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
+	if err != nil {
+		return nil, err
+	}
+  vuln.RuleID = issues[index].ID
 	vuln.Details = issues[index].Description
 	vuln.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vuln.Line = f.getVulnerabilityLineByName(lineContent, vuln.File)
 	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln)
+	return f.SetCommitAuthor(vuln), err
 }
 
 func (f *Formatter) getVulnerabilityLineByName(line, fileName string) string {
-	path := filepath.Join(f.GetConfigProjectPath(), fileName)
+	path := filepath.Join(f.GetConfigProjectPath(), filepath.Clean(fileName))
 	fileOpened, err := os.Open(path)
 	if err != nil {
 		return "-"
@@ -147,13 +154,18 @@ func (f *Formatter) getLine(name string, scanner *bufio.Scanner) string {
 	return "-"
 }
 
-func (f *Formatter) getDefaultVulnerabilitySeverityInSafety(projectSubPath string) *vulnerability.Vulnerability {
+// nolint: funlen,lll // needs to be bigger
+func (f *Formatter) getDefaultVulnerabilitySeverityInSafety(projectSubPath string) (*vulnerability.Vulnerability, error) {
 	vulnerabilitySeverity := &vulnerability.Vulnerability{}
 	vulnerabilitySeverity.Language = languages.Python
 	vulnerabilitySeverity.Severity = severities.High
 	vulnerabilitySeverity.SecurityTool = tools.Safety
 	vulnerabilitySeverity.Confidence = "-"
 	vulnerabilitySeverity.Column = "0"
-	vulnerabilitySeverity.File = f.GetFilepathFromFilename("requirements.txt", projectSubPath)
-	return vulnerabilitySeverity
+	filePath, err := f.GetFilepathFromFilename("requirements.txt", projectSubPath)
+	if err != nil {
+		return nil, err
+	}
+	vulnerabilitySeverity.File = filePath
+	return vulnerabilitySeverity, err
 }

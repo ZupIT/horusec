@@ -33,7 +33,6 @@ import (
 	engine "github.com/ZupIT/horusec-engine"
 
 	"github.com/ZupIT/horusec/config"
-	commitauthor "github.com/ZupIT/horusec/internal/entities/commit_author"
 	dockerentity "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	customrules "github.com/ZupIT/horusec/internal/services/custom_rules"
@@ -53,7 +52,7 @@ type CustomRules interface {
 
 // Git is the interface that handle Git operations
 type Git interface {
-	CommitAuthor(line string, file string) commitauthor.CommitAuthor
+	CommitAuthor(line string, file string) git.CommitAuthor
 }
 
 type Service struct {
@@ -180,11 +179,14 @@ func (s *Service) truncatedCode(code string, column int) string {
 	return codeFromColumn
 }
 
-func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) string {
+func (s *Service) GetFilepathFromFilename(filename, projectSubPath string) (string, error) {
 	basePath := filepath.Join(s.GetConfigProjectPath(), projectSubPath)
-	filepathWithFileName := file.GetPathFromFilename(filename, basePath)
+	filepathWithFileName, err := file.GetPathFromFilename(filename, basePath)
+	if err != nil {
+		return "", err
+	}
 
-	return filepath.Join(projectSubPath, filepathWithFileName)
+	return filepath.Join(projectSubPath, filepathWithFileName), err
 }
 
 func (s *Service) SetCommitAuthor(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {

@@ -99,11 +99,20 @@ func (f *Formatter) parseOutput(output string) error {
 
 	f.setSeveritiesAndVulnsByID(analysis)
 
-	for _, result := range analysis.getRun().Results {
-		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(result))
-	}
+	f.addVulnIntoAnalysis(analysis)
 
 	return nil
+}
+
+func (f *Formatter) addVulnIntoAnalysis(analysis *scsAnalysis) {
+	for _, result := range analysis.getRun().Results {
+		vuln, err := f.newVulnerability(result)
+		if err != nil {
+			f.SetAnalysisError(err, tools.SecurityCodeScan, err.Error(), "")
+			continue
+		}
+		f.AddNewVulnerabilityIntoAnalysis(vuln)
+	}
 }
 
 func (f *Formatter) setSeveritiesAndVulnsByID(analysis *scsAnalysis) {
@@ -111,9 +120,12 @@ func (f *Formatter) setSeveritiesAndVulnsByID(analysis *scsAnalysis) {
 	f.vulnerabilitiesByID = analysis.vulnerabilitiesByID()
 }
 
-func (f *Formatter) newVulnerability(result *scsResult) *vulnerability.Vulnerability {
-	code, _ := fileutils.GetCode(f.GetConfigProjectPath(), result.getFile(), result.getLine())
-
+// nolint: funlen // needs to be bigger
+func (f *Formatter) newVulnerability(result *scsResult) (*vulnerability.Vulnerability, error) {
+	code, err := fileutils.GetCode(f.GetConfigProjectPath(), result.getFile(), result.getLine())
+	if err != nil {
+		return nil, err
+	}
 	vuln := &vulnerability.Vulnerability{
 		RuleID:       result.RuleID,
 		SecurityTool: tools.SecurityCodeScan,
@@ -126,7 +138,7 @@ func (f *Formatter) newVulnerability(result *scsResult) *vulnerability.Vulnerabi
 		Code:         code,
 	}
 
-	return f.SetCommitAuthor(vulnHash.Bind(vuln))
+	return f.SetCommitAuthor(vulnHash.Bind(vuln)), err
 }
 
 // nolint: funlen

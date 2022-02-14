@@ -14,8 +14,29 @@
 
 package sonarqube
 
+type Report struct {
+	Issues []Issue `json:"issues"`
+}
+
+type Issue struct {
+	Type               string     `json:"type"`
+	RuleID             string     `json:"ruleId"`
+	EngineID           string     `json:"engineId"`
+	Severity           string     `json:"severity"`
+	EffortMinutes      int        `json:"effortMinutes"`
+	PrimaryLocation    Location   `json:"primaryLocation"`
+	SecondaryLocations []Location `json:"secondaryLocations,omitempty"`
+}
+
 type Location struct {
 	Message  string    `json:"message"`
 	Filepath string    `json:"filePath"`
 	Range    TextRange `json:"textRange"`
+}
+
+type TextRange struct {
+	StartLine   int `json:"startLine"`
+	EndLine     int `json:"endLine,omitempty"`
+	StartColumn int `json:"startColumn,omitempty"`
+	EndColumn   int `json:"endColumn,omitempty"`
 }

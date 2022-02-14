@@ -146,14 +146,14 @@ func (r ruleIDValidator) Validate(value interface{}) error {
 		return fmt.Errorf("unsupported language %s", r.language)
 	}
 
-	return r.valiteDuplicates(id, rules)
+	return r.validateDuplicates(id, rules)
 }
 
-func (r ruleIDValidator) valiteDuplicates(id string, rules []engine.Rule) error {
+func (r ruleIDValidator) validateDuplicates(id string, rules []engine.Rule) error {
 	for _, rule := range rules {
-		// Custom rules is converted to text.TextRule, so we only need
-		// to check duplicates in text.TextRule rules.
-		if r, ok := rule.(text.TextRule); ok {
+		// Custom rules is converted to text.Rule, so we only need
+		// to check duplicates in text.Rule rules.
+		if r, ok := rule.(*text.Rule); ok {
 			if r.ID == id {
 				return fmt.Errorf("duplicate rule id %s", id)
 			}

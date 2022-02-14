@@ -23,8 +23,8 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func NewAllowPrivilegeEscalation() text.TextRule {
-	return text.TextRule{
+func NewAllowPrivilegeEscalation() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-1",
 			Name:        "Allow Privilege Escalation",
@@ -34,15 +34,15 @@ func NewAllowPrivilegeEscalation() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`allowPrivilegeEscalation:\strue`),
+			regexp.MustCompile(`allowPrivilegeEscalation:\s*true`),
 			regexp.MustCompile(`containers:`),
 			regexp.MustCompile(`securityContext:`),
 		},
 	}
 }
 
-func NewHostAliases() text.TextRule {
-	return text.TextRule{
+func NewHostAliases() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-2",
 			Name:        "Host Aliases",
@@ -59,8 +59,8 @@ func NewHostAliases() text.TextRule {
 	}
 }
 
-func NewDockerSock() text.TextRule {
-	return text.TextRule{
+func NewDockerSock() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-3",
 			Name:        "Docker Sock",
@@ -77,8 +77,8 @@ func NewDockerSock() text.TextRule {
 	}
 }
 
-func NewCapabilitySystemAdmin() text.TextRule {
-	return text.TextRule{
+func NewCapabilitySystemAdmin() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-4",
 			Name:        "Capability System Admin",
@@ -88,7 +88,7 @@ func NewCapabilitySystemAdmin() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`-\sSYS_ADMIN`),
+			regexp.MustCompile(`-\s*SYS_ADMIN`),
 			regexp.MustCompile(`add:`),
 			regexp.MustCompile(`capabilities:`),
 			regexp.MustCompile(`securityContext:`),
@@ -97,8 +97,8 @@ func NewCapabilitySystemAdmin() text.TextRule {
 	}
 }
 
-func NewPrivilegedContainer() text.TextRule {
-	return text.TextRule{
+func NewPrivilegedContainer() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-5",
 			Name:        "Privileged Container",
@@ -108,15 +108,15 @@ func NewPrivilegedContainer() text.TextRule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`privileged:\strue`),
+			regexp.MustCompile(`privileged:\s*true`),
 			regexp.MustCompile(`securityContext:`),
 			regexp.MustCompile(`(initContainers:|containers:)`),
 		},
 	}
 }
 
-func NewSeccompUnconfined() text.TextRule {
-	return text.TextRule{
+func NewSeccompUnconfined() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-6",
 			Name:        "Seccomp Unconfined",
@@ -126,14 +126,14 @@ func NewSeccompUnconfined() text.TextRule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+: unconfined`),
-			regexp.MustCompile(`[\[ ]seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:unconfined[\] ]`),
+			regexp.MustCompile(`seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:\s*unconfined`),
+			regexp.MustCompile(`[\[ ]seccomp\.security\.alpha\.kubernetes\.io/[a-zA-Z-.]+:\s*unconfined[\] ]`),
 		},
 	}
 }
 
-func NewHostIPC() text.TextRule {
-	return text.TextRule{
+func NewHostIPC() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-7",
 			Name:        "Host IPC",
@@ -141,15 +141,15 @@ func NewHostIPC() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostIPC:\strue`),
+			regexp.MustCompile(`hostIPC:\s*true`),
 		},
 	}
 }
 
-func NewHostPID() text.TextRule {
-	return text.TextRule{
+func NewHostPID() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-8",
 			Name:        "Host PID",
@@ -157,15 +157,15 @@ func NewHostPID() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostPID:\strue`),
+			regexp.MustCompile(`hostPID:\s*true`),
 		},
 	}
 }
 
-func NewHostNetwork() text.TextRule {
-	return text.TextRule{
+func NewHostNetwork() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-KUBERNETES-9",
 			Name:        "Host Network",
@@ -173,9 +173,9 @@ func NewHostNetwork() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`hostNetwork:\strue`),
+			regexp.MustCompile(`hostNetwork:\s*true`),
 		},
 	}
 }

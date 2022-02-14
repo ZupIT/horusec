@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker:20.10-git
+FROM horuszup/docker-amd64:20.10-git
 
 COPY /horusec_linux_amd64 /usr/local/bin/horusec
 

@@ -56,7 +56,7 @@ func TestParseOutput(t *testing.T) {
 		}
 	})
 
-	t.Run("should add no error and no vulnerabilities on analysis when parse invalid output", func(t *testing.T) {
+	t.Run("should add error and no vulnerabilities on analysis when parse invalid output", func(t *testing.T) {
 		analysis := new(analysis.Analysis)
 
 		dockerAPIControllerMock := testutil.NewDockerMock()
@@ -67,7 +67,7 @@ func TestParseOutput(t *testing.T) {
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 
-		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
+		assert.True(t, analysis.HasErrors(), "Expected no errors on analysis")
 		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
 	})
 

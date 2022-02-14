@@ -96,13 +96,18 @@ func (f *Formatter) parseResults(results map[string]interface{}) {
 func (f *Formatter) parseMessages(filepath string, result interface{}) {
 	for _, message := range f.parseToResult(result).Messages {
 		if message.IsAllowedMessage() && message.IsNotFailedToScan() {
-			vuln := f.setVulnerabilityData(filepath, message)
+			vuln, err := f.setVulnerabilityData(filepath, message)
+			if err != nil {
+				f.SetAnalysisError(err, tools.PhpCS, err.Error(), "")
+				continue
+			}
 			f.AddNewVulnerabilityIntoAnalysis(vuln)
 		}
 	}
 }
 
-func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) *vulnerability.Vulnerability {
+// nolint: funlen,lll // needs to be bigger
+func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) (*vulnerability.Vulnerability, error) {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Severity = result.GetSeverity()
 	vuln.RuleID = vulnhash.HashRuleID(result.Message)
@@ -111,12 +116,23 @@ func (f *Formatter) setVulnerabilityData(filepath string, result entities.Messag
 	vuln.Column = result.GetColumn()
 	vuln.File = f.RemoveSrcFolderFromPath(filepath)
 	vuln = vulnhash.Bind(vuln)
-
+	code, err := f.getCode(vuln, result)
+	if err != nil {
+		return nil, err
+	}
 	// NOTE: code and details were set after the vulnhash.Bind to avoid changes in the hash generation
-	vuln.Code, _ = fileutils.GetCode(f.GetConfigProjectPath(), vuln.File, result.GetLine())
+	vuln.Code = code
 	vuln.Details += fmt.Sprintf("\n %s", result.Source)
 
-	return f.SetCommitAuthor(vuln)
+	return f.SetCommitAuthor(vuln), err
+}
+
+func (f *Formatter) getCode(vuln *vulnerability.Vulnerability, result entities.Message) (string, error) {
+	code, err := fileutils.GetCode(f.GetConfigProjectPath(), vuln.File, result.GetLine())
+	if err != nil {
+		return "", err
+	}
+	return code, err
 }
 
 func (f *Formatter) getDefaultVulnerabilitySeverity() *vulnerability.Vulnerability {

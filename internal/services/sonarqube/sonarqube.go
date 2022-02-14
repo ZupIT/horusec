@@ -17,29 +17,27 @@ package sonarqube
 import (
 	"strconv"
 
-	horusecEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	vulnEntity "github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	horusecSeverity "github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-
-	"github.com/ZupIT/horusec/internal/entities/sonarqube"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 )
 
 type SonarQube struct {
-	analysis *horusecEntities.Analysis
+	analysis *analysis.Analysis
 }
 
-func NewSonarQube(analysis *horusecEntities.Analysis) *SonarQube {
+func NewSonarQube(analysiss *analysis.Analysis) *SonarQube {
 	return &SonarQube{
-		analysis: analysis,
+		analysis: analysiss,
 	}
 }
 
-func (sq *SonarQube) ConvertVulnerabilityToSonarQube() (report sonarqube.Report) {
-	report.Issues = []sonarqube.Issue{}
+func (sq *SonarQube) ConvertVulnerabilityToSonarQube() (report Report) {
+	report.Issues = []Issue{}
 	for index := range sq.analysis.AnalysisVulnerabilities {
-		vulnerability := sq.analysis.AnalysisVulnerabilities[index].Vulnerability
+		vuln := sq.analysis.AnalysisVulnerabilities[index].Vulnerability
 
-		issue := sq.formatReportStruct(&vulnerability)
+		issue := sq.formatReportStruct(&vuln)
 
 		report.Issues = append(report.Issues, *issue)
 	}
@@ -47,11 +45,11 @@ func (sq *SonarQube) ConvertVulnerabilityToSonarQube() (report sonarqube.Report)
 	return report
 }
 
-func (sq *SonarQube) formatReportStruct(vulnerability *vulnEntity.Vulnerability) (issue *sonarqube.Issue) {
-	issue = sq.newIssue(vulnerability)
+func (sq *SonarQube) formatReportStruct(vuln *vulnerability.Vulnerability) (issue *Issue) {
+	issue = sq.newIssue(vuln)
 
-	convertedVulnerabilityLine, _ := strconv.Atoi(vulnerability.Line)
-	convertedVulnerabilityColumn, _ := strconv.Atoi(vulnerability.Column)
+	convertedVulnerabilityLine, _ := strconv.Atoi(vuln.Line)
+	convertedVulnerabilityColumn, _ := strconv.Atoi(vuln.Column)
 
 	issue.PrimaryLocation.Range.StartLine = sq.shouldBeGreatherThanZero(convertedVulnerabilityLine)
 	issue.PrimaryLocation.Range.StartColumn = sq.shouldBeGreatherThanZero(convertedVulnerabilityColumn)
@@ -66,30 +64,30 @@ func (sq *SonarQube) shouldBeGreatherThanZero(v int) int {
 	return 1
 }
 
-func (sq *SonarQube) newIssue(vulnerability *vulnEntity.Vulnerability) *sonarqube.Issue {
-	return &sonarqube.Issue{
+func (sq *SonarQube) newIssue(vuln *vulnerability.Vulnerability) *Issue {
+	return &Issue{
 		EngineID: "horusec",
 		Type:     "VULNERABILITY",
-		Severity: sq.convertHorusecSeverityToSonarQube(vulnerability.Severity),
-		RuleID:   vulnerability.SecurityTool.ToString(),
-		PrimaryLocation: sonarqube.Location{
-			Message:  vulnerability.Details,
-			Filepath: vulnerability.File,
+		Severity: sq.convertHorusecSeverityToSonarQube(vuln.Severity),
+		RuleID:   vuln.SecurityTool.ToString(),
+		PrimaryLocation: Location{
+			Message:  vuln.Details,
+			Filepath: vuln.File,
 		},
 	}
 }
 
-func (sq *SonarQube) convertHorusecSeverityToSonarQube(severity horusecSeverity.Severity) string {
+func (sq *SonarQube) convertHorusecSeverityToSonarQube(severity severities.Severity) string {
 	return sq.getSonarQubeSeverityMap()[severity]
 }
 
-func (sq *SonarQube) getSonarQubeSeverityMap() map[horusecSeverity.Severity]string {
-	return map[horusecSeverity.Severity]string{
-		horusecSeverity.Critical: "BLOCKER",
-		horusecSeverity.High:     "CRITICAL",
-		horusecSeverity.Medium:   "MAJOR",
-		horusecSeverity.Low:      "MINOR",
-		horusecSeverity.Unknown:  "INFO",
-		horusecSeverity.Info:     "INFO",
+func (sq *SonarQube) getSonarQubeSeverityMap() map[severities.Severity]string {
+	return map[severities.Severity]string{
+		severities.Critical: "BLOCKER",
+		severities.High:     "CRITICAL",
+		severities.Medium:   "MAJOR",
+		severities.Low:      "MINOR",
+		severities.Unknown:  "INFO",
+		severities.Info:     "INFO",
 	}
 }

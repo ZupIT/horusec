@@ -438,7 +438,7 @@ func TestGetFilepathFromFilename(t *testing.T) {
 		assert.NotNil(t, file)
 		assert.NoError(t, err)
 
-		result := monitorController.GetFilepathFromFilename(filename, "")
+		result, err := monitorController.GetFilepathFromFilename(filename, "")
 
 		assert.Equal(t, filepath.Join(relativeFilePath, filename), result)
 		t.Cleanup(func() {
@@ -455,8 +455,8 @@ func TestGetFilepathFromFilename(t *testing.T) {
 		monitorController := NewFormatterService(&analysis.Analysis{}, testutil.NewDockerMock(), cfg)
 		filename := "server.go"
 
-		result := monitorController.GetFilepathFromFilename(filename, "")
-
+		result, err := monitorController.GetFilepathFromFilename(filename, "")
+		assert.Error(t, err)
 		assert.Equal(t, "", result)
 	})
 }

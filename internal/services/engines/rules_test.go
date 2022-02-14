@@ -93,8 +93,8 @@ func TestGetRules(t *testing.T) {
 			rulesID := map[string]bool{}
 
 			for _, rule := range rules {
-				r, ok := rule.(text.TextRule)
-				require.True(t, ok, "Expected rule type of text.TextRule, got %T", rule)
+				r, ok := rule.(*text.Rule)
+				require.True(t, ok, "Expected rule type of text.Rule, got %T", rule)
 				expressions += len(r.Expressions)
 
 				if rulesID[r.ID] == true {

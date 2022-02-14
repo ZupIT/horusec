@@ -26,8 +26,8 @@ import (
 // Deprecated: This rule is not usage really in any swift project,
 // because when use sqlite3_exec internally it's running the commands sqlite3_prepare_v2, sqlite3_step, sqlite3_finalize
 // then is not necessary use sqlite3_finalize and this rule not will get anywhere vulnerability
-//func NewSQLiteDatabase() text.TextRule {
-//	return text.TextRule{
+//func NewSQLiteDatabase() *text.Rule {
+//	return &text.Rule{
 //		Metadata: engine.Metadata{
 //			ID:          "HS-SWIFT-1",
 //			Name:        "SQLite Database",
@@ -43,63 +43,60 @@ import (
 //	}
 //}
 
-func NewCoreDataDatabase() text.TextRule {
-	return text.TextRule{
+func NewCoreDataDatabase() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-2",
 			Name:        "CoreData Database",
-			Description: "App uses CoreData Database. Sensitive Information should be encrypted.",
+			Description: "App uses CoreData Database. Sensitive Information should be encrypted. For more information checkout the CWE-311 (https://cwe.mitre.org/data/definitions/311.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`NSManagedObjectContext`),
-			regexp.MustCompile(`\.save\(\)`),
+			regexp.MustCompile(`(?i)(NSManagedObjectContext)(([^C]|C[^r]|Cr[^y]|Cry[^p]|Cryp[^t])*)(\.save\(\))`),
 		},
 	}
 }
 
-func NewDTLS12NotUsed() text.TextRule {
-	return text.TextRule{
+func NewDTLS12NotUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-3",
-			Name:        "DTLS 1.2 not used",
-			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0.",
+			Name:        "DTLS 1.0 or 1.1 not used",
+			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.TLSMinimumSupportedProtocolVersion`),
-			regexp.MustCompile(`tls_protocol_version_t\.DTLSv10`),
+			regexp.MustCompile(`tls_protocol_version_t\.DTLSv[0-1][0-1]`),
 		},
 	}
 }
 
-func NewTLS13NotUsed() text.TextRule {
-	return text.TextRule{
+func NewTLS13NotUsed() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-4",
-			Name:        "TLS 1.3 not used",
-			Description: "Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Name:        "TLS 1.0 or TLS 1.1 not be used",
+			Description: "TLS 1.2 should be used. Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\.TLSMinimumSupportedProtocolVersion`),
-			regexp.MustCompile(`tls_protocol_version_t\.TLSv12`),
+			regexp.MustCompile(`tls_protocol_version_t\.TLSv(0|1[0-1])`),
 		},
 	}
 }
 
-func NewReverseEngineering() text.TextRule {
-	return text.TextRule{
+func NewReverseEngineering() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-5",
 			Name:        "Reverse engineering",
-			Description: "This App may have Reverse engineering detection capabilities.",
+			Description: "This App may have Reverse engineering detection capabilities. For more information checkout the OWASP-M9 (https://owasp.org/www-project-mobile-top-10/2016-risks/m9-reverse-engineering) advisory.",
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
@@ -108,13 +105,12 @@ func NewReverseEngineering() text.TextRule {
 			regexp.MustCompile(`"FridaGadget"`),
 			regexp.MustCompile(`"cynject"`),
 			regexp.MustCompile(`"libcycript"`),
-			regexp.MustCompile(`"/usr/sbin/frida-server"`),
 		},
 	}
 }
 
-func NewWeakMD5CryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakMD5CryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-6",
 			Name:        "Weak MD5 hash using",
@@ -130,8 +126,8 @@ func NewWeakMD5CryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakCommonDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakCommonDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-7",
 			Name:        "Weak DES hash using",
@@ -147,8 +143,8 @@ func NewWeakCommonDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakIDZDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakIDZDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-8",
 			Name:        "Weak DES hash using",
@@ -164,8 +160,8 @@ func NewWeakIDZDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewWeakBlowfishCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakBlowfishCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-9",
 			Name:        "Weak Cipher Mode",
@@ -181,8 +177,8 @@ func NewWeakBlowfishCryptoCipher() text.TextRule {
 	}
 }
 
-func NewMD6Collision() text.TextRule {
-	return text.TextRule{
+func NewMD6Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-10",
 			Name:        "Weak MD6 hash using",
@@ -198,8 +194,8 @@ func NewMD6Collision() text.TextRule {
 	}
 }
 
-func NewMD5Collision() text.TextRule {
-	return text.TextRule{
+func NewMD5Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-11",
 			Name:        "Weak MD5 hash using",
@@ -215,8 +211,8 @@ func NewMD5Collision() text.TextRule {
 	}
 }
 
-func NewSha1Collision() text.TextRule {
-	return text.TextRule{
+func NewSha1Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-12",
 			Name:        "Weak SHA1 hash using",
@@ -226,14 +222,15 @@ func NewSha1Collision() text.TextRule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(?i)\.SHA1\.hash`),
 			regexp.MustCompile(`(?i)SHA1\(`),
 			regexp.MustCompile(`CC_SHA1\(`),
 		},
 	}
 }
 
-func NewJailbreakDetect() text.TextRule {
-	return text.TextRule{
+func NewJailbreakDetect() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-13",
 			Name:        "Jailbreak detection",
@@ -294,8 +291,8 @@ func NewJailbreakDetect() text.TextRule {
 	}
 }
 
-func NewLoadHTMLString() text.TextRule {
-	return text.TextRule{
+func NewLoadHTMLString() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-14",
 			Name:        "Javascript injection",
@@ -305,14 +302,13 @@ func NewLoadHTMLString() text.TextRule {
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`loadHTMLString`),
-			regexp.MustCompile(`webView`),
+			regexp.MustCompile(`loadHTMLString\(((.*["|']\+.*\+["|'])|([^"]\w*,?))`),
 		},
 	}
 }
 
-func NewWeakDesCryptoCipher() text.TextRule {
-	return text.TextRule{
+func NewWeakDesCryptoCipher() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-15",
 			Name:        "Weak Cipher Mode",
@@ -328,8 +324,8 @@ func NewWeakDesCryptoCipher() text.TextRule {
 	}
 }
 
-func NewRealmDatabase() text.TextRule {
-	return text.TextRule{
+func NewRealmDatabase() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-16",
 			Name:        "Realm Database",
@@ -337,15 +333,15 @@ func NewRealmDatabase() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`realm\.write`),
 		},
 	}
 }
 
-func NewTLSMinimum() text.TextRule {
-	return text.TextRule{
+func NewTLSMinimum() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-17",
 			Name:        "Deperected tls property",
@@ -353,15 +349,15 @@ func NewTLSMinimum() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`\.tlsMinimumSupportedProtocol`),
 		},
 	}
 }
 
-func NewUIPasteboard() text.TextRule {
-	return text.TextRule{
+func NewUIPasteboard() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-18",
 			Name:        "UIPasteboard",
@@ -369,15 +365,15 @@ func NewUIPasteboard() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`UIPasteboard`),
 		},
 	}
 }
 
-func NewFileProtection() text.TextRule {
-	return text.TextRule{
+func NewFileProtection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-19",
 			Name:        "File protection",
@@ -385,15 +381,15 @@ func NewFileProtection() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)\.noFileProtection`),
 		},
 	}
 }
 
-func NewWebViewSafari() text.TextRule {
-	return text.TextRule{
+func NewWebViewSafari() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-20",
 			Name:        "WebView Safari",
@@ -401,15 +397,15 @@ func NewWebViewSafari() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`UIWebView|SFSafariViewController`),
+			regexp.MustCompile(`UIWebView\(\)|SFSafariViewController`),
 		},
 	}
 }
 
-func NewKeyboardCache() text.TextRule {
-	return text.TextRule{
+func NewKeyboardCache() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-21",
 			Name:        "Keyboard cache",
@@ -417,15 +413,15 @@ func NewKeyboardCache() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`.autocorrectionType = .no`),
 		},
 	}
 }
 
-func NewMD4Collision() text.TextRule {
-	return text.TextRule{
+func NewMD4Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-22",
 			Name:        "Weak MD4 hash using",
@@ -433,15 +429,15 @@ func NewMD4Collision() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CC_MD4\(`),
 		},
 	}
 }
 
-func NewMD2Collision() text.TextRule {
-	return text.TextRule{
+func NewMD2Collision() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-23",
 			Name:        "Weak MD2 hash using",
@@ -449,15 +445,15 @@ func NewMD2Collision() text.TextRule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`CC_MD2\(`),
 		},
 	}
 }
 
-func NewSQLInjection() text.TextRule {
-	return text.TextRule{
+func NewSQLInjection() *text.Rule {
+	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-SWIFT-24",
 			Name:        "SQL Injection",
@@ -465,7 +461,7 @@ func NewSQLInjection() text.TextRule {
 			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
-		Type: text.Regular,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)((sqlite3_exec|executeChange|raw)\(.?((.*|\n)*)?)(select|update|insert|delete)((.*|\n)*)?.*((["|']*)(\s?)(\+))`),
 		},
