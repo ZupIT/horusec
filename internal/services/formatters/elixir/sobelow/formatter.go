@@ -129,14 +129,20 @@ func (f *Formatter) newVulnerability(output *sobelowOutput,
 	if err != nil {
 		return nil, err
 	}
-	vuln := &vulnerability.Vulnerability{
+
+	vuln := f.newVulnMetadata(output)
+	vuln.File = filePath
+
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
+}
+
+func (f *Formatter) newVulnMetadata(output *sobelowOutput) *vulnerability.Vulnerability {
+	return &vulnerability.Vulnerability{
 		SecurityTool: tools.Sobelow,
 		RuleID:       vulnhash.HashRuleID(output.Title),
 		Language:     languages.Elixir,
 		Severity:     severities.Unknown,
 		Details:      output.Title,
-		File:         filePath,
 		Line:         output.Line,
 	}
-	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
 }
