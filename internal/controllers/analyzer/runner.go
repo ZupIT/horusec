@@ -240,6 +240,7 @@ func (r *runner) detectVulnerabilityNginx(_ *sync.WaitGroup, projectSubPath stri
 
 func (r *runner) detectVulnerabilityJavascript(wg *sync.WaitGroup, projectSubPath string) error {
 	spawn(wg, horusecjavascript.NewFormatter(r.formatter), projectSubPath)
+	spawn(wg, horusecjavascript.NewSemanticFormatter(r.formatter), projectSubPath)
 
 	if err := r.docker.PullImage(r.getCustomOrDefaultImage(languages.Javascript)); err != nil {
 		return err

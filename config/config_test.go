@@ -468,6 +468,7 @@ func TestConfig_Bytes(t *testing.T) {
   "enable_information_severity": true,
   "enable_owasp_dependency_check": true,
   "enable_shell_check": true,
+  "enable_semantic_engine": false,
   "severities_to_ignore": [
     "INFO"
   ],
@@ -623,6 +624,7 @@ func TestConfig_Bytes(t *testing.T) {
   "enable_information_severity": false,
   "enable_owasp_dependency_check": false,
   "enable_shell_check": false,
+  "enable_semantic_engine": false,
   "severities_to_ignore": null,
   "files_or_paths_to_ignore": null,
   "false_positive_hashes": null,

@@ -21,6 +21,12 @@ import (
 	"github.com/ZupIT/horusec/internal/services/formatters"
 )
 
+// NewFormatter create a new Javascript formatter using default regex based engine.
 func NewFormatter(service formatters.IService) formatters.IFormatter {
 	return formatters.NewDefaultFormatter(service, javascript.NewRules(), languages.Javascript)
+}
+
+// NewSemanticFormatter create a new Javascript formatter using the a semantic engine.
+func NewSemanticFormatter(service formatters.IService) formatters.IFormatter {
+	return formatters.NewDefaultFormatter(service, javascript.NewSemanticRules(), languages.Javascript)
 }

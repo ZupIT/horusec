@@ -128,3 +128,8 @@ func (m *FormatterMock) IsShellcheckDisable() bool {
 	args := m.MethodCalled("IsShellcheckDisable")
 	return args.Get(0).(bool)
 }
+
+func (m *FormatterMock) IsSemanticEngineEnable() bool {
+	args := m.MethodCalled("IsSemanticEngineEnable")
+	return args.Get(0).(bool)
+}

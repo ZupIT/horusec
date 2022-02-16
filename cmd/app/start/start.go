@@ -259,6 +259,12 @@ func (s *Start) CreateStartCommand() *cobra.Command {
 			s.configs.EnableShellCheck,
 			`Run ShellCheck tool https://github.com/koalaman/shellcheck`,
 		)
+	startCmd.PersistentFlags().
+		Bool(
+			"engine.enable-semantic",
+			s.configs.EnableSemanticEngine,
+			"Enable experimental semantic engine",
+		)
 
 	if !dist.IsStandAlone() {
 		startCmd.PersistentFlags().

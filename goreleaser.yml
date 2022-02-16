@@ -16,7 +16,6 @@ project_name: horusec
 
 builds:
   - id: horusec
-    env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
@@ -33,7 +32,6 @@ builds:
       - "386"
     binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
   - id: horusec-standalone
-    env: [ CGO_ENABLED=0 ]
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'

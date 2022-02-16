@@ -20,16 +20,34 @@ import (
 	"github.com/ZupIT/horusec/internal/services/engines"
 )
 
+// NewRules create a new Javascript rule manager that use regex based rules.
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(Rules(), extensions())
+	return engines.NewRuleManager(regexRules(), []string{".js", ".ts", ".jsx", ".tsx"})
 }
 
-func extensions() []string {
-	return []string{".js", ".ts", ".jsx", ".tsx"}
+// NewSemanticRules create a new Javascript rule manager that use semantic engine rules.
+func NewSemanticRules() *engines.RuleManager {
+	return engines.NewRuleManagerWithSemanticRules(nil, semanticRules(), []string{".js"})
 }
 
 // Rules return all rules registred to Javascript engine.
 func Rules() []engine.Rule {
+	return append(regexRules(), semanticRules()...)
+}
+
+// semanticRules return all semantic engine based rules registred to Javascript engine.
+func semanticRules() []engine.Rule {
+	return []engine.Rule{
+		NewSemanticFilePathTraversal(),
+		NewSemanticArgumentInjection(),
+		NewSemanticBrokenCryptographicAlgorithm(),
+		NewSemanticCodeInjection(),
+		NewSemanticCryptographicallyWeakPseudoRandomNumberGenerator(),
+	}
+}
+
+// regexRules return all regex based rules registred to Javascript engine.
+func regexRules() []engine.Rule {
 	return []engine.Rule{
 		// Regular rules
 		NewNoUseEval(),

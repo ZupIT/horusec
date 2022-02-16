@@ -90,6 +90,7 @@ func TestStartAnalysis(t *testing.T) {
 				service.On("GetConfigProjectPath").Return(".")
 				service.On("ParseFindingsToVulnerabilities").Return(nil)
 				service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
+				service.On("IsSemanticEngineEnable").Return(false)
 
 				assert.NotPanics(t, func() {
 					tt.formatter(service).StartAnalysis("")
@@ -108,6 +109,7 @@ func TestStartAnalysis(t *testing.T) {
 				service.On("GetConfigProjectPath").Return(".")
 				service.On("ParseFindingsToVulnerabilities").Return(nil)
 				service.On("GetCustomRulesByLanguage").Return([]engine.Rule{})
+				service.On("IsSemanticEngineEnable").Return(false)
 
 				assert.NotPanics(t, func() {
 					tt.formatter(service).StartAnalysis("")
