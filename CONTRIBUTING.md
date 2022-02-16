@@ -96,7 +96,7 @@ Writing a good issue will help our team better analyze and manage your contribut
 
 **Scope:** Add what your issue refers to:
 
-- **[Burg report](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=bug&template=bug_report.md):** Create a report to help us improve
+- **[Bug report](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=bug&template=bug_report.md):** Create a report to help us improve
 
 - **[Feature request](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=feature&template=feature_request.md):** Suggest a new feature for a project
 
