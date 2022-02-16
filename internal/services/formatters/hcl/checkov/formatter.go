@@ -106,6 +106,7 @@ func (f *Formatter) newVulnerability(check *checkovCheck) *vulnerability.Vulnera
 		SecurityTool: tools.Checkov,
 		Language:     languages.HCL,
 		Severity:     severities.Unknown,
+		RuleID:       check.CheckID,
 		Details:      check.getDetails(),
 		Line:         check.getStartLine(),
 		Code:         f.GetCodeWithMaxCharacters(check.getCode(), 0),

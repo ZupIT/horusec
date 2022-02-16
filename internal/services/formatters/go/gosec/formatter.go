@@ -105,6 +105,7 @@ func (f *Formatter) newVulnerabilityFromIssue(issue *issue) *vulnerability.Vulne
 		SecurityTool: tools.GoSec,
 		Severity:     issue.Severity,
 		Details:      issue.Details,
+		RuleID:       issue.RuleID,
 		Code:         f.getCode(issue.Code, issue.Column),
 		Line:         issue.Line,
 		Column:       issue.Column,

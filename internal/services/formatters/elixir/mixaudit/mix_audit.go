@@ -28,6 +28,7 @@ type mixAuditVulnerability struct {
 		Description string `json:"description"`
 		Package     string `json:"package"`
 		Title       string `json:"title"`
+		CVE         string `json:"cve"`
 	} `json:"advisory"`
 	Dependency struct {
 		Lockfile string `json:"lockfile"`

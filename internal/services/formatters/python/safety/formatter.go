@@ -119,6 +119,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 	if err != nil {
 		return nil, err
 	}
+	vuln.RuleID = issues[index].ID
 	vuln.Details = issues[index].Description
 	vuln.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
 	vuln.Line = f.getVulnerabilityLineByName(lineContent, vuln.File)

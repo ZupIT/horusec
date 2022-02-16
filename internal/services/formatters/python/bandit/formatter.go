@@ -113,6 +113,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesBandit(
 	issues []entities.Result, index int) *vulnerability.Vulnerability {
 	vulnerabilitySeverity := f.getDefaultVulnerabilitySeverity()
 	vulnerabilitySeverity.Severity = issues[index].IssueSeverity
+	vulnerabilitySeverity.RuleID = issues[index].TestID
 	vulnerabilitySeverity.Details = issues[index].IssueText
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issues[index].Code, 0)
 	vulnerabilitySeverity.Line = strconv.Itoa(issues[index].LineNumber)

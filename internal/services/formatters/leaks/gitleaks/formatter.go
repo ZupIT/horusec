@@ -102,6 +102,7 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue
 	vulnerabilitySeverity *vulnerability.Vulnerability) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
 	vulnerabilitySeverity.Severity = severities.Critical
+	vulnerabilitySeverity.RuleID = vulnhash.HashRuleID(issue.Rule)
 	vulnerabilitySeverity.Details = issue.Rule
 	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
 	vulnerabilitySeverity.File = issue.File

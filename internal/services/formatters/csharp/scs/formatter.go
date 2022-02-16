@@ -127,6 +127,7 @@ func (f *Formatter) newVulnerability(result *scsResult) (*vulnerability.Vulnerab
 		return nil, err
 	}
 	vuln := &vulnerability.Vulnerability{
+		RuleID:       result.RuleID,
 		SecurityTool: tools.SecurityCodeScan,
 		Language:     languages.CSharp,
 		Severity:     f.getSeverity(result.RuleID),

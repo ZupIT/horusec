@@ -96,6 +96,7 @@ func (f *Formatter) setVulnerabilityData(output *entities.Output) *vulnerability
 	data := f.getDefaultVulnerabilitySeverity()
 	data.Severity = severities.Low
 	data.Confidence = confidence.Low
+	data.RuleID = vulnhash.HashRuleID(output.Message)
 	data.Details = output.Message
 	data.Column = output.GetColumn()
 	data.Line = output.GetLine()

@@ -28,6 +28,7 @@ type issue struct {
 	Code       string                `json:"code"`
 	Line       string                `json:"line"`
 	Column     string                `json:"column"`
+	RuleID     string                `json:"rule_id"`
 }
 
 // output represents the output schema from gosec.

@@ -103,6 +103,7 @@ func (f *Formatter) newVulnerability(
 ) *vulnerability.Vulnerability {
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.OwaspDependencyCheck,
+		RuleID:       vulnhash.HashRuleID(vulnData.Description),
 		Language:     languages.Generic,
 		Severity:     vulnData.getSeverity(),
 		Details:      vulnData.Description,

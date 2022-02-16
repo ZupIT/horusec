@@ -148,6 +148,7 @@ func (f *Formatter) newVulnerability(output *issue, projectSubPath string) (*vul
 		Language:     languages.Javascript,
 		File:         filePath,
 		Severity:     output.getSeverity(),
+		RuleID:       strconv.Itoa(output.ID),
 		Details:      output.Overview,
 		Code:         output.ModuleName,
 	}

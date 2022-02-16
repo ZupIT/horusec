@@ -88,6 +88,7 @@ func (f *Formatter) parseOutput(output string) error {
 func (f *Formatter) newVulnerability(mixVuln *mixAuditVulnerability) *vulnerability.Vulnerability {
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.MixAudit,
+		RuleID:       mixVuln.Advisory.CVE,
 		Language:     languages.Elixir,
 		Severity:     severities.High,
 		Details:      mixVuln.getDetails(),

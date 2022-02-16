@@ -110,6 +110,7 @@ func (f *Formatter) parseMessages(filepath string, result interface{}) {
 func (f *Formatter) setVulnerabilityData(filepath string, result entities.Message) (*vulnerability.Vulnerability, error) {
 	vuln := f.getDefaultVulnerabilitySeverity()
 	vuln.Severity = result.GetSeverity()
+	vuln.RuleID = vulnhash.HashRuleID(result.Message)
 	vuln.Details = result.Message
 	vuln.Line = result.GetLine()
 	vuln.Column = result.GetColumn()

@@ -90,6 +90,7 @@ func (f *Formatter) parseOutput(output string) error {
 
 func (f *Formatter) newVulnerabilityFromResult(result *sgResult) *vulnerability.Vulnerability {
 	vuln := &vulnerability.Vulnerability{
+		RuleID:       result.CheckID,
 		SecurityTool: tools.Semgrep,
 		Details:      result.Extra.Message,
 		Severity:     f.getSeverity(result.Extra.Severity),

@@ -88,6 +88,7 @@ func (f *Formatter) newVulnerability(result *flawFinderResult) *vulnerability.Vu
 		SecurityTool: tools.Flawfinder,
 		Language:     languages.C,
 		Severity:     result.getSeverity(),
+		RuleID:       vulnhash.HashRuleID(result.getDetails()),
 		Details:      result.getDetails(),
 		Line:         result.Line,
 		Column:       result.Column,

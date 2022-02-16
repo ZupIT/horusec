@@ -94,6 +94,7 @@ func (f *Formatter) newVulnerability(result *tfsecResult) *vulnerability.Vulnera
 		SecurityTool: tools.TfSec,
 		Language:     languages.HCL,
 		Severity:     result.getSeverity(),
+		RuleID:       result.RuleID,
 		Details:      result.getDetails(),
 		Line:         result.getStartLine(),
 		Code:         f.GetCodeWithMaxCharacters(result.getCode(), 0),

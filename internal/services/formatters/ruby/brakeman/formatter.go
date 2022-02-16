@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -125,6 +126,7 @@ func (f *Formatter) newVulnerability(output *warning, projectSubPath string) (*v
 		Language:     languages.Ruby,
 		Severity:     output.getSeverity(),
 		Confidence:   output.getConfidence(),
+		RuleID:       strconv.Itoa(output.WarningCode),
 		Details:      output.getDetails(),
 		Line:         output.getLine(),
 		File:         filePath,
