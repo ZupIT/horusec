@@ -78,7 +78,7 @@ generateBinaries () {
     mkdir -p "./bin/horusec/$ACTUAL_RELEASE_FORMATTED"
 
     # Build for linux x86
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/app/main.go;
+    if ! env GOOS=linux GOARCH=386 go build -a  -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x86" ./cmd/app/main.go;
     then
         echo "Error when generate Build for linux_x86"
     else
@@ -86,7 +86,7 @@ generateBinaries () {
     fi
 
     # Build for linux x64
-    if ! env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" ./cmd/app/main.go;
+    if ! env GOOS=linux GOARCH=amd64 go build -a  -o "./bin/horusec/$ACTUAL_RELEASE_FORMATTED/horusec_linux_x64" ./cmd/app/main.go;
     then
         echo "Error when generate Build for linux_x64"
     else

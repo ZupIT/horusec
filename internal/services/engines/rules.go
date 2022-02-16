@@ -21,19 +21,29 @@ import (
 // RuleManager is a generic implementation of formatters.RuleManager
 // that can be reused between all engines to load rules
 type RuleManager struct {
-	rules      []engine.Rule
+	regex      []engine.Rule
+	semantic   []engine.Rule
 	extensions []string
 }
 
 func NewRuleManager(rules []engine.Rule, extensions []string) *RuleManager {
+	return NewRuleManagerWithSemanticRules(rules, nil, extensions)
+}
+
+func NewRuleManagerWithSemanticRules(regex, semantic []engine.Rule, extensions []string) *RuleManager {
 	return &RuleManager{
-		rules:      rules,
+		regex:      regex,
 		extensions: extensions,
+		semantic:   semantic,
 	}
 }
 
 func (r *RuleManager) GetAllRules() []engine.Rule {
-	return r.rules
+	return r.regex
+}
+
+func (r *RuleManager) GetAllSemanticRules() []engine.Rule {
+	return r.semantic
 }
 
 func (r *RuleManager) GetAllExtensions() []string {

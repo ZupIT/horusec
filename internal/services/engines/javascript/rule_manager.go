@@ -21,11 +21,21 @@ import (
 )
 
 func NewRules() *engines.RuleManager {
-	return engines.NewRuleManager(Rules(), extensions())
+	return engines.NewRuleManagerWithSemanticRules(Rules(), SemanticRules(), extensions())
 }
 
 func extensions() []string {
 	return []string{".js", ".ts", ".jsx", ".tsx"}
+}
+
+func SemanticRules() []engine.Rule {
+	return []engine.Rule{
+		NewSemanticFilePathTraversal(),
+		NewSemanticArgumentInjection(),
+		NewSemanticBrokenCryptographicAlgorithm(),
+		NewSemanticCodeInjection(),
+		NewSemanticCryptographicallyWeakPseudoRandomNumberGenerator(),
+	}
 }
 
 // Rules return all rules registred to Javascript engine.

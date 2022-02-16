@@ -28,6 +28,7 @@ import (
 
 type RuleManager interface {
 	GetAllRules() []engine.Rule
+	GetAllSemanticRules() []engine.Rule
 	GetAllExtensions() []string
 }
 
@@ -57,6 +58,7 @@ func (f *DefaultFormatter) StartAnalysis(src string) {
 	f.svc.LogDebugWithReplace(messages.MsgDebugToolFinishAnalysis, tools.HorusecEngine, f.language)
 }
 
+// nolint:funlen
 func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
 	f.svc.LogDebugWithReplace(messages.MsgDebugToolStartAnalysis, tools.HorusecEngine, f.language)
 
@@ -64,6 +66,10 @@ func (f *DefaultFormatter) execEngineAndParseResults(src string) error {
 	path := f.svc.GetConfigProjectPath()
 	if src != "" {
 		path = filepath.Join(path, src)
+	}
+	if f.svc.IsSemanticEngineEnable() {
+		logger.LogDebugWithLevel("Semantic engine enabled")
+		rules = append(rules, f.manager.GetAllSemanticRules()...)
 	}
 
 	findings, err := f.engine.Run(context.Background(), path, rules...)
