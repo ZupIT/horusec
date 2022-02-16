@@ -90,7 +90,7 @@ Writing a good issue will help our team better analyze and manage your contribut
 
 **With the title:**
 
-**[Project][Scope]: Title Description**  
+**Project:Scope - Title Description**  
 
 **Project:** Name of the project or repository you want to contribute to.  
 
@@ -104,7 +104,7 @@ Writing a good issue will help our team better analyze and manage your contribut
 
 - **[Support request](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=support&template=support_request.md):** Support request or question relating to Horusec
 
-**Example: [Horusec-cli][Improvement]: Suggestion for CLI installation experience** 
+**Example: Horusec-cli:Improvement - Suggestion for CLI installation experience** 
 
 **With the issue description:**
 
