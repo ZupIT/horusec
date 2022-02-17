@@ -32,8 +32,9 @@ func TestBind(t *testing.T) {
 
 	Bind(&vuln)
 
-	assert.Equal(t, "278facfff87828631a37b27d76d1a926bed37466b05cab7d365d7f5c7345ac6d", vuln.VulnHash)
-	assert.Equal(t, "751cf1c4e4f0fbf59777eea1d14c062b913a57fd3c0e457400ec134577c89686", vuln.VulnHashInvalid)
+	assert.Equal(t, "468865c64851037b2f8b9a8954de9d884d08cdf14e6f841072b85f7ac03ecc5e", vuln.VulnHash)
+	assert.Equal(t, "751cf1c4e4f0fbf59777eea1d14c062b913a57fd3c0e457400ec134577c89686", vuln.DeprecatedHashes[0])
+	assert.Equal(t, "278facfff87828631a37b27d76d1a926bed37466b05cab7d365d7f5c7345ac6d", vuln.DeprecatedHashes[1])
 }
 
 func TestToOneLine(t *testing.T) {

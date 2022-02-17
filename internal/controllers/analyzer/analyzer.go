@@ -139,6 +139,8 @@ func (a *Analyzer) sendAnalysis() error {
 }
 
 func (a *Analyzer) formatAnalysisToPrint() {
+	a.setUpdateHashWarnings()
+
 	a.analysis = a.setFalsePositive()
 	if !a.config.EnableInformationSeverity {
 		a.analysis = a.removeInfoVulnerabilities()
@@ -159,30 +161,45 @@ func (a *Analyzer) formatAnalysisToSendToAPI() {
 	}
 }
 
-// nolint:gocyclo
-func (a *Analyzer) checkIfNoExistHashAndLog(list []string) {
-	for _, hash := range list {
-		existing := false
-		for idx := range a.analysis.AnalysisVulnerabilities {
-			vulnHash := a.analysis.AnalysisVulnerabilities[idx].Vulnerability.VulnHash
-			vulnHashInvalid := a.analysis.AnalysisVulnerabilities[idx].Vulnerability.VulnHashInvalid
-			if hash == vulnHash || hash == vulnHashInvalid {
-				existing = true
+// logWarnIfHashDontExistsInConfig logs a warning if the one of the config hashes don't exist in the analysis.
+// nolint
+func (a *Analyzer) logWarnIfHashDontExistsInConfig(configHashes []string) {
+	for _, configHash := range configHashes {
+		exists := false
+
+		for vulnIndex := range a.analysis.AnalysisVulnerabilities {
+			// See vulnerability.Vulnerability.DeprecatedHashes docs for more info.
+			hashes := make([]string, len(a.analysis.AnalysisVulnerabilities[vulnIndex].Vulnerability.DeprecatedHashes)+1)
+			hashes = append(hashes, a.analysis.AnalysisVulnerabilities[vulnIndex].Vulnerability.DeprecatedHashes...)
+			hashes = append(hashes, a.analysis.AnalysisVulnerabilities[vulnIndex].Vulnerability.VulnHash)
+			if a.contains(hashes, configHash) {
+				exists = true
 				break
 			}
 		}
-		if !existing {
-			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis + hash)
+
+		if !exists {
+			logger.LogWarnWithLevel(messages.MsgWarnHashNotExistOnAnalysis + configHash)
 		}
 	}
+}
+
+func (a *Analyzer) contains(hashes []string, hash string) bool {
+	for _, v := range hashes {
+		if hash == v {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (a *Analyzer) setFalsePositive() *analysis.Analysis {
 	a.analysis = a.SetFalsePositivesAndRiskAcceptInVulnerabilities(
 		a.config.FalsePositiveHashes, a.config.RiskAcceptHashes)
 
-	a.checkIfNoExistHashAndLog(a.config.FalsePositiveHashes)
-	a.checkIfNoExistHashAndLog(a.config.RiskAcceptHashes)
+	a.logWarnIfHashDontExistsInConfig(a.getAllConfigHashes())
+
 	return a.analysis
 }
 
@@ -213,14 +230,19 @@ func (a *Analyzer) SetFalsePositivesAndRiskAcceptInVulnerabilities(falsePositive
 	return a.analysis
 }
 
+//nolint:gocyclo // complexity will be reduced after removing the deprecated hashes
 func (a *Analyzer) setVulnerabilityType(
 	vuln *vulnerability.Vulnerability, hashes []string, vulnType enumsVulnerability.Type,
 ) {
 	for _, hash := range hashes {
 		hash = strings.TrimSpace(hash)
-		// See vulnerability.Vulnerability.VulnHashInvalid docs for more info.
-		if hash != "" && (strings.TrimSpace(vuln.VulnHash) == hash || strings.TrimSpace(vuln.VulnHashInvalid) == hash) {
-			vuln.Type = vulnType
+
+		// See vulnerability.Vulnerability.DeprecatedHashes docs for more info.
+		for _, deprecatedHash := range vuln.DeprecatedHashes {
+			if hash != "" && (strings.TrimSpace(vuln.VulnHash) == hash || strings.TrimSpace(deprecatedHash) == hash) {
+				vuln.Type = vulnType
+				return
+			}
 		}
 	}
 }
@@ -371,4 +393,40 @@ func (a *Analyzer) removeVulnerabilitiesByTypes() *analysis.Analysis {
 	a.analysis.AnalysisVulnerabilities = vulnerabilities
 
 	return a.analysis
+}
+
+// setUpdateHashWarnings checks for hashes generated in older formats but that are still valid. If one of
+// these hashes are found, a warning will be showed informing the user to update the outdated hash.
+// TODO: Remove setUpdateHashWarnings before release v2.10.0
+// nolint
+func (a *Analyzer) setUpdateHashWarnings() {
+	isPrintDepreciationMsg := true
+	configHashes := a.getAllConfigHashes()
+
+	vulnerabilities := a.analysis.AnalysisVulnerabilities
+	for vulnIndex := range vulnerabilities {
+		for _, deprecatedHash := range vulnerabilities[vulnIndex].Vulnerability.DeprecatedHashes {
+			for _, configHash := range configHashes {
+				if deprecatedHash == configHash {
+					if isPrintDepreciationMsg {
+						a.analysis.AddWarning(messages.MsgWarnAnalysisContainsOutdatedHash)
+						isPrintDepreciationMsg = false
+					}
+
+					a.analysis.AddWarning(fmt.Sprintf(messages.MsgWarnUpdateOutdatedHash,
+						configHash, vulnerabilities[vulnIndex].Vulnerability.VulnHash))
+				}
+			}
+		}
+	}
+}
+
+func (a *Analyzer) getAllConfigHashes() []string {
+	size := len(a.config.FalsePositiveHashes) + len(a.config.RiskAcceptHashes)
+
+	configHashes := make([]string, size)
+	configHashes = append(configHashes, a.config.FalsePositiveHashes...)
+	configHashes = append(configHashes, a.config.RiskAcceptHashes...)
+
+	return configHashes
 }

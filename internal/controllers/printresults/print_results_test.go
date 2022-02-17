@@ -301,7 +301,11 @@ const (
         "commitHash": "",
         "commitMessage": "",
         "commitDate": "",
-        "vulnHash": ""
+        "rule_id": "",
+        "vulnHash": "",
+        "deprecatedHashes": null,
+        "securityToolVersion": "",
+        "securityToolInfoUri": ""
       }
     }
   ]
@@ -322,7 +326,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates GoSec
 Type: Vulnerability
-ReferenceHash: e85cdcb9de69717b2c63f2367ae75c3cc0162acefc6714986eab55e6a52b0bab
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -336,7 +340,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates SecurityCodeScan
 Type: Vulnerability
-ReferenceHash: 3889442bd5280ea3b7bd89408d478f3d7fcfb6b78bc1e2e53e726344fc47f9bf
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -350,7 +354,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates Brakeman
 Type: Vulnerability
-ReferenceHash: fc9fd74b92f16d962a4758fa2b05bca09e0912e49c01d2dc5faf11a798b62480
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -364,7 +368,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates NpmAudit
 Type: Vulnerability
-ReferenceHash: a4774674dcff66efdafe4c58df5e2cc72f768330e79187f79e93838dc7875a9e
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -378,7 +382,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates YarnAudit
 Type: Vulnerability
-ReferenceHash: 2821233bffb27450b1e24453c491a36834db50417fc70eb9d7d0af057a455126
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -392,7 +396,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates Bandit
 Type: Vulnerability
-ReferenceHash: dcff5a09607c641c7b127bf53d6efc38533f7fb601f0b00862e0d7738b25aa5d
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -406,7 +410,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates Safety
 Type: Vulnerability
-ReferenceHash: 1322569065b57231b2c21981a74f61710060ca967aa824c1634a791241bc5b86
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -420,7 +424,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates HorusecLeaks
 Type: Vulnerability
-ReferenceHash: 5829ce1578d6b902c2f545181f4b8e836f29da72702fa53c0bd2caad77e869dd
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -434,7 +438,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates GitLeaks
 Type: Vulnerability
-ReferenceHash: 1cb3d3e481f1b28514f06631d31a10bab589509e3fac4354fbf210e980535f72
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -448,7 +452,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates HorusecJava
 Type: Vulnerability
-ReferenceHash: b7684b5d431ba356f65e8dbe3c62ee24cd97412094b5ae205c99670ed54f883d
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -462,7 +466,7 @@ File: cert.pem
 Code: -----BEGIN CERTIFICATE-----
 Details: Found SSH and/or x.509 Cerficates HorusecKotlin
 Type: Vulnerability
-ReferenceHash: 9824269893d4df5e66a4fe7f53a715117bb722910228152b04831b6d2ad19a5b
+ReferenceHash: 03405f909c9ed621e2bccd9e50d237dbe9374e4c67f89c1018d70fa9a4912d71
 
 ==================================================================================
 
@@ -470,7 +474,6 @@ In this analysis, a total of 11 possible vulnerabilities were found and we class
 Total of Vulnerability HIGH is: 3
 Total of Vulnerability MEDIUM is: 1
 Total of Vulnerability LOW is: 7
-
 `
 
 	// expectedSonarqubeJsonResult is the expected json result

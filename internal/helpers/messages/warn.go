@@ -48,4 +48,11 @@ const (
 	MsgWarnGitRepositoryIsNotFullCloned = "{HORUSEC_CLI} Repository is not fully cloned." +
 		"Commit author can result wrong authors. Check the documentation for more info." +
 		"https://docs.horusec.io/docs/cli/installation/#2-installation-via-pipeline"
+
+	// TODO: Remove MsgWarnUpdateOutdatedHash before release v2.10.0
+	MsgWarnUpdateOutdatedHash = "{HORUSEC_CLI} Update hash %s to %s"
+
+	// TODO: Remove MsgWarnAnalysisContainsOutdatedHash before release v2.10.0
+	MsgWarnAnalysisContainsOutdatedHash = "{HORUSEC_CLI} YOUR CONFIGURATION FILE CONTAINS SOME HASHES THAT WILL NO " +
+		"LONGER BE VALID AS OF v2.10.0 IS RELEASED. PLEASE UPDATE YOUR CONFIGURATION FILE WITH THE FOLLOWING HASHES:"
 )

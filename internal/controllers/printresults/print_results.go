@@ -91,6 +91,7 @@ func (pr *PrintResults) Print() (totalVulns int, err error) {
 	pr.verifyRepositoryAuthorizationToken()
 	pr.printResponseAnalysis()
 	pr.checkIfExistsErrorsInAnalysis()
+	pr.printWarnings()
 	if pr.config.IsTimeout {
 		logger.LogWarnWithLevel(messages.MsgWarnTimeoutOccurs)
 	}
@@ -432,4 +433,11 @@ func (pr *PrintResults) createTxtOutputFile() error {
 	}
 
 	return file.CreateAndWriteFile(pr.textOutput, pr.config.JSONOutputFilePath)
+}
+
+// printWarnings print all necessary warnings in the end of the analysis
+func (pr *PrintResults) printWarnings() {
+	for _, warning := range pr.analysis.Warnings {
+		logger.LogWarnWithLevel(warning)
+	}
 }
