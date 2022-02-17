@@ -71,17 +71,17 @@ When you open a Pull Request, follow the requirements below:
 
 1. Add a title with the following pattern: 
 
-#### **[PKG][TYPE]: Description**
+#### **PKG:TYPE - Description**
 
 #### **PKG:** Name of the package or main service you want to change.
 
 #### **TYPE**: Add what your Pull Request (PR) refers to:
-- **FEATURE:** PR refers to a new activity.
-- **BUGFIX:** PR refers to corrections for the next release.
-- **HOTFIX:** PR refers to corrections where you will need a cherry-pick and the update of the minor version. 
-- **CHORE:** PR refers to changes for the next release, but it was only maintenance without an activity impact.  
+- **feature:** PR refers to a new activity.
+- **bugfix:** PR refers to corrections for the next release.
+- **hotfix:** PR refers to corrections where you will need a cherry-pick and the update of the minor version. 
+- **chore:** PR refers to changes for the next release, but it was only maintenance without an activity impact.  
 
-**Example:** **[start][bugfix]: Fix bug when Horusec haven't read the new flag of authorization**
+**Example:** **start:bugfix - fix bug when Horusec haven't read the new flag of authorization**
 
  
 2. Answer the questions about what you did, how to verify it and a short description for the changelog, see an example below:
