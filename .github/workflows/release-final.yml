@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-name: release-new
+name: release-final
 on:
   workflow_dispatch:
     inputs:
@@ -20,16 +20,16 @@ on:
         required: true
 permissions: read-all
 jobs:
-  NewRelease:
+  ReleaseFinal:
     permissions:
       contents: write
       packages: write
+      issues:   write
     runs-on: ubuntu-latest
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-
-
+    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -84,8 +84,8 @@ jobs:
       - name: Checkout release candidate branch
         run: mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
 
-      - name: Create local tag
-        run: mage -v createLocalTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
+      - name: Create and push tag
+        run: mage -v createAndPushTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -97,8 +97,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+          GORELEASER_PREVIOUS_TAG: ${{ steps.updated-version.outputs.actualReleaseVersion }}
           CURRENT_DATE: ${{ steps.date.outputs.date }}
           CLI_VERSION: ${{ steps.updated-version.outputs.nextReleaseVersion }}
 
       - name: Push updates
+        if: ${{ success() }}
         run: mage -v gitPushAll
+
+      - name: Remove updates
+        if: ${{ !success() }}
+        run: mage -v removeTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
