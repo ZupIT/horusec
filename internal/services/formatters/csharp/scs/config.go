@@ -14,10 +14,11 @@
 
 package scs
 
+// nolint:lll // necessary to be long
 const CMD = `
 		{{WORK_DIR}}
 		dotnet restore > /tmp/restore-output-ANALYSISID.txt
-		security-scan {{SLN_NAME}} --export=output-ANALYSISID.json > /tmp/scs-run-output-ANALYSISID.txt
+		security-scan {{SLN_NAME}} --ignore-msbuild-errors --export=output-ANALYSISID.json &> /tmp/scs-run-output-ANALYSISID.txt
 		cat output-ANALYSISID.json
 		chmod -R 777 .
   `
