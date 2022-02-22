@@ -202,7 +202,8 @@ func (s *Service) SetCommitAuthor(vuln *vulnerability.Vulnerability) *vulnerabil
 }
 
 func (s *Service) ParseFindingsToVulnerabilities(findings []engine.Finding, tool tools.Tool,
-	language languages.Language) {
+	language languages.Language,
+) {
 	for index := range findings {
 		vuln := s.newVulnerabilityFromFinding(&findings[index], tool, language)
 		vuln = s.SetCommitAuthor(vuln)
@@ -221,7 +222,8 @@ func (s *Service) AddNewVulnerabilityIntoAnalysis(vuln *vulnerability.Vulnerabil
 }
 
 func (s *Service) newVulnerabilityFromFinding(finding *engine.Finding, tool tools.Tool,
-	language languages.Language) *vulnerability.Vulnerability {
+	language languages.Language,
+) *vulnerability.Vulnerability {
 	return &vulnerability.Vulnerability{
 		RuleID:       finding.ID,
 		Line:         strconv.Itoa(finding.SourceLocation.Line),

@@ -94,7 +94,8 @@ func (s *Sarif) buildReportRun(report *Report) {
 // the association maps in the SARIF object to reflect the run's existence
 func (s *Sarif) initToolStructure(
 	vulnerabilityy *vulnerability.Vulnerability,
-	runsByTool map[string]ReportRun) ReportRun {
+	runsByTool map[string]ReportRun,
+) ReportRun {
 	s.rulesByToolAndID[string(vulnerabilityy.SecurityTool)] = make(map[string]Rule)
 	s.artifactsByToolAndName[string(vulnerabilityy.SecurityTool)] = make(map[string]Artifact)
 

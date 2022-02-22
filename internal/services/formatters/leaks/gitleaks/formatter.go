@@ -99,7 +99,8 @@ func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) 
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
-	vulnerabilitySeverity *vulnerability.Vulnerability) {
+	vulnerabilitySeverity *vulnerability.Vulnerability,
+) {
 	vulnerabilitySeverity = f.getDefaultSeverity()
 	vulnerabilitySeverity.Severity = severities.Critical
 	vulnerabilitySeverity.RuleID = vulnhash.HashRuleID(issue.Rule)
@@ -111,7 +112,8 @@ func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue
 }
 
 func (f *Formatter) setCommitAuthor(vuln *vulnerability.Vulnerability,
-	issue *entities.Issue) *vulnerability.Vulnerability {
+	issue *entities.Issue,
+) *vulnerability.Vulnerability {
 	vuln.CommitAuthor = issue.Author
 	vuln.CommitMessage = strings.ReplaceAll(issue.CommitMessage, "\n", "")
 	vuln.CommitEmail = issue.Email

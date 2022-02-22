@@ -37,7 +37,8 @@ func NewDockerClientMock() *DockerClientMock {
 }
 
 func (m *DockerClientMock) ContainerCreate(_ context.Context, _ *container.Config, _ *container.HostConfig,
-	_ *network.NetworkingConfig, _ *specs.Platform, _ string) (container.ContainerCreateCreatedBody, error) {
+	_ *network.NetworkingConfig, _ *specs.Platform, _ string,
+) (container.ContainerCreateCreatedBody, error) {
 	args := m.MethodCalled("ContainerCreate")
 	return args.Get(0).(container.ContainerCreateCreatedBody), mockutils.ReturnNilOrError(args, 1)
 }
@@ -53,7 +54,8 @@ func (m *DockerClientMock) ContainerList(_ context.Context, _ types.ContainerLis
 }
 
 func (m *DockerClientMock) ContainerWait(_ context.Context, _ string, _ container.WaitCondition) (
-	<-chan container.ContainerWaitOKBody, <-chan error) {
+	<-chan container.ContainerWaitOKBody, <-chan error,
+) {
 	args := m.MethodCalled("ContainerWait")
 	agr1 := make(chan container.ContainerWaitOKBody)
 	agr2 := make(chan error)

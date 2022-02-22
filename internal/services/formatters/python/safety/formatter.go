@@ -113,7 +113,8 @@ func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue, pr
 }
 
 func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
-	issues []entities.Issue, index int, projectSubPath string) (*vulnerability.Vulnerability, error) {
+	issues []entities.Issue, index int, projectSubPath string,
+) (*vulnerability.Vulnerability, error) {
 	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
 	vuln, err := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
 	if err != nil {

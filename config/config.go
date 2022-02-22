@@ -545,7 +545,8 @@ func (c *Config) extractFlagValueStringSlice(cmd *cobra.Command, name string, de
 }
 
 func (c *Config) extractFlagValueStringToString(
-	cmd *cobra.Command, name string, defaultValue map[string]string) map[string]string {
+	cmd *cobra.Command, name string, defaultValue map[string]string,
+) map[string]string {
 	if cmd.PersistentFlags().Changed(name) {
 		flagValue, err := cmd.PersistentFlags().GetStringToString(name)
 		logger.LogPanicWithLevel(messages.MsgPanicGetFlagValue, err)
