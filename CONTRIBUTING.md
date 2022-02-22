@@ -9,7 +9,10 @@ This is Horusec contributing guide. Please read the following sections to learn 
 ### 2. [**Prerequisites**](#prerequisites)
 > #### 2.1. [**Developer Certificate of Origin**](#developer-certificate-of-origin)
 > #### 2.2. [**Code Review**](#code-review)
-> #### 2.3. [**Pull Requests**](#pull-requests)    
+> #### 2.3. [**Issues**](#issues)
+> ##### 2.3.1. [**Check the issue tracker**](#check-the-issue-tracker)
+> ##### 2.3.2. [**Open an issue for any new problem**](#open-an-issue-for-any-new-problem)
+> #### 2.4. [**Pull Requests**](#pull-requests)    
 ### 3. [**How to contribute?**](#how-to-contribute?)
  > #### 3.1. [**Prepare your development environment**](#prepare-your-development-environment)
 > #### 3.2. [**First contribution**](#first-contribution)
@@ -65,6 +68,51 @@ For this method, your name and e-mail must be the same registered on your GitHub
 
 ### **Code Review**
 - All your submissions needs a review.
+
+### **Issues**
+
+If you have a bug or an idea, check out the following sections before submitting your contribution.
+
+
+#### **Check the issue tracker**
+
+All our issues are centralized in our main repository, it is quite likely that you will find a topic that is being discussed. Check the [**open issues**](https://github.com/ZupIT/horusec/issues), another good way to start is [**good first issues**](https://github.com/ZupIT/horusec/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
+
+Use the GitHub's search filter to help you. For example:
+
+- **Test related issues:** `is:open is:issue label:kind/tests `
+- **Issues that need extra attention:** `is:open is:issue label:"help wanted" `
+- **Issues related to a bug:** `is:issue is:open label:kind/bug `
+
+#### **Open an issue for any new problem**
+
+Writing a good issue will help our team better analyze and manage your contributions, therefore, follow the standards and best practices below:
+
+**With the title:**
+
+**Project:Scope - Title Description**  
+
+**Project:** Name of the project or repository you want to contribute to.  
+
+**Scope:** Add what your issue refers to:
+
+- **[Bug report](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=bug&template=bug_report.md):** Create a report to help us improve
+
+- **[Feature request](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=feature&template=feature_request.md):** Suggest a new feature for a project
+
+- **[Improvement](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=improvement&template=improvement.md):** Suggest a improvement for a project
+
+- **[Support request](https://github.com/ZupIT/horusec/issues/new?assignees=&labels=support&template=support_request.md):** Support request or question relating to Horusec
+
+**Example: Horusec-cli:Improvement - Suggestion for CLI installation experience** 
+
+**With the issue description:**
+
+Try to explain the scenario to us by following these tips:
+
+ - **Context:** explain the conditions which led you to write this issue.
+ - **Problem or idea:** the context should lead to something, an idea or a problem that you’re facing.
+ - **Solution or next step:** this where you move forward. You can engage others (request feedback), assign somebody else to the issue, or simply leave it for further investigation, but you absolutely need to propose a next step towards solving the issue.
 
 ### **Pull Requests**
 When you open a Pull Request, follow the requirements below:
