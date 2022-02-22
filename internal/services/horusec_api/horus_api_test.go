@@ -286,6 +286,9 @@ func TestServiceSendAnalysis(t *testing.T) {
 			tt.args.config.CertPath = file.Name()
 			s := NewHorusecAPIService(tt.args.config)
 			if err := s.SendAnalysis(tt.args.entity); (err != nil) != tt.wantErr {
+				fmt.Println()
+				fmt.Printf("ERROR TESTE DE SendAnalysis: %v", err)
+				fmt.Println()
 				assert.NoError(t, err)
 			}
 		})
