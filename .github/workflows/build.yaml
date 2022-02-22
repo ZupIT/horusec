@@ -1,4 +1,4 @@
-# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+# Copyright 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 name: Build
 on:
   pull_request:
@@ -20,20 +19,74 @@ on:
   push:
     branches:
       - main
+
 permissions: read-all
 jobs:
   build:
+    permissions:
+      contents: write
+      packages: write
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    env:
+      COSIGN_KEY_LOCATION: /tmp/cosign.key
+      COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
           go-version: 1.17
-      - name: build
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -o "tmp/horusec-linux-x64" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o "tmp/horusec-linux-arm64" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a -installsuffix cgo -o "tmp/horusec-darwin-x64" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -o "tmp/horusec-darwin-arm64" ./cmd/app/main.go
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a -installsuffix cgo -o "tmp/horusec-win.exe" ./cmd/app/main.go
+
+      - name: Cosign Installer
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.2.0'
+
+      - name: Install Mage
+        run: go install github.com/magefile/mage@v1.11
+
+      - name: Get current date
+        id: date
+        run: mage -v getCurrentDate
+
+      - name: Git config
+        run: mage -v defaultGitConfig
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Install cosign private key
+        run: mage -v writeCosignKeyToFile
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+
+      - name: Create local tag
+        run: mage -v createLocalTag "v0.0.1-alpha.1"
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --skip-publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+          GORELEASER_CURRENT_TAG: "v0.0.1-alpha.1"
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+          CLI_VERSION: "v0.0.1-alpha.1"
+
+      - name: check-docker
+        run: docker image ls -a
+
+      - name: check-binaries
+        run: ls -a dist
