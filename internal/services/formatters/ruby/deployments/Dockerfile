@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ruby:2.7.5-alpine
+FROM ruby:3.1-alpine
 
 RUN apk add git
 
