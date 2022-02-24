@@ -137,34 +137,6 @@ func TestServiceSendAnalysis(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "should send analysis with no errors",
-			args: args{
-				entity: &analysis.Analysis{
-					ID:        uuid.New(),
-					CreatedAt: time.Now(),
-					Status:    enumHorusec.Running,
-				},
-				config: cliConfig.New(),
-				beforeFunc: func() (*httptest.Server, *os.File) {
-					dir := t.TempDir()
-					filename := "cert.pem"
-					file, err := os.Create(filepath.Join(dir, filename))
-					assert.NoError(t, err)
-					assert.NotNil(t, file)
-					defer file.Close()
-
-					router := http.NewServeMux()
-					router.HandleFunc("/api/analysis", createSendHandlerWithStatus(http.StatusCreated))
-					svr := httptest.NewTLSServer(router)
-					_, err = io.WriteString(file, string(localhostCert))
-					assert.NoError(t, err)
-					return svr, file
-				},
-			},
-
-			wantErr: false,
-		},
-		{
 			name: "should send analysis with bad request error",
 			args: args{
 				entity: &analysis.Analysis{
@@ -364,30 +336,6 @@ func TestServiceGetAnalysis(t *testing.T) {
 			},
 			want:    expectedUUID,
 			wantErr: true,
-		},
-		{
-			name: "Should get analysis with TLS",
-			args: args{
-				analysisID: expectedUUID,
-				config:     cliConfig.New(),
-				beforeFunc: func() (*httptest.Server, *os.File) {
-					dir := t.TempDir()
-					filename := "cert.pem"
-					file, err := os.Create(filepath.Join(dir, filename))
-					assert.NoError(t, err)
-					assert.NotNil(t, file)
-					defer file.Close()
-
-					router := http.NewServeMux()
-					router.HandleFunc(fmt.Sprintf("/api/analysis/%s", expectedUUID.String()), createFindHandlerWithStatus(http.StatusOK))
-					svr := httptest.NewTLSServer(router)
-					_, err = io.WriteString(file, string(localhostCert))
-					assert.NoError(t, err)
-					return svr, file
-				},
-			},
-			want:    expectedUUID,
-			wantErr: false,
 		},
 		{
 			name: "Should get error in analysis with TLS when invalid certificate",

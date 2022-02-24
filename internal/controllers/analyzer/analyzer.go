@@ -273,7 +273,8 @@ func (a *Analyzer) sortVulnerabilitiesByType() *analysis.Analysis {
 }
 
 func (a *Analyzer) getVulnerabilitiesByType(
-	vulnType enumsVulnerability.Type) (response []analysis.AnalysisVulnerabilities) {
+	vulnType enumsVulnerability.Type,
+) (response []analysis.AnalysisVulnerabilities) {
 	for index := range a.analysis.AnalysisVulnerabilities {
 		if a.analysis.AnalysisVulnerabilities[index].Vulnerability.Type == vulnType {
 			response = append(response, a.analysis.AnalysisVulnerabilities[index])
@@ -283,7 +284,8 @@ func (a *Analyzer) getVulnerabilitiesByType(
 }
 
 func (a *Analyzer) getVulnerabilitiesBySeverity(
-	search severities.Severity) (response []analysis.AnalysisVulnerabilities) {
+	search severities.Severity,
+) (response []analysis.AnalysisVulnerabilities) {
 	for index := range a.analysis.AnalysisVulnerabilities {
 		if a.analysis.AnalysisVulnerabilities[index].Vulnerability.Severity == search {
 			response = append(response, a.analysis.AnalysisVulnerabilities[index])
