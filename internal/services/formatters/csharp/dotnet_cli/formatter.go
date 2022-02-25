@@ -29,7 +29,7 @@ import (
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
 	"github.com/ZupIT/horusec/internal/utils/file"
-	vulnHash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
+	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
 const CsProjExt = ".csproj"
@@ -154,22 +154,31 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 func (f *Formatter) newVulnerability(dependency *dotnetDependency,
 	projectSubPath string) (*vulnerability.Vulnerability, error,
 ) {
-	code, filePath, line, err := f.getCodeFilePathAndLine(dependency, projectSubPath)
+	code, absFilePath, line, err := f.getCodeFilePathAndLine(dependency, projectSubPath)
 	if err != nil {
 		return nil, err
 	}
+
+	relFilePath, err := filepath.Rel(f.GetConfigProjectPath(), absFilePath)
+	if err != nil {
+		return nil, err
+	}
+
 	vuln := &vulnerability.Vulnerability{
 		SecurityTool: tools.DotnetCli,
 		Language:     languages.CSharp,
 		Confidence:   confidence.High,
-		RuleID:       vulnHash.HashRuleID(dependency.getDescription()),
+		RuleID:       vulnhash.HashRuleID(dependency.getDescription()),
 		Details:      dependency.getDescription(),
 		Code:         code,
-		File:         f.removeHorusecFolder(filePath),
+		File:         relFilePath,
 		Line:         line,
 		Severity:     dependency.getSeverity(),
 	}
-	return f.SetCommitAuthor(vulnHash.Bind(vuln)), nil
+
+	vuln.DeprecatedHashes = f.getDeprecatedHashes(absFilePath, *vuln)
+
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), nil
 }
 
 func (f *Formatter) getCodeFilePathAndLine(dependency *dotnetDependency,
@@ -203,4 +212,14 @@ func (f *Formatter) isInvalidOutput(output string) bool {
 
 func (f *Formatter) removeHorusecFolder(path string) string {
 	return filepath.Clean(strings.ReplaceAll(path, filepath.Join(".horusec", f.GetAnalysisID()), ""))
+}
+
+// getDeprecatedHashes necessary due a change that from now the hash is generated from a relative path, not an absolute
+// path. This func exists to keep generating this old hashes with the absolute path and avoid some breaking changes.
+// TODO: This will be removed after the release v2.10.0 be released
+// nolint:gocritic // it has to be without pointer
+func (f *Formatter) getDeprecatedHashes(absFilePath string, vuln vulnerability.Vulnerability) []string {
+	vuln.File = f.removeHorusecFolder(absFilePath)
+
+	return vulnhash.Bind(&vuln).DeprecatedHashes
 }

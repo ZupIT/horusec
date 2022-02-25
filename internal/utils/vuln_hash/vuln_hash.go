@@ -23,26 +23,39 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 )
 
-// Bind generate and set the vulnerability hash on vuln. Note that Bind
-// generate the valid and invalid vulnerability hashes.
+// Bind create a sha256 hash of the vulnerability using the vulnerability code, line and file. The file path should
+// be relative to avoid generating different hashes between environments. The Vulnerability.VulnHash field is set
+// automatically with the generated hash. Some hashes that are deprecated but still valid are also defined in the
+// Vulnerability.DeprecatedHashes field, as of v2.10.0 is released, these hashes will no longer be considered and
+// this field will be removed.
 //
 // nolint:funlen
 func Bind(vuln *vulnerability.Vulnerability) *vulnerability.Vulnerability {
 	vuln.VulnHash = crypto.GenerateSHA256(
 		toOneLine(vuln.Code),
 		vuln.Line,
-		vuln.Details,
 		vuln.File,
-		vuln.CommitEmail,
 	)
 
-	// See vulnerability.Vulnerability.VulnHashInvalid docs for more info.
-	vuln.VulnHashInvalid = crypto.GenerateSHA256(
-		toOneLine(vuln.Code),
-		vuln.Line,
-		fmt.Sprintf("%s: %s", vuln.RuleID, vuln.Details),
-		vuln.File,
-		vuln.CommitEmail,
+	// TODO: DeprecatedHashes will be removed after the release v2.10.0 be released.
+	vuln.DeprecatedHashes = append(vuln.DeprecatedHashes,
+		// Generates a hash in an old format containing the rule id, description and commit email.
+		crypto.GenerateSHA256(
+			toOneLine(vuln.Code),
+			vuln.Line,
+			fmt.Sprintf("%s: %s", vuln.RuleID, vuln.Details),
+			vuln.File,
+			vuln.CommitEmail,
+		),
+
+		// Generates a hash in an old format containing the description and commit email.
+		crypto.GenerateSHA256(
+			toOneLine(vuln.Code),
+			vuln.Line,
+			vuln.Details,
+			vuln.File,
+			vuln.CommitEmail,
+		),
 	)
 
 	return vuln

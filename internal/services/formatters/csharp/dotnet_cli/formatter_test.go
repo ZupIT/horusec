@@ -58,7 +58,7 @@ func TestParseOutput(t *testing.T) {
 			assert.NotEmpty(t, vuln.Code, "Expected not empty code")
 			assert.Equal(
 				t,
-				filepath.Join(cfg.ProjectPath, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj"),
+				filepath.Join("NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj"),
 				vuln.File,
 				"Expected equals file name",
 			)

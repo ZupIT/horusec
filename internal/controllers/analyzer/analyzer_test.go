@@ -90,7 +90,7 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 		{
 			name:          "ChangeBreakingHashToFalsePositive",
 			vulnerability: vuln,
-			hashes:        []string{vuln.VulnHashInvalid},
+			hashes:        vuln.DeprecatedHashes,
 			expectedType:  vulnerabilityenum.FalsePositive,
 		},
 		{
@@ -102,7 +102,7 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 		{
 			name:          "ChangeBreakingHashToRiskAccept",
 			vulnerability: vuln,
-			hashes:        []string{vuln.VulnHashInvalid},
+			hashes:        vuln.DeprecatedHashes,
 			expectedType:  vulnerabilityenum.RiskAccepted,
 		},
 	}
@@ -133,7 +133,6 @@ func TestAnalyzerSetFalsePositivesAndRiskAcceptInVulnerabilities(t *testing.T) {
 
 			analyzer.SetFalsePositivesAndRiskAcceptInVulnerabilities(falsePositiveHashes, riskAcceptHashes)
 
-			require.Len(t, analyzer.analysis.AnalysisVulnerabilities, len(tt.hashes))
 			for _, vuln := range analyzer.analysis.AnalysisVulnerabilities {
 				assert.Equal(t, tt.expectedType, vuln.Vulnerability.Type)
 			}

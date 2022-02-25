@@ -87,8 +87,11 @@ func TestParseFindingsToVulnerabilities(t *testing.T) {
 			CommitHash:    "-",
 			CommitMessage: "-",
 			// NOTE: We hard coded vulnerability hash here to assert that we are not breaking existing hashes
-			VulnHash:        "b9ffd6959275a840254c9ddc9ab0cc5edd6f7950f1b71103d772ac5a17ca988d",
-			VulnHashInvalid: "7ebe9a1e2b39735edcae2f576f31ea4779b5eb9300064e3ebb351069fdd01ed3",
+			VulnHash: "54a8a3798eaaf1d6ae7e5f1e8ea21af7b65c00d15ce52bac5e457aeb4961eb30",
+			DeprecatedHashes: []string{
+				"7ebe9a1e2b39735edcae2f576f31ea4779b5eb9300064e3ebb351069fdd01ed3",
+				"b9ffd6959275a840254c9ddc9ab0cc5edd6f7950f1b71103d772ac5a17ca988d",
+			},
 		},
 	}
 
