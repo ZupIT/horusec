@@ -26,7 +26,12 @@ jobs:
     permissions:
       contents: write
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
 
     steps:
       - name: Checkout
@@ -51,7 +56,14 @@ jobs:
       - name: Create local tag
         run: git tag --force v0.0.0-alpha
 
+      - name: Install GCC cross compilation toolchains
+        if: ${{ matrix.os != 'macos-latest' }} 
+        run: |
+          sudo apt update
+          sudo apt install -y crossbuild-essential-arm64 crossbuild-essential-i386 mingw-w64
+
       - name: Run GoReleaser
+        if: ${{ matrix.os != 'macos-latest' }} 
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
@@ -63,7 +75,21 @@ jobs:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
           CLI_VERSION: "v0.0.0-alpha"
 
+      - name: Run GoReleaser on MacOS
+        if: ${{ matrix.os == 'macos-latest' }} 
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --skip-publish --skip-sign --release-notes="README.md" --config goreleaser-macos.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_CURRENT_TAG: "v0.0.0-alpha"
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+          CLI_VERSION: "v0.0.0-alpha"
+
       - name: check-docker
+        if: ${{ matrix.os != 'macos-latest' }} 
         run: docker image ls -a
 
       - name: check-binaries

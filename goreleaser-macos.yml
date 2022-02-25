@@ -1,0 +1,94 @@
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+project_name: horusec
+
+builds:
+  - id: horusec
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
+    env:
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  - id: horusec-standalone
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
+    env:
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}_stand_alone
+changelog:
+  skip: true
+snapshot:
+  name_template: '{{ incpatch .Tag }}'
+archives:
+  - id: horusec
+    builds:
+      - horusec
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format: binary
+    replacements:
+      amd64: amd64
+      386: x86
+      arm64: arm64
+      darwin: mac
+      windows: win
+  - id: horusec-standalone
+    builds:
+      - horusec-standalone
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}_stand_alone"
+    format: binary
+    replacements:
+      amd64: amd64
+      386: x86
+      arm64: arm64
+      darwin: mac
+      windows: win
+checksum:
+  name_template: 'checksums.txt'
+release:
+  draft: true
+  extra_files:
+    - glob: deployments/cosign.pub
+signs:
+  - cmd: cosign
+    stdin: '{{ .Env.COSIGN_PWD }}'
+    args: [ "sign-blob", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "-output=${signature}", "${artifact}" ]
+    artifacts: all
+docker_signs:
+  - cmd: cosign
+    args: [ "sign", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "${artifact}" ]
+    artifacts: all
+    stdin: '{{ .Env.COSIGN_PWD }}'
