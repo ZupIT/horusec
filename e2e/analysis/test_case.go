@@ -661,6 +661,7 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf("{HORUSEC_CLI} %s - %s is finished in analysisID:", tools.GitLeaks, languages.Leaks),
 					fmt.Sprintf("{HORUSEC_CLI} Running %s - %s", tools.HorusecEngine, languages.Leaks),
 					fmt.Sprintf("{HORUSEC_CLI} %s - %s is finished in analysisID:", tools.HorusecEngine, languages.Leaks),
+					fmt.Sprintf("{HORUSEC_CLI} The current path it's not a valid git repository"),
 				},
 				OutputsNotContains: []string{
 					fmt.Sprintf("{HORUSEC_CLI} Something error went wrong in %s tool", tools.GitLeaks),

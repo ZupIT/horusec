@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint
 package gitleaks
 
+// CMD contains the necessary code to execute Gitleaks inside the container. The 'git config diff.renames 0' command
+// it's necessary to avoid the 'inexact rename detection was skipped due to too many files' error in big projects.
 const CMD = `
-		{{WORK_DIR}}
-		if ! gitleaks --config-path /rules/rules.toml --path . --leaks-exit-code 0 --format json --report /tmp/leaks-result.json &> /tmp/leaks-runner-output.txt; then
-			echo /tmp/leaks-runner-output.txt
-		else
-			cat /tmp/leaks-result.json
-		fi
+	{{WORK_DIR}}
+	git config diff.renames 0
+	if ! gitleaks detect -c /rules/rules.toml -f json -r /tmp/leaks.json --exit-code 0 &> /tmp/leaks-output.txt; then
+		cat /tmp/leaks-output.txt
+	else
+		cat /tmp/leaks.json
+	fi
   `

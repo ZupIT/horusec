@@ -55,4 +55,5 @@ const (
 	// TODO: Remove MsgWarnAnalysisContainsOutdatedHash before release v2.10.0
 	MsgWarnAnalysisContainsOutdatedHash = "{HORUSEC_CLI} YOUR CONFIGURATION FILE CONTAINS SOME HASHES THAT WILL NO " +
 		"LONGER BE VALID AS OF v2.10.0 IS RELEASED. PLEASE UPDATE YOUR CONFIGURATION FILE WITH THE FOLLOWING HASHES:"
+	MsgWarnPathIsInvalidGitRepository = "{HORUSEC_CLI} The current path it's not a valid git repository"
 )

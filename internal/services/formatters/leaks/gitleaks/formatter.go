@@ -17,6 +17,7 @@ package gitleaks
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -29,7 +30,6 @@ import (
 	"github.com/ZupIT/horusec/internal/enums/images"
 	"github.com/ZupIT/horusec/internal/helpers/messages"
 	"github.com/ZupIT/horusec/internal/services/formatters"
-	"github.com/ZupIT/horusec/internal/services/formatters/leaks/gitleaks/entities"
 	vulnhash "github.com/ZupIT/horusec/internal/utils/vuln_hash"
 )
 
@@ -62,64 +62,11 @@ func (f *Formatter) startGitLeaks(projectSubPath string) (string, error) {
 		return output, err
 	}
 
-	return output, f.formatOutputGitLeaks(output)
-}
-
-func (f *Formatter) formatOutputGitLeaks(output string) error {
-	if output == "" || (len(output) >= 4 && output[:4] == "null") {
-		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
-			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
-		f.setGitLeaksOutPutInHorusecAnalysis([]entities.Issue{})
-		return nil
+	if err := f.checkOutputErrors(output); err != nil {
+		return output, err
 	}
 
-	issues, err := f.parseOutputToIssues(output)
-	if err != nil {
-		return err
-	}
-
-	f.setGitLeaksOutPutInHorusecAnalysis(issues)
-	return nil
-}
-
-func (f *Formatter) parseOutputToIssues(output string) ([]entities.Issue, error) {
-	var issues []entities.Issue
-	err := json.Unmarshal([]byte(output), &issues)
-	if err != nil && strings.Contains(err.Error(), "invalid character") {
-		err = errors.New(output)
-	}
-	return issues, err
-}
-
-func (f *Formatter) setGitLeaksOutPutInHorusecAnalysis(issues []entities.Issue) {
-	for key := range issues {
-		vuln := f.setupVulnerabilitiesSeveritiesGitLeaks(&issues[key])
-		f.AddNewVulnerabilityIntoAnalysis(vuln)
-	}
-}
-
-func (f *Formatter) setupVulnerabilitiesSeveritiesGitLeaks(issue *entities.Issue) (
-	vulnerabilitySeverity *vulnerability.Vulnerability,
-) {
-	vulnerabilitySeverity = f.getDefaultSeverity()
-	vulnerabilitySeverity.Severity = severities.Critical
-	vulnerabilitySeverity.RuleID = vulnhash.HashRuleID(issue.Rule)
-	vulnerabilitySeverity.Details = issue.Rule
-	vulnerabilitySeverity.Code = f.GetCodeWithMaxCharacters(issue.Line, 0)
-	vulnerabilitySeverity.File = issue.File
-	vulnerabilitySeverity = vulnhash.Bind(vulnerabilitySeverity)
-	return f.setCommitAuthor(vulnerabilitySeverity, issue)
-}
-
-func (f *Formatter) setCommitAuthor(vuln *vulnerability.Vulnerability,
-	issue *entities.Issue,
-) *vulnerability.Vulnerability {
-	vuln.CommitAuthor = issue.Author
-	vuln.CommitMessage = strings.ReplaceAll(issue.CommitMessage, "\n", "")
-	vuln.CommitEmail = issue.Email
-	vuln.CommitDate = issue.Date
-	vuln.CommitHash = issue.Commit
-	return vuln
+	return output, f.parseOutput(output)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -131,9 +78,57 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Leaks), images.Leaks)
 }
 
-func (f *Formatter) getDefaultSeverity() *vulnerability.Vulnerability {
-	vulnerabilitySeverity := &vulnerability.Vulnerability{}
-	vulnerabilitySeverity.Language = languages.Leaks
-	vulnerabilitySeverity.SecurityTool = tools.GitLeaks
-	return vulnerabilitySeverity
+func (f *Formatter) parseOutput(output string) error {
+	issues := make([]*Issue, 0)
+
+	if err := json.Unmarshal([]byte(output), &issues); err != nil {
+		return err
+	}
+
+	if len(issues) == 0 {
+		logger.LogDebugWithLevel(messages.MsgDebugOutputEmpty,
+			map[string]interface{}{"tool": tools.GitLeaks.ToString()})
+		return nil
+	}
+
+	f.forEachIssueCreateNewVuln(issues)
+
+	return nil
+}
+
+func (f *Formatter) forEachIssueCreateNewVuln(issues []*Issue) {
+	for _, issue := range issues {
+		f.AddNewVulnerabilityIntoAnalysis(f.newVulnerability(issue))
+	}
+}
+
+//nolint:funlen // necessary to be long
+func (f *Formatter) newVulnerability(issue *Issue) *vulnerability.Vulnerability {
+	vuln := &vulnerability.Vulnerability{
+		Language:      languages.Leaks,
+		SecurityTool:  tools.GitLeaks,
+		Severity:      severities.Critical,
+		RuleID:        vulnhash.HashRuleID(issue.Description),
+		Details:       issue.Description,
+		Code:          f.GetCodeWithMaxCharacters(issue.Secret, 0),
+		File:          issue.File,
+		Line:          strconv.Itoa(issue.StartLine),
+		Column:        strconv.Itoa(issue.StartColumn),
+		CommitAuthor:  issue.Author,
+		CommitMessage: f.GetCodeWithMaxCharacters(issue.Message, 0),
+		CommitEmail:   issue.Email,
+		CommitDate:    issue.Date,
+		CommitHash:    issue.Commit,
+	}
+
+	return vulnhash.Bind(vuln)
+}
+
+func (f *Formatter) checkOutputErrors(output string) error {
+	if strings.Contains(output, "fatal: not a git repository") ||
+		strings.Contains(output, "fatal: cannot chdir to") {
+		return errors.New(messages.MsgWarnPathIsInvalidGitRepository)
+	}
+
+	return nil
 }
