@@ -376,16 +376,8 @@ func (pr *PrintResults) checkIfExistsErrorsInAnalysis() {
 	}
 }
 
-func (pr *PrintResults) printErrors(errorMessage string) {
-	if strings.Contains(errorMessage, messages.MsgErrorPacketJSONNotFound) ||
-		strings.Contains(errorMessage, messages.MsgErrorYarnLockNotFound) ||
-		strings.Contains(errorMessage, messages.MsgErrorGemLockNotFound) ||
-		strings.Contains(errorMessage, messages.MsgErrorNotFoundRequirementsTxt) {
-		logger.LogWarnWithLevel(strings.ReplaceAll(errorMessage, ";", ""))
-		return
-	}
-
-	logger.LogStringAsError(strings.ReplaceAll(errorMessage, ";", ""))
+func (pr *PrintResults) printErrors(err string) {
+	logger.LogStringAsError(strings.ReplaceAll(err, ";", ""))
 }
 
 func (pr *PrintResults) printResponseAnalysis() {
