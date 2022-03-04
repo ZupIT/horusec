@@ -250,6 +250,7 @@ func (a *Analyzer) setVulnerabilityType(
 func (a *Analyzer) setAnalysisFinishedData() *analysis.Analysis {
 	a.analysis.FinishedAt = time.Now()
 
+	a.removeWarningsFromErrors()
 	if a.analysis.HasErrors() {
 		a.analysis.Status = enumsAnalysis.Error
 		return a.analysis
@@ -429,4 +430,27 @@ func (a *Analyzer) getAllConfigHashes() []string {
 	configHashes = append(configHashes, a.config.RiskAcceptHashes...)
 
 	return configHashes
+}
+
+// removeWarningsFromErrors workaround to separate warnings from errors until the formatters are refactored
+func (a *Analyzer) removeWarningsFromErrors() {
+	var errors string
+
+	for _, err := range strings.SplitAfter(a.analysis.Errors, ";") {
+		if a.isWarning(err) {
+			a.analysis.AddWarning(err)
+		} else {
+			errors += err
+		}
+	}
+
+	a.analysis.Errors = errors
+}
+
+// isWarning workaround to check if the message it's form a warning until the formatters are refactored
+func (a *Analyzer) isWarning(err string) bool {
+	return strings.Contains(err, messages.MsgErrorPacketJSONNotFound) ||
+		strings.Contains(err, messages.MsgErrorYarnLockNotFound) ||
+		strings.Contains(err, messages.MsgErrorGemLockNotFound) ||
+		strings.Contains(err, messages.MsgErrorNotFoundRequirementsTxt)
 }
