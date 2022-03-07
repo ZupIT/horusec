@@ -10,7 +10,7 @@ require (
 	github.com/docker/docker v20.10.9+incompatible
 	github.com/go-enry/go-enry/v2 v2.8.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/gocarina/gocsv v0.0.0-20211203214250-4735fba0c1d9
+	github.com/gocarina/gocsv v0.0.0-20220304222734-caabc5f00d30
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/magefile/mage v1.12.1
