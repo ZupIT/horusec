@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Set up Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: 1.17
       ## Run go mod tidy and then check if there was a diff. If so, fail the check.
