@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package entities
+package gitleaks
 
 type Issue struct {
-	Line          string `json:"line"`
-	Offender      string `json:"offender"`
-	Commit        string `json:"commit"`
-	Repo          string `json:"repo"`
-	Rule          string `json:"rule"`
-	CommitMessage string `json:"commitMessage"`
-	Author        string `json:"author"`
-	Email         string `json:"email"`
-	File          string `json:"file"`
-	Date          string `json:"date"`
-	Tags          string `json:"tags"`
+	Description string
+	StartLine   int
+	EndLine     int
+	StartColumn int
+	EndColumn   int
+	Match       string
+	Secret      string
+	File        string
+	Commit      string
+	Entropy     int
+	Author      string
+	Email       string
+	Date        string
+	Message     string
 }

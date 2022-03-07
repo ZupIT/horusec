@@ -452,5 +452,6 @@ func (a *Analyzer) isWarning(err string) bool {
 	return strings.Contains(err, messages.MsgErrorPacketJSONNotFound) ||
 		strings.Contains(err, messages.MsgErrorYarnLockNotFound) ||
 		strings.Contains(err, messages.MsgErrorGemLockNotFound) ||
-		strings.Contains(err, messages.MsgErrorNotFoundRequirementsTxt)
+		strings.Contains(err, messages.MsgErrorNotFoundRequirementsTxt) ||
+		strings.Contains(err, messages.MsgWarnPathIsInvalidGitRepository)
 }
