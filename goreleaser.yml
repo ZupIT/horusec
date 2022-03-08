@@ -30,7 +30,7 @@ builds:
     goarch:
       - amd64
       - arm64
-      - 386
+      - "386"
     binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
   - id: horusec-standalone
     env: [ CGO_ENABLED=0 ]
@@ -48,10 +48,30 @@ builds:
     goarch:
       - amd64
       - arm64
-      - 386
+      - "386"
     binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}_stand_alone
 changelog:
-  skip: true
+  skip: false
+  use: github
+  groups:
+  - title: 'Features'
+    regexp: "^.*:(feature|feat)\\s-.*$"
+    order: 0
+  - title: 'Bug fixes'
+    regexp: "^.*:(bugfix|fix)\\s-.*$"
+    order: 1
+  - title: 'Hotfixes'
+    regexp: "^.*:hotfix\\s-.*$"
+    order: 2
+  - title: 'Chores'
+    regexp: "^.*:chore\\s-.*$"
+    order: 3
+  - title: Others
+    order: 999
+  filters:
+    exclude:
+      - '^deps:chore.*$'
+      - '^build(deps):.*$'
 snapshot:
   name_template: '{{ incpatch .Tag }}'
 archives:
@@ -80,7 +100,13 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 release:
-  draft: true
+  draft: false
+  mode: append
+  footer: |
+    ## Docker images
+    - `docker pull horuszup/horusec-cli:{{ .Tag }}`
+
+    **Full Changelog**: https://github.com/ZupIT/horusec/compare/{{ .PreviousTag }}...{{ .Tag }}
   extra_files:
     - glob: deployments/cosign.pub
 nfpms:
@@ -120,7 +146,7 @@ docker_signs:
 dockers:
   - image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'
-    skip_push: false
+    skip_push: "false"
     goos: linux
     goarch: amd64
     dockerfile: ./deployments/Dockerfile-gorelease-amd64
@@ -136,7 +162,7 @@ dockers:
       - --tls-verify=false
   - image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-arm64'
-    skip_push: false
+    skip_push: "false"
     goos: linux
     goarch: arm64
     dockerfile: ./deployments/Dockerfile-gorelease-arm64

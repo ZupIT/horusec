@@ -20,16 +20,16 @@ on:
         required: true
 permissions: read-all
 jobs:
-  Rc:
+  ReleaseRc:
     permissions:
       contents: write
       packages: write
+      issues:   write
     runs-on: ubuntu-latest
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-
-
+    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -82,9 +82,9 @@ jobs:
           HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
       - name: Checkout release branch
         run: mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
-        
-      - name: Create local tag
-        run: mage -v createLocalTag ${{ steps.updated-version.outputs.nextRCVersion }}
+
+      - name: Create and push tag
+        run: mage -v createAndPushTag ${{ steps.updated-version.outputs.nextRCVersion }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -96,8 +96,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextRCVersion }}
+          GORELEASER_PREVIOUS_TAG: ${{ steps.updated-version.outputs.actualRCVersion }}
           CURRENT_DATE: ${{ steps.date.outputs.date }}
           CLI_VERSION: ${{ steps.updated-version.outputs.nextRCVersion }}
 
       - name: Push updates
+        if: ${{ success() }}
         run: mage -v gitPushAll
+
+      - name: Remove updates
+        if: ${{ !success() }}
+        run: mage -v removeTag ${{ steps.updated-version.outputs.nextRCVersion }}

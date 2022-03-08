@@ -11,22 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-name: alpha
+name: release-alpha
 on:
   push:
     branches:
       - main
 permissions: read-all
 jobs:
-  Alpha:
+  ReleaseAlpha:
     permissions:
       contents: write
       packages: write
+      issues:   write
     runs-on: ubuntu-latest
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -154,7 +154,6 @@ jobs:
             ./dist/horusec_windows_arm64/horusec_win_arm64.exe.sig
             ./dist/horusec_darwin_arm64/horusec_mac_arm64
             ./dist/horusec_darwin_arm64/horusec_mac_arm64.sig
-
             ./dist/horusec-standalone_linux_amd64/horusec_linux_amd64_stand_alone
             ./dist/horusec-standalone_linux_amd64/horusec_linux_amd64_stand_alone.sig
             ./dist/horusec-standalone_linux_386/horusec_linux_x86_stand_alone
