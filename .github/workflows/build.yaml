@@ -27,9 +27,6 @@ jobs:
       contents: write
       packages: write
     runs-on: ubuntu-latest
-    env:
-      COSIGN_KEY_LOCATION: /tmp/cosign.key
-      COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
 
     steps:
       - name: Checkout
@@ -41,11 +38,6 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Cosign Installer
-        uses: sigstore/cosign-installer@main
-        with:
-          cosign-release: 'v1.2.0'
-
       - name: Install Mage
         run: go install github.com/magefile/mage@v1.11
 
@@ -56,34 +48,20 @@ jobs:
       - name: Git config
         run: mage -v defaultGitConfig
 
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v4
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
-      - name: Install cosign private key
-        run: mage -v writeCosignKeyToFile
-        env:
-          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
-
       - name: Create local tag
-        run: mage -v createLocalTag "v0.0.1-alpha.1"
+        run: git tag --force v0.0.0-alpha
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --skip-publish
+          args: release --rm-dist --skip-publish --skip-sign --release-notes="README.md"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          GORELEASER_CURRENT_TAG: "v0.0.1-alpha.1"
+          GORELEASER_CURRENT_TAG: "v0.0.0-alpha"
           CURRENT_DATE: ${{ steps.date.outputs.date }}
-          CLI_VERSION: "v0.0.1-alpha.1"
+          CLI_VERSION: "v0.0.0-alpha"
 
       - name: check-docker
         run: docker image ls -a
