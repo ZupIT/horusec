@@ -121,7 +121,7 @@ func (s *Sarif) newTool(vulnerabilityy *vulnerability.Vulnerability) ScanTool {
 		Driver: ScanToolDriver{
 			Name:               vulnerabilityy.SecurityTool.ToString(),
 			MoreInformationURI: "https://docs.horusec.io/docs/cli/analysis-tools/overview/",
-			Version:            version.Version,
+			Version:            s.getVersionWithoutPrefix(),
 		},
 	}
 }
@@ -189,4 +189,8 @@ func (s *Sarif) getSarifSeverityMap() map[severities.Severity]string {
 		severities.Unknown:  Note,
 		severities.Info:     Note,
 	}
+}
+
+func (s *Sarif) getVersionWithoutPrefix() string {
+	return strings.ReplaceAll(version.Version, "v", "")
 }
