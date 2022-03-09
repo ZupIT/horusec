@@ -19,7 +19,7 @@ import "github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 const (
 	DefaultRegistry = "docker.io"
 	C               = "horuszup/horusec-c:v1.0.1"
-	Csharp          = "horuszup/horusec-csharp:v1.1.0"
+	Csharp          = "horuszup/horusec-csharp:v1.2.0"
 	Elixir          = "horuszup/horusec-elixir:v1.1.0"
 	Generic         = "horuszup/horusec-generic:v1.1.0"
 	Go              = "horuszup/horusec-go:v1.2.1"

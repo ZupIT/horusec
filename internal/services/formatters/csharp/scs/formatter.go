@@ -41,12 +41,19 @@ var (
 
 	// ErrBuildProject occurs when SCS fail to build the dotnet project.
 	ErrBuildProject = errors.New("project failed to build. Fix the project issues and try again")
+
+	// ErrInvalidSDKOutput occurs when SCS try to use an old version of csharp SDK to analyze a project with the new One
+	ErrInvalidSDKOutput = errors.New("horusec-engine-csharp SDK is outdated, " +
+		"you can build your own and add to horusecCliCustomImages config" +
+		" or create a new issue on https://github.com/ZupIT/horusec/issues to maintainers update the image")
 )
 
 const (
 	BuildFailedOutput    = "Msbuild failed when processing the file"
 	SolutionFileNotFound = "solution file not found"
 	solutionExt          = ".sln"
+	invalidSDKOutput     = "Could not execute because the application was not found or a " +
+		"compatible .NET SDK is not installed."
 )
 
 type Formatter struct {
@@ -208,6 +215,9 @@ func (f *Formatter) checkOutputErrors(output string) (string, error) {
 
 	if strings.Contains(output, SolutionFileNotFound) {
 		return output, ErrSolutionNotFound
+	}
+	if strings.Contains(output, invalidSDKOutput) {
+		return output, ErrInvalidSDKOutput
 	}
 
 	return output, nil
