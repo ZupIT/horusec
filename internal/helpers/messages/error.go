@@ -26,21 +26,13 @@ const (
 	MsgVulnerabilityTypeToShowInvalid           = "{HORUSEC_CLI} Error on validate vulnerability type is wrong type: "
 	MsgErrorRunToolInDocker                     = "{HORUSEC_CLI} Error to execute tool %s | analysisID -> %s | output -> %s"
 	MsgErrorInvalidWorkDir                      = "{HORUSEC_CLI} Workdir is nil! Check the configuration and try again"
-	MsgErrorParseStringToToolsConfig            = "{HORUSEC_CLI} Error when try parse tools config string to entity. " +
-		"Returning default values"
-	MsgErrorNotFoundRequirementsTxt = "{HORUSEC_CLI} Error The file requirements.txt not found in python project to " +
-		"start analysis. It would be a good idea to commit it so horusec can check for vulnerabilities"
-	MsgErrorPacketJSONNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a package-lock.json " +
-		"file. If you use NPM to handle your dependencies, it would be a good idea to commit it so horusec can check " +
-		"for vulnerabilities"
-	MsgErrorYarnLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a yarn.lock file. " +
-		"If you use Yarn to handle your dependencies, it would be a good idea to commit it so horusec " +
-		"can check for vulnerabilities"
-	MsgErrorYarnProcess     = "{HORUSEC_CLI} Error Yarn returned an error: "
-	MsgErrorGemLockNotFound = "{HORUSEC_CLI} Error It looks like your project doesn't have a gemfile.lock file, " +
-		"it would be a good idea to commit it so horusec can check for vulnerabilities"
-	MsgErrorGetFilenameByExt = "Could not get filename by extension: "
-	MsgErrorNancyRateLimit   = `{HORUSEC_CLI} Nancy tool failed to query the GitHub API for updates.
+	MsgErrorParseStringToToolsConfig            = "{HORUSEC_CLI} Error when try parse tools config string to entity. Returning default values"
+	MsgErrorNotFoundRequirementsTxt             = "file requirements.txt was not found in your Python project. It would be a good idea to commit it so Horusec can check for vulnerabilities"
+	MsgErrorPackageLockJSONNotFound             = "file package-lock.json was not found in your Javascript project. If you use NPM to handle your dependencies, it would be a good idea to commit it so Horusec can check for vulnerabilities"
+	MsgErrorYarnLockNotFound                    = "file yarn.lock file was not found in your Javascript project. If you use Yarn to handle your dependencies, it would be a good idea to commit it so Horusec can check for vulnerabilities"
+	MsgErrorYarnProcess                         = "{HORUSEC_CLI} Yarn returned an error: "
+	MsgErrorGetFilenameByExt                    = "Could not get filename by extension: "
+	MsgErrorNancyRateLimit                      = `{HORUSEC_CLI} Nancy tool failed to query the GitHub API for updates.
 This is most likely due to GitHub rate-limiting on unauthenticated requests.
 To make authenticated requests please:
   1. Generate a token at https://github.com/settings/tokens

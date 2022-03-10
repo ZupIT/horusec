@@ -76,7 +76,7 @@ func TestGosecStartAnalysis(t *testing.T) {
 
 		gosec.StartAnalysis("")
 		assert.True(t, entity.HasErrors(), "Expected errors for analysis")
-		assert.Equal(t, "Error while running tool GoSec: some error", entity.Errors)
+		assert.Equal(t, "{HORUSEC_CLI} Error while running tool GoSec: some error", entity.Errors)
 	})
 
 	t.Run("Should run analysis and return error for an invalid output", func(t *testing.T) {

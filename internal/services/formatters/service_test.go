@@ -108,7 +108,7 @@ func TestSetAnalysisError(t *testing.T) {
 	svc.SetAnalysisError(errors.New("some error"), tools.HorusecEngine, "testing", "")
 	svc.SetAnalysisError(errors.New("other error"), tools.HorusecEngine, "testing 2", "")
 
-	expectedErrors := "Error while running tool HorusecEngine: some error; Error while running tool HorusecEngine: other error"
+	expectedErrors := "{HORUSEC_CLI} Error while running tool HorusecEngine: some error;{HORUSEC_CLI} Error while running tool HorusecEngine: other error"
 
 	assert.Equal(t, expectedErrors, analysis.Errors)
 }
