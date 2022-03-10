@@ -69,7 +69,7 @@ func GetPathFromFilename(filename, basePath string) (string, error) {
 // filename, otherwise will return an empty string.
 func GetSubPathByFilename(projectPath, subPath, filename string) (string, error) {
 	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
-	logger.LogDebugWithLevel(fmt.Sprintf("Seaching for files with %s name on %s", filename, pathToWalk))
+	logger.LogDebugWithLevel(fmt.Sprintf("{HORUSEC_CLI} Searching for files with %s name on %s", filename, pathToWalk))
 
 	if path, err := GetPathFromFilename(filename, pathToWalk); path != "" {
 		logger.LogDebugWithLevel(fmt.Sprintf("Found file %s on %s", filename, path))
@@ -86,7 +86,7 @@ func GetSubPathByFilename(projectPath, subPath, filename string) (string, error)
 // nolint: funlen,gocyclo
 func GetSubPathByExtension(projectPath, subPath, ext string) (extensionPath string) {
 	pathToWalk := joinProjectPathWithSubPath(projectPath, subPath)
-	logger.LogDebugWithLevel(fmt.Sprintf("Seaching for files with %s extension on %s", ext, pathToWalk))
+	logger.LogDebugWithLevel(fmt.Sprintf("{HORUSEC_CLI} Searching for files with %s extension on %s", ext, pathToWalk))
 
 	err := filepath.Walk(pathToWalk, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
