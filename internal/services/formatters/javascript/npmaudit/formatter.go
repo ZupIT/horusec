@@ -93,7 +93,7 @@ func (f *Formatter) parseOutput(containerOutput, projectSubPath string) error {
 
 func (f *Formatter) IsNotFoundError(containerOutput string) error {
 	if strings.Contains(containerOutput, "ERROR_PACKAGE_LOCK_NOT_FOUND") {
-		return errors.New(messages.MsgErrorPacketJSONNotFound)
+		return errors.New(messages.MsgErrorPackageLockJSONNotFound)
 	}
 
 	return nil

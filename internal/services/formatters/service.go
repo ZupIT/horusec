@@ -126,9 +126,9 @@ func (s *Service) addAnalysisError(tool tools.Tool, err error) {
 	if err != nil {
 		buf := bytes.NewBufferString("")
 		if len(s.analysis.Errors) > 0 {
-			fmt.Fprintf(buf, "; ")
+			fmt.Fprintf(buf, ";")
 		}
-		fmt.Fprintf(buf, "Error while running tool %s: %v", tool, err)
+		fmt.Fprintf(buf, "{HORUSEC_CLI} Error while running tool %s: %v", tool, err)
 		s.analysis.Errors += buf.String()
 	}
 }
