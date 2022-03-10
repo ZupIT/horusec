@@ -438,7 +438,7 @@ func (a *Analyzer) removeWarningsFromErrors() {
 
 	for _, err := range strings.SplitAfter(a.analysis.Errors, ";") {
 		if a.isWarning(err) {
-			a.analysis.AddWarning(err)
+			a.analysis.AddWarning(strings.ReplaceAll(err, ";", ""))
 		} else {
 			errors += err
 		}
@@ -449,9 +449,8 @@ func (a *Analyzer) removeWarningsFromErrors() {
 
 // isWarning workaround to check if the message it's form a warning until the formatters are refactored
 func (a *Analyzer) isWarning(err string) bool {
-	return strings.Contains(err, messages.MsgErrorPacketJSONNotFound) ||
+	return strings.Contains(err, messages.MsgErrorPackageLockJSONNotFound) ||
 		strings.Contains(err, messages.MsgErrorYarnLockNotFound) ||
-		strings.Contains(err, messages.MsgErrorGemLockNotFound) ||
 		strings.Contains(err, messages.MsgErrorNotFoundRequirementsTxt) ||
 		strings.Contains(err, messages.MsgWarnPathIsInvalidGitRepository)
 }
