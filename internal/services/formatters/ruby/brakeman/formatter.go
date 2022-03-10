@@ -42,7 +42,7 @@ const (
 	notFoundError = "please supply the path to a rails application"
 )
 
-var ErrNotFoundRailsProject = errors.New("brakeman only works on Ruby On Rails project")
+var ErrNotFoundRailsProject = errors.New(messages.MsgWarnBrakemanNotRubyOnRailsProject)
 
 type Formatter struct {
 	formatters.IService
