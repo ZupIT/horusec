@@ -41,7 +41,7 @@ import (
 // nolint: stylecheck
 // We actually want that this error message be capitalized since the file name that was
 // not found is capitalized.
-var ErrGemLockNotFound = errors.New("Gemfile.lock file is required to execute Bundler analysis")
+var ErrGemLockNotFound = errors.New(messages.MsgWarnGemfileIsRequiredForBundler)
 
 type Formatter struct {
 	formatters.IService

@@ -448,9 +448,12 @@ func (a *Analyzer) removeWarningsFromErrors() {
 }
 
 // isWarning workaround to check if the message it's form a warning until the formatters are refactored
+// nolint:gocyclo // necessary complexity, but will be removed in the future
 func (a *Analyzer) isWarning(err string) bool {
 	return strings.Contains(err, messages.MsgErrorPackageLockJSONNotFound) ||
 		strings.Contains(err, messages.MsgErrorYarnLockNotFound) ||
 		strings.Contains(err, messages.MsgErrorNotFoundRequirementsTxt) ||
-		strings.Contains(err, messages.MsgWarnPathIsInvalidGitRepository)
+		strings.Contains(err, messages.MsgWarnPathIsInvalidGitRepository) ||
+		strings.Contains(err, messages.MsgWarnBrakemanNotRubyOnRailsProject) ||
+		strings.Contains(err, messages.MsgWarnGemfileIsRequiredForBundler)
 }
