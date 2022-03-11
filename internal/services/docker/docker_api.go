@@ -223,12 +223,14 @@ func (d *API) logStatusAndExecuteCRDContainer(imageNameWithTag, cmd string) (con
 	return containerOutput, nil
 }
 
+// nolint:funlen
 func (d *API) executeCRDContainer(imageNameWithTag, cmd string) (containerOutput string, err error) {
 	containerID, err := d.createContainer(imageNameWithTag, cmd)
 	if err != nil {
 		return "", err
 	}
 
+	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, imageNameWithTag, containerID)
 	containerOutput, err = d.readContainer(containerID)
 	if err != nil {
 		return "", err
@@ -272,8 +274,6 @@ func (d *API) getImageID() string {
 
 // nolint: funlen
 func (d *API) readContainer(containerID string) (string, error) {
-	d.loggerAPIStatusWithContainerID(messages.MsgDebugDockerAPIContainerWait, "", containerID)
-
 	chanContainerStatus, _ := d.dockerClient.ContainerWait(d.ctx, containerID, "")
 
 	if containerWaitStatus := <-chanContainerStatus; containerWaitStatus.Error != nil {
