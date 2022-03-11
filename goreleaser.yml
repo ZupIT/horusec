@@ -101,6 +101,7 @@ checksum:
   name_template: 'checksums.txt'
 release:
   draft: false
+  prerelease: auto
   mode: append
   footer: |
     ## Docker images
