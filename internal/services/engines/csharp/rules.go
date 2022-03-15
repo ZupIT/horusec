@@ -70,14 +70,10 @@ func NewExternalEntityInjection() *text.Rule {
 			Severity:    severities.Medium.ToString(),
 			Confidence:  confidence.High.ToString(),
 		},
-		Type: text.AndMatch,
+		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`new XmlReaderSettings\(\)`),
-			regexp.MustCompile(`XmlReader.Create\(.*\)`),
-			regexp.MustCompile(`new XmlDocument\(.*\)`),
-			regexp.MustCompile(`Load\(.*\)`),
-			regexp.MustCompile(`ProhibitDtd = false`),
-			regexp.MustCompile(`(new XmlReaderSettings\(\))(([^P]|P[^r]|Pr[^o]|Pro[^h]|Proh[^i]|Prohi[^b]|Prohib[^i]|Prohibi[^t]|Prohibit[^D]|ProhibitD[^t]|ProhibitDt[^d])*)(\.Load\(.*\))`),
+			regexp.MustCompile(`(new XmlReaderSettings\(\))(.|\s)*(ProhibitDtd\s*=\s*false)(.|\s)*(XmlReader.Create\(.*\))`),
+			regexp.MustCompile(`(new XmlReaderSettings\(\))(.|\s)*(DtdProcessing\s*=\s*DtdProcessing.Parse)(.|\s)*(XmlReader.Create\(.*\))`),
 		},
 	}
 }
@@ -95,7 +91,7 @@ func NewPathTraversal() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`ActionResult`),
 			regexp.MustCompile(`System.IO.File.ReadAllBytes\(Server.MapPath\(.*\) \+ .*\)`),
-			regexp.MustCompile(`File\(.*, System.Net.Mime.MediaTypeNames.Application.Octet, .*\)`),
+			regexp.MustCompile(`(private|public|protected|internal|var)(([^G]|G[^e]|Ge[^t]|Get[^I]|GetI[^n]|GetIn[^v]|GetInv[^a]|GetInva[^l]|GetInval[^i]|GetInvali[^d]|GetInvalid[^F]|GetInvalidF[^i]|GetInvalidFi[^l]|GetInvalidFil[^e]|GetInvalidFile[^N]|GetInvalidFileN[^a]|GetInvalidFileNa[^m]|GetInvalidFileNam[^e]|GetInvalidFileName[^C]|GetInvalidFileNameC[^h]|GetInvalidFileNameCh[^a]|GetInvalidFileNameCha[^r]|GetInvalidFileNameChar[^s])*)(\s*File\(.*,\s*System\.Net\.Mime\.MediaTypeNames\.Application\.Octet\s*,.*\))`),
 		},
 	}
 }
@@ -105,14 +101,13 @@ func NewSQLInjectionWebControls() *text.Rule {
 		Metadata: engine.Metadata{
 			ID:          "HS-CSHARP-5",
 			Name:        "SQL Injection WebControls",
-			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0014).",
+			Description: "Malicious user might get direct read and/or write access to the database. If the database is poorly configured the attacker might even get Remote Code Execution (RCE) on the machine running the database. For more information access: (https://security-code-scan.github.io/#SCS0002).",
 			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`"Select .* From .* where .*" & .*`),
-			regexp.MustCompile(`System\.Web\.UI\.WebControls\.SqlDataSource | System\.Web\.UI\.WebControls\.SqlDataSourceView | Microsoft\.Whos\.Framework\.Data\.SqlUtility`),
+			regexp.MustCompile(`(?i)['|"]Select .* From .* where .*['|"]\s*\+\s*\w+[[:print:]]*\s*\+\s*['|"]`),
 		},
 	}
 }
@@ -148,8 +143,8 @@ func NewFormsAuthenticationCookielessMode() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
 			regexp.MustCompile(`(\<forms)((([^c]|c[^o]|co[^o]|coo[^k]|cook[^i]|cooki[^e]|cookie[^l]|cookiel[^e]|cookiele[^s]|cookieles[^s])*)|([^U]|U[^s]|Us[^e]|Use[^C]|UseC[^o]|UseCo[^o]|UseCoo[^k]|UseCook[^i]|UseCooki[^e]|UseCookie[^s])*)(\/\>)`),
+			regexp.MustCompile(`\<authentication\s*mode\s*=\s*["|']Forms`),
 		},
 	}
 }
