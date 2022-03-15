@@ -2614,3 +2614,23 @@ func NewVulnerableRemoteCodeInjectionApacheLog4j() *text.Rule {
 		},
 	}
 }
+
+func NewUncheckedClassInstatiation() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:          "HS-JAVA-151",
+			Name:        "Unchecked Class Instantiation when providing Plugin Classes",
+			Description: `CVE-2022-21724 pgjdbc instantiates plugin instances based on class names provided via authenticationPluginClassName, sslhostnameverifier, socketFactory, sslfactory, sslpasswordcallback connection properties. However, the driver did not verify if the class implements the expected interface before instantiating the class. The first impacted version is REL9.4.1208 (it introduced socketFactory connection property) until 42.3.1. Please update to fixed versions ^42.2.25 or ^42.3.2. For more information checkout the CVE-2022-21724 (https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-21724) advisory.`,
+			Severity:    severities.High.ToString(),
+			Confidence:  confidence.Low.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`compile.*group:.*org\.postgresql.*name:.*postgresql.*version:.*(('|")(([1-3]?[0-9]?)\..*\..*|(4[0-2]\.(([0-2]\.(([0-9])|([0-1][0-9].*)|(2[0-4])))|(3\.[0-1]).*)))('|"))`),
+			regexp.MustCompile(`compile.*postgresql.*(:postgresql:\s*(([1-3]?[0-9]?)\..*\..*|(4[0-2]\.(([0-2]\.(([0-9])|([0-1][0-9].*)|(2[0-4])))|(3\.[0-1]).*)))).*('|")`),
+			regexp.MustCompile(`<groupId>\s*org\.postgresql\s*</groupId>\s*<artifactId>.*\s*postgresql.*\s*</artifactId>\s*(<version>\s*(([1-3]?[0-9]?)\..*\..*|(4[0-2]\.(([0-2]\.(([0-9])|([0-1][0-9].*)|(2[0-4])))|(3\.[0-1]).*))))\s*</version>`),
+			regexp.MustCompile(`<dependency.*org.*org\.postgresql.*name.*postgresql.*rev\s*=\s*['|"]\s*(([1-3]?[0-9]?)\..*\..*|(4[0-2]\.(([0-2]\.(([0-9])|([0-1][0-9].*)|(2[0-4])))|(3\.[0-1]).*)))\s*['|"]\s*/>`),
+			regexp.MustCompile(`<(postgre|postgres|postgresql)\.version>\s*(([1-3]?[0-9]?)\..*\..*|(4[0-2]\.(([0-2]\.(([0-9])|([0-1][0-9].*)|(2[0-4])))|(3\.[0-1]).*))).*</(postgre|postgres|postgresql)\.version>`),
+		},
+	}
+}
