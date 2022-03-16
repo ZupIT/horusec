@@ -72,6 +72,7 @@ const (
 	EnvLogFilePath                     = "HORUSEC_CLI_LOG_FILE_PATH"
 	EnvEnableOwaspDependencyCheck      = "HORUSEC_CLI_ENABLE_OWASP_DEPENDENCY_CHECK"
 	EnvEnableShellCheck                = "HORUSEC_CLI_ENABLE_SHELLCHECK"
+	EnvEnableSemanticEngine            = "HORUSEC_CLI_ENABLE_SEMANTIC_ENGINE"
 )
 
 type GlobalOptions struct {
@@ -107,6 +108,7 @@ type StartOptions struct {
 	EnableInformationSeverity       bool                      `json:"enable_information_severity"`
 	EnableOwaspDependencyCheck      bool                      `json:"enable_owasp_dependency_check"`
 	EnableShellCheck                bool                      `json:"enable_shell_check"`
+	EnableSemanticEngine            bool                      `json:"enable_semantic_engine"`
 	SeveritiesToIgnore              []string                  `json:"severities_to_ignore"`
 	FilesOrPathsToIgnore            []string                  `json:"files_or_paths_to_ignore"`
 	FalsePositiveHashes             []string                  `json:"false_positive_hashes"`
@@ -173,6 +175,7 @@ func New() *Config {
 			EnableInformationSeverity:       false,
 			EnableOwaspDependencyCheck:      false,
 			EnableShellCheck:                false,
+			EnableSemanticEngine:            false,
 		},
 	}
 }
@@ -221,6 +224,7 @@ func (c *Config) LoadStartFlags(cmd *cobra.Command) *Config {
 		cmd, "enable-owasp-dependency-check", c.EnableOwaspDependencyCheck,
 	)
 	c.EnableShellCheck = c.extractFlagValueBool(cmd, "enable-shellcheck", c.EnableShellCheck)
+	c.EnableSemanticEngine = c.extractFlagValueBool(cmd, "engine.enable-semantic", c.EnableSemanticEngine)
 	return c
 }
 
@@ -316,6 +320,7 @@ func (c *Config) LoadFromConfigFile() *Config {
 	)
 	c.EnableOwaspDependencyCheck = viper.GetBool(c.toLowerCamel(EnvEnableOwaspDependencyCheck))
 	c.EnableShellCheck = viper.GetBool(c.toLowerCamel(EnvEnableShellCheck))
+	c.EnableSemanticEngine = viper.GetBool(c.toLowerCamel(EnvEnableSemanticEngine))
 	return c
 }
 
@@ -365,6 +370,7 @@ func (c *Config) LoadFromEnvironmentVariables() *Config {
 	c.LogFilePath = env.GetEnvOrDefault(EnvLogFilePath, c.LogFilePath)
 	c.EnableOwaspDependencyCheck = env.GetEnvOrDefaultBool(EnvEnableOwaspDependencyCheck, c.EnableOwaspDependencyCheck)
 	c.EnableShellCheck = env.GetEnvOrDefaultBool(EnvEnableShellCheck, c.EnableShellCheck)
+	c.EnableSemanticEngine = env.GetEnvOrDefaultBool(EnvEnableSemanticEngine, c.EnableShellCheck)
 	return c
 }
 
@@ -459,6 +465,7 @@ func (c *Config) ToMapLowerCase() map[string]interface{} {
 		c.toLowerCamel(EnvLogFilePath):                     c.LogFilePath,
 		c.toLowerCamel(EnvEnableOwaspDependencyCheck):      c.EnableOwaspDependencyCheck,
 		c.toLowerCamel(EnvEnableShellCheck):                c.EnableShellCheck,
+		c.toLowerCamel(EnvEnableSemanticEngine):            c.EnableSemanticEngine,
 	}
 }
 

@@ -282,3 +282,7 @@ func (s *Service) IsOwaspDependencyCheckDisable() bool {
 func (s *Service) IsShellcheckDisable() bool {
 	return !s.config.EnableShellCheck
 }
+
+func (s *Service) IsSemanticEngineEnable() bool {
+	return s.config.EnableSemanticEngine
+}

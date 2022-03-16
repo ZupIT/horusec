@@ -57,6 +57,7 @@ const (
 	StartFlagReturnError                = "--return-error"
 	StartFlagRiskAccept                 = "--risk-accept"
 	StartFlagShowVulnerabilitiesTypes   = "--show-vulnerabilities-types"
+	StartEngineEnableSemantic           = "--engine.enable-semantic"
 )
 
 func GetAllStartFlags() []string {
@@ -69,6 +70,6 @@ func GetAllStartFlags() []string {
 		StartFlagInformationSeverity, StartFlagInsecureSkipVerify, StartFlagJSONOutputFilePath,
 		StartFlagMonitorRetryCount, StartFlagOutputFormat, StartFlagProjectPath,
 		StartFlagRepositoryName, StartFlagRequestTimeout, StartFlagReturnError,
-		StartFlagRiskAccept, StartFlagShowVulnerabilitiesTypes,
+		StartFlagRiskAccept, StartFlagShowVulnerabilitiesTypes, StartEngineEnableSemantic,
 	}
 }

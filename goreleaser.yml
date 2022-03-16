@@ -15,8 +15,7 @@
 project_name: horusec
 
 builds:
-  - id: horusec
-    env: [ CGO_ENABLED=0 ]
+  - id: horusec-linux-amd64
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
@@ -25,15 +24,13 @@ builds:
       - -s -w
     goos:
       - linux
-      - windows
-      - darwin
     goarch:
       - amd64
-      - arm64
-      - "386"
-    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
-  - id: horusec-standalone
-    env: [ CGO_ENABLED=0 ]
+    env:
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "387" "x86" }}
+
+  - id: horusec-standalone-linux-amd64
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
@@ -43,13 +40,160 @@ builds:
       - -s -w
     goos:
       - linux
-      - windows
-      - darwin
     goarch:
       - amd64
-      - arm64
+    env:
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "387" "x86" }}
+
+  - id: horusec-linux-386
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - linux
+    goarch:
       - "386"
-    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}_stand_alone
+    env:
+      - CGO_ENABLED=1
+      - CC=i686-linux-gnu-gcc
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "387" "x86" }}
+
+  - id: horusec-standalone-linux-386
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
+    goos:
+      - linux
+    goarch:
+      - "386"
+    env:
+      - CGO_ENABLED=1
+      - CC=i686-linux-gnu-gcc
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "387" "x86" }}
+
+  - id: horusec-linux-arm64
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - linux
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=1
+      - CC=aarch64-linux-gnu-gcc
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  - id: horusec-standalone-linux-arm64
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
+    goos:
+      - linux
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=1
+      - CC=aarch64-linux-gnu-gcc
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  - id: horusec-windows-amd64
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  - id: horusec-standalone-windows-amd64
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+      
+  - id: horusec-windows-x86
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -s -w
+    goos:
+      - windows
+    goarch:
+      - "386"
+    env:
+      - CC=i686-w64-mingw32-gcc
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  - id: horusec-standalone-windows-x86
+    main: ./cmd/app/main.go
+    ldflags:
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+      - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+      - -X 'github.com/ZupIT/horusec/config/dist.standAlone=true'
+      - -s -w
+    goos:
+      - windows
+    goarch:
+      - "386"
+    env:
+      - CC=i686-w64-mingw32-gcc
+      - CGO_ENABLED=1
+    binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
+  # - id: horusec-windows-arm64
+  #   main: ./cmd/app/main.go
+  #   ldflags:
+  #     - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
+  #     - -X 'github.com/ZupIT/horusec/cmd/app/version.Commit={{ .Commit }}'
+  #     - -X 'github.com/ZupIT/horusec/cmd/app/version.Date={{ .Env.CURRENT_DATE }}'
+  #     - -s -w
+  #   goos:
+  #     - windows
+  #   goarch:
+  #     - arm64
+  #   env:
+  #     - CGO_ENABLED=1
+  #     - CC=arm-none-eabi-gcc
+  #   binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
+
 changelog:
   skip: false
   use: github
@@ -77,7 +221,11 @@ snapshot:
 archives:
   - id: horusec
     builds:
-      - horusec
+      - horusec-linux-amd64
+      - horusec-linux-386
+      - horusec-linux-arm64
+      - horusec-windows-amd64
+      - horusec-windows-386
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format: binary
     replacements:
@@ -88,7 +236,10 @@ archives:
       windows: win
   - id: horusec-standalone
     builds:
-      - horusec-standalone
+      - horusec-standalone-linux-386
+      - horusec-standalone-linux-arm64
+      - horusec-standalone-windows-amd64
+      - horusec-standalone-windows-386
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}_stand_alone"
     format: binary
     replacements:
@@ -115,7 +266,11 @@ nfpms:
     package_name: horusec
     file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     builds:
-      - horusec
+      - horusec-linux-amd64
+      - horusec-linux-386
+      - horusec-linux-arm64
+      - horusec-windows-amd64
+      - horusec-windows-386
     replacements:
       amd64: amd64
       386: x86

@@ -80,6 +80,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, 1, len(configs.ShowVulnerabilitiesTypes))
 		assert.Equal(t, false, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, false, configs.EnableShellCheck)
+		assert.Equal(t, false, configs.EnableSemanticEngine)
 	})
 	t.Run("Should return horusec config using new config file", func(t *testing.T) {
 		viper.Reset()
@@ -121,6 +122,7 @@ func TestNewHorusecConfig(t *testing.T) {
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages[languages.Go])
+		assert.Equal(t, true, configs.EnableSemanticEngine)
 	})
 	t.Run("Should return horusec config using config file and override by environment", func(t *testing.T) {
 		viper.Reset()
@@ -161,6 +163,7 @@ func TestNewHorusecConfig(t *testing.T) {
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
 		assert.Equal(t, "docker.io/company/go:latest", configs.CustomImages[languages.Go])
+		assert.Equal(t, true, configs.EnableSemanticEngine)
 
 		assert.NoError(t, os.Setenv(config.EnvHorusecAPIUri, "http://horusec.com"))
 		assert.NoError(t, os.Setenv(config.EnvTimeoutInSecondsRequest, "99"))
@@ -187,6 +190,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(config.EnvEnableShellCheck, "true"))
 		assert.NoError(t, os.Setenv(config.EnvCustomRulesPath, "test"))
 		assert.NoError(t, os.Setenv(config.EnvEnableInformationSeverity, "true"))
+		assert.NoError(t, os.Setenv(config.EnvEnableSemanticEngine, "false"))
 		assert.NoError(t, os.Setenv(
 			config.EnvLogFilePath, filepath.Join(os.TempDir(), "test.log")),
 		)
@@ -219,6 +223,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableInformationSeverity)
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
+		assert.Equal(t, false, configs.EnableSemanticEngine)
 		assert.Equal(
 			t,
 			[]string{vulnerability.Vulnerability.ToString(), vulnerability.FalsePositive.ToString()},
@@ -260,6 +265,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableInformationSeverity)
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
+		assert.Equal(t, true, configs.EnableSemanticEngine)
 		assert.Equal(t, toolsconfig.Config{
 			IsToIgnore: true,
 		}, configs.ToolsConfig[tools.GoSec])
@@ -288,6 +294,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.NoError(t, os.Setenv(config.EnvEnableInformationSeverity, "true"))
 		assert.NoError(t, os.Setenv(config.EnvEnableOwaspDependencyCheck, "true"))
 		assert.NoError(t, os.Setenv(config.EnvEnableShellCheck, "true"))
+		assert.NoError(t, os.Setenv(config.EnvEnableSemanticEngine, "false"))
 		assert.NoError(t, os.Setenv(config.EnvShowVulnerabilitiesTypes, fmt.Sprintf("%s, %s", vulnerability.Vulnerability.ToString(), vulnerability.RiskAccepted.ToString())))
 		configs.LoadFromEnvironmentVariables()
 		assert.Equal(t, configFilePath, configs.ConfigFilePath)
@@ -316,6 +323,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, true, configs.EnableInformationSeverity)
 		assert.Equal(t, true, configs.EnableOwaspDependencyCheck)
 		assert.Equal(t, true, configs.EnableShellCheck)
+		assert.Equal(t, false, configs.EnableSemanticEngine)
 
 		logger.LogSetOutput(io.Discard)
 		startCmd := start.NewStartCommand(configs)
@@ -354,6 +362,7 @@ func TestNewHorusecConfig(t *testing.T) {
 			"--repository-name", "repository-name-test",
 			"--request-timeout", "123",
 			"--return-error", "true",
+			"--engine.enable-semantic", "true",
 		}
 		assert.NoError(t, cobraCmd.PersistentFlags().Parse(args))
 		assert.NoError(t, cobraCmd.Execute())
@@ -383,6 +392,7 @@ func TestNewHorusecConfig(t *testing.T) {
 		assert.Equal(t, "repository-name-test", configs.RepositoryName)
 		assert.Equal(t, int64(123), configs.TimeoutInSecondsRequest)
 		assert.Equal(t, true, configs.ReturnErrorIfFoundVulnerability)
+		assert.Equal(t, true, configs.EnableSemanticEngine)
 	})
 }
 
@@ -468,6 +478,7 @@ func TestConfig_Bytes(t *testing.T) {
   "enable_information_severity": true,
   "enable_owasp_dependency_check": true,
   "enable_shell_check": true,
+  "enable_semantic_engine": false,
   "severities_to_ignore": [
     "INFO"
   ],
@@ -623,6 +634,7 @@ func TestConfig_Bytes(t *testing.T) {
   "enable_information_severity": false,
   "enable_owasp_dependency_check": false,
   "enable_shell_check": false,
+  "enable_semantic_engine": false,
   "severities_to_ignore": null,
   "files_or_paths_to_ignore": null,
   "false_positive_hashes": null,

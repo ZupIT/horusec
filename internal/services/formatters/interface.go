@@ -101,4 +101,7 @@ type IService interface {
 
 	// IsShellcheckDisable return true if shell check is disable, otherwise false.
 	IsShellcheckDisable() bool
+
+	// IsSemanticEngineEnable return true if experimental semantic engine is enabled, otherwise false.
+	IsSemanticEngineEnable() bool
 }

@@ -45,5 +45,6 @@
   },
   "horusecCliCustomImages": {
     "go": "docker.io/company/go:latest"
-  }
+  },
+  "horusecCliEnableSemanticEngine": true
 }
