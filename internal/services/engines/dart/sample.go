@@ -272,6 +272,7 @@ static Future<HttpServer> SentToApi(
 	bool shared = false}
 ) => _HttpServer.bindSecure('https://my-api.com.br', port, context, backlog, v6Only, requestClientCertificate, shared);
 `
+	SampleSafeHSDART6 = `// You can't use sms library`
 	SampleSafeHSDART7 = `
 import 'package:sprintf/sprintf.dart';
 import 'dart:html';
