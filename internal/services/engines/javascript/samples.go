@@ -19,7 +19,9 @@ const (
 console.log("user email: ", email)
 console.debug("user password: ", pwd)
 `
-	SampleSafeHSJAVASCRIPT1 = ``
+	SampleSafeHSJAVASCRIPT1 = `
+console.test()
+`
 
 	SampleVulnerableHSJAVASCRIPT2 = `
 function f(req) {
@@ -176,7 +178,19 @@ function f3() {
 	prompt("testing");
 }
 `
-	SampleSafeHSJAVASCRIPT16 = ``
+	SampleSafeHSJAVASCRIPT16 = `
+function f() {
+	// don't use alert;
+}
+
+function f2() {
+	// don't use confirm;
+}
+
+function f3() {
+	// don't use prompt;
+}
+`
 
 	SampleVulnerableHSJAVASCRIPT17 = `
 app.use('/', express.static('public', {

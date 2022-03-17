@@ -73,8 +73,10 @@ Depending on the implementation in the operating system the bioID is just a lock
 Basically on Android, you can ask to use the 4-digit password because of "faulty hardware" and this functionality depends on how the application uses this.
 There are applications that ask for 6 digit passwords and then ask for the bioID just to "automatically type" the 6 digit password which can cause an easy identification and access to your application is broken.
 For more information checkout the OWSAP M4:2016 (https://owasp.org/www-project-mobile-top-10/2016-risks/m4-insecure-authentication) advisory and see this example how implement good authentication (in "C" Language): https://developer.apple.com/library/archive/samplecode/KeychainTouchID/Introduction/Intro.html.`,
-			Severity:   severities.Info.ToString(),
-			Confidence: confidence.Medium.ToString(),
+			Severity:      severities.Info.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSDART3,
+			UnsafeExample: SampleVulnerableHSDART3,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{

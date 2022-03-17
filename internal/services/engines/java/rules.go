@@ -17,6 +17,7 @@
 package java
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
@@ -169,11 +170,13 @@ func NewXMLParsingVulnerableToXXEWithJdom2() *text.Rule {
 func NewInsecureImplementationOfSSL() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-9",
-			Name:        "Insecure Implementation of SSL",
-			Description: "Insecure Implementation of SSL. Trusting all the certificates or accepting self signed certificates is a critical Security Hole. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-9",
+			SafeExample:   SampleSafeHSJAVA9,
+			UnsafeExample: SampleVulnerableHSJAVA9,
+			Name:          "Insecure Implementation of SSL",
+			Description:   "Insecure Implementation of SSL. Trusting all the certificates or accepting self signed certificates is a critical Security Hole. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -186,11 +189,13 @@ func NewInsecureImplementationOfSSL() *text.Rule {
 func NewMessageDigestIsCustom() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-10",
-			Name:        "Message digest is custom",
-			Description: "Implementing a custom MessageDigest is error-prone. NIST recommends the use of SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, or SHA-512/256. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-10",
+			SafeExample:   SampleSafeHSJAVA10,
+			UnsafeExample: SampleVulnerableHSJAVA10,
+			Name:          "Message digest is custom",
+			Description:   "Implementing a custom MessageDigest is error-prone. NIST recommends the use of SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, or SHA-512/256. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -204,11 +209,13 @@ func NewMessageDigestIsCustom() *text.Rule {
 func NewTrustManagerThatAcceptAnyCertificatesClient() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-11",
-			Name:        "TrustManager that accept any certificates Client",
-			Description: "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-11",
+			SafeExample:   SampleSafeHSJAVA11,
+			UnsafeExample: SampleVulnerableHSJAVA11,
+			Name:          "TrustManager that accept any certificates Client",
+			Description:   "Empty TrustManager implementations are often used to connect easily to a host that is not signed by a root certificate authority. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -222,11 +229,13 @@ func NewTrustManagerThatAcceptAnyCertificatesClient() *text.Rule {
 func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-12",
-			Name:        "Server hostnames should be verified during SSL/TLS connections",
-			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-12",
+			SafeExample:   SampleSafeHSJAVA12,
+			UnsafeExample: SampleVulnerableHSJAVA12,
+			Name:          "Server hostnames should be verified during SSL/TLS connections",
+			Description:   "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -240,11 +249,13 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnections() *text.Rule {
 func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-13",
-			Name:        "Server hostnames should be verified during SSL/TLS connections With SimpleEmail",
-			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-13",
+			SafeExample:   SampleSafeHSJAVA13,
+			UnsafeExample: SampleVulnerableHSJAVA13,
+			Name:          "Server hostnames should be verified during SSL/TLS connections With SimpleEmail",
+			Description:   "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -257,11 +268,13 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithSimpleEmail() 
 func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-14",
-			Name:        "Server hostnames should be verified during SSL/TLS connections With Mail's",
-			Description: "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-14",
+			SafeExample:   SampleSafeHSJAVA14,
+			UnsafeExample: SampleVulnerableHSJAVA14,
+			Name:          "Server hostnames should be verified during SSL/TLS connections With Mail's",
+			Description:   "To establish a SSL/TLS connection not vulnerable to man-in-the-middle attacks, it's essential to make sure the server presents the right certificate. The certificate's hostname-specific data should match the server hostname. It's not recommended to re-invent the wheel by implementing custom hostname verification. TLS/SSL libraries provide built-in hostname verification functions that should be used. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -334,11 +347,13 @@ func NewServerHostnamesShouldBeVerifiedDuringSSLTLSConnectionsWithMail() *text.R
 func NewWebViewLoadFilesFromExternalStorage() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-18",
-			Name:        "WebView Load Files From External Storage",
-			Description: "WebView load files from external storage. Files in external storage can be modified by any application. For more information checkout the CWE-919 (https://cwe.mitre.org/data/definitions/919.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-18",
+			SafeExample:   SampleSafeHSJAVA18,
+			UnsafeExample: SampleVulnerableHSJAVA18,
+			Name:          "WebView Load Files From External Storage",
+			Description:   "WebView load files from external storage. Files in external storage can be modified by any application. For more information checkout the CWE-919 (https://cwe.mitre.org/data/definitions/919.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -351,11 +366,13 @@ func NewWebViewLoadFilesFromExternalStorage() *text.Rule {
 func NewInsecureWebViewImplementation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-19",
-			Name:        "Insecure Web View Implementation",
-			Description: "Insecure WebView Implementation. Execution of user controlled code in WebView is a critical Security Hole. For more information checkout the CWE-749 (https://cwe.mitre.org/data/definitions/749.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-19",
+			SafeExample:   SampleSafeHSJAVA19,
+			UnsafeExample: SampleVulnerableHSJAVA19,
+			Name:          "Insecure Web View Implementation",
+			Description:   "Insecure WebView Implementation. Execution of user controlled code in WebView is a critical Security Hole. For more information checkout the CWE-749 (https://cwe.mitre.org/data/definitions/749.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -410,11 +427,13 @@ func NewInsecureWebViewImplementation() *text.Rule {
 func NewNoUseWebviewDebuggingEnable() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-22",
-			Name:        "No Use Webview Debugging Enable",
-			Description: "Remote WebView debugging is enabled. For more information checkout the CWE-215 (https://cwe.mitre.org/data/definitions/215.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-22",
+			SafeExample:   SampleSafeHSJAVA22,
+			UnsafeExample: SampleVulnerableHSJAVA22,
+			Name:          "No Use Webview Debugging Enable",
+			Description:   "Remote WebView debugging is enabled. For more information checkout the CWE-215 (https://cwe.mitre.org/data/definitions/215.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -461,11 +480,13 @@ func NewNoCopyContentToClipboard() *text.Rule {
 func NewNoUseWebviewIgnoringSSL() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-25",
-			Name:        "No Use Webview Ignoring SSL",
-			Description: "Insecure WebView Implementation. WebView ignores SSL Certificate errors and accept any SSL Certificate. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-25",
+			SafeExample:   SampleSafeHSJAVA25,
+			UnsafeExample: SampleVulnerableHSJAVA25,
+			Name:          "No Use Webview Ignoring SSL",
+			Description:   "Insecure WebView Implementation. WebView ignores SSL Certificate errors and accept any SSL Certificate. This application is vulnerable to MITM attacks. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -479,11 +500,13 @@ func NewNoUseWebviewIgnoringSSL() *text.Rule {
 func NewSQLInjectionWithSqlUtil() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-26",
-			Name:        "SQL Injection With SqlUtil",
-			Description: "The method identified is susceptible to injection. The input should be validated and properly escaped. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-26",
+			SafeExample:   SampleSafeHSJAVA26,
+			UnsafeExample: SampleVulnerableHSJAVA26,
+			Name:          "SQL Injection With SqlUtil",
+			Description:   "The method identified is susceptible to injection. The input should be validated and properly escaped. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -496,11 +519,13 @@ func NewSQLInjectionWithSqlUtil() *text.Rule {
 func NewNoUseFridaServer() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-27",
-			Name:        "No Use Frida Server",
-			Description: "This App detects frida server.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-27",
+			SafeExample:   SampleSafeHSJAVA27,
+			UnsafeExample: SampleVulnerableHSJAVA27,
+			Name:          "No Use Frida Server",
+			Description:   "This App detects frida server.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -514,11 +539,13 @@ func NewNoUseFridaServer() *text.Rule {
 func NewNoUseSSLPinningLib() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-28",
-			Name:        "No Use SSL Pinning Lib",
-			Description: "This App uses an SSL Pinning Library (org.thoughtcrime.ssl.pinning) to prevent MITM attacks in secure communication channel.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-28",
+			SafeExample:   SampleSafeHSJAVA28,
+			UnsafeExample: SampleVulnerableHSJAVA28,
+			Name:          "No Use SSL Pinning Lib",
+			Description:   "This App uses an SSL Pinning Library (org.thoughtcrime.ssl.pinning) to prevent MITM attacks in secure communication channel.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -531,11 +558,13 @@ func NewNoUseSSLPinningLib() *text.Rule {
 func NewNoUseDexGuardAppDebuggable() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-29",
-			Name:        "DexGuard Debug Detection",
-			Description: "DexGuard Debug Detection code to detect whatever an App is debuggable or not is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-29",
+			SafeExample:   SampleSafeHSJAVA29,
+			UnsafeExample: SampleVulnerableHSJAVA29,
+			Name:          "DexGuard Debug Detection",
+			Description:   "DexGuard Debug Detection code to detect whatever an App is debuggable or not is identified.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -548,11 +577,13 @@ func NewNoUseDexGuardAppDebuggable() *text.Rule {
 func NewNoUseDexGuardDebuggerConnected() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-30",
-			Name:        "No Use DexGuard Debugger Connected",
-			Description: "DexGuard Debugger Detection code is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-30",
+			SafeExample:   SampleSafeHSJAVA30,
+			UnsafeExample: SampleVulnerableHSJAVA30,
+			Name:          "No Use DexGuard Debugger Connected",
+			Description:   "DexGuard Debugger Detection code is identified.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -565,11 +596,13 @@ func NewNoUseDexGuardDebuggerConnected() *text.Rule {
 func NewNoUseDexGuardEmulatorDetection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-31",
-			Name:        "No Use DexGuard Emulator Detection",
-			Description: "DexGuard Emulator Detection code is identified.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-31",
+			SafeExample:   SampleSafeHSJAVA31,
+			UnsafeExample: SampleVulnerableHSJAVA31,
+			Name:          "No Use DexGuard Emulator Detection",
+			Description:   "DexGuard Emulator Detection code is identified.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -582,11 +615,13 @@ func NewNoUseDexGuardEmulatorDetection() *text.Rule {
 func NewNoUseDexGuardWithDebugKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-32",
-			Name:        "No Use DexGuard With Debug Key",
-			Description: "DexGuard code to detect wheather the App is signed with a debug key or not is identified.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-32",
+			SafeExample:   SampleSafeHSJAVA32,
+			UnsafeExample: SampleVulnerableHSJAVA32,
+			Name:          "No Use DexGuard With Debug Key",
+			Description:   "DexGuard code to detect wheather the App is signed with a debug key or not is identified.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -599,11 +634,13 @@ func NewNoUseDexGuardWithDebugKey() *text.Rule {
 func NewNoUseDexGuardRoot() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-33",
-			Name:        "No Use DexGuard Root",
-			Description: "DexGuard Root Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-33",
+			SafeExample:   SampleSafeHSJAVA33,
+			UnsafeExample: SampleVulnerableHSJAVA33,
+			Name:          "No Use DexGuard Root",
+			Description:   "DexGuard Root Detection code is identified",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -616,11 +653,13 @@ func NewNoUseDexGuardRoot() *text.Rule {
 func NewNoUseDexGuard() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-34",
-			Name:        "No Use DexGuard",
-			Description: "DexGuard App Tamper Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-34",
+			SafeExample:   SampleSafeHSJAVA34,
+			UnsafeExample: SampleVulnerableHSJAVA34,
+			Name:          "No Use DexGuard",
+			Description:   "DexGuard App Tamper Detection code is identified",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -633,11 +672,13 @@ func NewNoUseDexGuard() *text.Rule {
 func NewNoUseDexGuardInSigner() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-35",
-			Name:        "No Use DexGuard in signer",
-			Description: "DexGuard Signer Certificate Tamper Detection code is identified",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-35",
+			SafeExample:   SampleSafeHSJAVA35,
+			UnsafeExample: SampleVulnerableHSJAVA35,
+			Name:          "No Use DexGuard in signer",
+			Description:   "DexGuard Signer Certificate Tamper Detection code is identified",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -650,11 +691,13 @@ func NewNoUseDexGuardInSigner() *text.Rule {
 func NewNoUsePackageWithTamperDetection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-36",
-			Name:        "No use package with tamper detection.",
-			Description: "The App may use package signature for tamper detection.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-36",
+			SafeExample:   SampleSafeHSJAVA36,
+			UnsafeExample: SampleVulnerableHSJAVA36,
+			Name:          "No use package with tamper detection.",
+			Description:   "The App may use package signature for tamper detection.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -667,11 +710,13 @@ func NewNoUsePackageWithTamperDetection() *text.Rule {
 func NewLoadAndManipulateDexFiles() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-37",
-			Name:        "Load and Manipulate Dex Files",
-			Description: "Load and Manipulate Dex Files",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-37",
+			SafeExample:   SampleSafeHSJAVA37,
+			UnsafeExample: SampleVulnerableHSJAVA37,
+			Name:          "Load and Manipulate Dex Files",
+			Description:   "Load and Manipulate Dex Files",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -684,11 +729,13 @@ func NewLoadAndManipulateDexFiles() *text.Rule {
 func NewObfuscation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-38",
-			Name:        "Obfuscation",
-			Description: "Obfuscation",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-38",
+			SafeExample:   SampleSafeHSJAVA38,
+			UnsafeExample: SampleVulnerableHSJAVA38,
+			Name:          "Obfuscation",
+			Description:   "Obfuscation",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -701,11 +748,13 @@ func NewObfuscation() *text.Rule {
 func NewExecuteOSCommand() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-39",
-			Name:        "Execute OS Command",
-			Description: "Execute OS Command. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-39",
+			SafeExample:   SampleSafeHSJAVA39,
+			UnsafeExample: SampleVulnerableHSJAVA39,
+			Name:          "Execute OS Command",
+			Description:   "Execute OS Command. For more information checkout the CWE-78 (https://cwe.mitre.org/data/definitions/78.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -719,11 +768,13 @@ func NewExecuteOSCommand() *text.Rule {
 func NewTCPServerSocket() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-40",
-			Name:        "TCP Server Socket",
-			Description: "TCP Server Socket",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-40",
+			SafeExample:   SampleSafeHSJAVA40,
+			UnsafeExample: SampleVulnerableHSJAVA40,
+			Name:          "TCP Server Socket",
+			Description:   "TCP Server Socket",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -736,11 +787,13 @@ func NewTCPServerSocket() *text.Rule {
 func NewTCPSocket() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-41",
-			Name:        "TCP Socket",
-			Description: "TCP Socket",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-41",
+			SafeExample:   SampleSafeHSJAVA41,
+			UnsafeExample: SampleVulnerableHSJAVA41,
+			Name:          "TCP Socket",
+			Description:   "TCP Socket",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -753,11 +806,13 @@ func NewTCPSocket() *text.Rule {
 func NewUDPDatagramPacket() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-42",
-			Name:        "UDP Datagram Packet",
-			Description: "UDP Datagram Packet",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-42",
+			SafeExample:   SampleSafeHSJAVA42,
+			UnsafeExample: SampleVulnerableHSJAVA42,
+			Name:          "UDP Datagram Packet",
+			Description:   "UDP Datagram Packet",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -770,11 +825,13 @@ func NewUDPDatagramPacket() *text.Rule {
 func NewUDPDatagramSocket() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-43",
-			Name:        "UDP Datagram Socket",
-			Description: "UDP Datagram Socket",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-43",
+			SafeExample:   SampleSafeHSJAVA43,
+			UnsafeExample: SampleVulnerableHSJAVA43,
+			Name:          "UDP Datagram Socket",
+			Description:   "UDP Datagram Socket",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -787,11 +844,13 @@ func NewUDPDatagramSocket() *text.Rule {
 func NewWebViewScriptInterface() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-44",
-			Name:        "WebView Script Interface",
-			Description: "WebView Script Interface",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-44",
+			SafeExample:   SampleSafeHSJAVA44,
+			UnsafeExample: SampleVulnerableHSJAVA44,
+			Name:          "WebView Script Interface",
+			Description:   "WebView Script Interface",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -804,11 +863,13 @@ func NewWebViewScriptInterface() *text.Rule {
 func NewGetCellInformation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-45",
-			Name:        "Get Cell Information",
-			Description: "Get Cell Information",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-45",
+			SafeExample:   SampleSafeHSJAVA45,
+			UnsafeExample: SampleVulnerableHSJAVA45,
+			Name:          "Get Cell Information",
+			Description:   "Get Cell Information",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -821,11 +882,13 @@ func NewGetCellInformation() *text.Rule {
 func NewGetCellLocation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-46",
-			Name:        "Get Cell Location",
-			Description: "Get Cell Location",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-46",
+			SafeExample:   SampleSafeHSJAVA46,
+			UnsafeExample: SampleVulnerableHSJAVA46,
+			Name:          "Get Cell Location",
+			Description:   "Get Cell Location",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -838,11 +901,13 @@ func NewGetCellLocation() *text.Rule {
 func NewGetSubscriberID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-47",
-			Name:        "Get Subscriber ID",
-			Description: "Get Subscriber ID",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-47",
+			SafeExample:   SampleSafeHSJAVA47,
+			UnsafeExample: SampleVulnerableHSJAVA47,
+			Name:          "Get Subscriber ID",
+			Description:   "Get Subscriber ID",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -855,11 +920,13 @@ func NewGetSubscriberID() *text.Rule {
 func NewGetDeviceID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-48",
-			Name:        "Get Device ID",
-			Description: "Get Device ID",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-48",
+			SafeExample:   SampleSafeHSJAVA48,
+			UnsafeExample: SampleVulnerableHSJAVA48,
+			Name:          "Get Device ID",
+			Description:   "Get Device ID",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -872,11 +939,13 @@ func NewGetDeviceID() *text.Rule {
 func NewGetSoftwareVersion() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-49",
-			Name:        "Get Software Version, IMEI/SV etc",
-			Description: "Get Software Version, IMEI/SV etc",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-49",
+			SafeExample:   SampleSafeHSJAVA49,
+			UnsafeExample: SampleVulnerableHSJAVA49,
+			Name:          "Get Software Version, IMEI/SV etc",
+			Description:   "Get Software Version, IMEI/SV etc",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -889,11 +958,13 @@ func NewGetSoftwareVersion() *text.Rule {
 func NewGetSIMSerialNumber() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-50",
-			Name:        "Get SIM Serial Number",
-			Description: "Get SIM Serial Number",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-50",
+			SafeExample:   SampleSafeHSJAVA50,
+			UnsafeExample: SampleVulnerableHSJAVA50,
+			Name:          "Get SIM Serial Number",
+			Description:   "Get SIM Serial Number",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -906,11 +977,13 @@ func NewGetSIMSerialNumber() *text.Rule {
 func NewGetSIMProviderDetails() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-51",
-			Name:        "Get SIM Provider Details",
-			Description: "Get SIM Provider Details",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-51",
+			SafeExample:   SampleSafeHSJAVA51,
+			UnsafeExample: SampleVulnerableHSJAVA51,
+			Name:          "Get SIM Provider Details",
+			Description:   "Get SIM Provider Details",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -923,11 +996,13 @@ func NewGetSIMProviderDetails() *text.Rule {
 func NewGetSIMOperatorName() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-52",
-			Name:        "Get SIM Operator Name",
-			Description: "Get SIM Operator Name",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-52",
+			SafeExample:   SampleSafeHSJAVA52,
+			UnsafeExample: SampleVulnerableHSJAVA52,
+			Name:          "Get SIM Operator Name",
+			Description:   "Get SIM Operator Name",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -940,11 +1015,13 @@ func NewGetSIMOperatorName() *text.Rule {
 func NewQueryDatabaseOfSMSContacts() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-53",
-			Name:        "Query Database of SMS, Contacts etc.",
-			Description: "Query Database of SMS, Contacts etc.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-53",
+			SafeExample:   SampleSafeHSJAVA53,
+			UnsafeExample: SampleVulnerableHSJAVA53,
+			Name:          "Query Database of SMS, Contacts etc.",
+			Description:   "Query Database of SMS, Contacts etc.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -958,11 +1035,13 @@ func NewQueryDatabaseOfSMSContacts() *text.Rule {
 func NewPotentialPathTraversal() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-54",
-			Name:        "Potential Path Traversal (file read)",
-			Description: `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: "new File("resources/images/", FilenameUtils.getName(value_received_in_params))". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-54",
+			SafeExample:   SampleSafeHSJAVA54,
+			UnsafeExample: SampleVulnerableHSJAVA54,
+			Name:          "Potential Path Traversal (file read)",
+			Description:   `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: "new File("resources/images/", FilenameUtils.getName(value_received_in_params))". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -975,11 +1054,13 @@ func NewPotentialPathTraversal() *text.Rule {
 func NewJakartaAndPotentialPathTraversal() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-55",
-			Name:        "Potential Path Traversal (file read)",
-			Description: `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: "new File("resources/images/", FilenameUtils.getName(value_received_in_params))". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-55",
+			SafeExample:   SampleSafeHSJAVA55,
+			UnsafeExample: SampleVulnerableHSJAVA55,
+			Name:          "Potential Path Traversal (file read)",
+			Description:   `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. This rule identifies potential path traversal vulnerabilities. Please consider use this example: "new File("resources/images/", FilenameUtils.getName(value_received_in_params))". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -992,11 +1073,13 @@ func NewJakartaAndPotentialPathTraversal() *text.Rule {
 func NewPotentialPathTraversalUsingScalaAPI() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-56",
-			Name:        "Potential Path Traversal Using scala API (file read)",
-			Description: `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. Please consider use this example: "val result = Source.fromFile("public/lists/" + FilenameUtils.getName(value_received_in_params)).getLines().mkString". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-56",
+			SafeExample:   SampleSafeHSJAVA56,
+			UnsafeExample: SampleVulnerableHSJAVA56,
+			Name:          "Potential Path Traversal Using scala API (file read)",
+			Description:   `A file is opened to read its content. The filename comes from an input parameter. If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read. Please consider use this example: "val result = Source.fromFile("public/lists/" + FilenameUtils.getName(value_received_in_params)).getLines().mkString". For more information checkout the CWE-22 (https://cwe.mitre.org/data/definitions/22.html) advisory.`,
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1008,11 +1091,13 @@ func NewPotentialPathTraversalUsingScalaAPI() *text.Rule {
 func NewSMTPHeaderInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-57",
-			Name:        "SMTP Header Injection",
-			Description: "If user input is place in a header line, the application should remove or replace new line characters (CR / LF). For more information checkout the CWE-93 (https://cwe.mitre.org/data/definitions/93.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-57",
+			SafeExample:   SampleSafeHSJAVA57,
+			UnsafeExample: SampleVulnerableHSJAVA57,
+			Name:          "SMTP Header Injection",
+			Description:   "If user input is place in a header line, the application should remove or replace new line characters (CR / LF). For more information checkout the CWE-93 (https://cwe.mitre.org/data/definitions/93.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1026,11 +1111,13 @@ func NewSMTPHeaderInjection() *text.Rule {
 func NewInsecureSMTPSSLConnection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-58",
-			Name:        "Insecure SMTP SSL connection",
-			Description: "Some email libraries that enable SSL connections do not verify the server certificate by default. This is equivalent to trusting all certificates. For more information checkout the CWE-297 (https://cwe.mitre.org/data/definitions/297.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-58",
+			SafeExample:   SampleSafeHSJAVA58,
+			UnsafeExample: SampleVulnerableHSJAVA58,
+			Name:          "Insecure SMTP SSL connection",
+			Description:   "Some email libraries that enable SSL connections do not verify the server certificate by default. This is equivalent to trusting all certificates. For more information checkout the CWE-297 (https://cwe.mitre.org/data/definitions/297.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1043,11 +1130,13 @@ func NewInsecureSMTPSSLConnection() *text.Rule {
 func NewPersistentCookieUsage() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-59",
-			Name:        "Persistent Cookie Usage",
-			Description: "Storing sensitive data in a persistent cookie for an extended period can lead to a breach of confidentiality or account compromise. For more information checkout the CWE-539 (https://cwe.mitre.org/data/definitions/539.html) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-59",
+			SafeExample:   SampleSafeHSJAVA59,
+			UnsafeExample: SampleVulnerableHSJAVA59,
+			Name:          "Persistent Cookie Usage",
+			Description:   "Storing sensitive data in a persistent cookie for an extended period can lead to a breach of confidentiality or account compromise. For more information checkout the CWE-539 (https://cwe.mitre.org/data/definitions/539.html) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1060,11 +1149,13 @@ func NewPersistentCookieUsage() *text.Rule {
 func NewAnonymousLDAPBind() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-60",
-			Name:        "Anonymous LDAP bind",
-			Description: "All LDAP queries executed against the context will be performed without authentication and access control. For more information checkout the (https://docs.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-60",
+			SafeExample:   SampleSafeHSJAVA60,
+			UnsafeExample: SampleVulnerableHSJAVA60,
+			Name:          "Anonymous LDAP bind",
+			Description:   "All LDAP queries executed against the context will be performed without authentication and access control. For more information checkout the (https://docs.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1077,11 +1168,13 @@ func NewAnonymousLDAPBind() *text.Rule {
 func NewLDAPEntryPoisoning() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-61",
-			Name:        "LDAP Entry Poisoning",
-			Description: "If certain attributes are presented, the deserialization of object will be made in the application querying the directory. Object deserialization should be consider a risky operation that can lead to remote code execution. For more information checkout the (https://blog.trendmicro.com/trendlabs-security-intelligence/new-headaches-how-the-pawn-storm-zero-day-evaded-javas-click-to-play-protection) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-61",
+			SafeExample:   SampleSafeHSJAVA61,
+			UnsafeExample: SampleVulnerableHSJAVA61,
+			Name:          "LDAP Entry Poisoning",
+			Description:   "If certain attributes are presented, the deserialization of object will be made in the application querying the directory. Object deserialization should be consider a risky operation that can lead to remote code execution. For more information checkout the (https://blog.trendmicro.com/trendlabs-security-intelligence/new-headaches-how-the-pawn-storm-zero-day-evaded-javas-click-to-play-protection) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1094,11 +1187,13 @@ func NewLDAPEntryPoisoning() *text.Rule {
 func NewIgnoringXMLCommentsInSAML() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-62",
-			Name:        "Ignoring XML comments in SAML",
-			Description: "Security Assertion Markup Language (SAML) is a single sign-on protocol that that used XML. The SAMLResponse message include statements that describe the authenticated user. If a user manage to place XML comments (<!-- -->), it may caused issue in the way the parser extract literal value. For more information checkout the (https://spring.io/blog/2018/03/01/spring-security-saml-and-this-week-s-saml-vulnerability) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-62",
+			SafeExample:   SampleSafeHSJAVA62,
+			UnsafeExample: SampleVulnerableHSJAVA62,
+			Name:          "Ignoring XML comments in SAML",
+			Description:   "Security Assertion Markup Language (SAML) is a single sign-on protocol that that used XML. The SAMLResponse message include statements that describe the authenticated user. If a user manage to place XML comments (<!-- -->), it may caused issue in the way the parser extract literal value. For more information checkout the (https://spring.io/blog/2018/03/01/spring-security-saml-and-this-week-s-saml-vulnerability) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1111,11 +1206,13 @@ func NewIgnoringXMLCommentsInSAML() *text.Rule {
 func NewInformationExposureThroughAnErrorMessage() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-63",
-			Name:        "Information Exposure Through An Error Message",
-			Description: "The sensitive information may be valuable information on its own (such as a password), or it may be useful for launching other, more deadly attacks. For more information checkout the CWE-209 (https://cwe.mitre.org/data/definitions/209.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-63",
+			SafeExample:   SampleSafeHSJAVA63,
+			UnsafeExample: SampleVulnerableHSJAVA63,
+			Name:          "Information Exposure Through An Error Message",
+			Description:   "The sensitive information may be valuable information on its own (such as a password), or it may be useful for launching other, more deadly attacks. For more information checkout the CWE-209 (https://cwe.mitre.org/data/definitions/209.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1128,11 +1225,13 @@ func NewInformationExposureThroughAnErrorMessage() *text.Rule {
 func NewHTTPParameterPollution() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-64",
-			Name:        "HTTP Parameter Pollution",
-			Description: "Concatenating unvalidated user input into a URL can allow an attacker to override the value of a request parameter. For more information checkout the CAPEC-460 (https://capec.mitre.org/data/definitions/460.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-64",
+			SafeExample:   SampleSafeHSJAVA64,
+			UnsafeExample: SampleVulnerableHSJAVA64,
+			Name:          "HTTP Parameter Pollution",
+			Description:   "Concatenating unvalidated user input into a URL can allow an attacker to override the value of a request parameter. For more information checkout the CAPEC-460 (https://capec.mitre.org/data/definitions/460.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1145,11 +1244,13 @@ func NewHTTPParameterPollution() *text.Rule {
 func NewAWSQueryInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-65",
-			Name:        "AWS Query Injection",
-			Description: "Constructing SimpleDB queries containing user input can allow an attacker to view unauthorized records. For more information checkout the CWE-943 (https://cwe.mitre.org/data/definitions/943.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-65",
+			SafeExample:   SampleSafeHSJAVA65,
+			UnsafeExample: SampleVulnerableHSJAVA65,
+			Name:          "AWS Query Injection",
+			Description:   "Constructing SimpleDB queries containing user input can allow an attacker to view unauthorized records. For more information checkout the CWE-943 (https://cwe.mitre.org/data/definitions/943.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1164,11 +1265,13 @@ func NewAWSQueryInjection() *text.Rule {
 func NewPotentialTemplateInjectionPebble() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-66",
-			Name:        "Potential template injection with Pebble ",
-			Description: "A malicious user in control of a template can run malicious code on the server-side. Freemarker templates should be seen as scripts. For more information checkout the (https://portswigger.net/research/server-side-template-injection) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-66",
+			SafeExample:   SampleSafeHSJAVA66,
+			UnsafeExample: SampleVulnerableHSJAVA66,
+			Name:          "Potential template injection with Pebble ",
+			Description:   "A malicious user in control of a template can run malicious code on the server-side. Freemarker templates should be seen as scripts. For more information checkout the (https://portswigger.net/research/server-side-template-injection) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1182,11 +1285,13 @@ func NewPotentialTemplateInjectionPebble() *text.Rule {
 func NewPotentialTemplateInjectionFreemarker() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-67",
-			Name:        "Potential template injection with Freemarker ",
-			Description: "A malicious user in control of a template can run malicious code on the server-side. Freemarker templates should be seen as scripts. For more information checkout the (https://portswigger.net/research/server-side-template-injection) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-67",
+			SafeExample:   SampleSafeHSJAVA67,
+			UnsafeExample: SampleVulnerableHSJAVA67,
+			Name:          "Potential template injection with Freemarker ",
+			Description:   "A malicious user in control of a template can run malicious code on the server-side. Freemarker templates should be seen as scripts. For more information checkout the (https://portswigger.net/research/server-side-template-injection) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1200,11 +1305,13 @@ func NewPotentialTemplateInjectionFreemarker() *text.Rule {
 func NewRequestDispatcherFileDisclosure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-68",
-			Name:        "Request Dispatcher File Disclosure",
-			Description: "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-68",
+			SafeExample:   SampleSafeHSJAVA68,
+			UnsafeExample: SampleVulnerableHSJAVA68,
+			Name:          "Request Dispatcher File Disclosure",
+			Description:   "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1217,11 +1324,13 @@ func NewRequestDispatcherFileDisclosure() *text.Rule {
 func NewSpringFileDisclosure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-69",
-			Name:        "Spring File Disclosure ",
-			Description: "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-69",
+			SafeExample:   SampleSafeHSJAVA69,
+			UnsafeExample: SampleVulnerableHSJAVA69,
+			Name:          "Spring File Disclosure ",
+			Description:   "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1234,11 +1343,13 @@ func NewSpringFileDisclosure() *text.Rule {
 func NewPotentialCodeScriptInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-70",
-			Name:        "Potential code injection when using Script Engine",
-			Description: "Dynamic code is being evaluate. A careful analysis of the code construction should be made. Malicious code execution could lead to data leakage or operating system compromised. For more information checkout the CWE-94 (https://cwe.mitre.org/data/definitions/94.html) advisory and checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-70",
+			SafeExample:   SampleSafeHSJAVA70,
+			UnsafeExample: SampleVulnerableHSJAVA70,
+			Name:          "Potential code injection when using Script Engine",
+			Description:   "Dynamic code is being evaluate. A careful analysis of the code construction should be made. Malicious code execution could lead to data leakage or operating system compromised. For more information checkout the CWE-94 (https://cwe.mitre.org/data/definitions/94.html) advisory and checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1252,11 +1363,13 @@ func NewPotentialCodeScriptInjection() *text.Rule {
 func NewStrutsFileDisclosure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-71",
-			Name:        "Struts File Disclosure ",
-			Description: "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-71",
+			SafeExample:   SampleSafeHSJAVA71,
+			UnsafeExample: SampleVulnerableHSJAVA71,
+			Name:          "Struts File Disclosure ",
+			Description:   "Constructing a server-side redirect path with user input could allow an attacker to download application binaries (including application classes or jar files) or view arbitrary files within protected directories. For more information checkout the CWE-552 (https://cwe.mitre.org/data/definitions/552.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1269,11 +1382,13 @@ func NewStrutsFileDisclosure() *text.Rule {
 func NewUnsafeJacksonDeserializationConfiguration() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-72",
-			Name:        "Unsafe Jackson deserialization configuration ",
-			Description: "When the Jackson databind library is used incorrectly the deserialization of untrusted data can lead to remote code execution, if there is a class in classpath that allows the trigger of malicious operation.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-72",
+			SafeExample:   SampleSafeHSJAVA72,
+			UnsafeExample: SampleVulnerableHSJAVA72,
+			Name:          "Unsafe Jackson deserialization configuration ",
+			Description:   "When the Jackson databind library is used incorrectly the deserialization of untrusted data can lead to remote code execution, if there is a class in classpath that allows the trigger of malicious operation.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1287,11 +1402,13 @@ func NewUnsafeJacksonDeserializationConfiguration() *text.Rule {
 func NewObjectDeserializationUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-73",
-			Name:        "Object deserialization is used",
-			Description: "Object deserialization of untrusted data can lead to remote code execution, if there is a class in classpath that allows the trigger of malicious operation. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-73",
+			SafeExample:   SampleSafeHSJAVA73,
+			UnsafeExample: SampleVulnerableHSJAVA73,
+			Name:          "Object deserialization is used",
+			Description:   "Object deserialization of untrusted data can lead to remote code execution, if there is a class in classpath that allows the trigger of malicious operation. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1306,11 +1423,13 @@ func NewObjectDeserializationUsed() *text.Rule {
 func NewPotentialCodeScriptInjectionWithSpringExpression() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-74",
-			Name:        "Potential code injection when using Spring Expression",
-			Description: "A Spring expression is built with a dynamic value. The source of the value(s) should be verified to avoid that unfiltered values fall into this risky code evaluation. For more information checkout the CWE-94 (https://cwe.mitre.org/data/definitions/94.html) advisory and checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-74",
+			SafeExample:   SampleSafeHSJAVA74,
+			UnsafeExample: SampleVulnerableHSJAVA74,
+			Name:          "Potential code injection when using Spring Expression",
+			Description:   "A Spring expression is built with a dynamic value. The source of the value(s) should be verified to avoid that unfiltered values fall into this risky code evaluation. For more information checkout the CWE-94 (https://cwe.mitre.org/data/definitions/94.html) advisory and checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1323,11 +1442,13 @@ func NewPotentialCodeScriptInjectionWithSpringExpression() *text.Rule {
 func NewCookieWithoutTheHttpOnlyFlag() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-75",
-			Name:        "Cookie without the HttpOnly flag ",
-			Description: "A new cookie is created without the HttpOnly flag set. For more information checkout the (https://owasp.org/www-community/HttpOnly) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-75",
+			SafeExample:   SampleSafeHSJAVA75,
+			UnsafeExample: SampleVulnerableHSJAVA75,
+			Name:          "Cookie without the HttpOnly flag ",
+			Description:   "A new cookie is created without the HttpOnly flag set. For more information checkout the (https://owasp.org/www-community/HttpOnly) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1340,11 +1461,13 @@ func NewCookieWithoutTheHttpOnlyFlag() *text.Rule {
 func NewWebViewWithGeolocationActivated() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-76",
-			Name:        "WebView with geolocation activated",
-			Description: "It is suggested to ask the user for a confirmation about obtaining its geolocation.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-76",
+			SafeExample:   SampleSafeHSJAVA76,
+			UnsafeExample: SampleVulnerableHSJAVA76,
+			Name:          "WebView with geolocation activated",
+			Description:   "It is suggested to ask the user for a confirmation about obtaining its geolocation.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1358,11 +1481,13 @@ func NewWebViewWithGeolocationActivated() *text.Rule {
 func NewUseOfESAPIEncryptor() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-77",
-			Name:        "Use of ESAPI Encryptor",
-			Description: "The ESAPI has a small history of vulnerabilities within the cryptography component. Here is a quick validation list to make sure the Authenticated Encryption is working as expected. For more information checkout the CWE-310 (https://cwe.mitre.org/data/definitions/310.html) advisory",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-77",
+			SafeExample:   SampleSafeHSJAVA77,
+			UnsafeExample: SampleVulnerableHSJAVA77,
+			Name:          "Use of ESAPI Encryptor",
+			Description:   "The ESAPI has a small history of vulnerabilities within the cryptography component. Here is a quick validation list to make sure the Authenticated Encryption is working as expected. For more information checkout the CWE-310 (https://cwe.mitre.org/data/definitions/310.html) advisory",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1377,11 +1502,13 @@ func NewUseOfESAPIEncryptor() *text.Rule {
 func NewStaticIV() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-78",
-			Name:        "Static IV",
-			Description: "Initialization vector must be regenerated for each message to be encrypted. For more information checkout the CWE-329 (https://cwe.mitre.org/data/definitions/329.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-78",
+			SafeExample:   SampleSafeHSJAVA78,
+			UnsafeExample: SampleVulnerableHSJAVA78,
+			Name:          "Static IV",
+			Description:   "Initialization vector must be regenerated for each message to be encrypted. For more information checkout the CWE-329 (https://cwe.mitre.org/data/definitions/329.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1394,11 +1521,13 @@ func NewStaticIV() *text.Rule {
 func NewXMLDecoderUsage() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-79",
-			Name:        "XML Decoder usage",
-			Description: "XMLDecoder should not be used to parse untrusted data. Deserializing user input can lead to arbitrary code execution. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-79",
+			SafeExample:   SampleSafeHSJAVA79,
+			UnsafeExample: SampleVulnerableHSJAVA79,
+			Name:          "XML Decoder usage",
+			Description:   "XMLDecoder should not be used to parse untrusted data. Deserializing user input can lead to arbitrary code execution. For more information checkout the CWE-20 (https://cwe.mitre.org/data/definitions/20.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1411,11 +1540,13 @@ func NewXMLDecoderUsage() *text.Rule {
 func NewPotentialXSSInServlet() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-80",
-			Name:        "Potential XSS in Servlet",
-			Description: "A potential XSS was found. It could be used to execute unwanted Script in a client's browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-80",
+			SafeExample:   SampleSafeHSJAVA80,
+			UnsafeExample: SampleVulnerableHSJAVA80,
+			Name:          "Potential XSS in Servlet",
+			Description:   "A potential XSS was found. It could be used to execute unwanted Script in a client's browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1429,11 +1560,13 @@ func NewPotentialXSSInServlet() *text.Rule {
 func NewEscapingOfSpecialXMLCharactersIsDisabled() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-81",
-			Name:        "Escaping of special XML characters is disabled",
-			Description: "A potential XSS was found. It could be used to execute unwanted Script in a client's browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-81",
+			SafeExample:   SampleSafeHSJAVA81,
+			UnsafeExample: SampleVulnerableHSJAVA81,
+			Name:          "Escaping of special XML characters is disabled",
+			Description:   "A potential XSS was found. It could be used to execute unwanted Script in a client's browser. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1446,11 +1579,13 @@ func NewEscapingOfSpecialXMLCharactersIsDisabled() *text.Rule {
 func NewDynamicVariableInSpringExpression() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-82",
-			Name:        "Dynamic variable in Spring expression",
-			Description: "A Spring expression is built with a dynamic value. The source of the value(s) should be verified to avoid that unfiltered values fall into this risky code evaluation. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-82",
+			SafeExample:   SampleSafeHSJAVA82,
+			UnsafeExample: SampleVulnerableHSJAVA82,
+			Name:          "Dynamic variable in Spring expression",
+			Description:   "A Spring expression is built with a dynamic value. The source of the value(s) should be verified to avoid that unfiltered values fall into this risky code evaluation. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1463,11 +1598,13 @@ func NewDynamicVariableInSpringExpression() *text.Rule {
 func NewRSAUsageWithShortKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-83",
-			Name:        "RSA usage with short key",
-			Description: "The NIST recommends the use of 2048 bits and higher keys for the RSA algorithm. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-83",
+			SafeExample:   SampleSafeHSJAVA83,
+			UnsafeExample: SampleVulnerableHSJAVA83,
+			Name:          "RSA usage with short key",
+			Description:   "The NIST recommends the use of 2048 bits and higher keys for the RSA algorithm. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1480,11 +1617,13 @@ func NewRSAUsageWithShortKey() *text.Rule {
 func NewBlowfishUsageWithShortKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-84",
-			Name:        "Blowfish usage with short key",
-			Description: "The Blowfish cipher supports key sizes from 32 bits to 448 bits. A small key size makes the ciphertext vulnerable to brute force attacks. At least 128 bits of entropy should be used when generating the key if use of Blowfish is required. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-84",
+			SafeExample:   SampleSafeHSJAVA84,
+			UnsafeExample: SampleVulnerableHSJAVA84,
+			Name:          "Blowfish usage with short key",
+			Description:   "The Blowfish cipher supports key sizes from 32 bits to 448 bits. A small key size makes the ciphertext vulnerable to brute force attacks. At least 128 bits of entropy should be used when generating the key if use of Blowfish is required. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1497,11 +1636,13 @@ func NewBlowfishUsageWithShortKey() *text.Rule {
 func NewClassesShouldNotBeLoadedDynamically() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-85",
-			Name:        "Classes should not be loaded dynamically",
-			Description: "Dynamically loaded classes could contain malicious code executed by a static class initializer. I.E. you wouldn't even have to instantiate or explicitly invoke methods on such classes to be vulnerable to an attack. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-85",
+			SafeExample:   SampleSafeHSJAVA85,
+			UnsafeExample: SampleVulnerableHSJAVA85,
+			Name:          "Classes should not be loaded dynamically",
+			Description:   "Dynamically loaded classes could contain malicious code executed by a static class initializer. I.E. you wouldn't even have to instantiate or explicitly invoke methods on such classes to be vulnerable to an attack. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1534,11 +1675,13 @@ func NewClassesShouldNotBeLoadedDynamically() *text.Rule {
 func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-87",
-			Name:        "XPath expressions should not be vulnerable to injection attacks",
-			Description: "User provided data, such as URL parameters, should always be considered untrusted and tainted. Constructing XPath expressions directly from tainted data enables attackers to inject specially crafted values that changes the initial meaning of the expression itself. Successful XPath injection attacks can read sensitive information from XML documents. For more information checkout the CWE-643 (https://cwe.mitre.org/data/definitions/643.html) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-87",
+			SafeExample:   SampleSafeHSJAVA87,
+			UnsafeExample: SampleVulnerableHSJAVA87,
+			Name:          "XPath expressions should not be vulnerable to injection attacks",
+			Description:   "User provided data, such as URL parameters, should always be considered untrusted and tainted. Constructing XPath expressions directly from tainted data enables attackers to inject specially crafted values that changes the initial meaning of the expression itself. Successful XPath injection attacks can read sensitive information from XML documents. For more information checkout the CWE-643 (https://cwe.mitre.org/data/definitions/643.html) advisory",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1551,11 +1694,13 @@ func NewXPathExpressionsShouldNotBeVulnerableToInjectionAttacks() *text.Rule {
 func NewExceptionsShouldNotBeThrownFromServletMethods() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-88",
-			Name:        "Exceptions should not be thrown from servlet methods",
-			Description: "Even though the signatures for methods in a servlet include throws IOException, ServletException, it's a bad idea to let such exceptions be thrown. Failure to catch exceptions in a servlet could leave a system in a vulnerable state. For more information checkout the CWE-600 (https://cwe.mitre.org/data/definitions/600.html) advisory",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-88",
+			SafeExample:   SampleSafeHSJAVA88,
+			UnsafeExample: SampleVulnerableHSJAVA88,
+			Name:          "Exceptions should not be thrown from servlet methods",
+			Description:   "Even though the signatures for methods in a servlet include throws IOException, ServletException, it's a bad idea to let such exceptions be thrown. Failure to catch exceptions in a servlet could leave a system in a vulnerable state. For more information checkout the CWE-600 (https://cwe.mitre.org/data/definitions/600.html) advisory",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1569,8 +1714,10 @@ func NewExceptionsShouldNotBeThrownFromServletMethods() *text.Rule {
 func NewFunctionCallsShouldNotBeVulnerableToPathInjectionAttacks() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:   "HS-JAVA-89",
-			Name: "I/O function calls should not be vulnerable to path injection attacks",
+			ID:            "HS-JAVA-89",
+			SafeExample:   SampleSafeHSJAVA89,
+			UnsafeExample: SampleVulnerableHSJAVA89,
+			Name:          "I/O function calls should not be vulnerable to path injection attacks",
 			Description: `User provided data, such as URL parameters, POST data payloads, or cookies, should always be considered untrusted and tainted. Constructing file system paths directly from tainted data could enable an attacker to inject specially crafted values, such as '../', that change the initial path and, when accessed, resolve to a path on the filesystem where the user should normally not have access.
 
 A successful attack might give an attacker the ability to read, modify, or delete sensitive information from the file system and sometimes even execute arbitrary operating system commands. This is often referred to as a "path traversal" or "directory traversal" attack. For more information checkout the CWE-99 (https://cwe.mitre.org/data/definitions/99.html) advisory and checkout the (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A1-Injection)`,
@@ -1589,11 +1736,13 @@ A successful attack might give an attacker the ability to read, modify, or delet
 func NewActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-90",
-			Name:        "ActiveMQConnectionFactory should not be vulnerable to malicious code deserialization",
-			Description: "Internally, ActiveMQ relies on  serialization mechanism for marshaling/unmashaling of the message payload. Deserialization based on data supplied by the user could lead to remote code execution attacks, where the structure of the serialized data is changed to modify the behavior of the object being unserialized. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-JAVA-90",
+			SafeExample:   SampleSafeHSJAVA90,
+			UnsafeExample: SampleVulnerableHSJAVA90,
+			Name:          "ActiveMQConnectionFactory should not be vulnerable to malicious code deserialization",
+			Description:   "Internally, ActiveMQ relies on  serialization mechanism for marshaling/unmashaling of the message payload. Deserialization based on data supplied by the user could lead to remote code execution attacks, where the structure of the serialized data is changed to modify the behavior of the object being unserialized. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.High.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1606,11 +1755,13 @@ func NewActiveMQConnectionFactoryVulnerableToMaliciousCodeDeserialization() *tex
 func NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-91",
-			Name:        "HTTP response headers should not be vulnerable to injection attacks",
-			Description: "User provided data, such as URL parameters, POST data payloads, or cookies, should always be considered untrusted and tainted. Applications constructing HTTP response headers based on tainted data could allow attackers to change security sensitive headers like Cross-Origin Resource Sharing headers. This could, for example, enable Cross-Site Scripting (XSS) attacks. Web application frameworks and servers might also allow attackers to inject new line characters in headers to craft malformed HTTP response. In this case the application would be vulnerable to a larger range of attacks like HTTP Response Splitting/Smuggling. Most of the time this type of attack is mitigated by default modern web application frameworks but there might be rare cases where older versions are still vulnerable. As a best practice, applications that use user provided data to construct the response header should always validate the data first. Validation should be based on a whitelist. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory and checkout (https://www.owasp.org/index.php/Top_10-2017_A7-Cross-Site_Scripting_(XSS)).",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-91",
+			SafeExample:   SampleSafeHSJAVA91,
+			UnsafeExample: SampleVulnerableHSJAVA91,
+			Name:          "HTTP response headers should not be vulnerable to injection attacks",
+			Description:   "User provided data, such as URL parameters, POST data payloads, or cookies, should always be considered untrusted and tainted. Applications constructing HTTP response headers based on tainted data could allow attackers to change security sensitive headers like Cross-Origin Resource Sharing headers. This could, for example, enable Cross-Site Scripting (XSS) attacks. Web application frameworks and servers might also allow attackers to inject new line characters in headers to craft malformed HTTP response. In this case the application would be vulnerable to a larger range of attacks like HTTP Response Splitting/Smuggling. Most of the time this type of attack is mitigated by default modern web application frameworks but there might be rare cases where older versions are still vulnerable. As a best practice, applications that use user provided data to construct the response header should always validate the data first. Validation should be based on a whitelist. For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory and checkout (https://www.owasp.org/index.php/Top_10-2017_A7-Cross-Site_Scripting_(XSS)).",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1624,11 +1775,13 @@ func NewHTTPResponseHeadersShouldNotBeVulnerableToInjectionAttacks() *text.Rule 
 func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-92",
-			Name:        "OpenSAML2 should be configured to prevent authentication bypass",
-			Description: "From a specially crafted <SAMLResponse> file, an attacker having already access to the SAML system with his own account can bypass the authentication mechanism and be authenticated as another user. This is due to the fact that SAML protocol rely on XML format and how the underlying XML parser interprets XML comments. If an attacker manage to change the <NameID> field identifying the authenticated user with XML comments, he can exploit the vulnerability. For more information checkout the OWASP (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-92",
+			SafeExample:   SampleSafeHSJAVA92,
+			UnsafeExample: SampleVulnerableHSJAVA92,
+			Name:          "OpenSAML2 should be configured to prevent authentication bypass",
+			Description:   "From a specially crafted <SAMLResponse> file, an attacker having already access to the SAML system with his own account can bypass the authentication mechanism and be authenticated as another user. This is due to the fact that SAML protocol rely on XML format and how the underlying XML parser interprets XML comments. If an attacker manage to change the <NameID> field identifying the authenticated user with XML comments, he can exploit the vulnerability. For more information checkout the OWASP (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication) advisory",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1642,11 +1795,13 @@ func NewOpenSAML2ShouldBeConfiguredToPreventAuthenticationBypass() *text.Rule {
 func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-93",
-			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
-			Description: "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-93",
+			SafeExample:   SampleSafeHSJAVA93,
+			UnsafeExample: SampleVulnerableHSJAVA93,
+			Name:          "HttpServletRequest.getRequestedSessionId should not be used",
+			Description:   "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1659,11 +1814,13 @@ func NewHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text.Rule {
 func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-94",
-			Name:        "HttpServletRequest.getRequestedSessionId should not be used",
-			Description: "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-94",
+			SafeExample:   SampleSafeHSJAVA94,
+			UnsafeExample: SampleVulnerableHSJAVA94,
+			Name:          "HttpServletRequest.getRequestedSessionId should not be used",
+			Description:   "Due to the ability of the end-user to manually change the value, the session ID in the request should only be used by a servlet container (E.G. Tomcat or Jetty) to see if the value matches the ID of an an existing session. If it does not, the user should be considered unauthenticated. Moreover, this session ID should never be logged to prevent hijacking of active sessions. For more information checkout the CWE-807 (https://cwe.mitre.org/data/definitions/807) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1676,11 +1833,13 @@ func NewJakartaAndHttpServletRequestGetRequestedSessionIdShouldNotBeUsed() *text
 func NewLDAPAuthenticatedAnalyzeYourCode() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-95",
-			Name:        "LDAP authenticated Analyze your code",
-			Description: `An LDAP client authenticates to an LDAP server with a "bind request" which provides, among other, a simple authentication method. Anonymous binds and unauthenticated binds allow access to information in the LDAP directory without providing a password, their use is therefore strongly discouraged. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory and checkout (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication).`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-95",
+			SafeExample:   SampleSafeHSJAVA95,
+			UnsafeExample: SampleVulnerableHSJAVA95,
+			Name:          "LDAP authenticated Analyze your code",
+			Description:   `An LDAP client authenticates to an LDAP server with a "bind request" which provides, among other, a simple authentication method. Anonymous binds and unauthenticated binds allow access to information in the LDAP directory without providing a password, their use is therefore strongly discouraged. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory and checkout (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication).`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1694,11 +1853,13 @@ func NewLDAPAuthenticatedAnalyzeYourCode() *text.Rule {
 func NewWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-96",
-			Name:        "Web applications should not have a main method",
-			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-96",
+			SafeExample:   SampleSafeHSJAVA96,
+			UnsafeExample: SampleVulnerableHSJAVA96,
+			Name:          "Web applications should not have a main method",
+			Description:   "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1711,11 +1872,13 @@ func NewWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
 func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-97",
-			Name:        "Web applications should not have a main method",
-			Description: "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-97",
+			SafeExample:   SampleSafeHSJAVA97,
+			UnsafeExample: SampleVulnerableHSJAVA97,
+			Name:          "Web applications should not have a main method",
+			Description:   "Having a main method in a web application opens a door to the application logic that an attacker may never be able to reach (but watch out if one does!), but it is a sloppy practice and indicates that other problems may be present. For more information checkout the CWE-489 (https://cwe.mitre.org/data/definitions/489.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1728,11 +1891,13 @@ func NewJakartaAndWebApplicationsShouldHotHaveAMainMethod() *text.Rule {
 func NewSecureRandomSeedsShouldNotBePredictable() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-98",
-			Name:        "SecureRandom seeds should not be predictable",
-			Description: "The java.security.SecureRandom class provides a strong random number generator (RNG) appropriate for cryptography. However, seeding it with a constant or another predictable value will weaken it significantly. In general, it is much safer to rely on the seed provided by the SecureRandom implementation. For more information checkout the CWE-330 (https://cwe.mitre.org/data/definitions/330.html) advisory and checkout (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A6-Security_Misconfiguration).",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-98",
+			SafeExample:   SampleSafeHSJAVA98,
+			UnsafeExample: SampleVulnerableHSJAVA98,
+			Name:          "SecureRandom seeds should not be predictable",
+			Description:   "The java.security.SecureRandom class provides a strong random number generator (RNG) appropriate for cryptography. However, seeding it with a constant or another predictable value will weaken it significantly. In general, it is much safer to rely on the seed provided by the SecureRandom implementation. For more information checkout the CWE-330 (https://cwe.mitre.org/data/definitions/330.html) advisory and checkout (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A6-Security_Misconfiguration).",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -1745,11 +1910,13 @@ func NewSecureRandomSeedsShouldNotBePredictable() *text.Rule {
 func NewFileIsWorldReadable() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-99",
-			Name:        "File Is World Readable",
-			Description: "The file is World Readable. Any App can read from the file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-99",
+			SafeExample:   SampleSafeHSJAVA99,
+			UnsafeExample: SampleVulnerableHSJAVA99,
+			Name:          "File Is World Readable",
+			Description:   "The file is World Readable. Any App can read from the file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1762,11 +1929,13 @@ func NewFileIsWorldReadable() *text.Rule {
 func NewFileIsWorldWritable() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-100",
-			Name:        "File Is World Writable",
-			Description: "The file is World Writable. Any App can write to the file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-100",
+			SafeExample:   SampleSafeHSJAVA100,
+			UnsafeExample: SampleVulnerableHSJAVA100,
+			Name:          "File Is World Writable",
+			Description:   "The file is World Writable. Any App can write to the file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1779,11 +1948,13 @@ func NewFileIsWorldWritable() *text.Rule {
 func NewNoWriteExternalContent() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-101",
-			Name:        "No Write External Content",
-			Description: "App can read/write to External Storage. Any App can read data written to External Storage. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-101",
+			SafeExample:   SampleSafeHSJAVA101,
+			UnsafeExample: SampleVulnerableHSJAVA101,
+			Name:          "No Write External Content",
+			Description:   "App can read/write to External Storage. Any App can read data written to External Storage. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1796,11 +1967,13 @@ func NewNoWriteExternalContent() *text.Rule {
 func NewNoUseIVsWeak() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-102",
-			Name:        "No use IVs weak",
-			Description: `The App may use weak IVs like "0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00" or "0x01,0x02,0x03,0x04,0x05,0x06,0x07". Not using a random IV makes the resulting ciphertext much more predictable and susceptible to a dictionary attack. For more information checkout the CWE-329 (https://cwe.mitre.org/data/definitions/329.html) advisory.`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-102",
+			SafeExample:   SampleSafeHSJAVA102,
+			UnsafeExample: SampleVulnerableHSJAVA102,
+			Name:          "No use IVs weak",
+			Description:   `The App may use weak IVs like "0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00" or "0x01,0x02,0x03,0x04,0x05,0x06,0x07". Not using a random IV makes the resulting ciphertext much more predictable and susceptible to a dictionary attack. For more information checkout the CWE-329 (https://cwe.mitre.org/data/definitions/329.html) advisory.`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1813,11 +1986,13 @@ func NewNoUseIVsWeak() *text.Rule {
 func NewRootDetectionCapabilities() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-103",
-			Name:        "This App may have root detection capabilities.",
-			Description: "This App may have root detection capabilities.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-103",
+			SafeExample:   SampleSafeHSJAVA103,
+			UnsafeExample: SampleVulnerableHSJAVA103,
+			Name:          "This App may have root detection capabilities.",
+			Description:   "This App may have root detection capabilities.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1835,11 +2010,13 @@ func NewRootDetectionCapabilities() *text.Rule {
 func NewJARURLConnection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-104",
-			Name:        "JAR URL Connection",
-			Description: "JAR URL Connection",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-104",
+			SafeExample:   SampleSafeHSJAVA104,
+			UnsafeExample: SampleVulnerableHSJAVA104,
+			Name:          "JAR URL Connection",
+			Description:   "JAR URL Connection",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1893,11 +2070,13 @@ func NewJARURLConnection() *text.Rule {
 func NewOverlyPermissiveFilePermission() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-107",
-			Name:        "Overly permissive file permission",
-			Description: "It is generally a bad practices to set overly permissive file permission such as read+write+exec for all users. If the file affected is a configuration, a binary, a script or sensitive data, it can lead to privilege escalation or information leakage. For more information checkout the CWE-732 (https://cwe.mitre.org/data/definitions/732.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-107",
+			SafeExample:   SampleSafeHSJAVA107,
+			UnsafeExample: SampleVulnerableHSJAVA107,
+			Name:          "Overly permissive file permission",
+			Description:   "It is generally a bad practices to set overly permissive file permission such as read+write+exec for all users. If the file affected is a configuration, a binary, a script or sensitive data, it can lead to privilege escalation or information leakage. For more information checkout the CWE-732 (https://cwe.mitre.org/data/definitions/732.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1912,11 +2091,13 @@ func NewOverlyPermissiveFilePermission() *text.Rule {
 func NewCipherGetInstanceInsecure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-108",
-			Name:        "DES, DESede, RSA is insecure",
-			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-108",
+			SafeExample:   SampleSafeHSJAVA108,
+			UnsafeExample: SampleVulnerableHSJAVA108,
+			Name:          "DES, DESede, RSA is insecure",
+			Description:   "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -1933,11 +2114,13 @@ func NewCipherGetInstanceInsecure() *text.Rule {
 func NewHiddenElements() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-109",
-			Name:        "Hidden elements",
-			Description: "Hidden elements in view can be used to hide data from user. But this data can be leaked. For more information checkout the CWE-919 (https://cwe.mitre.org/data/definitions/919.html) advisory.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-109",
+			SafeExample:   SampleSafeHSJAVA109,
+			UnsafeExample: SampleVulnerableHSJAVA109,
+			Name:          "Hidden elements",
+			Description:   "Hidden elements in view can be used to hide data from user. But this data can be leaked. For more information checkout the CWE-919 (https://cwe.mitre.org/data/definitions/919.html) advisory.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -1949,11 +2132,13 @@ func NewHiddenElements() *text.Rule {
 func NewWeakCypherBlockMode() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-110",
-			Name:        "Weak block mode for Cryptographic Hash Function",
-			Description: "A weak ECB, (a.k.a 'block mode') was found in one of your Ciphers. Always use a strong, high entropy hash, for example the SHA-512 with salt options. For more information check CWE-327 (https://cwe.mitre.org/data/definitions/327.html), CWE-719 (https://cwe.mitre.org/data/definitions/719.html), CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-780 (https://cwe.mitre.org/data/definitions/780.html) for deeper details on how to fix it.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-110",
+			SafeExample:   SampleSafeHSJAVA110,
+			UnsafeExample: SampleVulnerableHSJAVA110,
+			Name:          "Weak block mode for Cryptographic Hash Function",
+			Description:   "A weak ECB, (a.k.a 'block mode') was found in one of your Ciphers. Always use a strong, high entropy hash, for example the SHA-512 with salt options. For more information check CWE-327 (https://cwe.mitre.org/data/definitions/327.html), CWE-719 (https://cwe.mitre.org/data/definitions/719.html), CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-780 (https://cwe.mitre.org/data/definitions/780.html) for deeper details on how to fix it.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -1969,11 +2154,13 @@ func NewWeakCypherBlockMode() *text.Rule {
 func NewWeakHash() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-111",
-			Name:        "Weak Cryptographic Hash Function used",
-			Description: "Using a weak CHF pose a threat to your application security since it can be vulnerable to a number of attacks that could lead to data leaking, improper access of features and resources of your infrastructure and even rogue sessions. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-111",
+			SafeExample:   SampleSafeHSJAVA111,
+			UnsafeExample: SampleVulnerableHSJAVA111,
+			Name:          "Weak Cryptographic Hash Function used",
+			Description:   "Using a weak CHF pose a threat to your application security since it can be vulnerable to a number of attacks that could lead to data leaking, improper access of features and resources of your infrastructure and even rogue sessions. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -1989,11 +2176,13 @@ func NewWeakHash() *text.Rule {
 func NewPossibleFileWithVulnerabilityWhenOpen() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-112",
-			Name:        "Possible  File With Vulnerability When Open",
-			Description: "The file is World Readable and Writable. Any App can read/write to the file. For more information checkout the CWE-276  (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-112",
+			SafeExample:   SampleSafeHSJAVA112,
+			UnsafeExample: SampleVulnerableHSJAVA112,
+			Name:          "Possible  File With Vulnerability When Open",
+			Description:   "The file is World Readable and Writable. Any App can read/write to the file. For more information checkout the CWE-276  (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2005,11 +2194,13 @@ func NewPossibleFileWithVulnerabilityWhenOpen() *text.Rule {
 func NewSensitiveInformationNotEncrypted() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-113",
-			Name:        "Sensitive Information Not Encrypted",
-			Description: "App can write to App Directory. Sensitive Information should be encrypted. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-113",
+			SafeExample:   SampleSafeHSJAVA113,
+			UnsafeExample: SampleVulnerableHSJAVA113,
+			Name:          "Sensitive Information Not Encrypted",
+			Description:   "App can write to App Directory. Sensitive Information should be encrypted. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2021,11 +2212,13 @@ func NewSensitiveInformationNotEncrypted() *text.Rule {
 func NewInsecureRandomNumberGenerator() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-114",
-			Name:        "Insecure Random Number Generator",
-			Description: "The App uses an insecure Random Number Generator. For more information checkout the CWE-330 (https://cwe.mitre.org/data/definitions/330.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-114",
+			SafeExample:   SampleSafeHSJAVA114,
+			UnsafeExample: SampleVulnerableHSJAVA114,
+			Name:          "Insecure Random Number Generator",
+			Description:   "The App uses an insecure Random Number Generator. For more information checkout the CWE-330 (https://cwe.mitre.org/data/definitions/330.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2038,11 +2231,13 @@ func NewInsecureRandomNumberGenerator() *text.Rule {
 func NewNoDefaultHash() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-115",
-			Name:        "No Default  Hash",
-			Description: `This App uses  Hash Code. It"s a weak hash function and should never be used in Secure Crypto Implementation. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-115",
+			SafeExample:   SampleSafeHSJAVA115,
+			UnsafeExample: SampleVulnerableHSJAVA115,
+			Name:          "No Default  Hash",
+			Description:   `This App uses  Hash Code. It"s a weak hash function and should never be used in Secure Crypto Implementation. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2054,11 +2249,13 @@ func NewNoDefaultHash() *text.Rule {
 func NewLayoutParamsFlagSecure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-116",
-			Name:        "Layout Params Flag Secure",
-			Description: "These activities prevent screenshot when they go to background.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-116",
+			SafeExample:   SampleSafeHSJAVA116,
+			UnsafeExample: SampleVulnerableHSJAVA116,
+			Name:          "Layout Params Flag Secure",
+			Description:   "These activities prevent screenshot when they go to background.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2070,11 +2267,13 @@ func NewLayoutParamsFlagSecure() *text.Rule {
 func NewNoUseSQLCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-117",
-			Name:        "No use SQL Cipher",
-			Description: "This App uses SQL Cipher. But the secret may be hardcoded. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-117",
+			SafeExample:   SampleSafeHSJAVA117,
+			UnsafeExample: SampleVulnerableHSJAVA117,
+			Name:          "No use SQL Cipher",
+			Description:   "This App uses SQL Cipher. But the secret may be hardcoded. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2086,11 +2285,13 @@ func NewNoUseSQLCipher() *text.Rule {
 func NewPreventTapJackingAttacks() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-118",
-			Name:        "Prevent Tap Jacking Attacks",
-			Description: "This app has capabilities to prevent tapjacking attacks. For more information checkout the CWE-1021 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-118",
+			SafeExample:   SampleSafeHSJAVA118,
+			UnsafeExample: SampleVulnerableHSJAVA118,
+			Name:          "Prevent Tap Jacking Attacks",
+			Description:   "This app has capabilities to prevent tapjacking attacks. For more information checkout the CWE-1021 (https://cwe.mitre.org/data/definitions/1021.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2102,11 +2303,13 @@ func NewPreventTapJackingAttacks() *text.Rule {
 func NewPreventWriteSensitiveInformationInTmpFile() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-119",
-			Name:        "Prevent Write sensitive information in tmp file",
-			Description: "App creates temp file. Sensitive information should never be written into a temp file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-119",
+			SafeExample:   SampleSafeHSJAVA119,
+			UnsafeExample: SampleVulnerableHSJAVA119,
+			Name:          "Prevent Write sensitive information in tmp file",
+			Description:   "App creates temp file. Sensitive information should never be written into a temp file. For more information checkout the CWE-276 (https://cwe.mitre.org/data/definitions/276.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2118,11 +2321,13 @@ func NewPreventWriteSensitiveInformationInTmpFile() *text.Rule {
 func NewGetWindowFlagSecure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-120",
-			Name:        "Get Window Flag Secure",
-			Description: "This App has capabilities to prevent against Screenshots from Recent Task History/Now On Tap etc.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-120",
+			SafeExample:   SampleSafeHSJAVA120,
+			UnsafeExample: SampleVulnerableHSJAVA120,
+			Name:          "Get Window Flag Secure",
+			Description:   "This App has capabilities to prevent against Screenshots from Recent Task History/Now On Tap etc.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2134,11 +2339,13 @@ func NewGetWindowFlagSecure() *text.Rule {
 func NewLoadingNativeCode() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-121",
-			Name:        "Loading Native Code",
-			Description: "Loading Native Code (Shared Library)",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-121",
+			SafeExample:   SampleSafeHSJAVA121,
+			UnsafeExample: SampleVulnerableHSJAVA121,
+			Name:          "Loading Native Code",
+			Description:   "Loading Native Code (Shared Library)",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2150,11 +2357,13 @@ func NewLoadingNativeCode() *text.Rule {
 func NewDynamicClassAndDexloading() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-122",
-			Name:        "Dynamic Class and Dexloading",
-			Description: "Dynamic Class and Dexloading",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-122",
+			SafeExample:   SampleSafeHSJAVA122,
+			UnsafeExample: SampleVulnerableHSJAVA122,
+			Name:          "Dynamic Class and Dexloading",
+			Description:   "Dynamic Class and Dexloading",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2166,11 +2375,13 @@ func NewDynamicClassAndDexloading() *text.Rule {
 func NewCryptoImport() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-123",
-			Name:        " Crypto import",
-			Description: " Crypto import",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-123",
+			SafeExample:   SampleSafeHSJAVA123,
+			UnsafeExample: SampleVulnerableHSJAVA123,
+			Name:          " Crypto import",
+			Description:   " Crypto import",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2182,11 +2393,13 @@ func NewCryptoImport() *text.Rule {
 func NewStartingService() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-124",
-			Name:        "Starting Service",
-			Description: "Starting Service",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-124",
+			SafeExample:   SampleSafeHSJAVA124,
+			UnsafeExample: SampleVulnerableHSJAVA124,
+			Name:          "Starting Service",
+			Description:   "Starting Service",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2198,11 +2411,13 @@ func NewStartingService() *text.Rule {
 func NewSendingBroadcast() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-125",
-			Name:        "Sending Broadcast",
-			Description: "Sending Broadcast",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-125",
+			SafeExample:   SampleSafeHSJAVA125,
+			UnsafeExample: SampleVulnerableHSJAVA125,
+			Name:          "Sending Broadcast",
+			Description:   "Sending Broadcast",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2214,11 +2429,13 @@ func NewSendingBroadcast() *text.Rule {
 func NewLocalFileOperations() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-126",
-			Name:        "Local File I/O Operations",
-			Description: "Local File I/O Operations",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-126",
+			SafeExample:   SampleSafeHSJAVA126,
+			UnsafeExample: SampleVulnerableHSJAVA126,
+			Name:          "Local File I/O Operations",
+			Description:   "Local File I/O Operations",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2230,11 +2447,13 @@ func NewLocalFileOperations() *text.Rule {
 func NewInterProcessCommunication() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-127",
-			Name:        "Inter Process Communication",
-			Description: "Inter Process Communication",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-127",
+			SafeExample:   SampleSafeHSJAVA127,
+			UnsafeExample: SampleVulnerableHSJAVA127,
+			Name:          "Inter Process Communication",
+			Description:   "Inter Process Communication",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2246,11 +2465,13 @@ func NewInterProcessCommunication() *text.Rule {
 func NewDefaultHttpClient() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-128",
-			Name:        "DefaultHttpClient with default constructor is not compatible with TLS 1.2",
-			Description: "Upgrade your implementation to use one of the recommended constructs and configure https.protocols JVM option to include TLSv1.2. Use SystemDefaultHttpClient instead. For more information checkout (https://blogs.oracle.com/java-platform-group/diagnosing-tls,-ssl,-and-https)",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-128",
+			SafeExample:   SampleSafeHSJAVA128,
+			UnsafeExample: SampleVulnerableHSJAVA128,
+			Name:          "DefaultHttpClient with default constructor is not compatible with TLS 1.2",
+			Description:   "Upgrade your implementation to use one of the recommended constructs and configure https.protocols JVM option to include TLSv1.2. Use SystemDefaultHttpClient instead. For more information checkout (https://blogs.oracle.com/java-platform-group/diagnosing-tls,-ssl,-and-https)",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2262,11 +2483,13 @@ func NewDefaultHttpClient() *text.Rule {
 func NewWeakSSLContext() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-129",
-			Name:        "Weak SSLContext",
-			Description: `Upgrade your implementation to the following, and configure https.protocols JVM option to include TLSv1.2:. Use SSLContext.getInstance("TLS"). For more information checkout (https://blogs.oracle.com/java-platform-group/diagnosing-tls,-ssl,-and-https)`,
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-129",
+			SafeExample:   SampleSafeHSJAVA129,
+			UnsafeExample: SampleVulnerableHSJAVA129,
+			Name:          "Weak SSLContext",
+			Description:   `Upgrade your implementation to the following, and configure https.protocols JVM option to include TLSv1.2:. Use SSLContext.getInstance("TLS"). For more information checkout (https://blogs.oracle.com/java-platform-group/diagnosing-tls,-ssl,-and-https)`,
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2278,11 +2501,13 @@ func NewWeakSSLContext() *text.Rule {
 func NewHostnameVerifierThatAcceptAnySignedCertificates() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-130",
-			Name:        "HostnameVerifier that accept any signed certificates",
-			Description: "A HostnameVerifier that accept any host are often use because of certificate reuse on many hosts. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-130",
+			SafeExample:   SampleSafeHSJAVA130,
+			UnsafeExample: SampleVulnerableHSJAVA130,
+			Name:          "HostnameVerifier that accept any signed certificates",
+			Description:   "A HostnameVerifier that accept any host are often use because of certificate reuse on many hosts. As a consequence, this is vulnerable to Man-in-the-middle attacks since the client will trust any certificate. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2294,11 +2519,13 @@ func NewHostnameVerifierThatAcceptAnySignedCertificates() *text.Rule {
 func NewURLRewritingMethod() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-131",
-			Name:        "URL rewriting method",
-			Description: "URL rewriting has significant security risks. Since session ID appears in the URL, it may be easily seen by third parties. Session ID in the URL can be disclosed in many ways. For more information checkout the (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-131",
+			SafeExample:   SampleSafeHSJAVA131,
+			UnsafeExample: SampleVulnerableHSJAVA131,
+			Name:          "URL rewriting method",
+			Description:   "URL rewriting has significant security risks. Since session ID appears in the URL, it may be easily seen by third parties. Session ID in the URL can be disclosed in many ways. For more information checkout the (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A2-Broken_Authentication) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2310,11 +2537,13 @@ func NewURLRewritingMethod() *text.Rule {
 func NewDisablingHTMLEscaping() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-132",
-			Name:        "Disabling HTML escaping",
-			Description: "Disabling HTML escaping put the application at risk for Cross-Site Scripting (XSS). For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-132",
+			SafeExample:   SampleSafeHSJAVA132,
+			UnsafeExample: SampleVulnerableHSJAVA132,
+			Name:          "Disabling HTML escaping",
+			Description:   "Disabling HTML escaping put the application at risk for Cross-Site Scripting (XSS). For more information checkout the CWE-79 (https://cwe.mitre.org/data/definitions/79.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2326,11 +2555,13 @@ func NewDisablingHTMLEscaping() *text.Rule {
 func NewOverlyPermissiveCORSPolicy() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-133",
-			Name:        "Overly permissive CORS policy",
-			Description: "A web server defines which other domains are allowed to access its domain using cross-origin requests. However, caution should be taken when defining the header because an overly permissive CORS policy will allow a malicious application to communicate with the victim application in an inappropriate way, leading to spoofing, data theft, relay and other attacks. For more information checkout the (https://fetch.spec.whatwg.org/) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-133",
+			SafeExample:   SampleSafeHSJAVA133,
+			UnsafeExample: SampleVulnerableHSJAVA133,
+			Name:          "Overly permissive CORS policy",
+			Description:   "A web server defines which other domains are allowed to access its domain using cross-origin requests. However, caution should be taken when defining the header because an overly permissive CORS policy will allow a malicious application to communicate with the victim application in an inappropriate way, leading to spoofing, data theft, relay and other attacks. For more information checkout the (https://fetch.spec.whatwg.org/) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2342,11 +2573,13 @@ func NewOverlyPermissiveCORSPolicy() *text.Rule {
 func NewSQLInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-134",
-			Name:        "SQL Injection",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Alternatively to prepare statements, each parameter can be escaped manually. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-134",
+			SafeExample:   SampleSafeHSJAVA134,
+			UnsafeExample: SampleVulnerableHSJAVA134,
+			Name:          "SQL Injection",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Alternatively to prepare statements, each parameter can be escaped manually. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2358,11 +2591,13 @@ func NewSQLInjection() *text.Rule {
 func NewSQLInjectionWithTurbine() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-135",
-			Name:        "SQL Injection With Turbine",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Turbine API provide a DSL to build query with  code. Alternatively to prepare statements, each parameter can be escaped manually. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-135",
+			SafeExample:   SampleSafeHSJAVA135,
+			UnsafeExample: SampleVulnerableHSJAVA135,
+			Name:          "SQL Injection With Turbine",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Turbine API provide a DSL to build query with  code. Alternatively to prepare statements, each parameter can be escaped manually. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2374,11 +2609,13 @@ func NewSQLInjectionWithTurbine() *text.Rule {
 func NewSQLInjectionWithHibernate() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-136",
-			Name:        "SQL Injection With Hibernate",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Alternatively to prepare statements, Hibernate Criteria can be used. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory and checkout the CWE-564 (https://cwe.mitre.org/data/definitions/564.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-136",
+			SafeExample:   SampleSafeHSJAVA136,
+			UnsafeExample: SampleVulnerableHSJAVA136,
+			Name:          "SQL Injection With Hibernate",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. Alternatively to prepare statements, Hibernate Criteria can be used. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory and checkout the CWE-564 (https://cwe.mitre.org/data/definitions/564.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2390,11 +2627,13 @@ func NewSQLInjectionWithHibernate() *text.Rule {
 func NewSQLInjectionWithJDO() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-137",
-			Name:        "SQL Injection With JDO",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-137",
+			SafeExample:   SampleSafeHSJAVA137,
+			UnsafeExample: SampleVulnerableHSJAVA137,
+			Name:          "SQL Injection With JDO",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2406,11 +2645,13 @@ func NewSQLInjectionWithJDO() *text.Rule {
 func NewSQLInjectionWithJPA() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-138",
-			Name:        "SQL Injection With JPA",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-138",
+			SafeExample:   SampleSafeHSJAVA138,
+			UnsafeExample: SampleVulnerableHSJAVA138,
+			Name:          "SQL Injection With JPA",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2422,11 +2663,13 @@ func NewSQLInjectionWithJPA() *text.Rule {
 func NewSQLInjectionWithSpringJDBC() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-139",
-			Name:        "SQL Injection Spring JDBC",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-139",
+			SafeExample:   SampleSafeHSJAVA139,
+			UnsafeExample: SampleVulnerableHSJAVA139,
+			Name:          "SQL Injection Spring JDBC",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2438,11 +2681,13 @@ func NewSQLInjectionWithSpringJDBC() *text.Rule {
 func NewSQLInjectionWithJDBC() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-140",
-			Name:        "SQL Injection JDBC",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-140",
+			SafeExample:   SampleSafeHSJAVA140,
+			UnsafeExample: SampleVulnerableHSJAVA140,
+			Name:          "SQL Injection JDBC",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2454,11 +2699,13 @@ func NewSQLInjectionWithJDBC() *text.Rule {
 func NewLDAPInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-141",
-			Name:        "Potential LDAP Injection",
-			Description: "Just like SQL, all inputs passed to an LDAP query need to be passed in safely. Unfortunately, LDAP doesn't have prepared statement interfaces like SQL. Therefore, the primary defense against LDAP injection is strong input validation of any untrusted data before including it in an LDAP query. For more information checkout the CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-141",
+			SafeExample:   SampleSafeHSJAVA141,
+			UnsafeExample: SampleVulnerableHSJAVA141,
+			Name:          "Potential LDAP Injection",
+			Description:   "Just like SQL, all inputs passed to an LDAP query need to be passed in safely. Unfortunately, LDAP doesn't have prepared statement interfaces like SQL. Therefore, the primary defense against LDAP injection is strong input validation of any untrusted data before including it in an LDAP query. For more information checkout the CWE-90 (https://cwe.mitre.org/data/definitions/90.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2470,11 +2717,13 @@ func NewLDAPInjection() *text.Rule {
 func NewPotentialExternalControl() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-142",
-			Name:        "Potential external control of configuration",
-			Description: "Allowing external control of system settings can disrupt service or cause an application to behave in unexpected, and potentially malicious ways. An attacker could cause an error by providing a nonexistent catalog name or connect to an unauthorized portion of the database. For more information checkout the CWE-15 (https://cwe.mitre.org/data/definitions/15.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-142",
+			SafeExample:   SampleSafeHSJAVA142,
+			UnsafeExample: SampleVulnerableHSJAVA142,
+			Name:          "Potential external control of configuration",
+			Description:   "Allowing external control of system settings can disrupt service or cause an application to behave in unexpected, and potentially malicious ways. An attacker could cause an error by providing a nonexistent catalog name or connect to an unauthorized portion of the database. For more information checkout the CWE-15 (https://cwe.mitre.org/data/definitions/15.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2486,11 +2735,13 @@ func NewPotentialExternalControl() *text.Rule {
 func NewBadHexadecimalConcatenation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-143",
-			Name:        "Bad hexadecimal concatenation",
-			Description: "When converting a byte array containing a hash signature to a human readable string, a conversion mistake can be made if the array is read byte by byte. The following sample illustrates the use of the method Integer.toHexString() which will trim any leading zeroes from each byte of the computed hash value. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-143",
+			SafeExample:   SampleSafeHSJAVA143,
+			UnsafeExample: SampleVulnerableHSJAVA143,
+			Name:          "Bad hexadecimal concatenation",
+			Description:   "When converting a byte array containing a hash signature to a human readable string, a conversion mistake can be made if the array is read byte by byte. The following sample illustrates the use of the method Integer.toHexString() which will trim any leading zeroes from each byte of the computed hash value. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2502,11 +2753,13 @@ func NewBadHexadecimalConcatenation() *text.Rule {
 func NewNullCipherInsecure() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-144",
-			Name:        "NullCipher is insecure",
-			Description: "The NullCipher is rarely used intentionally in production applications. It implements the Cipher interface by returning ciphertext identical to the supplied plaintext. In a few contexts, such as testing, a NullCipher may be appropriate. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-144",
+			SafeExample:   SampleSafeHSJAVA144,
+			UnsafeExample: SampleVulnerableHSJAVA144,
+			Name:          "NullCipher is insecure",
+			Description:   "The NullCipher is rarely used intentionally in production applications. It implements the Cipher interface by returning ciphertext identical to the supplied plaintext. In a few contexts, such as testing, a NullCipher may be appropriate. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2518,11 +2771,13 @@ func NewNullCipherInsecure() *text.Rule {
 func NewUnsafeHashEquals() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-145",
-			Name:        "Unsafe hash equals",
-			Description: "An attacker might be able to detect the value of the secret hash due to the exposure of comparison timing. When the functions Arrays.equals() or String.equals() are called, they will exit earlier if fewer bytes are matched. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-145",
+			SafeExample:   SampleSafeHSJAVA145,
+			UnsafeExample: SampleVulnerableHSJAVA145,
+			Name:          "Unsafe hash equals",
+			Description:   "An attacker might be able to detect the value of the secret hash due to the exposure of comparison timing. When the functions Arrays.equals() or String.equals() are called, they will exit earlier if fewer bytes are matched. For more information checkout the CWE-704 (https://cwe.mitre.org/data/definitions/704.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2534,11 +2789,13 @@ func NewUnsafeHashEquals() *text.Rule {
 func NewUnvalidatedRedirect() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-146",
-			Name:        "Unvalidated Redirect",
-			Description: "Unvalidated redirects occur when an application redirects a user to a destination URL specified by a user supplied parameter that is not validated. Such vulnerabilities can be used to facilitate phishing attacks. For more information checkout the CWE-601 (https://cwe.mitre.org/data/definitions/601.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-JAVA-146",
+			SafeExample:   SampleSafeHSJAVA146,
+			UnsafeExample: SampleVulnerableHSJAVA146,
+			Name:          "Unvalidated Redirect",
+			Description:   "Unvalidated redirects occur when an application redirects a user to a destination URL specified by a user supplied parameter that is not validated. Such vulnerabilities can be used to facilitate phishing attacks. For more information checkout the CWE-601 (https://cwe.mitre.org/data/definitions/601.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2550,11 +2807,13 @@ func NewUnvalidatedRedirect() *text.Rule {
 func NewRequestMappingMethodsNotPublic() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-147",
-			Name:        "@RequestMapping methods should be public",
-			Description: "A method with a @RequestMapping annotation part of a class annotated with @Controller (directly or indirectly through a meta annotation - @RestController from Spring Boot is a good example) will be called to handle matching web requests. That will happen even if the method is private, because Spring invokes such methods via reflection, without checking visibility. For more information checkout the OWASAP:A6 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A6-Security_Misconfiguration) advisory",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-147",
+			SafeExample:   SampleSafeHSJAVA147,
+			UnsafeExample: SampleVulnerableHSJAVA147,
+			Name:          "@RequestMapping methods should be public",
+			Description:   "A method with a @RequestMapping annotation part of a class annotated with @Controller (directly or indirectly through a meta annotation - @RestController from Spring Boot is a good example) will be called to handle matching web requests. That will happen even if the method is private, because Spring invokes such methods via reflection, without checking visibility. For more information checkout the OWASAP:A6 (https://owasp.org/www-project-top-ten/OWASP_Top_Ten_2017/Top_10-2017_A6-Security_Misconfiguration) advisory",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2566,11 +2825,13 @@ func NewRequestMappingMethodsNotPublic() *text.Rule {
 func NewLDAPDeserializationNotDisabled() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-148",
-			Name:        "LDAP deserialization should be disabled",
-			Description: "JNDI supports the deserialization of objects from LDAP directories, which is fundamentally insecure and can lead to remote code execution. This rule raises an issue when an LDAP search query is executed with SearchControls configured to allow deserialization. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-148",
+			SafeExample:   SampleSafeHSJAVA148,
+			UnsafeExample: SampleVulnerableHSJAVA148,
+			Name:          "LDAP deserialization should be disabled",
+			Description:   "JNDI supports the deserialization of objects from LDAP directories, which is fundamentally insecure and can lead to remote code execution. This rule raises an issue when an LDAP search query is executed with SearchControls configured to allow deserialization. For more information checkout the CWE-502 (https://cwe.mitre.org/data/definitions/502.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2582,11 +2843,13 @@ func NewLDAPDeserializationNotDisabled() *text.Rule {
 func NewDatabasesPasswordNotProtected() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-149",
-			Name:        "Databases should be password-protected",
-			Description: "Databases should always be password protected. The use of a database connection with an empty password is a clear indication of a database that is not protected. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-JAVA-149",
+			SafeExample:   SampleSafeHSJAVA149,
+			UnsafeExample: SampleVulnerableHSJAVA149,
+			Name:          "Databases should be password-protected",
+			Description:   "Databases should always be password protected. The use of a database connection with an empty password is a clear indication of a database that is not protected. For more information checkout the CWE-521 (https://cwe.mitre.org/data/definitions/521.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Low.ToString(),
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -2598,7 +2861,25 @@ func NewDatabasesPasswordNotProtected() *text.Rule {
 func NewVulnerableRemoteCodeInjectionApacheLog4j() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-JAVA-150",
+			ID: "HS-JAVA-150",
+			SafeExample: fmt.Sprintf(`Maven Example:
+%s
+
+Gradle Example:
+%s
+
+Ivy Example:
+%s
+`, SampleMavenSafeHSJAVA150, Sample2GradleSafeHSJAVA150, Sample4IvySafeHSJAVA150),
+			UnsafeExample: fmt.Sprintf(`Maven Example:
+%s
+
+Gradle Example:
+%s
+
+Ivy Example:
+%s
+`, SampleMavenVulnerableHSJAVA150, Sample2GradleVulnerableHSJAVA150, Sample4IvyVulnerableHSJAVA150),
 			Name:        "Remote code injection Apache Log4j",
 			Description: "Log4j versions prior to 2.17.1 are subject to a remote code execution vulnerability via the ldap JNDI parser, uncontrolled recursion from self-referential lookups and some other vulnerabilities. For more information checkout the CVE-2021-44228 (https://nvd.nist.gov/vuln/detail/CVE-2021-44228), CVE-2021-45046 (https://nvd.nist.gov/vuln/detail/CVE-2021-45046), CVE-2021-45105 (https://nvd.nist.gov/vuln/detail/CVE-2021-45105) and CVE-2021-44832 (https://nvd.nist.gov/vuln/detail/CVE-2021-44832) advisories.",
 			Severity:    severities.Critical.ToString(),

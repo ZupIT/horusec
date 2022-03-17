@@ -22,8 +22,7 @@ public class Foo {
 		reader.parse(input)
 	}
 }
-	`
-
+`
 	SampleSafeHSJAVA1 = `
 public class Foo {
 	void bar() {
@@ -47,7 +46,6 @@ public class Foo {
 	}
 }
 	`
-
 	SampleVulnerableHSJAVA2 = `
 public class Foo {
 	public void parseXML(InputStream input) throws XMLStreamException {
@@ -56,7 +54,6 @@ public class Foo {
 	}
 }
 	`
-
 	SampleSafeHSJAVA2 = `
 public class Foo {
 	public void parseXML(InputStream input) throws XMLStreamException {
@@ -184,6 +181,9 @@ public class Foo {
 	}
 }
 	`
+
+	SampleVulnerableHSJAVA6 = ``
+	SampleSafeHSJAVA6       = ``
 
 	SampleVulnerableHSJAVA7 = `
 public class Foo {
@@ -413,6 +413,17 @@ public class Foo {
 }
 	`
 
+	// Deprecated: Repeated vulnerability, same as HS-JAVA-14
+	//
+	//SampleVulnerableHSJAVA15 = ``
+	//SampleSafeHSJAVA15       = ``
+	//
+	//SampleVulnerableHSJAVA16 = ``
+	//SampleSafeHSJAVA16       = ``
+	//
+	//SampleVulnerableHSJAVA17 = ``
+	//SampleSafeHSJAVA17       = ``
+
 	SampleVulnerableHSJAVA18 = `
 import android.webkit.WebView;
 
@@ -477,6 +488,20 @@ public class MainActivity extends AppCompatActivity {
 	}
 }
 	`
+
+	// Deprecated: Simply using SQL Cipher does not appear to be a vulnerability, to this becomes a vulnerability will
+	// depend on what is stored, how it was stored and the sql cipher version, removed to avoid false positives.
+	// reference: https://www.zetetic.net/blog/2019/08/14/defcon-sqlite-attacks/
+	//
+	//SampleVulnerableHSJAVA20 = ``
+	//SampleSafeHSJAVA20       = ``
+
+	// Deprecated: This vulnerability should search for a hardcoded secret, the actual implemented way
+	// will only lead to false positives, leaks engine already does a search for hardcoded credentials.
+	// reference: https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-6301?search=realm
+	//
+	//SampleVulnerableHSJAVA21 = ``
+	//SampleSafeHSJAVA21       = ``
 
 	SampleVulnerableHSJAVA22 = `
 public class Foo {
@@ -606,6 +631,9 @@ public void findUser() {
 }
 `
 
+	SampleVulnerableHSJAVA27 = ``
+	SampleSafeHSJAVA27       = ``
+
 	SampleVulnerableHSJAVA28 = `
 package org.thoughtcrime.ssl.pinning;
 
@@ -655,6 +683,258 @@ package org.thoughtcrime.ssl.pinning;
     }
   }
 `
+
+	SampleVulnerableHSJAVA29 = ``
+	SampleSafeHSJAVA29       = ``
+
+	SampleVulnerableHSJAVA30 = ``
+	SampleSafeHSJAVA30       = ``
+
+	SampleVulnerableHSJAVA31 = ``
+	SampleSafeHSJAVA31       = ``
+
+	SampleVulnerableHSJAVA32 = ``
+	SampleSafeHSJAVA32       = ``
+
+	SampleVulnerableHSJAVA33 = ``
+	SampleSafeHSJAVA33       = ``
+
+	SampleVulnerableHSJAVA34 = ``
+	SampleSafeHSJAVA34       = ``
+
+	SampleVulnerableHSJAVA35 = ``
+	SampleSafeHSJAVA35       = ``
+
+	SampleVulnerableHSJAVA36 = ``
+	SampleSafeHSJAVA36       = ``
+
+	SampleVulnerableHSJAVA37 = ``
+	SampleSafeHSJAVA37       = ``
+
+	SampleVulnerableHSJAVA38 = ``
+	SampleSafeHSJAVA38       = ``
+
+	SampleVulnerableHSJAVA39 = ``
+	SampleSafeHSJAVA39       = ``
+
+	SampleVulnerableHSJAVA40 = ``
+	SampleSafeHSJAVA40       = ``
+
+	SampleVulnerableHSJAVA41 = ``
+	SampleSafeHSJAVA41       = ``
+
+	SampleVulnerableHSJAVA42 = ``
+	SampleSafeHSJAVA42       = ``
+
+	SampleVulnerableHSJAVA43 = ``
+	SampleSafeHSJAVA43       = ``
+
+	SampleVulnerableHSJAVA44 = ``
+	SampleSafeHSJAVA44       = ``
+
+	SampleVulnerableHSJAVA45 = ``
+	SampleSafeHSJAVA45       = ``
+
+	SampleVulnerableHSJAVA46 = ``
+	SampleSafeHSJAVA46       = ``
+
+	SampleVulnerableHSJAVA47 = ``
+	SampleSafeHSJAVA47       = ``
+
+	SampleVulnerableHSJAVA48 = ``
+	SampleSafeHSJAVA48       = ``
+
+	SampleVulnerableHSJAVA49 = ``
+	SampleSafeHSJAVA49       = ``
+
+	SampleVulnerableHSJAVA50 = ``
+	SampleSafeHSJAVA50       = ``
+
+	SampleVulnerableHSJAVA51 = ``
+	SampleSafeHSJAVA51       = ``
+
+	SampleVulnerableHSJAVA52 = ``
+	SampleSafeHSJAVA52       = ``
+
+	SampleVulnerableHSJAVA53 = ``
+	SampleSafeHSJAVA53       = ``
+
+	SampleVulnerableHSJAVA54 = ``
+	SampleSafeHSJAVA54       = ``
+
+	SampleVulnerableHSJAVA55 = ``
+	SampleSafeHSJAVA55       = ``
+
+	SampleVulnerableHSJAVA56 = ``
+	SampleSafeHSJAVA56       = ``
+
+	SampleVulnerableHSJAVA57 = ``
+	SampleSafeHSJAVA57       = ``
+
+	SampleVulnerableHSJAVA58 = ``
+	SampleSafeHSJAVA58       = ``
+
+	SampleVulnerableHSJAVA59 = ``
+	SampleSafeHSJAVA59       = ``
+
+	SampleVulnerableHSJAVA60 = ``
+	SampleSafeHSJAVA60       = ``
+
+	SampleVulnerableHSJAVA61 = ``
+	SampleSafeHSJAVA61       = ``
+
+	SampleVulnerableHSJAVA62 = ``
+	SampleSafeHSJAVA62       = ``
+
+	SampleVulnerableHSJAVA63 = ``
+	SampleSafeHSJAVA63       = ``
+
+	SampleVulnerableHSJAVA64 = ``
+	SampleSafeHSJAVA64       = ``
+
+	SampleVulnerableHSJAVA65 = ``
+	SampleSafeHSJAVA65       = ``
+
+	SampleVulnerableHSJAVA66 = ``
+	SampleSafeHSJAVA66       = ``
+
+	SampleVulnerableHSJAVA67 = ``
+	SampleSafeHSJAVA67       = ``
+
+	SampleVulnerableHSJAVA68 = ``
+	SampleSafeHSJAVA68       = ``
+
+	SampleVulnerableHSJAVA69 = ``
+	SampleSafeHSJAVA69       = ``
+
+	SampleVulnerableHSJAVA70 = ``
+	SampleSafeHSJAVA70       = ``
+
+	SampleVulnerableHSJAVA71 = ``
+	SampleSafeHSJAVA71       = ``
+
+	SampleVulnerableHSJAVA72 = ``
+	SampleSafeHSJAVA72       = ``
+
+	SampleVulnerableHSJAVA73 = ``
+	SampleSafeHSJAVA73       = ``
+
+	SampleVulnerableHSJAVA74 = ``
+	SampleSafeHSJAVA74       = ``
+
+	SampleVulnerableHSJAVA75 = ``
+	SampleSafeHSJAVA75       = ``
+
+	SampleVulnerableHSJAVA76 = ``
+	SampleSafeHSJAVA76       = ``
+
+	SampleVulnerableHSJAVA77 = ``
+	SampleSafeHSJAVA77       = ``
+
+	SampleVulnerableHSJAVA78 = ``
+	SampleSafeHSJAVA78       = ``
+
+	SampleVulnerableHSJAVA79 = ``
+	SampleSafeHSJAVA79       = ``
+
+	SampleVulnerableHSJAVA80 = ``
+	SampleSafeHSJAVA80       = ``
+
+	SampleVulnerableHSJAVA81 = ``
+	SampleSafeHSJAVA81       = ``
+
+	SampleVulnerableHSJAVA82 = ``
+	SampleSafeHSJAVA82       = ``
+
+	SampleVulnerableHSJAVA83 = ``
+	SampleSafeHSJAVA83       = ``
+
+	SampleVulnerableHSJAVA84 = ``
+	SampleSafeHSJAVA84       = ``
+
+	SampleVulnerableHSJAVA85 = ``
+	SampleSafeHSJAVA85       = ``
+
+	// Deprecated: Repeated vulnerability, same as HS-JAVA-12
+	//
+	//SampleVulnerableHSJAVA86 = ``
+	//SampleSafeHSJAVA86       = ``
+
+	SampleVulnerableHSJAVA87 = ``
+	SampleSafeHSJAVA87       = ``
+
+	SampleVulnerableHSJAVA88 = ``
+	SampleSafeHSJAVA88       = ``
+
+	SampleVulnerableHSJAVA89 = ``
+	SampleSafeHSJAVA89       = ``
+
+	SampleVulnerableHSJAVA90 = ``
+	SampleSafeHSJAVA90       = ``
+
+	SampleVulnerableHSJAVA91 = ``
+	SampleSafeHSJAVA91       = ``
+
+	SampleVulnerableHSJAVA92 = ``
+	SampleSafeHSJAVA92       = ``
+
+	SampleVulnerableHSJAVA93 = ``
+	SampleSafeHSJAVA93       = ``
+
+	SampleVulnerableHSJAVA94 = ``
+	SampleSafeHSJAVA94       = ``
+
+	SampleVulnerableHSJAVA95 = ``
+	SampleSafeHSJAVA95       = ``
+
+	SampleVulnerableHSJAVA96 = ``
+	SampleSafeHSJAVA96       = ``
+
+	SampleVulnerableHSJAVA97 = ``
+	SampleSafeHSJAVA97       = ``
+
+	SampleVulnerableHSJAVA98 = ``
+	SampleSafeHSJAVA98       = ``
+
+	SampleVulnerableHSJAVA99 = ``
+	SampleSafeHSJAVA99       = ``
+
+	SampleVulnerableHSJAVA100 = ``
+	SampleSafeHSJAVA100       = ``
+
+	SampleVulnerableHSJAVA101 = ``
+	SampleSafeHSJAVA101       = ``
+
+	SampleVulnerableHSJAVA102 = ``
+	SampleSafeHSJAVA102       = ``
+
+	SampleVulnerableHSJAVA103 = ``
+	SampleSafeHSJAVA103       = ``
+
+	SampleVulnerableHSJAVA104 = ``
+	SampleSafeHSJAVA104       = ``
+
+	// Deprecated: Repeated vulnerability, same as HS-JAVA-23
+	//
+	//SampleVulnerableHSJAVA105 = ``
+	//SampleSafeHSJAVA105       = ``
+
+	// Deprecated: Repeated vulnerability, same as HS-JAVA-111
+	//
+	//SampleVulnerableHSJAVA106 = ``
+	//SampleSafeHSJAVA106       = ``
+
+	SampleVulnerableHSJAVA107 = ``
+	SampleSafeHSJAVA107       = ``
+
+	SampleVulnerableHSJAVA108 = ``
+	SampleSafeHSJAVA108       = ``
+
+	SampleVulnerableHSJAVA109 = ``
+	SampleSafeHSJAVA109       = ``
+
+	SampleVulnerableHSJAVA110 = ``
+	SampleSafeHSJAVA110       = ``
 
 	SampleVulnerableHSJAVA111 = `
 public class Foo {
@@ -732,6 +1012,72 @@ public class Foo {
 }
 `
 
+	SampleVulnerableHSJAVA112 = ``
+	SampleSafeHSJAVA112       = ``
+
+	SampleVulnerableHSJAVA113 = ``
+	SampleSafeHSJAVA113       = ``
+
+	SampleVulnerableHSJAVA114 = ``
+	SampleSafeHSJAVA114       = ``
+
+	SampleVulnerableHSJAVA115 = ``
+	SampleSafeHSJAVA115       = ``
+
+	SampleVulnerableHSJAVA116 = ``
+	SampleSafeHSJAVA116       = ``
+
+	SampleVulnerableHSJAVA117 = ``
+	SampleSafeHSJAVA117       = ``
+
+	SampleVulnerableHSJAVA118 = ``
+	SampleSafeHSJAVA118       = ``
+
+	SampleVulnerableHSJAVA119 = ``
+	SampleSafeHSJAVA119       = ``
+
+	SampleVulnerableHSJAVA120 = ``
+	SampleSafeHSJAVA120       = ``
+
+	SampleVulnerableHSJAVA121 = ``
+	SampleSafeHSJAVA121       = ``
+
+	SampleVulnerableHSJAVA122 = ``
+	SampleSafeHSJAVA122       = ``
+
+	SampleVulnerableHSJAVA123 = ``
+	SampleSafeHSJAVA123       = ``
+
+	SampleVulnerableHSJAVA124 = ``
+	SampleSafeHSJAVA124       = ``
+
+	SampleVulnerableHSJAVA125 = ``
+	SampleSafeHSJAVA125       = ``
+
+	SampleVulnerableHSJAVA126 = ``
+	SampleSafeHSJAVA126       = ``
+
+	SampleVulnerableHSJAVA127 = ``
+	SampleSafeHSJAVA127       = ``
+
+	SampleVulnerableHSJAVA128 = ``
+	SampleSafeHSJAVA128       = ``
+
+	SampleVulnerableHSJAVA129 = ``
+	SampleSafeHSJAVA129       = ``
+
+	SampleVulnerableHSJAVA130 = ``
+	SampleSafeHSJAVA130       = ``
+
+	SampleVulnerableHSJAVA131 = ``
+	SampleSafeHSJAVA131       = ``
+
+	SampleVulnerableHSJAVA132 = ``
+	SampleSafeHSJAVA132       = ``
+
+	SampleVulnerableHSJAVA133 = ``
+	SampleSafeHSJAVA133       = ``
+
 	SampleVulnerableHSJAVA134 = `
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -779,6 +1125,33 @@ public class VulnerableCodeSQLInjection134 {
 }
 `
 
+	SampleVulnerableHSJAVA135 = ``
+	SampleSafeHSJAVA135       = ``
+
+	SampleVulnerableHSJAVA136 = ``
+	SampleSafeHSJAVA136       = ``
+
+	SampleVulnerableHSJAVA137 = ``
+	SampleSafeHSJAVA137       = ``
+
+	SampleVulnerableHSJAVA138 = ``
+	SampleSafeHSJAVA138       = ``
+
+	SampleVulnerableHSJAVA139 = ``
+	SampleSafeHSJAVA139       = ``
+
+	SampleVulnerableHSJAVA140 = ``
+	SampleSafeHSJAVA140       = ``
+
+	SampleVulnerableHSJAVA141 = ``
+	SampleSafeHSJAVA141       = ``
+
+	SampleVulnerableHSJAVA142 = ``
+	SampleSafeHSJAVA142       = ``
+
+	SampleVulnerableHSJAVA143 = ``
+	SampleSafeHSJAVA143       = ``
+
 	SampleVulnerableHSJAVA144 = `
 public class Foo {
 	public void Bar() {
@@ -788,6 +1161,7 @@ public class Foo {
 	}
 }
 `
+	SampleSafeHSJAVA144 = `// Don't use NullCipher in its code`
 
 	SampleVulnerableHSJAVA145 = `
 public class Foo {

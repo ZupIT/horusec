@@ -966,6 +966,12 @@ func TestRulesSafeCode(t *testing.T) {
 			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-134", ".test")),
 		},
 		{
+			Name:     "HS-JAVA-144",
+			Rule:     NewNullCipherInsecure(),
+			Src:      SampleSafeHSJAVA144,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-134", ".test")),
+		},
+		{
 			Name:     "HS-JAVA-145",
 			Rule:     NewUnsafeHashEquals(),
 			Src:      SampleSafeHSJAVA145,
