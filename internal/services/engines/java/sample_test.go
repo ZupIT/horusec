@@ -1185,4 +1185,264 @@ test {
     </dependencies>
 </project>
 `
+
+	SampleMavenVulnerableHSJAVA151 = `
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>PostgresUncheckedClassExample</groupId>
+    <artifactId>PostgresUncheckedClassExample</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.1.0</version>
+        </dependency>
+    </dependencies>
+</project>
+`
+
+	SampleMavenSafeHSJAVA151 = `
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>PostgresUncheckedClassExample</groupId>
+    <artifactId>PostgresUncheckedClassExample</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.25</version>
+        </dependency>
+    </dependencies>
+</project>
+`
+
+	Sample2GradleVulnerableHSJAVA151 = `
+group 'com.lamarjs'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.3.0'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+`
+
+	Sample2GradleSafeHSJAVA151 = `
+group 'com.lamarjs'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.3.2'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+`
+
+	Sample3GradleVulnerableHSJAVA151 = `
+plugins {
+    id 'java'
+}
+
+group 'com.epam.rp'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile 'org.seleniumhq.selenium:selenium-server:3.141.59'
+
+    compile 'org.testng:testng:6.13.1'
+    compile 'com.epam.reportportal:agent-java-testng:4.2.3'
+    
+    compile 'org.postgresql:postgresql:40.1.1'
+}
+
+
+test { 
+    useTestNG() {
+        useDefaultListeners = true
+        suites 'suites/amazon_test.xml'
+    }
+}
+`
+
+	Sample3GradleSafeHSJAVA151 = `
+plugins {
+    id 'java'
+}
+
+group 'com.epam.rp'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile 'org.seleniumhq.selenium:selenium-server:3.141.59'
+
+    compile 'org.testng:testng:6.13.1'
+    compile 'com.epam.reportportal:agent-java-testng:4.2.3'
+    
+    
+    compile 'org.postgresql:postgresql:42.3.2'
+}
+
+
+test { 
+    useTestNG() { 
+        useDefaultListeners = true
+        suites 'suites/amazon_test.xml
+    }
+}
+`
+
+	Sample4IvyVulnerableHSJAVA151 = `
+<ivy-module version="2.0">
+  <info organisation="uk.co.worldsofwar" module="sipsoc"/>
+  <dependencies>
+    <dependency org="org.eclipse.jetty" name="jetty-http" rev="9.4.9.v20180320"/>
+    <dependency org="org.eclipse.jetty" name="jetty-annotations" rev="9.4.9.v20180320" />
+    <dependency org="org.eclipse.jetty" name="jetty-webapp" rev="9.4.9.v20180320" />
+    <dependency org="org.freemarker" name="freemarker" rev="2.3.28" />
+    <dependency org="org.glassfish.jersey.core" name="jersey-server" rev="2.27" />
+    <dependency org="org.glassfish.jersey.containers" name="jersey-container-servlet" rev="2.27" />
+    <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.27" />
+    <dependency org="com.auth0" name="java-jwt" rev="3.3.0" />
+    <dependency org="com.zaxxer" name="HikariCP" rev="3.1.0" />
+    <dependency org="org.postgresql" name="postgresql" rev="42.2.2" />
+
+
+
+    <exclude org="*" ext="*" type="source" />
+    <exclude org="*" ext="*" type="javadoc" />
+    <exclude org="*" ext="*" type="tests" />
+
+  </dependencies>
+</ivy-module>
+`
+
+	Sample4IvySafeHSJAVA151 = `
+<ivy-module version="2.0">
+  <info organisation="uk.co.worldsofwar" module="sipsoc"/>
+  <dependencies>
+    <dependency org="org.eclipse.jetty" name="jetty-http" rev="9.4.9.v20180320"/>
+    <dependency org="org.eclipse.jetty" name="jetty-annotations" rev="9.4.9.v20180320" />
+    <dependency org="org.eclipse.jetty" name="jetty-webapp" rev="9.4.9.v20180320" />
+    <dependency org="org.freemarker" name="freemarker" rev="2.3.28" />
+    <dependency org="org.glassfish.jersey.core" name="jersey-server" rev="2.27" />
+    <dependency org="org.glassfish.jersey.containers" name="jersey-container-servlet" rev="2.27" />
+    <dependency org="org.glassfish.jersey.media" name="jersey-media-json-jackson" rev="2.27" />
+    <dependency org="com.auth0" name="java-jwt" rev="3.3.0" />
+    <dependency org="com.zaxxer" name="HikariCP" rev="3.1.0" />
+    <dependency org="org.postgresql" name="postgresql" rev="42.2.25" />
+
+
+
+    <exclude org="*" ext="*" type="source" />
+    <exclude org="*" ext="*" type="javadoc" />
+    <exclude org="*" ext="*" type="tests" />
+
+  </dependencies>
+</ivy-module>
+`
+
+	Sample5MavenVulnerableHSJAVA151 = `
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.postgresql</groupId>
+    <artifactId>postgresql-examples</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>postgresql-examples</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <postgresql.version>42.3.1</postgresql.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+`
+
+	Sample5MavenSafeHSJAVA151 = `
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.postgresql</groupId>
+    <artifactId>postgresql-examples</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>postgresql-examples</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <postgresql.version>42.3.2</postgresql.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+`
 )

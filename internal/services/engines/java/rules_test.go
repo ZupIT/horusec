@@ -643,6 +643,86 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      SampleMavenVulnerableHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<groupId>org.postgresql</groupId>",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+						Line:     10,
+						Column:   12,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample2GradleVulnerableHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.2", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "compile group: 'org.postgresql', name: 'postgresql', version: '42.3.0'",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.2", ".test")),
+						Line:     15,
+						Column:   4,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample3GradleVulnerableHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.3", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "compile 'org.postgresql:postgresql:40.1.1'",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.3", ".test")),
+						Line:     22,
+						Column:   4,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample4IvyVulnerableHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.4", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<dependency org=\"org.postgresql\" name=\"postgresql\" rev=\"42.2.2\" />",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.4", ".test")),
+						Line:     14,
+						Column:   4,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample5MavenVulnerableHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.5", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<postgresql.version>42.3.1</postgresql.version>",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151.5", ".test")),
+						Line:     16,
+						Column:   8,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -896,6 +976,36 @@ func TestRulesSafeCode(t *testing.T) {
 			Rule:     NewVulnerableRemoteCodeInjectionApacheLog4j(),
 			Src:      Sample5MavenSafeHSJAVA150,
 			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-150", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      SampleMavenSafeHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample2GradleSafeHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample3GradleSafeHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample4IvySafeHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-151",
+			Rule:     NewUncheckedClassInstatiation(),
+			Src:      Sample5MavenSafeHSJAVA151,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
 		},
 	}
 	testutil.TestSafeCode(t, testcases)
