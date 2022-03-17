@@ -15,7 +15,6 @@
 package nginx
 
 import (
-	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -31,12 +30,12 @@ func TestRulesVulnerableCode(t *testing.T) {
 			Name:     "HS-NGINX-1",
 			Rule:     NewIncludeXFrameOptionsHeader(),
 			Src:      SampleVulnerableHSNGINX1,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-1", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-1.test"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
 					SourceLocation: engine.Location{
-						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-1", ".test")),
+						Filename: filepath.Join(tempDir, "HS-NGINX-1.test"),
 						Line:     0,
 						Column:   0,
 					},
@@ -47,12 +46,12 @@ func TestRulesVulnerableCode(t *testing.T) {
 			Name:     "HS-NGINX-2",
 			Rule:     NewIncludeXContentTypeOptionsHeader(),
 			Src:      SampleVulnerableHSNGINX2,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-2", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-2.test"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
 					SourceLocation: engine.Location{
-						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-2", ".test")),
+						Filename: filepath.Join(tempDir, "HS-NGINX-2.test"),
 						Line:     0,
 						Column:   0,
 					},
@@ -63,12 +62,12 @@ func TestRulesVulnerableCode(t *testing.T) {
 			Name:     "HS-NGINX-3",
 			Rule:     NewIncludeContentSecurityPolicyHeader(),
 			Src:      SampleVulnerableHSNGINX3,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-3", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-3.test"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
 					SourceLocation: engine.Location{
-						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-3", ".test")),
+						Filename: filepath.Join(tempDir, "HS-NGINX-3.test"),
 						Line:     0,
 						Column:   0,
 					},
@@ -79,12 +78,12 @@ func TestRulesVulnerableCode(t *testing.T) {
 			Name:     "HS-NGINX-4",
 			Rule:     NewIncludeServerTokensOff(),
 			Src:      SampleVulnerableHSNGINX4,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-4", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-4.test"),
 			Findings: []engine.Finding{
 				{
 					CodeSample: "",
 					SourceLocation: engine.Location{
-						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-4", ".test")),
+						Filename: filepath.Join(tempDir, "HS-NGINX-4.test"),
 						Line:     0,
 						Column:   0,
 					},
@@ -103,25 +102,25 @@ func TestRulesSafeCode(t *testing.T) {
 			Name:     "HS-NGINX-1",
 			Rule:     NewIncludeXFrameOptionsHeader(),
 			Src:      SampleSafeHSNGINX1,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-1", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-1.test"),
 		},
 		{
 			Name:     "HS-NGINX-2",
 			Rule:     NewIncludeXContentTypeOptionsHeader(),
 			Src:      SampleSafeHSNGINX2,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-2", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-2.test"),
 		},
 		{
 			Name:     "HS-NGINX-3",
 			Rule:     NewIncludeContentSecurityPolicyHeader(),
 			Src:      SampleSafeHSNGINX3,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-3", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-3.test"),
 		},
 		{
 			Name:     "HS-NGINX-4",
 			Rule:     NewIncludeServerTokensOff(),
 			Src:      SampleSafeHSNGINX4,
-			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-NGINX-4", ".test")),
+			Filename: filepath.Join(tempDir, "HS-NGINX-4.test"),
 		},
 	}
 
