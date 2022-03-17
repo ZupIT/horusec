@@ -34,7 +34,30 @@ spec:
     command: [ "sh", "-c", "sleep 1h" ]
     volumeMounts:
     - name: sec-ctx-vol
-      mountPath: /data/demo`
+      mountPath: /data/demo
+`
+
+	SampleSafeHSKUBERNETES1 = `apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  volumes:
+  - name: sec-ctx-vol
+    emptyDir: {}
+  containers:
+  - name: sec-ctx-demo
+    image: busybox
+    command: [ "sh", "-c", "sleep 1h" ]
+    volumeMounts:
+    - name: sec-ctx-vol
+      mountPath: /data/demo
+`
+
 	SampleVulnerableHSKUBERNETES2 = `
 apiVersion: v1
 kind: Pod
@@ -59,6 +82,27 @@ spec:
     args:
     - "/etc/hosts"
 `
+	SampleSafeHSKUBERNETES2 = `
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /foo
+          backend:
+            serviceName: foo-service
+            servicePort: 8000
+        - path: /bar
+          backend:
+            serviceName: bar-service
+            servicePort: 8000
+`
+
 	SampleVulnerableHSKUBERNETES3 = `
 apiVersion: v1
 kind: Pod
@@ -71,6 +115,19 @@ spec:
     hostPath:
       path: /var/run/docker.sock
 `
+	SampleSafeHSKUBERNETES3 = `
+apiVersion: v1  
+kind: Pod  
+metadata:  
+  name: security-best-practice
+spec:  
+  containers:  
+  # specification of the pod’s containers  
+  # ...  
+  securityContext:  
+    readOnlyRootFilesystem: true
+`
+
 	SampleVulnerableHSKUBERNETES4 = `
 ---
 apiVersion: extensions/v1beta1
@@ -86,6 +143,22 @@ kind: Deployment
             add: # Add sys_admin is broken of security
               - SYS_ADMIN
 `
+	SampleSafeHSKUBERNETES4 = `
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+...
+      containers:
+      - name: payment
+        image: nginx
+        securityContext:
+          capabilities:
+            drop: # Drop all capabilities from a pod as above
+              - all
+            add: # Add only those required
+              - NET_BIND_SERVICE
+`
+
 	SampleVulnerableHSKUBERNETES5 = `
 apiVersion: v1
 kind: Pod
@@ -99,6 +172,19 @@ spec:
       securityContext:
         privileged: true
 `
+	SampleSafeHSKUBERNETES5 = `
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged
+spec:
+  containers:
+    - name: pause
+      image: k8s.gcr.io/pause
+      securityContext:
+        privileged: false
+`
+
 	SampleVulnerableHSKUBERNETES6 = `apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -126,124 +212,6 @@ spec:
     rule: 'RunAsAny'
   fsGroup:
     rule: 'RunAsAny'
-`
-	SampleVulnerableHSKUBERNETES7 = `apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: privileged
-  annotations:
-    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
-spec:
-  hostPorts:
-  - min: 0
-    max: 65535
-  hostIPC: true
-`
-	SampleVulnerableHSKUBERNETES8 = `apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: privileged
-  annotations:
-    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
-spec:
-  hostPorts:
-  - min: 0
-    max: 65535
-  hostPID: true
-`
-	SampleVulnerableHSKUBERNETES9 = `
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: privileged
-  annotations:
-    seccomp.security.alpha.kubernetes.io/allowedProfileNames: unconfined
-spec:
-  hostPorts:
-  - min: 0
-    max: 65535
-  hostNetwork: true
-`
-)
-
-const (
-	SampleSafeHSKUBERNETES1 = `apiVersion: v1
-kind: Pod
-metadata:
-  name: security-context-demo
-spec:
-  securityContext:
-    runAsUser: 1000
-    runAsGroup: 3000
-    fsGroup: 2000
-  volumes:
-  - name: sec-ctx-vol
-    emptyDir: {}
-  containers:
-  - name: sec-ctx-demo
-    image: busybox
-    command: [ "sh", "-c", "sleep 1h" ]
-    volumeMounts:
-    - name: sec-ctx-vol
-      mountPath: /data/demo`
-	SampleSafeHSKUBERNETES2 = `
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: example-ingress
-  annotations:
-    ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - http:
-      paths:
-        - path: /foo
-          backend:
-            serviceName: foo-service
-            servicePort: 8000
-        - path: /bar
-          backend:
-            serviceName: bar-service
-            servicePort: 8000
-`
-	SampleSafeHSKUBERNETES3 = `
-apiVersion: v1  
-kind: Pod  
-metadata:  
-  name: security-best-practice
-spec:  
-  containers:  
-  # specification of the pod’s containers  
-  # ...  
-  securityContext:  
-    readOnlyRootFilesystem: true
-`
-	SampleSafeHSKUBERNETES4 = `
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-...
-      containers:
-      - name: payment
-        image: nginx
-        securityContext:
-          capabilities:
-            drop: # Drop all capabilities from a pod as above
-              - all
-            add: # Add only those required
-              - NET_BIND_SERVICE
-`
-	SampleSafeHSKUBERNETES5 = `
-apiVersion: v1
-kind: Pod
-metadata:
-  name: privileged
-spec:
-  containers:
-    - name: pause
-      image: k8s.gcr.io/pause
-      securityContext:
-        privileged: false
 `
 	SampleSafeHSKUBERNETES6 = `apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
@@ -273,6 +241,19 @@ spec:
   fsGroup:
     rule: 'RunAsAny'
 `
+
+	SampleVulnerableHSKUBERNETES7 = `apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: privileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+spec:
+  hostPorts:
+  - min: 0
+    max: 65535
+  hostIPC: true
+`
 	SampleSafeHSKUBERNETES7 = `apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -285,6 +266,19 @@ spec:
     max: 65535
   hostIPC: false
 `
+
+	SampleVulnerableHSKUBERNETES8 = `apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: privileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+spec:
+  hostPorts:
+  - min: 0
+    max: 65535
+  hostPID: true
+`
 	SampleSafeHSKUBERNETES8 = `apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -295,7 +289,22 @@ spec:
   hostPorts:
   - min: 0
     max: 65535
-  hostPID: false`
+  hostPID: false
+`
+
+	SampleVulnerableHSKUBERNETES9 = `
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: privileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: unconfined
+spec:
+  hostPorts:
+  - min: 0
+    max: 65535
+  hostNetwork: true
+`
 	SampleSafeHSKUBERNETES9 = `
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy

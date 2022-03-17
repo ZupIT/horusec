@@ -26,11 +26,13 @@ import (
 func NewAllowPrivilegeEscalation() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-1",
-			Name:        "Allow Privilege Escalation",
-			Description: "Privileged containers share namespaces with the host system, eschew cgroup restrictions, and do not offer any security. They should be used exclusively as a bundling and distribution mechanism for the code in the container, and not for isolation.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-KUBERNETES-1",
+			Name:          "Allow Privilege Escalation",
+			Description:   "Privileged containers share namespaces with the host system, eschew cgroup restrictions, and do not offer any security. They should be used exclusively as a bundling and distribution mechanism for the code in the container, and not for isolation.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES1,
+			UnsafeExample: SampleVulnerableHSKUBERNETES1,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -44,11 +46,13 @@ func NewAllowPrivilegeEscalation() *text.Rule {
 func NewHostAliases() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-2",
-			Name:        "Host Aliases",
-			Description: "Managing /etc/hosts aliases can prevent the container from modifying the file after a pod's containers have already been started. DNS should be managed by the orchestrator.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-KUBERNETES-2",
+			Name:          "Host Aliases",
+			Description:   "Managing /etc/hosts aliases can prevent the container from modifying the file after a pod's containers have already been started. DNS should be managed by the orchestrator.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES2,
+			UnsafeExample: SampleVulnerableHSKUBERNETES2,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -62,11 +66,13 @@ func NewHostAliases() *text.Rule {
 func NewDockerSock() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-3",
-			Name:        "Docker Sock",
-			Description: "Mounting the docker.socket leaks information about other containers and can allow container breakout.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-KUBERNETES-3",
+			Name:          "Docker Sock",
+			Description:   "Mounting the docker.socket leaks information about other containers and can allow container breakout.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES3,
+			UnsafeExample: SampleVulnerableHSKUBERNETES3,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -80,11 +86,13 @@ func NewDockerSock() *text.Rule {
 func NewCapabilitySystemAdmin() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-4",
-			Name:        "Capability System Admin",
-			Description: "CAP_SYS_ADMIN is the most privileged capability and should always be avoided.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.High.ToString(),
+			ID:            "HS-KUBERNETES-4",
+			Name:          "Capability System Admin",
+			Description:   "CAP_SYS_ADMIN is the most privileged capability and should always be avoided.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES4,
+			UnsafeExample: SampleVulnerableHSKUBERNETES4,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -100,11 +108,13 @@ func NewCapabilitySystemAdmin() *text.Rule {
 func NewPrivilegedContainer() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-5",
-			Name:        "Privileged Container",
-			Description: "Privileged containers can allow almost completely unrestricted host access.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-KUBERNETES-5",
+			Name:          "Privileged Container",
+			Description:   "Privileged containers can allow almost completely unrestricted host access.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES5,
+			UnsafeExample: SampleVulnerableHSKUBERNETES5,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -118,11 +128,13 @@ func NewPrivilegedContainer() *text.Rule {
 func NewSeccompUnconfined() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-6",
-			Name:        "Seccomp Unconfined",
-			Description: "Unconfined Seccomp profiles have full system call access.",
-			Severity:    severities.Low.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-KUBERNETES-6",
+			Name:          "Seccomp Unconfined",
+			Description:   "Unconfined Seccomp profiles have full system call access.",
+			Severity:      severities.Low.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES6,
+			UnsafeExample: SampleVulnerableHSKUBERNETES6,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -135,11 +147,13 @@ func NewSeccompUnconfined() *text.Rule {
 func NewHostIPC() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-7",
-			Name:        "Host IPC",
-			Description: "Sharing the host's IPC namespace allows container processes to communicate with processes on the host.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-KUBERNETES-7",
+			Name:          "Host IPC",
+			Description:   "Sharing the host's IPC namespace allows container processes to communicate with processes on the host.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES7,
+			UnsafeExample: SampleVulnerableHSKUBERNETES7,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -151,11 +165,13 @@ func NewHostIPC() *text.Rule {
 func NewHostPID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-8",
-			Name:        "Host PID",
-			Description: "Sharing the host's PID namespace allows visibility of processes on the host, potentially leaking information such as environment variables and configuration.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-KUBERNETES-8",
+			Name:          "Host PID",
+			Description:   "Sharing the host's PID namespace allows visibility of processes on the host, potentially leaking information such as environment variables and configuration.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES8,
+			UnsafeExample: SampleVulnerableHSKUBERNETES8,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -167,11 +183,13 @@ func NewHostPID() *text.Rule {
 func NewHostNetwork() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-KUBERNETES-9",
-			Name:        "Host Network",
-			Description: "Sharing the host's network namespace permits processes in the pod to communicate with processes bound to the host's loopback adapter.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-KUBERNETES-9",
+			Name:          "Host Network",
+			Description:   "Sharing the host's network namespace permits processes in the pod to communicate with processes bound to the host's loopback adapter.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSKUBERNETES9,
+			UnsafeExample: SampleVulnerableHSKUBERNETES9,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
