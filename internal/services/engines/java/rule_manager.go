@@ -187,6 +187,7 @@ func Rules() []engine.Rule {
 		NewLDAPDeserializationNotDisabled(),
 		NewDatabasesPasswordNotProtected(),
 		NewVulnerableRemoteCodeInjectionApacheLog4j(),
+		NewUncheckedClassInstatiation(),
 	}
 	return append(java, jvm.Rules()...)
 }
