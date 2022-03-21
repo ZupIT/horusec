@@ -68,7 +68,7 @@ func Rules() []engine.Rule {
 		NewCookieWithoutHttpOnlyFlag(),
 		NewSQLInjectionEnterpriseLibraryData(),
 		NewCQLInjectionCassandra(),
-		NewPasswordComplexity(),
+		NewPasswordComplexityDefault(),
 		NewNoInputVariable(),
 		NewIdentityWeakPasswordComplexity(),
 
