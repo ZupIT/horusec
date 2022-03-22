@@ -26,7 +26,7 @@ import (
 	"github.com/ZupIT/horusec-engine/text"
 )
 
-func TestValidate1(t *testing.T) {
+func TestValidate(t *testing.T) {
 	type test struct {
 		name     string
 		cr       CustomRule
@@ -115,7 +115,7 @@ func TestValidate1(t *testing.T) {
 	}
 }
 
-func TestValidateAllLanguages1(t *testing.T) {
+func TestValidateAllLanguages(t *testing.T) {
 	type test struct {
 		name     string
 		cr       CustomRule
@@ -263,7 +263,7 @@ func TestValidateAllLanguages1(t *testing.T) {
 	}
 }
 
-func TestGetRuleType1(t *testing.T) {
+func TestGetRuleType(t *testing.T) {
 	type test struct {
 		name     string
 		cr       CustomRule
@@ -324,7 +324,7 @@ func TestGetRuleType1(t *testing.T) {
 	}
 }
 
-func TestGetExpressions1(t *testing.T) {
+func TestGetExpressions(t *testing.T) {
 
 	exprs := []string{"testOne", "testTwo"}
 	exprOne, _ := regexp.Compile(exprs[0])
@@ -375,7 +375,7 @@ func TestGetExpressions1(t *testing.T) {
 	}
 }
 
-func TestToString1(t *testing.T) {
+func TestToString(t *testing.T) {
 	type test struct {
 		name     string
 		cr       CustomRule
