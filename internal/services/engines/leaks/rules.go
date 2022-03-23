@@ -26,11 +26,13 @@ import (
 func NewAWSManagerID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-1",
-			Name:        "AWS Manager ID",
-			Description: "When use AWS Manager ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-1",
+			Name:          "AWS Manager ID",
+			Description:   "When use AWS Manager ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS1,
+			UnsafeExample: SampleVulnerableHSLEAKS1,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -42,11 +44,13 @@ func NewAWSManagerID() *text.Rule {
 func NewAWSSecretKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-2",
-			Name:        "AWS Secret Key",
-			Description: "When use AWS Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-2",
+			Name:          "AWS Secret Key",
+			Description:   "When use AWS Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS2,
+			UnsafeExample: SampleVulnerableHSLEAKS2,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -59,11 +63,13 @@ func NewAWSSecretKey() *text.Rule {
 func NewAWSMWSKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-3",
-			Name:        "AWS MWS key",
-			Description: "When use AWS MWS key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-3",
+			Name:          "AWS MWS key",
+			Description:   "When use AWS MWS key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS3,
+			UnsafeExample: SampleVulnerableHSLEAKS3,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -75,11 +81,13 @@ func NewAWSMWSKey() *text.Rule {
 func NewFacebookSecretKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-4",
-			Name:        "Facebook Secret Key",
-			Description: "When use Facebook Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-4",
+			Name:          "Facebook Secret Key",
+			Description:   "When use Facebook Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS4,
+			UnsafeExample: SampleVulnerableHSLEAKS4,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -91,11 +99,13 @@ func NewFacebookSecretKey() *text.Rule {
 func NewFacebookClientID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-5",
-			Name:        "Facebook Client ID",
-			Description: "When use Facebook Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-5",
+			Name:          "Facebook Client ID",
+			Description:   "When use Facebook Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS5,
+			UnsafeExample: SampleVulnerableHSLEAKS5,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -107,11 +117,13 @@ func NewFacebookClientID() *text.Rule {
 func NewTwitterSecretKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-6",
-			Name:        "Twitter Secret Key",
-			Description: "When use Twitter Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-6",
+			Name:          "Twitter Secret Key",
+			Description:   "When use Twitter Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS6,
+			UnsafeExample: SampleVulnerableHSLEAKS6,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -123,11 +135,13 @@ func NewTwitterSecretKey() *text.Rule {
 func NewTwitterClientID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-7",
-			Name:        "Twitter Client ID",
-			Description: "When use Twitter Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-7",
+			Name:          "Twitter Client ID",
+			Description:   "When use Twitter Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS7,
+			UnsafeExample: SampleVulnerableHSLEAKS7,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -139,11 +153,13 @@ func NewTwitterClientID() *text.Rule {
 func NewGithub() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-8",
-			Name:        "Github",
-			Description: "A GitHub access token was found. This pose a critical threat against your organization since it can give access not only to the platform itself and all the members of your (perhaps private) organization to feed more accurate spear phishing attacks but also to actual source code from your applications. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-8",
+			Name:          "Github",
+			Description:   "A GitHub access token was found. This pose a critical threat against your organization since it can give access not only to the platform itself and all the members of your (perhaps private) organization to feed more accurate spear phishing attacks but also to actual source code from your applications. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS8,
+			UnsafeExample: SampleVulnerableHSLEAKS8,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -155,11 +171,13 @@ func NewGithub() *text.Rule {
 func NewLinkedInClientID() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-9",
-			Name:        "LinkedIn Client ID",
-			Description: "When use LinkedIn Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-9",
+			Name:          "LinkedIn Client ID",
+			Description:   "When use LinkedIn Client ID is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS9,
+			UnsafeExample: SampleVulnerableHSLEAKS9,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -171,11 +189,13 @@ func NewLinkedInClientID() *text.Rule {
 func NewLinkedInSecretKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-10",
-			Name:        "LinkedIn Secret Key",
-			Description: "When use LinkedIn Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-10",
+			Name:          "LinkedIn Secret Key",
+			Description:   "When use LinkedIn Secret Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS10,
+			UnsafeExample: SampleVulnerableHSLEAKS10,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -187,11 +207,13 @@ func NewLinkedInSecretKey() *text.Rule {
 func NewSlack() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-11",
-			Name:        "Slack",
-			Description: "A hardcoded credential for your company's Slack can pose a huge threat to the safety and image of your company, since, in the wrong hands, this could lead to data leaking, a high chance of a successful spear phishing attacks and even access to logs and other development related conversations that could leverage a more critical attack. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-11",
+			Name:          "Slack",
+			Description:   "A hardcoded credential for your company's Slack can pose a huge threat to the safety and image of your company, since, in the wrong hands, this could lead to data leaking, a high chance of a successful spear phishing attacks and even access to logs and other development related conversations that could leverage a more critical attack. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS11,
+			UnsafeExample: SampleVulnerableHSLEAKS11,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -204,11 +226,13 @@ func NewSlack() *text.Rule {
 func NewAsymmetricPrivateKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-12",
-			Name:        "Asymmetric Private Key",
-			Description: "Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-12",
+			Name:          "Asymmetric Private Key",
+			Description:   "Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS12,
+			UnsafeExample: SampleVulnerableHSLEAKS12,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -221,11 +245,13 @@ func NewAsymmetricPrivateKey() *text.Rule {
 func NewGoogleAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-13",
-			Name:        "Google API key",
-			Description: "When use Google API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-13",
+			Name:          "Google API key",
+			Description:   "When use Google API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS13,
+			UnsafeExample: SampleVulnerableHSLEAKS13,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -238,11 +264,13 @@ func NewGoogleAPIKey() *text.Rule {
 func NewGoogleGCPServiceAccount() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-14",
-			Name:        "Google (GCP) Service Account",
-			Description: "When use Google (GCP) Service Account is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-14",
+			Name:          "Google (GCP) Service Account",
+			Description:   "When use Google (GCP) Service Account is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS14,
+			UnsafeExample: SampleVulnerableHSLEAKS14,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -256,11 +284,13 @@ func NewGoogleGCPServiceAccount() *text.Rule {
 func NewHerokuAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-15",
-			Name:        "Heroku API key",
-			Description: "Hardcoded credentials pose a huge threat to your cloud provider account since you can lose control over who can access some resources, which can lead not only to data access violation but also to improper usage of resources leading to a financial loss. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-15",
+			Name:          "Heroku API key",
+			Description:   "Hardcoded credentials pose a huge threat to your cloud provider account since you can lose control over who can access some resources, which can lead not only to data access violation but also to improper usage of resources leading to a financial loss. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS15,
+			UnsafeExample: SampleVulnerableHSLEAKS15,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -272,11 +302,13 @@ func NewHerokuAPIKey() *text.Rule {
 func NewMailChimpAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-16",
-			Name:        "MailChimp API key",
-			Description: "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-16",
+			Name:          "MailChimp API key",
+			Description:   "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS16,
+			UnsafeExample: SampleVulnerableHSLEAKS16,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -288,11 +320,13 @@ func NewMailChimpAPIKey() *text.Rule {
 func NewMailgunAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-17",
-			Name:        "Mailgun API key",
-			Description: "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-17",
+			Name:          "Mailgun API key",
+			Description:   "Mail and/or SMS providers are a huge entrypoint for more sophisticated attacks or even attacks focused on damaging a brand's reputation. Leaving them in your source code will lead your team to lost track of who can access and personificate your company or application. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS17,
+			UnsafeExample: SampleVulnerableHSLEAKS17,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -304,11 +338,13 @@ func NewMailgunAPIKey() *text.Rule {
 func NewPayPalBraintreeAccessToken() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-18",
-			Name:        "PayPal Braintree access token",
-			Description: "Payment providers are the barebones of your companies monetization so it is a absolutely disaster if any of this tokens fall in wrong hands since they can provide access to crucial information about your company, and in worst case scenarios even lead to big financial loss. It's important to keep this kind of info in some form of secret manager, e.g Hashicorp's Vault. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-18",
+			Name:          "PayPal Braintree access token",
+			Description:   "Payment providers are the barebones of your companies monetization so it is a absolutely disaster if any of this tokens fall in wrong hands since they can provide access to crucial information about your company, and in worst case scenarios even lead to big financial loss. It's important to keep this kind of info in some form of secret manager, e.g Hashicorp's Vault. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS18,
+			UnsafeExample: SampleVulnerableHSLEAKS18,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -320,11 +356,13 @@ func NewPayPalBraintreeAccessToken() *text.Rule {
 func NewPicaticAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-19",
-			Name:        "Picatic API key",
-			Description: "When use Picatic API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-19",
+			Name:          "Picatic API key",
+			Description:   "When use Picatic API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS19,
+			UnsafeExample: SampleVulnerableHSLEAKS19,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -336,11 +374,13 @@ func NewPicaticAPIKey() *text.Rule {
 func NewSendGridAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-20",
-			Name:        "SendGrid API Key",
-			Description: "When use SendGrid API Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-20",
+			Name:          "SendGrid API Key",
+			Description:   "When use SendGrid API Key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS20,
+			UnsafeExample: SampleVulnerableHSLEAKS20,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -352,11 +392,13 @@ func NewSendGridAPIKey() *text.Rule {
 func NewStripeAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-21",
-			Name:        "Stripe API key",
-			Description: "When use Stripe API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-21",
+			Name:          "Stripe API key",
+			Description:   "When use Stripe API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS21,
+			UnsafeExample: SampleVulnerableHSLEAKS21,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -368,11 +410,13 @@ func NewStripeAPIKey() *text.Rule {
 func NewSquareAccessToken() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-22",
-			Name:        "Square access token",
-			Description: "When use Square access token is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-22",
+			Name:          "Square access token",
+			Description:   "When use Square access token is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS22,
+			UnsafeExample: SampleVulnerableHSLEAKS22,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -384,11 +428,13 @@ func NewSquareAccessToken() *text.Rule {
 func NewSquareOAuthSecret() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-23",
-			Name:        "Square OAuth secret",
-			Description: "When use Square OAuth secret is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-23",
+			Name:          "Square OAuth secret",
+			Description:   "When use Square OAuth secret is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS23,
+			UnsafeExample: SampleVulnerableHSLEAKS23,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -400,11 +446,13 @@ func NewSquareOAuthSecret() *text.Rule {
 func NewTwilioAPIKey() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-24",
-			Name:        "Twilio API key",
-			Description: "When use Twilio API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-24",
+			Name:          "Twilio API key",
+			Description:   "When use Twilio API key is recommended use vault or environment variable encrypted for the best security. For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS24,
+			UnsafeExample: SampleVulnerableHSLEAKS24,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -416,11 +464,13 @@ func NewTwilioAPIKey() *text.Rule {
 func NewHardCodedCredentialGeneric() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-25",
-			Name:        "Potential Hard-coded credential",
-			Description: "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-25",
+			Name:          "Potential Hard-coded credential",
+			Description:   "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS25,
+			UnsafeExample: SampleVulnerableHSLEAKS25,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -432,11 +482,13 @@ func NewHardCodedCredentialGeneric() *text.Rule {
 func NewHardCodedPassword() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-26",
-			Name:        "Hard-coded password",
-			Description: "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-26",
+			Name:          "Hard-coded password",
+			Description:   "The software contains hard-coded credentials, such as a password or cryptographic key, which it uses for its own inbound authentication, outbound communication to external components, or encryption of internal data. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS26,
+			UnsafeExample: SampleVulnerableHSLEAKS26,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -452,11 +504,13 @@ func NewHardCodedPassword() *text.Rule {
 func NewPasswordExposedInHardcodedURL() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-27",
-			Name:        "Password found in a hardcoded URL",
-			Description: "A password was found in a hardcoded URL, this can lead to not only the leak of this password but also a failure point to some more sophisticated CSRF and SSRF attacks. Check CWE-352 (https://cwe.mitre.org/data/definitions/352.html) and CWE-918 (https://cwe.mitre.org/data/definitions/918.html) for more details.",
-			Severity:    severities.Critical.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-27",
+			Name:          "Password found in a hardcoded URL",
+			Description:   "A password was found in a hardcoded URL, this can lead to not only the leak of this password but also a failure point to some more sophisticated CSRF and SSRF attacks. Check CWE-352 (https://cwe.mitre.org/data/definitions/352.html) and CWE-918 (https://cwe.mitre.org/data/definitions/918.html) for more details.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS27,
+			UnsafeExample: SampleVulnerableHSLEAKS27,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
@@ -468,11 +522,13 @@ func NewPasswordExposedInHardcodedURL() *text.Rule {
 func NewWPConfig() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-LEAKS-28",
-			Name:        "Wordpress configuration file disclosure",
-			Description: "Wordpress configuration file exposed, this can lead to the leak of admin passwords, database credentials and a lot of sensitive data about the system. Check CWE-200 (https://cwe.mitre.org/data/definitions/200.html) for more details.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Medium.ToString(),
+			ID:            "HS-LEAKS-28",
+			Name:          "Wordpress configuration file disclosure",
+			Description:   "Wordpress configuration file exposed, this can lead to the leak of admin passwords, database credentials and a lot of sensitive data about the system. Check CWE-200 (https://cwe.mitre.org/data/definitions/200.html) for more details.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Medium.ToString(),
+			SafeExample:   SampleSafeHSLEAKS28,
+			UnsafeExample: SampleVulnerableHSLEAKS28,
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
