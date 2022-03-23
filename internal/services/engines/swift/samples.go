@@ -49,132 +49,7 @@ func savePill(pass: String) throws {
     }
 }
 `
-	SampleVulnerableHSSWIFT3 = `
-...
-var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.DTLSv11
-`
-	SampleVulnerableHSSWIFT4 = `
-...
-var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.TLSv11
-`
-	SampleVulnerableHSSWIFT5 = `import PackageDescription
-let package = Package(name: "Alamofire",
-                      platforms: [.macOS(.v10_12),
-                                  .iOS(.v10),
-                                  .tvOS(.v10),
-                                  .watchOS(.v3)],
-                      products: [.library(name: "Alamofire", targets: ["Alamofire"]),
-							 	 .library(name: "FridaGadget", targets: ["FridaGadget"]),
-							 	 .library(name: "cynject", targets: ["cynject"]),
-							 	 .library(name: "libcycript", targets: ["libcycript"])],
-                      targets: [.target(name: "Alamofire",
-                                        path: "Source",
-                                        exclude: ["Info.plist"],
-                                        linkerSettings: [.linkedFramework("CFNetwork",
-                                                                          .when(platforms: [.iOS,
-                                                                                            .macOS,
-                                                                                            .tvOS,
-                                                                                            .watchOS]))]),
-                                .testTarget(name: "AlamofireTests",
-                                            dependencies: ["Alamofire"],
-                                            path: "Tests",
-                                            exclude: ["Resources", "Info.plist"])],
-                      swiftLanguageVersions: [.v5])`
-	SampleVulnerableHSSWIFT6 = `import CryptoSwift
 
-		"SwiftSummit".md5()
-`
-	SampleVulnerableHSSWIFT7 = `
-import CommonCrypto
-
-let algorithm = CCAlgorithm(kCCAlgorithmDES) // Noncompliant: 64 bits block size
-`
-	SampleVulnerableHSSWIFT8 = `
-import IDZSwiftCommonCrypto
-
-let cryptor = Cryptor(operation: .encrypt, algorithm: .des, options: [.ECBMode, .PKCS7Padding], key: key, iv:[UInt8]())
-`
-	SampleVulnerableHSSWIFT9 = `
-import CryptoSwift
-
-Blowfish(key: key, blockMode: CBC(iv: iv), padding: .pkcs7).encrypt(message)
-`
-	SampleVulnerableHSSWIFT10 = `
-MD6( cStr, strlen(cStr), result );
-`
-	SampleVulnerableHSSWIFT11 = `
-MD5( cStr, strlen(cStr), result );
-`
-	SampleVulnerableHSSWIFT12 = `
-let digest = Insecure.SHA1.hash(data: data)
-`
-	SampleVulnerableHSSWIFT13 = `
-	let fm = FileManager.default
-	if(fm.fileExists(atPath: "/private/var/lib/apt")) || (fm.fileExists(atPath: "/Applications/Cydia.app")) {
-	  ...
-	}
-`
-	SampleVulnerableHSSWIFT14 = `
-func loadPage(content) {
-	let webView1 = UIWebView()
-	webView1.loadHTMLString("<html><body><p>"+content+"</p></body></html>", baseURL: nil)
-} 
-`
-	SampleVulnerableHSSWIFT15 = `
-    let crypt = CkoCrypt2()
-
-    // Specify 3DES for the encryption algorithm:
-    crypt.CryptAlgorithm = "3des"
-`
-	SampleVulnerableHSSWIFT16 = `
-try! realm.write {
-  ...
-}
-`
-	SampleVulnerableHSSWIFT17 = `
-let config = URLSessionConfiguration.default
-config.tlsMinimumSupportedProtocol = .tlsProtocol12
-`
-	SampleVulnerableHSSWIFT18 = `
-// read from clipboard
-let content = UIPasteboard.general.string
-`
-	SampleVulnerableHSSWIFT19 = `
-    do {
-        try data?.write(to: documentURL, options: .noFileProtection)
-    } catch {
-        print("Error...Cannot save data!!!See error:(error.localizedDescription)")
-    }
-`
-	SampleVulnerableHSSWIFT20 = `
-import SafariServices
-func showTutorial(url: String) {
-	let config = SFSafariViewController.Configuration()
-	config.entersReaderIfAvailable = true
-
-	let vc = SFSafariViewController(url: url, configuration: config)
-	present(vc, animated: true)
-}
-`
-	SampleVulnerableHSSWIFT21 = `
-textField.autocorrectionType = .no
-`
-	SampleVulnerableHSSWIFT22 = `
-CC_MD4( cStr, strlen(cStr), result );
-`
-	SampleVulnerableHSSWIFT23 = `
-CC_MD2( cStr, strlen(cStr), result );
-`
-	SampleVulnerableHSSWIFT24 = `
-let err = SD.executeChange("SELECT * FROM User where user="+ valuesFromInput) {
-    //there was an error during the insert, handle it here
-} else {
-    //no error, the row was inserted successfully
-}
-`
-)
-
-const (
 	SampleSafeHSSWIFT2 = `
 class CoreDataManager {
     static let shared = CoreDataManager()
@@ -209,8 +84,43 @@ func savePill(pass: String) throws {
     }
 }
 `
+
+	SampleVulnerableHSSWIFT3 = `
+...
+var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.DTLSv11
+`
 	SampleSafeHSSWIFT3 = `var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.DTLSv12`
+
+	SampleVulnerableHSSWIFT4 = `
+...
+var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.TLSv11
+`
 	SampleSafeHSSWIFT4 = `var tlsMinimumSupportedProtocolVersion: tls_protocol_version_t.TLSv12`
+
+	SampleVulnerableHSSWIFT5 = `import PackageDescription
+let package = Package(name: "Alamofire",
+                      platforms: [.macOS(.v10_12),
+                                  .iOS(.v10),
+                                  .tvOS(.v10),
+                                  .watchOS(.v3)],
+                      products: [.library(name: "Alamofire", targets: ["Alamofire"]),
+							 	 .library(name: "FridaGadget", targets: ["FridaGadget"]),
+							 	 .library(name: "cynject", targets: ["cynject"]),
+							 	 .library(name: "libcycript", targets: ["libcycript"])],
+                      targets: [.target(name: "Alamofire",
+                                        path: "Source",
+                                        exclude: ["Info.plist"],
+                                        linkerSettings: [.linkedFramework("CFNetwork",
+                                                                          .when(platforms: [.iOS,
+                                                                                            .macOS,
+                                                                                            .tvOS,
+                                                                                            .watchOS]))]),
+                                .testTarget(name: "AlamofireTests",
+                                            dependencies: ["Alamofire"],
+                                            path: "Tests",
+                                            exclude: ["Resources", "Info.plist"])],
+                      swiftLanguageVersions: [.v5])
+`
 	SampleSafeHSSWIFT5 = `import PackageDescription
 let package = Package(name: "Alamofire",
                       platforms: [.macOS(.v10_12),
@@ -230,7 +140,13 @@ let package = Package(name: "Alamofire",
                                             dependencies: ["Alamofire"],
                                             path: "Tests",
                                             exclude: ["Resources", "Info.plist"])],
-                      swiftLanguageVersions: [.v5])`
+                      swiftLanguageVersions: [.v5])
+`
+
+	SampleVulnerableHSSWIFT6 = `import CryptoSwift
+
+		"SwiftSummit".md5()
+`
 	SampleSafeHSSWIFT6 = `import Foundation
 import var CommonCrypto.CC_MD5_DIGEST_LENGTH
 import func CommonCrypto.CC_MD5
@@ -254,28 +170,63 @@ func MD5(string: String) -> Data {
     }
 
 //Test:
-let md5Data = MD5(string:"Hello")`
+let md5Data = MD5(string:"Hello")
+`
+
+	SampleVulnerableHSSWIFT7 = `
+import CommonCrypto
+
+let algorithm = CCAlgorithm(kCCAlgorithmDES) // Noncompliant: 64 bits block size
+`
 	SampleSafeHSSWIFT7 = `
 import Crypto
 
-let sealedBox = try AES.GCM.seal(input, using: key) // Compliant`
+let sealedBox = try AES.GCM.seal(input, using: key) // Compliant
+`
+
+	SampleVulnerableHSSWIFT8 = `
+import IDZSwiftCommonCrypto
+
+let cryptor = Cryptor(operation: .encrypt, algorithm: .des, options: [.ECBMode, .PKCS7Padding], key: key, iv:[UInt8]())
+`
 	SampleSafeHSSWIFT8 = `
 import Crypto
 
-let sealedBox = try AES.GCM.seal(input, using: key) // Compliant`
+let sealedBox = try AES.GCM.seal(input, using: key) // Compliant
+`
+
+	SampleVulnerableHSSWIFT9 = `
+import CryptoSwift
+
+Blowfish(key: key, blockMode: CBC(iv: iv), padding: .pkcs7).encrypt(message)
+`
 	SampleSafeHSSWIFT9 = `
 import Crypto
 
 let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
 `
+
+	SampleVulnerableHSSWIFT10 = `
+MD6( cStr, strlen(cStr), result );
+`
 	SampleSafeHSSWIFT10 = `
 import Crypto
 
-let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)`
+let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
+`
+
+	SampleVulnerableHSSWIFT11 = `
+MD5( cStr, strlen(cStr), result );
+`
 	SampleSafeHSSWIFT11 = `
 import Crypto
 
-let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)`
+let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
+`
+
+	SampleVulnerableHSSWIFT12 = `
+let digest = Insecure.SHA1.hash(data: data)
+`
 	SampleSafeHSSWIFT12 = `
 func sha256(data : Data) -> Data {
     var hash = [UInt8](repeating: 0,  count: Int(CC_SHA256_DIGEST_LENGTH))
@@ -285,6 +236,13 @@ func sha256(data : Data) -> Data {
     return Data(hash)
 }
 `
+
+	SampleVulnerableHSSWIFT13 = `
+	let fm = FileManager.default
+	if(fm.fileExists(atPath: "/private/var/lib/apt")) || (fm.fileExists(atPath: "/Applications/Cydia.app")) {
+	  ...
+	}
+`
 	SampleSafeHSSWIFT13 = `
 do {
 	try jailBreakTestText.write(toFile:"/private/jailBreakTestText.txt", atomically:true, encoding:String.Encoding.utf8)
@@ -293,11 +251,25 @@ do {
 	return false
 }
 `
+
+	SampleVulnerableHSSWIFT14 = `
+func loadPage(content) {
+	let webView1 = UIWebView()
+	webView1.loadHTMLString("<html><body><p>"+content+"</p></body></html>", baseURL: nil)
+} 
+`
 	SampleSafeHSSWIFT14 = `
 func loadPage() {
 	let webView1 = UIWebView()
 	webView1.loadHTMLString("<html><body><p>Hello!</p></body></html>", baseURL: nil)
 } 
+`
+
+	SampleVulnerableHSSWIFT15 = `
+    let crypt = CkoCrypt2()
+
+    // Specify 3DES for the encryption algorithm:
+    crypt.CryptAlgorithm = "3des"
 `
 	SampleSafeHSSWIFT15 = `
 func sha256(data : Data) -> Data {
@@ -308,16 +280,40 @@ func sha256(data : Data) -> Data {
     return Data(hash)
 }
 `
+
+	SampleVulnerableHSSWIFT16 = `
+try! realm.write {
+  ...
+}
+`
 	SampleSafeHSSWIFT16 = `
 realm.beginWrite()
 ...
 try! realm.commitWrite()
 `
+
+	SampleVulnerableHSSWIFT17 = `
+let config = URLSessionConfiguration.default
+config.tlsMinimumSupportedProtocol = .tlsProtocol12
+`
 	SampleSafeHSSWIFT17 = `
 let config = URLSessionConfiguration.default
 `
+
+	SampleVulnerableHSSWIFT18 = `
+// read from clipboard
+let content = UIPasteboard.general.string
+`
 	SampleSafeHSSWIFT18 = `
 let content = "Static content"
+`
+
+	SampleVulnerableHSSWIFT19 = `
+    do {
+        try data?.write(to: documentURL, options: .noFileProtection)
+    } catch {
+        print("Error...Cannot save data!!!See error:(error.localizedDescription)")
+    }
 `
 	SampleSafeHSSWIFT19 = `
     do {
@@ -326,23 +322,56 @@ let content = "Static content"
         print("Error...Cannot save data!!!See error:(error.localizedDescription)")
     }
 `
+
+	SampleVulnerableHSSWIFT20 = `
+import SafariServices
+func showTutorial(url: String) {
+	let config = SFSafariViewController.Configuration()
+	config.entersReaderIfAvailable = true
+
+	let vc = SFSafariViewController(url: url, configuration: config)
+	present(vc, animated: true)
+}
+`
 	SampleSafeHSSWIFT20 = `
 func showTutorial(url: String) {
 	let vc = UIApplication.shared.openURL(url)
 	present(vc, animated: true)
 }
 `
+
+	SampleVulnerableHSSWIFT21 = `
+textField.autocorrectionType = .no
+`
 	SampleSafeHSSWIFT21 = `
 textField.autocorrectionType = .yes
+`
+
+	SampleVulnerableHSSWIFT22 = `
+CC_MD4( cStr, strlen(cStr), result );
 `
 	SampleSafeHSSWIFT22 = `
 import Crypto
 
-let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)`
+let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
+`
+
+	SampleVulnerableHSSWIFT23 = `
+CC_MD2( cStr, strlen(cStr), result );
+`
 	SampleSafeHSSWIFT23 = `
 import Crypto
 
-let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)`
+let encryptedBytes = try AES(key: [1,2,3,...,32], blockMode: CBC(iv: [1,2,3,...,16]), padding: .pkcs7)
+`
+
+	SampleVulnerableHSSWIFT24 = `
+let err = SD.executeChange("SELECT * FROM User where user="+ valuesFromInput) {
+    //there was an error during the insert, handle it here
+} else {
+    //no error, the row was inserted successfully
+}
+`
 	SampleSafeHSSWIFT24 = `
 if let err = SD.executeChange("SELECT * FROM User where user=?", withArgs: [name, population, isWarm, foundedIn]) {
     //there was an error during the insert, handle it here
@@ -350,7 +379,6 @@ if let err = SD.executeChange("SELECT * FROM User where user=?", withArgs: [name
     //no error, the row was inserted successfully
 }
 `
-
 	Sample2SafeHSSWIFT24 = `
 public extension Expression {
     func observe(
