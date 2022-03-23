@@ -46,11 +46,13 @@ import (
 func NewCoreDataDatabase() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-2",
-			Name:        "CoreData Database",
-			Description: "App uses CoreData Database. Sensitive Information should be encrypted. For more information checkout the CWE-311 (https://cwe.mitre.org/data/definitions/311.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-2",
+			Name:          "CoreData Database",
+			Description:   "App uses CoreData Database. Sensitive Information should be encrypted. For more information checkout the CWE-311 (https://cwe.mitre.org/data/definitions/311.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT2,
+			UnsafeExample: SampleVulnerableHSSWIFT2,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -62,11 +64,13 @@ func NewCoreDataDatabase() *text.Rule {
 func NewDTLS12NotUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-3",
-			Name:        "DTLS 1.0 or 1.1 not used",
-			Description: "DTLS 1.2 should be used. Detected old version - DTLS 1.0. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-3",
+			Name:          "DTLS 1.0 or 1.1 not used",
+			Description:   "DTLS 1.2 should be used. Detected old version - DTLS 1.0. For more information checkout the CWE-295 (https://cwe.mitre.org/data/definitions/295.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT3,
+			UnsafeExample: SampleVulnerableHSSWIFT3,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -78,11 +82,13 @@ func NewDTLS12NotUsed() *text.Rule {
 func NewTLS13NotUsed() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-4",
-			Name:        "TLS 1.0 or TLS 1.1 not be used",
-			Description: "TLS 1.2 should be used. Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-4",
+			Name:          "TLS 1.0 or TLS 1.1 not be used",
+			Description:   "TLS 1.2 should be used. Older versions of SSL/TLS protocol like \"SSLv3\" have been proven to be insecure. This rule raises an issue when an SSL/TLS context is created with an insecure protocol version (ie: a protocol different from \"TLSv1.2\", \"TLSv1.3\", \"DTLSv1.2\" or \"DTLSv1.3\"). For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) and CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT4,
+			UnsafeExample: SampleVulnerableHSSWIFT4,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -94,11 +100,13 @@ func NewTLS13NotUsed() *text.Rule {
 func NewReverseEngineering() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-5",
-			Name:        "Reverse engineering",
-			Description: "This App may have Reverse engineering detection capabilities. For more information checkout the OWASP-M9 (https://owasp.org/www-project-mobile-top-10/2016-risks/m9-reverse-engineering) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-5",
+			Name:          "Reverse engineering",
+			Description:   "This App may have Reverse engineering detection capabilities. For more information checkout the OWASP-M9 (https://owasp.org/www-project-mobile-top-10/2016-risks/m9-reverse-engineering) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT5,
+			UnsafeExample: SampleVulnerableHSSWIFT5,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -112,11 +120,13 @@ func NewReverseEngineering() *text.Rule {
 func NewWeakMD5CryptoCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-6",
-			Name:        "Weak MD5 hash using",
-			Description: "The MD5 hash algorithm that was used is considered weak. It can also cause hash collisions. It is always recommended to use some CHF (Cryptographic Hash Function), which is mathematically strong and not reversible. SHA512 would be the most recommended hash for storing the password and it is also important to adopt some type of Salt, so that the Hash is more secure. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-6",
+			Name:          "Weak MD5 hash using",
+			Description:   "The MD5 hash algorithm that was used is considered weak. It can also cause hash collisions. It is always recommended to use some CHF (Cryptographic Hash Function), which is mathematically strong and not reversible. SHA512 would be the most recommended hash for storing the password and it is also important to adopt some type of Salt, so that the Hash is more secure. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT6,
+			UnsafeExample: SampleVulnerableHSSWIFT6,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -129,11 +139,13 @@ func NewWeakMD5CryptoCipher() *text.Rule {
 func NewWeakCommonDesCryptoCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-7",
-			Name:        "Weak DES hash using",
-			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-7",
+			Name:          "Weak DES hash using",
+			Description:   "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT7,
+			UnsafeExample: SampleVulnerableHSSWIFT7,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -146,11 +158,13 @@ func NewWeakCommonDesCryptoCipher() *text.Rule {
 func NewWeakIDZDesCryptoCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-8",
-			Name:        "Weak DES hash using",
-			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-8",
+			Name:          "Weak DES hash using",
+			Description:   "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT8,
+			UnsafeExample: SampleVulnerableHSSWIFT8,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -163,11 +177,13 @@ func NewWeakIDZDesCryptoCipher() *text.Rule {
 func NewWeakBlowfishCryptoCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-9",
-			Name:        "Weak Cipher Mode",
-			Description: "Cipher algorithms should be robust",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-9",
+			Name:          "Weak Cipher Mode",
+			Description:   "Cipher algorithms should be robust",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT9,
+			UnsafeExample: SampleVulnerableHSSWIFT9,
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
@@ -180,11 +196,13 @@ func NewWeakBlowfishCryptoCipher() *text.Rule {
 func NewMD6Collision() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-10",
-			Name:        "Weak MD6 hash using",
-			Description: "MD6 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-10",
+			Name:          "Weak MD6 hash using",
+			Description:   "MD6 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT10,
+			UnsafeExample: SampleVulnerableHSSWIFT10,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -197,11 +215,13 @@ func NewMD6Collision() *text.Rule {
 func NewMD5Collision() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-11",
-			Name:        "Weak MD5 hash using",
-			Description: "MD5 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-11",
+			Name:          "Weak MD5 hash using",
+			Description:   "MD5 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT11,
+			UnsafeExample: SampleVulnerableHSSWIFT11,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -214,11 +234,13 @@ func NewMD5Collision() *text.Rule {
 func NewSha1Collision() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-12",
-			Name:        "Weak SHA1 hash using",
-			Description: "SHA1 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-12",
+			Name:          "Weak SHA1 hash using",
+			Description:   "SHA1 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT12,
+			UnsafeExample: SampleVulnerableHSSWIFT12,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -232,11 +254,13 @@ func NewSha1Collision() *text.Rule {
 func NewJailbreakDetect() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-13",
-			Name:        "Jailbreak detection",
-			Description: "This App may have Jailbreak detection capabilities.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-13",
+			Name:          "Jailbreak detection",
+			Description:   "This App may have Jailbreak detection capabilities.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT13,
+			UnsafeExample: SampleVulnerableHSSWIFT13,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -294,11 +318,13 @@ func NewJailbreakDetect() *text.Rule {
 func NewLoadHTMLString() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-14",
-			Name:        "Javascript injection",
-			Description: "User input not sanitized in \"loadHTMLString\" can result in an injection of JavaScript in the context of your application, allowing access to private data. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-14",
+			Name:          "Javascript injection",
+			Description:   "User input not sanitized in \"loadHTMLString\" can result in an injection of JavaScript in the context of your application, allowing access to private data. For more information checkout the CWE-95 (https://cwe.mitre.org/data/definitions/95.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT14,
+			UnsafeExample: SampleVulnerableHSSWIFT14,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -310,11 +336,13 @@ func NewLoadHTMLString() *text.Rule {
 func NewWeakDesCryptoCipher() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-15",
-			Name:        "Weak Cipher Mode",
-			Description: "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-15",
+			Name:          "Weak Cipher Mode",
+			Description:   "DES is considered strong ciphers for modern applications. Currently, NIST recommends the usage of AES block ciphers instead of DES. For more information checkout the CWE-326 (https://cwe.mitre.org/data/definitions/326.html) advisory",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT15,
+			UnsafeExample: SampleVulnerableHSSWIFT15,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -327,11 +355,13 @@ func NewWeakDesCryptoCipher() *text.Rule {
 func NewRealmDatabase() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-16",
-			Name:        "Realm Database",
-			Description: "App uses Realm Database. Sensitive Information should be encrypted.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-16",
+			Name:          "Realm Database",
+			Description:   "App uses Realm Database. Sensitive Information should be encrypted.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT16,
+			UnsafeExample: SampleVulnerableHSSWIFT16,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -343,11 +373,13 @@ func NewRealmDatabase() *text.Rule {
 func NewTLSMinimum() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-17",
-			Name:        "Deperected tls property",
-			Description: "Use of deprecated property tlsMinimumSupportedProtocol. To avoid potential security risks, use tlsMinimumSupportedProtocolVersion",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-17",
+			Name:          "Deperected tls property",
+			Description:   "Use of deprecated property tlsMinimumSupportedProtocol. To avoid potential security risks, use tlsMinimumSupportedProtocolVersion",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT17,
+			UnsafeExample: SampleVulnerableHSSWIFT17,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -359,11 +391,13 @@ func NewTLSMinimum() *text.Rule {
 func NewUIPasteboard() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-18",
-			Name:        "UIPasteboard",
-			Description: "This application uses UIPasteboard, improper use of this class can lead to security issues.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-18",
+			Name:          "UIPasteboard",
+			Description:   "This application uses UIPasteboard, improper use of this class can lead to security issues.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT18,
+			UnsafeExample: SampleVulnerableHSSWIFT18,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -375,11 +409,13 @@ func NewUIPasteboard() *text.Rule {
 func NewFileProtection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-19",
-			Name:        "File protection",
-			Description: "The file has no special protections associated with it.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-19",
+			Name:          "File protection",
+			Description:   "The file has no special protections associated with it.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT19,
+			UnsafeExample: SampleVulnerableHSSWIFT19,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -391,11 +427,13 @@ func NewFileProtection() *text.Rule {
 func NewWebViewSafari() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-20",
-			Name:        "WebView Safari",
-			Description: "It is recommended to use WKWebView instead of SFSafariViewController or UIWebView to prevent navigating to arbitrary URLs.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-20",
+			Name:          "WebView Safari",
+			Description:   "It is recommended to use WKWebView instead of SFSafariViewController or UIWebView to prevent navigating to arbitrary URLs.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT20,
+			UnsafeExample: SampleVulnerableHSSWIFT20,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -407,11 +445,13 @@ func NewWebViewSafari() *text.Rule {
 func NewKeyboardCache() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-21",
-			Name:        "Keyboard cache",
-			Description: "Keyboard cache should be disabled for all sensitive data inputs.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-21",
+			Name:          "Keyboard cache",
+			Description:   "Keyboard cache should be disabled for all sensitive data inputs.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT21,
+			UnsafeExample: SampleVulnerableHSSWIFT21,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -423,11 +463,13 @@ func NewKeyboardCache() *text.Rule {
 func NewMD4Collision() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-22",
-			Name:        "Weak MD4 hash using",
-			Description: "MD4 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-22",
+			Name:          "Weak MD4 hash using",
+			Description:   "MD4 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT22,
+			UnsafeExample: SampleVulnerableHSSWIFT22,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -439,11 +481,13 @@ func NewMD4Collision() *text.Rule {
 func NewMD2Collision() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-23",
-			Name:        "Weak MD2 hash using",
-			Description: "MD2 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
-			Severity:    severities.Medium.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-23",
+			Name:          "Weak MD2 hash using",
+			Description:   "MD2 is a weak hash, which can generate repeated hashes. For more information checkout the CWE-327 (https://cwe.mitre.org/data/definitions/327.html) advisory.",
+			Severity:      severities.Medium.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT23,
+			UnsafeExample: SampleVulnerableHSSWIFT23,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
@@ -455,11 +499,13 @@ func NewMD2Collision() *text.Rule {
 func NewSQLInjection() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
-			ID:          "HS-SWIFT-24",
-			Name:        "SQL Injection",
-			Description: "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
-			Severity:    severities.High.ToString(),
-			Confidence:  confidence.Low.ToString(),
+			ID:            "HS-SWIFT-24",
+			Name:          "SQL Injection",
+			Description:   "The input values included in SQL queries need to be passed in safely. Bind variables in prepared statements can be used to easily mitigate the risk of SQL injection. For more information checkout the CWE-89 (https://cwe.mitre.org/data/definitions/89.html) advisory.",
+			Severity:      severities.High.ToString(),
+			Confidence:    confidence.Low.ToString(),
+			SafeExample:   SampleSafeHSSWIFT24,
+			UnsafeExample: SampleVulnerableHSSWIFT24,
 		},
 		Type: text.OrMatch,
 		Expressions: []*regexp.Regexp{
