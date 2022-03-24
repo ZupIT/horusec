@@ -110,36 +110,43 @@ func TestCreateAndWriteFile(t *testing.T) {
 
 func TestGetDependencyCodeFilepathAndLine(t *testing.T) {
 	t.Run("Should run with success", func(t *testing.T) {
-		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
-			testutil.CsharpExample1, "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(
+			testutil.CsharpExample1, "", []string{"Microsoft.AspNetCore.Http", "2.2.2"}, dotnetcli.CsProjExt,
 		)
-
-		expectedCode := "<PackageReference Include=\"Microsoft.AspNetCore.Http\" Version=\"2.2.2\"/>"
+		expectedCode := "    <PackageReference Include=\"Microsoft.AspNetCore.Http\" Version=\"2.2.2\"/>"
 		expectedFile := filepath.Join(testutil.CsharpExample1, "NetCoreVulnerabilities", "NetCoreVulnerabilities.csproj")
 		expectedLine := "7"
 		assert.NoError(t, err)
-		assert.Equal(t, expectedLine, line)
-		assert.Equal(t, expectedFile, file)
-		assert.Equal(t, expectedCode, code)
+		assert.Equal(t, expectedLine, dependencyInfo.Line)
+		assert.Equal(t, expectedFile, dependencyInfo.Path)
+		assert.Equal(t, expectedCode, dependencyInfo.Code)
 	})
 	t.Run("Should return empty when path is invalid", func(t *testing.T) {
-		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
-			"invalidPath", "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(
+			"invalidPath", "", []string{"Microsoft.AspNetCore.Http"}, dotnetcli.CsProjExt,
 		)
-
 		assert.Error(t, err)
-		assert.Zero(t, code)
-		assert.Zero(t, file)
-		assert.Zero(t, line)
+		assert.ErrorIs(t, err, os.ErrNotExist)
+		assert.Nil(t, dependencyInfo)
 	})
 	t.Run("Should return empty when path is valid but has no files", func(t *testing.T) {
-		code, file, line, err := file.GetDependencyCodeFilepathAndLine(
-			t.TempDir(), "", "Microsoft.AspNetCore.Http", dotnetcli.CsProjExt,
+		dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(
+			t.TempDir(), "", []string{"Microsoft.AspNetCore.Http"}, dotnetcli.CsProjExt,
 		)
 		assert.NoError(t, err)
-		assert.Zero(t, code)
-		assert.Zero(t, file)
-		assert.Zero(t, line)
+		assert.NotNil(t, dependencyInfo)
+		assert.Empty(t, dependencyInfo.Line)
+		assert.Empty(t, dependencyInfo.Code)
+		assert.Empty(t, dependencyInfo.Path)
+	})
+	t.Run("Should found the file but not found the code expected in this file", func(t *testing.T) {
+		dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(
+			testutil.CsharpExample1, "", []string{"This_Code_Not_Exists_In_File", "5.2.3"}, dotnetcli.CsProjExt,
+		)
+		assert.NoError(t, err)
+		assert.Empty(t, dependencyInfo.Line)
+		assert.Empty(t, dependencyInfo.Path)
+		assert.Empty(t, dependencyInfo.Code)
 	})
 }
 

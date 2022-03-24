@@ -46,7 +46,7 @@ jobs:
 
       - name: Setup docker for MacOS
         if: ${{ matrix.os == 'macos-latest' }} 
-        uses: docker-practice/actions-setup-docker@master
+        uses: docker-practice/actions-setup-docker@v1
         with:
           docker_buildx: false
 

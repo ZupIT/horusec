@@ -21,7 +21,7 @@ RUN "$JAVA_HOME/bin/jlink" --compress=2 \
 
 FROM python:3.10.2-alpine3.14
 
-RUN pip install semgrep==v0.63.0
+RUN pip install semgrep==v0.85.0
 
 COPY --from=jlink /jlinked /opt/jdk/
 
@@ -29,10 +29,11 @@ ENV JAVA_HOME=/opt/jdk
 
 RUN apk update && apk add curl
 
-RUN curl -o /bin/dependency-check-6.2.2-release.zip -LO https://github.com/jeremylong/DependencyCheck/releases/download/v6.2.2/dependency-check-6.2.2-release.zip
+# TODO: upgrade owasp dependency check to 7.x version
+RUN curl -o /bin/dependency-check-6.5.3-release.zip -LO https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip
 
-RUN unzip /bin/dependency-check-6.2.2-release.zip -d  /bin
+RUN unzip /bin/dependency-check-6.5.3-release.zip -d  /bin
 
-RUN rm /bin/dependency-check-6.2.2-release.zip
+RUN rm /bin/dependency-check-6.5.3-release.zip
 
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.19.2
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.24.4

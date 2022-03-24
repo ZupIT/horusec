@@ -37,18 +37,18 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return(output, nil)
 
-		analysis := new(analysis.Analysis)
+		newAnalysis := new(analysis.Analysis)
 
 		cfg := config.New()
-		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, analysis, testutil.CsharpExample1)
+		cfg.ProjectPath = testutil.CreateHorusecAnalysisDirectory(t, newAnalysis, testutil.CsharpExample1)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, cfg)
+		service := formatters.NewFormatterService(newAnalysis, dockerAPIControllerMock, cfg)
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 
-		assert.Len(t, analysis.AnalysisVulnerabilities, 3)
+		assert.Len(t, newAnalysis.AnalysisVulnerabilities, 3)
 
-		for _, v := range analysis.AnalysisVulnerabilities {
+		for _, v := range newAnalysis.AnalysisVulnerabilities {
 			vuln := v.Vulnerability
 			assert.Equal(t, tools.DotnetCli, vuln.SecurityTool)
 			assert.Equal(t, languages.CSharp, vuln.Language)
@@ -72,14 +72,14 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", nil)
 
-		analysis := new(analysis.Analysis)
+		newAnalysis := new(analysis.Analysis)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(newAnalysis, dockerAPIControllerMock, config.New())
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 
-		assert.Len(t, analysis.AnalysisVulnerabilities, 0)
-		assert.False(t, analysis.HasErrors(), "Expected no errors on analysis")
+		assert.Len(t, newAnalysis.AnalysisVulnerabilities, 0)
+		assert.False(t, newAnalysis.HasErrors(), "Expected no errors on analysis")
 	})
 
 	t.Run("should add error from executing container on analysis", func(t *testing.T) {
@@ -87,13 +87,13 @@ func TestParseOutput(t *testing.T) {
 		dockerAPIControllerMock.On("SetAnalysisID")
 		dockerAPIControllerMock.On("CreateLanguageAnalysisContainer").Return("", errors.New("test"))
 
-		analysis := new(analysis.Analysis)
+		newAnalysis := new(analysis.Analysis)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(newAnalysis, dockerAPIControllerMock, config.New())
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 
-		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
+		assert.True(t, newAnalysis.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("should add error on analysis when solution was not found", func(t *testing.T) {
@@ -103,26 +103,26 @@ func TestParseOutput(t *testing.T) {
 			"A project or solution file could not be found", nil,
 		)
 
-		analysis := new(analysis.Analysis)
+		newAnalysis := new(analysis.Analysis)
 
-		service := formatters.NewFormatterService(analysis, dockerAPIControllerMock, config.New())
+		service := formatters.NewFormatterService(newAnalysis, dockerAPIControllerMock, config.New())
 		formatter := NewFormatter(service)
 		formatter.StartAnalysis("")
 
-		assert.True(t, analysis.HasErrors(), "Expected errors on analysis")
+		assert.True(t, newAnalysis.HasErrors(), "Expected errors on analysis")
 	})
 
 	t.Run("should not execute tool because it's ignored", func(t *testing.T) {
 		dockerAPIControllerMock := testutil.NewDockerMock()
 
-		config := config.New()
-		config.ToolsConfig = toolsconfig.ToolsConfig{
+		newConfig := config.New()
+		newConfig.ToolsConfig = toolsconfig.ToolsConfig{
 			tools.DotnetCli: toolsconfig.Config{
 				IsToIgnore: true,
 			},
 		}
 
-		service := formatters.NewFormatterService(new(analysis.Analysis), dockerAPIControllerMock, config)
+		service := formatters.NewFormatterService(new(analysis.Analysis), dockerAPIControllerMock, newConfig)
 		formatter := NewFormatter(service)
 
 		formatter.StartAnalysis("")

@@ -119,8 +119,9 @@ func (f *Formatter) getOutputText(output string) string {
 func (f *Formatter) newVulnerability(vulnData *nancyVulnerability, vulnerable *nancyVulnerable,
 	projectSubPath string,
 ) (*vulnerability.Vulnerability, error) {
-	code, filePath, line, err := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, vulnerable.getDependency(), goModulesExt, goSumExt,
+	dep, version := vulnerable.getDependencyAndVersion()
+	dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(
+		f.GetConfigProjectPath(), projectSubPath, []string{dep, version}, goModulesExt, goSumExt,
 	)
 	if err != nil {
 		return nil, err
@@ -133,11 +134,11 @@ func (f *Formatter) newVulnerability(vulnData *nancyVulnerability, vulnerable *n
 		Details:      vulnData.getDescription(),
 		RuleID:       vulnData.Cve,
 		Confidence:   confidence.High,
-		Code:         code,
-		Line:         line,
-		File:         f.removeHorusecFolder(filePath),
+		Code:         dependencyInfo.Code,
+		Line:         dependencyInfo.Line,
+		File:         f.removeHorusecFolder(dependencyInfo.Path),
 	}
-	return f.SetCommitAuthor(vulnHash.Bind(vuln)), err
+	return f.SetCommitAuthor(vulnHash.Bind(vuln)), nil
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *docker.AnalysisData {

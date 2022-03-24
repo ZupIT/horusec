@@ -42,14 +42,17 @@ func TestGetDependency(t *testing.T) {
 			Coordinates: "pkg:golang/test@123",
 		}
 
-		assert.Equal(t, "test", vulnerable.getDependency())
+		dep, version := vulnerable.getDependencyAndVersion()
+		assert.Equal(t, "test", dep)
+		assert.Equal(t, "123", version)
 	})
 
 	t.Run("should return dependency when no version was found", func(t *testing.T) {
 		vulnerable := nancyVulnerable{
 			Coordinates: "pkg:golang/test",
 		}
-
-		assert.Equal(t, "test", vulnerable.getDependency())
+		dep, version := vulnerable.getDependencyAndVersion()
+		assert.Equal(t, "test", dep)
+		assert.Empty(t, version)
 	})
 }

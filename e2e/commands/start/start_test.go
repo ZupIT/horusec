@@ -479,9 +479,9 @@ var _ = Describe("running binary Horusec with start parameter", func() {
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Severity: LOW`))
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Confidence: LOW`))
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`RuleID: HS-JAVA-99999999999`))
-			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Details: Teste QA`))
-			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Teste de description QA`))
 			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Type: Vulnerability`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Possible vulnerability detected: Test QA`))
+			Eventually(session.Wait(testutil.AverageTimeoutAnalyzeForExamplesFolder).Out).Should(gbytes.Say(`Test Description QA`))
 		})
 	})
 })
@@ -497,8 +497,8 @@ func writeJsonFile(path string) {
 	customRules := []map[string]interface{}{
 		{
 			"id":          "HS-JAVA-99999999999",
-			"name":        "Teste QA",
-			"description": "Teste de description QA",
+			"name":        "Test QA",
+			"description": "Test Description QA",
 			"language":    "Java",
 			"severity":    "LOW",
 			"confidence":  "LOW",

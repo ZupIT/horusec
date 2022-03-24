@@ -21,6 +21,7 @@ const (
 	MsgErrorPathNotValid                        = "invalid path:"
 	MsgErrorJSONOutputFilePathNotValidExtension = "Output File path not valid file of type:"
 	MsgErrorJSONOutputFilePathNotValidUnknown   = "Output File path is required or is invalid:"
+	MSgErrorGitLeaksPermissionDenied            = "error: could not lock config file .git/config: Permission denied"
 	MsgErrorSeverityNotValid                    = "Type of severity not valid. See severities enable:"
 	MsgErrorAskForUserCancelled                 = "{HORUSEC_CLI} Operation was canceled by user"
 	MsgVulnerabilityTypeToShowInvalid           = "{HORUSEC_CLI} Error on validate vulnerability type is wrong type: "
@@ -77,4 +78,5 @@ const (
 	MsgErrorGetRelativePathFromFile          = "{HORUSEC_CLI} Error when get relative path of file"
 	MsgErrorGetDependencyCodeFilepathAndLine = "{HORUSEC_CLI} Error when get dependency code filepath and line"
 	MsgErrorGetDependencyInfo                = "{HORUSEC_CLI} Error when get dependency code info"
+	MsgErrorBundlerNotAccessDB               = "{HORUSEC_CLI} BundlerAudit cannot access database in github: "
 )

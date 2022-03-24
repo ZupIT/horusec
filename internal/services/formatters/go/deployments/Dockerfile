@@ -16,7 +16,7 @@ FROM golang:1.17.8-alpine
 
 RUN apk add curl
 
-RUN curl -fsSL https://github.com/sonatype-nexus-community/nancy/releases/download/v1.0.29/nancy-v1.0.29-linux-amd64 -o /bin/nancy
+RUN curl -fsSL https://github.com/sonatype-nexus-community/nancy/releases/download/v1.0.33/nancy-v1.0.33-linux-amd64 -o /bin/nancy
 RUN chmod +x /bin/nancy
 
-RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.8.1
+RUN wget -O - -q https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.11.0
