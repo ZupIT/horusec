@@ -15,205 +15,400 @@
 package customrules
 
 import (
+	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-engine/text"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestValidate(t *testing.T) {
-	t.Run("should return no errors when valid custom rule", func(t *testing.T) {
-		customRule := CustomRule{
-			ID:          "HS-LEAKS-1000",
-			Name:        "test",
-			Description: "test",
-			Severity:    severities.Low,
-			Confidence:  confidence.Low,
-			Type:        OrMatch,
-			Expressions: []string{""},
-			Language:    languages.Leaks,
-		}
+	type test struct {
+		name     string
+		cr       CustomRule
+		validate func(err error)
+	}
 
-		assert.NoError(t, customRule.Validate())
-	})
-
-	t.Run("should return error when empty custom rule", func(t *testing.T) {
-		customRule := CustomRule{}
-		assert.Error(t, customRule.Validate())
-	})
-
-	t.Run("should return error when invalid ID", func(t *testing.T) {
-		customRule := CustomRule{
-			ID:          "HS-INVALID-1",
-			Name:        "test",
-			Description: "test",
-			Severity:    severities.Low,
-			Confidence:  confidence.Low,
-			Type:        Regular,
-			Expressions: []string{""},
-			Language:    languages.Java,
-		}
-		assert.Error(t, customRule.Validate())
-	})
-	t.Run("should return error when duplicated ID", func(t *testing.T) {
-		customRule := CustomRule{
-			ID:          "HS-LEAKS-1",
-			Name:        "test",
-			Description: "test",
-			Severity:    severities.Low,
-			Confidence:  confidence.Low,
-			Type:        Regular,
-			Expressions: []string{""},
-			Language:    languages.Leaks,
-		}
-		assert.Error(t, customRule.Validate())
-	})
-	t.Run("should return error when not supported language", func(t *testing.T) {
-		customRule := CustomRule{
-			ID:          "HS-PYTHON-1",
-			Name:        "test",
-			Description: "test",
-			Severity:    severities.Low,
-			Confidence:  confidence.Low,
-			Type:        Regular,
-			Expressions: []string{""},
-			Language:    languages.Python,
-		}
-		assert.Error(t, customRule.Validate())
-	})
-}
-
-func TestValidateAllLanguages(t *testing.T) {
-	rules := []CustomRule{
+	tests := []test{
 		{
-			ID:         "HS-CSHARP-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.CSharp,
+			name: "should return no errors when valid custom rule",
+			cr: CustomRule{
+				ID:          "HS-LEAKS-1000",
+				Name:        "test",
+				Description: "test",
+				Severity:    severities.Low,
+				Confidence:  confidence.Low,
+				Type:        OrMatch,
+				Expressions: []string{""},
+				Language:    languages.Leaks,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
 		},
 		{
-			ID:         "HS-DART-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Dart,
+			name: "should return error when empty custom rule",
+			cr:   CustomRule{},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
 		},
 		{
-			ID:         "HS-JAVA-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Java,
+			name: "should return error when invalid ID",
+			cr: CustomRule{
+				ID:          "HS-INVALID-1",
+				Name:        "test",
+				Description: "test",
+				Severity:    severities.Low,
+				Confidence:  confidence.Low,
+				Type:        Regular,
+				Expressions: []string{""},
+				Language:    languages.Java,
+			},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
 		},
 		{
-			ID:         "HS-KOTLIN-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Kotlin,
+			name: "should return error when duplicated ID",
+			cr: CustomRule{
+				ID:          "HS-LEAKS-1",
+				Name:        "test",
+				Description: "test",
+				Severity:    severities.Low,
+				Confidence:  confidence.Low,
+				Type:        Regular,
+				Expressions: []string{""},
+				Language:    languages.Leaks,
+			},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
 		},
 		{
-			ID:         "HS-YAML-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Yaml,
-		},
-		{
-			ID:         "HS-LEAKS-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Leaks,
-		},
-		{
-			ID:         "HS-JAVASCRIPT-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Javascript,
-		},
-		{
-			ID:         "HS-NGINX-10000",
-			Severity:   severities.Low,
-			Confidence: confidence.Low,
-			Type:       Regular,
-			Language:   languages.Nginx,
+			name: "should return error when not supported language",
+			cr: CustomRule{
+				ID:          "HS-PYTHON-1",
+				Name:        "test",
+				Description: "test",
+				Severity:    severities.Low,
+				Confidence:  confidence.Low,
+				Type:        Regular,
+				Expressions: []string{""},
+				Language:    languages.Python,
+			},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
 		},
 	}
 
-	for _, rule := range rules {
-		err := rule.Validate()
-		assert.NoError(t, err, "Expected no error for custom rule of language %s: %v", rule.Language, err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.cr.Validate()
+			tt.validate(err)
+		})
+	}
+}
+
+func TestValidateAllLanguages(t *testing.T) {
+	type test struct {
+		name     string
+		cr       CustomRule
+		validate func(err error)
+	}
+
+	tests := []test{
+		{
+			name: "Language CSharp",
+			cr: CustomRule{
+				ID:         "HS-CSHARP-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.CSharp,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language DART",
+			cr: CustomRule{
+				ID:         "HS-DART-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Dart,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language Java",
+			cr: CustomRule{
+				ID:         "HS-JAVA-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Java,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language Kotlin",
+			cr: CustomRule{
+				ID:         "HS-KOTLIN-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Kotlin,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language YAML",
+			cr: CustomRule{
+				ID:         "HS-YAML-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Yaml,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language Leaks",
+			cr: CustomRule{
+				ID:         "HS-LEAKS-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Leaks,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language JavaScript",
+			cr: CustomRule{
+				ID:         "HS-JAVASCRIPT-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Javascript,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Language Nginx",
+			cr: CustomRule{
+				ID:         "HS-NGINX-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Nginx,
+			},
+			validate: func(err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "Error due to invalid ID",
+			cr: CustomRule{
+				ID:         "HS-NOT-CORRECT-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Nginx,
+			},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
+		},
+		{
+			name: "Language Nginx - Error due to invalid Language",
+			cr: CustomRule{
+				ID:         "HS-JAVA-10000",
+				Severity:   severities.Low,
+				Confidence: confidence.Low,
+				Type:       Regular,
+				Language:   languages.Language("DOESNTEXIST"),
+			},
+			validate: func(err error) {
+				require.Error(t, err)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.cr.Validate()
+			tt.validate(err)
+		})
 	}
 }
 
 func TestGetRuleType(t *testing.T) {
-	t.Run("should return regular type", func(t *testing.T) {
-		customRule := CustomRule{
-			Type: Regular,
-		}
+	type test struct {
+		name     string
+		cr       CustomRule
+		validate func(m text.MatchType)
+	}
 
-		assert.Equal(t, text.Regular, customRule.GetRuleType())
-	})
+	tests := []test{
+		{
+			name: "should return regular type",
+			cr: CustomRule{
+				Type: Regular,
+			},
+			validate: func(m text.MatchType) {
+				require.Equal(t, text.Regular, m)
+			},
+		},
+		{
+			name: "should return regular type",
+			cr:   CustomRule{},
+			validate: func(m text.MatchType) {
+				require.Equal(t, text.Regular, m)
+			},
+		},
+		{
+			name: "should return OR type",
+			cr: CustomRule{
+				Type: OrMatch,
+			},
+			validate: func(m text.MatchType) {
+				require.Equal(t, text.OrMatch, m)
+			},
+		},
+		{
+			name: "should return AND type",
+			cr: CustomRule{
+				Type: AndMatch,
+			},
+			validate: func(m text.MatchType) {
+				require.Equal(t, text.AndMatch, m)
+			},
+		},
+		{
+			name: "should return NOT type",
+			cr: CustomRule{
+				Type: NotMatch,
+			},
+			validate: func(m text.MatchType) {
+				require.Equal(t, text.NotMatch, m)
+			},
+		},
+	}
 
-	t.Run("should return regular type", func(t *testing.T) {
-		customRule := CustomRule{}
-
-		assert.Equal(t, text.Regular, customRule.GetRuleType())
-	})
-
-	t.Run("should return or type", func(t *testing.T) {
-		customRule := CustomRule{
-			Type: OrMatch,
-		}
-
-		assert.Equal(t, text.OrMatch, customRule.GetRuleType())
-	})
-
-	t.Run("should return and type", func(t *testing.T) {
-		customRule := CustomRule{
-			Type: AndMatch,
-		}
-
-		assert.Equal(t, text.AndMatch, customRule.GetRuleType())
-	})
-
-	t.Run("should return not type", func(t *testing.T) {
-		customRule := CustomRule{
-			Type: NotMatch,
-		}
-
-		assert.Equal(t, text.NotMatch, customRule.GetRuleType())
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := tt.cr.GetRuleType()
+			tt.validate(m)
+		})
+	}
 }
 
 func TestGetExpressions(t *testing.T) {
-	t.Run("should success get regex expressions", func(t *testing.T) {
-		customRule := CustomRule{
-			Expressions: []string{"test", "test"},
-		}
 
-		assert.Len(t, customRule.GetExpressions(), 2)
-	})
+	exprs := []string{"testOne", "testTwo"}
+	exprOne, _ := regexp.Compile(exprs[0])
+	exprTwo, _ := regexp.Compile(exprs[1])
 
-	t.Run("should log error when failed to compile expression", func(t *testing.T) {
-		customRule := CustomRule{
-			Expressions: []string{"^\\/(?!\\/)(.*?)"},
-		}
+	exprSl := []*regexp.Regexp{
+		exprOne,
+		exprTwo,
+	}
 
-		assert.Len(t, customRule.GetExpressions(), 0)
-	})
+	failedExpr := []string{"^\\/(?!\\/)(.*?)"}
+
+	type test struct {
+		name     string
+		cr       CustomRule
+		validate func(e []*regexp.Regexp)
+	}
+
+	tests := []test{
+		{
+			name: "successful get regex expressions",
+			cr: CustomRule{
+				Expressions: exprs,
+			},
+			validate: func(e []*regexp.Regexp) {
+				require.Len(t, e, 2)
+				require.ElementsMatch(t, exprSl, e)
+			},
+		},
+		// TODO - Should this function not actually log its errors so we could
+		// actually return and test for errors?
+		{
+			name: "should log an error when expression fails to complie",
+			cr: CustomRule{
+				Expressions: failedExpr,
+			},
+			validate: func(e []*regexp.Regexp) {
+				require.Len(t, e, 0)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := tt.cr.GetExpressions()
+			tt.validate(e)
+		})
+	}
 }
 
 func TestToString(t *testing.T) {
-	t.Run("should log error when failed to compile expression", func(t *testing.T) {
-		customRule := CustomRule{ID: ""}
+	type test struct {
+		name     string
+		cr       CustomRule
+		validate func(s string)
+	}
 
-		assert.NotEmpty(t, customRule.String())
-	})
+	crStr := "{\"id\":\"test123\",\"name\":\"\",\"description\":\"\",\"language\":\"\",\"severity\":\"\",\"confidence\":\"\",\"type\":\"\",\"expressions\":null}"
+	tests := []test{
+		{
+			name: "should log an error when failed to compile expression",
+			cr: CustomRule{
+				ID: "",
+			},
+			validate: func(s string) {
+				require.NotEmpty(t, s)
+			},
+		},
+		{
+			name: "successful conversion to a string",
+			cr: CustomRule{
+				ID: "test123",
+			},
+			validate: func(s string) {
+				require.NotEmpty(t, s)
+				require.Equal(t, crStr, s)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := tt.cr.String()
+			tt.validate(s)
+		})
+	}
 }
