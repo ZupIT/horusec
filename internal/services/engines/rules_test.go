@@ -42,7 +42,7 @@ func TestGetRules(t *testing.T) {
 		{
 			engine:             "Javascript",
 			manager:            javascript.NewRules(),
-			expectedTotalRules: 53,
+			expectedTotalRules: 55,
 		},
 		{
 			engine:             "Nginx",
