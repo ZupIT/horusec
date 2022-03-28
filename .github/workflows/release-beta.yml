@@ -81,11 +81,17 @@ jobs:
         env:
           HORUSEC_REPOSITORY_ORG: ${{ github.repository_owner }}
           HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
+
       - name: Checkout release branch
         run: mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
 
       - name: Create and push tag
         run: mage -v createAndPushTag ${{ steps.updated-version.outputs.nextBetaVersion }}
+
+      - name: Install GCC cross compilation toolchains
+        run: |
+          sudo apt update
+          sudo apt install -y crossbuild-essential-arm64 crossbuild-essential-i386 mingw-w64
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2

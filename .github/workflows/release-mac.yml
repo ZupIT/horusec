@@ -1,0 +1,120 @@
+# Copyright 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+name: release-mac
+on:
+  workflow_run:
+    workflows: ["release-final", "release-rc", "release-beta"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions: read-all
+jobs:
+  ReleaseMac:
+    permissions:
+      contents: write
+      packages: write
+      issues:   write
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macOS-latest
+    env:
+      COSIGN_KEY_LOCATION: /tmp/cosign.key
+      COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.17
+
+      - name: Cosign Installer
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.2.0'
+
+      - name: Install Mage
+        run: go install github.com/magefile/mage@v1.11
+
+      - name: Get release info
+        id: release-info
+        run: mage -v GetReleaseInfo
+        env:
+          HORUSEC_REPOSITORY_ORG: ${{ github.repository_owner }}
+          HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Install cosign private key
+        run: mage -v writeCosignKeyToFile
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+
+      - name: Get current date
+        id: date
+        run: mage -v getCurrentDate
+
+      - name: Git config
+        run: mage -v defaultGitConfig
+
+      - name: Checkout release branch
+        run: mage -v checkoutReleaseBranch ${{ steps.release-info.outputs.actualReleaseBranchName }}
+
+      - name: Run GoReleaser on MacOS
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --snapshot --rm-dist --config goreleaser-macos.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_CURRENT_TAG: ${{ steps.release-info.outputs.lastLaunchedRelease }}
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+          CLI_VERSION: ${{ steps.release-info.outputs.lastLaunchedRelease }}
+
+      - name: Rename checksums
+        run: |
+          mv ./dist/checksums.txt ./dist/checksums-mac.txt
+          mv ./dist/checksums.txt.sig ./dist/checksums-mac.txt.sig
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.release-info.outputs.lastLaunchedRelease }}
+          files: |
+            ./dist/checksums-mac.txt
+            ./dist/checksums-mac.txt.sig
+            ./dist/horusec_darwin_amd64/horusec_mac_amd64
+            ./dist/horusec_darwin_amd64/horusec_mac_amd64.sig
+            ./dist/horusec-standalone_darwin_amd64/horusec_mac_amd64_stand_alone
+            ./dist/horusec-standalone_darwin_amd64/horusec_mac_amd64_stand_alone.sig
+            ./dist/horusec_darwin_arm64/horusec_mac_arm64
+            ./dist/horusec_darwin_arm64/horusec_mac_arm64.sig
+            ./dist/horusec-standalone_darwin_arm64/horusec_mac_arm64_stand_alone
+            ./dist/horusec-standalone_darwin_arm64/horusec_mac_arm64_stand_alone.sig

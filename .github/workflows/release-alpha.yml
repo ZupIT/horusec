@@ -96,6 +96,11 @@ jobs:
       - name: Create local tag
         run: mage -v createAlphaTag
 
+      - name: Install GCC cross compilation toolchains
+        run: |
+          sudo apt update
+          sudo apt install -y crossbuild-essential-arm64 crossbuild-essential-i386 mingw-w64
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:

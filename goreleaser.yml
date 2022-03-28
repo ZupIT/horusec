@@ -144,8 +144,8 @@ builds:
       - CC=x86_64-w64-mingw32-gcc
       - CGO_ENABLED=1
     binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
-      
-  - id: horusec-windows-x86
+
+  - id: horusec-windows-386
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
@@ -161,7 +161,7 @@ builds:
       - CGO_ENABLED=1
     binary: horusec_{{ replace (replace .Os "windows" "win") "darwin" "mac" }}_{{ replace .Arch "386" "x86" }}
 
-  - id: horusec-standalone-windows-x86
+  - id: horusec-standalone-windows-386
     main: ./cmd/app/main.go
     ldflags:
       - -X 'github.com/ZupIT/horusec/cmd/app/version.Version={{ .Env.CLI_VERSION }}'
@@ -198,20 +198,20 @@ changelog:
   skip: false
   use: github
   groups:
-  - title: 'Features'
-    regexp: "^.*:(feature|feat)\\s-.*$"
-    order: 0
-  - title: 'Bug fixes'
-    regexp: "^.*:(bugfix|fix)\\s-.*$"
-    order: 1
-  - title: 'Hotfixes'
-    regexp: "^.*:hotfix\\s-.*$"
-    order: 2
-  - title: 'Chores'
-    regexp: "^.*:chore\\s-.*$"
-    order: 3
-  - title: Others
-    order: 999
+    - title: 'Features'
+      regexp: "^.*:(feature|feat)\\s-.*$"
+      order: 0
+    - title: 'Bug fixes'
+      regexp: "^.*:(bugfix|fix)\\s-.*$"
+      order: 1
+    - title: 'Hotfixes'
+      regexp: "^.*:hotfix\\s-.*$"
+      order: 2
+    - title: 'Chores'
+      regexp: "^.*:chore\\s-.*$"
+      order: 3
+    - title: Others
+      order: 999
   filters:
     exclude:
       - '^deps:chore.*$'
@@ -236,6 +236,7 @@ archives:
       windows: win
   - id: horusec-standalone
     builds:
+      - horusec-standalone-linux-amd64
       - horusec-standalone-linux-386
       - horusec-standalone-linux-arm64
       - horusec-standalone-windows-amd64
@@ -252,6 +253,7 @@ checksum:
   name_template: 'checksums.txt'
 release:
   draft: false
+  prerelease: auto
   mode: append
   footer: |
     ## Docker images
@@ -306,6 +308,8 @@ dockers:
     goarch: amd64
     dockerfile: ./deployments/Dockerfile-gorelease-amd64
     use: docker
+    ids:
+      - horusec-linux-amd64
     build_flag_templates:
       - "--pull"
       - "--label=org.opencontainers.image.created={{.Date}}"
@@ -322,6 +326,8 @@ dockers:
     goarch: arm64
     dockerfile: ./deployments/Dockerfile-gorelease-arm64
     use: docker
+    ids:
+      - horusec-linux-arm64
     build_flag_templates:
       - "--pull"
       - "--label=org.opencontainers.image.created={{.Date}}"
@@ -332,7 +338,6 @@ dockers:
     push_flags:
       - --tls-verify=false
 docker_manifests:
-
   - name_template: 'horuszup/horusec-cli:{{ .Tag }}'
     image_templates:
       - 'horuszup/horusec-cli:{{ .Tag }}-amd64'

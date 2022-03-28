@@ -86,6 +86,11 @@ jobs:
       - name: Create and push tag
         run: mage -v createAndPushTag ${{ steps.updated-version.outputs.nextRCVersion }}
 
+      - name: Install GCC cross compilation toolchains
+        run: |
+          sudo apt update
+          sudo apt install -y crossbuild-essential-arm64 crossbuild-essential-i386 mingw-w64
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
