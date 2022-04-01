@@ -2634,3 +2634,21 @@ func NewUncheckedClassInstatiation() *text.Rule {
 		},
 	}
 }
+
+func NewVulnerableRemoteCodeExecutionSpringFramework() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:          "HS-JAVA-152",
+			Name:        "Spring Framework Remote Code Execution",
+			Description: "It has been identified that versions prior to < 5.3.18 or < 5.2.20 of the spring framework are vulnerable to remote code execution. Please upgrade to version >= 5.3.18 or >= 5.2.20. For more information checkout the CVE-2022-22965 (https://tanzu.vmware.com/security/cve-2022-22965) advisory.",
+			Severity:    severities.Critical.ToString(),
+			Confidence:  confidence.Medium.ToString(),
+		},
+		Type: text.OrMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`<dependency.*org="org\.springframework".*\s.*(5\.[0-3]\.(1[0-7]|[0-9]\.|[0-9]"))|([0-4]\.[0-9]+\.[0-9]+).*/>`),
+			regexp.MustCompile(`compile.*"org\.springframework:spring-context.*((5\.[0-3]\.(1[0-7]|[0-9]\.|[0-9]"))|([0-4]\.[0-9]+\.[0-9]+).*"\))`),
+			regexp.MustCompile(`<groupId>\s*org\.springframework\s*</groupId>\s*<artifactId>.*\s*spring-context.*\s*</artifactId>\s*(<version>\s*((5\.[0-3]\.(1[0-7]|[0-9]\.|[0-9]"))|([0-4]\.[0-9]+\.[0-9]+)).*)\s*</version>`),
+		},
+	}
+}
