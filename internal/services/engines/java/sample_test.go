@@ -1445,4 +1445,50 @@ test {
     </dependencies>
 </project>
 `
+
+	Sample1IvyVulnerableHSJAVA152 = `
+<dependency org="org.springframework"
+    name="spring-core" rev="5.3.17.RELEASE" conf="compile->runtime"/>
+`
+
+	Sample1IvySafeHSJAVA152 = `
+<dependency org="org.springframework"
+    name="spring-core" rev="5.3.18.RELEASE" conf="compile->runtime"/>
+`
+
+	Sample2GradleVulnerableHSJAVA152 = `
+dependencies {
+    compile("org.springframework:spring-context:5.3.17.RELEASE")
+    testCompile("org.springframework:spring-test:5.3.17.RELEASE")
+}
+`
+
+	Sample2GradleSafeHSJAVA152 = `
+dependencies {
+    compile("org.springframework:spring-context:5.3.18.RELEASE")
+    testCompile("org.springframework:spring-test:5.3.18.RELEASE")
+}
+`
+
+	Sample3MavenVulnerableHSJAVA152 = `
+<dependencies>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>5.3.17.RELEASE</version>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
+`
+
+	Sample3MavenSafeHSJAVA152 = `
+<dependencies>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>5.3.18.RELEASE</version>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
+`
 )

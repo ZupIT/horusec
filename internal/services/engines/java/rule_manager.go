@@ -143,6 +143,7 @@ func Rules() []engine.Rule {
 		// NewMessageDigest(),
 		NewOverlyPermissiveFilePermission(),
 		NewCipherGetInstanceInsecure(),
+		NewVulnerableRemoteCodeExecutionSpringFramework(),
 
 		// Regular rules
 		NewHiddenElements(),

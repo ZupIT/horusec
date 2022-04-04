@@ -723,6 +723,54 @@ func TestRulesVulnerableCode(t *testing.T) {
 				},
 			},
 		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample1IvyVulnerableHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.1", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<dependency org=\"org.springframework\"",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.1", ".test")),
+						Line:     2,
+						Column:   0,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample2GradleVulnerableHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.2", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "compile(\"org.springframework:spring-context:5.3.17.RELEASE\")",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.2", ".test")),
+						Line:     3,
+						Column:   4,
+					},
+				},
+			},
+		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample3MavenVulnerableHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.3", ".test")),
+			Findings: []engine.Finding{
+				{
+					CodeSample: "<groupId>org.springframework</groupId>",
+					SourceLocation: engine.Location{
+						Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152.3", ".test")),
+						Line:     4,
+						Column:   8,
+					},
+				},
+			},
+		},
 	}
 
 	testutil.TestVulnerableCode(t, testcases)
@@ -1006,6 +1054,24 @@ func TestRulesSafeCode(t *testing.T) {
 			Rule:     NewUncheckedClassInstatiation(),
 			Src:      Sample5MavenSafeHSJAVA151,
 			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-151", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample1IvySafeHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample2GradleSafeHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152", ".test")),
+		},
+		{
+			Name:     "HS-JAVA-152",
+			Rule:     NewVulnerableRemoteCodeExecutionSpringFramework(),
+			Src:      Sample3MavenSafeHSJAVA152,
+			Filename: filepath.Join(tempDir, fmt.Sprintf("%s%s", "HS-JAVA-152", ".test")),
 		},
 	}
 	testutil.TestSafeCode(t, testcases)

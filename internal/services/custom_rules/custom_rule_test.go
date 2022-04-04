@@ -18,12 +18,11 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-engine/text"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidate(t *testing.T) {
@@ -325,7 +324,6 @@ func TestGetRuleType(t *testing.T) {
 }
 
 func TestGetExpressions(t *testing.T) {
-
 	exprs := []string{"testOne", "testTwo"}
 	exprOne, _ := regexp.Compile(exprs[0])
 	exprTwo, _ := regexp.Compile(exprs[1])
