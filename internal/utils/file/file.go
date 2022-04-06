@@ -230,16 +230,16 @@ func getCodeFromDesiredLine(file *os.File, desiredLine int) string {
 // GetDependencyCodeFilepathAndLine find a file inside projectPath + subPath with
 // ext that match the dependency name.
 //
-// Return the file, code sample and line that match the dependency name.
-func GetDependencyCodeFilepathAndLine(projectPath, subPath, dependency string,
-	extensions ...string) (code, file, line string, err error,
-) {
+// Return the DependencyInfo struct that match the dependency name.
+func GetDependencyCodeFilepathAndLine(projectPath, subPath string, codesToFindInSameRow []string,
+	extensions ...string,
+) (*DependencyInfo, error) {
 	paths, err := getPathsByExtension(projectPath, subPath, extensions...)
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 
-	return GetDependencyInfo(dependency, paths...)
+	return GetDependencyInfo(codesToFindInSameRow, paths)
 }
 
 // nolint: funlen
@@ -268,34 +268,40 @@ func getPathsByExtension(projectPath, subPath string, extensions ...string) ([]s
 //
 // The line and the dependency trimmed is also returned.
 //
-//nolint:funlen,gocyclo
-func GetDependencyInfo(dependency string, paths ...string) (string, string, string, error) {
+//nolint:funlen
+func GetDependencyInfo(codesToFindInSameRow, paths []string) (*DependencyInfo, error) {
+	dep := &DependencyInfo{}
 	for _, path := range paths {
 		line := 0
 		file, err := os.Open(filepath.Clean(path))
 		if err != nil {
-			return "", "", "", err
+			logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, file.Close())
+			return nil, errors.New(messages.MsgErrorGetDependencyInfo + err.Error())
 		}
-
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			line++
-
-			if strings.Contains(scanner.Text(), dependency) {
-				if err = file.Close(); err != nil {
-					logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, err)
-				}
-				return strings.TrimSpace(scanner.Text()), path, strconv.Itoa(line), err
+			currentText := scanner.Text()
+			if existsCodesToFindInSameRow(codesToFindInSameRow, currentText) {
+				dep.Code = currentText
+				dep.Path = path
+				dep.Line = strconv.Itoa(line)
+				logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, file.Close())
+				return dep, nil
 			}
 		}
+		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, file.Close())
+	}
+	return &DependencyInfo{}, nil
+}
 
-		if err = file.Close(); err != nil {
-			logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, err)
-			return "", "", "", err
+func existsCodesToFindInSameRow(codesToFindInSameRow []string, currentText string) bool {
+	for _, cf := range codesToFindInSameRow {
+		if !strings.Contains(strings.ToLower(currentText), strings.ToLower(cf)) {
+			return false
 		}
 	}
-
-	return "", "", "", nil
+	return true
 }
 
 func CreateAndWriteFile(input, filename string) error {

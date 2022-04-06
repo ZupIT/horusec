@@ -16,6 +16,7 @@ package analysis
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -67,7 +68,8 @@ func NewTestCase() []*TestCase {
 			RequiredDocker: false,
 			Command: Command{
 				Flags: map[string]string{
-					testutil.StartFlagProjectPath: testutil.ExamplesPath,
+					testutil.StartFlagProjectPath:         testutil.ExamplesPath,
+					testutil.StartFlagInformationSeverity: "true",
 				},
 			},
 			Expected: Expected{
@@ -77,11 +79,12 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf(messages.MsgPrintFinishAnalysisWithStatus, analysis.Success),
 					messages.MsgDebugVulnHashToFix,
 					messages.MsgWarnAnalysisFoundVulns[16:],
-					"In this analysis, a total of 61 possible vulnerabilities were found and we classified them into:",
+					"In this analysis, a total of 78 possible vulnerabilities were found and we classified them into:",
 					"Total of Vulnerability CRITICAL is: 22",
 					"Total of Vulnerability HIGH is: 24",
-					"Total of Vulnerability MEDIUM is: 12",
-					"Total of Vulnerability LOW is: 3",
+					"Total of Vulnerability MEDIUM is: 9",
+					"Total of Vulnerability LOW is: 2",
+					"Total of Vulnerability INFO is: 21",
 					fmt.Sprintf("{HORUSEC_CLI} Running %s - %s", tools.HorusecEngine, languages.CSharp),
 					fmt.Sprintf("{HORUSEC_CLI} Running %s - %s", tools.HorusecEngine, languages.Dart),
 					fmt.Sprintf("{HORUSEC_CLI} Running %s - %s", tools.HorusecEngine, languages.Java),
@@ -115,6 +118,7 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.DotnetCli),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Nancy),
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.Trivy),
+					`Details: (1/4) * Possible vulnerability detected:`,
 				},
 				OutputsNotContains: []string{
 					fmt.Sprintf("{HORUSEC_CLI} The tool was ignored for run in this analysis: %s", tools.HorusecEngine),
@@ -643,7 +647,7 @@ func NewTestCase() []*TestCase {
 			RequiredDocker: true,
 			Command: Command{
 				Flags: map[string]string{
-					testutil.StartFlagProjectPath:        testutil.ExamplesPath,
+					testutil.StartFlagProjectPath:        filepath.Join(testutil.RootPath, "..", "horusec-examples-vulnerabilities"),
 					testutil.StartFlagEnableGitHistory:   "true",
 					testutil.StartFlagEnableCommitAuthor: "true",
 					testutil.StartFlagAnalysisTimeout:    "10000",
@@ -651,7 +655,7 @@ func NewTestCase() []*TestCase {
 				},
 			},
 			Expected: Expected{
-				Language: languages.Generic,
+				Language: languages.Leaks,
 				ExitCode: 0,
 				OutputsContains: []string{
 					fmt.Sprintf(messages.MsgPrintFinishAnalysisWithStatus, analysis.Success),
@@ -661,10 +665,10 @@ func NewTestCase() []*TestCase {
 					fmt.Sprintf("{HORUSEC_CLI} %s - %s is finished in analysisID:", tools.GitLeaks, languages.Leaks),
 					fmt.Sprintf("{HORUSEC_CLI} Running %s - %s", tools.HorusecEngine, languages.Leaks),
 					fmt.Sprintf("{HORUSEC_CLI} %s - %s is finished in analysisID:", tools.HorusecEngine, languages.Leaks),
-					fmt.Sprintf("{HORUSEC_CLI} The current path it's not a valid git repository"),
 				},
 				OutputsNotContains: []string{
 					fmt.Sprintf("{HORUSEC_CLI} Something error went wrong in %s tool", tools.GitLeaks),
+					fmt.Sprintf("{HORUSEC_CLI} Error while running tool %s: {HORUSEC_CLI} The current path it's not a valid git repository", tools.GitLeaks),
 				},
 			},
 		},

@@ -37,13 +37,14 @@ func (v *nancyVulnerable) getVulnerability() *nancyVulnerability {
 	return nil
 }
 
-func (v *nancyVulnerable) getDependency() string {
-	dependency := strings.ReplaceAll(v.Coordinates, replaceDependencyText, "")
+func (v *nancyVulnerable) getDependencyAndVersion() (dependency, version string) {
+	coordinates := strings.ReplaceAll(v.Coordinates, replaceDependencyText, "")
 
-	index := strings.Index(dependency, indexDependencyVersion)
+	index := strings.Index(coordinates, indexDependencyVersion)
 	if index < 0 {
-		return dependency
+		return coordinates, ""
 	}
-
-	return dependency[:index]
+	dependency = coordinates[:index]
+	version = coordinates[index+1:]
+	return dependency, version
 }

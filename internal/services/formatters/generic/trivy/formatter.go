@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"sync"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -117,11 +118,16 @@ func (f *Formatter) executeContainers(projectSubPath string) (string, string, er
 }
 
 func (f *Formatter) parse(projectSubPath, configOutput, fileSystemOutput string) (string, error) {
-	if err := f.parseOutput(configOutput, CmdConfig, projectSubPath); err != nil {
-		return configOutput, err
+	completeOutput := fmt.Sprintf("ConfigOutput: %s. FileSystemOutput: %s", configOutput, fileSystemOutput)
+	if err := f.parseOutput(configOutput, projectSubPath); err != nil {
+		return completeOutput, err
 	}
 
-	return fileSystemOutput, f.parseOutput(fileSystemOutput, CmdFs, projectSubPath)
+	if err := f.parseOutput(fileSystemOutput, projectSubPath); err != nil {
+		return completeOutput, err
+	}
+
+	return completeOutput, nil
 }
 
 func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *docker.AnalysisData {
@@ -133,47 +139,38 @@ func (f *Formatter) getDockerConfig(cmd, projectSubPath string) *docker.Analysis
 	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Generic), images.Generic)
 }
 
-func (f *Formatter) parseOutput(output, cmd, projectSubPath string) error {
+func (f *Formatter) parseOutput(output, projectSubPath string) error {
 	report := new(trivyOutput)
-
 	if output == "" {
 		return nil
 	}
-
 	if err := json.Unmarshal([]byte(output), report); err != nil {
 		return err
 	}
-
 	for _, result := range report.Results {
-		f.addVulnerabilities(cmd, result, filepath.Join(projectSubPath, result.Target))
+		f.addVulnerabilitiesOutput(result.Vulnerabilities, filepath.Join(projectSubPath, result.Target), projectSubPath)
+		if result.Misconfigurations != nil {
+			f.addMisconfigurationOutput(result.Misconfigurations, filepath.Join(projectSubPath, result.Target))
+		}
 	}
-
 	return nil
 }
 
-func (f *Formatter) addVulnerabilities(cmd string, result *trivyOutputResult, path string) {
-	switch cmd {
-	case CmdFs:
-		f.addVulnerabilitiesOutput(result.Vulnerabilities, path)
-	case CmdConfig:
-		f.addVulnerabilitiesOutput(result.Vulnerabilities, path)
-		f.addMisconfigurationOutput(result.Misconfigurations, path)
-	}
-}
-
 // nolint: funlen // needs to be bigger
-func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerability, target string) {
+func (f *Formatter) addVulnerabilitiesOutput(vulnerabilities []*trivyVulnerability, target, projectSubPath string) {
 	for _, vuln := range vulnerabilities {
 		addVuln := f.getVulnBase()
 		addVuln.RuleID = vuln.VulnerabilityID
-		addVuln.Code = fmt.Sprintf("%s v%s", vuln.PkgName, vuln.InstalledVersion)
-		_, _, line, err := file.GetDependencyInfo(addVuln.Code, filepath.Join(f.GetConfigProjectPath(), target))
+		dependencyInfo, err := file.GetDependencyInfo(
+			[]string{vuln.PkgName, vuln.InstalledVersion},
+			[]string{filepath.Join(f.GetConfigProjectPath(), target)},
+		)
 		if err != nil {
-			f.SetAnalysisError(err, tools.Trivy, err.Error(), "")
+			f.SetAnalysisError(err, tools.Trivy, "", projectSubPath)
 			logger.LogErrorWithLevel(messages.MsgErrorGetDependencyInfo, err)
-			continue
 		}
-		addVuln.Line = line
+		addVuln.Code = fmt.Sprintf("%s\n%s", dependencyInfo.Code, vuln.getInstalledVersionAndUpdateVersion())
+		addVuln.Line = dependencyInfo.Line
 		addVuln.File = target
 		addVuln.Details = vuln.getDetails()
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
@@ -197,14 +194,23 @@ func (f *Formatter) getDeprecatedHashes(pkgName string, vuln vulnerability.Vulne
 	return vulnhash.Bind(&vuln).DeprecatedHashes
 }
 
+// nolint:funlen // method can be bigger
 func (f *Formatter) addMisconfigurationOutput(result []*trivyMisconfiguration, target string) {
 	for _, vuln := range result {
 		addVuln := f.getVulnBase()
+		addVuln.Line = strconv.Itoa(vuln.IacMetadata.StartLine)
 		addVuln.File = target
-		addVuln.Code = vuln.Title
+		if vuln.IacMetadata.Resource != "" {
+			addVuln.Code = fmt.Sprintf("%s\n%s", vuln.IacMetadata.Resource, vuln.Title)
+		} else {
+			addVuln.Code = vuln.Title
+		}
 		addVuln.Details = fmt.Sprintf(
-			"%s - %s - %s - %s", vuln.Description, vuln.Message, vuln.Resolution, vuln.References,
-		)
+			`MissConfiguration
+      %s
+      Message: %s
+      Resolution: %s
+      References: %s`, vuln.Description, vuln.Message, vuln.Resolution, vuln.References)
 		addVuln.Severity = severities.GetSeverityByString(vuln.Severity)
 		addVuln = vulnhash.Bind(addVuln)
 		f.AddNewVulnerabilityIntoAnalysis(f.SetCommitAuthor(addVuln))
@@ -214,7 +220,7 @@ func (f *Formatter) addMisconfigurationOutput(result []*trivyMisconfiguration, t
 func (f *Formatter) getVulnBase() *vulnerability.Vulnerability {
 	return &vulnerability.Vulnerability{
 		VulnerabilityID: uuid.New(),
-		Line:            "0",
+		Line:            "1",
 		Column:          "0",
 		Confidence:      confidence.Medium,
 		SecurityTool:    tools.Trivy,

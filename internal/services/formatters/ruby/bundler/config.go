@@ -16,5 +16,5 @@ package bundler
 
 const CMD = `
 		{{WORK_DIR}}
-		bundle-audit check
+		bundle-audit check -F json --quiet
   `

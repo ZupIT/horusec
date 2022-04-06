@@ -15,6 +15,7 @@
 package analyzer
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"time"
@@ -56,6 +57,8 @@ type HorusecService interface {
 	SendAnalysis(*analysis.Analysis) error
 	GetAnalysis(uuid.UUID) (*analysis.Analysis, error)
 }
+
+const detailsHeaderText = "* Possible vulnerability detected: "
 
 // Analyzer is responsible to orchestrate the pipeline of an analysis.
 //
@@ -156,6 +159,7 @@ func (a *Analyzer) formatAnalysisToSendToAPI() {
 	a.analysis = a.setDefaultVulnerabilityType()
 	a.analysis = a.setDefaultConfidence()
 	a.analysis = a.sortVulnerabilitiesByType()
+	a.analysis = a.joinAllVulnerabilitiesOfSameToolAndHash()
 	if !a.config.EnableInformationSeverity {
 		a.analysis = a.removeInfoVulnerabilities()
 	}
@@ -292,6 +296,14 @@ func (a *Analyzer) sortVulnerabilitiesByType() *analysis.Analysis {
 		a.getVulnerabilitiesByType(enumsVulnerability.Corrected)...,
 	)
 	a.analysis.AnalysisVulnerabilities = analysisVulnerabilities
+	return a.analysis
+}
+
+// joinAllVulnerabilitiesOfSameToolAndHash will check if exists duplicated hash
+// and join the details in only one vulnerability
+func (a *Analyzer) joinAllVulnerabilitiesOfSameToolAndHash() *analysis.Analysis {
+	newAnalysisVulnerabilities := a.getAllVulnerabilitiesWithDetailsJoined()
+	a.analysis.AnalysisVulnerabilities = a.setCounterOfDetailsDuplicated(newAnalysisVulnerabilities)
 	return a.analysis
 }
 
@@ -456,4 +468,61 @@ func (a *Analyzer) isWarning(err string) bool {
 		strings.Contains(err, messages.MsgWarnPathIsInvalidGitRepository) ||
 		strings.Contains(err, messages.MsgWarnBrakemanNotRubyOnRailsProject) ||
 		strings.Contains(err, messages.MsgWarnGemfileIsRequiredForBundler)
+}
+
+// getAllVulnerabilitiesWithDetailsJoined will add the default separator of the details and will check if the hash
+// already exists in list of the vulnerabilities, if is duplicated, so, it will only join both details.
+// nolint:funlen,gocyclo // Breaking this function will make it more confusing
+func (a *Analyzer) getAllVulnerabilitiesWithDetailsJoined() (
+	newAnalysisVulnerabilities []analysis.AnalysisVulnerabilities,
+) {
+	for currentIndex := range a.analysis.AnalysisVulnerabilities {
+		currentAV := a.analysis.AnalysisVulnerabilities[currentIndex]
+		exists := false
+		for newIndex := range newAnalysisVulnerabilities {
+			newAV := newAnalysisVulnerabilities[newIndex]
+			if currentAV.Vulnerability.VulnHash == newAV.Vulnerability.VulnHash &&
+				!strings.Contains(newAV.Vulnerability.Details, currentAV.Vulnerability.Details) {
+				exists = true
+				newAnalysisVulnerabilities[newIndex].Vulnerability.Details = fmt.Sprintf("%s\n         %s%s",
+					newAV.Vulnerability.Details, detailsHeaderText, currentAV.Vulnerability.Details)
+				break
+			}
+		}
+		if !exists {
+			currentAV.Vulnerability.Details = fmt.Sprintf("%s%s", detailsHeaderText, currentAV.Vulnerability.Details)
+			newAnalysisVulnerabilities = append(newAnalysisVulnerabilities, currentAV)
+		}
+	}
+	return newAnalysisVulnerabilities
+}
+
+// setCounterOfDetailsDuplicated will check how many details there are by looking
+// for the detailsHeaderText separator constant and will update to add a counter of the details in this vulnerability.
+// nolint:funlen,gocyclo // Breaking this function will make it more confusing
+func (a *Analyzer) setCounterOfDetailsDuplicated(
+	analysisVulnerabilities []analysis.AnalysisVulnerabilities,
+) (newAnalysisVulnerabilities []analysis.AnalysisVulnerabilities) {
+	for indexAV := range analysisVulnerabilities {
+		currentAV := analysisVulnerabilities[indexAV]
+		newDetails := bytes.NewBufferString("")
+		detailEmptySplit := strings.Split(currentAV.Vulnerability.Details, detailsHeaderText)
+		detailToSetSplit := make([]string, 0)
+		for _, d := range detailEmptySplit {
+			if d != "" {
+				detailToSetSplit = append(detailToSetSplit, d)
+			}
+		}
+		for indexDS, detail := range detailToSetSplit {
+			lastChar := "\n"
+			if indexDS+1 == len(detailToSetSplit) {
+				lastChar = ""
+			}
+			_, _ = fmt.Fprintf(newDetails, "%s(%v/%v) %s%s%s", newDetails, indexDS+1, len(detailToSetSplit),
+				detailsHeaderText, detail, lastChar)
+		}
+		currentAV.Vulnerability.Details = newDetails.String()
+		newAnalysisVulnerabilities = append(newAnalysisVulnerabilities, currentAV)
+	}
+	return newAnalysisVulnerabilities
 }

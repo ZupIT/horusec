@@ -321,12 +321,13 @@ func (pr *PrintResults) printTextOutputVulnerabilityData(vulnerability *vulnerab
 	if vulnerability.RuleID != "" {
 		pr.printlnf("RuleID: %s", vulnerability.RuleID)
 	}
-	pr.printlnf("Details: %s", vulnerability.Details)
 	pr.printlnf("Type: %s", vulnerability.Type)
 
 	pr.printCommitAuthor(vulnerability)
 
 	pr.printlnf("ReferenceHash: %s", vulnerability.VulnHash)
+
+	pr.printlnf("Details: %s", vulnerability.Details)
 
 	pr.logSeparator(true)
 }

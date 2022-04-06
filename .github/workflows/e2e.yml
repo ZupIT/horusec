@@ -21,12 +21,11 @@ on:
   push:
     branches:
       - main
-permissions: read-all
+
+permissions:
+  contents: write
 jobs:
   test:
-    permissions:
-      contents: write
-      packages: write
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -49,9 +48,13 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Download Examples repository
+        run: |
+          git clone https://github.com/ZupIT/horusec-examples-vulnerabilities.git ../horusec-examples-vulnerabilities
+
       - name: Setup docker for MacOS
         if: ${{ matrix.os == 'macos-latest' }}
-        uses: docker-practice/actions-setup-docker@master
+        uses: docker-practice/actions-setup-docker@v1
         with:
           docker_buildx: false
       - name: Build local images

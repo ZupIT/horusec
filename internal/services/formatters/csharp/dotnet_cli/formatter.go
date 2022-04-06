@@ -150,16 +150,18 @@ func (f *Formatter) parseFieldByIndex(index int, fieldValue string, dependency *
 	}
 }
 
-// nolint: funlen // needs to be bigger
+// nolint:funlen // This method will mount the vulnerability struct and is necessary more lines
 func (f *Formatter) newVulnerability(dependency *dotnetDependency,
 	projectSubPath string) (*vulnerability.Vulnerability, error,
 ) {
-	code, absFilePath, line, err := f.getCodeFilePathAndLine(dependency, projectSubPath)
+	dependencyInfo, err := file.GetDependencyCodeFilepathAndLine(f.GetConfigProjectPath(), projectSubPath,
+		[]string{dependency.Name}, CsProjExt,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	relFilePath, err := filepath.Rel(f.GetConfigProjectPath(), absFilePath)
+	relFilePath, err := filepath.Rel(f.GetConfigProjectPath(), dependencyInfo.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -170,27 +172,15 @@ func (f *Formatter) newVulnerability(dependency *dotnetDependency,
 		Confidence:   confidence.High,
 		RuleID:       vulnhash.HashRuleID(dependency.getDescription()),
 		Details:      dependency.getDescription(),
-		Code:         code,
-		File:         relFilePath,
-		Line:         line,
+		Code:         dependencyInfo.Code,
+		File:         f.removeHorusecFolder(relFilePath),
+		Line:         dependencyInfo.Line,
 		Severity:     dependency.getSeverity(),
 	}
 
-	vuln.DeprecatedHashes = f.getDeprecatedHashes(absFilePath, *vuln)
+	vuln.DeprecatedHashes = f.getDeprecatedHashes(dependencyInfo.Path, *vuln)
 
 	return f.SetCommitAuthor(vulnhash.Bind(vuln)), nil
-}
-
-func (f *Formatter) getCodeFilePathAndLine(dependency *dotnetDependency,
-	projectSubPath string) (string, string, string, error,
-) {
-	code, filePath, line, err := file.GetDependencyCodeFilepathAndLine(
-		f.GetConfigProjectPath(), projectSubPath, dependency.Name, CsProjExt,
-	)
-	if err != nil {
-		return "", "", "", err
-	}
-	return code, filePath, line, nil
 }
 
 func (f *Formatter) checkOutputErrors(output string, err error) (string, error) {

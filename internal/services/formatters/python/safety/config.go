@@ -35,7 +35,7 @@ const CMD = `
 		  if grep -q "unpinned requirement" "/tmp/warning-ANALYSISID"; then
 			cat /tmp/warning-ANALYSISID
 		  fi
-		  jq -c '{"issues":map({"dependency": .[0], "vulnerable_below": .[1], "installed_verson": .[2], "description": .[3], "id": .[4]})}' /tmp/safety_horusec_analysis_output-ANALYSISID.json > /tmp/output-ANALYSISID.json
+		  jq -c '{"issues":map({"dependency": .[0], "vulnerable_below": .[1], "installed_version": .[2], "description": .[3], "id": .[4]})}' /tmp/safety_horusec_analysis_output-ANALYSISID.json > /tmp/output-ANALYSISID.json
 		  cat /tmp/output-ANALYSISID.json
 		else
 		  echo "ERROR_RUNNING_SAFETY"

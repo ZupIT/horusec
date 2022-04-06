@@ -40,6 +40,13 @@ type trivyMisconfiguration struct {
 	Resolution  string   `json:"resolution"`
 	References  []string `json:"references"`
 	Severity    string   `json:"severity"`
+	IacMetadata struct {
+		Resource  string `json:"resource"`
+		Provider  string `json:"provider"`
+		Service   string `json:"service"`
+		StartLine int    `json:"startline"`
+		EndLine   int    `json:"endline"`
+	} `json:"iacmetadata"`
 }
 
 type trivyVulnerability struct {
@@ -59,10 +66,10 @@ func (v *trivyVulnerability) getDetails() string {
 	details := v.getBaseDetailsWithoutCWEs()
 
 	if len(v.CweIDs) > 0 {
-		return v.getDetailsWithCWEs(details)
+		details = v.getDetailsWithCWEs(details)
 	}
-
-	return strings.TrimRight(details, "\n")
+	details = strings.TrimRight(details, "\n")
+	return strings.ReplaceAll(details, "\n\n", "")
 }
 
 func (v *trivyVulnerability) getBaseDetailsWithoutCWEs() (details string) {
@@ -70,16 +77,19 @@ func (v *trivyVulnerability) getBaseDetailsWithoutCWEs() (details string) {
 		details += v.Description + "\n"
 	}
 
-	if v.InstalledVersion != "" && v.FixedVersion != "" {
-		details += fmt.Sprintf("Installed Version: %q, Update to Version: %q for fix this issue.\n",
-			v.InstalledVersion, v.FixedVersion)
-	}
-
 	if v.PrimaryURL != "" {
 		details += fmt.Sprintf("PrimaryURL: %s.\n", v.PrimaryURL)
 	}
 
 	return details
+}
+
+func (v *trivyVulnerability) getInstalledVersionAndUpdateVersion() (code string) {
+	if v.InstalledVersion != "" && v.FixedVersion != "" {
+		return fmt.Sprintf("\tInstalled Version: %q\n\tUpdate to Version: %q for fix this issue.",
+			v.InstalledVersion, v.FixedVersion)
+	}
+	return ""
 }
 
 // nolint:gomnd // magic number "2" is not necessary to check

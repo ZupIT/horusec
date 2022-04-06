@@ -15,11 +15,9 @@
 package bundler
 
 import (
-	"bufio"
+	"encoding/json"
 	"errors"
-	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -27,6 +25,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/google/uuid"
 
 	dockerEntities "github.com/ZupIT/horusec/internal/entities/docker"
 	"github.com/ZupIT/horusec/internal/enums/images"
@@ -71,15 +70,10 @@ func (f *Formatter) startBundlerAudit(projectSubPath string) (string, error) {
 	if err != nil {
 		return output, err
 	}
-
-	if errGemLock := f.verifyGemLockError(output); errGemLock != nil {
-		return output, errGemLock
+	if err := f.validateOutput(output); err != nil {
+		return output, err
 	}
-	err = f.parseOutput(f.removeOutputEsc(output), projectSubPath)
-	if err != nil {
-		return "", err
-	}
-	return "", nil
+	return output, f.parseOutput(output, projectSubPath)
 }
 
 func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.AnalysisData {
@@ -87,7 +81,7 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 		CMD: f.AddWorkDirInCmd(
 			CMD,
 			file.GetSubPathByExtension(f.GetConfigProjectPath(), projectSubPath, "Gemfile.lock"),
-			tools.SecurityCodeScan,
+			tools.BundlerAudit,
 		),
 		Language: languages.Ruby,
 	}
@@ -95,120 +89,75 @@ func (f *Formatter) getDockerConfig(projectSubPath string) *dockerEntities.Analy
 	return analysisData.SetImage(f.GetCustomImageByLanguage(languages.Ruby), images.Ruby)
 }
 
-func (f *Formatter) verifyGemLockError(output string) error {
-	if strings.Contains(output, `Could not find "Gemfile.lock"`) {
-		return ErrGemLockNotFound
-	}
-
-	return nil
-}
-
-func (f *Formatter) removeOutputEsc(output string) string {
-	output = strings.ReplaceAll(output, "\u001B[0m", "")
-	output = strings.ReplaceAll(output, "\u001B[31m", "")
-	output = strings.ReplaceAll(output, "\u001B[32m", "")
-	output = strings.ReplaceAll(output, "\u001B[33m", "")
-	output = strings.ReplaceAll(output, "\u001B[1m", "")
-	return output
-}
-
 func (f *Formatter) parseOutput(output, projectSubPath string) error {
-	isInvalid, err := f.isValidOutput(output)
-	if isInvalid {
+	auditOutput := AuditOutput{}
+	if err := json.Unmarshal([]byte(output), &auditOutput); err != nil {
 		return err
 	}
 
-	for _, outputSplit := range strings.Split(output, "Name:") {
-		err := f.processOutput(outputSplit, projectSubPath)
+	return f.processOutput(auditOutput, projectSubPath)
+}
+
+func (f *Formatter) processOutput(outputData AuditOutput, projectSubPath string) error {
+	for index := range outputData.Results {
+		vuln, err := f.newVulnerability(&outputData.Results[index], outputData.Version, projectSubPath)
 		if err != nil {
 			return err
 		}
+		f.AddNewVulnerabilityIntoAnalysis(vuln)
 	}
 	return nil
 }
 
-func (f *Formatter) isValidOutput(output string) (bool, error) {
-	// If the output does not have the "Name:" string when we split on this string
-	// the strings.Split function will return a list with a single element and this
-	// single element will be the entire invalid output, so we do this strings.Contains
-	// validation to avoid parse an invalid output data.
-	if strings.Contains(output, "No vulnerabilities found") || !strings.Contains(output, "Name:") {
-		if strings.Contains(output, "No vulnerabilities found") {
-			return true, nil
-		}
-		return true, errors.New("invalid output data")
-	}
-	return false, nil
-}
-
-// nolint: funlen,gocyclo // needs to be bigger
-func (f *Formatter) processOutput(outputData, projectSubPath string) error {
-	if outputData == "" {
-		return nil
-	}
-
-	var output bundlerOutput
-	for _, value := range strings.Split(outputData, "\r\n") {
-		if value == "" || value == "Vulnerabilities found!" {
-			continue
-		}
-
-		output.setOutputData(&output, value)
-	}
-	vuln, err := f.newVulnerability(&output, projectSubPath)
-	if err != nil {
-		return err
-	}
-	f.AddNewVulnerabilityIntoAnalysis(vuln)
-	return err
-}
-
 // nolint: funlen // needs to be bigger
-func (f *Formatter) newVulnerability(output *bundlerOutput,
-	projectSubPath string) (*vulnerability.Vulnerability, error,
-) {
-	filePath, err := f.GetFilepathFromFilename("Gemfile.lock", projectSubPath)
+func (f *Formatter) newVulnerability(result *Result, securityToolVersion,
+	projectSubPath string,
+) (*vulnerability.Vulnerability, error) {
+	vuln := f.getVulnBase(result, securityToolVersion)
+	gemFilePath, err := f.GetFilepathFromFilename("Gemfile.lock", projectSubPath)
 	if err != nil {
 		return nil, err
 	}
-	vuln := &vulnerability.Vulnerability{
-		SecurityTool: tools.BundlerAudit,
-		Language:     languages.Ruby,
-		Confidence:   confidence.Low,
-		Severity:     output.getSeverity(),
-		RuleID:       output.Advisory,
-		Details:      output.getDetails(),
-		File:         filePath,
-		Code:         f.GetCodeWithMaxCharacters(output.Name, 0),
-	}
-	vuln.Line = f.getVulnerabilityLineByName(vuln.Code, vuln.File)
-	return f.SetCommitAuthor(vulnhash.Bind(vuln)), err
-}
-
-func (f *Formatter) getVulnerabilityLineByName(module, fileName string) string {
-	filePath := filepath.Join(f.GetConfigProjectPath(), filepath.Clean(fileName))
-	fileExisting, err := os.Open(filePath)
+	dependencyInfo, err := file.GetDependencyInfo(
+		[]string{result.Gem.Name, result.Gem.Version}, []string{filepath.Join(f.GetConfigProjectPath(), gemFilePath)})
 	if err != nil {
-		return ""
+		return nil, err
 	}
-
-	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileExisting.Close())
-	}()
-
-	return f.getLine(module, bufio.NewScanner(fileExisting))
+	vuln.Line = dependencyInfo.Line
+	vuln.File = f.removeHorusecFolder(dependencyInfo.Path)
+	vuln.Code = dependencyInfo.Code
+	return f.SetCommitAuthor(vulnhash.Bind(vuln)), nil
 }
 
-func (f *Formatter) getLine(module string, scanner *bufio.Scanner) string {
-	line := 1
-
-	for scanner.Scan() {
-		if strings.Contains(strings.ToLower(scanner.Text()), strings.ToLower(module)) {
-			return strconv.Itoa(line)
-		}
-
-		line++
+// validateOutput will check if output from container contains the error in your response
+// "fatal: unable to access 'https://github.com/rubysec/ruby-advisory-db.git/': Could not resolve host: github.com"
+func (f *Formatter) validateOutput(output string) error {
+	// When not found "Gemfile.lock" file the output is empty
+	// Or not found any vulnerability in your project
+	if output == "" {
+		return ErrGemLockNotFound
 	}
+	if strings.HasPrefix(strings.ToLower(output), "fatal: unable to access") &&
+		strings.Contains(strings.ToLower(output), "could not resolve host") {
+		return errors.New(messages.MsgErrorBundlerNotAccessDB)
+	}
+	return nil
+}
 
-	return ""
+func (f *Formatter) removeHorusecFolder(path string) string {
+	return filepath.Clean(strings.ReplaceAll(path, filepath.Join(".horusec", f.GetAnalysisID()), ""))
+}
+
+func (f *Formatter) getVulnBase(result *Result, securityToolVersion string) *vulnerability.Vulnerability {
+	return &vulnerability.Vulnerability{
+		VulnerabilityID:     uuid.New(),
+		Column:              "0",
+		Confidence:          confidence.Medium,
+		Details:             result.getDetails(),
+		SecurityTool:        tools.BundlerAudit,
+		Language:            languages.Ruby,
+		Severity:            result.getSeverity(),
+		RuleID:              result.Advisory.ID,
+		SecurityToolVersion: securityToolVersion,
+	}
 }
