@@ -15,13 +15,10 @@
 package safety
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -112,47 +109,28 @@ func (f *Formatter) setSafetyOutPutInHorusecAnalysis(issues []entities.Issue, pr
 	}
 }
 
+// nolint:funlen // method is not necessary broken
 func (f *Formatter) setupVulnerabilitiesSeveritiesSafety(
 	issues []entities.Issue, index int, projectSubPath string,
 ) (*vulnerability.Vulnerability, error) {
-	lineContent := fmt.Sprintf("%s=%s", issues[index].Dependency, issues[index].InstalledVersion)
 	vuln, err := f.getDefaultVulnerabilitySeverityInSafety(projectSubPath)
 	if err != nil {
 		return nil, err
 	}
-	vuln.RuleID = issues[index].ID
-	vuln.Details = issues[index].Description
-	vuln.Code = f.GetCodeWithMaxCharacters(issues[index].Dependency, 0)
-	vuln.Line = f.getVulnerabilityLineByName(lineContent, vuln.File)
-	vuln = vulnhash.Bind(vuln)
-	return f.SetCommitAuthor(vuln), err
-}
-
-func (f *Formatter) getVulnerabilityLineByName(line, fileName string) string {
-	path := filepath.Join(f.GetConfigProjectPath(), filepath.Clean(fileName))
-	fileOpened, err := os.Open(path)
+	dependencyInfo, err := file.GetDependencyInfo(
+		[]string{issues[index].Dependency, issues[index].InstalledVersion}, []string{vuln.File})
 	if err != nil {
-		return "-"
+		return nil, err
 	}
-
-	defer func() {
-		logger.LogErrorWithLevel(messages.MsgErrorDeferFileClose, fileOpened.Close())
-	}()
-	scanner := bufio.NewScanner(fileOpened)
-	return f.getLine(line, scanner)
-}
-
-func (f *Formatter) getLine(name string, scanner *bufio.Scanner) string {
-	line := 1
-	for scanner.Scan() {
-		if strings.Contains(strings.ToLower(scanner.Text()), strings.ToLower(name)) {
-			return strconv.Itoa(line)
-		}
-
-		line++
-	}
-
-	return "-"
+	vuln.RuleID = issues[index].ID
+	vuln.Code = dependencyInfo.Code
+	vuln.Details = fmt.Sprintf(" Versions Unsafes: %s\nMore Information: %s",
+		issues[index].VulnerableBelow, issues[index].Description,
+	)
+	vuln.Line = dependencyInfo.Line
+	vuln.File = f.removeHorusecFolder(vuln.File)
+	vuln = vulnhash.Bind(vuln)
+	return f.SetCommitAuthor(vuln), nil
 }
 
 // nolint: funlen,lll // needs to be bigger
@@ -167,6 +145,10 @@ func (f *Formatter) getDefaultVulnerabilitySeverityInSafety(projectSubPath strin
 	if err != nil {
 		return nil, err
 	}
-	vulnerabilitySeverity.File = filePath
+	vulnerabilitySeverity.File = filepath.Join(f.GetConfigProjectPath(), filePath)
 	return vulnerabilitySeverity, err
+}
+
+func (f *Formatter) removeHorusecFolder(path string) string {
+	return filepath.Clean(strings.ReplaceAll(path, filepath.Join(".horusec", f.GetAnalysisID()), ""))
 }

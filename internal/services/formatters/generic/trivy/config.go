@@ -16,7 +16,7 @@ package trivy
 
 const CmdFs = `
 		{{WORK_DIR}}
-		TRIVY_NEW_JSON_SCHEMA=true trivy fs  -f json -o resultFs.json ./ &> /dev/null
+		TRIVY_NEW_JSON_SCHEMA=true trivy filesystem -f json -o resultFs.json ./ &> /dev/null
 		cat resultFs.json
   `
 

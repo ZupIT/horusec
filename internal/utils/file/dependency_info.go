@@ -12,28 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package bundler
+package file
 
-type bundlerCriticalityType string
-
-const (
-	High   bundlerCriticalityType = "High"
-	Medium bundlerCriticalityType = "Medium"
-	Low    bundlerCriticalityType = "Low"
-)
-
-func (c bundlerCriticalityType) String() string {
-	return string(c)
-}
-
-func getCriticalityTypeByString(criticalityType string) bundlerCriticalityType {
-	switch criticalityType {
-	case High.String():
-		return High
-	case Medium.String():
-		return Medium
-	case Low.String():
-		return Low
-	}
-	return Low
+type DependencyInfo struct {
+	Code string
+	Path string
+	Line string
 }

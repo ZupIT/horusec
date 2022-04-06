@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ZupIT/horusec/internal/utils/copy"
@@ -40,6 +41,9 @@ func NormalizePathToAssertInJSON(path string) string {
 //
 // The value returned will be a project path that contains the .horusec directory inside.
 func CreateHorusecAnalysisDirectory(tb testing.TB, analysiss *analysis.Analysis, paths ...string) string {
+	if analysiss.ID == uuid.Nil {
+		analysiss.ID = uuid.New()
+	}
 	projectPath := tb.TempDir()
 
 	horusecPath := filepath.Join(projectPath, ".horusec", analysiss.ID.String())

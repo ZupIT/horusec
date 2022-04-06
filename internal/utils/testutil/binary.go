@@ -37,7 +37,9 @@ func GinkgoGetHorusecCmdWithFlags(cmdArg string, flags map[string]string) *exec.
 	for flag, value := range flags {
 		args = append(args, fmt.Sprintf("%s=%s", flag, value))
 	}
-	return exec.Command(bin, args...)
+	cmd := exec.Command(bin, args...)
+	cmd.Env = os.Environ()
+	return cmd
 }
 
 func ginkgoBuildHorusecBinary(customArgs ...string) string {
