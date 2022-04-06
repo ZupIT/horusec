@@ -31,36 +31,45 @@ function f() {
 	window.eval("any string")
 }
 `
-
 	SampleVulnerableHSJAVASCRIPT3 = `
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 `
-	SampleSafeHSJAVASCRIPT3 = ``
+	SampleSafeHSJAVASCRIPT3 = `process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";`
 
 	SampleVulnerableHSJAVASCRIPT4 = `
 const hash = crypto.createHash('md5')
 `
-	SampleSafeHSJAVASCRIPT4 = ``
+	SampleSafeHSJAVASCRIPT4 = `const hash = crypto.createHash('sha256')`
 
 	SampleVulnerableHSJAVASCRIPT5 = `
 const hash = crypto.createHash('sha1')
 `
-	SampleSafeHSJAVASCRIPT5 = ``
+	SampleSafeHSJAVASCRIPT5 = `const hash = crypto.createHash('sha512')`
 
 	SampleVulnerableHSJAVASCRIPT6 = `
 function f() {
 	return Math.random();
 }
 `
-	SampleSafeHSJAVASCRIPT6 = ``
-
+	SampleSafeHSJAVASCRIPT6 = `
+function f() {
+	const randomBuffer = new Uint32Array(1);
+	(window.crypto || window.msCrypto).getRandomValues(randomBuffer);
+	const uint = randomBuffer[0];
+}
+`
 	SampleVulnerableHSJAVASCRIPT7 = `
 function f(req) {
 	return fs.readFileSync(req.body, 'utf8')
 }
 `
-	SampleSafeHSJAVASCRIPT7 = ``
-
+	SampleSafeHSJAVASCRIPT7 = `
+function f(req) {
+	const sanitize = require("sanitize-filename");
+	const userInput = sanitize(req.body)
+	return fs.readFileSync(userInput, 'utf8')
+}
+`
 	SampleVulnerableHSJAVASCRIPT8 = `
 function f(req) {
 	return fs.createReadStream(req.body)
@@ -78,7 +87,6 @@ function f(foo) {
 	Model.find({ where: { foo: foo}});
 }
 `
-
 	SampleVulnerableHSJAVASCRIPT10 = `
 var libxml = require("libxmljs2");
 
@@ -89,7 +97,6 @@ var libxml = require("libxmljs2");
 
 var xmlDoc = libxml.parseXmlString(xml);
 `
-
 	SampleVulnerableHSJAVASCRIPT11 = `
 function f() {
 	var popup = window.open();
@@ -114,7 +121,6 @@ function f2() {
 	});
 }
 `
-
 	SampleVulnerableHSJAVASCRIPT12 = `
 function f() {
 	const options = {
@@ -127,7 +133,7 @@ function f2() {
 		secureProtocol: 'TLSv1.1'
 	}
 }
-	`
+`
 	SampleSafeHSJAVASCRIPT12 = `
 
 function f() {
@@ -136,10 +142,9 @@ function f() {
 	}
 }
 `
-
 	SampleVulnerableHSJAVASCRIPT13 = `
 const db = window.openDatabase();
-	`
+`
 	SampleSafeHSJAVASCRIPT13 = ``
 
 	SampleVulnerableHSJAVASCRIPT14 = `
@@ -182,7 +187,6 @@ app.use('/', express.static('public', {
 app.use('/', express.static('public', { }));
 
 `
-
 	SampleVulnerableHSJAVASCRIPT18 = `
 function success(pos) {
 	console.log(pos)
@@ -217,105 +221,525 @@ app.get('/products/:id', cors(corsOptions), function (req, res, next) {
 })
 `
 
-	SampleVulnerableHSJAVASCRIPT20 = ``
-	SampleSafeHSJAVASCRIPT20       = ``
+	SampleVulnerableHSJAVASCRIPT20 = `
+function f() {
+	var input = process.stdin.read();
+	console.log(input);
+}
+`
+	SampleSafeHSJAVASCRIPT20 = ``
 
-	SampleVulnerableHSJAVASCRIPT21 = ``
-	SampleSafeHSJAVASCRIPT21       = ``
+	SampleVulnerableHSJAVASCRIPT21 = `
+function f() {
+	console.exec(process.argv[0])
+}
+`
+	SampleSafeHSJAVASCRIPT21 = `
+function f() {
+	var userArgs = mySanitizer(process.argv[0])
+	console.exec(userArgs);
+}
+`
+	SampleVulnerableHSJAVASCRIPT22 = `
+function f() {
+	const { path } = req.body;
+	redirect(path);
+}
+`
+	SampleSafeHSJAVASCRIPT22 = `
+function f() {
+	const { path } = req.body;
+	const sanitizedPath = mySanitizer(path)
+	redirect('https://myOrigin/' + sanitizedPath);
+}
+`
+	SampleVulnerableHSJAVASCRIPT23 = `
+function f() {
+	return response.render(req.body.data);
+}
 
-	SampleVulnerableHSJAVASCRIPT22 = ``
-	SampleSafeHSJAVASCRIPT22       = ``
+function f() {
+	return response.send(req.body.content);
+}
+`
+	SampleSafeHSJAVASCRIPT23 = `
+function f() {
+	const { content } = req.body;
+	const sanitizedContent= mySanitizer(content)
+	return response.send(sanitizedContent)
+}
+`
+	SampleVulnerableHSJAVASCRIPT24 = `
+function f() {
+	return document.write(req.body.data);
+}
 
-	SampleVulnerableHSJAVASCRIPT23 = ``
-	SampleSafeHSJAVASCRIPT23       = ``
+function f() {
+	return body.write(req.body.content);
+}
 
-	SampleVulnerableHSJAVASCRIPT24 = ``
-	SampleSafeHSJAVASCRIPT24       = ``
+function f() {
+	const element = document.getElementById('title')
+	return element.write(req.body.content);
+}
+`
+	SampleSafeHSJAVASCRIPT24 = `
+function f() {
+	const { content } = req.body;
+	const element = document.getElementById('title')
+	const sanitizedContent= mySanitizer(content)
+	return element.write(sanitizedContent);
+}
+`
+	SampleVulnerableHSJAVASCRIPT25 = `
+function f() {
+	try {
+		const allUsers = db.users.getAll()
+		return res.send(allUsers)
+	} catch (err) {
+		return res.send(err.stack);
+	}
+}
+`
+	SampleSafeHSJAVASCRIPT25 = `
+function f() {
+	try {
+		const allUsers = db.users.getAll()
+		return res.send(allUsers)
+	} catch (err) {
+		MyServerSideLogger(err.stack);
+		return res.status(500);
+	}
+}
+`
+	SampleVulnerableHSJAVASCRIPT26 = `
+function f() {
+	const badBinary = axios.get('http://insecureDomain.com/program.bin');
+	os.exec(badBinary);
+}
+`
+	SampleSafeHSJAVASCRIPT26 = `
+function f() {
+	const myBinary = axios.get('https://secureDomain.com/program.exe');
+	os.exec(myBinary);
+}
+`
+	SampleVulnerableHSJAVASCRIPT27 = `
+import request from 'request';
 
-	SampleVulnerableHSJAVASCRIPT25 = ``
-	SampleSafeHSJAVASCRIPT25       = ``
+function f() {
+	require request from request.body;
+ 	request(req.body);
+}
+`
+	SampleSafeHSJAVASCRIPT27 = `
+function f() {
+	const { data } = req.body;
+	const safeData = MySanitizer(data)
+ 	return request(safeData);
+}
+`
+	SampleVulnerableHSJAVASCRIPT28 = `
+function f({ req, res }) {
+	var request = require('request');
+	const res = request.get(req.body);
+	return res;
+}
+`
+	SampleSafeHSJAVASCRIPT28 = ``
 
-	SampleVulnerableHSJAVASCRIPT26 = ``
-	SampleSafeHSJAVASCRIPT26       = ``
+	SampleVulnerableHSJAVASCRIPT29 = `
+function f() {
+	const myKey = crypto.generateKeyPairSync('rsa', {
+		modulusLength: 1024	
+	});
+}
+`
+	SampleSafeHSJAVASCRIPT29 = `
+function f() {
+	const myKey = crypto.generateKeyPairSync('rsa', {
+		modulusLength: 4096	
+	});
+}
+`
+	SampleVulnerableHSJAVASCRIPT30 = `
+function f() {
+	const myKey = crypto.generateKeyPairSync('ec', {
+		namedCurve: 'secp102k1'	
+	});
+}
+`
+	SampleSafeHSJAVASCRIPT30 = `
+function f() {
+	const myKey = crypto.generateKeyPairSync('ec', {
+		namedCurve: 'secp521k1'	
+	});
+}
+`
+	SampleVulnerableHSJAVASCRIPT31 = `
+function f() {
+	var jwt = require('jsonwebtoken');
+	var token = jwt.sign({ foo: 'bar' }, privateKey, { algorithm: 'RS256'});
+}
+`
+	SampleSafeHSJAVASCRIPT31 = `
+function f() {
+	var jwt = require('jsonwebtoken');
+	var token = jwt.sign({ foo: 'bar' }, privateKey, { algorithm: 'HS384'});
+}
+`
+	SampleVulnerableHSJAVASCRIPT32 = `
+const tls = require('tls')
+tls.connect({
+  checkServerIdentity: () => myCustomVerification()
+})
+`
+	SampleSafeHSJAVASCRIPT32 = `
+const tls = require('tls')
+tls.connect()
+`
+	SampleVulnerableHSJAVASCRIPT33 = `
+tls.connect({
+  rejectUnauthorized: false
+})
+`
+	SampleSafeHSJAVASCRIPT33 = `
+tls.connect({
+  rejectUnauthorized: true
+})
+`
+	SampleVulnerableHSJAVASCRIPT34 = `
+const element = createElement('script');
+element.setAttribute('src', req.body.data)
+element.setAttribute('type', 'text/javascript')
+`
+	SampleSafeHSJAVASCRIPT34 = ``
 
-	SampleVulnerableHSJAVASCRIPT27 = ``
-	SampleSafeHSJAVASCRIPT27       = ``
+	SampleVulnerableHSJAVASCRIPT35 = `
+var mysql = require('mysql');
 
-	SampleVulnerableHSJAVASCRIPT28 = ``
-	SampleSafeHSJAVASCRIPT28       = ``
+var con = mysql.createConnection({
+  	password: "root",
+	user: "root",
+  	host: "localhost",
+});
+`
+	SampleSafeHSJAVASCRIPT35 = `
+var mysql = require('mysql');
 
-	SampleVulnerableHSJAVASCRIPT29 = ``
-	SampleSafeHSJAVASCRIPT29       = ``
+var con = mysql.createConnection({
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS
+	host: process.env.DB_HOST,
+});
+`
+	SampleVulnerableHSJAVASCRIPT36 = `
+const { exec } = require('child_process');
+exec('chmod 666 /home/dev', { shell: true })
+`
+	SampleSafeHSJAVASCRIPT36 = ``
 
-	SampleVulnerableHSJAVASCRIPT30 = ``
-	SampleSafeHSJAVASCRIPT30       = ``
+	SampleVulnerableHSJAVASCRIPT37 = `
+import httpProxy from 'http-proxy'
+function f() {
+	return new httpProxy.createProxyServer({
+		xfwd: true
+	});
+}
+`
+	SampleSafeHSJAVASCRIPT37 = `
+import httpProxy from 'http-proxy'
+function f() {
+	return new httpProxy.createProxyServer({
+		xfwd: false
+	});
+}
+`
+	SampleVulnerableHSJAVASCRIPT38 = `
+	const { Signale } = require('signale');
+	const logger = new Signale({ secrets: [] });
+`
+	SampleSafeHSJAVASCRIPT38 = `
+	const { Signale } = require('signale');
+	const regexToRemoveSensitiveData = "([0-9]{4}-?)+";
+	const logger = new Signale({ secrets: [regexToRemoveSensitiveData] });
+`
+	SampleVulnerableHSJAVASCRIPT39 = `
+const express = require('express'),
+app = express();
+app.use(require('helmet')({
+    dnsPrefetchControl:{ allow: true }
+}));
+`
+	SampleSafeHSJAVASCRIPT39 = `
+const express = require('express'),
+app = express();
+app.use(require('helmet')({
+    dnsPrefetchControl:{ allow: false }
+}));
+`
+	SampleVulnerableHSJAVASCRIPT40 = `
+const express = require('express'),
+app = express();
+app.use(require('helmet')({
+    expectCt: false
+}));
+`
+	SampleSafeHSJAVASCRIPT40 = `
+const express = require('express'),
+app = express();
+app.use(require('helmet')({
+    expectCt: true
+}));
+`
+	SampleVulnerableHSJAVASCRIPT41 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(
+  helmet({
+    referrerPolicy: { policy: 'no-referrer-when-downgrade' }
+  })
+);
+`
+	SampleSafeHSJAVASCRIPT41 = `
+const express = require('express'),
+app = express();
+app.use(require('helmet')({
+    referrerPolicy: { policy: 'no-referrer' }
+}));
+`
+	SampleVulnerableHSJAVASCRIPT42 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(
+  helmet({
+    noSniff: false
+  })
+);
+`
+	SampleSafeHSJAVASCRIPT42 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
 
-	SampleVulnerableHSJAVASCRIPT31 = ``
-	SampleSafeHSJAVASCRIPT31       = ``
+app.use(helmet.noSniff());
 
-	SampleVulnerableHSJAVASCRIPT32 = ``
-	SampleSafeHSJAVASCRIPT32       = ``
+app.use(
+  helmet({
+    noSniff: true
+  })
+);
+`
+	SampleVulnerableHSJAVASCRIPT43 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      frameAncestors: ["'none'"],
+    },
+  })
+);
+`
+	SampleSafeHSJAVASCRIPT43 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(helmet.contentSecurityPolicy());
+`
+	SampleVulnerableHSJAVASCRIPT44 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      blockAllMixed: ['self'],
+    },
+  })
+);
+`
+	SampleSafeHSJAVASCRIPT44 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(helmet.contentSecurityPolicy());
+`
+	SampleVulnerableHSJAVASCRIPT45 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
+`
+	SampleSafeHSJAVASCRIPT45 = `
+const express = require('express'),
+const helmet = require('helmet');
+app = express();
+app.use(helmet.contentSecurityPolicy());
+`
+	SampleVulnerableHSJAVASCRIPT46 = `
+const express = require('express');
+const cookieSession = require('cookie-session');
+app = express();
+app.use(cookieSession({
+	name: 'session',
+	httpOnly: false
+})
+`
+	SampleSafeHSJAVASCRIPT46 = `
+const express = require('express');
+const cookieSession = require('cookie-session');
+app = express();
+app.use(cookieSession({
+	name: 'session',
+	httpOnly: true
+})
+`
+	SampleVulnerableHSJAVASCRIPT47 = `
+const express = require('express');
+const cookieSession = require('cookie-session');
+app = express();
+app.use(cookieSession({
+	name: 'session',
+	secure: false
+})
+`
+	SampleSafeHSJAVASCRIPT47 = `
+const express = require('express');
+const cookieSession = require('cookie-session');
+app = express();
+app.use(cookieSession({
+	name: 'session',
+	secure: true
+})
+`
+	SampleVulnerableHSJAVASCRIPT48 = `
+const net = require('net');
+const socket = new net.Socket();
+net.connect({ port: port }, () => {});
+`
+	SampleSafeHSJAVASCRIPT48 = `
+const express = require('express');
+const app = express();
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
-	SampleVulnerableHSJAVASCRIPT33 = ``
-	SampleSafeHSJAVASCRIPT33       = ``
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
 
-	SampleVulnerableHSJAVASCRIPT34 = ``
-	SampleSafeHSJAVASCRIPT34       = ``
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
+`
+	SampleVulnerableHSJAVASCRIPT49 = `
+const crypto = require('crypto');
+const key = Buffer.from(crypto.randomBytes(32));
+const iv = crypto.randomBytes(16);
 
-	SampleVulnerableHSJAVASCRIPT35 = ``
-	SampleSafeHSJAVASCRIPT35       = ``
+let cipher = crypto.createCipheriv('RC4', key, iv);
+`
+	SampleSafeHSJAVASCRIPT49 = `
+const crypto = require('crypto');
+const key = Buffer.from(crypto.randomBytes(32));
+const iv = crypto.randomBytes(16);
 
-	SampleVulnerableHSJAVASCRIPT36 = ``
-	SampleSafeHSJAVASCRIPT36       = ``
+let cipher = crypto.createCipheriv('AES-256-GCM', key, iv);
+`
+	SampleVulnerableHSJAVASCRIPT50 = `
+const Formidable = require('formidable');
+const form = new Formidable();
+form.keepExtensions = true;
+`
+	SampleSafeHSJAVASCRIPT50 = `
+const Formidable = require('formidable');
+const form = new Formidable();
+form.keepExtensions = false;
+`
+	SampleVulnerableHSJAVASCRIPT51 = `
+const Formidable = require('formidable');
+const form = new Formidable();
+form.maxFileSize = 10000000;
+`
+	SampleSafeHSJAVASCRIPT51 = `
+const Formidable = require('formidable');
+const form = new Formidable();
+form.maxFileSize = 7000000;
+`
+	SampleVulnerableHSJAVASCRIPT52 = `
+function f1() {
+	let Mustache = require("mustache");
+	Mustache.escape = function(text) {return text;};
+	let rendered = Mustache.render(template, { name: inputName });
+}
 
-	SampleVulnerableHSJAVASCRIPT37 = ``
-	SampleSafeHSJAVASCRIPT37       = ``
+function f2() {
+const markdownIt = require('markdown-it');
+let md = markdownIt({
+	html: true
+});
 
-	SampleVulnerableHSJAVASCRIPT38 = ``
-	SampleSafeHSJAVASCRIPT38       = ``
+let result = md.render('# <b>attack</b>');
+}
+`
+	SampleSafeHSJAVASCRIPT52 = `
+function f1() {
+	let Mustache = require("mustache");
+	let rendered = Mustache.render(template, { name: inputName });
+}
 
-	SampleVulnerableHSJAVASCRIPT39 = ``
-	SampleSafeHSJAVASCRIPT39       = ``
+function f2() {
+const markdownIt = require('markdown-it');
+let result = md.render('# <b>attack</b>');
+}
+`
+	SampleVulnerableHSJAVASCRIPT53 = `
+const db = require('./mysql/dbConnection.js');
+const email = req.query.email;
+db.query("SELECT * FROM USERS WHERE EMAIL = " + name);
+`
+	SampleSafeHSJAVASCRIPT53 = `
+var query = "";
+const db = require('./mysql/dbConnection.js');
+const email = req.query.email;
+db.query("SELECT * FROM USERS WHERE EMAIL = ?", [email]);
+`
+	SampleVulnerableHSJAVASCRIPT54 = `
+const MongoClient = require('mongodb').MongoClient;
+MongoClient.connect("mongodb://localhost:27017/mydb", function(err, db) {
+  if (err) throw err;
+  db.close();
+});
+`
+	SampleSafeHSJAVASCRIPT54 = `
+const MongoClient = require('mongodb').MongoClient;
+MongoClient.connect(process.env.MONGO_URI, function(err, db) {
+  if (err) throw err;
+  db.close();
+});
+`
 
-	SampleVulnerableHSJAVASCRIPT40 = ``
-	SampleSafeHSJAVASCRIPT40       = ``
-
-	SampleVulnerableHSJAVASCRIPT41 = ``
-	SampleSafeHSJAVASCRIPT41       = ``
-
-	SampleVulnerableHSJAVASCRIPT42 = ``
-	SampleSafeHSJAVASCRIPT42       = ``
-
-	SampleVulnerableHSJAVASCRIPT43 = ``
-	SampleSafeHSJAVASCRIPT43       = ``
-
-	SampleVulnerableHSJAVASCRIPT44 = ``
-	SampleSafeHSJAVASCRIPT44       = ``
-
-	SampleVulnerableHSJAVASCRIPT45 = ``
-	SampleSafeHSJAVASCRIPT45       = ``
-
-	SampleVulnerableHSJAVASCRIPT46 = ``
-	SampleSafeHSJAVASCRIPT46       = ``
-
-	SampleVulnerableHSJAVASCRIPT47 = ``
-	SampleSafeHSJAVASCRIPT47       = ``
-
-	SampleVulnerableHSJAVASCRIPT48 = ``
-	SampleSafeHSJAVASCRIPT48       = ``
-
-	SampleVulnerableHSJAVASCRIPT49 = ``
-	SampleSafeHSJAVASCRIPT49       = ``
-
-	SampleVulnerableHSJAVASCRIPT50 = ``
-	SampleSafeHSJAVASCRIPT50       = ``
-
-	SampleVulnerableHSJAVASCRIPT51 = ``
-	SampleSafeHSJAVASCRIPT51       = ``
-
-	SampleVulnerableHSJAVASCRIPT52 = ``
-	SampleSafeHSJAVASCRIPT52       = ``
-
-	SampleVulnerableHSJAVASCRIPT53 = ``
-	SampleSafeHSJAVASCRIPT53       = ``
+	SampleVulnerableHSJAVASCRIPT55 = `
+const { Client } = require('pg')
+const client = new Client({
+	password: 'root',
+	user: 'root',
+	host: 'localhost',
+})
+`
+	SampleSafeHSJAVASCRIPT55 = `
+const { Client } = require('pg')
+const client = new Client({
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS
+	host: process.env.DB_HOST,
+`
 )
