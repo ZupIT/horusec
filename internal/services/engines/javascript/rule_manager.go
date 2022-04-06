@@ -82,6 +82,8 @@ func Rules() []engine.Rule {
 		NewCreatingCookiesWithoutTheHttpOnlyFlag(),
 		NewCreatingCookiesWithoutTheSecureFlag(),
 		NewNoUseSocketManually(),
+		NewMongoDbHardCodedCredentialsSecuritySensitive(),
+		NewPostgresqlHardCodedCredentialsSecuritySensitive(),
 
 		// Or rules
 		NewEncryptionAlgorithmsWeak(),

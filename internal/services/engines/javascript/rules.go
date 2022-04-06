@@ -389,7 +389,6 @@ func NewReadingTheStandardInput() *text.Rule {
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`process\.stdin.read\(\)`),
-			regexp.MustCompile(`process\.stdin`),
 		},
 	}
 }
@@ -498,7 +497,7 @@ func NewInsecureDownload() *text.Rule {
 		},
 		Type: text.Regular,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(fetch|get|download)*\(.*(?:http:).*.(\.sh|\.exe|\.cmd|\.bat|\.dll|\.txt)`),
+			regexp.MustCompile(`(fetch|get|download)*\(.*(?:http:).*.(\.sh|\.exe|\.cmd|\.bat|\.dll|\.txt|\.js|\.go|\.bin)`),
 		},
 	}
 }
@@ -555,7 +554,7 @@ func NewCryptographicRsaShouldBeRobust() *text.Rule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(modulusLength:\s*)([0-9][^\d]|[0-9]{2}[^\d]|[0-9]{3}[^\d]|[0-1][0-9]{3}[^\d]|20[0-3][0-9]|204[0-7])`),
-			regexp.MustCompile(`\.generateKeyPairSync\(.*rsa`),
+			regexp.MustCompile(`generateKeyPairSync|generateKeyPair\(.*rsa`),
 		},
 	}
 }
@@ -574,7 +573,7 @@ func NewCryptographicEcShouldBeRobust() *text.Rule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(namedCurve:.*secp)([0-9][^\d]|[0-9]{2}[^\d]|[0-2][0-2][0-3][^\d])`),
-			regexp.MustCompile(`\.generateKeyPairSync\(.*ec`),
+			regexp.MustCompile(`generateKeyPairSync|generateKeyPair\(.*ec`),
 		},
 	}
 }
@@ -612,7 +611,7 @@ func NewServerHostnameNotVerified() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`checkServerIdentity.*\{\s*\}`),
+			regexp.MustCompile(`checkServerIdentity`),
 			regexp.MustCompile(`(\.request\(|request\.|\.connect\()`),
 		},
 	}
@@ -689,7 +688,7 @@ func NewUsingShellInterpreterWhenExecutingOSCommands() *text.Rule {
 		},
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
-			regexp.MustCompile(`(\.exec\(|\.execSync\(|\.spawn\(|\.spawnSync\(|\.execFile\(|\.execFileSync\()((.*,(.|\s)*shell\s*:\strue)|(("|')?(\w|\s)+("|')?[^,]\))|(.*,.*\{)(([^s]|s[^h]|sh[^e]|she[^l]|shel[^l])*)(\}))`),
+			regexp.MustCompile(`(exec\(|execSync\(|spawn\(|spawnSync\(|execFile\(|execFileSync\()((.*,(.|\s)*shell\s*:\strue)|(("|')?(\w|\s)+("|')?[^,]\))|(.*,.*\{)(([^s]|s[^h]|sh[^e]|she[^l]|shel[^l])*)(\}))`),
 			regexp.MustCompile(`child_process`),
 		},
 	}
@@ -749,7 +748,7 @@ func NewAllowingBrowsersToPerformDNSPrefetching() *text.Rule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`allow\s*:\s*true`),
-			regexp.MustCompile(`dnsPrefetchControl\(`),
+			regexp.MustCompile(`dnsPrefetchControl`),
 			regexp.MustCompile(`helmet`),
 		},
 	}
@@ -788,7 +787,7 @@ func NewDisablingStrictHTTPNoReferrerPolicy() *text.Rule {
 		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`policy\s*:(\s|.)*no-referrer-when-downgrade`),
-			regexp.MustCompile(`\.referrerPolicy\(`),
+			regexp.MustCompile(`referrerPolicy`),
 			regexp.MustCompile(`helmet`),
 		},
 	}
@@ -828,7 +827,7 @@ func NewDisablingContentSecurityPolicyFrameAncestorsDirective() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`frameAncestors\s*:(\s|.)*none`),
 			regexp.MustCompile(`helmet`),
-			regexp.MustCompile(`\.contentSecurityPolicy\(`),
+			regexp.MustCompile(`contentSecurityPolicy`),
 		},
 	}
 }
@@ -848,7 +847,7 @@ func NewAllowingMixedContent() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(directives\s*:\s*\{)(([^b]|b[^l]|bl[^o]|blo[^c]|bloc[^k]|block[^A]|blockA[^l]|blockAl[^l]|blockAll[^M]|blockAllM[^i]|blockAllMi[^x]|blockAllMix[^e]|blockAllMixe[^d]|blockAllMixed[^C]|blockAllMixedC[^o]|blockAllMixedCo[^n]|blockAllMixedCon[^t]|blockAllMixedCont[^e]|blockAllMixedConte[^n]|blockAllMixedConten[^t])*)(\})`),
 			regexp.MustCompile(`helmet`),
-			regexp.MustCompile(`\.contentSecurityPolicy\(`),
+			regexp.MustCompile(`contentSecurityPolicy`),
 		},
 	}
 }
@@ -921,7 +920,7 @@ func NewNoUseSocketManually() *text.Rule {
 			SafeExample:   SampleSafeHSJAVASCRIPT48,
 			UnsafeExample: SampleVulnerableHSJAVASCRIPT48,
 		},
-		Type: text.Regular,
+		Type: text.AndMatch,
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`new.*Socket\(`),
 			regexp.MustCompile(`require\(.net.\)|from\s.net.`),
@@ -1025,6 +1024,45 @@ func NewSQLInjection() *text.Rule {
 		Expressions: []*regexp.Regexp{
 			regexp.MustCompile(`(?i)query\(.*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)`),
 			regexp.MustCompile(`(?i)((?:var|let|const)?\s*\w+.?\s*(=|:).*(SELECT|UPDATE|DELETE|INSERT).*(\+|\$\{)\s*\w+$)`),
+		},
+	}
+}
+
+func NewMongoDbHardCodedCredentialsSecuritySensitive() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:            "HS-JAVASCRIPT-54",
+			Name:          "MongoDb Hard-coded credentials are security-sensitive",
+			Description:   "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source. It's recommended to customize the configuration of this rule with additional credential words such as \"oauthToken\", \"secret\", others. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSJAVASCRIPT54,
+			UnsafeExample: SampleVulnerableHSJAVASCRIPT54,
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`\.connect\(\s*["|']\S+["|']`),
+			regexp.MustCompile(`require\(.mongodb.\)|from\s.mongodb.`),
+		},
+	}
+}
+
+func NewPostgresqlHardCodedCredentialsSecuritySensitive() *text.Rule {
+	return &text.Rule{
+		Metadata: engine.Metadata{
+			ID:            "HS-JAVASCRIPT-55",
+			Name:          "Postgresql Hard-coded credentials are security-sensitive",
+			Description:   "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source. It's recommended to customize the configuration of this rule with additional credential words such as \"oauthToken\", \"secret\", others. For more information checkout the CWE-798 (https://cwe.mitre.org/data/definitions/798.html) advisory.",
+			Severity:      severities.Critical.ToString(),
+			Confidence:    confidence.High.ToString(),
+			SafeExample:   SampleSafeHSJAVASCRIPT35,
+			UnsafeExample: SampleVulnerableHSJAVASCRIPT35,
+		},
+		Type: text.AndMatch,
+		Expressions: []*regexp.Regexp{
+			regexp.MustCompile(`(host|user|database|password|port):\s*["|']\w+["|']`),
+			regexp.MustCompile(`new Client\(\{`),
+			regexp.MustCompile(`require\(.pg.\)|from\s.pg.`),
 		},
 	}
 }
