@@ -15,7 +15,6 @@
 package analyzer
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 	"time"
@@ -505,7 +504,7 @@ func (a *Analyzer) setCounterOfDetailsDuplicated(
 ) (newAnalysisVulnerabilities []analysis.AnalysisVulnerabilities) {
 	for indexAV := range analysisVulnerabilities {
 		currentAV := analysisVulnerabilities[indexAV]
-		newDetails := bytes.NewBufferString("")
+		newDetails := ""
 		detailEmptySplit := strings.Split(currentAV.Vulnerability.Details, detailsHeaderText)
 		detailToSetSplit := make([]string, 0)
 		for _, d := range detailEmptySplit {
@@ -518,10 +517,10 @@ func (a *Analyzer) setCounterOfDetailsDuplicated(
 			if indexDS+1 == len(detailToSetSplit) {
 				lastChar = ""
 			}
-			_, _ = fmt.Fprintf(newDetails, "%s(%v/%v) %s%s%s", newDetails, indexDS+1, len(detailToSetSplit),
+			newDetails = fmt.Sprintf("%s(%v/%v) %s%s%s", newDetails, indexDS+1, len(detailToSetSplit),
 				detailsHeaderText, detail, lastChar)
 		}
-		currentAV.Vulnerability.Details = newDetails.String()
+		currentAV.Vulnerability.Details = newDetails
 		newAnalysisVulnerabilities = append(newAnalysisVulnerabilities, currentAV)
 	}
 	return newAnalysisVulnerabilities
