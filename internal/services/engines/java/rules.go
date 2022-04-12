@@ -31,7 +31,7 @@ func NewXMLParsingVulnerableToXXE() *text.Rule {
 			ID:          "HS-JAVA-1",
 			Name:        "XML parsing vulnerable to XXE",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -49,7 +49,7 @@ func NewXMLParsingVulnerableToXXEWithXMLInputFactory() *text.Rule {
 			ID:          "HS-JAVA-2",
 			Name:        "XML parsing vulnerable to XXE With XMLInputFactory",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -66,7 +66,7 @@ func NewXMLParsingVulnerableToXXEWithDocumentBuilder() *text.Rule {
 			ID:          "HS-JAVA-3",
 			Name:        "XML parsing vulnerable to XXE With DocumentBuilder",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -84,7 +84,7 @@ func NewXMLParsingVulnerableToXXEWithSAXParserFactory() *text.Rule {
 			ID:          "HS-JAVA-4",
 			Name:        "XML parsing vulnerable to XXE With SAXParserFactory",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -102,7 +102,7 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() *text.Rule {
 			ID:          "HS-JAVA-5",
 			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -114,31 +114,13 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() *text.Rule {
 	}
 }
 
-// Deprecated: Repeated vulnerability, same as HS-JAVA-5
-//
-//func NewXMLParsingVulnerableToXXEWithSchemaFactory() *text.Rule {
-//	return &text.Rule{
-//		Metadata: engine.Metadata{
-//			ID:          "HS-JAVA-6",
-//			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
-//			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-//			Severity:    severities.Medium.ToString(),
-//			Confidence:  confidence.Low.ToString(),
-//		},
-//		Type: text.AndMatch,
-//		Expressions: []*regexp.Regexp{
-//			regexp.MustCompile(`SchemaFactory\.newInstance\(`),
-//		},
-//	}
-//}
-
 func NewXMLParsingVulnerableToXXEWithDom4j() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
 			ID:          "HS-JAVA-7",
 			Name:        "XML parsing vulnerable to XXE With Dom4j",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
@@ -155,7 +137,7 @@ func NewXMLParsingVulnerableToXXEWithJdom2() *text.Rule {
 			ID:          "HS-JAVA-8",
 			Name:        "XML parsing vulnerable to XXE With Jdom2",
 			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
-			Severity:    severities.Medium.ToString(),
+			Severity:    severities.High.ToString(),
 			Confidence:  confidence.Low.ToString(),
 		},
 		Type: text.AndMatch,
