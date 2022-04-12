@@ -114,6 +114,24 @@ func NewXMLParsingVulnerableToXXEWithTransformerFactory() *text.Rule {
 	}
 }
 
+// Deprecated: Repeated vulnerability, same as HS-JAVA-5
+//
+//func NewXMLParsingVulnerableToXXEWithSchemaFactory() *text.Rule {
+//	return &text.Rule{
+//		Metadata: engine.Metadata{
+//			ID:          "HS-JAVA-6",
+//			Name:        "XML parsing vulnerable to XXE With TransformerFactory",
+//			Description: "XML External Entity (XXE) attacks can occur when an XML parser supports XML entities while processing XML received from an untrusted source. For more information checkout the CWE-611 (https://cwe.mitre.org/data/definitions/611.html) advisory.",
+//			Severity:    severities.Medium.ToString(),
+//			Confidence:  confidence.Low.ToString(),
+//		},
+//		Type: text.AndMatch,
+//		Expressions: []*regexp.Regexp{
+//			regexp.MustCompile(`SchemaFactory\.newInstance\(`),
+//		},
+//	}
+//}
+
 func NewXMLParsingVulnerableToXXEWithDom4j() *text.Rule {
 	return &text.Rule{
 		Metadata: engine.Metadata{
